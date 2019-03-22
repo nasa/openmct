@@ -46,6 +46,7 @@
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
                       :selectedLayoutItems="selectedLayoutItems"
+                      :complexContent="complexContent"
                       @endDrag="endDrag">
         </edit-marquee>
     </div>
@@ -127,7 +128,10 @@
         down: -1,
         bottom: Number.NEGATIVE_INFINITY
     };
-
+    const SIMPLE_CONTENT_TYPES = [
+        'clock',
+        'summary-widget'
+    ];
     const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
 
     let components = ITEM_TYPE_VIEW_MAP;
@@ -163,6 +167,20 @@
                 return this.layoutItems.filter(item => {
                     return this.itemIsInCurrentSelection(item);
                 });
+            },
+            complexContent() {
+                let isSingleSelect = this.selectedLayoutItems && this.selectedLayoutItems.length === 1;
+                let type = this.selectedLayoutItems[0].type;
+
+                if (isSingleSelect && type === 'subobject-view') {
+                    this.openmct.objects.get(this.selectedLayoutItems[0].identifier)
+                        .then(domainObject => {
+                            console.log('isComplextContent', !SIMPLE_CONTENT_TYPES.includes(domainObject.type));
+                            return !SIMPLE_CONTENT_TYPES.includes(domainObject.type);
+                        });
+                } else {
+                    return false;
+                }
             },
             showMarquee() {
                 return this.selection.length > 0 && this.selection[0].length > 1;

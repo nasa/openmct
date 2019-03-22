@@ -22,7 +22,10 @@
 
 <template>
         <!-- Drag handles -->
-        <div class="c-frame-edit" :style="style">
+        <div class="c-frame-edit"
+             :style="style"
+             :class="{
+                'has-complex-content': complexContent}">
             <div class="c-frame-edit__move"
                  @mousedown="startDrag([1,1], [0,0], $event, 'move')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
@@ -199,7 +202,8 @@
         inject: ['openmct'],
         props: {
             selectedLayoutItems: Array,
-            gridSize: Array
+            gridSize: Array,
+            complexContent: Boolean
         },        
         data() {
             return {
