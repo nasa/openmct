@@ -53,18 +53,25 @@ export default {
                 }
             });
         },
+        clearData() {
+            this.domainObject = {};
+            this.originalPath = [];
+            this.keyString = '';
+        },
         updateSelection(selection) {
-            if (selection.length === 0) {
-                this.domainObject = {};
-                this.originalLocation = [];
+            if (!selection.length) {
+                this.clearData();
+                return;
+            } else if (!selection[0].context.item) {
+                this.clearData();
                 return;
             }
 
             this.domainObject = selection[0].context.item;
-            
+
             let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-            if (this.keyString !== keyString) {
+            if (keyString && this.keyString !== keyString) {
                 this.keyString = keyString;
                 this.originalPath = [];
 
