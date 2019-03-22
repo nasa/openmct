@@ -270,6 +270,50 @@ select {
     }
 }
 
+/******************************************************** TABS */
+.c-tabs {
+    // TODO: add theme constants for tab colors: active, default, etc. Look at tab colors from Tabs view.
+    display: flex;
+    flex: 0 0 auto;
+    margin-bottom: 20px;
+    position: relative;
+    &:before {
+        // Separator line at bottom of tabs
+        content: '';
+        display: block;
+        height: 1px;
+        width: 100%;
+        background: $colorInteriorBorder;
+        position: absolute;
+        bottom: 1px;
+    }
+    .c-tab + .c-tab {
+        margin-left: $interiorMargin;
+    }
+}
+
+.c-tab {
+    $bc: $colorInteriorBorder;
+    $br: $basicCr;
+    background: rgba($overlayColorFg, 0.2);
+    cursor: pointer;
+    padding: 5px 30px;
+    border-top-left-radius: $br;
+    border-top-right-radius: $br;
+    border-top: 1px solid $bc;
+    border-right: 1px solid $bc;
+    border-bottom: 1px solid transparent;
+    border-left: 1px solid $bc;
+    text-transform: uppercase;
+
+    &.active {
+        background: rgba($overlayColorFg, 0.5);
+        border-bottom-color: $overlayColorBg;
+        pointer-events: none;
+        z-index: 1;
+    }
+}
+
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
     &--link {
