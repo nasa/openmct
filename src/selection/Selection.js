@@ -185,8 +185,9 @@ define(
             return;
         }
 
-        this.select(this.capturing.reverse(), event.shiftKey);
+        let reversedCapturing = this.capturing.reverse();
         delete this.capturing;
+        this.select(reversedCapturing, event.shiftKey);
     };
 
     /**
