@@ -1,0 +1,144 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/******************************************************************* MESSAGES */
+.w-message-contents {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+        margin-bottom: $interiorMargin;
+    }
+
+    .message-body {
+        flex: 1 1 100%;
+    }
+}
+
+// Singleton in an overlay dialog
+.t-message-single .l-message,
+.t-message-single.l-message {
+    $iconW: $messageListIconD;
+    &:before {
+        font-size: $iconW;
+        width: $iconW + 2;
+    }
+    .title {
+        font-size: 1.2em;
+    }
+}
+
+// Singleton inline in a view
+.t-message-inline .l-message,
+.t-message-inline.l-message {
+    border-radius: $controlCr;
+    &.message-severity-info { background-color: rgba($colorInfo, 0.3); }
+    &.message-severity-alert { background-color: rgba($colorWarningLo, 0.3); }
+    &.message-severity-error { background-color: rgba($colorWarningHi, 0.3); }
+
+    .w-message-contents.l-message-body-only {
+        .message-body {
+            margin-top: $interiorMargin;
+        }
+    }
+}
+
+// In a list
+.c-overlay__messages {
+    //@include abs();
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding-right: $interiorMargin;
+
+    > div,
+    > span {
+        margin-bottom: $interiorMargin;
+    }
+
+    .w-messages {
+        flex: 1 1 100%;
+        overflow-y: auto;
+        padding-right: $interiorMargin;
+    }
+    // Each message
+    .c-message {
+        @include discreteItem();
+        flex: 0 0 auto;
+        margin-bottom: $interiorMarginSm;
+
+        .hint,
+        .bottom-bar {
+            text-align: left;
+        }
+    }
+
+}
+
+@include phonePortrait {
+    .t-message-single .l-message,
+    .t-message-single.l-message {
+        flex-direction: column;
+        &:before {
+            margin-right: 0;
+            margin-bottom: $interiorMarginLg;
+            text-align: center;
+            width: 100%;
+        }
+
+        .bottom-bar {
+            text-align: center;
+            .s-button {
+                display: block;
+                width: 100%;
+            }
+        }
+    }
+}
+
+body.desktop .t-message-list {
+    .w-message-contents { padding-right: $interiorMargin; }
+}
+
+// Alert elements in views
+mixin sUnSynced() {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
+}
+
+.s-unsynced {
+    @include sUnsynced();
+}
+
+.s-status-timeconductor-unsynced {
+    // Plot areas
+    .gl-plot .gl-plot-display-area {
+        @include sUnsynced();
+    }
+
+    // Object headers
+    .object-header {
+        .t-object-alert {
+            display: inline;
+        }
+    }
+}

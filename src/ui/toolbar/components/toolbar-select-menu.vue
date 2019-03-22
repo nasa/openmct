@@ -1,6 +1,6 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon c-click-icon--menu"
+        <div class="c-icon-button c-icon-button--menu"
              :class="[options.icon, {'c-click-icon--mixed': nonSpecific}]"
              :title="options.title"
              @click="toggle">

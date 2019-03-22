@@ -1,12 +1,20 @@
 const path = require('path');
 const bourbon = require('node-bourbon');
+const packageDefinition = require('./package.json');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 const devMode = process.env.NODE_ENV !== 'production';
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 // TODO: Build Constants w/ git-rev-sync
+const gitRevision = require('child_process')
+    .execSync('git rev-parse HEAD')
+    .toString().trim();
+const gitBranch = require('child_process')
+    .execSync('git rev-parse --abbrev-ref HEAD')
+    .toString().trim();
 
 const webpackConfig = {
     mode: devMode ? 'development' : 'production',
@@ -32,6 +40,12 @@ const webpackConfig = {
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
     plugins: [
+        new webpack.DefinePlugin({
+            __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
+            __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
+            __OPENMCT_REVISION__: `'${gitRevision}'`,
+            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+        }),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             path: 'assets/styles/',
