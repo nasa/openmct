@@ -91,8 +91,6 @@ export default {
         }
         this.openmct.selection.on('change', this.showSelection);
         this.openmct.editor.on('isEditing', this.setEditState);
-
-        document.addEventListener('dragend', this.notDragging);
     },
     methods: {
         setEditState(isEditing) {
@@ -165,16 +163,16 @@ export default {
         moveFrom(index){
             this.isDragging = true;
             this.moveFromIndex = index;
+            document.addEventListener('dragend', this.hideDragStyling);
         },
-        notDragging() {
+        hideDragStyling() {
             this.isDragging = false;
+            document.removeEventListener('dragend', this.hideDragStyling);
         }
     },
     destroyed() {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
-
-        document.removeEventListener('dragend', this.notDragging);
 
         if (this.mutationUnobserver) {
             this.mutationUnobserver();
