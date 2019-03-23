@@ -1,6 +1,6 @@
 <template>
     <div class="c-tabs-view">
-        <div class="c-tabs-view__tabs-holder c-compact-button-holder"
+        <div class="c-tabs-view__tabs-holder c-tabs"
             :class="{
                 'is-dragging': isDragging,
                 'is-mouse-over': allowDrop
@@ -11,7 +11,7 @@
             </div>
             <div class="c-tabs-view__empty-message"
                  v-if="!tabsList.length > 0">Drag objects here to add them to this view.</div>
-            <button class="c-tabs-view__tab c-compact-button"
+            <button class="c-tabs-view__tab c-tab"
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[
@@ -53,9 +53,14 @@
         }
 
         &__tabs-holder {
-            @include userSelectNone();
-            flex: 0 0 auto;
             min-height: $h;
+        }
+
+        &__tab {
+            &:before {
+                margin-right: $interiorMarginSm;
+                opacity: 0.7;
+            }
         }
 
         &__object-holder {

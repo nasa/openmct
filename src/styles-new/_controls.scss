@@ -50,10 +50,6 @@ button {
     }
 }
 
-.c-compact-button {
-    @include cCompactButtons($bg: $colorBtnBg, $fg: $colorBtnFg, $bgHov: $colorBtnBgHov);
-}
-
 /********* Icon Buttons */
 .c-click-icon {
     @include cClickIcon();
@@ -272,45 +268,59 @@ select {
 
 /******************************************************** TABS */
 .c-tabs {
-    // TODO: add theme constants for tab colors: active, default, etc. Look at tab colors from Tabs view.
+    // Single horizontal strip of tabs, with a bottom divider line
+    $bgActive: $colorBtnReverseBg;
+
+    @include userSelectNone();
     display: flex;
     flex: 0 0 auto;
-    margin-bottom: 20px;
-    position: relative;
+    flex-wrap: wrap;
+
     &:before {
         // Separator line at bottom of tabs
         content: '';
         display: block;
         height: 1px;
         width: 100%;
-        background: $colorInteriorBorder;
+        background: $colorBtnReverseBg;
         position: absolute;
-        bottom: 1px;
-    }
-    .c-tab + .c-tab {
-        margin-left: $interiorMargin;
+        bottom: 0px;
+        z-index: 1;
     }
 }
 
 .c-tab {
-    $bc: $colorInteriorBorder;
-    $br: $basicCr;
-    background: rgba($overlayColorFg, 0.2);
+    // Used in Tab View, generic tabs
+    background: $colorBtnBg;
+    color: $colorBtnFg;
     cursor: pointer;
-    padding: 5px 30px;
-    border-top-left-radius: $br;
-    border-top-right-radius: $br;
-    border-top: 1px solid $bc;
-    border-right: 1px solid $bc;
-    border-bottom: 1px solid transparent;
-    border-left: 1px solid $bc;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    margin: 0 1px 1px 0;
+    padding: $interiorMargin $interiorMarginLg;
+    white-space: nowrap;
 
-    &.active {
-        background: rgba($overlayColorFg, 0.5);
-        border-bottom-color: $overlayColorBg;
+    --notchSize: 7px;
+
+    clip-path:
+        polygon(
+            0% 0%,
+            calc(100% - var(--notchSize)) 0%,
+            100% var(--notchSize),
+            100% calc(100% - var(--notchSize)),
+            100% 100%,
+            0% 100%
+        );
+
+    @include hover() {
+        background: $colorBtnBgHov;
+    }
+
+    &.is-current {
+        background: $colorBtnReverseBg;
+        color: $colorBtnReverseFg;
         pointer-events: none;
-        z-index: 1;
     }
 }
 
