@@ -21,13 +21,8 @@
  *****************************************************************************/
 
 <template>
-        <!-- Drag handles -->
-        <div class="c-frame-edit"
-             :style="style"
-             :class="{
-                'has-complex-content': complexContent}">
-            <div class="c-frame-edit__move"
-                 @mousedown="startDrag([1,1], [0,0], $event, 'move')"></div>
+        <!-- Resize handles -->
+        <div class="c-frame-edit" :style="style">
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
                  @mousedown="startDrag([1,1], [-1,-1], $event, 'resize')"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--ne"
@@ -258,6 +253,7 @@
                 }.bind(this));
             },
             startDrag(posFactor, dimFactor, event, type) {
+                console.log('startDrag');
                 // document.body.addEventListener('mousemove', this.continueDrag);
                 // document.body.addEventListener('mouseup', this.endDrag);
 

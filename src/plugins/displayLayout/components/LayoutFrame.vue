@@ -29,6 +29,10 @@
          :style="style">
 
         <slot></slot>
+
+        <div class="c-frame-edit__move"
+             @mousedown="startMove([1,1], [0,0], $event, 'move')">
+        </div>
     </div>
 </template>
 
@@ -135,6 +139,12 @@
             },
             inspectable() {
                 return this.item.type === 'subobject-view' || this.item.type === 'telemetry-view';
+            }
+        },
+        methods: {
+            startMove(posFactor, dimFactor, event, type) {
+                console.log('startMove');
+                event.stopPropagation();
             }
         }
     }
