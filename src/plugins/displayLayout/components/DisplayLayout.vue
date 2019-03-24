@@ -23,7 +23,7 @@
 <template>
     <div class="l-layout"
          @dragover="handleDragOver"
-         @click="bypassSelection"
+         @click.capture="bypassSelection"
          @drop="handleDrop">
         <!-- Background grid -->
         <div class="l-layout__grid-holder c-grid">
@@ -250,20 +250,22 @@
                     if ($event) {
                         $event.stopImmediatePropagation();
                     }
+                    this.dragInProgress = false;
                     return;
                 }
             },
             endDrag(item, updates) {
-                this.dragInProgress = true;
-                setTimeout(function () {
-                    this.dragInProgress = false;
-                }.bind(this), 0);
+                // this.dragInProgress = true;
+                // setTimeout(function () {
+                //     this.dragInProgress = false;
+                // }.bind(this), 0);
 
                 let index = this.layoutItems.indexOf(item);
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
             },
             move(gridDelta) {
+                this.dragInProgress = true;
                 if (!this.selectionCopy) {
                     this.selectionCopy = _.cloneDeep(this.selection);
                 }
@@ -278,11 +280,10 @@
                 });
             },
             endMove() {
-                console.log('endMove');
-                this.dragInProgress = true;
-                setTimeout(function () {
-                    this.dragInProgress = false;
-                }.bind(this), 0);
+                // this.dragInProgress = true;
+                // setTimeout(function () {
+                //     this.dragInProgress = false;
+                // }.bind(this), 0);
                 this.selectionCopy = undefined;
                 // TODO: mutate new position
             },
