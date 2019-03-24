@@ -39,7 +39,7 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    /******************************* FRAME */
+    /******************* FRAME */
     .c-frame {
         display: flex;
         flex-direction: column;
@@ -62,7 +62,7 @@
 
     .is-editing {
         .c-frame {
-            // .c-frame styles while editing
+            /******************* STYLES FOR C-FRAME WHILE EDITING */
             &:not([s-selected]) {
                 &:hover {
                     border: $editFrameBorderHov;
@@ -73,6 +73,10 @@
                 // All frames selected while editing
                 border: $editFrameSelectedBorder;
                 box-shadow: $editFrameSelectedShdw;
+
+                .c-frame-edit__move {
+                    cursor: move;
+                }
             }
         }
 
@@ -81,7 +85,6 @@
             @include test(green); // TEMP
             @include abs();
             display: block;
-            cursor: move;
         }
 
         /******************* 0 - 1 ITEM SELECTED */
