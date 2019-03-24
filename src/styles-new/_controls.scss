@@ -269,12 +269,11 @@ select {
 /******************************************************** TABS */
 .c-tabs {
     // Single horizontal strip of tabs, with a bottom divider line
-    $bgActive: $colorBtnReverseBg;
-
     @include userSelectNone();
     display: flex;
     flex: 0 0 auto;
     flex-wrap: wrap;
+    position: relative; // Required in case this is applied to a <ul>
 
     &:before {
         // Separator line at bottom of tabs
@@ -297,7 +296,7 @@ select {
     display: flex;
     align-items: center;
     flex: 1 1 auto;
-    margin: 0 1px 1px 0;
+    margin: 1px 1px 0 0;
     padding: $interiorMargin $interiorMarginLg;
     white-space: nowrap;
 
