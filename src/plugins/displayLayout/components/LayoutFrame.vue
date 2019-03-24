@@ -58,15 +58,50 @@
     }
 
     .is-editing {
+        .c-so-view.has-complex-content {
+            // Target frames that hold domain objects that include header elements, as opposed to drawing and alpha objects
+            // Make the __move element a more affordable drag UI element
+            & + .c-frame-edit__move {
+                @include userSelectNone();
+                background: $editFrameMovebarColorBg;
+                box-shadow: rgba(black, 0.2) 0 1px;
+                bottom: auto;
+                height: 0; // Height is set on hover on s-selected.c-frame
+                opacity: 0.8;
+                max-height: 100%;
+                overflow: hidden;
+                text-align: center;
+
+                &:before {
+                    // Grippy
+                    $h: 4px;
+                    $tbOffset: ($editFrameMovebarH - $h) / 2;
+                    $lrOffset: 25%;
+                    @include grippy($editFrameMovebarColorFg);
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    top: $tbOffset; right: $lrOffset; bottom: $tbOffset; left: $lrOffset;
+                }
+
+                &:hover {
+                    background: $editFrameHovMovebarColorBg;
+                    &:before { @include grippy($editFrameHovMovebarColorFg); }
+                }
+            }
+
+            &:hover {
+                & + .c-frame-edit__move {
+                    height: $editFrameMovebarH;
+                }
+            }
+        }
+
         .c-frame {
             $moveBarOutDelay: 500ms;
             &.no-frame {
                 border: $editFrameBorder; // Base border style for a frame element while editing.
             }
-
-         /*   &-edit {
-                display: contents;
-            }*/
 
             &-edit__move,
             .c-so-view {
@@ -82,20 +117,12 @@
 
             &[s-selected] {
                 // All frames selected while editing
-                // border: $editFrameSelectedBorder;
-                // box-shadow: $editFrameSelectedShdw;
-
-             cursor: move;
-
-            /* > .c-frame-edit {
-                    [class*='__handle'] {
-                        display: block;
-                    }
-                }*/
+                border: $editFrameSelectedBorder;
+                box-shadow: $editFrameSelectedShdw;
             }
         }
 
-        .l-layout__frame:not(.is-resizing) {
+        .c-frame:not(.is-resizing) {
             // Show and animate the __move bar for sub-object views with complex content
             &:hover > .c-so-view.has-complex-content {
                 // Move content down so the __move bar doesn't cover it.
@@ -108,7 +135,7 @@
                 }
 
                 // Show the move bar
-                + .c-frame-edit .c-frame-edit__move {
+                + .c-frame-edit__move {
                     height: $editFrameMovebarH;
                     transition: $transIn;
                 }
