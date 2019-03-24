@@ -43,11 +43,6 @@
         position: absolute;
         border: $editMarqueeBorder;
 
-        &__move {
-            @include abs();
-            cursor: move;
-        }
-
         &__handle {
             $d: 6px;
             $o: floor($d * -0.5);

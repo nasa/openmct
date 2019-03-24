@@ -24,7 +24,10 @@
     <div class="l-layout"
          @dragover="handleDragOver"
          @click.capture="bypassSelection"
-         @drop="handleDrop">
+         @drop="handleDrop"
+         :class="{
+            'is-multi-selected':selectedLayoutItems.length > 1
+            }">
         <!-- Background grid -->
         <div class="l-layout__grid-holder c-grid">
             <div class="c-grid__x l-grid l-grid-x"

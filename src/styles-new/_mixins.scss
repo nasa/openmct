@@ -618,7 +618,6 @@
 @mixin test($c: deeppink, $a: 0.3) {
     background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;
-    box-shadow: deeppink 0 0 10px 1px !important;
 }
 
 
