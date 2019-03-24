@@ -21,9 +21,10 @@
  *****************************************************************************/
 
 <template>
-    <!-- <div class="l-layout__frame c-frame no-frame" :style="position"> -->
     <layout-frame :item="item"
-                  :grid-size="gridSize">
+                  :grid-size="gridSize"
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-box-view"
              :style="style">
         </div>

@@ -95,7 +95,7 @@ define(
          * @param {number[]} pixelDelta the offset from the
          *        original position, in pixels
          */
-        LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
+        LayoutDrag.prototype.getAdjustedPositionAndDimensions = function (pixelDelta) {
             var gridDelta = toGridDelta(this.gridSize, pixelDelta);
             return {
                 position: max(add(
@@ -106,6 +106,16 @@ define(
                     this.rawPosition.dimensions,
                     multiply(gridDelta, this.dimFactor)
                 ), [1, 1])
+            };
+        };
+
+        LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
+            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+            return {
+                position: max(add(
+                    this.rawPosition.position,
+                    multiply(gridDelta, this.posFactor)
+                ), [0, 0])
             };
         };
 

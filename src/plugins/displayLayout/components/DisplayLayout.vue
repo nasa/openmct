@@ -41,12 +41,13 @@
                    :key="item.id"
                    :gridSize="item.useGrid ? gridSize : [1, 1]"
                    :initSelect="initSelectIndex === index"
-                   :index="index">
+                   :index="index"
+                   @move="move"
+                   @endMove="endMove">
         </component>
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
                       :selectedLayoutItems="selectedLayoutItems"
-                      :complexContent="complexContent"
                       @endDrag="endDrag">
         </edit-marquee>
     </div>
@@ -153,6 +154,7 @@
             return {
                 internalDomainObject: domainObject,
                 initSelectIndex: undefined,
+                dragInProgress: false,
                 selection: []
             };
         },
@@ -167,20 +169,6 @@
                 return this.layoutItems.filter(item => {
                     return this.itemIsInCurrentSelection(item);
                 });
-            },
-            complexContent() {
-                let isSingleSelect = this.selectedLayoutItems && this.selectedLayoutItems.length === 1;
-                let type = this.selectedLayoutItems[0].type;
-
-                if (isSingleSelect && type === 'subobject-view') {
-                    this.openmct.objects.get(this.selectedLayoutItems[0].identifier)
-                        .then(domainObject => {
-                            console.log('isComplextContent', !SIMPLE_CONTENT_TYPES.includes(domainObject.type));
-                            return !SIMPLE_CONTENT_TYPES.includes(domainObject.type);
-                        });
-                } else {
-                    return false;
-                }
             },
             showMarquee() {
                 return this.selection.length > 0 && this.selection[0].length > 1;
@@ -210,7 +198,7 @@
                 });
             },
             itemIsInCurrentSelection(item) {
-                return this.selection.some(selectionPath => selectionPath[0].context.layoutItem.id === item.id);
+                return this.selection.some(selectionPath => selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.id === item.id);
             },
             attachSelectionListener(index) {
                 if (!this.removeSelectionListeners) {
@@ -274,6 +262,29 @@
                 let index = this.layoutItems.indexOf(item);
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
+            },
+            move(gridDelta) {
+                if (!this.selectionCopy) {
+                    this.selectionCopy = _.cloneDeep(this.selection);
+                }
+
+                this.layoutItems.map(item => {
+                    if (this.itemIsInCurrentSelection(item)) {
+                        let selectionPath = this.selectionCopy.filter(selectionPath => selectionPath[0].context.layoutItem.id === item.id)[0];
+                        let selectedItem = selectionPath[0].context.layoutItem;
+                        item.x = Math.max(selectedItem.x + gridDelta[0], 0);
+                        item.y = Math.max(selectedItem.y + gridDelta[1], 0);
+                    }
+                });
+            },
+            endMove() {
+                console.log('endMove');
+                this.dragInProgress = true;
+                setTimeout(function () {
+                    this.dragInProgress = false;
+                }.bind(this), 0);
+                this.selectionCopy = undefined;
+                // TODO: mutate new position
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);

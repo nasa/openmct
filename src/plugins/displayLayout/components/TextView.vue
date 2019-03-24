@@ -22,7 +22,9 @@
 
  <template>
     <layout-frame :item="item"
-                  :grid-size="gridSize">
+                  :grid-size="gridSize"
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-text-view"
              :style="style">
             {{ item.text }}

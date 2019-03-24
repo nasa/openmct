@@ -197,8 +197,7 @@
         inject: ['openmct'],
         props: {
             selectedLayoutItems: Array,
-            gridSize: Array,
-            complexContent: Boolean
+            gridSize: Array
         },        
         data() {
             return {
@@ -216,7 +215,7 @@
 
                 this.selectedLayoutItems.forEach(item => {
                     positions.push({
-                        'x' :item.x,
+                        'x': item.x,
                         'y': item.y,
                         'width': item.width,
                         'height': item.height
@@ -269,7 +268,7 @@
             continueDrag(event) {
                 event.preventDefault();
                 this.updatePosition(event);
-                this.dragPosition = this.activeDrag.getAdjustedPosition(this.delta);
+                this.dragPosition = this.activeDrag.getAdjustedPositionAndDimensions(this.delta);
             },
             endDrag(event) {
                 // document.body.removeEventListener('mousemove', this.continueDrag);

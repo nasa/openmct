@@ -31,7 +31,7 @@
         <slot></slot>
 
         <div class="c-frame-edit__move"
-             @mousedown="startMove([1,1], [0,0], $event, 'move')">
+             @mousedown="startMove([1,1], [0,0], $event)">
         </div>
     </div>
 </template>
@@ -119,6 +119,8 @@
 
 
 <script>
+    import LayoutDrag from './../LayoutDrag'
+
     export default {
         inject: ['openmct'],
         props: {
@@ -142,9 +144,48 @@
             }
         },
         methods: {
-            startMove(posFactor, dimFactor, event, type) {
-                console.log('startMove');
-                event.stopPropagation();
+            updatePosition(event) {
+                let currentPosition = [event.pageX, event.pageY];
+                this.initialPosition = this.initialPosition || currentPosition;
+                this.delta = currentPosition.map(function (value, index) {
+                    return value - this.initialPosition[index];
+                }.bind(this));
+            },
+            startMove(posFactor, dimFactor, event) {
+                document.body.addEventListener('mousemove', this.continueMove);
+                document.body.addEventListener('mouseup', this.endMove);
+                this.dragPosition = {
+                    position: [this.item.x, this.item.y]
+                };
+                this.startPosition = this.dragPosition;
+                this.updatePosition(event);
+                this.activeDrag = new LayoutDrag(this.dragPosition, posFactor, dimFactor, this.gridSize);
+                event.preventDefault();
+            },
+            continueMove(event) {
+                event.preventDefault();
+                this.updatePosition(event);
+                let newPosition = this.activeDrag.getAdjustedPosition(this.delta);
+
+                if (!_.isEqual(newPosition, this.dragPosition)) {
+                    this.dragPosition = newPosition;
+                    this.$emit('move', this.toGridDelta(this.delta));
+                }
+            },
+            endMove(event) {
+                document.body.removeEventListener('mousemove', this.continueMove);
+                document.body.removeEventListener('mouseup', this.endMove);
+                this.continueMove(event);
+                this.$emit('endMove');
+                this.dragPosition = undefined;
+                this.initialPosition = undefined;
+                this.delta = undefined;
+                event.preventDefault();
+            },
+            toGridDelta(pixelDelta) {
+                return pixelDelta.map((v, i) => {
+                    return Math.round(v / this.gridSize[i]);
+                });
             }
         }
     }
