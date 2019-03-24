@@ -48,7 +48,6 @@
             $o: floor($d * -0.5);
             background: $editFrameColorHandleFg;
             box-shadow: $editFrameColorHandleBg 0 0 0 2px;
-            //display: none; // Set to block via s-selected selector
             pointer-events: all;
             position: absolute;
             width: $d; height: $d;

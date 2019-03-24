@@ -30,9 +30,9 @@
             </line>
         </svg>
 
+        <div class="c-frame-edit__move"
+             @mousedown="startDrag($event)"></div>
         <div class="c-frame-edit">
-            <div class="c-frame-edit__move"
-                 @mousedown="startDrag($event)"></div>
             <div class="c-frame-edit__handle"
                  :class="startHandleClass"
                  @mousedown="startDrag($event, 'start')"></div>
