@@ -194,7 +194,6 @@
                 this.dragPosition = {
                     position: [this.item.x, this.item.y]
                 };
-                this.startPosition = this.dragPosition;
                 this.updatePosition(event);
                 this.activeDrag = new LayoutDrag(this.dragPosition, posFactor, dimFactor, this.gridSize);
                 event.preventDefault();

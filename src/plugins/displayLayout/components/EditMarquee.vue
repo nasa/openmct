@@ -156,7 +156,7 @@
                 }.bind(this));
             },
             startDrag(posFactor, dimFactor, event, type) {
-                console.log('startDrag');
+                // console.log('startDrag');
                 // document.body.addEventListener('mousemove', this.continueDrag);
                 // document.body.addEventListener('mouseup', this.endDrag);
 

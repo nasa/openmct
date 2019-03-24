@@ -170,7 +170,9 @@ define(
      * @private
      */
     Selection.prototype.capture = function (selectable) {
-        if (!this.capturing) {
+        let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
+
+        if (!this.capturing || capturingContainsSelectable) {
             this.capturing = [];
         }
 

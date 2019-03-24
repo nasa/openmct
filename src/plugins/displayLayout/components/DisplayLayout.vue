@@ -132,10 +132,6 @@
         down: -1,
         bottom: Number.NEGATIVE_INFINITY
     };
-    const SIMPLE_CONTENT_TYPES = [
-        'clock',
-        'summary-widget'
-    ];
     const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
 
     let components = ITEM_TYPE_VIEW_MAP;
@@ -157,7 +153,6 @@
             return {
                 internalDomainObject: domainObject,
                 initSelectIndex: undefined,
-                dragInProgress: false,
                 selection: []
             };
         },
@@ -201,7 +196,8 @@
                 });
             },
             itemIsInCurrentSelection(item) {
-                return this.selection.some(selectionPath => selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.id === item.id);
+                return this.selection.some(selectionPath =>
+                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.id === item.id);
             },
             attachSelectionListener(index) {
                 if (!this.removeSelectionListeners) {
@@ -263,32 +259,32 @@
                 //     this.dragInProgress = false;
                 // }.bind(this), 0);
 
-                let index = this.layoutItems.indexOf(item);
-                Object.assign(item, updates);
-                this.mutate(`configuration.items[${index}]`, item);
+                // let index = this.layoutItems.indexOf(item);
+                // Object.assign(item, updates);
+                // this.mutate(`configuration.items[${index}]`, item);
             },
             move(gridDelta) {
                 this.dragInProgress = true;
-                if (!this.selectionCopy) {
-                    this.selectionCopy = _.cloneDeep(this.selection);
+
+                if (!this.initialPositions) {
+                    this.initialPositions = {};
+                    _.cloneDeep(this.selectedLayoutItems).forEach(selectedItem => {
+                        this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
+                    });
                 }
 
-                this.layoutItems.map(item => {
-                    if (this.itemIsInCurrentSelection(item)) {
-                        let selectionPath = this.selectionCopy.filter(selectionPath => selectionPath[0].context.layoutItem.id === item.id)[0];
-                        let selectedItem = selectionPath[0].context.layoutItem;
-                        item.x = Math.max(selectedItem.x + gridDelta[0], 0);
-                        item.y = Math.max(selectedItem.y + gridDelta[1], 0);
+                let layoutItems = this.layoutItems.map(item => {
+                    if (this.initialPositions[item.id]) {
+                        let initialPosition = this.initialPositions[item.id];
+                        item.x = Math.max(initialPosition[0] + gridDelta[0], 0);
+                        item.y = Math.max(initialPosition[1] + gridDelta[1], 0);
                     }
+                    return item;
                 });
             },
             endMove() {
-                // this.dragInProgress = true;
-                // setTimeout(function () {
-                //     this.dragInProgress = false;
-                // }.bind(this), 0);
-                this.selectionCopy = undefined;
-                // TODO: mutate new position
+                this.mutate('configuration.items', this.layoutItems);
+                this.initialPositions = undefined;
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);

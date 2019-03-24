@@ -22,7 +22,8 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <object-frame v-if="domainObject"
                       :domain-object="domainObject"
                       :object-path="objectPath"

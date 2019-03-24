@@ -23,7 +23,8 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @move="(gridDelta) => $emit('move', gridDelta)">
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-image-view"
              :style="style">
         </div>
