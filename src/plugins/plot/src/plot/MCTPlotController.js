@@ -315,6 +315,7 @@ define([
     };
 
     MCTPlotController.prototype.wheelZoom = function (event) {
+        const ZOOM_AMT = 0.1;
         event.preventDefault();
 
         if (!this.positionOverPlot) {
@@ -349,24 +350,24 @@ define([
         if (event.wheelDelta < 0) {
 
             this.$scope.xAxis.set('displayRange', {
-                min: xDisplayRange.min + ((xAxisDist * 0.01) * xAxisMinDist),
-                max: xDisplayRange.max - ((xAxisDist * 0.01) * xAxisMaxDist)
+                min: xDisplayRange.min + ((xAxisDist * ZOOM_AMT) * xAxisMinDist),
+                max: xDisplayRange.max - ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
             });
 
             this.$scope.yAxis.set('displayRange', {
-                min: yDisplayRange.min + ((yAxisDist * 0.01) * yAxisMinDist),
-                max: yDisplayRange.max - ((yAxisDist * 0.01) * yAxisMaxDist)
+                min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
             });
         } else if (event.wheelDelta >= 0) {
 
             this.$scope.xAxis.set('displayRange', {
-                min: xDisplayRange.min - ((xAxisDist * 0.01) * xAxisMinDist),
-                max: xDisplayRange.max + ((xAxisDist * 0.01) * xAxisMaxDist)
+                min: xDisplayRange.min - ((xAxisDist * ZOOM_AMT) * xAxisMinDist),
+                max: xDisplayRange.max + ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
             });
 
             this.$scope.yAxis.set('displayRange', {
-                min: yDisplayRange.min - ((yAxisDist * 0.01) * yAxisMinDist),
-                max: yDisplayRange.max + ((yAxisDist * 0.01) * yAxisMaxDist)
+                min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
             });
         }
 

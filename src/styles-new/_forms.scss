@@ -101,7 +101,6 @@
             min-width: 120px;
             order: 1;
             position: relative;
-            white-space: nowrap;
             width: $formLabelW;
         }
 
@@ -121,6 +120,15 @@
                     margin-right: 5px;
                 }
             }
+
+            .l-input-lg { // LEGACY FORM SUPPORT
+                input[type=text],
+                input[type=search],
+                input[type=number] {
+                    width: 100%;
+                }
+            }
+
             .select {
                 margin-right: $interiorMargin;
             }

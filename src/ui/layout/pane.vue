@@ -128,7 +128,6 @@
                 background: $colorSplitterBg;
                 display: block;
                 position: absolute;
-                z-index: 10;
                 transition: $transOut;
 
                 &:before {
