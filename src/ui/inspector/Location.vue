@@ -1,9 +1,8 @@
 <template>
 <div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Location</div>
+    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
     <ul class="c-properties__section">
         <li class="c-properties__row" v-if="originalPath.length">
-            <div class="c-properties__label">Original</div>
             <ul class="c-properties__value">
                 <li v-for="pathObject in orderedOriginalPath"
                     :key="pathObject.key">
@@ -43,8 +42,14 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        setOriginalPath(path) {
-            this.originalPath = path.slice(1,-1).map((domainObject, index, pathArray) => {
+        setOriginalPath(path, skipSlice) {
+            let originalPath = path;
+
+            if (!skipSlice) {
+                originalPath = path.slice(1,-1);
+            }
+
+            this.originalPath = originalPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 return {
                     domainObject,
@@ -62,8 +67,8 @@ export default {
             if (!selection.length) {
                 this.clearData();
                 return;
-            } else if (!selection[0].context.item) {
-                this.clearData();
+            } else if (!selection[0].context.item && selection[1] && selection[1].context.item) {
+                this.setOriginalPath([selection[1].context.item], true);
                 return;
             }
 
