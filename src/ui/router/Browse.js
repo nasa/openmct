@@ -42,14 +42,13 @@ define([
                 // navigation service and router to expose a clear and minimal
                 // API for this.
                 openmct.router.path = objects.reverse();
-                
+
                 unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
                     openmct.router.path[0] = newObject;
                 });
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
                 browseObject = navigatedObject;
-                document.title = browseObject.name;
 
                 if (!navigatedObject) {
                     openmct.layout.$refs.browseObject.clear();
@@ -57,7 +56,9 @@ define([
                 }
                 let currentProvider = openmct
                     .objectViews
-                    .getByProviderKey(currentViewKey)
+                    .getByProviderKey(currentViewKey);
+
+                document.title = browseObject.name; //change document title to current object in main view
 
                 if (currentProvider && currentProvider.canView(navigatedObject)) {
                     viewObject(navigatedObject,  currentProvider);
