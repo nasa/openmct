@@ -32,7 +32,7 @@
 
         <div class="c-frame-edit__move"
              @mousedown="startDrag($event)"></div>
-        <div class="c-frame-edit">
+        <div class="c-frame-edit" v-if="showFrameEdit">
             <div class="c-frame-edit__handle"
                  :class="startHandleClass"
                  @mousedown="startDrag($event, 'start')"></div>
@@ -79,10 +79,15 @@
         },
         data() {
             return {
-                dragPosition: undefined
+                dragPosition: undefined,
+                selection: []
             };
         },
         computed: {
+            showFrameEdit() {
+                let singleSelect = this.selection && this.selection.length === 1
+                return singleSelect && this.selection[0][0].context.layoutItem && this.selection[0][0].context.layoutItem.type === 'line-view';
+            },
             position() {
                 let {x, y, x2, y2} = this.item;
                 if (this.dragPosition) {
@@ -205,6 +210,9 @@
                     dragPosition.y2 -= gridDeltaY;
                 }
                 return dragPosition;
+            },
+            setSelection(selection) {
+                this.selection = selection;
             }
         },
         watch: {
@@ -217,6 +225,7 @@
             }
         },
         mounted() {
+            this.openmct.selection.on('change', this.setSelection);
             this.context = {
                 layoutItem: this.item,
                 index: this.index
@@ -228,6 +237,7 @@
             if (this.removeSelectable) {
                 this.removeSelectable();
             }
+            this.openmct.selection.off('change', this.setSelection);
         }
     }
  </script>

@@ -169,7 +169,10 @@
                 });
             },
             showMarquee() {
-                return this.selection.length > 0 && this.selection[0].length > 1;
+                let selectionPath = this.selection[0];
+                let singleSelectedLine = this.selection.length === 1 &&
+                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+                return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
             }
         },
         inject: ['openmct'],
