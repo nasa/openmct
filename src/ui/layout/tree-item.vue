@@ -11,7 +11,7 @@
             </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
-            <tree-item v-for="child in sortedChildren"
+            <tree-item v-for="child in children"
                        :key="child.id"
                        :node="child">
             </tree-item>
@@ -49,17 +49,6 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
-            },
-            sortedChildren() {
-                return this.children.sort((a,b) => {
-                    if (a.object.name < b.object.name) {
-                        return -1;
-                    } else if (a.object.name > b.object.name) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
             }
         },
         mounted() {
