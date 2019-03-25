@@ -11,6 +11,14 @@
             </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
+
+            <!-- loading -->
+            <span
+                class="loading"
+                v-if="isLoading && !loaded">
+            </span>
+            <!-- end loading -->
+
             <tree-item v-for="child in children"
                        :key="child.id"
                        :node="child">
@@ -88,6 +96,7 @@
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
                     this.composition.load().then(this.finishLoading());
+                    this.isLoading = true;
                 }
             }
         },
