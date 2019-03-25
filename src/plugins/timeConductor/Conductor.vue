@@ -167,10 +167,10 @@
         }
 
         &.is-realtime-mode {
-            grid-template-columns: 20px auto 1fr auto auto;
-            grid-template-areas:
-                    "tc-mode-icon tc-start tc-ticks tc-updated tc-end"
-                    "tc-controls tc-controls tc-controls tc-controls tc-controls";
+            .c-conductor__time-bounds {
+                grid-template-columns: 20px auto 1fr auto auto;
+                grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-updated tc-end";
+            }
 
             .c-conductor__end-fixed {
                 grid-area: tc-updated;
@@ -178,9 +178,15 @@
         }
 
         body.phone.portrait & {
-            grid-row-gap: $interiorMargin;
-            grid-template-rows: auto auto auto;
-            grid-template-columns: 20px auto auto;
+            .c-conductor__time-bounds {
+                grid-row-gap: $interiorMargin;
+                grid-template-rows: auto auto;
+                grid-template-columns: 20px auto auto;
+            }
+
+            .c-conductor__controls {
+                padding-left: 25px; // Line up visually with other controls
+            }
 
             &__mode-icon {
                 grid-row: 1;
@@ -204,17 +210,19 @@
                     justify-content: flex-start;
                 }
 
-                grid-template-areas:
+                .c-conductor__time-bounds {
+                    grid-template-areas:
                         "tc-mode-icon tc-start tc-start"
                         "tc-mode-icon tc-end tc-end"
-                        "tc-mode-icon tc-controls tc-controls";
-            }
+                    }
+                }
 
             &.is-realtime-mode {
-                grid-template-areas:
+                .c-conductor__time-bounds {
+                    grid-template-areas:
                         "tc-mode-icon tc-start tc-updated"
-                        "tc-mode-icon tc-end tc-end"
-                        "tc-mode-icon tc-controls tc-controls";
+                        "tc-mode-icon tc-end tc-end";
+                }
 
                 .c-conductor__end-fixed {
                     justify-content: flex-end;
