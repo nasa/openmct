@@ -53,10 +53,10 @@
         makeDefinition(openmct, gridSize, element) {
             return {
                 stroke: 'transparent',
-                x: 19,
-                y: 5,
-                width: 20,
-                height: 15,
+                x: 1,
+                y: 1,
+                width: 10,
+                height: 5,
                 url: element.url,
                 useGrid: true
             };

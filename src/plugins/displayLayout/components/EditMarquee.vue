@@ -113,21 +113,11 @@
                 let y = Number.POSITIVE_INFINITY;
                 let width = Number.NEGATIVE_INFINITY;
                 let height = Number.NEGATIVE_INFINITY;
-                let positions = [];
-
                 this.selectedLayoutItems.forEach(item => {
-                    positions.push({
-                        'x': item.x,
-                        'y': item.y,
-                        'width': item.width,
-                        'height': item.height
-                    });
-                });
-                positions.forEach(position => {
-                    y = Math.min(position.y, y);
-                    x = Math.min(position.x, x);
-                    width = Math.max(position.width + position.x, width);
-                    height = Math.max(position.height + position.y, height);
+                    y = Math.min(item.y, y);
+                    x = Math.min(item.x, x);
+                    width = Math.max(item.width + item.x, width);
+                    height = Math.max(item.height + item.y, height);
                 });
 
                 if (this.dragPosition) {
@@ -144,7 +134,6 @@
                     width: width,
                     height: height
                 }
-
                 return this.getMarqueeStyle(x, y, width, height);
             }
         },
