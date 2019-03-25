@@ -40,7 +40,7 @@
     .c-frame-edit {
         // In Layouts, this is the editing rect and handles
         pointer-events: none;
-        position: absolute;
+        @include abs();
         border: $editMarqueeBorder;
 
         &__handle {
