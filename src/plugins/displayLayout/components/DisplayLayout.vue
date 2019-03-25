@@ -51,7 +51,7 @@
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
                       :selectedLayoutItems="selectedLayoutItems"
-                      @endDrag="endDrag">
+                      @endResize="endResize">
         </edit-marquee>
     </div>
 </template>
@@ -253,15 +253,17 @@
                     return;
                 }
             },
-            endDrag(item, updates) {
-                // this.dragInProgress = true;
-                // setTimeout(function () {
-                //     this.dragInProgress = false;
-                // }.bind(this), 0);
-
-                // let index = this.layoutItems.indexOf(item);
-                // Object.assign(item, updates);
-                // this.mutate(`configuration.items[${index}]`, item);
+            endResize(gridDeltaX, gridDeltaY, gridDeltaWidth, gridDeltaHeight) {
+                this.dragInProgress = true;
+                this.layoutItems.forEach(item => {
+                    if (this.itemIsInCurrentSelection(item)) {
+                        item.x += gridDeltaX;
+                        item.y += gridDeltaY;
+                        item.width += gridDeltaWidth;
+                        item.height += gridDeltaHeight;
+                    }
+                });
+                this.mutate("configuration.items", this.layoutItems);
             },
             move(gridDelta) {
                 this.dragInProgress = true;
