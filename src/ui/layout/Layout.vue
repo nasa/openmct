@@ -196,7 +196,6 @@
         &__time-conductor {
             border-top: 1px solid $colorInteriorBorder;
             padding-top: $interiorMargin;
-            overflow: hidden;
         }
 
         &__main {
