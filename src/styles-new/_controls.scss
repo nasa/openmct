@@ -139,7 +139,7 @@ button {
             font-family: symbolsfont;
             font-size: 1rem * $s;
             transform-origin: center;
-            transition: transform 100ms ease-in-out;
+            transition: $transOut;
         }
     }
 
@@ -711,7 +711,6 @@ input[type="range"] {
     }
 }
 
-/***************************************************** LOCAL CONTROLS */
 .h-local-controls {
     // Holder for local controls
     &--horz {
