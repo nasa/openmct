@@ -49,6 +49,8 @@ define([
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
                 browseObject = navigatedObject;
+                document.title = browseObject.name;
+
                 if (!navigatedObject) {
                     openmct.layout.$refs.browseObject.clear();
                     return;

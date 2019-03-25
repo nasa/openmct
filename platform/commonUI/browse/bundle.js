@@ -31,7 +31,6 @@ define([
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
     "./src/windowing/NewTabAction",
-    "./src/windowing/WindowTitler",
     "./res/templates/browse.html",
     "./res/templates/browse-object.html",
     "./res/templates/browse/object-header.html",
@@ -52,7 +51,6 @@ define([
     NavigateAction,
     OrphanNavigationHandler,
     NewTabAction,
-    WindowTitler,
     browseTemplate,
     browseObjectTemplate,
     objectHeaderTemplate,
@@ -226,14 +224,6 @@ define([
                 }
             ],
             "runs": [
-                {
-                    "implementation": WindowTitler,
-                    "depends": [
-                        "navigationService",
-                        "$rootScope",
-                        "$document"
-                    ]
-                },
                 {
                     "implementation": OrphanNavigationHandler,
                     "depends": [
