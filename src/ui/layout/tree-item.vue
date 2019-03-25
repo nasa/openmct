@@ -95,7 +95,7 @@
                     this.composition = this.openmct.composition.get(this.domainObject);
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
-                    this.composition.load().then(this.finishLoading());
+                    this.composition.load().then(this.finishLoading);
                     this.isLoading = true;
                 }
             }
