@@ -253,14 +253,21 @@
                     return;
                 }
             },
-            endResize(gridDeltaX, gridDeltaY, gridDeltaWidth, gridDeltaHeight) {
+            endResize(deltaX, deltaY, deltaWidth, deltaHeight) {
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
-                        item.x += gridDeltaX;
-                        item.y += gridDeltaY;
-                        item.width += gridDeltaWidth;
-                        item.height += gridDeltaHeight;
+                        if (!item.useGrid) {
+                            deltaX = deltaX * this.gridSize[0];
+                            deltaY = deltaY * this.gridSize[1];
+                            deltaWidth = deltaWidth * this.gridSize[0];
+                            deltaHeight = deltaHeight * this.gridSize[1];
+                        }
+
+                        item.x += deltaX;
+                        item.y += deltaY;
+                        item.width += deltaWidth;
+                        item.height += deltaHeight;
                     }
                 });
                 this.mutate("configuration.items", this.layoutItems);
