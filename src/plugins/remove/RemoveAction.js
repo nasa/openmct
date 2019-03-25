@@ -88,13 +88,10 @@ export default class RemoveAction {
     }
 
     appliesTo(objectPath) {
-        let object = objectPath[0];
-        let objectType = object && this.openmct.types.get(object.type);
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
 
-        return objectType.definition.creatable &&
-            parentType &&
+        return parentType &&
             parentType.definition.creatable &&
             Array.isArray(parent.composition);
     }
