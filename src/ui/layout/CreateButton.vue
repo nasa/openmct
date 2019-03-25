@@ -8,7 +8,7 @@
              v-if="opened">
             <div class="c-super-menu__menu">
                 <ul>
-                    <li v-for="(item, index) in items"
+                    <li v-for="(item, index) in sortedItems"
                         :key="index"
                         :class="item.class"
                         :title="item.title"
@@ -144,6 +144,19 @@
                 items: items,
                 selectedMenuItem: {},
                 opened: false
+            }
+        },
+        computed: {
+            sortedItems () {
+                return this.items.sort((a,b) => {
+                    if (a.name < b.name) {
+                        return -1;
+                    } else if (a.name > b.name) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
             }
         }
     }
