@@ -129,26 +129,26 @@
                 }
             }
 
-            .select {
+            select {
                 margin-right: $interiorMargin;
             }
         }
 
         .hint, .field-hints {  color: $colorFieldHint;  }
+    }
+}
 
-        .selector-list {
-            // Used in create overlay to display tree view
-            @include nice-input();
-            padding: $interiorMargin;
-            position: relative;
-            min-height: 150px;
-            height: 100%;
-            >.wrapper {
-                $p: $interiorMargin;
-                box-sizing: border-box;
-                overflow: auto;
-            }
-        }
+.selector-list {
+    // Displays tree view in dialogs
+    @include nice-input();
+    padding: $interiorMargin;
+    position: relative;
+    min-height: 150px;
+    height: 100%;
+    >.wrapper {
+        $p: $interiorMargin;
+        box-sizing: border-box;
+        overflow: auto;
     }
 }
 
