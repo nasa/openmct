@@ -114,22 +114,10 @@
                 let width = Number.NEGATIVE_INFINITY;
                 let height = Number.NEGATIVE_INFINITY;
                 this.selectedLayoutItems.forEach(item => {
-                    let itemX = item.x,
-                        itemY = item.y,
-                        itemWidth = item.width,
-                        itemHeight = item.height;
-
-                    if (!item.useGrid) {
-                        itemX = Math.round(itemX / this.gridSize[0]);
-                        itemY = Math.round(itemY / this.gridSize[1]);
-                        itemWidth = Math.round(itemWidth / this.gridSize[0]);
-                        itemHeight = Math.round(itemHeight / this.gridSize[1]);
-                    }
-
-                    x = Math.min(itemX, x);
-                    y = Math.min(itemY, y);
-                    width = Math.max(itemWidth + itemX, width);
-                    height = Math.max(itemHeight + itemY, height);
+                    x = Math.min(item.x, x);
+                    y = Math.min(item.y, y);
+                    width = Math.max(item.width + item.x, width);
+                    height = Math.max(item.height + item.y, height);
                 });
 
                 if (this.dragPosition) {

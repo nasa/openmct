@@ -227,29 +227,6 @@ define([], function () {
                     };
                 }
 
-                function getSnapToGridButton(selectedParent, selection) {
-                    return {
-                        control: "toggle-button",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: getAllTypes(selection),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".useGrid";
-                        },
-                        options: [
-                            {
-                                value: false,
-                                icon: "icon-grid-snap-to",
-                                title: "Grid snapping enabled"
-                            },
-                            {
-                                value: true,
-                                icon: "icon-grid-snap-no",
-                                title: "Grid snapping disabled"
-                            }
-                        ]
-                    };
-                }
-
                 function getXInput(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
@@ -557,8 +534,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getWidthInput(selectedParent, selection)
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
@@ -589,8 +565,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getWidthInput(selectedParent, selection)
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
@@ -615,8 +590,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getWidthInput(selectedParent, selection)
                             ];
                         }
                         if (toolbar['text'].length === 0) {
@@ -638,8 +612,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getWidthInput(selectedParent, selection)
                             ];
                         }
                         if (toolbar['remove'].length === 0) {
@@ -657,8 +630,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getWidthInput(selectedParent, selection)
                             ];
                         }
                         if (toolbar['url'].length === 0) {
@@ -679,8 +651,7 @@ define([], function () {
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
                                 getX2Input(selectedParent, selection),
-                                getY2Input(selectedParent, selection),
-                                getSnapToGridButton(selectedParent, selection)
+                                getY2Input(selectedParent, selection)
                             ];
                         }
                         if (toolbar['remove'].length === 0) {

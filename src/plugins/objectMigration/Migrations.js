@@ -51,7 +51,6 @@ define([
                     height: panel.dimensions[1],
                     x: panel.position[0],
                     y: panel.position[1],
-                    useGrid: true,
                     identifier: domainObject.identifier,
                     id: uuid(),
                     type: 'telemetry-view',
@@ -68,7 +67,6 @@ define([
                     height: panel.dimensions[1],
                     x: panel.position[0],
                     y: panel.position[1],
-                    useGrid: true,
                     identifier: domainObject.identifier,
                     id: uuid(),
                     type: 'subobject-view',
@@ -84,7 +82,7 @@ define([
         return migratedObject;
     }
 
-    function migrateFixedPositionConfiguration(elements, telemetryObjects) {
+    function migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize) {
         const DEFAULT_STROKE = "transparent";
         const DEFAULT_SIZE = "13px";
         const DEFAULT_COLOR = "";
@@ -97,9 +95,15 @@ define([
                 y: element.y,
                 width: element.width,
                 height: element.height,
-                useGrid: element.useGrid,
                 id: uuid()
             };
+
+            if (!element.useGrid) {
+                item.x = Math.round(item.x / gridSize[0]);
+                item.y = Math.round(item.y / gridSize[1]);
+                item.width = Math.round(item.width / gridSize[0]);
+                item.height = Math.round(item.height / gridSize[1]);
+            }
 
             if (element.type === "fixed.telemetry") {
                 item.type = "telemetry-view";
@@ -172,10 +176,11 @@ define([
                     name: domainObject.name,
                     type: "layout"
                 };
+                let gridSize = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
                 let layoutType = openmct.types.get('layout');
                 layoutType.definition.initialize(newLayoutObject);
                 newLayoutObject.composition = domainObject.composition;
-                newLayoutObject.configuration.layoutGrid = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
+                newLayoutObject.configuration.layoutGrid = gridSize;
 
                 let elements = domainObject.configuration['fixed-display'].elements;
                 let telemetryObjects = {};
@@ -191,7 +196,7 @@ define([
                 return Promise.all(promises)
                     .then(function () {
                         newLayoutObject.configuration.items =
-                            migrateFixedPositionConfiguration(elements, telemetryObjects);
+                            migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize);
                         return newLayoutObject;
                     });
             }

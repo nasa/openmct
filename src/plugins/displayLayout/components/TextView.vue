@@ -60,8 +60,7 @@
                 y: 1,
                 width: 10,
                 height: 5,
-                text: element.text,
-                useGrid: true
+                text: element.text
             };
         },
         inject: ['openmct'],

@@ -57,8 +57,7 @@
                 y: 1,
                 width: 10,
                 height: 5,
-                url: element.url,
-                useGrid: true
+                url: element.url
             };
         },
         inject: ['openmct'],

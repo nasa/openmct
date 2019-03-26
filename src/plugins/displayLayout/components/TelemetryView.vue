@@ -99,8 +99,7 @@
                 stroke: "transparent",
                 fill: "transparent",
                 color: "",
-                size: "13px",
-                useGrid: true
+                size: "13px"
             };
         },
         inject: ['openmct'],

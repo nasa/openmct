@@ -42,7 +42,7 @@
                    :is="item.type"
                    :item="item"
                    :key="item.id"
-                   :gridSize="item.useGrid ? gridSize : [1, 1]"
+                   :gridSize="gridSize"
                    :initSelect="initSelectIndex === index"
                    :index="index"
                    @move="move"
@@ -184,68 +184,10 @@
             },
             setSelection(selection) {
                 this.selection = selection;
-
-                if (selection.length === 0) {
-                    return;
-                }
-
-                this.unsubscribeSelectionListeners();
-                selection.forEach(selectionPath => {
-                    let itemIndex = selectionPath[0].context.index;
-
-                    if (itemIndex !== undefined) {
-                        this.attachSelectionListener(itemIndex);
-                    }
-                });
             },
             itemIsInCurrentSelection(item) {
                 return this.selection.some(selectionPath =>
                     selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.id === item.id);
-            },
-            attachSelectionListener(index) {
-                if (!this.removeSelectionListeners) {
-                    this.removeSelectionListeners = [];
-                }
-
-                let path = `configuration.items[${index}].useGrid`;
-                let oldValue = _.get(this.internalDomainObject, path);
-
-                this.removeSelectionListeners.push(this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
-                    if (oldValue === value) {
-                        return;
-                    }
-
-                    let item = this.layoutItems[index];
-                    oldValue = value;
-
-                    if (value) {
-                        item.x = Math.round(item.x / this.gridSize[0]);
-                        item.y = Math.round(item.y / this.gridSize[1]);
-                        item.width = Math.round(item.width / this.gridSize[0]);
-                        item.height = Math.round(item.height / this.gridSize[1]);
-
-                        if (item.x2) {
-                            item.x2 = Math.round(item.x2 / this.gridSize[0]);
-                        }
-                        if (item.y2) {
-                            item.y2 = Math.round(item.y2 / this.gridSize[1]);
-                        }
-                    } else {
-                        item.x = this.gridSize[0] * item.x;
-                        item.y = this.gridSize[1] * item.y;
-                        item.width = this.gridSize[0] * item.width;
-                        item.height = this.gridSize[1] * item.height;
-
-                        if (item.x2) {
-                            item.x2 = this.gridSize[0] * item.x2;
-                        }
-                        if (item.y2) {
-                            item.y2 = this.gridSize[1] * item.y2;
-                        }
-                    }
-                    item.useGrid = value;
-                    this.mutate(`configuration.items[${index}]`, item);
-                }.bind(this)));
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
@@ -260,13 +202,6 @@
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
-                        if (!item.useGrid) {
-                            deltaX = deltaX * this.gridSize[0];
-                            deltaY = deltaY * this.gridSize[1];
-                            deltaWidth = deltaWidth * this.gridSize[0];
-                            deltaHeight = deltaHeight * this.gridSize[1];
-                        }
-
                         item.x += deltaX;
                         item.y += deltaY;
                         item.width += deltaWidth;
@@ -484,8 +419,6 @@
                 }
 
                 this.mutate('configuration.items', this.layoutItems);
-                this.unsubscribeSelectionListeners();
-                newIndices.forEach(newIndex => this.attachSelectionListener(newIndex));
             },
             moveUpOrDown(position, indices, items, delta) {
                 let previousItemIndex = -1;
@@ -538,15 +471,6 @@
                     this.layoutItems.splice(itemIndex, 1);
                     this.layoutItems.splice(newIndex, 0, items[itemIndex]);
                 }
-            },
-            unsubscribeSelectionListeners() {
-                if (this.removeSelectionListeners) {
-                    this.removeSelectionListeners.forEach(listener => {
-                        listener();
-                    });
-                }
-
-                delete this.removeSelectionListeners;
             }
         },
         mounted() {
@@ -565,7 +489,6 @@
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
-            this.unsubscribeSelectionListeners();
         }
     }
 </script>
