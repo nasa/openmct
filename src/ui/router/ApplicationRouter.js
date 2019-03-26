@@ -60,6 +60,10 @@ class ApplicationRouter extends EventEmitter {
     }
 
     handleLocationChange(pathString) {
+        if (pathString[0] !== '/') {
+            pathString = '/' + pathString
+        }
+
         let url = new URL(
             pathString,
             `${location.protocol}//${location.host}${location.pathname}`
