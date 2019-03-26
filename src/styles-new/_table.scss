@@ -48,11 +48,15 @@ table {
     }
 }
 
+div.c-table {
+    // When c-table is used as a wrapper element in more complex table views
+    height: 100%;
+}
+
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
     $min-w: 50px;
 
-    height: 100%;
     width: 100%;
 
     &__control-bar,
