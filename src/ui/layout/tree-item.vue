@@ -11,10 +11,17 @@
             </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
+
+            <!-- loading -->
+            <span
+                class="loading"
+                v-if="isLoading && !loaded">
+            </span>
+            <!-- end loading -->
+
             <tree-item v-for="child in children"
                        :key="child.id"
-                       :node="child"
-                       >
+                       :node="child">
             </tree-item>
         </ul>
     </li>
@@ -50,7 +57,7 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
-            },
+            }
         },
         mounted() {
             // TODO: should update on mutation.
@@ -88,7 +95,8 @@
                     this.composition = this.openmct.composition.get(this.domainObject);
                     this.composition.on('add', this.addChild);
                     this.composition.on('remove', this.removeChild);
-                    this.composition.load().then(this.finishLoading());
+                    this.composition.load().then(this.finishLoading);
+                    this.isLoading = true;
                 }
             }
         },
