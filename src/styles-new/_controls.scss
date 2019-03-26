@@ -48,6 +48,16 @@ button {
             height: $d; width: $d;
         }
     }
+
+    &.is-active {
+        background: $colorBtnActiveBg;
+        color: $colorBtnActiveFg;
+    }
+
+    &.is-selected {
+        background: $colorBtnSelectedBg;
+        color: $colorBtnSelectedFg;
+    }
 }
 
 /********* Icon Buttons */

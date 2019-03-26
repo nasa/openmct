@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 /******************************************************** TABLE */
 table {
     $minW: 50px;
@@ -53,8 +52,7 @@ table {
     // Can be used by any type of table, scrolling, LAD, etc.
     $min-w: 50px;
 
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
+    height: 100%;
     width: 100%;
 
     &__control-bar,
@@ -116,5 +114,37 @@ table {
 .c-lad-table {
     th, td {
         width: 33%; // Needed to prevent size jumping as values dynamically update
+    }
+}
+
+/************************************** TABLE AND SUMMARY VIEWS */
+// Displays summary values above a table.
+
+.c-table-and-summary {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * { margin-top: $interiorMargin; }
+
+    &__summary {
+        display: flex;
+        justify-items: stretch;
+
+        > * + * { margin-left: 1px; }
+    }
+
+    &__summary-item {
+        background: $colorSummaryBg;
+        color: $colorSummaryFg;
+        flex: 1 1 auto;
+        padding: $interiorMargin $interiorMarginLg;
+
+        em {
+            font-weight: bold;
+            color: $colorSummaryFgEm;
+        }
     }
 }
