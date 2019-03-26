@@ -25,176 +25,220 @@ define([
 ], function (
     uuid
 ) {
-    function isTelemetry(domainObject) {
-        if (openmct.telemetry.isTelemetryObject(domainObject)
-            && domainObject.type !== 'summary-widget'
-            && domainObject.type !== 'example.imagery') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function migrateDisplayLayout(domainObject, childObjects) {
-        const DEFAULT_GRID_SIZE = [32, 32];
-        let migratedObject = Object.assign({}, domainObject);
-        let panels = migratedObject.configuration.layout.panels;
-        let items = [];
-
-        Object.keys(panels).forEach(key => {
-            let panel = panels[key];
-            let domainObject = childObjects[key];
-
-            if (isTelemetry(domainObject)) {
-                items.push({
-                    width: panel.dimensions[0],
-                    height: panel.dimensions[1],
-                    x: panel.position[0],
-                    y: panel.position[1],
-                    useGrid: true,
-                    identifier: domainObject.identifier,
-                    id: uuid(),
-                    type: 'telemetry-view',
-                    displayMode: 'all',
-                    value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
-                    stroke: "transparent",
-                    fill: "",
-                    color: "",
-                    size: "13px"
+    return function Migrations(openmct) {
+        function getColumnNameKeyMap(domainObject) {
+            let composition = openmct.composition.get(domainObject);
+            if (composition) {
+                return composition.load().then(composees => {
+                    return composees.reduce((nameKeyMap, composee) => {
+                        let metadata = openmct.telemetry.getMetadata(composee);
+                        if (metadata !== undefined) {
+                            metadata.values().forEach(value => {
+                                nameKeyMap[value.name] = value.key;
+                            });
+                        }
+                        return nameKeyMap;
+                    }, {});
                 });
             } else {
-                items.push({
-                    width: panel.dimensions[0],
-                    height: panel.dimensions[1],
-                    x: panel.position[0],
-                    y: panel.position[1],
-                    useGrid: true,
-                    identifier: domainObject.identifier,
-                    id: uuid(),
-                    type: 'subobject-view',
-                    hasFrame: panel.hasFrame
-                });
-            }
-        });
-
-        migratedObject.configuration.items = items;
-        migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
-        delete migratedObject.layoutGrid;
-        delete migratedObject.configuration.layout;
-        return migratedObject;
-    }
-
-    function migrateFixedPositionConfiguration(elements, telemetryObjects) {
-        const DEFAULT_STROKE = "transparent";
-        const DEFAULT_SIZE = "13px";
-        const DEFAULT_COLOR = "";
-        const DEFAULT_FILL = "";
-        let items = [];
-
-        elements.forEach(element => {
-            let item = {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height,
-                useGrid: element.useGrid,
-                id: uuid()
-            };
-
-            if (element.type === "fixed.telemetry") {
-                item.type = "telemetry-view";
-                item.stroke = element.stroke || DEFAULT_STROKE;
-                item.fill = element.fill || DEFAULT_FILL;
-                item.color = element.color || DEFAULT_COLOR;
-                item.size = element.size || DEFAULT_SIZE;
-                item.identifier = telemetryObjects[element.id].identifier;
-                item.displayMode = element.titled ? 'all' : 'value';
-                item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue();
-            } else if (element.type === 'fixed.box') {
-                item.type = "box-view";
-                item.stroke = element.stroke || DEFAULT_STROKE;
-                item.fill = element.fill || DEFAULT_FILL;
-            } else if (element.type === 'fixed.line') {
-                item.type = "line-view";
-                item.x2 = element.x2;
-                item.y2 = element.y2;
-                item.stroke = element.stroke || DEFAULT_STROKE;
-                delete item.height;
-                delete item.width;
-            } else if (element.type === 'fixed.text') {
-                item.type = "text-view";
-                item.text = element.text;
-                item.stroke = element.stroke || DEFAULT_STROKE;
-                item.fill = element.fill || DEFAULT_FILL;
-                item.color = element.color || DEFAULT_COLOR;
-                item.size = element.size || DEFAULT_SIZE;
-            } else if (element.type === 'fixed.image') {
-                item.type = "image-view";
-                item.url =element.url;
-                item.stroke = element.stroke || DEFAULT_STROKE;
-            }
-
-            items.push(item);
-        });
-
-        return items;
-    }
-
-    return [
-        {
-            check(domainObject) {
-                return domainObject.type === 'layout' && domainObject.configuration.layout;
-            },
-            migrate(domainObject) {
-                let childObjects = {};
-                let promises = Object.keys(domainObject.configuration.layout.panels).map(key => {
-                    return openmct.objects.get(key)
-                        .then(object => {
-                            childObjects[key] = object;
-                        });
-                });
-
-                return Promise.all(promises)
-                    .then(function () {
-                        return migrateDisplayLayout(domainObject, childObjects);
-                    });
-            },
-        },
-        {
-            check(domainObject) {
-                return domainObject.type === 'telemetry.fixed' && domainObject.configuration['fixed-display'];
-            },
-            migrate(domainObject) {
-                const DEFAULT_GRID_SIZE = [64, 16];
-                let newLayoutObject = {
-                    identifier: domainObject.identifier,
-                    location: domainObject.location,
-                    name: domainObject.name,
-                    type: "layout"
-                };
-                let layoutType = openmct.types.get('layout');
-                layoutType.definition.initialize(newLayoutObject);
-                newLayoutObject.composition = domainObject.composition;
-                newLayoutObject.configuration.layoutGrid = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
-
-                let elements = domainObject.configuration['fixed-display'].elements;
-                let telemetryObjects = {};
-                let promises = elements.map(element => {
-                    if (element.id) {
-                        return openmct.objects.get(element.id)
-                            .then(object => {
-                                telemetryObjects[element.id] = object;
-                            });
-                    }
-                });
-
-                return Promise.all(promises)
-                    .then(function () {
-                        newLayoutObject.configuration.items =
-                            migrateFixedPositionConfiguration(elements, telemetryObjects);
-                        return newLayoutObject;
-                    });
+                return Promise.resolve([]);
             }
         }
-    ];
+
+        function isTelemetry(domainObject) {
+            if (openmct.telemetry.isTelemetryObject(domainObject)
+                && domainObject.type !== 'summary-widget'
+                && domainObject.type !== 'example.imagery') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function migrateDisplayLayout(domainObject, childObjects) {
+            const DEFAULT_GRID_SIZE = [32, 32];
+            let migratedObject = Object.assign({}, domainObject);
+            let panels = migratedObject.configuration.layout.panels;
+            let items = [];
+
+            Object.keys(panels).forEach(key => {
+                let panel = panels[key];
+                let domainObject = childObjects[key];
+
+                if (isTelemetry(domainObject)) {
+                    items.push({
+                        width: panel.dimensions[0],
+                        height: panel.dimensions[1],
+                        x: panel.position[0],
+                        y: panel.position[1],
+                        useGrid: true,
+                        identifier: domainObject.identifier,
+                        id: uuid(),
+                        type: 'telemetry-view',
+                        displayMode: 'all',
+                        value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
+                        stroke: "transparent",
+                        fill: "",
+                        color: "",
+                        size: "13px"
+                    });
+                } else {
+                    items.push({
+                        width: panel.dimensions[0],
+                        height: panel.dimensions[1],
+                        x: panel.position[0],
+                        y: panel.position[1],
+                        useGrid: true,
+                        identifier: domainObject.identifier,
+                        id: uuid(),
+                        type: 'subobject-view',
+                        hasFrame: panel.hasFrame
+                    });
+                }
+            });
+
+            migratedObject.configuration.items = items;
+            migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
+            delete migratedObject.layoutGrid;
+            delete migratedObject.configuration.layout;
+            return migratedObject;
+        }
+
+        function migrateFixedPositionConfiguration(elements, telemetryObjects) {
+            const DEFAULT_STROKE = "transparent";
+            const DEFAULT_SIZE = "13px";
+            const DEFAULT_COLOR = "";
+            const DEFAULT_FILL = "";
+            let items = [];
+
+            elements.forEach(element => {
+                let item = {
+                    x: element.x,
+                    y: element.y,
+                    width: element.width,
+                    height: element.height,
+                    useGrid: element.useGrid,
+                    id: uuid()
+                };
+
+                if (element.type === "fixed.telemetry") {
+                    item.type = "telemetry-view";
+                    item.stroke = element.stroke || DEFAULT_STROKE;
+                    item.fill = element.fill || DEFAULT_FILL;
+                    item.color = element.color || DEFAULT_COLOR;
+                    item.size = element.size || DEFAULT_SIZE;
+                    item.identifier = telemetryObjects[element.id].identifier;
+                    item.displayMode = element.titled ? 'all' : 'value';
+                    item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue();
+                } else if (element.type === 'fixed.box') {
+                    item.type = "box-view";
+                    item.stroke = element.stroke || DEFAULT_STROKE;
+                    item.fill = element.fill || DEFAULT_FILL;
+                } else if (element.type === 'fixed.line') {
+                    item.type = "line-view";
+                    item.x2 = element.x2;
+                    item.y2 = element.y2;
+                    item.stroke = element.stroke || DEFAULT_STROKE;
+                    delete item.height;
+                    delete item.width;
+                } else if (element.type === 'fixed.text') {
+                    item.type = "text-view";
+                    item.text = element.text;
+                    item.stroke = element.stroke || DEFAULT_STROKE;
+                    item.fill = element.fill || DEFAULT_FILL;
+                    item.color = element.color || DEFAULT_COLOR;
+                    item.size = element.size || DEFAULT_SIZE;
+                } else if (element.type === 'fixed.image') {
+                    item.type = "image-view";
+                    item.url =element.url;
+                    item.stroke = element.stroke || DEFAULT_STROKE;
+                }
+
+                items.push(item);
+            });
+
+            return items;
+        }
+
+        return [
+            {
+                check(domainObject) {
+                    return domainObject.type === 'layout' && domainObject.configuration.layout;
+                },
+                migrate(domainObject) {
+                    let childObjects = {};
+                    let promises = Object.keys(domainObject.configuration.layout.panels).map(key => {
+                        return openmct.objects.get(key)
+                            .then(object => {
+                                childObjects[key] = object;
+                            });
+                    });
+
+                    return Promise.all(promises)
+                        .then(function () {
+                            return migrateDisplayLayout(domainObject, childObjects);
+                        });
+                }
+            },
+            {
+                check(domainObject) {
+                    return domainObject.type === 'telemetry.fixed' && domainObject.configuration['fixed-display'];
+                },
+                migrate(domainObject) {
+                    const DEFAULT_GRID_SIZE = [64, 16];
+                    let newLayoutObject = {
+                        identifier: domainObject.identifier,
+                        location: domainObject.location,
+                        name: domainObject.name,
+                        type: "layout"
+                    };
+                    let layoutType = openmct.types.get('layout');
+                    layoutType.definition.initialize(newLayoutObject);
+                    newLayoutObject.composition = domainObject.composition;
+                    newLayoutObject.configuration.layoutGrid = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
+
+                    let elements = domainObject.configuration['fixed-display'].elements;
+                    let telemetryObjects = {};
+                    let promises = elements.map(element => {
+                        if (element.id) {
+                            return openmct.objects.get(element.id)
+                                .then(object => {
+                                    telemetryObjects[element.id] = object;
+                                });
+                        }
+                    });
+
+                    return Promise.all(promises)
+                        .then(function () {
+                            newLayoutObject.configuration.items =
+                                migrateFixedPositionConfiguration(elements, telemetryObjects);
+                            return newLayoutObject;
+                        });
+                }
+            },
+            {
+                check(domainObject) {
+                    return domainObject.type === 'table' &&
+                        domainObject.configuration.table;
+                },
+                migrate(domainObject) {
+                    let currentTableConfiguration = domainObject.configuration.table || {};
+                    let currentColumnConfiguration = currentTableConfiguration.columns || {};
+                    return getColumnNameKeyMap(domainObject).then(nameKeyMap => {
+                        let hiddenColumns = Object.keys(currentColumnConfiguration).filter(columnName => {
+                            return currentColumnConfiguration[columnName] === false;
+                        }).reduce((hiddenColumnsMap, hiddenColumnName) => {
+                            let key = nameKeyMap[hiddenColumnName];
+                            hiddenColumnsMap[key] = true;
+                            return hiddenColumnsMap;
+                        }, {});
+
+                        domainObject.configuration.hiddenColumns = hiddenColumns;
+                        delete domainObject.configuration.table;
+                        return domainObject;
+                    });
+                }
+            }
+        ];
+    }
 });

@@ -7,6 +7,13 @@
                 @clear="searchTree">
             </search>
         </div>
+
+        <!-- loading -->
+        <span v-if="isLoading"
+            class="loading">
+        </span>
+        <!-- end loading -->
+
         <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
             No results found
         </div>
@@ -168,7 +175,8 @@
             return {
                 searchValue: '',
                 allTreeItems: [],
-                filteredTreeItems: []
+                filteredTreeItems: [],
+                isLoading: false
             }
         },
         computed: {
@@ -182,9 +190,13 @@
         },
         methods: {
             getAllChildren() {
+                this.isLoading = true;
                 this.openmct.objects.get('ROOT')
-                    .then(root => this.openmct.composition.get(root).load())
+                    .then(root => {
+                        return this.openmct.composition.get(root).load()
+                    })
                     .then(children => {
+                        this.isLoading = false;
                         this.allTreeItems = children.map(c => {
                                 return {
                                     id: this.openmct.objects.makeKeyString(c.identifier),

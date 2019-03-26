@@ -5,15 +5,18 @@
         @input="applySearch" 
         @clear="applySearch">
     </Search>
-    <div class="c-elements-pool__elements">
+    <div class="c-elements-pool__elements"
+        :class="{'is-dragging': isDragging}">
         <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
             v-if="elements.length > 0">
-            <li :key="element.identifier.key" v-for="(element, index) in elements" @drop="moveTo(index)" @dragover="allowDrop">
-                <div class="c-tree__item c-elements-pool__item">
+            <li :key="element.identifier.key" v-for="(element, index) in elements"
+                @drop="moveTo(index)"
+                @dragover="allowDrop">
+                <div class="c-tree__item c-elements-pool__item"
+                     draggable="true"
+                     @dragstart="moveFrom(index)">
                     <span class="c-elements-pool__grippy"
-                          v-if="elements.length > 1 && isEditing"
-                          draggable="true"
-                          @dragstart="moveFrom(index)">
+                          v-if="elements.length > 1 && isEditing">
                     </span>
                     <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
                 </div>
@@ -44,6 +47,9 @@
         &__elements {
             flex: 1 1 auto;
             overflow: auto;
+            &.is-dragging {
+                li { opacity: 0.2; }
+            }
         }
 
         &__grippy {
@@ -56,7 +62,7 @@
         }
     }
 
-    .js-last-place{
+    .js-last-place {
         height: 10px;
     }
 </style>
@@ -75,7 +81,8 @@ export default {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
-            currentSearch: ''
+            currentSearch: '',
+            isDragging: false
         }
     },
     mounted() {
@@ -155,12 +162,19 @@ export default {
             this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
         moveFrom(index){
+            this.isDragging = true;
             this.moveFromIndex = index;
+            document.addEventListener('dragend', this.hideDragStyling);
+        },
+        hideDragStyling() {
+            this.isDragging = false;
+            document.removeEventListener('dragend', this.hideDragStyling);
         }
     },
     destroyed() {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
+
         if (this.mutationUnobserver) {
             this.mutationUnobserver();
         }
