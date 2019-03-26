@@ -13,10 +13,10 @@
         <ul v-if="expanded" class="c-tree">
 
             <!-- loading -->
-            <span
+            <li
                 class="loading"
                 v-if="isLoading && !loaded">
-            </span>
+            </li>
             <!-- end loading -->
 
             <tree-item v-for="child in children"
