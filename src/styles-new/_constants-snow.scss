@@ -83,6 +83,9 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
+$filterHov: brightness(1.3); // Tree, location items
+$colorSelectedBg: pushBack($colorKey, 40%);
+$colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -98,6 +101,20 @@ $colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316de
 $colorStatusError: #da0004;
 $colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%) contrast(114%);
 $colorStatusBtnBg: #666; // Where is this used?
+$colorAlert: #ff3c00;
+$colorAlertFg: #fff;
+$colorWarningHi: #990000;
+$colorWarningHiFg: #FF9594;
+$colorWarningLo: #ff9900;
+$colorWarningLoFg: #523400;
+$colorDiagnostic: #a4b442;
+$colorDiagnosticFg: #39461A;
+$colorCommand: #3693bd;
+$colorCommandFg: #fff;
+$colorInfo: #2294a2;
+$colorInfoFg: #fff;
+$colorOk: #33cc33;
+$colorOkFg: #fff;
 
 // States
 $colorPausedBg: #ff9900;
@@ -173,6 +190,10 @@ $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
 $colorBtnCautionBg: #f16f6f;
 $colorBtnCautionBgHov: #f1504e;
 $colorBtnCautionFg: $colorBtnFg;
+$colorBtnActiveBg: $colorOk;
+$colorBtnActiveFg: $colorOkFg;
+$colorBtnSelectedBg: $colorBtnMajorBg;
+$colorBtnSelectedFg: $colorBtnMajorFg;
 $colorClickIconButton: $colorKey;
 $colorClickIconButtonBgHov: rgba($colorKey, 0.2);
 $colorClickIconButtonFgHov: $colorKeyHov;
@@ -265,22 +286,6 @@ $colorLimitRedBg: #ff0000;
 $colorLimitRedFg: #fff;
 $colorLimitRedIc: #ffa99a;
 
-// Status
-$colorAlert: #ff3c00;
-$colorAlertFg: #fff;
-$colorWarningHi: #990000;
-$colorWarningHiFg: #FF9594;
-$colorWarningLo: #ff9900;
-$colorWarningLoFg: #523400;
-$colorDiagnostic: #a4b442;
-$colorDiagnosticFg: #39461A;
-$colorCommand: #3693bd;
-$colorCommandFg: #fff;
-$colorInfo: #2294a2;
-$colorInfoFg: #fff;
-$colorOk: #33cc33;
-$colorOkFg: #fff;
-
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
@@ -305,6 +310,9 @@ $colorTabHeaderFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
 $colorTabGroupHeaderFg: pullForward($colorTabGroupHeaderBg, 40%);
+$colorSummaryBg: #999;
+$colorSummaryFg: rgba($colorBodyBg, 0.7);
+$colorSummaryFgEm: white;
 
 // Plot
 $colorPlotBg: rgba(black, 0.05);
@@ -323,8 +331,8 @@ $colorItemTreeHoverFg: pullForward($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
-$colorItemTreeSelectedBg: pushBack($colorKey, 15%);
-$colorItemTreeSelectedFg: $colorBodyBg;
+$colorItemTreeSelectedBg: $colorSelectedBg;
+$colorItemTreeSelectedFg: $colorItemTreeHoverFg;
 $colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
 $colorItemTreeEditingBg: pushBack($editUIColor, 20%);
 $colorItemTreeEditingFg: $editUIColor;
@@ -347,6 +355,7 @@ $scrollbarThumbColorMenuHov: darken($scrollbarThumbColorMenu, 2%);
 
 // Splitter
 $splitterHandleD: 2px;
+$splitterD: $splitterHandleD;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 20%);

@@ -186,7 +186,6 @@
             // Wrapper for main views
             flex: 1 1 auto !important;
             overflow: auto;
-            //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
         &__tree {

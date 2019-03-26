@@ -804,7 +804,9 @@ mct-indicators mct-include {
     }
 
     .label {
+        // Hover bubbles that appear when hovering on an Indicator
         display: inline-block;
+
         a,
         button,
         s-button,
@@ -851,8 +853,6 @@ mct-indicators mct-include {
     }
 
     &:not(.no-collapse) {
-        z-index: 0;
-
         &:before {
             margin-right: 0 !important;
         }
@@ -870,6 +870,8 @@ mct-indicators mct-include {
             transform-origin: 10px 100%;
             transform: scale(0.0);
             white-space: nowrap;
+            z-index: 50;
+
             &:before {
                 // Infobubble-style arrow element
                 content: '';
@@ -880,9 +882,9 @@ mct-indicators mct-include {
             }
         }
 
-        &:hover {
+        @include hover() {
             background: $bg;
-            z-index: 1;
+
             .label {
                 opacity: 1;
                 transform: scale(1.0);
@@ -1314,7 +1316,7 @@ body.desktop {
 .grid-properties {
     display: grid;
     grid-row-gap: 0;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
 }
 
 .grid-span-all,

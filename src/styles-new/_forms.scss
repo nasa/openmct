@@ -101,7 +101,6 @@
             min-width: 120px;
             order: 1;
             position: relative;
-            white-space: nowrap;
             width: $formLabelW;
         }
 
@@ -121,26 +120,35 @@
                     margin-right: 5px;
                 }
             }
-            .select {
+
+            .l-input-lg { // LEGACY FORM SUPPORT
+                input[type=text],
+                input[type=search],
+                input[type=number] {
+                    width: 100%;
+                }
+            }
+
+            select {
                 margin-right: $interiorMargin;
             }
         }
 
         .hint, .field-hints {  color: $colorFieldHint;  }
+    }
+}
 
-        .selector-list {
-            // Used in create overlay to display tree view
-            @include nice-input();
-            padding: $interiorMargin;
-            position: relative;
-            min-height: 150px;
-            height: 100%;
-            >.wrapper {
-                $p: $interiorMargin;
-                box-sizing: border-box;
-                overflow: auto;
-            }
-        }
+.selector-list {
+    // Displays tree view in dialogs
+    @include nice-input();
+    padding: $interiorMargin;
+    position: relative;
+    min-height: 150px;
+    height: 100%;
+    >.wrapper {
+        $p: $interiorMargin;
+        box-sizing: border-box;
+        overflow: auto;
     }
 }
 

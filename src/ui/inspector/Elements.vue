@@ -55,6 +55,7 @@
         &__grippy {
             $d: 8px;
             @include grippy($c: $colorItemTreeVC, $dir: 'y');
+            flex: 0 0 auto;
             margin-right: $interiorMarginSm;
             transform: translateY(-2px);
             width: $d; height: $d;
