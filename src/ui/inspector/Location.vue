@@ -1,9 +1,8 @@
 <template>
 <div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Location</div>
+    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
     <ul class="c-properties__section">
         <li class="c-properties__row" v-if="originalPath.length">
-            <div class="c-properties__label">Original</div>
             <ul class="c-properties__value c-location">
                 <li v-for="pathObject in orderedOriginalPath"
                     class="c-location__item"
