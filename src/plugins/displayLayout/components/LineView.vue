@@ -179,20 +179,34 @@
                 event.preventDefault();
                 let pxDeltaX = this.startPosition[0] - event.pageX;
                 let pxDeltaY = this.startPosition[1] - event.pageY;
-                this.dragPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
+                let newPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
+
+                if (this.dragging !== 'start' && this.dragging !== 'end' && !_.isEqual(newPosition, this.dragPosition)) {
+                        this.dragPosition = newPosition;
+                        this.$emit('move', this.gridDelta);
+                } else {
+                    this.dragPosition = newPosition;
+                }
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 let {x, y, x2, y2} = this.dragPosition;
-                this.$emit('endDrag', this.item, {x, y, x2, y2});
+                if (this.dragging !== 'start' && this.dragging !== 'end') {
+                    this.$emit('endMove');
+                } else {
+                    this.$emit('endLineResize', this.item, {x, y, x2, y2});
+                }
                 this.dragPosition = undefined;
                 this.dragging = undefined;
+                this.gridDelta = undefined;
                 event.preventDefault();
             },
             calculateDragPosition(pxDeltaX, pxDeltaY) {
                 let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
                 let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
+                this.gridDelta = [gridDeltaX, gridDeltaY];
+
                 let {x, y, x2, y2} = this.item;
                 let dragPosition = {x, y, x2, y2};
                 if (this.dragging === 'start') {

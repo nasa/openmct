@@ -46,7 +46,8 @@
                    :initSelect="initSelectIndex === index"
                    :index="index"
                    @move="move"
-                   @endMove="endMove">
+                   @endMove="endMove"
+                   @endLineResize='endLineResize'>
         </component>
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
@@ -198,6 +199,12 @@
                     return;
                 }
             },
+            endLineResize(item, updates) {
+                this.dragInProgress = true;
+                let index = this.layoutItems.indexOf(item);
+                Object.assign(item, updates);
+                this.mutate(`configuration.items[${index}]`, item);
+            },
             endResize(deltaX, deltaY, deltaWidth, deltaHeight) {
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
@@ -211,20 +218,33 @@
                 this.mutate("configuration.items", this.layoutItems);
             },
             move(gridDelta) {
+                // console.log('move', gridDelta);
                 this.dragInProgress = true;
 
                 if (!this.initialPositions) {
                     this.initialPositions = {};
                     _.cloneDeep(this.selectedLayoutItems).forEach(selectedItem => {
-                        this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
+                        if (selectedItem.type === 'line-view') {
+                            this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y, selectedItem.x2, selectedItem.y2];
+                        } else {
+                            this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
+                        }
                     });
                 }
 
                 let layoutItems = this.layoutItems.map(item => {
                     if (this.initialPositions[item.id]) {
                         let initialPosition = this.initialPositions[item.id];
-                        item.x = Math.max(initialPosition[0] + gridDelta[0], 0);
-                        item.y = Math.max(initialPosition[1] + gridDelta[1], 0);
+                        // console.log('initialPosition', initialPosition);
+                        if (initialPosition.length === 2) {
+                            item.x = Math.max(initialPosition[0] + gridDelta[0], 0);
+                            item.y = Math.max(initialPosition[1] + gridDelta[1], 0);
+                        } else {
+                            item.x = initialPosition[0] - gridDelta[0];
+                            item.y = initialPosition[1] - gridDelta[1];
+                            item.x2 = initialPosition[2] - gridDelta[0];
+                            item.y2 = initialPosition[3] - gridDelta[1];
+                        }
                     }
                     return item;
                 });
