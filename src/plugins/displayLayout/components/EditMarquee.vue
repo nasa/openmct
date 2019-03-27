@@ -116,8 +116,20 @@
                 this.selectedLayoutItems.forEach(item => {
                     x = Math.min(item.x, x);
                     y = Math.min(item.y, y);
-                    width = Math.max(item.width + item.x, width);
-                    height = Math.max(item.height + item.y, height);
+
+                    if (item.x2) {
+                        let lineWidth = Math.abs(item.x - item.x2);
+                        width = Math.max(lineWidth + item.x, width);
+                    } else {
+                        width = Math.max(item.width + item.x, width);
+                    }
+
+                    if (item.y2) {
+                        let lineHeight = Math.abs(item.y - item.y2);
+                        height = Math.max(lineHeight + item.y2, height)
+                    } else {
+                        height = Math.max(item.height + item.y, height);
+                    }
                 });
 
                 if (this.dragPosition) {
