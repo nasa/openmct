@@ -114,20 +114,23 @@
                 let width = Number.NEGATIVE_INFINITY;
                 let height = Number.NEGATIVE_INFINITY;
                 this.selectedLayoutItems.forEach(item => {
-                    x = Math.min(item.x, x);
-                    y = Math.min(item.y, y);
-
                     if (item.x2) {
                         let lineWidth = Math.abs(item.x - item.x2);
-                        width = Math.max(lineWidth + item.x, width);
+                        let lineMinX = Math.min(item.x, item.x2);
+                        x = Math.min(lineMinX, x);
+                        width = Math.max(lineWidth + lineMinX, width);
                     } else {
+                        x = Math.min(item.x, x);
                         width = Math.max(item.width + item.x, width);
                     }
 
                     if (item.y2) {
                         let lineHeight = Math.abs(item.y - item.y2);
-                        height = Math.max(lineHeight + item.y2, height)
+                        let lineMinY = Math.min(item.y, item.y2);
+                        y = Math.min(lineMinY, y);
+                        height = Math.max(lineHeight + lineMinY, height);
                     } else {
+                        y = Math.min(item.y, y);
                         height = Math.max(item.height + item.y, height);
                     }
                 });
