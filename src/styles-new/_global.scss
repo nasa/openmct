@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/******************************* RESETS */
+/******************************************************** RESETS */
 *,
 :before,
 :after {
@@ -31,7 +30,7 @@ div {
     position: relative;
 }
 
-/******************************* UTILITIES */
+/******************************************************** UTILITIES */
 .u-contents {
     display: contents;
 }
@@ -45,7 +44,7 @@ div {
     }
 }
 
-/******************************* BROWSER ELEMENTS */
+/******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
         box-sizing: border-box;
@@ -75,7 +74,7 @@ body.desktop {
     }
 }
 
-/************************** HTML ENTITIES */
+/******************************************************** HTML ENTITIES */
 a {
     color: $colorA;
     cursor: pointer;
@@ -167,7 +166,6 @@ body.desktop .has-local-controls {
 
 /******************************************************** SELECTION AND EDITING */
 // Provides supporting styles for Display Layouts and augmented legacy Fixed Position view
-
 .c-grid,
 .c-grid__x,
 .c-grid__y {
@@ -204,169 +202,88 @@ body.desktop .has-local-controls {
     }
 }
 
-/************************** LEGACY */
-
-mct-container {
+/******************************************************** STATES */
+@mixin  spinner($b: 5px, $c: $colorKey) {
+    animation-name: rotation-centered;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    border-radius: 100%;
+    box-sizing: border-box;
+    border-color: rgba($c, 0.25);
+    border-top-color: rgba($c, 1.0);
+    border-style: solid;
+    border-width: $b;
     display: block;
-}
-
-.abs {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: auto;
-    width: auto;
+    left: 50%; top: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%);
 }
 
-.code {
-    font-family: "Lucida Console", monospace;
-    font-size: 0.7em;
-    line-height: 150%;
-    white-space: pre;
+.wait-spinner {
+    @include spinner($waitSpinnerBorderW, $colorKey);
+    pointer-events: none;
+    z-index: 2;
+    &.inline {
+        display: inline-block !important;
+        margin-right: $interiorMargin;
+        position: relative !important;
+        vertical-align: middle;
+    }
 }
 
-.codehilite {
-    @extend .code;
-    background-color: rgba($colorBodyFg, 0.1);
-    padding: 1em;
+.loading {
+    // Can be applied to any block element with height and width
+    pointer-events: none;
+    &:before,
+    &:after {
+        content: '';
+    }
+    &:before {
+        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
+        height: $waitSpinnerD; width: $waitSpinnerD;
+        z-index: 10;
+    }
+    &:after {
+        @include abs();
+        background: $colorLoadingBg;
+        display: block;
+        z-index: 9;
+    }
+    &.c-tree__item {
+        $d: $waitSpinnerTreeD;
+        $spinnerL: 19px + $d/2;
+
+        display: flex;
+        align-items: center;
+        padding-left: $spinnerL + $d/2 + $interiorMargin;
+        background: $colorLoadingBg;
+        min-height: 5px + $d;
+
+        .c-tree__item__label {
+            font-style: italic;
+            opacity: 0.6;
+        }
+        &:before {
+            height: $d;
+            width: $d;
+            border-width: 4px;
+            left: $spinnerL;
+        }
+        &:after {
+            display: none;
+        }
+    }
+
+    &.c-loading--overlay {
+        @include abs();
+    }
 }
 
 *[disabled],
-.disabled,
-a.disabled {
+.disabled {
     opacity: $controlDisabledOpacity;
     pointer-events: none !important;
     cursor: default !important;
-}
-
-.s-status-missing {
-    // Labels. Expects .s-status-missing to be applied to mct-representation that contains
-    .t-object-label .t-item-icon:before {
-        content: $glyph-icon-object-unknown;
-    }
-
-    // Item, grid item. Expects .s-status-missing to be applied to mct-representation that contains .item.grid-item
-    .item .t-item-icon-glyph:before {
-        content: $glyph-icon-object-unknown;
-    }
-
-    // Object header. Expects .s-status-missing to be applied to mct-representation.object-header
-    &.object-header {
-        .type-icon:before {
-            content: $glyph-icon-object-unknown;
-        }
-    }
-
-    // Tree item. Expects .s-status-missing to be applied to .tree-item,
-    // and mct-representation.search-item
-    &.tree-item,
-    &.search-item {
-        > .rep-object-label .t-item-icon:before {
-            content: $glyph-icon-object-unknown;
-        }
-    }
-}
-
-.align-right {
-    text-align: right;
-}
-
-.centered {
-    text-align: center;
-}
-
-.no-selection {
-    // aka selection = "None". Used in palettes and their menu buttons.
-    $c: red;
-    $s: 48%;
-    $e: 52%;
-    background-image: linear-gradient(-45deg,
-            transparent $s - 5%,
-            $c $s,
-            $c $e,
-            transparent $e + 5%
-    );
-    box-shadow:inset rgba(black, 0.3) 0 0 0 1px;
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
-.scrolling,
-.scroll {
-    overflow: auto;
-}
-
-.vscroll {
-    overflow-x: hidden;
-    overflow-y: auto;
-    &.scroll-pad {
-        padding-right: $interiorMargin;
-    }
-}
-
-.vscroll--persist {
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
-.slidable {
-    cursor: move; // Fallback
-    cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
-    &.horz {
-        cursor: col-resize;
-    }
-    &.vert {
-        cursor: row-resize;
-    }
-}
-
-.no-margin {
-    margin: 0;
-}
-
-.ds {
-    box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
-}
-
-.capitalize {
-    text-transform: capitalize;
-}
-
-.hide,
-.hidden,
-.t-main-view .hide-in-t-main-view {
-    display: none !important;
-}
-
-.hide-nice {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.invisible {
-    display: block;
-    visibility: hidden;
-    height: 0;
-    padding: 0;
-    border: 0;
-    margin: 0 !important;
-    transform: scale(0);
-    pointer-events: none;
-    position: absolute;
-}
-
-.sep {
-    color: rgba(#fff, 0.2);
-}
-
-.comma-list span {
-    &:not(:first-child) {
-        &:before {
-            content: ', ';
-        }
-    }
 }

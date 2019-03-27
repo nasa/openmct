@@ -9,15 +9,15 @@
         </div>
 
         <!-- loading -->
-        <span v-if="isLoading"
-            class="loading">
-        </span>
+        <div class="c-tree-and-search__loading loading"
+            v-if="isLoading"></div>
         <!-- end loading -->
 
         <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
             No results found
         </div>
-        <ul class="c-tree-and-search__tree c-tree">
+        <ul class="c-tree-and-search__tree c-tree"
+            v-if="!isLoading">
             <tree-item v-for="treeItem in treeItems"
                        :key="treeItem.id"
                        :node="treeItem">
@@ -41,6 +41,10 @@
             flex: 0 0 auto;
         }
 
+        &__loading {
+            flex: 1 1 auto;
+        }
+
         &__no-results {
             font-style: italic;
             opacity: 0.6;
@@ -58,8 +62,17 @@
         overflow-y: auto;
         padding-right: $interiorMargin;
 
+        li {
+            display: block;
+            position: relative;
+        }
+
         .c-tree {
             margin-left: 15px;
+        }
+
+        &__item-h {
+
         }
 
         &__item {
