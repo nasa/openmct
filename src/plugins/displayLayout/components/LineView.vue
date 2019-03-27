@@ -79,6 +79,7 @@
         data() {
             return {
                 dragPosition: undefined,
+                dragging: undefined,
                 selection: []
             };
         },
@@ -89,7 +90,7 @@
             },
             position() {
                 let {x, y, x2, y2} = this.item;
-                if (this.dragPosition) {
+                if (this.dragging && this.dragPosition) {
                     ({x, y, x2, y2} = this.dragPosition);
                 }
                 return {x, y, x2, y2};
@@ -181,9 +182,12 @@
                 let pxDeltaY = this.startPosition[1] - event.pageY;
                 let newPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
 
-                if (this.dragging !== 'start' && this.dragging !== 'end' && !_.isEqual(newPosition, this.dragPosition)) {
+                if (!this.dragging) {
+                    if (!_.isEqual(newPosition, this.dragPosition)) {
+                        // console.log('continueDrag', 'newPosition', newPosition, "this.dragPosition", {...this.dragPosition});
                         this.dragPosition = newPosition;
                         this.$emit('move', this.gridDelta);
+                    }
                 } else {
                     this.dragPosition = newPosition;
                 }
@@ -192,7 +196,7 @@
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 let {x, y, x2, y2} = this.dragPosition;
-                if (this.dragging !== 'start' && this.dragging !== 'end') {
+                if (!this.dragging) {
                     this.$emit('endMove');
                 } else {
                     this.$emit('endLineResize', this.item, {x, y, x2, y2});
