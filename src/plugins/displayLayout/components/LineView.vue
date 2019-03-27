@@ -75,6 +75,7 @@
             gridSize: Array,
             initSelect: Boolean,
             index: Number,
+            multiSelect: Boolean
         },
         data() {
             return {
@@ -85,8 +86,8 @@
         },
         computed: {
             showFrameEdit() {
-                let singleSelect = this.selection && this.selection.length === 1
-                return singleSelect && this.selection[0][0].context.layoutItem && this.selection[0][0].context.layoutItem.type === 'line-view';
+                let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
+                return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
             },
             position() {
                 let {x, y, x2, y2} = this.item;
@@ -97,6 +98,7 @@
             },
             style() {
                 let {x, y, x2, y2} = this.position;
+                // console.log('line position', this.position);
                 let width = this.gridSize[0] * Math.abs(x - x2);
                 let height = this.gridSize[1] * Math.abs(y - y2);
                 let left = this.gridSize[0] * Math.min(x, x2);

@@ -26,7 +26,7 @@
          @click.capture="bypassSelection"
          @drop="handleDrop"
          :class="{
-            'is-multi-selected':selectedLayoutItems.length > 1
+            'is-multi-selected': selectedLayoutItems.length > 1
             }">
         <!-- Background grid -->
         <div class="l-layout__grid-holder c-grid">
@@ -45,6 +45,7 @@
                    :gridSize="gridSize"
                    :initSelect="initSelectIndex === index"
                    :index="index"
+                   :multiSelect="selectedLayoutItems.length > 1"
                    @move="move"
                    @endMove="endMove"
                    @endLineResize='endLineResize'>
@@ -235,7 +236,9 @@
                 let layoutItems = this.layoutItems.map(item => {
                     if (this.initialPositions[item.id]) {
                         let initialPosition = this.initialPositions[item.id];
-                        // console.log('initialPosition', initialPosition);
+                        // let [x, y, x2, y2] = initialPosition;
+                        // console.log('x:', x, 'y:', y, "x2:", x2, "y2:", y2);
+
                         if (initialPosition.length === 2) {
                             item.x = Math.max(initialPosition[0] + gridDelta[0], 0);
                             item.y = Math.max(initialPosition[1] + gridDelta[1], 0);
@@ -245,6 +248,7 @@
                             item.x2 = initialPosition[2] - gridDelta[0];
                             item.y2 = initialPosition[3] - gridDelta[1];
                         }
+                        // console.log('updated item', {...item});
                     }
                     return item;
                 });
