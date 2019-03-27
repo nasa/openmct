@@ -280,7 +280,11 @@ define([
         if (!provider) {
             return Promise.reject('No provider found');
         }
-        return provider.request.apply(provider, arguments);
+        return provider.request.apply(provider, arguments).catch((rejected) => {
+            this.openmct.notifications.error('Server Error, please see console for details');
+            console.error(rejected);
+            return Promise.reject(rejected);
+        });
     };
 
     /**
