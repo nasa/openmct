@@ -461,7 +461,7 @@ body.mobile.phone {
     width: $ruleLabelW;
 }
 
-.t-message-widget-no-data {
+.js-summary-widget__message {
     display: none;
 }
 
@@ -508,7 +508,7 @@ body.mobile.phone {
         &.expanded-widget-rules {
             .widget-rules-wrapper {
                 min-height: 50px;
-                height: auto;
+                height: 100%; // Fix for Chrome 73 scrolling bug
                 opacity: 1;
                 pointer-events: inherit;
             }
@@ -520,7 +520,7 @@ body.mobile.phone {
             opacity: 0.3;
             pointer-events: none;
         }
-        .t-message-widget-no-data {
+        .js-summary-widget__message {
             display: flex;
         }
     }

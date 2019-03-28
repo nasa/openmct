@@ -63,16 +63,12 @@
         padding-right: $interiorMargin;
 
         li {
-            display: block;
             position: relative;
+            &.c-tree__item-h { display: block; }
         }
 
         .c-tree {
             margin-left: 15px;
-        }
-
-        &__item-h {
-
         }
 
         &__item {
