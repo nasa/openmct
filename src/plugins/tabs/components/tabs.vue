@@ -81,6 +81,7 @@
         }
 
         &__empty-message {
+            background: rgba($colorBodyFg, 0.1);
             color: rgba($colorBodyFg, 0.7);
             font-style: italic;
             text-align: center;

@@ -25,9 +25,12 @@ table {
     width: 100%;
 
     thead {
-        background: $colorTabHeaderBg;
-        th + th {
-            border-left: 1px solid $colorTabHeaderBorder;
+        th {
+            background: $colorTabHeaderBg;
+
+            + th {
+                border-left: 1px solid $colorTabHeaderBorder;
+            }
         }
     }
 
@@ -46,6 +49,8 @@ table {
     td {
         vertical-align: top;
     }
+
+    a { color: $colorBtnMajorBg; }
 }
 
 div.c-table {

@@ -36,7 +36,7 @@
 
     .c-message {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
 
         > * + * {
             margin-left: $interiorMarginLg;
@@ -64,6 +64,17 @@
         &__title,
         &__action-text {
             font-size: 1.2em; // TEMP
+        }
+
+        &--simple {
+            // Icon and text elements only
+            &:before {
+                font-size: 30px !important;
+            }
+
+            [class*='__text'] {
+                font-size: 1.25em;
+            }
         }
 
         /************************** LEGACY */

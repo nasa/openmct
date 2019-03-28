@@ -11,14 +11,12 @@
             </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
-
-            <!-- loading -->
-            <li
-                class="loading"
+            <li class="c-tree__item-h"
                 v-if="isLoading && !loaded">
+                <div class="c-tree__item loading">
+                    <span class="c-tree__item__label">Loading...</span>
+                </div>
             </li>
-            <!-- end loading -->
-
             <tree-item v-for="child in children"
                        :key="child.id"
                        :node="child">
