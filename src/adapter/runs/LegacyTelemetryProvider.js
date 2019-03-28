@@ -137,8 +137,7 @@ define([
         function callbackWrapper(series) {
             callback(createDatum(domainObject, metadata, series, series.getPointCount() - 1));
         }
-
-        return capability.subscribe(callbackWrapper, request);
+        return capability.subscribe(callbackWrapper, request) || function () {};
     };
 
     LegacyTelemetryProvider.prototype.supportsLimits = function (domainObject) {
