@@ -145,6 +145,13 @@ export default {
                 this.showTab(this.tabsList[this.tabsList.length - 1]);
             }
         },
+        onReorder(reorderPlan) {
+            let oldTabs = this.tabsList.slice();
+
+            reorderPlan.forEach(reorderEvent => {
+                this.$set(this.tabsList, reorderEvent.newIndex, oldTabs[reorderEvent.oldIndex]);
+            });
+        },
         onDrop(e) {
             this.setCurrentTab = true;
         },
@@ -171,6 +178,7 @@ export default {
         if (this.composition) {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
+            this.composition.on('reorder', this.onReorder);
             this.composition.load();
         }
 
@@ -187,6 +195,7 @@ export default {
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.onReorder);
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
