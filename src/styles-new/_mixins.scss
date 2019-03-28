@@ -477,50 +477,6 @@
     }
 }
 
-@mixin cCompactButtons($bg, $fg, $bgHov) {
-    // Used in Tab view
-    // To be used in indicators popups?
-
-    $m: 1px;
-    $btnM: $m;
-
-    &-holder {
-        background: $colorTabsHolderBg;
-        border-radius: $controlCr;
-        padding: $m ($m - $btnM) ($m - $btnM) $m;
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: stretch;
-
-        > * {
-            margin: 0 $btnM $btnM 0;
-        }
-    }
-
-    background: $colorBtnBg;
-    color: $colorBtnFg;
-    flex: 1 1 auto;
-    padding: $interiorMargin;
-
-    &:before {
-        opacity: 0.5;
-    }
-
-    > * {
-        margin-left: $interiorMarginSm;
-    }
-
-    @include hover() {
-        background: $bgHov;
-    }
-
-    &.is-current {
-        background: $colorBtnReverseBg;
-        color: $colorBtnReverseFg;
-        pointer-events: none;
-    }
-}
-
 @mixin cSelect($bg, $fg, $arwClr, $shdw) {
     $svgArwClr: str-slice(inspect($arwClr), 2, str-length(inspect($arwClr))); // Remove initial # in color value
     background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;

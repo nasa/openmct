@@ -1,17 +1,16 @@
 <template>
 <div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Location</div>
+    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
     <ul class="c-properties__section" v-if="!multiSelect">
         <li class="c-properties__row" v-if="originalPath.length">
-            <div class="c-properties__label">Original</div>
-            <ul class="c-properties__value">
+            <ul class="c-properties__value c-location">
                 <li v-for="pathObject in orderedOriginalPath"
+                    class="c-location__item"
                     :key="pathObject.key">
                     <object-label
                         :domainObject="pathObject.domainObject"
                         :objectPath="pathObject.objectPath">
                     </object-label>
-                    <span class="c-disclosure-triangle"></span>
                 </li>
             </ul>
         </li>
@@ -20,8 +19,50 @@
 </div>
 </template>
 
-<script>
+<style lang="scss">
+    @import "~styles/sass-base";
 
+    .c-location {
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            $m: $interiorMarginSm;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin: 0 $m $m 0;
+
+            &:not(:last-child) {
+                &:after {
+                    color: $colorInspectorPropName;
+                    content: $glyph-icon-arrow-right;
+                    font-family: symbolsfont;
+                    font-size: 0.7em;
+                    margin-left: $m;
+                    opacity: 0.8;
+                }
+            }
+
+            .c-object-label {
+                padding: 0;
+                transition: $transOut;
+
+                &__type-icon {
+                    width: auto;
+                    font-size: 1em;
+                }
+
+                &:hover {
+                    transition: $transIn;
+                    filter: $filterHov;
+                }
+            }
+        }
+    }
+</style>
+
+<script>
 import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
@@ -45,8 +86,14 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        setOriginalPath(path) {
-            this.originalPath = path.slice(1,-1).map((domainObject, index, pathArray) => {
+        setOriginalPath(path, skipSlice) {
+            let originalPath = path;
+
+            if (!skipSlice) {
+                originalPath = path.slice(1,-1);
+            }
+
+            this.originalPath = originalPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 return {
                     domainObject,
@@ -55,11 +102,16 @@ export default {
                 }
             });
         },
+        clearData() {
+            this.domainObject = {};
+            this.originalPath = [];
+            this.keyString = '';
+        },
         updateSelection(selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                this.domainObject = {};
+            if (!selection.length || !selection[0].length) {
+                this.clearData();
                 return;
-            }
+            }  
 
             if (selection.length > 1) {
                 this.multiSelect = true;
@@ -69,13 +121,16 @@ export default {
             }
             
             this.domainObject = selection[0][0].context.item;
-            if (!this.domainObject) {
+            let parentObject = selection[0][1];
+
+            if (!domainObject && parentObject && parentObject.context.item) {
+                this.setOriginalPath([parentObject.context.item], true);
                 return;
             }
 
             let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-            if (this.keyString !== keyString) {
+            if (keyString && this.keyString !== keyString) {
                 this.keyString = keyString;
                 this.originalPath = [];
 

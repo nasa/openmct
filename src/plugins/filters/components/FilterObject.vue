@@ -5,11 +5,11 @@
             <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="{'c-disclosure-triangle--expanded': expanded}"></span>
             <div class="c-tree__item__label">
-                <div class="t-object-label l-flex-row flex-elem grows">
-                    <div class="t-item-icon flex-elem"
+                <div class="c-object-label">
+                    <div class="c-object-label__type-icon"
                          :class="objectCssClass">
                     </div>
-                    <div class="t-title-label flex-elem grows">{{ filterObject.name }}</div>
+                    <div class="c-object-label__name flex-elem grows">{{ filterObject.name }}</div>
                 </div>
             </div>
         </div>

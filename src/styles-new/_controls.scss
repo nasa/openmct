@@ -48,10 +48,16 @@ button {
             height: $d; width: $d;
         }
     }
-}
 
-.c-compact-button {
-    @include cCompactButtons($bg: $colorBtnBg, $fg: $colorBtnFg, $bgHov: $colorBtnBgHov);
+    &.is-active {
+        background: $colorBtnActiveBg;
+        color: $colorBtnActiveFg;
+    }
+
+    &.is-selected {
+        background: $colorBtnSelectedBg;
+        color: $colorBtnSelectedFg;
+    }
 }
 
 /********* Icon Buttons */
@@ -159,7 +165,7 @@ button {
             font-family: symbolsfont;
             font-size: 1rem * $s;
             transform-origin: center;
-            transition: transform 100ms ease-in-out;
+            transition: $transOut;
         }
     }
 
@@ -283,6 +289,63 @@ select {
     // input and label in each __row
     &__row {
         > * + * { margin-left: $interiorMargin; }
+    }
+}
+
+/******************************************************** TABS */
+.c-tabs {
+    // Single horizontal strip of tabs, with a bottom divider line
+    @include userSelectNone();
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    position: relative; // Required in case this is applied to a <ul>
+
+    &:before {
+        // Separator line at bottom of tabs
+        content: '';
+        display: block;
+        height: 1px;
+        width: 100%;
+        background: $colorBtnReverseBg;
+        position: absolute;
+        bottom: 0px;
+        z-index: 1;
+    }
+}
+
+.c-tab {
+    // Used in Tab View, generic tabs
+    background: $colorBtnBg;
+    color: $colorBtnFg;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    margin: 1px 1px 0 0;
+    padding: $interiorMargin $interiorMarginLg;
+    white-space: nowrap;
+
+    --notchSize: 7px;
+
+    clip-path:
+        polygon(
+            0% 0%,
+            calc(100% - var(--notchSize)) 0%,
+            100% var(--notchSize),
+            100% calc(100% - var(--notchSize)),
+            100% 100%,
+            0% 100%
+        );
+
+    @include hover() {
+        background: $colorBtnBgHov;
+    }
+
+    &.is-current {
+        background: $colorBtnReverseBg;
+        color: $colorBtnReverseFg;
+        pointer-events: none;
     }
 }
 
@@ -678,7 +741,6 @@ input[type="range"] {
     }
 }
 
-/***************************************************** LOCAL CONTROLS */
 .h-local-controls {
     // Holder for local controls
     &--horz {

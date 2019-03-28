@@ -95,6 +95,7 @@
             .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
+                overflow: auto;
 
                 > * {
                     flex: 0 0 auto;
@@ -186,7 +187,6 @@
             // Wrapper for main views
             flex: 1 1 auto !important;
             overflow: auto;
-            //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
         &__tree {
@@ -209,6 +209,8 @@
             &__main {
                 // Top and bottom padding in container that holds tree, __pane-main and Inspector
                 padding: $shellMainPad;
+                min-height: 0;
+
                 > .l-pane {
                     padding-top: 0;
                     padding-bottom: 0;

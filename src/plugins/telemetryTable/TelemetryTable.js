@@ -59,6 +59,7 @@ define([
             this.filterObserver = undefined;
 
             this.createTableRowCollections();
+
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
         }
@@ -74,13 +75,17 @@ define([
 
         createTableRowCollections() {
             this.boundedRows = new BoundedTableRowCollection(this.openmct);
-
-            //By default, sort by current time system, ascending.
             this.filteredRows = new FilteredTableRowCollection(this.boundedRows);
-            this.filteredRows.sortBy({
+
+            //Fetch any persisted default sort
+            let sortOptions = this.configuration.getConfiguration().sortOptions;
+
+            //If no persisted sort order, default to sorting by time system, ascending.
+            sortOptions = sortOptions || {
                 key: this.openmct.time.timeSystem().key,
                 direction: 'asc'
-            });
+            };
+            this.filteredRows.sortBy(sortOptions);
         }
 
         loadComposition() {
@@ -208,6 +213,16 @@ define([
         unsubscribe(keyString) {
             this.subscriptions[keyString]();
             delete this.subscriptions[keyString];
+        }
+
+        sortBy(sortOptions) {
+            this.filteredRows.sortBy(sortOptions);
+
+            if (this.openmct.editor.isEditing()) {
+                let configuration = this.configuration.getConfiguration();
+                configuration.sortOptions = sortOptions;
+                this.configuration.updateConfiguration(configuration);
+            }
         }
 
         destroy() {
