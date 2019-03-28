@@ -206,14 +206,31 @@
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
             },
-            endResize(deltaX, deltaY, deltaWidth, deltaHeight) {
+            endResize(scaleX, scaleY, transformOriginX, transformOriginY, direction) {
+                // console.log("endResize", scaleX, scaleY, "transformOriginX", transformOriginX, "transformOriginY", transformOriginY, direction);
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
-                        item.x += deltaX;
-                        item.y += deltaY;
-                        item.width += deltaWidth;
-                        item.height += deltaHeight;
+                        let {x, y, width, height} = item;
+                        // console.log(">>>item x:", x, "y:", y, "width:", width, "height:", height);
+                        if (direction === 'nw') {
+
+                        } else if (direction === 'ne') {
+
+                        } else if (direction === 'sw') {
+                            let xRelativeToTransformOrigin = transformOriginX - item.x;
+                            item.x = Math.round((transformOriginX - xRelativeToTransformOrigin) * scaleX);
+                            item.y = Math.round(((item.y - transformOriginY) * scaleY) + transformOriginY);
+                            
+                        } else if (direction === 'se') {
+                            item.x = Math.round(((item.x - transformOriginX) * scaleX) + transformOriginX);
+                            item.y = Math.round(((item.y - transformOriginY) * scaleY) + transformOriginY);
+                        }
+
+                        // TODO: set x2 and y2 for lines instead of width and height
+                        item.width = Math.round(item.width * scaleX);
+                        item.height = Math.round(item.height * scaleY);
+                        // console.log('updated item x:', item.x, "y:", item.y, 'width:', item.width, "height:", item.height);
                     }
                 });
                 this.mutate("configuration.items", this.layoutItems);
