@@ -82,7 +82,6 @@
 
         /******************* DEFAULT STYLES FOR -EDIT__MOVE */
         .c-frame-edit__move {
-            @include test(green); // TEMP
             @include abs();
             display: block;
         }
