@@ -219,7 +219,6 @@
                 this.mutate("configuration.items", this.layoutItems);
             },
             move(gridDelta) {
-                // console.log('move', gridDelta);
                 this.dragInProgress = true;
 
                 if (!this.initialPositions) {
@@ -235,20 +234,18 @@
 
                 let layoutItems = this.layoutItems.map(item => {
                     if (this.initialPositions[item.id]) {
-                        let initialPosition = this.initialPositions[item.id];
-                        // let [x, y, x2, y2] = initialPosition;
-                        // console.log('x:', x, 'y:', y, "x2:", x2, "y2:", y2);
+                        let startingPosition = this.initialPositions[item.id];
+                        let [startingX, startingY, startingX2, startingY2] = startingPosition;
+                        item.x = startingX + gridDelta[0];
+                        item.y = startingY + gridDelta[1];
 
-                        if (initialPosition.length === 2) {
-                            item.x = Math.max(initialPosition[0] + gridDelta[0], 0);
-                            item.y = Math.max(initialPosition[1] + gridDelta[1], 0);
-                        } else {
-                            item.x = initialPosition[0] - gridDelta[0];
-                            item.y = initialPosition[1] - gridDelta[1];
-                            item.x2 = initialPosition[2] - gridDelta[0];
-                            item.y2 = initialPosition[3] - gridDelta[1];
+                        if (item.x2) {
+                            item.x2 = startingX2 + gridDelta[0];
                         }
-                        // console.log('updated item', {...item});
+
+                        if (item.y2) {
+                            item.y2 = startingY2 + gridDelta[1];
+                        }
                     }
                     return item;
                 });

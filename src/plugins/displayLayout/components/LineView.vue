@@ -98,7 +98,6 @@
             },
             style() {
                 let {x, y, x2, y2} = this.position;
-                // console.log('line position', this.position);
                 let width = this.gridSize[0] * Math.abs(x - x2);
                 let height = this.gridSize[1] * Math.abs(y - y2);
                 let left = this.gridSize[0] * Math.min(x, x2);
@@ -186,9 +185,9 @@
 
                 if (!this.dragging) {
                     if (!_.isEqual(newPosition, this.dragPosition)) {
-                        // console.log('continueDrag', 'newPosition', newPosition, "this.dragPosition", {...this.dragPosition});
+                        let gridDelta = [event.pageX - this.startPosition[0], event.pageY - this.startPosition[1]];
                         this.dragPosition = newPosition;
-                        this.$emit('move', this.gridDelta);
+                        this.$emit('move', this.toGridDelta(gridDelta));
                     }
                 } else {
                     this.dragPosition = newPosition;
@@ -205,16 +204,14 @@
                 }
                 this.dragPosition = undefined;
                 this.dragging = undefined;
-                this.gridDelta = undefined;
                 event.preventDefault();
             },
             calculateDragPosition(pxDeltaX, pxDeltaY) {
                 let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
                 let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
-                this.gridDelta = [gridDeltaX, gridDeltaY];
-
                 let {x, y, x2, y2} = this.item;
                 let dragPosition = {x, y, x2, y2};
+
                 if (this.dragging === 'start') {
                     dragPosition.x -= gridDeltaX;
                     dragPosition.y -= gridDeltaY;
@@ -232,6 +229,11 @@
             },
             setSelection(selection) {
                 this.selection = selection;
+            },
+            toGridDelta(pixelDelta) {
+                return pixelDelta.map((v, i) => {
+                    return Math.round(v / this.gridSize[i]);
+                });
             }
         },
         watch: {
