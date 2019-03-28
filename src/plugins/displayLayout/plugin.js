@@ -25,8 +25,7 @@ import Vue from 'vue'
 import objectUtils from '../../api/objects/object-utils.js'
 import DisplayLayoutType from './DisplayLayoutType.js'
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
-
-export default function () {
+export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
         openmct.objectViews.addProvider({
             key: 'layout.view',
@@ -47,7 +46,8 @@ export default function () {
                             template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
-                                objectUtils
+                                objectUtils,
+                                options
                             },
                             el: container,
                             data () {
@@ -83,5 +83,6 @@ export default function () {
                 return true;
             }
         });
+        DisplayLayoutPlugin._installed = true;
     }
 }
