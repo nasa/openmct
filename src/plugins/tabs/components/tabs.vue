@@ -26,7 +26,8 @@
             v-for="(tab, index) in tabsList"
             :key="index"
             :class="{'invisible': !isCurrent(tab)}">
-            <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
+            <div v-if="currentTab"
+                 class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
                 <div class="l-browse-bar__object-name">
                     {{currentTab.domainObject.name}}
