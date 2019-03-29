@@ -142,7 +142,7 @@ export default {
             this.applySearch(this.currentSearch);
         },
         removeElement(identifier) {
-            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            let keyString = this.openmct.objects.makeKeyString(identifier);
             delete this.elementsCache[keyString];
             this.applySearch(this.currentSearch);
         },
