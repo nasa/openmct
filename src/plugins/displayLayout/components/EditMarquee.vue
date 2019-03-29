@@ -24,13 +24,13 @@
         <!-- Resize handles -->
         <div class="c-frame-edit" :style="style">
             <div class="c-frame-edit__handle c-frame-edit__handle--nw"
-                 @mousedown="startResize([1,1], [-1,-1], $event, 'nw')"></div>
+                 @mousedown="startResize([1,1], [-1,-1], $event)"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--ne"
-                 @mousedown="startResize([0,1], [1,-1], $event, 'ne')"></div>
+                 @mousedown="startResize([0,1], [1,-1], $event)"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--sw"
-                 @mousedown="startResize([1,0], [-1,1], $event, 'sw')"></div>
+                 @mousedown="startResize([1,0], [-1,1], $event)"></div>
             <div class="c-frame-edit__handle c-frame-edit__handle--se"
-                 @mousedown="startResize([0,0], [1,1], $event, 'se')"></div>
+                 @mousedown="startResize([0,0], [1,1], $event)"></div>
         </div>
 </template>
 
@@ -149,7 +149,6 @@
                     width: width,
                     height: height
                 }
-                // console.log('marqueePosition', this.marqueePosition);
                 return this.getMarqueeStyle(x, y, width, height);
             }
         },
@@ -169,16 +168,15 @@
                     return value - this.initialPosition[index];
                 }.bind(this));
             },
-            startResize(posFactor, dimFactor, event, direction) {
-                this.direction = direction;
+            startResize(posFactor, dimFactor, event) {
                 document.body.addEventListener('mousemove', this.continueResize);
                 document.body.addEventListener('mouseup', this.endResize);
-                this.initialMarqueePosition = {
+                this.marqueeStartPosition = {
                     position: [this.marqueePosition.x, this.marqueePosition.y],
                     dimensions: [this.marqueePosition.width, this.marqueePosition.height]
                 };
                 this.updatePosition(event);
-                this.activeDrag = new LayoutDrag(this.initialMarqueePosition, posFactor, dimFactor, this.gridSize);
+                this.activeDrag = new LayoutDrag(this.marqueeStartPosition, posFactor, dimFactor, this.gridSize);
                 event.preventDefault();
             },
             continueResize(event) {
@@ -190,46 +188,47 @@
                 document.body.removeEventListener('mousemove', this.continueResize);
                 document.body.removeEventListener('mouseup', this.endResize);
                 this.continueResize(event);
-                // console.log('initialMarqueePosition', this.initialMarqueePosition);
-                let marqueeStartingWidth = this.initialMarqueePosition.dimensions[0];
-                let marqueeStartingHeight = this.initialMarqueePosition.dimensions[1];
-                let marqueeStartingX = this.initialMarqueePosition.position[0];
-                let marqueeStartingY = this.initialMarqueePosition.position[1];
 
-                let scaleX = this.dragPosition.dimensions[0] / this.initialMarqueePosition.dimensions[0];
-                let scaleY = this.dragPosition.dimensions[1] / this.initialMarqueePosition.dimensions[1];
-                let transformOrigin
+                let marqueeStartWidth = this.marqueeStartPosition.dimensions[0];
+                let marqueeStartHeight = this.marqueeStartPosition.dimensions[1];
+                let marqueeStartX = this.marqueeStartPosition.position[0];
+                let marqueeStartY = this.marqueeStartPosition.position[1];
 
-                if (this.direction === 'nw') {
-                    transformOrigin = [
-                        marqueeStartingX + marqueeStartingWidth,
-                        marqueeStartingY + marqueeStartingHeight
-                    ];
-                }
-                if (this.direction === 'ne') {
-                    transformOrigin = [
-                        marqueeStartingX,
-                        marqueeStartingY + marqueeStartingHeight
-                    ];
-                }
-                if (this.direction === 'sw') {
-                    transformOrigin = [
-                        marqueeStartingX + marqueeStartingWidth,
-                        marqueeStartingY
-                    ];
-                }
-                if (this.direction === 'se') {
-                    transformOrigin = [
-                        marqueeStartingX,
-                        marqueeStartingY
-                    ];
-                }
+                let marqueeEndX = this.dragPosition.position[0];
+                let marqueeEndY = this.dragPosition.position[1];
+                let marqueeEndWidth = this.dragPosition.dimensions[0];
+                let marqueeEndHeight = this.dragPosition.dimensions[1];
 
-                this.$emit('endResize', scaleX, scaleY, transformOrigin[0], transformOrigin[1], this.direction);
+                let scaleWidth =  marqueeEndWidth / marqueeStartWidth;
+                let scaleHeight =  marqueeEndHeight / marqueeStartHeight;
+
+                let marqueeStart = {
+                    x1: marqueeStartX,
+                    y1: marqueeStartY,
+                    x2: marqueeStartX + marqueeStartWidth,
+                    y2: marqueeStartY + marqueeStartHeight,
+                    height: marqueeStartWidth,
+                    width: marqueeStartHeight
+                };
+                let marqueeEnd = {
+                    x1: marqueeEndX,
+                    y1: marqueeEndY,
+                    x2: marqueeEndX + marqueeEndWidth,
+                    y2: marqueeEndY + marqueeEndHeight,
+                    width: marqueeEndWidth,
+                    height: marqueeEndHeight
+                };
+                let marqueeOffset = {
+                    x1: marqueeEnd.x1 - marqueeStart.x1,
+                    y1: marqueeEnd.y1 - marqueeStart.y1,
+                    x2: marqueeEnd.x2 - marqueeStart.x2,
+                    y2: marqueeEnd.y2 - marqueeStart.y2
+                };
+
+                this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeEnd, marqueeOffset);
                 this.dragPosition = undefined;
                 this.initialPosition = undefined;
-                this.initialMarqueePosition = undefined;
-                this.direction = undefined;
+                this.marqueeStartPosition = undefined;
                 this.delta = undefined;
                 event.preventDefault();
             }

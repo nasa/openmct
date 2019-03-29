@@ -206,31 +206,30 @@
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
             },
-            endResize(scaleX, scaleY, transformOriginX, transformOriginY, direction) {
-                // console.log("endResize", scaleX, scaleY, "transformOriginX", transformOriginX, "transformOriginY", transformOriginY, direction);
+            endResize(scaleWidth, scaleHeight, marqueeStart, marqueeEnd, marqueeOffset) {
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
-                        let {x, y, width, height} = item;
-                        // console.log(">>>item x:", x, "y:", y, "width:", width, "height:", height);
-                        if (direction === 'nw') {
+                        let itemXInMarqueeSpace = item.x - marqueeStart.x1;
+                        let itemYInMarqueeSpace = item.y - marqueeStart.y1;
 
-                        } else if (direction === 'ne') {
+                        let itemXInMarqueeSpaceAfterScale = Math.round(itemXInMarqueeSpace * scaleWidth);
+                        let itemYInMarqueeSpaceAfterScale = Math.round(itemYInMarqueeSpace * scaleHeight);
 
-                        } else if (direction === 'sw') {
-                            let xRelativeToTransformOrigin = transformOriginX - item.x;
-                            item.x = Math.round((transformOriginX - xRelativeToTransformOrigin) * scaleX);
-                            item.y = Math.round(((item.y - transformOriginY) * scaleY) + transformOriginY);
-                            
-                        } else if (direction === 'se') {
-                            item.x = Math.round(((item.x - transformOriginX) * scaleX) + transformOriginX);
-                            item.y = Math.round(((item.y - transformOriginY) * scaleY) + transformOriginY);
+                        item.x = itemXInMarqueeSpaceAfterScale + marqueeOffset.x1 + marqueeStart.x1;
+                        item.y = itemYInMarqueeSpaceAfterScale + marqueeOffset.y1 + marqueeStart.y1;
+
+                        if (item.x2) {
+                            // item.x2 = Math.round(item.x2 * scaleWidth);
+                        } else {
+                            item.width = Math.round(item.width * scaleWidth);
                         }
 
-                        // TODO: set x2 and y2 for lines instead of width and height
-                        item.width = Math.round(item.width * scaleX);
-                        item.height = Math.round(item.height * scaleY);
-                        // console.log('updated item x:', item.x, "y:", item.y, 'width:', item.width, "height:", item.height);
+                        if (item.y2) {
+                            // item.y2 = Math.round(item.y2 * scaleHeight);
+                        } else {
+                            item.height = Math.round(item.height * scaleHeight);
+                        }
                     }
                 });
                 this.mutate("configuration.items", this.layoutItems);
