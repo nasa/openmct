@@ -65,7 +65,8 @@ define([
                     "depends": [
                         "$document",
                         "$compile",
-                        "$rootScope"
+                        "$rootScope",
+                        "$timeout"
                     ]
                 }
             ],
