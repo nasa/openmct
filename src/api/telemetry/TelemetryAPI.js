@@ -281,7 +281,7 @@ define([
             return Promise.reject('No provider found');
         }
         return provider.request.apply(provider, arguments).catch((rejected) => {
-            this.openmct.notifications.error('Server Error, please see console for details');
+            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
             console.error(rejected);
             return Promise.reject(rejected);
         });
