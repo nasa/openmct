@@ -461,7 +461,7 @@ body.mobile.phone {
     width: $ruleLabelW;
 }
 
-.t-message-widget-no-data {
+.js-summary-widget__message {
     display: none;
 }
 
@@ -508,7 +508,7 @@ body.mobile.phone {
         &.expanded-widget-rules {
             .widget-rules-wrapper {
                 min-height: 50px;
-                height: auto;
+                height: 100%; // Fix for Chrome 73 scrolling bug
                 opacity: 1;
                 pointer-events: inherit;
             }
@@ -520,7 +520,7 @@ body.mobile.phone {
             opacity: 0.3;
             pointer-events: none;
         }
-        .t-message-widget-no-data {
+        .js-summary-widget__message {
             display: flex;
         }
     }
@@ -804,7 +804,9 @@ mct-indicators mct-include {
     }
 
     .label {
+        // Hover bubbles that appear when hovering on an Indicator
         display: inline-block;
+
         a,
         button,
         s-button,
@@ -851,8 +853,6 @@ mct-indicators mct-include {
     }
 
     &:not(.no-collapse) {
-        z-index: 0;
-
         &:before {
             margin-right: 0 !important;
         }
@@ -870,6 +870,8 @@ mct-indicators mct-include {
             transform-origin: 10px 100%;
             transform: scale(0.0);
             white-space: nowrap;
+            z-index: 50;
+
             &:before {
                 // Infobubble-style arrow element
                 content: '';
@@ -880,9 +882,9 @@ mct-indicators mct-include {
             }
         }
 
-        &:hover {
+        @include hover() {
             background: $bg;
-            z-index: 1;
+
             .label {
                 opacity: 1;
                 transform: scale(1.0);
@@ -1175,79 +1177,6 @@ body.desktop {
     }
 }
 
-/******************************************************************* WAIT SPINNERS */
-@mixin  spinner($b: 5px, $c: $colorKey) {
-    animation-name: rotation-centered;
-    animation-duration: 0.5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    border-radius: 100%;
-    box-sizing: border-box;
-    border-color: rgba($c, 0.25);
-    border-top-color: rgba($c, 1.0);
-    border-style: solid;
-    border-width: $b;
-    display: block;
-    position: absolute;
-    left: 50%; top: 50%;
-    transform-origin: center;
-    transform: translate(-50%, -50%);
-}
-
-.wait-spinner {
-    @include spinner($waitSpinnerBorderW, $colorKey);
-    pointer-events: none;
-    z-index: 2;
-    &.inline {
-        display: inline-block !important;
-        margin-right: $interiorMargin;
-        position: relative !important;
-        vertical-align: middle;
-    }
-}
-
-.loading {
-    // Can be applied to any block element with height and width
-    pointer-events: none;
-    &:before,
-    &:after {
-        content: '';
-    }
-    &:before {
-        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
-        height: $waitSpinnerD; width: $waitSpinnerD;
-        z-index: 10;
-    }
-    &:after {
-        @include abs();
-        background: $colorLoadingBg;
-        display: block;
-        z-index: 9;
-    }
-    &.tree-item.t-wait-node {
-        $d: $waitSpinnerTreeD;
-        $spinnerL: $interiorMargin + 19px + $d/2;
-        padding-left: $spinnerL + $d/2 + $interiorMargin;
-        .t-title-label {
-            font-style: italic;
-            opacity: 0.6;
-        }
-        &:before {
-            height: $d;
-            width: $d;
-            border-width: 4px;
-            left: $spinnerL;
-        }
-        &:after {
-            display: none;
-        }
-    }
-
-    &.c-loading--overlay {
-        @include abs();
-    }
-}
-
 /******************************************************************* FLEX STYLES */
 .l-flex-row,
 .l-flex-col {
@@ -1314,7 +1243,7 @@ body.desktop {
 .grid-properties {
     display: grid;
     grid-row-gap: 0;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
 }
 
 .grid-span-all,
@@ -1512,6 +1441,10 @@ body.desktop {
     display: contents;
 }
 
+mct-container {
+    display: block;
+}
+
 .overlay {
     .outer-holder {
         background: $colorMenuBg;
@@ -1577,3 +1510,157 @@ body.desktop {
         }
     }
 }
+
+.abs {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    width: auto;
+}
+
+.code {
+    font-family: "Lucida Console", monospace;
+    font-size: 0.7em;
+    line-height: 150%;
+    white-space: pre;
+}
+
+.codehilite {
+    @extend .code;
+    background-color: rgba($colorBodyFg, 0.1);
+    padding: 1em;
+}
+
+.s-status-missing {
+    // Labels. Expects .s-status-missing to be applied to mct-representation that contains
+    .t-object-label .t-item-icon:before {
+        content: $glyph-icon-object-unknown;
+    }
+
+    // Item, grid item. Expects .s-status-missing to be applied to mct-representation that contains .item.grid-item
+    .item .t-item-icon-glyph:before {
+        content: $glyph-icon-object-unknown;
+    }
+
+    // Object header. Expects .s-status-missing to be applied to mct-representation.object-header
+    &.object-header {
+        .type-icon:before {
+            content: $glyph-icon-object-unknown;
+        }
+    }
+
+    // Tree item. Expects .s-status-missing to be applied to .tree-item,
+    // and mct-representation.search-item
+    &.tree-item,
+    &.search-item {
+        > .rep-object-label .t-item-icon:before {
+            content: $glyph-icon-object-unknown;
+        }
+    }
+}
+
+.align-right {
+    text-align: right;
+}
+
+.centered {
+    text-align: center;
+}
+
+.no-selection {
+    // aka selection = "None". Used in palettes and their menu buttons.
+    $c: red;
+    $s: 48%;
+    $e: 52%;
+    background-image: linear-gradient(-45deg,
+            transparent $s - 5%,
+            $c $s,
+            $c $e,
+            transparent $e + 5%
+    );
+    box-shadow:inset rgba(black, 0.3) 0 0 0 1px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.scrolling,
+.scroll {
+    overflow: auto;
+}
+
+.vscroll {
+    overflow-x: hidden;
+    overflow-y: auto;
+    &.scroll-pad {
+        padding-right: $interiorMargin;
+    }
+}
+
+.vscroll--persist {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.slidable {
+    cursor: move; // Fallback
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    &.horz {
+        cursor: col-resize;
+    }
+    &.vert {
+        cursor: row-resize;
+    }
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.ds {
+    box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.hide,
+.hidden,
+.t-main-view .hide-in-t-main-view {
+    display: none !important;
+}
+
+.hide-nice {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.invisible {
+    display: block;
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    border: 0;
+    margin: 0 !important;
+    transform: scale(0);
+    pointer-events: none;
+    position: absolute;
+}
+
+.sep {
+    color: rgba(#fff, 0.2);
+}
+
+.comma-list span {
+    &:not(:first-child) {
+        &:before {
+            content: ', ';
+        }
+    }
+}
+

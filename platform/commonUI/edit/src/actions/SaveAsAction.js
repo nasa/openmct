@@ -162,15 +162,20 @@ function (
         function saveAfterClone(clonedObject) {
             return this.openmct.editor.save().then(() => {
                 // Force mutation for search indexing
-                clonedObject.useCapability('mutation', (model) => {
-                    return model;
-                });
                 return clonedObject;
             })
         }
 
         function finishEditing(clonedObject) {
             return fetchObject(clonedObject.getId())
+        }
+
+        function indexForSearch(savedObject) {
+            savedObject.useCapability('mutation', (model) => {
+                return model;
+            });
+
+            return savedObject;
         }
 
         function onSuccess(object) {
@@ -194,6 +199,7 @@ function (
             .then(undirtyOriginals)
             .then(saveAfterClone)
             .then(finishEditing)
+            .then(indexForSearch)
             .then(hideBlockingDialog)
             .then(onSuccess)
             .catch(onFailure);

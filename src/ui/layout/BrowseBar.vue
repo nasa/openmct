@@ -112,7 +112,7 @@ const PLACEHOLDER_OBJECT = {};
             promptUserandCancelEditing() {
                 let dialog = this.openmct.overlays.dialog({
                     iconClass: 'alert',
-                    message: 'Are you sure you want to continue? All unsaved changes will be lost!',
+                    message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
                     buttons: [
                         {
                             label: 'Ok',

@@ -7,10 +7,17 @@
                 @clear="searchTree">
             </search>
         </div>
+
+        <!-- loading -->
+        <div class="c-tree-and-search__loading loading"
+            v-if="isLoading"></div>
+        <!-- end loading -->
+
         <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
             No results found
         </div>
-        <ul class="c-tree-and-search__tree c-tree">
+        <ul class="c-tree-and-search__tree c-tree"
+            v-if="!isLoading">
             <tree-item v-for="treeItem in treeItems"
                        :key="treeItem.id"
                        :node="treeItem">
@@ -34,6 +41,10 @@
             flex: 0 0 auto;
         }
 
+        &__loading {
+            flex: 1 1 auto;
+        }
+
         &__no-results {
             font-style: italic;
             opacity: 0.6;
@@ -47,9 +58,15 @@
 
     .c-tree {
         @include userSelectNone();
+        height: 100%; // Chrome 73 overflow bug fix
         overflow-x: hidden;
         overflow-y: auto;
         padding-right: $interiorMargin;
+
+        li {
+            position: relative;
+            &.c-tree__item-h { display: block; }
+        }
 
         .c-tree {
             margin-left: 15px;
@@ -168,7 +185,8 @@
             return {
                 searchValue: '',
                 allTreeItems: [],
-                filteredTreeItems: []
+                filteredTreeItems: [],
+                isLoading: false
             }
         },
         computed: {
@@ -182,9 +200,13 @@
         },
         methods: {
             getAllChildren() {
+                this.isLoading = true;
                 this.openmct.objects.get('ROOT')
-                    .then(root => this.openmct.composition.get(root).load())
+                    .then(root => {
+                        return this.openmct.composition.get(root).load()
+                    })
                     .then(children => {
+                        this.isLoading = false;
                         this.allTreeItems = children.map(c => {
                                 return {
                                     id: this.openmct.objects.makeKeyString(c.identifier),

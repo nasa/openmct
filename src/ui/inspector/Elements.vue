@@ -55,6 +55,7 @@
         &__grippy {
             $d: 8px;
             @include grippy($c: $colorItemTreeVC, $dir: 'y');
+            flex: 0 0 auto;
             margin-right: $interiorMarginSm;
             transform: translateY(-2px);
             width: $d; height: $d;
@@ -141,7 +142,7 @@ export default {
             this.applySearch(this.currentSearch);
         },
         removeElement(identifier) {
-            let keyString = this.openmct.objects.makeKeyString(element.identifier);
+            let keyString = this.openmct.objects.makeKeyString(identifier);
             delete this.elementsCache[keyString];
             this.applySearch(this.currentSearch);
         },

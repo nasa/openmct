@@ -409,7 +409,7 @@ export default {
                     direction: 'asc'
                 }
             }
-            this.table.filteredRows.sortBy(this.sortOptions);
+            this.table.sortBy(this.sortOptions);
         },
         scroll() {
             if (!this.processingScroll) {
