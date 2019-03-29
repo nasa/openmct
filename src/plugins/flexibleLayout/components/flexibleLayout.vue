@@ -293,7 +293,9 @@
         }
 
         &__object-view {
+            display: flex;
             flex: 1 1 auto;
+            height: 0; // Chrome 73 overflow bug fix
             overflow: auto;
         }
 

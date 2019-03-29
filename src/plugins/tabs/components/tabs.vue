@@ -86,7 +86,10 @@
         }
 
         &__object {
+            display: flex;
+            flex-flow: column nowrap;
             flex: 1 1 auto;
+            height: 0; // Chrome 73 oveflow bug fix
         }
 
         &__empty-message {
