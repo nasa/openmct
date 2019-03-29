@@ -9,11 +9,27 @@ define([
         let browseObject;
         let unobserve = undefined;
 
+        openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
+
+        openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
+            let navigatePath = results[1];
+            navigateToPath(navigatePath, params.view);
+        });
+
+        openmct.router.on('change:params', function (newParams, oldParams, changed) {
+            if (changed.view && browseObject) {
+                let provider = openmct
+                    .objectViews
+                    .getByProviderKey(changed.view);
+                viewObject(browseObject, provider);
+            }
+        });
+
         function viewObject(object, viewProvider) {
             openmct.layout.$refs.browseObject.show(object, viewProvider.key, true);
             openmct.layout.$refs.browseBar.domainObject = object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
-        };
+        }
 
         function navigateToPath(path, currentViewKey) {
             navigateCall++;
@@ -23,18 +39,13 @@ define([
                 unobserve();
                 unobserve = undefined;
             }
-            if (path === undefined || path.length === 0) {
-                //If no object path provided, navigate to last child of root.
-                navigateToFirstChildOfRoot();
-                return;
-            }
 
             //Split path into object identifiers
             if (!Array.isArray(path)) {
                 path = path.split('/');
             }
 
-            pathToObjects(path).then((objects)=>{
+            return pathToObjects(path).then((objects)=>{
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
                 }
@@ -83,6 +94,12 @@ define([
             });
         }
 
+        function pathToObjects(path) {
+            return Promise.all(path.map((keyString)=>{
+                return openmct.objects.get(keyString);
+            }));
+        }
+
         function navigateToFirstChildOfRoot() {
             openmct.objects.get('ROOT').then(rootObject => {
                 openmct.composition.get(rootObject).load()
@@ -97,27 +114,5 @@ define([
                     });
             });
         }
-
-        function pathToObjects(path) {
-            return Promise.all(path.map((keyString)=>{
-                return openmct.objects.get(keyString);
-            }));
-        }
-
-        openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
-            let navigatePath = results[1];
-            navigateToPath(navigatePath, params.view);
-        });
-
-        openmct.router.on('change:params', function (newParams, oldParams, changed) {
-            if (changed.view && browseObject) {
-                let provider = openmct
-                    .objectViews
-                    .getByProviderKey(changed.view);
-                viewObject(browseObject, provider);
-            }
-        });
-
     }
-
 });
