@@ -432,9 +432,9 @@ export default {
         shouldSnapToBottom() {
             return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
         },
-        scrollToBottom() {
+        scrollToBottom: _.throttle(function() {
             this.scrollable.scrollTop = this.scrollable.scrollHeight;
-        },
+        }, 100),
         synchronizeScrollX() {
             this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
         },
