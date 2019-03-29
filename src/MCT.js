@@ -352,7 +352,7 @@ define([
         legacyRegistry.enable('adapter');
 
         this.router.route(/^\/$/, () => {
-            this.router.setPath('/browse/mine');
+            this.router.setPath('/browse/');
         });
 
         /**

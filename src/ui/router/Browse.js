@@ -23,14 +23,18 @@ define([
                 unobserve();
                 unobserve = undefined;
             }
+            if (path === undefined || path.length === 0) {
+                //If no object path provided, navigate to last child of root.
+                navigateToFirstChildOfRoot();
+                return;
+            }
 
+            //Split path into object identifiers
             if (!Array.isArray(path)) {
                 path = path.split('/');
             }
 
-            return Promise.all(path.map((keyString)=>{
-                return openmct.objects.get(keyString);
-            })).then((objects)=>{
+            pathToObjects(path).then((objects)=>{
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
                 }
@@ -79,11 +83,29 @@ define([
             });
         }
 
+        function navigateToFirstChildOfRoot() {
+            openmct.objects.get('ROOT').then(rootObject => {
+                openmct.composition.get(rootObject).load()
+                    .then(children => {
+                        let lastChild = children[children.length - 1];
+                        if (!lastChild) {
+                            console.error('Unable to navigate to anything. No root objects found.');
+                        } else {
+                            let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
+                            openmct.router.setPath(`#/browse/${lastChildId}`);
+                        }
+                    });
+            });
+        }
+
+        function pathToObjects(path) {
+            return Promise.all(path.map((keyString)=>{
+                return openmct.objects.get(keyString);
+            }));
+        }
+
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
             let navigatePath = results[1];
-            if (!navigatePath) {
-                navigatePath = 'mine';
-            }
             navigateToPath(navigatePath, params.view);
         });
 
