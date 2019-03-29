@@ -35,16 +35,20 @@ define(
                 mockTemplate,
                 mockElement,
                 mockScope,
+                mockTimeout,
                 overlayService;
 
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj("$document", ["find"]);
                 mockCompile = jasmine.createSpy("$compile");
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
-                mockBody = jasmine.createSpyObj("body", ["prepend"]);
+                mockBody = jasmine.createSpyObj("body", ["append"]);
                 mockTemplate = jasmine.createSpy("template");
                 mockElement = jasmine.createSpyObj("element", ["remove"]);
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
+                mockTimeout = function (callback) {
+                    callback();
+                }
 
                 mockDocument.find.and.returnValue(mockBody);
                 mockCompile.and.returnValue(mockTemplate);
@@ -54,7 +58,8 @@ define(
                 overlayService = new OverlayService(
                     mockDocument,
                     mockCompile,
-                    mockRootScope
+                    mockRootScope,
+                    mockTimeout
                 );
             });
 
@@ -67,7 +72,7 @@ define(
 
             it("adds the templated element to the body", function () {
                 overlayService.createOverlay("test", {});
-                expect(mockBody.prepend).toHaveBeenCalledWith(mockElement);
+                expect(mockBody.append).toHaveBeenCalledWith(mockElement);
             });
 
             it("places the provided model/key in its template's scope", function () {
