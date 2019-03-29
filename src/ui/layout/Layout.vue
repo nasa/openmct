@@ -95,7 +95,7 @@
             .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
-                overflow: auto;
+                overflow-x: hidden;
 
                 > * {
                     flex: 0 0 auto;
@@ -242,7 +242,10 @@
 
     .is-editing {
         .l-shell__main-container {
+            $m: 3px;
             box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+            margin-left: $m;
+            margin-right: $m;
 
             &[s-selected] {
                 // Provide a clearer selection context articulation for the main edit area

@@ -26,7 +26,8 @@
             v-for="(tab, index) in tabsList"
             :key="index"
             :class="{'invisible': !isCurrent(tab)}">
-            <div class="c-tabs-view__object-name l-browse-bar__object-name--w"
+            <div v-if="currentTab"
+                 class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
                 <div class="l-browse-bar__object-name">
                     {{currentTab.domainObject.name}}
@@ -81,6 +82,7 @@
         }
 
         &__empty-message {
+            background: rgba($colorBodyFg, 0.1);
             color: rgba($colorBodyFg, 0.7);
             font-style: italic;
             text-align: center;
@@ -145,6 +147,13 @@ export default {
                 this.showTab(this.tabsList[this.tabsList.length - 1]);
             }
         },
+        onReorder(reorderPlan) {
+            let oldTabs = this.tabsList.slice();
+
+            reorderPlan.forEach(reorderEvent => {
+                this.$set(this.tabsList, reorderEvent.newIndex, oldTabs[reorderEvent.oldIndex]);
+            });
+        },
         onDrop(e) {
             this.setCurrentTab = true;
         },
@@ -171,6 +180,7 @@ export default {
         if (this.composition) {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
+            this.composition.on('reorder', this.onReorder);
             this.composition.load();
         }
 
@@ -187,6 +197,7 @@ export default {
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.onReorder);
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);

@@ -126,7 +126,6 @@
             grid-template-rows: 1fr;
             grid-template-columns: 20px auto 1fr auto;
             grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-end";
-            overflow: hidden;
         }
 
         &__mode-icon {
