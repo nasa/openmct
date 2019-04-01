@@ -568,6 +568,7 @@ export default {
 
             this.openmct.objects.get(frame.domainObjectIdentifier).then((childDomainObject) => {
                 this.RemoveAction.removeFromCompositionAndSetSelection(this.domainObject, childDomainObject);
+                sizeToFill(container.frames);
             });
         },
         allowContainerDrop(event, index) {
