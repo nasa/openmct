@@ -27,6 +27,7 @@ export default class RemoveAction {
         this.cssClass = "icon-trash";
 
         this.openmct = openmct;
+        this.removeFromCompositionAndSetSelection = this.removeFromCompositionAndSetSelection.bind(this);
     }
 
     invoke(objectPath) {
@@ -85,6 +86,14 @@ export default class RemoveAction {
         );
 
         this.openmct.objects.mutate(parent, 'composition', composition);
+    }
+
+    removeFromCompositionAndSetSelection(parent, child) {
+        this.removeFromComposition(parent, child);
+
+        //set selection to parent
+        let currentSelection = this.openmct.selection.selected;
+        this.openmct.selection.select(currentSelection.slice(1));
     }
 
     appliesTo(objectPath) {

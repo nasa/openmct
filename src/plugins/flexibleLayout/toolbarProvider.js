@@ -77,11 +77,11 @@ function ToolbarProvider(openmct) {
                     .containers;
                 let container = containers
                     .filter(c => c.frames.some(f => f.id === frameId))[0];
-                let frame = container
+                let containerIndex = containers.indexOf(container);
+                let frame = container && container
                     .frames
                     .filter((f => f.id === frameId))[0];
-                let containerIndex = containers.indexOf(container);
-                let frameIndex = container.frames.indexOf(frame);
+                let frameIndex = container && container.frames.indexOf(frame);
 
                 deleteFrame = {
                     control: "button",
