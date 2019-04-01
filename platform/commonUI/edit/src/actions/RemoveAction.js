@@ -23,11 +23,7 @@
 /**
  * Module defining RemoveAction. Created by vwoeltje on 11/17/14.
  */
-define([
-    './RemoveDialog'
-], function (
-    RemoveDialog
-) {
+define([], function () {
 
     /**
      * Construct an action which will remove the provided object manifestation.
@@ -114,12 +110,7 @@ define([
             return parent.useCapability('mutation', doMutate);
         }
 
-        /*
-         * Pass in the function to remove the domain object so it can be
-         * associated with an 'OK' button press
-         */
-        dialog = new RemoveDialog(this.openmct, domainObject, removeFromContext);
-        dialog.show();
+        removeFromContext();
     };
 
     // Object needs to have a parent for Remove to be applicable

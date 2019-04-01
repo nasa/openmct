@@ -5,16 +5,16 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
-                <button class="c-click-icon c-click-icon--major icon-new-window" title="Open in a new browser tab"
+                <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
                 </button>
-                <button v-bind:class="['c-click-icon c-click-icon--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
+                <button v-bind:class="['c-icon-button c-icon-button--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
                     v-bind:title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                     @click="fullScreenToggle">
                 </button>
             </div>
-            <div class="l-shell__app-logo">[ App Logo ]</div>
+            <app-logo></app-logo>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -22,9 +22,6 @@
                   handle="after"
                   label="Browse"
                   collapsable>
-                <div class="l-shell__search">
-                    <search class="c-search--major" ref="shell-search"></search>
-                </div>
                 <mct-tree class="l-shell__tree"></mct-tree>
             </pane>
             <pane class="l-shell__pane-main">
@@ -33,7 +30,8 @@
                 </browse-bar>
                 <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
-                             ref="browseObject">
+                             ref="browseObject"
+                             :showEditView="true">
                 </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent">
@@ -76,7 +74,7 @@
             [class*="collapse-button"] {
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
-                    @include cClickIcon();
+                    @include cClickIconButton();
                     position: absolute;
                     right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
                     top: 0;
@@ -97,6 +95,7 @@
             .l-pane__contents {
                 display: flex;
                 flex-flow: column nowrap;
+                overflow-x: hidden;
 
                 > * {
                     flex: 0 0 auto;
@@ -188,7 +187,6 @@
             // Wrapper for main views
             flex: 1 1 auto !important;
             overflow: auto;
-            //font-size: 16px; // TEMP FOR LEGACY STYLING
         }
 
         &__tree {
@@ -211,6 +209,8 @@
             &__main {
                 // Top and bottom padding in container that holds tree, __pane-main and Inspector
                 padding: $shellMainPad;
+                min-height: 0;
+
                 > .l-pane {
                     padding-top: 0;
                     padding-bottom: 0;
@@ -230,11 +230,22 @@
                 width: 200px;
             }
         }
+
+        &__toolbar {
+            $p: $interiorMargin;
+            background: $editUIBaseColor;
+            border-radius: $basicCr;
+            height: $p + 24px; // Need to standardize the height
+            padding: $p;
+        }
     }
 
     .is-editing {
         .l-shell__main-container {
+            $m: 3px;
             box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+            margin-left: $m;
+            margin-right: $m;
 
             &[s-selected] {
                 // Provide a clearer selection context articulation for the main edit area
@@ -242,6 +253,7 @@
             }
         }
     }
+
 </style>
 
 <script>
@@ -250,12 +262,12 @@
     import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import CreateButton from './CreateButton.vue';
-    import search from '../components/search.vue';
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
     import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';
+    import AppLogo from './AppLogo.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -293,42 +305,35 @@
             ObjectView,
             'mct-template': MctTemplate,
             CreateButton,
-            search,
             multipane,
             pane,
             BrowseBar,
             StatusBar,
-            Toolbar
+            Toolbar,
+            AppLogo
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
                 this.isEditing = isEditing;
             });
+
+            this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
             return {
                 fullScreen: false,
-                conductorComponent: {},
-                isEditing: false
+                conductorComponent: undefined,
+                isEditing: false,
+                hasToolbar: false
             }
         },
         computed: {
             toolbar() {
-                let selection = this.openmct.selection.get();
-                let structure = undefined;
-
-                if (!selection[0]) {
-                    structure = [];
-                } else {
-                    structure = this.openmct.toolbars.get(selection);
-                }
-
-                return this.isEditing && structure.length > 0;
+                return this.hasToolbar && this.isEditing;
             }
         },
         methods: {
             fullScreenToggle() {
-
                 if (this.fullScreen) {
                     this.fullScreen = false;
                     exitFullScreen();
@@ -339,6 +344,17 @@
             },
             openInNewTab(event) {
                 window.open(window.location.href);
+            },
+            toggleHasToolbar(selection) {
+                let structure = undefined;
+
+                if (!selection[0]) {
+                    structure = [];
+                } else {
+                    structure = this.openmct.toolbars.get(selection);
+                }
+
+                this.hasToolbar = structure.length > 0;
             }
         }
     }

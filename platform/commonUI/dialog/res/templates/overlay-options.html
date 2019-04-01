@@ -19,18 +19,18 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<mct-container key="overlay">
-    <div class="abs top-bar">
-        <div class="dialog-title">{{ngModel.dialog.title}}</div>
-        <div class="hint">{{ngModel.dialog.hint}}</div>
+<mct-container key="c-overlay__contents">
+    <div class=c-overlay__top-bar">
+        <div class="c-overlay__dialog-title">{{ngModel.dialog.title}}</div>
+        <div class="c-overlay__dialog-hint hint">{{ngModel.dialog.hint}}</div>
     </div>
-    <div class='abs editor'>
+    <div class='c-overlay__contents-main'>
         <mct-include key="ngModel.dialog.template"
                      parameters="ngModel.dialog.parameters"
                      ng-model="ngModel.dialog.model">
         </mct-include>
     </div>
-    <div class="abs bottom-bar">
+    <div class="c-overlay__button-bar">
         <a ng-repeat="option in ngModel.dialog.options"
            href=''
            class="s-button lg"

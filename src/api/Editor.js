@@ -39,6 +39,7 @@ export default class Editor extends EventEmitter {
      * Initiate an editing session. This will start a transaction during
      * which any persist operations will be deferred until either save()
      * or finish() are called.
+     * @private
      */
     edit() {
         if (this.editing === true) {
@@ -59,6 +60,8 @@ export default class Editor extends EventEmitter {
     /**
      * Save any unsaved changes from this editing session. This will
      * end the current transaction.
+     *
+     * @private
      */
     save() {
         return this.getTransactionService().commit().then((result)=>{
@@ -72,6 +75,8 @@ export default class Editor extends EventEmitter {
 
     /**
      * End the currently active transaction and discard unsaved changes.
+     *
+     * @private
      */
     cancel() {
         this.getTransactionService().cancel();

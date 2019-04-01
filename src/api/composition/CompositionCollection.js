@@ -56,7 +56,8 @@ define([
         this.listeners = {
             add: [],
             remove: [],
-            load: []
+            load: [],
+            reorder: []
         };
         this.onProviderAdd = this.onProviderAdd.bind(this);
         this.onProviderRemove = this.onProviderRemove.bind(this);
@@ -91,6 +92,13 @@ define([
                     this.onProviderRemove,
                     this
                 );
+            } if (event === 'reorder') {
+                this.provider.on(
+                    this.domainObject,
+                    'reorder',
+                    this.onProviderReorder,
+                    this
+                )
             }
         }
 
@@ -139,6 +147,13 @@ define([
                         this.domainObject,
                         'remove',
                         this.onProviderRemove,
+                        this
+                    );
+                } else if (event === 'reorder') {
+                    this.provider.off(
+                        this.domainObject,
+                        'reorder',
+                        this.onProviderReorder,
                         this
                     );
                 }
@@ -210,6 +225,29 @@ define([
     };
 
     /**
+     * Reorder the domain objects in this composition.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {number} oldIndex
+     * @param {number} newIndex
+     * @memberof module:openmct.CompositionCollection#
+     * @name remove
+     */
+    CompositionCollection.prototype.reorder = function (oldIndex, newIndex, skipMutate) {
+        this.provider.reorder(this.domainObject, oldIndex, newIndex);
+    };
+
+    /**
+     * Handle reorder from provider.
+     * @private
+     */
+    CompositionCollection.prototype.onProviderReorder = function (reorderMap) {
+        this.emit('reorder', reorderMap);
+    };
+
+    /**
      * Handle adds from provider.
      * @private
      */
@@ -232,12 +270,12 @@ define([
      * Emit events.
      * @private
      */
-    CompositionCollection.prototype.emit = function (event, payload) {
+    CompositionCollection.prototype.emit = function (event, ...payload) {
         this.listeners[event].forEach(function (l) {
             if (l.context) {
-                l.callback.call(l.context, payload);
+                l.callback.apply(l.context, payload);
             } else {
-                l.callback(payload);
+                l.callback(...payload);
             }
         });
     };

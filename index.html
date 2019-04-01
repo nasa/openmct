@@ -27,7 +27,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title></title>
         <script src="dist/openmct.js"></script>
-        <link rel="stylesheet" href="dist/openmct.css">
+        <link rel="stylesheet" href="dist/styles/openmct.css">
         <link rel="icon" type="image/png" href="dist/favicons/favicon-32x32.png" sizes="32x32">
         <link rel="icon" type="image/png" href="dist/favicons/favicon-96x96.png" sizes="96x96">
         <link rel="icon" type="image/png" href="dist/favicons/favicon-16x16.png" sizes="16x16">
@@ -36,7 +36,9 @@
     <body>
     </body>
     <script>
-        var THIRTY_MINUTES = 30 * 60 * 1000;
+        const FIVE_MINUTES = 5 * 60 * 1000;
+        const THIRTY_MINUTES = 30 * 60 * 1000;
+
         [
             'example/eventGenerator',
             'example/styleguide'
@@ -51,6 +53,9 @@
         openmct.install(openmct.plugins.ImportExport());
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.panel"
+        }));
+        openmct.install(openmct.plugins.DisplayLayout({
+            showAsView: ['summary-widget', 'example.imagery']
         }));
         openmct.install(openmct.plugins.Conductor({
             menuOptions: [
@@ -67,8 +72,8 @@
                     timeSystem: 'utc',
                     clock: 'local',
                     clockOffsets: {
-                        start: -25 * 60 * 1000,
-                        end: 5 * 60 * 1000
+                        start: - THIRTY_MINUTES,
+                        end: FIVE_MINUTES
                     }
                 }
             ]
@@ -80,206 +85,8 @@
         openmct.install(openmct.plugins.FlexibleLayout());
         openmct.install(openmct.plugins.LADTable());
         openmct.install(openmct.plugins.NotebookSVC());
-        openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
-        openmct.time.timeSystem('utc');
+        openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
+        openmct.install(openmct.plugins.ObjectMigration());
         openmct.start();
-
-        // openmct.toolbars.addProvider({
-        //     name: "Testing Toolbar",
-        //     key: "testing",
-        //     description: "a mock toolbar that exercises all controls",
-        //     forSelection: function (selection) {
-        //         return true; // always applies.
-        //     },
-        //     toolbar: function (selection) {
-        //         return [
-        //             {
-        //                 control: 'menu',
-        //                 icon: 'icon-plus',
-        //                 label: 'Add',
-        //                 options: [
-        //                     { name: 'Box', class: 'icon-box', title: 'Add Box' },
-        //                     { name: 'Line', class: 'icon-line-horz', title: 'Add Line' },
-        //                     { name: 'Text', class: 'icon-font', title: 'Add Text' },
-        //                     { name: 'Image', class: 'icon-image', title: 'Add Image' }
-        //                 ]
-        //             },
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'color-picker',
-        //                 icon: 'icon-paint-bucket',
-        //                 value: '#33ff00',
-        //             },
-        //             {
-        //                 control: 'color-picker',
-        //                 icon: 'icon-pencil',
-        //                 value: '#ffffff',
-        //             },
-        //             {
-        //                 control: 'color-picker',
-        //                 icon: 'icon-font',
-        //                 value: '#333333',
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'select-menu',
-        //                 value: 11,
-        //                 options: [
-        //                     { value: 9, name: '9 px' },
-        //                     { value: 10, name: '10 px' },
-        //                     { value: 11, name: '11 px' },
-        //                     { value: 12, name: '12 px' },
-        //                     { value: 13, name: '13 px' },
-        //                     { value: 14, name: '14 px' },
-        //                     { value: 16, name: '16 px' },
-        //                     { value: 18, name: '18 px' },
-        //                     { value: 20, name: '20 px' },
-        //                     { value: 24, name: '24 px' },
-        //                     { value: 28, name: '28 px' },
-        //                     { value: 32, name: '32 px' },
-        //                     { value: 40, name: '40 px' },
-        //                     { value: 48, name: '48 px' },
-        //                     { value: 56, name: '56 px' },
-        //                     { value: 64, name: '64 px' },
-        //                     { value: 72, name: '72 px' },
-        //                     { value: 80, name: '80 px' },
-        //                     { value: 88, name: '88 px' },
-        //                     { value: 96, name: '96 px' },
-        //                     { value: 128, name: '128 px' },
-        //                     { value: 160, name: '160 px' }
-        //                 ]
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'menu',
-        //                 icon: 'icon-layers',
-        //                 options: [
-        //                     { name: 'Move to top', class: 'icon-arrow-double-up', title: 'Move to top' },
-        //                     { name: 'Move up', class: 'icon-arrow-up', title: 'Move up' },
-        //                     { name: 'Move down', class: 'icon-arrow-down', title: 'Move down' },
-        //                     { name: 'Move to bottom', class: 'icon-arrow-double-down', title: 'Move to bottom' }
-        //                 ]
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'button',
-        //                 icon: 'icon-gear'
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'input',
-        //                 type: 'number',
-        //                 label: 'X',
-        //                 value: 1,
-        //                 title: 'X position'
-        //             },
-        //             {
-        //                 control: 'input',
-        //                 type: 'number',
-        //                 label: 'Y',
-        //                 value: 2,
-        //                 title: 'Y position'
-        //             },
-        //             {
-        //                 control: 'input',
-        //                 type: 'number',
-        //                 label: 'W',
-        //                 value: 3,
-        //                 title: 'Width'
-        //             },
-        //             {
-        //                 control: 'input',
-        //                 type: 'number',
-        //                 label: 'H',
-        //                 value: 4,
-        //                 title: 'Height'
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'button',
-        //                 icon: 'icon-trash',
-        //                 label: 'delete',
-        //                 modifier: 'caution'
-        //             },
-        //
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'checkbox',
-        //                 name: 'this is a checkbox',
-        //             },
-        //             {
-        //                 control: 'separator'
-        //             },
-        //             {
-        //                 control: 'toggle-button',
-        //                 title: 'Toggle Frame',
-        //                 property: 'hideFrame',
-        //                 value: false,
-        //                 options: [
-        //                     {
-        //                         value: true,
-        //                         icon: 'icon-frame-hide'
-        //                     },
-        //                     {
-        //                         value: false,
-        //                         icon: 'icon-frame-show'
-        //                     }
-        //                 ]
-        //             },
-        //             {
-        //                 control: 'toggle-button',
-        //                 title: 'Snap to grid',
-        //                 property: 'snapToGrid',
-        //                 value: true,
-        //                 options: [
-        //                     {
-        //                         value: true,
-        //                         icon: 'icon-grid-snap-to'
-        //                     },
-        //                     {
-        //                         value: false,
-        //                         icon: 'icon-grid-snap-no'
-        //                     }
-        //                 ]
-        //             },
-        //             {
-        //                 control: 'toggle-button',
-        //                 title: 'Toggle label',
-        //                 property: 'showLabel',
-        //                 value: true,
-        //                 options: [
-        //                     {
-        //                         value: true,
-        //                         icon: 'icon-two-parts-both'
-        //                     },
-        //                     {
-        //                         value: false,
-        //                         icon: 'icon-two-parts-one-only'
-        //                     }
-        //                 ]
-        //             }
-        //         ];
-        //     }
-        // });
-
     </script>
 </html>

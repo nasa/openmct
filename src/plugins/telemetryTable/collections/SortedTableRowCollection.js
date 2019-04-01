@@ -127,7 +127,8 @@ define(
                     if (testRowValue > lastValue) {
                         return this.rows.length;
                     } else if (testRowValue === lastValue) {
-                        return this.rows.length - 1;
+                        // Maintain stable sort
+                        return this.rows.length;
                     } else if (testRowValue <= firstValue) {
                         return 0;
                     } else {
@@ -141,7 +142,8 @@ define(
                     } else if (testRowValue < lastValue) {
                         return this.rows.length;
                     } else if (testRowValue === lastValue) {
-                        return this.rows.length - 1;
+                        // Maintain stable sort
+                        return this.rows.length;
                     } else {
                         // Use a custom comparison function to support descending sort.
                         return lodashFunction(rows, testRow, (thisRow) => {

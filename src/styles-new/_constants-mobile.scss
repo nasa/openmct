@@ -27,8 +27,8 @@ $mobileListIconSize: 30px;
 $mobileTitleDescH: 35px;
 $mobileOverlayMargin: 20px;
 $mobileMenuIconD: 34px;
-$phoneItemH: floor($ueBrowseGridItemLg/4);
-$tabletItemH: floor($ueBrowseGridItemLg/3);
+$phoneItemH: floor($gridItemMobile / 4);
+$tabletItemH: floor($gridItemMobile / 3);
 
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobileTreeItemH: 35px;

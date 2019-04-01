@@ -59,6 +59,7 @@ define([
         this.openmct = openmct;
         this.objectService = objectService;
         this.exportImageService = exportImageService;
+        this.cursorGuide = false;
 
         $scope.pending = 0;
 
@@ -71,6 +72,14 @@ define([
         this.config.series.forEach(this.addSeries, this);
 
         this.followTimeConductor();
+
+        this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+
+        this.filterObserver = this.openmct.objects.observe(
+            this.newStyleDomainObject,
+            'configuration.filters',
+            this.updateFiltersAndResubscribe.bind(this)
+        );
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -154,6 +163,9 @@ define([
             clearInterval(this.checkForSize);
             delete this.checkForSize;
         }
+        if (this.filterObserver) {
+            this.filterObserver();
+        }
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
@@ -207,6 +219,7 @@ define([
 
     PlotController.prototype.stopLoading = function () {
         this.$scope.pending -= 1;
+        this.$scope.$digest();
     };
 
     /**
@@ -244,6 +257,12 @@ define([
                           xRange.max === xDisplayRange.max);
     };
 
+    PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
+        this.config.series.forEach(function (series) {
+            series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+        });
+    };
+
     /**
      * Export view as JPG.
      */
@@ -264,6 +283,11 @@ define([
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
+    };
+
+    PlotController.prototype.toggleCursorGuide = function ($event) {
+        this.cursorGuide = !this.cursorGuide;
+        this.$scope.$broadcast('cursorguide', $event);
     };
 
     return PlotController;

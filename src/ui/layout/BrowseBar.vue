@@ -2,7 +2,7 @@
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
             <button v-if="hasParent"
-                class="l-browse-bar__nav-to-parent-button c-click-icon c-click-icon--major icon-pointer-left" 
+                class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
                 @click="goToParent"></button>
             <div class="l-browse-bar__object-name--w"
                  :class="type.cssClass">
@@ -15,7 +15,7 @@
                     {{ domainObject.name }}
                 </span>
             </div>
-            <div class="l-browse-bar__context-actions c-disclosure-button" @click="showContextMenu"></div>
+            <div class="l-browse-bar__context-actions c-disclosure-button" @click.prevent.stop="showContextMenu"></div>
         </div>
 
         <div class="l-browse-bar__end">
@@ -24,7 +24,7 @@
                 <button class="c-button--menu"
                      :class="currentView.cssClass"
                      title="Switch view type"
-                     @click="toggleViewMenu">
+                     @click.stop="toggleViewMenu">
                     <span class="c-button__label">
                           {{ currentView.name }}
                     </span>
@@ -43,13 +43,32 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__edit c-button icon-notebook" 
+                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
                     title="New Notebook entry" 
                     @click="snapshot()">
                 </button>
-                <button class="l-browse-bar__actions__notebook-entry c-button c-button--major icon-pencil" title="Edit" v-if="isViewEditable & !isEditing" @click="edit()"></button>
-                <button class="l-browse-bar__actions c-button c-button--major icon-save" title="Save and Finish Editing" v-if="isEditing" @click="saveAndFinishEditing()"></button>
-                <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="cancelEditing()"></button>
+                <button class="l-browse-bar__actions__edit c-button c-button--major icon-pencil" title="Edit" v-if="isViewEditable & !isEditing" @click="edit()"></button>
+
+                <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+                    v-if="isEditing">
+                    <button class="c-button--menu c-button--major icon-save" title="Save" @click.stop="toggleSaveMenu"></button>
+                    <div class="c-menu" v-show="showSaveMenu">
+                        <ul>
+                            <li @click="saveAndFinishEditing"
+                                class="icon-save"
+                                title="Save and Finish Editing">
+                                Save and Finish Editing
+                            </li>
+                            <li @click="saveAndContinueEditing"
+                                class="icon-save"
+                                title="Save and Continue Editing">
+                                Save and Continue Editing
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="l-browse-bar__actions c-button icon-x" title="Cancel Editing" v-if="isEditing" @click="promptUserandCancelEditing()"></button>
             </div>
         </div>
     </div>
@@ -62,9 +81,15 @@ const PLACEHOLDER_OBJECT = {};
     export default {
         inject: ['openmct'],
         methods: {
-            toggleViewMenu(event) {
-                event.stopPropagation();
+            toggleViewMenu() {
                 this.showViewMenu = !this.showViewMenu;
+            },
+            toggleSaveMenu() {
+                this.showSaveMenu = !this.showSaveMenu;
+            },
+            closeViewAndSaveMenu() {
+                this.showViewMenu = false;
+                this.showSaveMenu = false;
             },
             updateName(event) {
                 // TODO: handle isssues with contenteditable text escaping.
@@ -84,20 +109,48 @@ const PLACEHOLDER_OBJECT = {};
             edit() {
                 this.openmct.editor.edit();
             },
-            cancelEditing() {
-                this.openmct.editor.cancel();
+            promptUserandCancelEditing() {
+                let dialog = this.openmct.overlays.dialog({
+                    iconClass: 'alert',
+                    message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
+                    buttons: [
+                        {
+                            label: 'Ok',
+                            emphasis: true,
+                            callback: () => {
+                                this.openmct.editor.cancel();
+                                dialog.dismiss();
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            },
+            promptUserbeforeNavigatingAway(event) {
+                if(this.openmct.editor.isEditing()) {
+                    event.preventDefault();
+                    event.returnValue = '';
+                }
             },
             saveAndFinishEditing() {
-                this.openmct.editor.save().then(()=> {
+                return this.openmct.editor.save().then(()=> {
                     this.openmct.notifications.info('Save successful');
                 }).catch((error) => {
                     this.openmct.notifications.error('Error saving objects');
                     console.error(error);
                 });
             },
+            saveAndContinueEditing() {
+                this.saveAndFinishEditing().then(() => {
+                    this.openmct.editor.edit();
+                });
+            },
             showContextMenu(event) {
-                event.preventDefault();
-                event.stopPropagation();
                 this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
             },
             snapshot() {
@@ -111,6 +164,7 @@ const PLACEHOLDER_OBJECT = {};
         data: function () {
             return {
                 showViewMenu: false,
+                showSaveMenu: false,
                 domainObject: PLACEHOLDER_OBJECT,
                 viewKey: undefined,
                 isEditing: this.openmct.editor.isEditing()
@@ -161,15 +215,16 @@ const PLACEHOLDER_OBJECT = {};
         mounted: function () {
             this.notebookSnapshot = new NotebookSnapshot(this.openmct);
 
-            document.addEventListener('click', () => {
-                if (this.showViewMenu) {
-                    this.showViewMenu = false;
-                }
-            });
+            document.addEventListener('click', this.closeViewAndSaveMenu);
+            window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
 
             this.openmct.editor.on('isEditing', (isEditing) => {
                 this.isEditing = isEditing;
             });
+        },
+        beforeDestroy: function () {
+            document.removeEventListener('click', this.closeViewAndSaveMenu);
+            window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }
     }
 </script>

@@ -46,7 +46,7 @@ define([
             view: function (selection) {
                 let component;
                 let domainObject = selection[0].context.item;
-                const tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -64,6 +64,7 @@ define([
                     destroy: function () {
                         component.$destroy();
                         component = undefined;
+                        tableConfiguration = undefined;
                     }
                 }
             },

@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import Conductor from './Conductor.vue';
-import Vue from 'vue';
 
 function isTruthy(a) {
     return !!a;
@@ -29,20 +28,17 @@ function isTruthy(a) {
 
 function validateMenuOption(menuOption, index) {
     if (menuOption.clock && !menuOption.clockOffsets) {
-        return "clock-based menuOption at index " + index + " is " +
-            "missing required property 'clockOffsets'.";
+        return `Conductor menu option is missing required property 'clockOffsets'. This field is required when configuring a menu option with a clock.\r\n${JSON.stringify(menuOption)}`;
     }
     if (!menuOption.timeSystem) {
-        return "menuOption at index " + index + " is missing " +
-            "required property 'timeSystem'.";
+        return `Conductor menu option is missing required property 'timeSystem'\r\n${JSON.stringify(menuOption)}`;
     }
     if (!menuOption.bounds && !menuOption.clock) {
-        return "fixed-bounds menuOption at index " + index + " is " +
-            "missing required property 'bounds'";
+        return `Conductor menu option is missing required property 'bounds'. This field is required when configuring a menu option with fixed bounds.\r\n${JSON.stringify(menuOption)}`;
     }
 }
 
-function validateConfiguration(config) {
+function hasRequiredOptions(config) {
     if (config === undefined ||
         config.menuOptions === undefined ||
         config.menuOptions.length === 0) {
@@ -56,7 +52,7 @@ function validateConfiguration(config) {
     return undefined;
 }
 
-function validateRuntimeConfiguration(config, openmct) {
+function validateConfiguration(config, openmct) {
     var systems = openmct.time.getAllTimeSystems()
         .reduce(function (m, ts) {
             m[ts.key] = ts;
@@ -68,23 +64,19 @@ function validateRuntimeConfiguration(config, openmct) {
             return m;
         }, {});
 
-    return config.menuOptions.map(function (menuOption, index) {
+    return config.menuOptions.map(function (menuOption) {
         if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
-            return "menuOption at index " + index + " specifies a " +
-                    "timeSystem that does not exist: " + menuOption.timeSystem;
+            return `Time system '${menuOption.timeSystem}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }
         if (menuOption.clock && !clocks[menuOption.clock]) {
-            return "menuOption at index " + index + " specifies a " +
-                    "clock that does not exist: " + menuOption.clock;
+            return `Clock '${menuOption.clock}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }
     }).filter(isTruthy).join('\n');
 }
 
 function throwIfError(configResult) {
     if (configResult) {
-        throw new Error("Invalid Time Conductor Configuration: \n" +
-            configResult + '\n' +
-            "https://github.com/nasa/openmct/blob/master/API.md#the-time-conductor");
+        throw new Error(`Invalid Time Conductor Configuration. ${configResult} \r\n https://github.com/nasa/openmct/blob/master/API.md#the-time-conductor`);
     }
 }
 
@@ -101,27 +93,21 @@ function mountComponent(openmct, configuration) {
     });
 }
 
-export default function (config){
-
-    let configResult = validateConfiguration(config);
-    throwIfError(configResult);
-
+export default function (config) {
     return function (openmct) {
+        let configResult = hasRequiredOptions(config) || validateConfiguration(config, openmct);
+        throwIfError(configResult);
+
+        var defaults = config.menuOptions[0];
+        if (defaults.clock) {
+            openmct.time.clock(defaults.clock, defaults.clockOffsets);
+            openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+        } else {
+            openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+        }
 
         openmct.on('start', function () {
-            configResult = validateRuntimeConfiguration(config, openmct);
-            throwIfError(configResult);
-
-            var defaults = config.menuOptions[0];
-            if (defaults.clock) {
-                openmct.time.clock(defaults.clock, defaults.clockOffsets);
-                openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
-            } else {
-                openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
-            }
-
             mountComponent(openmct, config);
-
         });
     };
-};
+}

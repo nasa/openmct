@@ -40,6 +40,7 @@ $menuLineH: 1.5rem;
 $treeItemIndent: 16px;
 $treeTypeIconW: 18px;
 $overlayOuterMarginLg: 5%;
+$overlayOuterMarginFullscreen: 0%;
 $overlayOuterMarginDialog: 20%;
 $overlayInnerMargin: 25px;
 /*************** Items */
@@ -59,6 +60,30 @@ $plotLegendH: 20px;
 $plotSwatchD: 8px;
 $plotDisplayArea: (0, 0, $plotXBarH, $plotYBarW); // 1: Top, 2: right, 3: bottom, 4: left
 $plotMinH: 95px;
+$controlBarH: 25px;
+/*************** Imagery */
+$imageMainControlBarH: 25px;
+$imageThumbsD: 100px;
+$imageThumbsWrapperH: 155px;
+$imageThumbPad: 1px;
+/*************** Bubbles */
+$bubbleArwSize: 10px;
+$bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
+/*************** Menus */
+$paletteMenuMinW: 128px; // Min-width of palettes when in a dropdown menu
+/*************** Forms */
+$formLabelMinW: 120px;
+$formLabelW: 30%;
+/*************** Wait Spinner */
+$waitSpinnerD: 32px;
+$waitSpinnerTreeD: 20px;
+$waitSpinnerBorderW: 5px;
+$waitSpinnerTreeBorderW: 3px;
+/*************** Messages */
+$messageIconD: 80px;
+$messageListIconD: 32px;
 
 /************************** MOBILE */
 $mobileMenuIconD: 24px; // Used

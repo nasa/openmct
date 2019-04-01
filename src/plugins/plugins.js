@@ -40,7 +40,9 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
-    './notebook-svc/plugin'
+    './notebook-svc/plugin',
+    './filters/plugin',
+    './objectMigration/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -61,7 +63,9 @@ define([
     FlexibleLayout,
     Tabs,
     LADTable,
-    NotebookSVC
+    NotebookSVC,
+    Filters,
+    ObjectMigration
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -75,26 +79,6 @@ define([
             };
         };
     });
-
-    plugins.Snow = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "snow"
-            });
-            import('snow' /* webpackChunkName: "theme-snow" */);
-        };
-    };
-
-    plugins.Espresso = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "espresso"
-            });
-            import('espresso' /* webpackChunkName: "theme-espresso" */);
-        };
-    };
 
     plugins.UTCTimeSystem = UTCTimeSystem;
 
@@ -177,6 +161,8 @@ define([
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
     plugins.NotebookSVC = NotebookSVC;
+    plugins.Filters = Filters;
+    plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;
 });

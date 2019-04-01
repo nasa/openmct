@@ -160,7 +160,7 @@ define([
                 },
                 {
                     "key": "remove",
-                    "category": "contextual",
+                    "category": "legacy",
                     "implementation": RemoveAction,
                     "cssClass": "icon-trash",
                     "name": "Remove",

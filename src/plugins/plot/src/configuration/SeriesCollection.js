@@ -66,6 +66,7 @@ define([
         },
         addTelemetryObject: function (domainObject, index) {
             var seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
+            var filters = this.plot.getPersistedFilters(domainObject.identifier);
             var plotObject = this.plot.get('domainObject');
 
             if (!seriesConfig) {
@@ -92,7 +93,8 @@ define([
                 collection: this,
                 openmct: this.openmct,
                 persistedConfig: this.plot
-                    .getPersistedSeriesConfig(domainObject.identifier)
+                    .getPersistedSeriesConfig(domainObject.identifier),
+                filters: filters
             }));
         },
         removeTelemetryObject: function (identifier) {

@@ -126,6 +126,7 @@ define([
             objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
+                reorder: [],
                 composition: [].slice.apply(domainObject.composition)
             };
         }
@@ -160,7 +161,7 @@ define([
         });
 
         objectListeners[event].splice(index, 1);
-        if (!objectListeners.add.length && !objectListeners.remove.length) {
+        if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
             delete this.listeningTo[keyString];
         }
     };
@@ -178,8 +179,12 @@ define([
      * @method remove
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
-        // TODO: this needs to be synchronized via mutation.
-        throw new Error('Default Provider does not implement removal.');
+        let composition = domainObject.composition.filter(function (child) {
+            return !(childId.namespace === child.namespace &&
+                childId.key === child.key);
+        });
+
+        this.publicAPI.objects.mutate(domainObject, 'composition', composition);
     };
 
     /**
@@ -197,6 +202,54 @@ define([
     DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
+    };
+
+    DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
+        let newComposition = domainObject.composition.slice();
+        let removeId = oldIndex > newIndex ? oldIndex + 1 : oldIndex;
+        let insertPosition = oldIndex < newIndex ? newIndex + 1 : newIndex;
+        //Insert object in new position
+        newComposition.splice(insertPosition, 0, domainObject.composition[oldIndex]);
+        newComposition.splice(removeId, 1);
+
+        let reorderPlan = [{
+            oldIndex,
+            newIndex
+        }];
+
+        if (oldIndex > newIndex) {
+            for (let i = newIndex; i < oldIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i + 1
+                });
+            }
+        } else {
+            for (let i = oldIndex + 1; i <= newIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i - 1
+                });
+            }
+        }
+        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+
+        let id = objectUtils.makeKeyString(domainObject.identifier);
+        var listeners = this.listeningTo[id];
+
+        if (!listeners) {
+            return;
+        }
+
+        listeners.reorder.forEach(notify);
+
+        function notify(listener) {
+            if (listener.context) {
+                listener.callback.call(listener.context, reorderPlan);
+            } else {
+                listener.callback(reorderPlan);
+            }
+        }
     };
 
     /**

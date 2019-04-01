@@ -21,18 +21,15 @@
  *****************************************************************************/
 
 @import "vendor/normalize.min.css";
-@import "sass-base.scss";
+@import "sass-base";
 
 /******************** RENDERS CSS */
+@import "about";
 @import "glyphs";
 @import "global";
 @import "status";
 @import "controls";
+@import "forms";
 @import "table";
 @import "legacy";
-
-/******************** LEGACY CSS */
-$output-bourbon-deprecation-warnings: false;
-@import "bourbon";
-@import "legacy-styles";
-
+@import "legacy-plots";

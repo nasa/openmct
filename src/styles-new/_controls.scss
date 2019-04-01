@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/********* Buttons */
+/******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {
     @include htmlInputReset();
@@ -39,16 +39,35 @@ button {
             opacity: 0.5;
         }
     }
-}
 
-.c-compact-button {
-    @include cCompactButtons($bg: $colorBtnBg, $fg: $colorBtnFg, $bgHov: $colorBtnBgHov);
+    &--swatched {
+        // Used with c-button--menu: a visual button with a larger swatch element adjacent to an icon
+        .c-swatch {
+            $d: 12px;
+            margin-left: $interiorMarginSm;
+            height: $d; width: $d;
+        }
+    }
+
+    &.is-active {
+        background: $colorBtnActiveBg;
+        color: $colorBtnActiveFg;
+    }
+
+    &.is-selected {
+        background: $colorBtnSelectedBg;
+        color: $colorBtnSelectedFg;
+    }
 }
 
 /********* Icon Buttons */
-.c-click-icon,
-.c-click-swatch {
+.c-click-icon {
     @include cClickIcon();
+}
+
+.c-icon-button,
+.c-click-swatch {
+    @include cClickIconButton();
 
     &--menu {
         &:after {
@@ -61,8 +80,8 @@ button {
     }
 }
 
-.c-click-icon {
-    .c-click-icon__label {
+.c-icon-button {
+    .c-icon-button__label {
         margin-left: $interiorMargin;
     }
 
@@ -130,7 +149,7 @@ button {
             font-family: symbolsfont;
             font-size: 1rem * $s;
             transform-origin: center;
-            transition: transform 100ms ease-in-out;
+            transition: $transOut;
         }
     }
 
@@ -237,6 +256,81 @@ select {
     border: none;
     border-radius: $controlCr;
     padding: 1px 20px 1px $interiorMargin;
+
+    *,
+    option {
+        background: $colorBtnBg;
+        color: $colorBtnFg;
+    }
+}
+
+// CHECKBOX LISTS
+// __input followed by __label
+.c-checkbox-list {
+    // Rows
+    &__row + &__row { margin-top: $interiorMarginSm; }
+
+    // input and label in each __row
+    &__row {
+        > * + * { margin-left: $interiorMargin; }
+    }
+}
+
+/******************************************************** TABS */
+.c-tabs {
+    // Single horizontal strip of tabs, with a bottom divider line
+    @include userSelectNone();
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    position: relative; // Required in case this is applied to a <ul>
+
+    &:before {
+        // Separator line at bottom of tabs
+        content: '';
+        display: block;
+        height: 1px;
+        width: 100%;
+        background: $colorBtnReverseBg;
+        position: absolute;
+        bottom: 0px;
+        z-index: 1;
+    }
+}
+
+.c-tab {
+    // Used in Tab View, generic tabs
+    background: $colorBtnBg;
+    color: $colorBtnFg;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    margin: 1px 1px 0 0;
+    padding: $interiorMargin $interiorMarginLg;
+    white-space: nowrap;
+
+    --notchSize: 7px;
+
+    clip-path:
+        polygon(
+            0% 0%,
+            calc(100% - var(--notchSize)) 0%,
+            100% var(--notchSize),
+            100% calc(100% - var(--notchSize)),
+            100% 100%,
+            0% 100%
+        );
+
+    @include hover() {
+        background: $colorBtnBgHov;
+    }
+
+    &.is-current {
+        background: $colorBtnReverseBg;
+        color: $colorBtnReverseFg;
+        pointer-events: none;
+    }
 }
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
@@ -360,33 +454,37 @@ select {
 .c-palette {
     display: flex;
     flex-flow: column nowrap;
+    line-height: normal;
 
     &__items {
-        flex: 1 1 auto;
         display: grid;
-        grid-template-columns: repeat(auto-fill, 12px);
         grid-gap: 1px;
+        grid-template-columns: repeat(auto-fill, 12px);
+        flex: 1 1 auto;
+
+        .c-menu & {
+            min-width: $paletteMenuMinW;
+        }
     }
 
     &__item {
         $d: 12px;
-
         border: 1px solid transparent;
         cursor: pointer;
-        min-width: $d; min-height: $d;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        width: $d;
+        height: $d;
+        text-align: center;
         transition: $transOut;
 
         &:hover {
             transition: $transIn;
-            $o: 0.7;
-            border-color: rgba($paletteItemBorderOuterColorSelected, $o);
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, $o) 0 0 0 1px;
         }
 
         &.is-selected {
-            border-color: $paletteItemBorderOuterColorSelected !important;
-            border-width: 2px;
-            box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            border-width: 1px;
         }
     }
 
@@ -400,6 +498,44 @@ select {
             @include noColor();
             border-color: $paletteItemBorderInnerColor;
             margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--color {
+        .c-palette__item {
+            &:hover {
+                border-color: rgba($paletteItemBorderOuterColorSelected, 0.7);
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 0.7) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                border-color: $paletteItemBorderOuterColorSelected !important;
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            }
+        }
+    }
+
+    &--icon {
+        .c-palette__items {
+            grid-gap: 3px;
+        }
+
+        .c-palette__item {
+            border-radius: $smallCr;
+            font-size: 0.6rem;
+
+            &:before {
+                display: block;
+                width: 100%;
+            }
+
+            &:hover {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.3) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.6) 0 0 0 1px;
+            }
         }
     }
 }
@@ -431,12 +567,6 @@ select {
 }
 
 .c-toolbar {
-    $p: $interiorMargin;
-    background: $editUIBaseColor;
-    border-radius: $basicCr;
-    height: $p + 24px; // Need to standardize the height
-    padding: $p;
-
     > * + * {
         margin-left: 2px;
     }
@@ -445,12 +575,12 @@ select {
         @include cToolbarSeparator();
     }
 
-    .c-click-icon,
+    .c-icon-button,
     .c-labeled-input {
         color: $editUIBaseColorFg;
     }
 
-    .c-click-icon {
+    .c-icon-button {
         @include cControl();
         $pLR: $interiorMargin - 1;
         $pTB: 2px;
@@ -490,16 +620,10 @@ select {
             margin-left: $interiorMargin;
         }
     }
-
-    .c-palette {
-        min-width: 136px;
-    }
 }
 
 /********* Button Sets */
 .c-button-set {
-    // When one set is adjacent to another, provides a divider between
-
     display: inline-flex;
     flex: 0 0 auto;
 
@@ -508,21 +632,24 @@ select {
         flex: 0 0 auto;
     }
 
-    + .c-button-set {
-        &:before {
-            @include cToolbarSeparator();
-            content: '';
-        }
-    }
-
     &[class*='--strip'] {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
-        // c-click-icons get grouped more closely together
-        &[class^="c-button"] {
+        // c-icon-buttons get grouped more closely together
+        [class^="c-button"] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
+        }
+    }
 
+    &[class*='--strip-h'] {
+        // Horizontal strip
+
+        + .c-button-set {
+            margin-left: $interiorMargin;
+        }
+
+        [class^="c-button"] {
             + * {
                 margin-left: 1px;
             }
@@ -594,6 +721,45 @@ input[type="range"] {
     }
 }
 
+.h-local-controls {
+    // Holder for local controls
+    &--horz {
+        // Horizontal layout be
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &--overlay-content {
+        > .c-button {
+            background: $colorLocalControlOvrBg;
+            border-radius: $controlCr;
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+        }
+    }
+}
+
+.c-local-controls {
+    // Controls that are in close proximity to an element they effect
+    &--show-on-hover {
+        // Hidden by default; requires a hover 1 - 3 levels above to display
+        transition: $transOut;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.has-local-controls:hover {
+    > .c-local-controls--show-on-hover,
+    > * > .c-local-controls--show-on-hover,
+    > * > * > .c-local-controls--show-on-hover,
+    > * > * > * > .c-local-controls--show-on-hover
+    {
+        transition: $transIn;
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
+
 /***************************************************** DRAG AND DROP */
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
@@ -644,25 +810,7 @@ input[type="range"] {
 }
 
 /***************************************************** LEGACY */
-
 .l-btn-set {
-    // Fixes
     display: flex;
     align-items: center;
-}
-
-.h-local-controls {
-    &-overlay-content {
-        box-shadow: $colorBodyBg 0 0 0 2px;
-        display: inline-block;
-        position: absolute;
-        right: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
-    }
-
-    &-trans {
-        // Has a translucent background plate
-        background: rgba($colorBodyBg, 0.8);
-        border-radius: $controlCr;
-    }
 }

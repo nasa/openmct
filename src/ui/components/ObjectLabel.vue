@@ -1,14 +1,47 @@
 <template>
-<a class="c-tree__item__label"
+<a class="c-tree__item__label c-object-label"
     draggable="true"
     @dragstart="dragStart"
     @click="navigateOrPreview"
     :href="objectLink">
-    <div class="c-tree__item__type-icon"
+    <div class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"></div>
-    <div class="c-tree__item__name">{{ observedObject.name }}</div>
+    <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
 </a>
 </template>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+    .c-object-label {
+        // <a> tag and draggable element that holds type icon and name.
+        // Used mostly in trees and lists
+        border-radius: $controlCr;
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+        overflow: hidden;
+        padding: $interiorMarginSm;
+        white-space: nowrap;
+
+        &__name {
+            @include ellipsize();
+            display: inline;
+            color: $colorItemTreeFg;
+            width: 100%;
+        }
+
+        &__type-icon {
+            // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
+            display: block;
+            flex: 0 0 auto;
+            font-size: 1.3em;
+            margin-right: $interiorMarginSm;
+            color: $colorItemTreeIcon;
+            width: $treeTypeIconW;
+        }
+    }
+</style>
+
 
 <script>
 
@@ -66,6 +99,7 @@ export default {
         dragStart(event) {
             let navigatedObject = this.openmct.router.path[0];
             let serializedPath = JSON.stringify(this.objectPath);
+            let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             /*
              * Cannot inspect data transfer objects on dragover/dragenter so impossible to determine composability at
@@ -78,6 +112,7 @@ export default {
             // serialize domain object anyway, because some views can drag-and-drop objects without composition 
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
+            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }
     }
 }

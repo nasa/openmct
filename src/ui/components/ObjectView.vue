@@ -8,10 +8,14 @@ export default {
     inject: ["openmct"],
     props: {
         view: String,
-        object: Object
+        object: Object,
+        showEditView: Boolean
     },
     destroyed() {
         this.clear();
+        if (this.releaseEditModeHandler) {
+            this.releaseEditModeHandler();
+        }
     },
     watch: {
         view(newView, oldView) {
@@ -37,6 +41,11 @@ export default {
             if (this.currentView) {
                 this.currentView.destroy();
                 this.$el.innerHTML = '';
+
+                if (this.releaseEditModeHandler) {
+                    this.releaseEditModeHandler();
+                    delete this.releaseEditModeHandler;
+                }
             }
             delete this.viewContainer;
             delete this.currentView;
@@ -45,6 +54,13 @@ export default {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
+        },
+        invokeEditModeHandler(editMode) {
+            this.currentView.onEditModeChange(editMode);
+        },
+        toggleEditView(editMode) {
+            this.clear();
+            this.updateView(true);
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -55,14 +71,32 @@ export default {
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
             let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+
             if (!provider) {
                 provider = this.openmct.objectViews.get(this.currentObject)[0];
                 if (!provider) {
                     return;
                 }
             }
-            this.currentView = provider.view(this.currentObject);
-            this.currentView.show(this.viewContainer);
+
+
+            if (provider.edit && this.showEditView) {
+                if (this.openmct.editor.isEditing()) {
+                    this.currentView = provider.edit(this.currentObject);
+                } else {
+                    this.currentView = provider.view(this.currentObject, false);    
+                }
+                this.openmct.editor.on('isEditing', this.toggleEditView);
+                this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
+            } else {
+                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing());
+
+                if (this.currentView.onEditModeChange) {
+                    this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
+                    this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.invokeEditModeHandler);
+                }
+            }
+            this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
                 this.removeSelectable = openmct.selection.selectable(

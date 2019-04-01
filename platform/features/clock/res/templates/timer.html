@@ -24,10 +24,10 @@
         <button ng-click="timer.clickStopButton()"
                 ng-hide="timer.timerState == 'stopped'"
                 title="Reset"
-                class="c-timer__ctrl-reset c-click-icon c-click-icon--major icon-reset"></button>
+                class="c-timer__ctrl-reset c-icon-button c-icon-button--major icon-reset"></button>
         <button ng-click="timer.clickButton()"
                 title="{{timer.buttonText()}}"
-                class="c-timer__ctrl-pause-play c-click-icon c-click-icon--major {{timer.buttonCssClass()}}"></button>
+                class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major {{timer.buttonCssClass()}}"></button>
     </div>
     <div class="c-timer__direction {{timer.signClass()}}"
         ng-hide="!timer.signClass()"></div>

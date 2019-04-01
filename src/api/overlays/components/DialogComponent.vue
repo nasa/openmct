@@ -27,10 +27,16 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    @mixin legacyMessage() {
+        flex: 0 1 auto;
+        font-family: symbolsfont;
+        font-size: $messageIconD; // Singleton message in a dialog
+        margin-right: $interiorMarginLg;
+    }
+
     .c-message {
         display: flex;
         align-items: center;
-        padding: $interiorMarginLg;
 
         > * + * {
             margin-left: $interiorMarginLg;
@@ -58,7 +64,44 @@
         &__title,
         &__action-text {
             font-size: 1.2em; // TEMP
+        }
 
+        &--simple {
+            // Icon and text elements only
+            &:before {
+                font-size: 30px !important;
+            }
+
+            [class*='__text'] {
+                font-size: 1.25em;
+            }
+        }
+
+        /************************** LEGACY */
+        &.message-severity-info:before {
+            @include legacyMessage();
+            content: $glyph-icon-info;
+            color: $colorInfo;
+        }
+
+        &.message-severity-alert:before {
+            @include legacyMessage();
+            content: $glyph-icon-alert-rect;
+            color: $colorWarningLo;
+        }
+
+        &.message-severity-error:before {
+            @include legacyMessage();
+            content: $glyph-icon-alert-triangle;
+            color: $colorWarningLo;
+        }
+
+        // Messages in a list
+        .c-overlay__messages & {
+            padding: $interiorMarginLg;
+            &:before {
+                font-size: $messageListIconD;
+            }
         }
     }
 </style>

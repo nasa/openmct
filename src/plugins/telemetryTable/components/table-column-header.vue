@@ -73,18 +73,14 @@ const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';
 
 export default {
     inject: ['openmct'],
-    data() {
-        return {
-            isEditing: this.openmct.editor.isEditing()
-        }
-    },
     props: {
         headerKey: String,
         headerIndex: Number,
         isHeaderTitle: Boolean,
         sortOptions: Object,
         columnWidth: Number,
-        hotzone: Boolean
+        hotzone: Boolean,
+        isEditing: Boolean
     },
     computed: {
         isSortable() {
@@ -167,16 +163,7 @@ export default {
         },
         sort() {
             this.$emit("sort");
-        },
-        toggleEditMode(isEditing) {
-            this.isEditing = isEditing;
         }
-    },
-    created() {
-        this.openmct.editor.on('isEditing', this.toggleEditMode);
-    },
-    destroyed() {
-        this.openmct.editor.off('isEditing', this.toggleEditMode);
     }
 }
 </script>

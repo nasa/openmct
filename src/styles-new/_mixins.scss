@@ -49,6 +49,19 @@
     }
 }
 
+/************************** EFFECTS */
+@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @keyframes pulse {
+        0%   { opacity: $opacity0; }
+        100% { opacity: $opacity100; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: alternate;
+    animation-iteration-count: $iteration;
+    animation-timing-function: ease-in-out;
+}
+
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -164,6 +177,30 @@
     background-color: $bg;
 }
 
+@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
+    width: 0;
+    height: 0;
+    $slopedB: $size/$ratio solid transparent;
+    $straightB: $size solid $color;
+    @if $dir == "up" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-bottom: $straightB;
+    } @else if $dir == "right" {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-left: $straightB;
+    } @else if $dir == "down" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-top: $straightB;
+    } @else {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-right: $straightB;
+    }
+}
+
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
     background-image: linear-gradient(-90deg,
         rgba($c, $a) 0%, rgba($c, $a) 50%,
@@ -184,7 +221,7 @@
     background-color: $colorInspectorSectionHeaderBg;
     color: $colorInspectorSectionHeaderFg;
     font-weight: normal;
-    margin: 0 0 $interiorMarginSm 0;
+    margin: $interiorMarginSm 0;
     padding: $interiorMarginSm $interiorMargin;
     text-transform: uppercase;
 }
@@ -336,7 +373,8 @@
         color: $colorBtnFgHov;
     }
 
-    &[class*="--major"] {
+    &[class*="--major"],
+    &[class*='is-active']{
         background: $colorBtnMajorBg;
         color: $colorBtnMajorFg;
 
@@ -356,29 +394,48 @@
     }
 }
 
+
 @mixin cClickIcon() {
-    // A clickable element that just includes the icon, no background
+    @include cControl();
+    cursor: pointer;
+    padding: 4px; // Bigger hit area
+    opacity: 0.6;
+    transition: $transOut;
+    transform-origin: center;
+
+    @include hover() {
+        transform: scale(1.1);
+        transition: $transIn;
+        opacity: 1;
+    }
+}
+
+@mixin cClickIconButton() {
+    // A clickable element that just includes the icon
+    // Background is displayed on hover
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
     @include cControl();
-    $pLR: 4px;
-    $pTB: 4px;
     background: none;
     box-shadow: none;
-    border-radius: $controlCr;
     cursor: pointer;
+    $pLR: 4px;
+    $pTB: 4px;
+    transition: $transOut;
+    border-radius: $controlCr;
     padding: $pTB $pLR;
-
-    @include hover() {
-        background: $colorClickIconBgHov;
-        color: $colorClickIconFgHov;
-    }
 
     &:before,
     *:before {
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
         font-size: 1.25em;
+    }
+
+    @include hover() {
+        transition: $transIn;
+        background: $colorClickIconButtonBgHov;
+        color: $colorClickIconButtonFgHov;
     }
 
     &[class*="--major"] {
@@ -407,50 +464,6 @@
         .c-menu {
             left: auto; right: 0;
         }
-    }
-}
-
-@mixin cCompactButtons($bg, $fg, $bgHov) {
-    // Used in Tab view
-    // To be used in indicators popups?
-
-    $m: 1px;
-    $btnM: $m;
-
-    &-holder {
-        background: $colorTabsHolderBg;
-        border-radius: $controlCr;
-        padding: $m ($m - $btnM) ($m - $btnM) $m;
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: stretch;
-
-        > * {
-            margin: 0 $btnM $btnM 0;
-        }
-    }
-
-    background: $colorBtnBg;
-    color: $colorBtnFg;
-    flex: 1 1 auto;
-    padding: $interiorMargin;
-
-    &:before {
-        opacity: 0.5;
-    }
-
-    > * {
-        margin-left: $interiorMarginSm;
-    }
-
-    @include hover() {
-        background: $bgHov;
-    }
-
-    &.is-current {
-        background: $colorBtnReverseBg;
-        color: $colorBtnReverseFg;
-        pointer-events: none;
     }
 }
 
@@ -552,4 +565,10 @@
     background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;
     box-shadow: deeppink 0 0 10px 1px !important;
+}
+
+
+@mixin sUnsynced() {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
 }

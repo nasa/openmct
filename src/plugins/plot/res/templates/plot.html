@@ -20,31 +20,34 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="PlotController as controller"
-    class="abs holder holder-plot has-control-bar"
-    ng-class="{
-        'loading': !!pending
-    }"
-    >
+    class="abs holder holder-plot has-control-bar">
     <div class="l-control-bar" ng-show="!controller.hideExportButtons">
-         <span class="l-btn-set">
-            <a class="s-button t-export labeled icon-download"
+         <span class="c-button-set c-button-set--strip-h">
+            <button class="c-button icon-download"
                ng-click="controller.exportPNG()"
                title="Export This View's Data as PNG">
-                PNG
-            </a>
-            <a class="s-button t-export labeled"
+                 <span class="c-button__label">PNG</span>
+            </button>
+            <button class="c-button"
                ng-click="controller.exportJPG()"
                title="Export This View's Data as JPG">
-                JPG
-            </a>
+                 <span class="c-button__label">JPG</span>
+            </button>
         </span>
+        <button class="c-button icon-crosshair"
+                ng-class="{ 'is-active': controller.cursorGuide }"
+                ng-click="controller.toggleCursorGuide($event)"
+                title="Toggle cursor guides">
+        </button>
     </div>
 
     <div class="l-view-section">
+        <div class="c-loading--overlay loading"
+            ng-show="!!pending"></div>
         <mct-plot config="controller.config"
                   series="series"
                   the-y-axis="yAxis"
                   the-x-axis="xAxis">
-                  </mct-plot>
+        </mct-plot>
     </div>
 </span>

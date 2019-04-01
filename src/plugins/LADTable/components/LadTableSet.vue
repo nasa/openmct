@@ -93,6 +93,12 @@
             this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
         },
+        reorderPrimary(reorderPlan) {
+            let oldComposition = this.primaryTelemetryObjects.slice();
+            reorderPlan.forEach(reorderEvent => {
+                this.$set(this.primaryTelemetryObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
+            });
+        },
         addSecondary(primary) {
             return (domainObject) => {
                 let secondary = {};
@@ -120,11 +126,13 @@
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addPrimary);
         this.composition.on('remove', this.removePrimary);
+        this.composition.on('reorder', this.reorderPrimary);
         this.composition.load();
     },
     destroyed() {
         this.composition.off('add', this.addPrimary);
         this.composition.off('remove', this.removePrimary);
+        this.composition.off('reorder', this.reorderPrimary);
         this.compositions.forEach(c => {
             c.composition.off('add', c.addCallback);
             c.composition.off('remove', c.removeCallback);
