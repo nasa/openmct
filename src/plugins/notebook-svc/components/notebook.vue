@@ -30,9 +30,9 @@
                     v-for="entry in entries"
                     :key="entry.id"
                     :entry="entry"
-                    :formatTime="formatTime"
                     @update-entry="persistEntry"
-                    @delete-entry="deleteEntry">
+                    @delete-entry="deleteEntry"
+                    @drop-embed="addEmbed">
                 </entry>
             </ul>
         </div>
@@ -47,6 +47,11 @@
 import Search from '../../../ui/components/search.vue';
 import Entry from './entry.vue';
 import Moment from 'moment';
+import searchVue from '../../../ui/components/search.vue';
+
+function formatTime(unixTime, format) {
+    return Moment(unixTime).format(format)
+}
 
 export default {
     inject: ['openmct', 'providedDomainObject'],
@@ -54,10 +59,13 @@ export default {
         Search,
         Entry
     },
+    provide: {
+        formatTime
+    },
     data() {
         return {
             domainObject: this.providedDomainObject,
-            timeFrame: 0,
+            timeFrame: '0',
             searchValue: '',
             sortOrder: this.providedDomainObject.configuration.sortOrder
         }
@@ -91,9 +99,6 @@ export default {
                 this.openmct.objects.mutate(this.domainObject, 'entries', entries);
             }
         },
-        formatTime(unixTime, format) {
-            return Moment(unixTime).format(format)
-        },
         findEntry(entryId) {
             return this.domainObject.entries.findIndex(entry => {
                 return entry.id === entryId;
@@ -106,18 +111,57 @@ export default {
         },
         deleteEntry(entryId) {
             let entryPos = this.findEntry(entryId),
-                entries = [...this.domainObject.entries];
+                entries = this.domainObject.entries;
             
             entries.splice(entryPos, 1);
             this.openmct.objects.mutate(this.domainObject, 'entries', entries);
+        },
+        applySearch(entries) {
+            return entries.filter((entry) => {
+                if (entry.text.includes(this.searchValue)) {
+                    return entry;
+                }
+            });
+        },
+        addEmbed(entryId, event) {
+            var data = event.dataTransfer.getData('openmct/domain-object-path');
+
+            if (data) {
+                var objectPath = JSON.parse(data),
+                    domainObject = objectPath[0],
+                    domainObjectKey = domainObject.identifier.key,
+                    domainObjectType = this.openmct.types.get(domainObject.type),
+                    cssClass = domainObjectType && domainObjectType.definition ? 
+                        domainObjectType.definition.cssClass : 'icon-object-unknown',
+                    entryPos = this.findEntry(entryId),
+                    currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,
+                    newEmbed = {
+                        id: '' + Date.now(),
+                        domainObject: domainObject,
+                        objectPath: objectPath,
+                        type: domainObjectKey,
+                        cssClass: cssClass,
+                        name: domainObject.name,
+                        snapshot: ''
+                    };
+    
+                currentEntryEmbeds.push(newEmbed);
+                this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
+            }
         }
     },
     computed: {
         entries() {
+            let entries = [...this.domainObject.entries];
+            
+            if (this.searchValue !== '') {
+                entries = this.applySearch(entries);
+            }
+
             if (this.sortOrder === 'newest') {
-                return [...this.domainObject.entries].reverse();
+                return entries.reverse();
             } else {
-                return this.domainObject.entries;
+                return entries;
             }
         }
     },

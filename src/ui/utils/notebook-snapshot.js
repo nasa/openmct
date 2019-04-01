@@ -90,7 +90,7 @@ class NotebookSnapshot {
         };
 
         function validateLocation(newParentObj) {
-            return newParentObj.model.type === 'notebook';
+            return newParentObj.model.type === 'notebook' || newParentObj.model.type === 'notebook-svc';
         }
 
         return overlayModel;
