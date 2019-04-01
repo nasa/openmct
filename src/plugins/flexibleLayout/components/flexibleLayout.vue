@@ -659,7 +659,7 @@ export default {
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
-        console.log(this.openmct);
+
         this.RemoveAction = new RemoveAction(this.openmct);
 
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
