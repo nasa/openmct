@@ -85,7 +85,7 @@ export default {
                 entries = this.domainObject.entries,
                 lastEntry = entries[entries.length - 1];
             
-            if (lastEntry && !lastEntry.text) {
+            if (lastEntry && !lastEntry.text && !lastEntry.embeds.length) {
                 let lastEntryComponent = this.$children.find(entryComponent => {
                     if (entryComponent.entry) {
                         return entryComponent.entry.id === lastEntry.id;

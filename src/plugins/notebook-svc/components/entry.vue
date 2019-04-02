@@ -55,7 +55,7 @@ export default {
         }
     },
     mounted() {
-        if (!this.entry.text) {
+        if (!this.entry.text && !this.entry.embeds.length) {
             this.$refs.contenteditable.focus();
         }
     }
