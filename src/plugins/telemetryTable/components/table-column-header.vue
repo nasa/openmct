@@ -34,7 +34,7 @@
             isSortable ? 'is-sortable' : '', 
             isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
             isSortable && sortOptions.direction].join(' ')">
-            <div v-if="isEditing" class="c-telemetry-table__resize-hitarea"
+            <div class="c-telemetry-table__resize-hitarea"
                 @mousedown="resizeColumnStart"
             ></div>
             <slot></slot>

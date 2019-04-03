@@ -181,10 +181,11 @@
         &__resize-hitarea {
             // In table-column-header.vue
             @include abs();
+            display: none; // Set to display: block in .is-editing section below
             left: auto; right: -1 * $tabularTdPadLR;
             width: $tableResizeColHitareaD;
             cursor: col-resize;
-            transform: translateX(50%);
+            transform: translateX(50%); // Move so this element sits over border between columns
         }
 
         /******************************* ELEMENTS */
@@ -258,6 +259,10 @@
                 background: $b;
                 > * { background: $b; }
             }
+        }
+
+        .c-telemetry-table__resize-hitarea {
+            display: block;
         }
     }
 
