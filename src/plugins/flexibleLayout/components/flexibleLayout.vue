@@ -514,7 +514,7 @@ export default {
                 remove associated domainObjects from composition
             */
             container.frames.forEach(f => {
-                this.composition.remove({identifier: f.domainObjectIdentifier});
+                this.removeFromComposition(f.domainObjectIdentifier);
             });
 
             this.containers.splice(containerIndex, 1);
@@ -529,6 +529,7 @@ export default {
             }
 
             sizeToFill(this.containers);
+            this.setSelectionToParent();
             this.persist();
         },
         moveFrame(toContainerIndex, toFrameIndex, frameId, fromContainerIndex) {
@@ -566,10 +567,20 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
 
-            this.openmct.objects.get(frame.domainObjectIdentifier).then((childDomainObject) => {
-                this.RemoveAction.removeFromCompositionAndSetSelection(this.domainObject, childDomainObject);
-                sizeToFill(container.frames);
+            this.removeFromCompositionAndSetSelection(frame.domainObjectIdentifier)
+                .then(() => {
+                    sizeToFill(container.frames)
+                    this.setSelectionToParent();
+                });
+        },
+        removeFromComposition(identifier) {
+            return this.openmct.objects.get(identifier).then((childDomainObject) => {
+                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
             });
+        },
+        setSelectionToParent() {
+             let currentSelection = this.openmct.selection.selected;
+             this.openmct.selection.select(currentSelection.slice(1));
         },
         allowContainerDrop(event, index) {
             if (!event.dataTransfer.types.includes('containerid')) {
