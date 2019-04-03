@@ -23,11 +23,11 @@
 <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
      :class="{'loading': loading}">
     <div class="c-table__control-bar c-control-bar">
-        <a class="s-button t-export icon-download labeled"
+        <button class="c-button icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
-            Export As CSV
-        </a>
+            <span class="c-button__label">Export As CSV</span>
+        </button>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
@@ -48,6 +48,7 @@
                         @resizeColumnEnd="updateConfiguredColumnWidths"
                         :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
+                        :isEditing="isEditing"
                         >{{title}}</table-column-header>
                 </tr>
                 <tr class="c-telemetry-table__headers__filter">
@@ -61,7 +62,9 @@
                         @dropTargetActive="dropTargetActive"
                         @reorderColumn="reorderColumn"
                         @resizeColumnEnd="updateConfiguredColumnWidths"
-                        :columnWidth="columnWidths[key]">
+                        :columnWidth="columnWidths[key]"
+                        :isEditing="isEditing"
+                        >
                         <search class="c-table__search"
                             v-model="filters[key]"
                             v-on:input="filterChanged(key)"
@@ -139,6 +142,7 @@
             // Wraps __headers table
             flex: 0 0 auto;
             overflow: hidden;
+            background: $colorTabHeaderBg;
         }
 
         /******************************* TABLES */
@@ -169,6 +173,7 @@
         &__body-w {
             // Wraps __body table provides scrolling
             flex: 1 1 100%;
+            height: 0; // Fixes Chrome 73 overflow bug
             overflow-x: auto;
             overflow-y: scroll;
         }
@@ -260,6 +265,12 @@ export default {
         search
     },
     inject: ['table', 'openmct', 'csvExporter'],
+    props: {
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         let configuration = this.table.configuration.getConfiguration();
 
@@ -399,7 +410,7 @@ export default {
                     direction: 'asc'
                 }
             }
-            this.table.filteredRows.sortBy(this.sortOptions);
+            this.table.sortBy(this.sortOptions);
         },
         scroll() {
             if (!this.processingScroll) {

@@ -124,6 +124,8 @@
         bottom: Number.NEGATIVE_INFINITY
     };
 
+    const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
+
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
 
@@ -150,7 +152,7 @@
                 return this.internalDomainObject.configuration.items;
             }
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'options'],
         props: ['domainObject'],
         components: ITEM_TYPE_VIEW_MAP,
         methods: {
@@ -264,12 +266,25 @@
                     }
                 }
             },
-            handleDragOver($event){
-                $event.preventDefault();
+            containsObject(identifier) {
+                return _.get(this.internalDomainObject, 'composition')
+                    .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            },
+            handleDragOver($event) {
+                // Get the ID of the dragged object
+                let draggedKeyString = $event.dataTransfer.types
+                    .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
+                    .map(type => type.substring(DRAG_OBJECT_TRANSFER_PREFIX.length))[0];
+                
+                // If the layout already contains the given object, then shortcut the default dragover behavior and 
+                // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
+                if (this.containsObject(draggedKeyString)){
+                    $event.preventDefault();
+                }
             },
             isTelemetry(domainObject) {
-                if (this.openmct.telemetry.isTelemetryObject(domainObject)
-                    && domainObject.type !== 'summary-widget') {
+                if (this.openmct.telemetry.isTelemetryObject(domainObject) && 
+                    !this.options.showAsView.includes(domainObject.type)) {
                     return true;
                 } else {
                     return false;

@@ -40,6 +40,8 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
+    './filters/plugin',
+    './objectMigration/plugin'
     './gauge/plugin',
     './bignumbers/plugin'
 ], function (
@@ -61,9 +63,11 @@ define([
     FolderView,
     FlexibleLayout,
     Tabs,
+    LADTable,
+    Filters,
+    ObjectMigration,
     Gauge,
-    Bignumbers,
-    LADTable
+    Bignumbers
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -77,26 +81,6 @@ define([
             };
         };
     });
-
-    plugins.Snow = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "snow"
-            });
-            import('snow' /* webpackChunkName: "theme-snow" */);
-        };
-    };
-
-    plugins.Espresso = function () {
-        return function install(openmct) {
-            openmct.legacyExtension('constants', {
-                key: "THEME",
-                value: "espresso"
-            });
-            import('espresso' /* webpackChunkName: "theme-espresso" */);
-        };
-    };
 
     plugins.UTCTimeSystem = UTCTimeSystem;
 
@@ -180,6 +164,8 @@ define([
     plugins.Bignumbers = Bignumbers;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
+    plugins.Filters = Filters;
+    plugins.ObjectMigration = ObjectMigration.default;
 
     return plugins;
 });

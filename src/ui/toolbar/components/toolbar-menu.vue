@@ -1,10 +1,10 @@
 <template>
     <div class="c-ctrl-wrapper">
-        <div class="c-click-icon c-click-icon--menu"
+        <div class="c-icon-button c-icon-button--menu"
              :class="options.icon"
              :title="options.title"
              @click="toggle">
-            <div class="c-click-icon__label"
+            <div class="c-icon-button__label"
                  v-if="options.label">
                 {{ options.label }}
             </div>

@@ -4,7 +4,7 @@
         <pane class="c-inspector__properties">
             <properties></properties>
             <location></location>
-            <inspector-view></inspector-view>
+            <inspector-views></inspector-views>
         </pane>
         <pane class="c-inspector__elements"
               handle="before"
@@ -22,7 +22,6 @@
             min-height: 50px;
 
             + [class*="__"] {
-                // Margin between elements
                 margin-top: $interiorMargin;
             }
 
@@ -37,9 +36,7 @@
         }
 
         &__elements {
-            // LEGACY TODO: Refactor when markup is updated, fix scrolling
-            // so that only tree holder handles overflow
-            height: 200px;
+            height: 200px; // Initial height
 
             .tree-item {
                 .t-object-label {
@@ -57,49 +54,13 @@
             height: $d;
         }
 
-        /************************************************************** LEGACY */
-        // TODO: refactor when legacy properties markup can be converted
-        .inspector-location {
-            display: inline-block;
-
-            .location-item {
-                $h: 1.2em;
-                box-sizing: border-box;
-                cursor: pointer;
-                display: inline-block;
-                line-height: $h;
-                position: relative;
-                padding: 2px 4px;
-
-                .t-object-label {
-                    .t-item-icon {
-                        height: $h;
-                        margin-right: $interiorMarginSm;
-                    }
-                }
-
-                &:hover {
-                    background: $colorItemTreeHoverBg;
-                    color: $colorItemTreeHoverFg;
-                    .icon {
-                        color: $colorItemTreeIconHover;
-                    }
-                }
-            }
-
-            &:not(.last) .t-object-label .t-title-label:after {
-                color: pushBack($colorInspectorFg, 15%);
-                content: '\e904';
-                display: inline-block;
-                font-family: symbolsfont;
-                font-size: 8px;
-                font-style: normal !important;
-                line-height: inherit;
-                margin-left: $interiorMarginSm;
-                width: 4px;
-            }
+        .c-tree {
+            // When a tree is in the Inspector, remove scrolling and right pad
+            overflow: visible;
+            padding-right: 0;
         }
 
+        /************************************************************** LEGACY */
         .l-inspector-part {
             display: contents;
         }
@@ -110,8 +71,8 @@
             grid-column: 1 / 3;
         }
 
-        .tree .grid-properties {
-            margin-left: $treeItemIndent + $interiorMarginLg;
+        .c-tree .grid-properties {
+            margin-left: $treeItemIndent;
         }
     }
 
@@ -137,7 +98,6 @@
         }
 
         + .c-properties {
-            // Margin between components
             margin-top: $interiorMarginLg;
         }
 
@@ -183,6 +143,13 @@
     }
     /********************************************* LEGACY SUPPORT */
     .c-inspector {
+        // FilterField.vue
+        .u-contents + .u-contents {
+            li.grid-row > * {
+                border-top: 1px solid $colorInspectorSectionHeaderBg;
+            }
+        }
+
         li.grid-row + li.grid-row {
             > * {
                 border-top: 1px solid $colorInspectorSectionHeaderBg;
@@ -210,7 +177,7 @@
     import Elements from './Elements.vue';
     import Location from './Location.vue';
     import Properties from './Properties.vue';
-    import InspectorView from './InspectorView.vue';
+    import InspectorViews from './InspectorViews.vue';
 
     export default {
         inject: ['openmct'],
@@ -223,7 +190,7 @@
             Elements,
             Properties,
             Location,
-            InspectorView
+            InspectorViews
         },
         data() {
             return {

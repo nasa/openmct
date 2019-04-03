@@ -27,6 +27,7 @@
                       :domain-object="domainObject"
                       :object-path="objectPath"
                       :has-frame="item.hasFrame"
+                      :show-edit-view="false"
                       ref="objectFrame">
         </object-frame>
     </layout-frame>

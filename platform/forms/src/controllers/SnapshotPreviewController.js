@@ -29,12 +29,13 @@ define(
         function SnapshotPreviewController($scope, openmct) {
 
             $scope.previewImage = function (imageUrl) {
-                let image = document.createElement('img');
-                image.src = imageUrl;
+                let imageDiv = document.createElement('div');
+                imageDiv.classList = 'image-main s-image-main';
+                imageDiv.style.backgroundImage = `url(${imageUrl})`;
 
                 let previewImageOverlay = openmct.overlays.overlay(
                     {
-                        element: image,
+                        element: imageDiv,
                         size: 'large',
                         buttons: [
                             {

@@ -12,11 +12,11 @@
         </li>
         <li class="c-properties__row" v-if="item.created">
             <div class="c-properties__label">Created</div>
-            <div class="c-properties__value">{{ item.created }}</div>
+            <div class="c-properties__value c-ne__text">{{ formatTime(item.created) }}</div>
         </li>
         <li class="c-properties__row" v-if="item.modified">
             <div class="c-properties__label">Modified</div>
-            <div class="c-properties__value">{{ item.modified }}</div>
+            <div class="c-properties__value c-ne__text">{{ formatTime(item.modified) }}</div>
         </li>
         <li class="c-properties__row"
             v-for="prop in typeProperties"
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import Moment from "moment";
+
 export default {
     inject: ['openmct'],
     data() {
@@ -93,6 +95,9 @@ export default {
                 return;
             }
             this.domainObject = selection[0].context.item;
+        },
+        formatTime(unixTime) {
+            return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';
         }
     }
 }

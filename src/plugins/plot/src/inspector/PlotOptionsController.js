@@ -76,7 +76,6 @@ define([
     PlotOptionsController.prototype.addSeries = function (series, index) {
         this.$scope.plotSeries[index] = series;
         series.locateOldObject(this.$scope.domainObject);
-
     };
 
     PlotOptionsController.prototype.resetAllSeries = function (series, index) {

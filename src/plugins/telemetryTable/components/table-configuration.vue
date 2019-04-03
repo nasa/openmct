@@ -1,19 +1,21 @@
 <template>
-<div class="c-properties" v-if="isEditing">
-    <div class="c-properties__header">Table Column Size</div>
-    <ul class="c-properties__section">
-        <li class="c-properties__row">
-            <div class="c-properties__label" title="Show or Hide Column"><label for="AutoSizeControl">Auto-size</label></div>
-            <div class="c-properties__value"><input type="checkbox" id="AutoSizeControl" :checked="configuration.autosize !== false" @change="toggleAutosize()"></div>            
-        </li>
-    </ul>
-    <div class="c-properties__header">Table Column Visibility</div>
-    <ul class="c-properties__section">
-        <li class="c-properties__row" v-for="(title, key) in headers">
-            <div class="c-properties__label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
-            <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
-        </li>
-    </ul>
+<div class="c-properties">
+    <template v-if="isEditing">
+        <div class="c-properties__header">Table Column Size</div>
+        <ul class="c-properties__section">
+            <li class="c-properties__row">
+                <div class="c-properties__label" title="Show or Hide Column"><label for="AutoSizeControl">Auto-size</label></div>
+                <div class="c-properties__value"><input type="checkbox" id="AutoSizeControl" :checked="configuration.autosize !== false" @change="toggleAutosize()"></div>            
+            </li>
+        </ul>
+        <div class="c-properties__header">Table Column Visibility</div>
+        <ul class="c-properties__section">
+            <li class="c-properties__row" v-for="(title, key) in headers">
+                <div class="c-properties__label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
+                <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
+            </li>
+        </ul>
+    </template>
 </div>
 </template>
 

@@ -3,6 +3,8 @@ define([
 ], function (
     summaryWidgetTemplate
 ) {
+    const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
+
     function SummaryWidgetView(domainObject, openmct) {
         this.openmct = openmct;
         this.domainObject = domainObject;
@@ -18,7 +20,7 @@ define([
         this.widget.title = datum.message;
         this.label.title = datum.message;
         this.label.innerHTML = datum.ruleLabel;
-        this.label.className = 'label widget-label c-summary-widget__label ' + datum.icon;
+        this.icon.className = WIDGET_ICON_CLASS + ' ' + datum.icon;
     };
 
     SummaryWidgetView.prototype.render = function () {
@@ -29,7 +31,8 @@ define([
 
         this.container.innerHTML = summaryWidgetTemplate;
         this.widget = this.container.querySelector('a');
-        this.label = this.container.querySelector('.widget-label');
+        this.icon = this.container.querySelector('#widgetIcon');
+        this.label = this.container.querySelector('.js-sw__label');
 
 
         if (this.domainObject.url) {

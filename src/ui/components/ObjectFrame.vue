@@ -42,9 +42,12 @@
                 </div>
             </div>
         </div>
-        <object-view class="c-so-view__object-view"
-                     ref="objectView"
-                     :object="domainObject"></object-view>
+        <object-view 
+            class="c-so-view__object-view"
+            ref="objectView"
+            :object="domainObject"
+            :show-edit-view="showEditView">
+        </object-view>
     </div>
 </template>
 
@@ -110,6 +113,12 @@
                 }
             }
         }
+
+        .c-click-icon,
+        .c-button {
+            // Shrink buttons a bit when they appear in a frame
+            font-size: 0.8em;
+        }
     }
 </style>
 
@@ -128,6 +137,10 @@
             domainObject: Object,
             objectPath: Array,
             hasFrame: Boolean,
+            showEditView: {
+                type: Boolean,
+                default: () => true
+            }
         },
         components: {
             ObjectView,

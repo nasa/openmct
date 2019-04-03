@@ -280,7 +280,11 @@ define([
         if (!provider) {
             return Promise.reject('No provider found');
         }
-        return provider.request.apply(provider, arguments);
+        return provider.request.apply(provider, arguments).catch((rejected) => {
+            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+            console.error(rejected);
+            return Promise.reject(rejected);
+        });
     };
 
     /**
@@ -297,7 +301,7 @@ define([
      * @returns {Function} a function which may be called to terminate
      *          the subscription
      */
-    TelemetryAPI.prototype.subscribe = function (domainObject, callback) {
+    TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
         var provider = this.findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
@@ -316,7 +320,7 @@ define([
                         subscriber.callbacks.forEach(function (cb) {
                             cb(value);
                         });
-                    });
+                    }, options);
             } else {
                 subscriber.unsubscribe = function () {};
             }

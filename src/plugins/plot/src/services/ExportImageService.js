@@ -30,7 +30,7 @@ define(
     ],
     function (
         html2canvas,
-        saveAs
+        { saveAs }
     ) {
 
         /**

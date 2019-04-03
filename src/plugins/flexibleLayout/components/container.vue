@@ -47,7 +47,8 @@
                     :key="frame.id"
                     :frame="frame"
                     :index="i"
-                    :containerIndex="index">
+                    :containerIndex="index"
+                    :isEditing="isEditing">
                 </frame-component>
 
                 <drop-hint
@@ -65,7 +66,8 @@
                     :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                     @init-move="startFrameResizing"
                     @move="frameResizing"
-                    @end-move="endFrameResizing">
+                    @end-move="endFrameResizing"
+                    :isEditing="isEditing">
                 </resize-handle>
             </template>
         </div>
@@ -77,14 +79,12 @@ import FrameComponent from './frame.vue';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
-import isEditingMixin from '../mixins/isEditing';
 
 const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct'],
-    props: ['container', 'index', 'rowsLayout'],
-    mixins: [isEditingMixin],
+    props: ['container', 'index', 'rowsLayout', 'isEditing'],
     components: {
         FrameComponent,
         ResizeHandle,

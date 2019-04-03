@@ -28,9 +28,9 @@ define([], function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                // Apply the layout toolbar if the edit mode is on, and the selected object
+                // Apply the layout toolbar if the selected object
                 // is inside a layout, or the main layout is selected.
-                return (openmct.editor.isEditing() && selection &&
+                return (selection &&
                     ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
                         (selection[0].context.item && selection[0].context.item.type === 'layout')));
             },

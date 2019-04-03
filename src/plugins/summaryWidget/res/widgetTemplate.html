@@ -1,22 +1,29 @@
-<div class="w-summary-widget s-status-no-data">
-    <a id="widget" class="t-summary-widget l-summary-widget s-summary-widget labeled">
-        <span id="widgetLabel" class="label widget-label">Default Static Name</span>
+<div class="c-sw-edit w-summary-widget s-status-no-data">
+    <a id="widget" class="t-summary-widget l-summary-widget s-summary-widget labeled c-sw">
+        <div id="widgetIcon" class="c-sw__icon js-sw__icon"></div>
+        <div id="widgetLabel" class="label widget-label c-sw__label js-sw__label">Default Static Name</div>
     </a>
-    <div class="holder flex-elem t-message-inline l-message message-severity-alert t-message-widget-no-data">
-        <div class="w-message-contents l-message-body-only">
-            <div class="message-body">
-                You must add at least one telemetry object to edit this widget.
-            </div>
+    <div class="js-summary-widget__message c-summary-widget__message c-message c-message--simple message-severity-alert">
+        <div class="c-summary-widget__text">
+            You must add at least one telemetry object to edit this widget.
         </div>
     </div>
-    <div class="holder l-flex-col l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-test-data expanded-widget-rules">
-        <div class="section-header"><span class="view-control t-view-control-test-data expanded"></span>Test Data Values</div>
-        <div class="widget-test-data flex-accordion-holder"></div>
-        <div class="section-header"><span class="view-control t-view-control-rules expanded"></span>Rules</div>
-        <div class="holder widget-rules-wrapper flex-elem expanded">
-            <div id="ruleArea" class="widget-rules"></div>
+    <div class="c-sw-edit__ui holder l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-test-data expanded-widget-rules">
+        <div class="c-sw-edit__ui__header">
+            <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-test-data"></span>
+            <span class="c-sw-edit__ui__header-label">Test Data Values</span>
+        </div>
+        <div class="c-sw-edit__ui__test-data widget-test-data flex-accordion-holder"></div>
+        <div class="c-sw-edit__ui__header">
+            <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-rules"></span>
+            <span class="c-sw-edit__ui__header-label">Rules</span>
+        </div>
+        <div class="c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded">
+            <div id="ruleArea" class="c-sw-editui__rules widget-rules"></div>
             <div class="holder add-rule-button-wrapper align-right">
-                <a id="addRule" class="s-button major labeled add-rule-button icon-plus">Add Rule</a>
+                <button id="addRule" class="c-button c-button--major add-rule-button icon-plus">
+                    <span class="c-button__label">Add Rule</span>
+                </button>
             </div>
         </div>
     </div>

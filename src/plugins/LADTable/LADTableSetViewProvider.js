@@ -35,6 +35,9 @@ define([
             canView: function (domainObject) {
                 return domainObject.type === 'LadTableSet';
             },
+            canEdit: function (domainObject) {
+                return domainObject.type === 'LadTableSet';
+            },
             view: function (domainObject) {
                 let component;
 

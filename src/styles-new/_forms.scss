@@ -1,0 +1,374 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+.c-form {
+    display: flex;
+    flex-direction: column;
+
+    &__section {
+        display: inherit;
+        flex-direction: column;
+    }
+
+    &__row {
+        display: flex;
+    }
+
+    &__header {
+        border-radius: $basicCr;
+        background: $colorFormSectionHeaderBg;
+        color: $colorFormSectionHeaderFg;
+        font-size: inherit;
+        font-weight: normal;
+        margin: $interiorMargin 0;
+        padding: $formTBPad $formLRPad;
+        text-transform: uppercase;
+    }
+}
+
+/***************************************************** LEGACY */
+.section-header {
+    border-radius: $basicCr;
+    color: lighten($colorBodyFg, 20%);
+    font-size: inherit;
+    margin: $interiorMargin 0;
+    padding: $formTBPad $formLRPad;
+    text-transform: uppercase;
+    .view-control {
+        display: inline-block;
+        margin-right: $interiorMargin;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+.form {
+    color: $colorFormText;
+    height: 100%;
+    width: 100%;
+
+    .l-form-section {
+        margin-bottom: $interiorMarginLg * 2;
+        position: relative;
+        &.grows {
+            .l-section-body,
+            .form-row {
+                flex: 1 1 auto;
+                .wrapper {
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    .form-row {
+        $m: $interiorMargin;
+        box-sizing: border-box;
+        border-top: 1px solid $colorFormLines;
+        padding: $formTBPad 0;
+        position: relative;
+
+        &.first {
+            border-top: none;
+        }
+
+        >.label,
+        >.controls {
+            box-sizing: border-box;
+            font-size: 0.8rem;
+        }
+
+        >.label {
+            // Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
+            min-width: 120px;
+            order: 1;
+            position: relative;
+            width: $formLabelW;
+        }
+
+        .value {
+            color: $colorInputFg;
+        }
+
+        .controls {
+            order: 2;
+            position: relative;
+            flex: 1 1 auto;
+
+            .l-composite-control {
+                &.l-checkbox {
+                    display: inline-block;
+                    line-height: $formRowCtrlsH;
+                    margin-right: 5px;
+                }
+            }
+
+            .l-input-lg { // LEGACY FORM SUPPORT
+                input[type=text],
+                input[type=search],
+                input[type=number] {
+                    width: 100%;
+                }
+            }
+
+            select {
+                margin-right: $interiorMargin;
+            }
+        }
+
+        .hint, .field-hints {  color: $colorFieldHint;  }
+    }
+}
+
+.selector-list {
+    // Displays tree view in dialogs
+    @include nice-input();
+    padding: $interiorMargin;
+    position: relative;
+    min-height: 0; // Chrome 73 overflow bug fix
+    height: 100%;
+    >.wrapper {
+        $p: $interiorMargin;
+        box-sizing: border-box;
+        overflow: auto;
+    }
+}
+
+.l-controls-first .form .form-row,
+.form .form-row.l-controls-first {
+    >.label,
+    >.controls {
+        line-height: inherit;
+        min-height: inherit;
+    }
+    >.label {
+        flex: 1 1 auto;
+        min-width: 0;
+        width: auto;
+        order: 2;
+    }
+    >.control,
+    >.controls {
+        flex: 0 0 auto;
+        margin-right: $interiorMargin;
+        order: 1;
+    }
+}
+
+.l-controls-under.l-flex-row {
+    // Change to use column layout
+    flex-direction: column;
+    .flex-elem {
+        margin-bottom: $interiorMarginLg;
+    }
+}
+
+.l-composite-control {
+    vertical-align: middle;
+    &:not(.l-inline) {
+        margin-bottom: $interiorMargin;
+    }
+    &.l-inline {
+        display: inline-block;
+    }
+    &.l-checkbox {
+        .composite-control-label {
+            line-height: 18px;
+        }
+    }
+}
+
+.autocomplete {
+    input {
+        width: 226px;
+        padding: 5px 0px 5px 7px;
+    }
+    .icon-arrow-down {
+        position: absolute;
+        top: 8px;
+        left: 210px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    .autocompleteOptions {
+        border: 1px solid $colorFormLines;
+        border-radius: 5px;
+        width: 224px;
+        max-height: 170px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        li {
+            border: 1px solid $colorFormLines;
+            padding: 8px 0px 8px 5px;
+            .optionText {
+                cursor: pointer;
+            }
+        }
+        .optionPreSelected {
+            background-color: $colorInspectorSectionHeaderBg;
+            color: $colorInspectorSectionHeaderFg;
+        }
+    }
+}
+
+/********* COMPACT FORM */
+// ul > li > label, control
+// Make a new UL for each form section
+// Allow control-first, controls-below
+// 3/8/19: Used by Summary Widgets edit UI
+
+.l-compact-form .tree ul li,
+.l-compact-form ul li {
+    padding: 2px 0;
+}
+
+
+.l-compact-form {
+    $h: $btnStdH;
+    $labelW: 40%;
+    $minW: $labelW;
+    ul {
+        li {
+            display: flex;
+            align-items: stretch;
+            padding: $interiorMargin 0;
+
+            label,
+            .control {
+                display: flex;
+            }
+            label {
+                line-height: $h;
+                width: $labelW;
+            }
+            .controls {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
+                flex-grow: 1;
+                margin-left: $interiorMargin;
+                min-height: $h;
+                line-height: $h;
+                input[type="text"],
+                input[type="search"],
+                input[type="number"],
+                button,
+                select {
+                    min-height: $h;
+                }
+
+                > * + * {
+                    margin-left: $interiorMarginSm;
+                }
+            }
+
+            &.connects-to-previous {
+                padding-top: 0;
+            }
+
+            &.section-header {
+                margin-top: $interiorMarginLg;
+                border-top: 1px solid $colorFormLines;
+            }
+
+            &.controls-first {
+                .control {
+                    flex-grow: 0;
+                    margin-right: $interiorMargin;
+                    min-width: 0;
+                    order: 1;
+                    width: auto;
+                }
+                label {
+                    flex-grow: 1;
+                    order: 2;
+                    width: auto;
+                }
+            }
+            &.controls-under {
+                display: block;
+                .control, label {
+                    display: block;
+                    width: auto;
+                }
+
+                ul li {
+                    border-top: none !important;
+                    padding: 0;
+                }
+            }
+        }
+    }
+}
+
+/******** VALIDATION */
+.form-error {
+    // Block element that visually flags an error and contains a message
+    background-color: $colorFormFieldErrorBg;
+    color: $colorFormFieldErrorFg;
+    border-radius: $basicCr;
+    display: block;
+    padding: 1px 6px;
+    &:before {
+        content: $glyph-icon-alert-triangle;
+        display: inline-block;
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
+    }
+}
+
+
+@mixin labelValidate($sym, $c) {
+    > .label {
+        @include glyphAfter($sym);
+        &:after {
+            color: $c;
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+mct-form.validates {
+    .form-row.validates {
+        > .label {
+            padding-right: 1em; // Keep room for validation element
+            &:after {
+                font-size: .8em;
+            }
+        }
+        &.invalid,
+        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
+
+        &.valid,
+        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
+
+        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
+    }
+}
+
+body.desktop .form-row.validates > .label {
+    &:after {
+        position: absolute;
+        right: $interiorMargin;
+        height: 100%;
+        line-height: 200%;
+    }
+}

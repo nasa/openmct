@@ -1,25 +1,79 @@
 <template>
 <div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Location</div>
+    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
     <ul class="c-properties__section">
-        <li class="c-properties__row">
-            <div class="c-properties__label">This Link</div>
-            <div class="c-properties__value">TODO</div>
-        </li>
-        <li class="c-properties__row">
-            <div class="c-properties__label">Original</div>
-            <div class="c-properties__value">TODO</div>
+        <li class="c-properties__row" v-if="originalPath.length">
+            <ul class="c-properties__value c-location">
+                <li v-for="pathObject in orderedOriginalPath"
+                    class="c-location__item"
+                    :key="pathObject.key">
+                    <object-label
+                        :domainObject="pathObject.domainObject"
+                        :objectPath="pathObject.objectPath">
+                    </object-label>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>
 </template>
 
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-location {
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            $m: $interiorMarginSm;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin: 0 $m $m 0;
+
+            &:not(:last-child) {
+                &:after {
+                    color: $colorInspectorPropName;
+                    content: $glyph-icon-arrow-right;
+                    font-family: symbolsfont;
+                    font-size: 0.7em;
+                    margin-left: $m;
+                    opacity: 0.8;
+                }
+            }
+
+            .c-object-label {
+                padding: 0;
+                transition: $transOut;
+
+                &__type-icon {
+                    width: auto;
+                    font-size: 1em;
+                }
+
+                &:hover {
+                    transition: $transIn;
+                    filter: $filterHov;
+                }
+            }
+        }
+    }
+</style>
+
 <script>
+import ObjectLabel from '../components/ObjectLabel.vue';
+
 export default {
     inject: ['openmct'],
+    components: {
+        ObjectLabel
+    },
     data() {
         return {
-            domainObject: {}
+            domainObject: {},
+            originalPath: [],
+            keyString: ''
         }
     },
     mounted() {
@@ -30,12 +84,52 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
+        setOriginalPath(path, skipSlice) {
+            let originalPath = path;
+
+            if (!skipSlice) {
+                originalPath = path.slice(1,-1);
+            }
+
+            this.originalPath = originalPath.map((domainObject, index, pathArray) => {
+                let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                return {
+                    domainObject,
+                    key,
+                    objectPath: pathArray.slice(index)
+                }
+            });
+        },
+        clearData() {
+            this.domainObject = {};
+            this.originalPath = [];
+            this.keyString = '';
+        },
         updateSelection(selection) {
-            if (selection.length === 0) {
-                this.domainObject = {};
+            if (!selection.length) {
+                this.clearData();
+                return;
+            } else if (!selection[0].context.item && selection[1] && selection[1].context.item) {
+                this.setOriginalPath([selection[1].context.item], true);
                 return;
             }
+
             this.domainObject = selection[0].context.item;
+
+            let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            if (keyString && this.keyString !== keyString) {
+                this.keyString = keyString;
+                this.originalPath = [];
+
+                this.openmct.objects.getOriginalPath(this.keyString)
+                    .then(this.setOriginalPath);
+            }
+        }
+    },
+    computed: {
+        orderedOriginalPath() {
+            return this.originalPath.reverse();
         }
     }
 }

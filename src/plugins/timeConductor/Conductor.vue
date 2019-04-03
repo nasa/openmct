@@ -23,72 +23,76 @@
     <div class="c-conductor"
          :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']">
         <form class="u-contents" ref="conductorForm" @submit.prevent="updateTimeFromConductor">
-            <button class="c-input--submit" type="submit" ref="submitButton"></button>
-            <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
+            <div class="c-conductor__time-bounds">
+                <button class="c-input--submit" type="submit" ref="submitButton"></button>
+                <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
 
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
-                 v-if="isFixed">
-                <!-- Fixed start -->
-                <div class="c-conductor__start-fixed__label">Start</div>
-                <input class="c-input--datetime"
-                       type="text" autocorrect="off" spellcheck="false"
-                       ref="startDate"
-                       v-model="formattedBounds.start"
-                       @change="validateAllBounds(); submitForm()" />
-                <date-picker
-                        :default-date-time="formattedBounds.start"
-                        :formatter="timeFormatter"
-                        @date-selected="startDateSelected"></date-picker>
-            </div>
-
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
-                 v-if="!isFixed">
-                <!-- RT start -->
-                <div class="c-direction-indicator icon-minus"></div>
-                <input class="c-input--hrs-min-sec"
-                       type="text" autocorrect="off"
-                       ref="startOffset"
-                       spellcheck="false"
-                       v-model="offsets.start"
-                       @change="validateAllOffsets(); submitForm()">
-            </div>
-
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-                <!-- Fixed end and RT 'last update' display -->
-                <div class="c-conductor__end-fixed__label">
-                    {{ isFixed ? 'End' : 'Updated' }}
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+                     v-if="isFixed">
+                    <!-- Fixed start -->
+                    <div class="c-conductor__start-fixed__label">Start</div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           ref="startDate"
+                           v-model="formattedBounds.start"
+                           @change="validateAllBounds(); submitForm()" />
+                    <date-picker
+                            v-if="isFixed && isUTCBased"
+                            :default-date-time="formattedBounds.start"
+                            :formatter="timeFormatter"
+                            @date-selected="startDateSelected"></date-picker>
                 </div>
-                <input class="c-input--datetime"
-                       type="text" autocorrect="off" spellcheck="false"
-                       v-model="formattedBounds.end"
-                       :disabled="!isFixed"
-                       ref="endDate"
-                       @change="validateAllBounds(); submitForm()">
-                <date-picker
-                        class="c-ctrl-wrapper--menus-left"
-                        :default-date-time="formattedBounds.end"
-                        :formatter="timeFormatter"
-                        @date-selected="endDateSelected"
-                        v-if="isFixed"></date-picker>
-            </div>
 
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
-                 v-if="!isFixed">
-                <!-- RT end -->
-                <div class="c-direction-indicator icon-plus"></div>
-                <input class="c-input--hrs-min-sec"
-                       type="text"
-                       autocorrect="off"
-                       spellcheck="false"
-                       ref="endOffset"
-                       v-model="offsets.end"
-                       @change="validateAllOffsets(); submitForm()">
-            </div>
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+                     v-if="!isFixed">
+                    <!-- RT start -->
+                    <div class="c-direction-indicator icon-minus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text" autocorrect="off"
+                           ref="startOffset"
+                           spellcheck="false"
+                           v-model="offsets.start"
+                           @change="validateAllOffsets(); submitForm()">
+                </div>
 
-            <conductor-axis
-                    class="c-conductor__ticks"
-                    :bounds="rawBounds"
-                    @panAxis="setViewFromBounds"></conductor-axis>
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+                    <!-- Fixed end and RT 'last update' display -->
+                    <div class="c-conductor__end-fixed__label">
+                        {{ isFixed ? 'End' : 'Updated' }}
+                    </div>
+                    <input class="c-input--datetime"
+                           type="text" autocorrect="off" spellcheck="false"
+                           v-model="formattedBounds.end"
+                           :disabled="!isFixed"
+                           ref="endDate"
+                           @change="validateAllBounds(); submitForm()">
+                    <date-picker
+                            v-if="isFixed && isUTCBased"
+                            class="c-ctrl-wrapper--menus-left"
+                            :default-date-time="formattedBounds.end"
+                            :formatter="timeFormatter"
+                            @date-selected="endDateSelected"></date-picker>
+                </div>
+
+                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
+                     v-if="!isFixed">
+                    <!-- RT end -->
+                    <div class="c-direction-indicator icon-plus"></div>
+                    <input class="c-input--hrs-min-sec"
+                           type="text"
+                           autocorrect="off"
+                           spellcheck="false"
+                           ref="endOffset"
+                           v-model="offsets.end"
+                           @change="validateAllOffsets(); submitForm()">
+                </div>
+
+                <conductor-axis
+                        class="c-conductor__ticks"
+                        :bounds="rawBounds"
+                        @panAxis="setViewFromBounds"></conductor-axis>
+
+            </div>
             <div class="c-conductor__controls">
                 <!-- Mode, time system menu buttons and duration slider -->
                 <ConductorMode class="c-conductor__mode-select"></ConductorMode>
@@ -112,17 +116,17 @@
 
     /*********************************************** CONDUCTOR LAYOUT */
     .c-conductor {
-        display: grid;
-        grid-column-gap: $interiorMargin;
-        grid-row-gap: $interiorMargin;
-        align-items: center;
+        &__time-bounds {
+            display: grid;
+            grid-column-gap: $interiorMargin;
+            grid-row-gap: $interiorMargin;
+            align-items: center;
 
-        // Default: fixed mode, desktop
-        grid-template-rows: 1fr 1fr;
-        grid-template-columns: 20px auto 1fr auto;
-        grid-template-areas:
-                "tc-mode-icon tc-start tc-ticks tc-end"
-                "tc-controls tc-controls tc-controls tc-controls";
+            // Default: fixed mode, desktop
+            grid-template-rows: 1fr;
+            grid-template-columns: 20px auto 1fr auto;
+            grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-end";
+        }
 
         &__mode-icon {
             grid-area: tc-mode-icon;
@@ -162,10 +166,10 @@
         }
 
         &.is-realtime-mode {
-            grid-template-columns: 20px auto 1fr auto auto;
-            grid-template-areas:
-                    "tc-mode-icon tc-start tc-ticks tc-updated tc-end"
-                    "tc-controls tc-controls tc-controls tc-controls tc-controls";
+            .c-conductor__time-bounds {
+                grid-template-columns: 20px auto 1fr auto auto;
+                grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-updated tc-end";
+            }
 
             .c-conductor__end-fixed {
                 grid-area: tc-updated;
@@ -173,9 +177,15 @@
         }
 
         body.phone.portrait & {
-            grid-row-gap: $interiorMargin;
-            grid-template-rows: auto auto auto;
-            grid-template-columns: 20px auto auto;
+            .c-conductor__time-bounds {
+                grid-row-gap: $interiorMargin;
+                grid-template-rows: auto auto;
+                grid-template-columns: 20px auto auto;
+            }
+
+            .c-conductor__controls {
+                padding-left: 25px; // Line up visually with other controls
+            }
 
             &__mode-icon {
                 grid-row: 1;
@@ -199,17 +209,19 @@
                     justify-content: flex-start;
                 }
 
-                grid-template-areas:
+                .c-conductor__time-bounds {
+                    grid-template-areas:
                         "tc-mode-icon tc-start tc-start"
                         "tc-mode-icon tc-end tc-end"
-                        "tc-mode-icon tc-controls tc-controls";
-            }
+                    }
+                }
 
             &.is-realtime-mode {
-                grid-template-areas:
+                .c-conductor__time-bounds {
+                    grid-template-areas:
                         "tc-mode-icon tc-start tc-updated"
-                        "tc-mode-icon tc-end tc-end"
-                        "tc-mode-icon tc-controls tc-controls";
+                        "tc-mode-icon tc-end tc-end";
+                }
 
                 .c-conductor__end-fixed {
                     justify-content: flex-end;
@@ -365,8 +377,8 @@ export default {
             }
         },
         setViewFromClock(clock) {
-            this.isFixed = clock === undefined;
             this.clearAllValidation();
+            this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
@@ -386,10 +398,15 @@ export default {
             }
         },
         clearAllValidation() {
-            [this.$refs.startDate, this.$refs.endDate, this.$refs.startOffset, this.$refs.endOffset].forEach((input) => {
-                input.setCustomValidity('');
-                input.title = '';
-            });
+            if (this.isFixed) {
+                [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
+            } else {
+                [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
+            }
+        },
+        clearValidationForInput(input){
+            input.setCustomValidity('');
+            input.title = '';
         },
         validateAllBounds() {
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {

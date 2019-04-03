@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="PlotOptionsController">
-    <ul class="tree c-tree">
+    <ul class="c-tree">
         <h2 title="Display properties for this object">Plot Series</h2>
         <li ng-repeat="series in plotSeries"
             ng-controller="PlotSeriesFormController"
@@ -87,13 +87,15 @@
                                   ng-style="{ background: series.get('color').asHexString() }">
                             </span>
                         </div>
-                        <div class="c-palette--inline c-palette__items" ng-show="toggle.isActive()">
-                            <div class="u-contents" ng-repeat="group in config.series.palette.groups()">
-                                <div class="c-palette__item"
-                                     ng-repeat="color in group"
-                                     ng-class="{ 'selected': series.get('color').equalTo(color) }"
-                                     ng-style="{ background: color.asHexString() }"
-                                     ng-click="setColor(color)">
+                        <div class="c-palette c-palette--color">
+                            <div class="c-palette__items" ng-show="toggle.isActive()">
+                                <div class="u-contents" ng-repeat="group in config.series.palette.groups()">
+                                    <div class="c-palette__item"
+                                         ng-repeat="color in group"
+                                         ng-class="{ 'selected': series.get('color').equalTo(color) }"
+                                         ng-style="{ background: color.asHexString() }"
+                                         ng-click="setColor(color)">
+                                    </div>
                                 </div>
                             </div>
                         </div>

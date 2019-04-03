@@ -21,7 +21,11 @@ define([
             topicService.and.returnValue(mutationTopic);
             publicAPI = {};
             publicAPI.objects = jasmine.createSpyObj('ObjectAPI', [
-                'get'
+                'get',
+                'mutate'
+            ]);
+            publicAPI.objects.eventEmitter = jasmine.createSpyObj('eventemitter', [
+                'on'
             ]);
             publicAPI.objects.get.and.callFake(function (identifier) {
                 return Promise.resolve({identifier: identifier});
@@ -52,6 +56,14 @@ define([
                         {
                             namespace: 'test',
                             key: 'a'
+                        },
+                        {
+                            namespace: 'test',
+                            key: 'b'
+                        },
+                        {
+                            namespace: 'test',
+                            key: 'c'
                         }
                     ]
                 };
@@ -68,11 +80,44 @@ define([
                 composition.on('add', listener);
 
                 return composition.load().then(function () {
-                    expect(listener.calls.count()).toBe(1);
+                    expect(listener.calls.count()).toBe(3);
                     expect(listener).toHaveBeenCalledWith({
                         identifier: {namespace: 'test', key: 'a'}
                     });
                 });
+            });
+            describe('supports reordering of composition', function () {
+                var listener;
+                beforeEach(function () {
+                    listener = jasmine.createSpy('reorderListener');
+                    composition.on('reorder', listener);
+                    
+                    return composition.load();
+                });
+                it('', function () {
+                    composition.reorder(1, 0);
+                    let newComposition =
+                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
+
+                    expect(reorderPlan.oldIndex).toBe(1);
+                    expect(reorderPlan.newIndex).toBe(0);
+                    expect(newComposition[0].key).toEqual('b');
+                    expect(newComposition[1].key).toEqual('a');
+                    expect(newComposition[2].key).toEqual('c');
+                });
+                it('', function () {
+                    composition.reorder(0, 2);
+                    let newComposition =
+                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
+
+                    expect(reorderPlan.oldIndex).toBe(0);
+                    expect(reorderPlan.newIndex).toBe(2);
+                    expect(newComposition[0].key).toEqual('b');
+                    expect(newComposition[1].key).toEqual('c');
+                    expect(newComposition[2].key).toEqual('a');
+                })
             });
 
             // TODO: Implement add/removal in new default provider.

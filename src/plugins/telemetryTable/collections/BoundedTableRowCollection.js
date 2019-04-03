@@ -41,7 +41,6 @@ define(
                 this.bounds = this.bounds.bind(this)
 
                 this.sortByTimeSystem(openmct.time.timeSystem());
-                openmct.time.on('timeSystem', this.sortByTimeSystem);
 
                 this.lastBounds = openmct.time.bounds();
                 openmct.time.on('bounds', this.bounds);
@@ -51,8 +50,8 @@ define(
                 // Insert into either in-bounds array, or the future buffer.
                 // Data in the future buffer will be re-evaluated for possible 
                 // insertion on next bounds change
-                let beforeStartOfBounds = item.datum[this.sortOptions.key] < this.lastBounds.start;
-                let afterEndOfBounds = item.datum[this.sortOptions.key] > this.lastBounds.end;
+                let beforeStartOfBounds = this.parseTime(item.datum[this.sortOptions.key]) < this.lastBounds.start;
+                let afterEndOfBounds = this.parseTime(item.datum[this.sortOptions.key]) > this.lastBounds.end;
 
                 if (!afterEndOfBounds && !beforeStartOfBounds) {
                     return super.addOne(item);
@@ -64,6 +63,12 @@ define(
 
             sortByTimeSystem(timeSystem) {
                 this.sortBy({key: timeSystem.key, direction: 'asc'});
+                let formatter = this.openmct.telemetry.getValueFormatter({
+                    key: timeSystem.key,
+                    source: timeSystem.key,
+                    format: timeSystem.timeFormat
+                });
+                this.parseTime = formatter.parse.bind(formatter);
                 this.futureBuffer.sortBy({key: timeSystem.key, direction: 'asc'});
             }
 
@@ -131,7 +136,6 @@ define(
             }
 
             destroy() {
-                this.openmct.time.off('timeSystem', this.sortByTimeSystem);
                 this.openmct.time.off('bounds', this.bounds);
             }
         }

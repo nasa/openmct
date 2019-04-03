@@ -28,14 +28,22 @@ define([
     describe('Telemetry API', function () {
         var openmct;
         var telemetryAPI;
+        var mockTypeService;
 
         beforeEach(function () {
             openmct = {
                 time: jasmine.createSpyObj('timeAPI', [
                     'timeSystem',
                     'bounds'
+                ]),
+                $injector: jasmine.createSpyObj('injector', [
+                    'get'
                 ])
             };
+            mockTypeService = jasmine.createSpyObj('typeService', [
+                'getType'
+            ]);
+            openmct.$injector.get.and.returnValue(mockTypeService);
             openmct.time.timeSystem.and.returnValue({key: 'system'});
             openmct.time.bounds.and.returnValue({start: 0, end: 1});
             telemetryAPI = new TelemetryAPI(openmct);
@@ -296,5 +304,233 @@ define([
                 );
             });
         });
+        describe('metadata', function () {
+            let mockMetadata = {};
+            let mockObjectType = {
+                typeDef: {}
+            };
+            beforeEach(function () {
+                telemetryAPI.addProvider({
+                    key: 'mockMetadataProvider',
+                    supportsMetadata() {
+                        return true;
+                    },
+                    getMetadata() {
+                        return mockMetadata;
+                    }
+                });
+                mockTypeService.getType.and.returnValue(mockObjectType);
+            })
+            it('respects explicit priority', function () {
+                mockMetadata.values = [
+                    {
+                        key: "name",
+                        name: "Name",
+                        hints: {
+                            priority: 2
+                        }
+                        
+                    },
+                    {
+                        key: "timestamp",
+                        name: "Timestamp",
+                        hints: {
+                            priority: 1
+                        }
+                    },
+                    {
+                        key: "sin",
+                        name: "Sine",
+                        hints: {
+                            priority: 4
+                        }
+                    },
+                    {
+                        key: "cos",
+                        name: "Cosine",
+                        hints: {
+                            priority: 3
+                        }
+                    }
+                ];
+                let metadata = telemetryAPI.getMetadata({});
+                let values = metadata.values();
+
+                values.forEach((value, index) => {
+                    expect(value.hints.priority).toBe(index + 1);
+                });
+            });
+            it('if no explicit priority, defaults to order defined', function () {
+                mockMetadata.values = [
+                    {
+                        key: "name",
+                        name: "Name"
+                        
+                    },
+                    {
+                        key: "timestamp",
+                        name: "Timestamp"
+                    },
+                    {
+                        key: "sin",
+                        name: "Sine"
+                    },
+                    {
+                        key: "cos",
+                        name: "Cosine"
+                    }
+                ];
+                let metadata = telemetryAPI.getMetadata({});
+                let values = metadata.values();
+
+                values.forEach((value, index) => {
+                    expect(value.key).toBe(mockMetadata.values[index].key);
+                });
+            });
+            it('respects domain priority', function () {
+                mockMetadata.values = [
+                    {
+                        key: "name",
+                        name: "Name"
+                        
+                    },
+                    {
+                        key: "timestamp-utc",
+                        name: "Timestamp UTC",
+                        hints: {
+                            domain: 2
+                        }
+                    },
+                    {
+                        key: "timestamp-local",
+                        name: "Timestamp Local",
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: "sin",
+                        name: "Sine",
+                        hints: {
+                            range: 2
+                        }
+                    },
+                    {
+                        key: "cos",
+                        name: "Cosine",
+                        hints: {
+                            range: 1
+                        }
+                    }
+                ];
+                let metadata = telemetryAPI.getMetadata({});
+                let values = metadata.valuesForHints(['domain']);
+
+                expect(values[0].key).toBe('timestamp-local');
+                expect(values[1].key).toBe('timestamp-utc');
+            });
+            it('respects range priority', function () {
+                mockMetadata.values = [
+                    {
+                        key: "name",
+                        name: "Name"
+                        
+                    },
+                    {
+                        key: "timestamp-utc",
+                        name: "Timestamp UTC",
+                        hints: {
+                            domain: 2
+                        }
+                    },
+                    {
+                        key: "timestamp-local",
+                        name: "Timestamp Local",
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: "sin",
+                        name: "Sine",
+                        hints: {
+                            range: 2
+                        }
+                    },
+                    {
+                        key: "cos",
+                        name: "Cosine",
+                        hints: {
+                            range: 1
+                        }
+                    }
+                ];
+                let metadata = telemetryAPI.getMetadata({});
+                let values = metadata.valuesForHints(['range']);
+
+                expect(values[0].key).toBe('cos');
+                expect(values[1].key).toBe('sin');
+            });
+            it('respects priority and domain ordering', function () {
+                mockMetadata.values = [
+                    {
+                        key: "id",
+                        name: "ID",
+                        hints: {
+                            priority: 2
+                        }
+                    },
+                    {
+                        key: "name",
+                        name: "Name",
+                        hints: {
+                            priority: 1
+                        }
+                        
+                    },
+                    {
+                        key: "timestamp-utc",
+                        name: "Timestamp UTC",
+                        hints: {
+                            domain: 2,
+                            priority: 1
+                        }
+                    },
+                    {
+                        key: "timestamp-local",
+                        name: "Timestamp Local",
+                        hints: {
+                            domain: 1,
+                            priority: 2
+                        }
+                    },
+                    {
+                        key: "timestamp-pst",
+                        name: "Timestamp PST",
+                        hints: {
+                            domain: 3,
+                            priority: 2
+                        }
+                    },
+                    {
+                        key: "sin",
+                        name: "Sine"
+                    },
+                    {
+                        key: "cos",
+                        name: "Cosine"
+                    }
+                ];
+                let metadata = telemetryAPI.getMetadata({});
+                let values = metadata.valuesForHints(['priority', 'domain']);
+                [
+                    'timestamp-utc',
+                    'timestamp-local',
+                    'timestamp-pst'
+                ].forEach((key, index) => {
+                    expect(values[index].key).toBe(key);
+                });
+            });
+        })
     });
 });

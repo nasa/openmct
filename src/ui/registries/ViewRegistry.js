@@ -121,6 +121,19 @@ define([], function () {
      */
 
     /**
+     * Indicates whether or not the application is in edit mode. This supports
+     * views that have distinct visual and behavioral elements when the
+     * navigated object is being edited.
+     *
+     * For cases where a completely separate view is desired for editing purposes,
+     * see {@link openmct.ViewProvider#edit}
+     *
+     * @param {boolean} isEditing
+     * @method show
+     * @memberof module:openmct.View#
+     */
+
+    /**
      * Release any resources associated with this view.
      *
      * View implementations should use this method to detach any
@@ -172,7 +185,15 @@ define([], function () {
 
     /**
      * An optional function that defines whether or not this view can be used to edit a given object.
-     * If not provided, will default to `false` and the view will not support editing.
+     * If not provided, will default to `false` and the view will not support editing. To support editing,
+     * return true from this function and then -
+     * * Return a {@link openmct.View} from the `view` function, using the `onEditModeChange` callback to
+     * add and remove editing elements from the view
+     * OR
+     * * Return a {@link openmct.View} from the `view` function defining a read-only view.
+     * AND
+     * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an 
+     * editing-specific view.
      *
      * @method canEdit
      * @memberof module:openmct.ViewProvider#
@@ -209,6 +230,19 @@ define([], function () {
      * @memberof module:openmct.ViewProvider#
      * @param {*} object the object to be viewed
      * @returns {module:openmct.View} a view of this domain object
+     */
+
+    /**
+     * Provide an edit-mode specific view of this object.
+     *
+     * If optionally specified, this function will be called when the application
+     * enters edit mode. This will cause the active non-edit mode view and its
+     * dom element to be destroyed.
+     *
+     * @method edit
+     * @memberof module:openmct.ViewProvider#
+     * @param {*} object the object to be edit
+     * @returns {module:openmct.View} an editable view of this domain object
      */
 
     return ViewRegistry;

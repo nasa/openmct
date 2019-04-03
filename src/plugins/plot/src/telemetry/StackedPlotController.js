@@ -35,6 +35,8 @@ define([
 
         this.$element = $element;
         this.exportImageService = exportImageService;
+        this.$scope = $scope;
+        this.cursorGuide = false;
 
         $scope.telemetryObjects = [];
 
@@ -143,6 +145,11 @@ define([
             .finally(function () {
                 this.hideExportButtons = false;
             }.bind(this));
+    };
+
+    StackedPlotController.prototype.toggleCursorGuide = function ($event) {
+        this.cursorGuide = !this.cursorGuide;
+        this.$scope.$broadcast('cursorguide', $event);
     };
 
     return StackedPlotController;
