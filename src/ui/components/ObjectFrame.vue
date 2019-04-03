@@ -137,7 +137,9 @@
 
     const SIMPLE_CONTENT_TYPES = [
         'clock',
-        'summary-widget'
+        'timer',
+        'summary-widget',
+        'hyperlink'
     ];
 
     export default {
