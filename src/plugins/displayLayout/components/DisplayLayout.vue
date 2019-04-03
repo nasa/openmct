@@ -80,9 +80,12 @@
         .l-shell__main-container {
             &[s-selected],
             &[s-selected-parent] {
-                // Display grid in main layout holder when editing
+                // Display grid and allow edit marquee to display in main layout holder when editing
                 > .l-layout {
                     background: $editUIGridColorBg;
+
+                    > .c-frame-edit { display: block; } // All other frames
+                    > .c-frame > .c-frame-edit { display: block; } // Line object frame
 
                     > [class*="__grid-holder"] {
                         display: block;
@@ -92,12 +95,14 @@
         }
 
         .l-layout__frame {
-            &[s-selected],
             &[s-selected-parent] {
-                // Display grid in nested layouts when editing
+                // Display grid and allow edit marquee to display in nested layouts when editing
                 > * > * > .l-layout {
                     background: $editUIGridColorBg;
                     box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                    > .c-frame-edit { display: block; } // All other frames
+                    > .c-frame > .c-frame-edit { display: block; } // Line object frame
 
                     > [class*='grid-holder'] {
                         display: block;

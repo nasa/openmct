@@ -39,6 +39,7 @@
 
     .c-frame-edit {
         // In Layouts, this is the editing rect and handles
+        display: none; // Set to display: block in DisplayLayout.vue
         pointer-events: none;
         @include abs();
         border: $editMarqueeBorder;
