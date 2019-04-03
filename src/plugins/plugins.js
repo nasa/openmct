@@ -41,7 +41,7 @@ define([
     './tabs/plugin',
     './LADTable/plugin',
     './filters/plugin',
-    './objectMigration/plugin'
+    './objectMigration/plugin',
     './gauge/plugin',
     './bignumbers/plugin'
 ], function (
