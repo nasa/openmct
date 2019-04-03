@@ -34,39 +34,13 @@
             isSortable ? 'is-sortable' : '', 
             isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
             isSortable && sortOptions.direction].join(' ')">
-            <div v-if="isEditing" class="c-telemetry-table__resize-hotzone c-telemetry-table__resize-hotzone--right"
+            <div v-if="isEditing" class="c-telemetry-table__resize-hitarea"
                 @mousedown="resizeColumnStart"
             ></div>
             <slot></slot>
         </div>
 </th>
 </template>
-<style lang="scss">
-    @import "~styles/sass-base";
-    @import "~styles/table";
-
-    $hotzone-size: 6px;
-
-    .c-telemetry-table__headers__content {
-        width: 100%;
-    }
-
-    .c-table.c-telemetry-table {
-        .c-telemetry-table__resize-hotzone {
-            display: block;
-            position: absolute;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            width: $hotzone-size;
-            min-width: $hotzone-size;
-            cursor: col-resize;
-            border: none;
-            right: 0px;
-            margin-right: -$tabularTdPadLR - 1 - $hotzone-size / 2;
-        }
-    }
-</style>
 <script>
 import _ from 'lodash';
 const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';

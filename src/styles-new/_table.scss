@@ -76,7 +76,7 @@ div.c-table {
     }
 
     thead tr,
-    [class*="__header"] {
+    &.c-table__headers {
         background: $colorTabHeaderBg;
 
         th {
