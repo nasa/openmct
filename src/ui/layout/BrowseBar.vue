@@ -43,7 +43,8 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
+                <button v-if="notebookEnabled" 
+                    class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
                     title="New Notebook entry" 
                     @click="snapshot()">
                 </button>
@@ -167,7 +168,8 @@ const PLACEHOLDER_OBJECT = {};
                 showSaveMenu: false,
                 domainObject: PLACEHOLDER_OBJECT,
                 viewKey: undefined,
-                isEditing: this.openmct.editor.isEditing()
+                isEditing: this.openmct.editor.isEditing(),
+                notebookEnabled: false
             }
         },
         computed: {
@@ -213,7 +215,11 @@ const PLACEHOLDER_OBJECT = {};
             }
         },
         mounted: function () {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+
+            if (this.openmct.types.get('notebook')) {
+                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+                this.notebookEnabled = true;
+            }
 
             document.addEventListener('click', this.closeViewAndSaveMenu);
             window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
