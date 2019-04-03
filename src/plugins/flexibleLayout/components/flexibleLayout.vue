@@ -567,7 +567,7 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
 
-            this.removeFromCompositionAndSetSelection(frame.domainObjectIdentifier)
+            this.removeFromComposition(frame.domainObjectIdentifier)
                 .then(() => {
                     sizeToFill(container.frames)
                     this.setSelectionToParent();
