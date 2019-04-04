@@ -34,7 +34,7 @@
     <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
         <table class="c-table__headers c-telemetry-table__headers">
             <thead>
-                <tr class="c-telemetry-table__headers__name">
+                <tr class="c-telemetry-table__headers__labels">
                     <table-column-header
                         v-for="(title, key, headerIndex) in headers"
                         :key="key"
@@ -49,7 +49,8 @@
                         :columnWidth="columnWidths[key]"
                         :sortOptions="sortOptions"
                         :isEditing="isEditing"
-                        >{{title}}</table-column-header>
+                    ><span class="c-telemetry-table__headers__label">{{title}}</span>
+                    </table-column-header>
                 </tr>
                 <tr class="c-telemetry-table__headers__filter">
                     <table-column-header
@@ -159,6 +160,32 @@
             thead {
                 display: block;
             }
+
+            &__labels {
+                // Top row, has labels
+                .c-telemetry-table__headers__content {
+                    // Holds __label, sort indicator and resize-hitarea
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                }
+            }
+        }
+
+        &__headers__label {
+            overflow: hidden;
+            flex: 0 1 auto;
+        }
+
+        &__resize-hitarea {
+            // In table-column-header.vue
+            @include abs();
+            display: none; // Set to display: block in .is-editing section below
+            left: auto; right: -1 * $tabularTdPadLR;
+            width: $tableResizeColHitareaD;
+            cursor: col-resize;
+            transform: translateX(50%); // Move so this element sits over border between columns
         }
 
         /******************************* ELEMENTS */
@@ -221,7 +248,7 @@
 
     /******************************* EDITING */
     .is-editing {
-        .c-telemetry-table__headers__name {
+        .c-telemetry-table__headers__labels {
             th[draggable],
             th[draggable] > * {
                 cursor: move;
@@ -232,6 +259,10 @@
                 background: $b;
                 > * { background: $b; }
             }
+        }
+
+        .c-telemetry-table__resize-hitarea {
+            display: block;
         }
     }
 

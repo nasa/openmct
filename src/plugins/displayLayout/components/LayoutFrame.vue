@@ -59,13 +59,6 @@
         > *:first-child {
             flex: 1 1 auto;
         }
-
-        &:not(.no-frame) {
-            background: $colorBodyBg;
-            border: $browseFrameBorder;
-            padding: $interiorMargin;
-        }
-
     }
 
     .c-frame-edit {
@@ -162,7 +155,6 @@
 
     .is-editing {
         .c-frame {
-            $moveBarOutDelay: 500ms;
             &.no-frame {
                 border: $editFrameBorder; // Base border style for a frame element while editing.
             }
@@ -196,12 +188,24 @@
             }
         }
 
-        .l-layout__frame:not(.is-resizing) {
+        .l-layout__frame[s-selected]:not(.is-resizing) {
             // Show and animate the __move bar for sub-object views with complex content
+            > .c-so-view.has-complex-content {
+                > .c-so-view__local-controls {
+                    transition: transform 250ms ease-in-out;
+                    transition-delay: $moveBarOutDelay;
+                }
+            }
+
             &:hover > .c-so-view.has-complex-content {
                 // Move content down so the __move bar doesn't cover it.
                 padding-top: $editFrameMovebarH;
                 transition: $transIn;
+
+                > .c-so-view__local-controls {
+                    transition: transform 50ms ease-in-out;
+                    transform: translateY($editFrameMovebarH);
+                }
 
                 &.c-so-view--no-frame {
                     // Move content down with a bit more space

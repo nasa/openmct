@@ -26,21 +26,19 @@
             'has-complex-content': complexContent
         }">
         <div class="c-so-view__header">
-            <div class="c-so-view__header__start">
-                <div class="c-so-view__header__name"
-                     :class="cssClass">
-                    {{ domainObject && domainObject.name }}
-                </div>
-                <context-menu-drop-down
+            <div class="c-so-view__header__name"
+                 :class="cssClass">
+                {{ domainObject && domainObject.name }}
+            </div>
+            <context-menu-drop-down
                     :object-path="objectPath">
-                </context-menu-drop-down>
-            </div>
-            <div class="c-so-view__header__end">
-                <div class="c-button icon-expand local-controls--hidden"
-                    title="View Large"
-                    @click="expand">
-                </div>
-            </div>
+            </context-menu-drop-down>
+        </div>
+        <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
+            <button class="c-button icon-expand"
+                 title="View Large"
+                 @click="expand">
+            </button>
         </div>
         <object-view 
             class="c-so-view__object-view"
@@ -65,16 +63,6 @@
             align-items: center;
             margin-bottom: $interiorMargin;
 
-            &__start,
-            &__end {
-                display: flex;
-                flex: 1 1 auto;
-            }
-
-            &__end {
-                justify-content: flex-end;
-            }
-
             &__name {
                 @include headerFont(1em);
                 display: flex;
@@ -84,8 +72,20 @@
             }
         }
 
-        &--no-frame > .c-so-view__header {
-            display: none;
+        &:not(.c-so-view--no-frame) {
+            background: $colorBodyBg;
+            border: $browseFrameBorder;
+            padding: $interiorMargin;
+        }
+
+        &--no-frame {
+            > .c-so-view__header {
+                display: none;
+            }
+
+            > .c-so-view__local-controls {
+                top: $interiorMarginSm; right: $interiorMarginSm;
+            }
         }
 
         &__name {
@@ -101,9 +101,24 @@
             }
         }
 
+        &__local-controls {
+            position: absolute;
+            top: 0; right: 0;
+            z-index: 2;
+        }
+
+        &__view-large {
+            display: none;
+        }
+
+        &.has-complex-content {
+            .c-so-view__view-large { display: block; }
+        }
+
         /*************************** OBJECT VIEW */
         &__object-view {
             flex: 1 1 auto;
+            height: 0; // Chrome 73 overflow bug fix
             overflow: auto;
 
             .c-object-view {
@@ -128,7 +143,9 @@
 
     const SIMPLE_CONTENT_TYPES = [
         'clock',
-        'summary-widget'
+        'timer',
+        'summary-widget',
+        'hyperlink'
     ];
 
     export default {

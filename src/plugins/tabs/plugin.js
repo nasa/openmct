@@ -31,6 +31,7 @@ define([
 
             openmct.types.addType('tabs', {
                 name: "Tabs View",
+                description: 'Add multiple objects of any type to this view, and quickly navigate between them with tabs',
                 creatable: true,
                 cssClass: 'icon-tabs-view',
                 initialize(domainObject) {

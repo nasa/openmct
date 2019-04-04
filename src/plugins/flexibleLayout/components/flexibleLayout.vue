@@ -106,9 +106,6 @@
     .c-fl {
         @include abs();
         display: flex;
-        flex-direction: column; // TEMP: only needed to support temp-toolbar element
-
-        > * + * {  margin-top: $interiorMargin; }
 
         .temp-toolbar {
             flex: 0 0 auto;
@@ -290,11 +287,6 @@
         &__header {
             flex: 0 0 auto;
             margin-bottom: $interiorMargin;
-        }
-
-        &__object-view {
-            flex: 1 1 auto;
-            overflow: auto;
         }
 
         &__size-indicator {
