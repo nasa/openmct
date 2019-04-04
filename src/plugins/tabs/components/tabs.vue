@@ -25,7 +25,7 @@
         <div class="c-tabs-view__object-holder"
             v-for="(tab, index) in tabsList"
             :key="index"
-            :class="{'invisible': !isCurrent(tab)}">
+            :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}">
             <div v-if="currentTab"
                  class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
@@ -68,6 +68,14 @@
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+
+            &--hidden {
+                height: 1000px;
+                width: 1000px;
+                position: absolute;
+                left: -9999px;
+                top: -9999px;
+            }
         }
 
         &__object-name {
@@ -78,7 +86,10 @@
         }
 
         &__object {
+            display: flex;
+            flex-flow: column nowrap;
             flex: 1 1 auto;
+            height: 0; // Chrome 73 oveflow bug fix
         }
 
         &__empty-message {

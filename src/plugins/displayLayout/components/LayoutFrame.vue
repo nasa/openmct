@@ -131,26 +131,37 @@
                         }
                     }
                 }
+            }
+        }
 
-                &:not(.is-resizing) {
-                    // Show and animate the __move bar for sub-object views with complex content
-                    // But only do this when Layout is not is-multi-select
-                    &:hover > .c-so-view.has-complex-content {
-                        // Move content down so the __move bar doesn't cover it.
-                        padding-top: $editFrameMovebarH;
-                        transition: $transIn;
+        .l-layout__frame[s-selected]:not(.is-resizing) {
+            // Show and animate the __move bar for sub-object views with complex content
+            > .c-so-view.has-complex-content {
+                > .c-so-view__local-controls {
+                    transition: transform 250ms ease-in-out;
+                    transition-delay: $moveBarOutDelay;
+                }
+            }
 
-                        &.c-so-view--no-frame {
-                            // Move content down with a bit more space
-                            padding-top: $editFrameMovebarH + $interiorMarginSm;
-                        }
+            &:hover > .c-so-view.has-complex-content {
+                // Move content down so the __move bar doesn't cover it.
+                padding-top: $editFrameMovebarH;
+                transition: $transIn;
 
-                        // Show the move bar
-                        + .c-frame-edit__move {
-                            height: $editFrameMovebarH;
-                            transition: $transIn;
-                        }
-                    }
+                > .c-so-view__local-controls {
+                    transition: transform 50ms ease-in-out;
+                    transform: translateY($editFrameMovebarH);
+                }
+
+                &.c-so-view--no-frame {
+                    // Move content down with a bit more space
+                    padding-top: $editFrameMovebarH + $interiorMarginSm;
+                }
+
+                // Show the move bar
+                + .c-frame-edit .c-frame-edit__move {
+                    height: $editFrameMovebarH;
+                    transition: $transIn;
                 }
             }
         }
