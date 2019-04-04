@@ -216,22 +216,25 @@
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
                         let itemXInMarqueeSpace = item.x - marqueeStart.x1;
-                        let itemYInMarqueeSpace = item.y - marqueeStart.y1;
-
                         let itemXInMarqueeSpaceAfterScale = Math.round(itemXInMarqueeSpace * scaleWidth);
-                        let itemYInMarqueeSpaceAfterScale = Math.round(itemYInMarqueeSpace * scaleHeight);
-
                         item.x = itemXInMarqueeSpaceAfterScale + marqueeOffset.x1 + marqueeStart.x1;
+
+                        let itemYInMarqueeSpace = item.y - marqueeStart.y1;
+                        let itemYInMarqueeSpaceAfterScale = Math.round(itemYInMarqueeSpace * scaleHeight);
                         item.y = itemYInMarqueeSpaceAfterScale + marqueeOffset.y1 + marqueeStart.y1;
 
                         if (item.x2) {
-                            // item.x2 = Math.round(item.x2 * scaleWidth);
+                            let itemX2InMarqueeSpace = item.x2 - marqueeStart.x1;
+                            let itemX2InMarqueeSpaceAfterScale = Math.round(itemX2InMarqueeSpace * scaleWidth);
+                            item.x2 = itemX2InMarqueeSpaceAfterScale + marqueeOffset.x1 + marqueeStart.x1;
                         } else {
                             item.width = Math.round(item.width * scaleWidth);
                         }
 
                         if (item.y2) {
-                            // item.y2 = Math.round(item.y2 * scaleHeight);
+                            let itemY2InMarqueeSpace = item.y2 - marqueeStart.y1;
+                            let itemY2InMarqueeSpaceAfterScale = Math.round(itemY2InMarqueeSpace * scaleHeight);
+                            item.y2 = itemY2InMarqueeSpaceAfterScale + marqueeOffset.y1 + marqueeStart.y1;
                         } else {
                             item.height = Math.round(item.height * scaleHeight);
                         }
