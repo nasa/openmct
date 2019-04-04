@@ -182,7 +182,7 @@
                 return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
             }
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'options'],
         props: ['domainObject'],
         components: components,
         methods: {
@@ -335,9 +335,8 @@
                 }
             },
             isTelemetry(domainObject) {
-                if (this.openmct.telemetry.isTelemetryObject(domainObject)
-                    && domainObject.type !== 'summary-widget'
-                    && domainObject.type !== 'example.imagery') {
+                if (this.openmct.telemetry.isTelemetryObject(domainObject) && 
+                    !this.options.showAsView.includes(domainObject.type)) {
                     return true;
                 } else {
                     return false;

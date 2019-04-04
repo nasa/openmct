@@ -248,7 +248,6 @@ define([
         this.legacyRegistry = defaultRegistry;
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
-        this.install(this.plugins.DisplayLayout());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
@@ -257,7 +256,6 @@ define([
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));
         }
-
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -328,6 +326,12 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement) {
+        if (!this.plugins.DisplayLayout._installed) {
+            this.install(this.plugins.DisplayLayout({
+                showAsView: ['summary-widget']
+            }));
+        }
+
         if (!domElement) {
             domElement = document.body;
         }
@@ -352,7 +356,7 @@ define([
         legacyRegistry.enable('adapter');
 
         this.router.route(/^\/$/, () => {
-            this.router.setPath('/browse/mine');
+            this.router.setPath('/browse/');
         });
 
         /**

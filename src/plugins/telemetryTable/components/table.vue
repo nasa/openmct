@@ -173,6 +173,7 @@
         &__body-w {
             // Wraps __body table provides scrolling
             flex: 1 1 100%;
+            height: 0; // Fixes Chrome 73 overflow bug
             overflow-x: auto;
             overflow-y: scroll;
         }
