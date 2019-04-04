@@ -72,6 +72,12 @@
             }
         }
 
+        &:not(.c-so-view--no-frame) {
+            background: $colorBodyBg;
+            border: $browseFrameBorder;
+            padding: $interiorMargin;
+        }
+
         &--no-frame {
             > .c-so-view__header {
                 display: none;

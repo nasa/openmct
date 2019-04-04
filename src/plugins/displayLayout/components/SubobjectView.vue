@@ -22,6 +22,7 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
+                  :title="domainObject.name"
                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
         <object-frame v-if="domainObject"
                       :domain-object="domainObject"
