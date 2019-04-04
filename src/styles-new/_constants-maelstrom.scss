@@ -392,8 +392,10 @@ $colorLoadingFg: #776ba2;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 
 // Transitions
-$transIn: all 50ms ease-in-out;
-$transOut: all 250ms ease-in-out;
+$transInTime: 50ms;
+$transOutTime: 250ms;
+$transIn: all $transInTime ease-in-out;
+$transOut: all $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 

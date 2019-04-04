@@ -103,7 +103,7 @@
 
         &__local-controls {
             position: absolute;
-            top: 0; right: 0;
+            top: $interiorMargin; right: $interiorMargin;
             z-index: 2;
         }
 
@@ -112,7 +112,7 @@
         }
 
         &.has-complex-content {
-            .c-so-view__view-large { display: block; }
+            > .c-so-view__view-large { display: block; }
         }
 
         /*************************** OBJECT VIEW */
