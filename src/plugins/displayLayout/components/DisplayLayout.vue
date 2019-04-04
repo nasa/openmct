@@ -211,30 +211,30 @@
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
             },
-            endResize(scaleWidth, scaleHeight, marqueeStart, marqueeEnd, marqueeOffset) {
+            endResize(scaleWidth, scaleHeight, marqueeStart, marqueeOffset) {
                 this.dragInProgress = true;
                 this.layoutItems.forEach(item => {
                     if (this.itemIsInCurrentSelection(item)) {
-                        let itemXInMarqueeSpace = item.x - marqueeStart.x1;
+                        let itemXInMarqueeSpace = item.x - marqueeStart.x;
                         let itemXInMarqueeSpaceAfterScale = Math.round(itemXInMarqueeSpace * scaleWidth);
-                        item.x = itemXInMarqueeSpaceAfterScale + marqueeOffset.x1 + marqueeStart.x1;
+                        item.x = itemXInMarqueeSpaceAfterScale + marqueeOffset.x + marqueeStart.x;
 
-                        let itemYInMarqueeSpace = item.y - marqueeStart.y1;
+                        let itemYInMarqueeSpace = item.y - marqueeStart.y;
                         let itemYInMarqueeSpaceAfterScale = Math.round(itemYInMarqueeSpace * scaleHeight);
-                        item.y = itemYInMarqueeSpaceAfterScale + marqueeOffset.y1 + marqueeStart.y1;
+                        item.y = itemYInMarqueeSpaceAfterScale + marqueeOffset.y + marqueeStart.y;
 
                         if (item.x2) {
-                            let itemX2InMarqueeSpace = item.x2 - marqueeStart.x1;
+                            let itemX2InMarqueeSpace = item.x2 - marqueeStart.x;
                             let itemX2InMarqueeSpaceAfterScale = Math.round(itemX2InMarqueeSpace * scaleWidth);
-                            item.x2 = itemX2InMarqueeSpaceAfterScale + marqueeOffset.x1 + marqueeStart.x1;
+                            item.x2 = itemX2InMarqueeSpaceAfterScale + marqueeOffset.x + marqueeStart.x;
                         } else {
                             item.width = Math.round(item.width * scaleWidth);
                         }
 
                         if (item.y2) {
-                            let itemY2InMarqueeSpace = item.y2 - marqueeStart.y1;
+                            let itemY2InMarqueeSpace = item.y2 - marqueeStart.y;
                             let itemY2InMarqueeSpaceAfterScale = Math.round(itemY2InMarqueeSpace * scaleHeight);
-                            item.y2 = itemY2InMarqueeSpaceAfterScale + marqueeOffset.y1 + marqueeStart.y1;
+                            item.y2 = itemY2InMarqueeSpaceAfterScale + marqueeOffset.y + marqueeStart.y;
                         } else {
                             item.height = Math.round(item.height * scaleHeight);
                         }

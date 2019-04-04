@@ -114,6 +114,7 @@
                 let y = Number.POSITIVE_INFINITY;
                 let width = Number.NEGATIVE_INFINITY;
                 let height = Number.NEGATIVE_INFINITY;
+
                 this.selectedLayoutItems.forEach(item => {
                     if (item.x2) {
                         let lineWidth = Math.abs(item.x - item.x2);
@@ -204,29 +205,23 @@
                 let scaleHeight =  marqueeEndHeight / marqueeStartHeight;
 
                 let marqueeStart = {
-                    x1: marqueeStartX,
-                    y1: marqueeStartY,
-                    x2: marqueeStartX + marqueeStartWidth,
-                    y2: marqueeStartY + marqueeStartHeight,
+                    x: marqueeStartX,
+                    y: marqueeStartY,
                     height: marqueeStartWidth,
                     width: marqueeStartHeight
                 };
                 let marqueeEnd = {
-                    x1: marqueeEndX,
-                    y1: marqueeEndY,
-                    x2: marqueeEndX + marqueeEndWidth,
-                    y2: marqueeEndY + marqueeEndHeight,
+                    x: marqueeEndX,
+                    y: marqueeEndY,
                     width: marqueeEndWidth,
                     height: marqueeEndHeight
                 };
                 let marqueeOffset = {
-                    x1: marqueeEnd.x1 - marqueeStart.x1,
-                    y1: marqueeEnd.y1 - marqueeStart.y1,
-                    x2: marqueeEnd.x2 - marqueeStart.x2,
-                    y2: marqueeEnd.y2 - marqueeStart.y2
+                    x: marqueeEnd.x - marqueeStart.x,
+                    y: marqueeEnd.y - marqueeStart.y
                 };
 
-                this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeEnd, marqueeOffset);
+                this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
                 this.dragPosition = undefined;
                 this.initialPosition = undefined;
                 this.marqueeStartPosition = undefined;

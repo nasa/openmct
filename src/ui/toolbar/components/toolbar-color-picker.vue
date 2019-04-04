@@ -43,8 +43,6 @@ export default {
     },
     methods: {
         select(color) {
-            console.log('color.value', color.value);
-            console.log('options.value', this.options.value);
             if (color.value !== this.options.value) {
                 this.$emit('change', color.value, this.options);
             }
