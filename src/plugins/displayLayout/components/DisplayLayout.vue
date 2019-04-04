@@ -61,6 +61,19 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
+    @mixin displayMarquee($c) {
+        > .c-frame-edit {
+            // All other frames
+            //@include test($c, 0.4);
+            display: block;
+        }
+        > .c-frame > .c-frame-edit {
+            // Line object frame
+            //@include test($c, 0.4);
+            display: block;
+        }
+    }
+
     .l-layout {
         @include abs();
         display: flex;
@@ -84,9 +97,6 @@
                 > .l-layout {
                     background: $editUIGridColorBg;
 
-                    > .c-frame-edit { display: block; } // All other frames
-                    > .c-frame > .c-frame-edit { display: block; } // Line object frame
-
                     > [class*="__grid-holder"] {
                         display: block;
                     }
@@ -102,13 +112,22 @@
                     background: $editUIGridColorBg;
                     box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
 
-                    > .c-frame-edit { display: block; } // All other frames
-                    > .c-frame > .c-frame-edit { display: block; } // Line object frame
-
                     > [class*='grid-holder'] {
                         display: block;
                     }
                 }
+            }
+        }
+
+        /*********************** EDIT MARQUEE CONTROL */
+        *[s-selected-parent] {
+            > .l-layout {
+                // When main shell layout is the parent
+                @include displayMarquee(deeppink);
+            }
+            > * > * > * {
+                // When a sub-layout is the parent
+                @include displayMarquee(blue);
             }
         }
     }
