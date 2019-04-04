@@ -95,6 +95,7 @@
         }
 
         .l-layout__frame {
+            &[s-selected],
             &[s-selected-parent] {
                 // Display grid and allow edit marquee to display in nested layouts when editing
                 > * > * > .l-layout {
@@ -112,7 +113,6 @@
         }
     }
 </style>
-
 
 <script>
     import uuid from 'uuid';
