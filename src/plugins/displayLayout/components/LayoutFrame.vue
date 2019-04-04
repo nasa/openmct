@@ -59,13 +59,6 @@
         > *:first-child {
             flex: 1 1 auto;
         }
-
-        &:not(.no-frame) {
-            background: $colorBodyBg;
-            border: $browseFrameBorder;
-            padding: $interiorMargin;
-        }
-
     }
 
     .c-frame-edit {
