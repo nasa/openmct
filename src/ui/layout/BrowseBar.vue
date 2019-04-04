@@ -120,6 +120,7 @@ const PLACEHOLDER_OBJECT = {};
                             callback: () => {
                                 this.openmct.editor.cancel();
                                 dialog.dismiss();
+                                this.openmct.layout.$refs.browseObject.updateView(false);
                             }
                         },
                         {
@@ -221,6 +222,11 @@ const PLACEHOLDER_OBJECT = {};
             this.openmct.editor.on('isEditing', (isEditing) => {
                 this.isEditing = isEditing;
             });
+        },
+        watch: {
+            domainObject() {
+                console.log('Domain object updated!');
+            }
         },
         beforeDestroy: function () {
             document.removeEventListener('click', this.closeViewAndSaveMenu);
