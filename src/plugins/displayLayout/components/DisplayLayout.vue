@@ -442,7 +442,6 @@
             orderItem(position, selectedItems) {
                 let delta = ORDERS[position];
                 let indices = [];
-                let newIndices = [];
                 let newIndex = -1;
                 let items = [];
 
@@ -453,13 +452,13 @@
                 indices.sort((a, b) => a - b);
 
                 if (position === 'top' || position === 'up') {
-                     indices.reverse();
+                    indices.reverse();
                 }
 
                 if (position === 'top' || position === 'bottom') {
-                    newIndices = this.moveToTopOrBottom(position, indices, items, delta);
+                    this.moveToTopOrBottom(position, indices, items, delta);
                 } else {
-                    newIndices = this.moveUpOrDown(position, indices, items, delta);
+                    this.moveUpOrDown(position, indices, items, delta);
                 }
 
                 this.mutate('configuration.items', this.layoutItems);
@@ -467,7 +466,6 @@
             moveUpOrDown(position, indices, items, delta) {
                 let previousItemIndex = -1;
                 let newIndex = -1;
-                let newIndices = [];
 
                 indices.forEach((itemIndex, index) => {
                     let isAdjacentItemSelected = position === 'up' ?
@@ -485,13 +483,10 @@
                     }
 
                     previousItemIndex = itemIndex;
-                    newIndices.push(newIndex);
                     this.updateItemOrder(newIndex, itemIndex, items);
                 });
-                return newIndices;
             },
             moveToTopOrBottom(position, indices, items, delta) {
-                let newIndices = [];
                 let newIndex = -1;
 
                 indices.forEach((itemIndex, index) => {
@@ -505,10 +500,8 @@
                         }
                     }
 
-                    newIndices.push(newIndex);
                     this.updateItemOrder(newIndex, itemIndex, items);
                 });
-                return newIndices;
             },
             updateItemOrder(newIndex, itemIndex, items) {
                 if (newIndex !== itemIndex) {
