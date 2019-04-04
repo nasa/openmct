@@ -21,8 +21,10 @@
  *****************************************************************************/
 
 define([
+    './object-utils.js',
     'lodash'
 ], function (
+    utils,
     _
 ) {
     var ANY_OBJECT_EVENT = "mutation";
@@ -41,7 +43,9 @@ define([
     }
 
     function qualifiedEventName(object, eventName) {
-        return [object.identifier.key, eventName].join(':');
+        var keystring = utils.makeKeyString(object.identifier);
+
+        return [keystring, eventName].join(':');
     }
 
     MutableObject.prototype.stopListening = function () {
