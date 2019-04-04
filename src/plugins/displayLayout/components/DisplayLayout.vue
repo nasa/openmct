@@ -465,8 +465,8 @@
                 let items = [];
 
                 Object.assign(items, this.layoutItems);
-                selectedItems.forEach(selectionPath => {
-                    indices.push(selectionPath[0].context.index);
+                this.selectedLayoutItems.forEach(selectedItem => {
+                    indices.push(this.layoutItems.indexOf(selectedItem));
                 });
                 indices.sort((a, b) => a - b);
 
