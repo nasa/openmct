@@ -38,7 +38,7 @@ $bodyFont: 'Chakra Petch', sans-serif;
     font-family: $headerFont;
     font-size: $size * 0.8; // This font is comparatively large, so reduce it a bit
     text-transform: uppercase;
-    word-spacing: 0.25em;
+    word-spacing: 0.4em;
 }
 
 @mixin bodyFont($size: 1em) {
@@ -68,11 +68,11 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: #393939;
+$colorBodyBg: #000000;
 $colorBodyFg: #ccc;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
-$colorHeadBg: #262626;
+$colorHeadBg: transparent;
 $colorHeadFg: $colorBodyFg;
 $colorStatusBarBg: $colorHeadBg;
 $colorStatusBarFg: $colorBodyFg;
@@ -366,7 +366,7 @@ $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
-$splitterBtnD: (16px, 35px); // height, width
+$splitterBtnD: (5px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: #666;
@@ -419,20 +419,4 @@ $createBtnTextTransform: uppercase;
 
 @mixin themedSelect($bg: $colorBtnBg, $fg: $colorBtnFg) {
     @include cSelect(linear-gradient(lighten($bg, 5%), $bg), $fg, lighten($bg, 20%), rgba(black, 0.5) 0 0.5px 3px);
-}
-
-/**************************************************** OVERRIDES */
-.c-frame {
-    &:not(.no-frame) {
-        $bc: #666;
-        $bLR: 3px solid transparent;
-        $br: 20px;
-        background: none !important;
-        border-radius: $br;
-        border-top: 4px solid $bc !important;
-        border-bottom: 2px solid $bc !important;
-        border-left: $bLR !important;;
-        border-right: $bLR !important;;
-        padding: 5px 10px 10px 10px !important;
-    }
 }
