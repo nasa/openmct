@@ -59,8 +59,10 @@ define([
                         });
                     },
                     destroy: function () {
-                        component.$destroy();
-                        component = undefined;
+                        if (component) {
+                            component.$destroy();
+                            component = undefined;
+                        }
                     }
                 }
             },
