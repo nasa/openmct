@@ -211,7 +211,8 @@
                                 return {
                                     id: this.openmct.objects.makeKeyString(c.identifier),
                                     object: c,
-                                    objectPath: [c]
+                                    objectPath: [c],
+                                    navigateToParent: '/browse'
                             };
                         });
                     });
