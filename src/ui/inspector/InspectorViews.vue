@@ -7,6 +7,8 @@
 </style>
 
 <script>
+import _ from 'lodash';
+
     export default {
         inject: ['openmct'],
         mounted() {
@@ -16,9 +18,20 @@
         destroyed() {
             this.openmct.selection.off('change', this.updateSelection);
         },
+        data() {
+            return {
+                selection: []
+            }
+        },
         methods: {
             updateSelection() {
                 let selection = this.openmct.selection.get();
+                
+                if (_.isEqual(this.selection[0], selection[0])) {
+                    return;
+                }
+                this.selection = selection;
+
                 if (this.selectedViews) {
                     this.selectedViews.forEach(selectedView => {
                         selectedView.destroy();
