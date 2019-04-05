@@ -29,14 +29,13 @@ define([
                     return false;
                 }
 
-                let selectionPath = selection[0];
+                let selectionContext = selection[0][0].context;
 
-                if (!selectionPath[0] || !selectionPath[0].context.item) {
+                if (!selectionContext.item) {
                     return false;
                 }
 
-                let domainObject = selectionPath[0].context.item;
-                return domainObject.type === typeDefinition.key;
+                return selectionContext.item.type === typeDefinition.key;
             },
             view: function (selection) {
                 let domainObject = selection[0][0].context.item;

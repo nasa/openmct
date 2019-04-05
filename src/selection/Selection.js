@@ -65,7 +65,7 @@ define(
 
         let multiSelect = isMultiSelectEvent &&
             this.parentSupportsMultiSelect(selectable) &&
-            this.peerSelection(selectable) &&
+            this.isPeer(selectable) &&
             !this.selectionContainsParent(selectable);
 
         if (multiSelect) {
@@ -162,7 +162,7 @@ define(
     /**
      * @private
      */
-    Selection.prototype.peerSelection = function (selectable) {
+    Selection.prototype.isPeer = function (selectable) {
         return this.selected.some(selectionPath => _.isEqual(selectionPath[1], selectable[1]));
     };
 
