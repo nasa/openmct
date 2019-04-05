@@ -588,13 +588,18 @@ export default {
             let el = this.$el;
             let width = el.clientWidth;
             let height = el.clientHeight;
+            let scrollTop = this.scrollable.scrollTop;
 
             this.resizePollHandle = setInterval(() => {
                 if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
                     this.calculateTableSize();
+                    // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+                    // Need to preserve scroll position in this case.
+                    this.scrollable.scrollTop = scrollTop;
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
+                scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
 
