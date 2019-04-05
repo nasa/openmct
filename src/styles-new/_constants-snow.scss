@@ -143,6 +143,8 @@ $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
+$editUIColorBg: $editUIColor;
+$editUIColorFg: #fff;
 $editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
@@ -159,7 +161,7 @@ $editFrameBorderHov: 1px solid $editFrameColorHov; // Hover on selectable frames
 $editFrameColorSelected: #333; // Border of selected frames
 $editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make handle standout
 $editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
-$editFrameSelectedShdw: rgba(black, 0.5) 0 1px 10px 1px;
+$editFrameSelectedShdw: rgba(black, 0.5) 0 1px 5px 2px;
 $editFrameSelectedBorder: 1px dashed $editFrameColorSelected; // Selected frame element
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
 $editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
