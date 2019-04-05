@@ -1,7 +1,7 @@
 <template>
     <div class="c-ctrl-wrapper">
         <div class="c-icon-button c-icon-button--swatched"
-             :class="options.icon"
+             :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
              :title="options.title"
              @click="toggle">
             <div class="c-swatch" :style="{
@@ -35,6 +35,11 @@ export default {
     mixins: [toggleMixin],
     props: {
         options: Object
+    },
+    computed: {
+        nonSpecific() {
+            return this.options.nonSpecific === true;
+        }
     },
     methods: {
         select(color) {

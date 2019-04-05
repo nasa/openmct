@@ -23,7 +23,8 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-box-view"
              :style="style">
         </div>
@@ -54,8 +55,7 @@
                 x: 1,
                 y: 1,
                 width: 10, 
-                height: 5,
-                useGrid: true
+                height: 5
             };
         },
         inject: ['openmct'],

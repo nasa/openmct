@@ -42,14 +42,13 @@
                 this.removeListeners();
                 this.domainObjectsById = {};
 
-                if (!selection[0]) {
+                if (selection.length === 0 || !selection[0][0]) {
                     this.structure = [];
                     return;
                 }
 
                 let structure = this.openmct.toolbars.get(selection) || [];
-                this.structure = structure.map(item => {
-                    let toolbarItem = {...item};
+                this.structure = structure.map(toolbarItem => {
                     let domainObject = toolbarItem.domainObject;
                     let formKeys = [];
                     toolbarItem.control = "toolbar-" + toolbarItem.control;
@@ -64,12 +63,7 @@
                     }
 
                     if (domainObject) {
-                        if (formKeys.length > 0) {
-                            toolbarItem.value = this.getFormValue(domainObject, toolbarItem);
-                        } else {
-                            toolbarItem.value = _.get(domainObject, this.getItemProperty(item));
-                        }
-
+                        toolbarItem.value = this.getValue(domainObject, toolbarItem);
                         this.registerListener(domainObject);
                     }
 
@@ -89,21 +83,12 @@
             observeObject(domainObject, id) {
                 let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
                     this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
-                    this.scheduleToolbarUpdate();
+                    this.updateToolbarAfterMutation();
                 }.bind(this));
                 this.unObserveObjects.push(unobserveObject);
             },
-            scheduleToolbarUpdate() {
-                if (this.toolbarUpdateScheduled) {
-                    return;
-                }
-
-                this.toolbarUpdateScheduled = true;
-                setTimeout(this.updateToolbarAfterMutation.bind(this));
-            },
             updateToolbarAfterMutation() {
-                this.structure = this.structure.map(item => {
-                    let toolbarItem = {...item};
+                this.structure = this.structure.map(toolbarItem => {
                     let domainObject = toolbarItem.domainObject;
 
                     if (domainObject) {
@@ -112,12 +97,7 @@
 
                         if (newObject) {
                             toolbarItem.domainObject = newObject;
-
-                            if (toolbarItem.formKeys) {
-                                toolbarItem.value = this.getFormValue(newObject, toolbarItem);
-                            } else {
-                                toolbarItem.value = _.get(newObject, this.getItemProperty(item));
-                            }
+                            toolbarItem.value = this.getValue(newObject, toolbarItem);
                         }
                     }
 
@@ -130,17 +110,58 @@
                         delete tracker.newObject;
                     }
                 });
-                this.toolbarUpdateScheduled = false;
+            },
+            getValue(domainObject, toolbarItem) {
+                let value = undefined;
+                let applicableSelectedItems = toolbarItem.applicableSelectedItems;
+
+                if (!applicableSelectedItems) {
+                    return value;
+                }
+
+                if (toolbarItem.formKeys) {
+                    value = this.getFormValue(domainObject, toolbarItem);
+                } else {
+                    let values = [];
+                    applicableSelectedItems.forEach(selectionPath => {
+                        values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
+                    });
+
+                    // If all values are the same, use it, otherwise mark the item as non-specific.
+                    if (values.every(value => value === values[0])) {
+                        value = values[0];
+                        toolbarItem.nonSpecific = false;
+                    } else {
+                        toolbarItem.nonSpecific = true;
+                    }
+                }
+
+                return value;
             },
             getFormValue(domainObject, toolbarItem) {
                 let value = {};
+                let values = {};
                 toolbarItem.formKeys.map(key => {
-                    value[key] = _.get(domainObject, this.getItemProperty(toolbarItem) + "." + key);
+                    values[key] = [];
+                    toolbarItem.applicableSelectedItems.forEach(selectionPath => {
+                        values[key].push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath) + "." + key));
+                    });
                 });
+
+                for (const key in values) {
+                    if (values[key].every(value => value === values[key][0])) {
+                        value[key] = values[key][0];
+                        toolbarItem.nonSpecific = false;
+                    } else {
+                        toolbarItem.nonSpecific = true;
+                        return {};
+                    }
+                }
+
                 return value;
             },
-            getItemProperty(item) {
-                return (typeof item.property === "function") ? item.property() : item.property;
+            getItemProperty(item, selectionPath) {
+                return (typeof item.property === "function") ? item.property(selectionPath) : item.property;
             },
             removeListeners() {
                 if (this.unObserveObjects) {
@@ -152,14 +173,12 @@
             },
             updateObjectValue(value, item) {
                 let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-                this.structure = this.structure.map((s) => {
-                    let toolbarItem = {...s};
-                    let domainObject = toolbarItem.domainObject;
 
-                    if (domainObject) {
-                        let id = this.openmct.objects.makeKeyString(domainObject.identifier);
+                this.structure = this.structure.map(toolbarItem => {
+                    if (toolbarItem.domainObject) {
+                        let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
 
-                        if (changedItemId === id && this.getItemProperty(item) === this.getItemProperty(s)) {
+                        if (changedItemId === id && _.isEqual(toolbarItem, item)) {
                             toolbarItem.value = value;
                         }
                     }
@@ -173,12 +192,17 @@
                     this.structure.map(s => {
                         if (s.formKeys) {
                             s.formKeys.forEach(key => {
-                                this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item) + "." + key, value[key]);
+                                item.applicableSelectedItems.forEach(selectionPath => {
+                                    this.openmct.objects.mutate(item.domainObject,
+                                        this.getItemProperty(item, selectionPath) + "." + key, value[key]);
+                                });
                             });
                         }
                     });
                 } else {
-                    this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item), value);
+                    item.applicableSelectedItems.forEach(selectionPath => {
+                        this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item, selectionPath), value);    
+                    });
                 }
             },
             triggerMethod(item, event) {

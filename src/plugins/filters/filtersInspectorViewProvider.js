@@ -33,16 +33,16 @@ define([
             key: 'filters-inspector',
             name: 'Filters Inspector View',
             canView: function (selection) {
-                if (selection.length === 0) {
+                if (selection.length === 0 || selection[0].length === 0) {
                     return false;
                 }
-                let object = selection[0].context.item;
+                let object = selection[0][0].context.item;
 
                 return object && supportedObjectTypesArray.some(type => object.type === type);
             },
             view: function (selection) {
                 let component;
-                let providedObject = selection[0].context.item;
+                let providedObject = selection[0][0].context.item;
 
                 return {
                     show: function (element) {
@@ -59,8 +59,10 @@ define([
                         });
                     },
                     destroy: function () {
-                        component.$destroy();
-                        component = undefined;
+                        if (component) {
+                            component.$destroy();
+                            component = undefined;
+                        }
                     }
                 }
             },

@@ -2,7 +2,7 @@
     <div class="c-ctrl-wrapper">
         <div class="c-icon-button"
              :title="nextValue.title"
-             :class="nextValue.icon"
+             :class="[nextValue.icon, {'c-click-icon--mixed': nonSpecific}]"
              @click="cycle">
         </div>
     </div>
@@ -23,6 +23,9 @@ export default {
                 nextIndex = 0;
             }
             return this.options.options[nextIndex];
+        },
+        nonSpecific() {
+            return this.options.nonSpecific === true;
         }
     },
     methods: {

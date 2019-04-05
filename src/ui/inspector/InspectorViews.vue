@@ -13,7 +13,7 @@ import _ from 'lodash';
         inject: ['openmct'],
         mounted() {
             this.openmct.selection.on('change', this.updateSelection);
-            this.updateSelection();
+            this.updateSelection(this.openmct.selection.get());
         },
         destroyed() {
             this.openmct.selection.off('change', this.updateSelection);
@@ -24,12 +24,11 @@ import _ from 'lodash';
             }
         },
         methods: {
-            updateSelection() {
-                let selection = this.openmct.selection.get();
-                
-                if (_.isEqual(this.selection[0], selection[0])) {
+            updateSelection(selection) {
+                if (_.isEqual(this.selection, selection)) {
                     return;
                 }
+
                 this.selection = selection;
 
                 if (this.selectedViews) {
@@ -38,12 +37,14 @@ import _ from 'lodash';
                     });
                     this.$el.innerHTML = '';
                 }
-                this.viewContainers = [];
+
+                if (selection.length > 1) {
+                    return;
+                }
+
                 this.selectedViews = this.openmct.inspectorViews.get(selection);
                 this.selectedViews.forEach(selectedView => {
                     let viewContainer = document.createElement('div');
-                    this.viewContainers.push(viewContainer);
-
                     this.$el.append(viewContainer)
                     selectedView.show(viewContainer);
                 });

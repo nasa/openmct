@@ -108,13 +108,23 @@
 }
 
 @mixin bgStripes($c: yellow, $a: 0.1, $bgsize: 5px, $angle: 90deg) {
-    background-image: linear-gradient($angle,
+    background: linear-gradient($angle,
         rgba($c, $a) 25%, transparent 25%,
         transparent 50%, rgba($c, $a) 50%,
         rgba($c, $a) 75%, transparent 75%,
         transparent 100%
     ) repeat;
     background-size: $bgsize $bgsize;
+}
+
+@mixin bgStripes2Color($c1, $c2, $bgSize, $angle: -45deg) {
+    background: linear-gradient(-45deg,
+            $c1 0%, $c1 25%,
+            $c2 25%, $c2 50%,
+            $c1 50%, $c1 75%,
+            $c2 75%, $c2 100%
+    ) repeat;
+    background-size: $bgSize;
 }
 
 @mixin disabled() {
@@ -564,7 +574,6 @@
 @mixin test($c: deeppink, $a: 0.3) {
     background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;
-    box-shadow: deeppink 0 0 10px 1px !important;
 }
 
 

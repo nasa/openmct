@@ -27,16 +27,17 @@ function ToolbarProvider(openmct) {
         key: "flex-layout",
         description: "A toolbar for objects inside a Flexible Layout.",
         forSelection: function (selection) {
-            let context = selection[0].context;
+            let context = selection[0][0].context;
 
             return (context && context.type &&
                 (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
 
-            let primary = selection[0],
-                secondary = selection[1],
-                tertiary = selection[2],
+            let selectionPath = selection[0],
+                primary = selectionPath[0],
+                secondary = selectionPath[1],
+                tertiary = selectionPath[2],
                 deleteFrame,
                 toggleContainer,
                 deleteContainer,
@@ -46,7 +47,7 @@ function ToolbarProvider(openmct) {
 
             separator = {
                 control: "separator",
-                domainObject: selection[0].context.item,
+                domainObject: primary.context.item,
                 key: "separator"
             };
 
