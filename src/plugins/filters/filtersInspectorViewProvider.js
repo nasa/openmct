@@ -33,7 +33,7 @@ define([
             key: 'filters-inspector',
             name: 'Filters Inspector View',
             canView: function (selection) {
-                if (selection.length === 0) {
+                if (selection.length === 0 || selection[0].length === 0) {
                     return false;
                 }
                 let object = selection[0][0].context.item;

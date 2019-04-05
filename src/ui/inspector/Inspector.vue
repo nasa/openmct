@@ -199,7 +199,7 @@
         },
         methods: {
             refreshComposition(selection) {
-                if (selection[0]) {
+                if (selection.length > 0 && selection[0].length > 0) {
                     let parentObject = selection[0][0].context.item;
 
                     this.hasComposition = !!(parentObject && this.openmct.composition.get(parentObject));

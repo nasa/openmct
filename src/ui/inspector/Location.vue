@@ -125,6 +125,7 @@ export default {
 
             if (!this.domainObject && parentObject && parentObject.context.item) {
                 this.setOriginalPath([parentObject.context.item], true);
+                this.keyString = '';
                 return;
             }
 
