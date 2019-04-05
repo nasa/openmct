@@ -79,9 +79,11 @@ export default class Editor extends EventEmitter {
      * @private
      */
     cancel() {
-        this.getTransactionService().cancel();
+        let cancelPromise = this.getTransactionService().cancel();
         this.editing = false;
         this.emit('isEditing', false);
+
+        return cancelPromise;
     }
 
     /**

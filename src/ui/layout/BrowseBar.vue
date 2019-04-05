@@ -119,7 +119,10 @@ const PLACEHOLDER_OBJECT = {};
                             label: 'Ok',
                             emphasis: true,
                             callback: () => {
-                                this.openmct.editor.cancel();
+                                this.openmct.editor.cancel().then(() => {
+                                    //refresh object view
+                                    this.openmct.layout.$refs.browseObject.show(this.domainObject, this.viewKey, false);
+                                });
                                 dialog.dismiss();
                             }
                         },
@@ -228,7 +231,20 @@ const PLACEHOLDER_OBJECT = {};
                 this.isEditing = isEditing;
             });
         },
+        watch: {
+            domainObject() {
+                if (this.mutationObserver) {
+                    this.mutationObserver();
+                }
+                this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
+                    this.domainObject = domainObject;
+                });
+            }
+        },
         beforeDestroy: function () {
+            if (this.mutationObserver) {
+                this.mutationObserver();
+            }
             document.removeEventListener('click', this.closeViewAndSaveMenu);
             window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }
