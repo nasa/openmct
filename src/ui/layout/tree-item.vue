@@ -7,7 +7,8 @@
                           v-model="expanded">
             </view-control>
             <object-label :domainObject="node.object"
-                          :objectPath="node.objectPath">
+                          :objectPath="node.objectPath"
+                          :navigateToPath="navigateToPath">
             </object-label>
         </div>
         <ul v-if="expanded" class="c-tree">
@@ -36,13 +37,12 @@
             node: Object
         },
         data() {
-            this.pathToObject = this.buildPathString(this.node.objectPath);
-
+            this.navigateToPath = this.buildPathString(this.node.navigateToParent)
             return {
                 hasChildren: false,
                 isLoading: false,
                 loaded: false,
-                isNavigated: this.pathToObject === this.openmct.router.currentLocation.path,
+                isNavigated: this.navigateToPath === this.openmct.router.currentLocation.path,
                 children: [],
                 expanded: false
             }
@@ -103,7 +103,8 @@
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
                     object: child,
-                    objectPath: [child].concat(this.node.objectPath)
+                    objectPath: [child].concat(this.node.objectPath),
+                    navigateToParent: this.navigateToPath
                 });
             },
             removeChild(identifier) {
@@ -115,15 +116,13 @@
                 this.isLoading = false;
                 this.loaded = true;
             },
-            buildPathString(path) {
-                return '/browse/' + path.map(o => o && this.openmct.objects.makeKeyString(o.identifier))
-                    .reverse()
-                    .join('/');
+            buildPathString(parentPath) {
+                return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
             },
             highlightIfNavigated(newPath, oldPath){
-                if (newPath === this.pathToObject) {
+                if (newPath === this.navigateToPath) {
                     this.isNavigated = true;
-                } else if (oldPath === this.pathToObject) {
+                } else if (oldPath === this.navigateToPath) {
                     this.isNavigated = false;
                 }
             }
