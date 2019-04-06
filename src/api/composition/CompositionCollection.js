@@ -25,7 +25,6 @@ define([
 ], function (
     _
 ) {
-
     /**
      * A CompositionCollection represents the list of domain objects contained
      * by another domain object. It provides methods for loading this
@@ -63,7 +62,6 @@ define([
         this.onProviderRemove = this.onProviderRemove.bind(this);
     }
 
-
     /**
      * Listen for changes to this composition.  Supports 'add', 'remove', and
      * 'load' events.
@@ -76,7 +74,11 @@ define([
         if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
-
+        if (!this.mutationListener) {
+            this.mutationListener = this.publicAPI.objects.observe(this.domainObject, '*', (newDomainObject) => {
+                this.domainObject = newDomainObject;
+            })
+        }
         if (this.provider.on && this.provider.off) {
             if (event === 'add') {
                 this.provider.on(
@@ -132,6 +134,10 @@ define([
 
         this.listeners[event].splice(index, 1);
         if (this.listeners[event].length === 0) {
+            if (this.mutationListener) {
+                this.mutationListener();
+                delete this.mutationListener;
+            }
             // Remove provider listener if this is the last callback to
             // be removed.
             if (this.provider.off && this.provider.on) {

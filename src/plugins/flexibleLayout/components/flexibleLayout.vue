@@ -414,6 +414,7 @@ import Container from '../utils/container';
 import Frame from '../utils/frame';
 import ResizeHandle from  './resizeHandle.vue';
 import DropHint from './dropHint.vue';
+import RemoveAction from '../../remove/RemoveAction.js';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -505,7 +506,7 @@ export default {
                 remove associated domainObjects from composition
             */
             container.frames.forEach(f => {
-                this.composition.remove({identifier: f.domainObjectIdentifier});
+                this.removeFromComposition(f.domainObjectIdentifier);
             });
 
             this.containers.splice(containerIndex, 1);
@@ -520,6 +521,7 @@ export default {
             }
 
             sizeToFill(this.containers);
+            this.setSelectionToParent();
             this.persist();
         },
         moveFrame(toContainerIndex, toFrameIndex, frameId, fromContainerIndex) {
@@ -553,20 +555,24 @@ export default {
         deleteFrame(frameId) {
             let container = this.containers
                 .filter(c => c.frames.some(f => f.id === frameId))[0];
-            let containerIndex = this.containers.indexOf(container);
             let frame = container
                 .frames
                 .filter((f => f.id === frameId))[0];
-            let frameIndex = container.frames.indexOf(frame);
 
-            /*
-                remove associated domainObject from composition
-            */
-            this.composition.remove({identifier: frame.domainObjectIdentifier});
-
-            container.frames.splice(frameIndex, 1);
-            sizeToFill(container.frames);
-            this.persist(containerIndex);
+            this.removeFromComposition(frame.domainObjectIdentifier)
+                .then(() => {
+                    sizeToFill(container.frames)
+                    this.setSelectionToParent();
+                });
+        },
+        removeFromComposition(identifier) {
+            return this.openmct.objects.get(identifier).then((childDomainObject) => {
+                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
+            });
+        },
+        setSelectionToParent() {
+             let currentSelection = this.openmct.selection.selected;
+             this.openmct.selection.select(currentSelection.slice(1));
         },
         allowContainerDrop(event, index) {
             if (!event.dataTransfer.types.includes('containerid')) {
@@ -656,6 +662,8 @@ export default {
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
+
+        this.RemoveAction = new RemoveAction(this.openmct);
 
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },

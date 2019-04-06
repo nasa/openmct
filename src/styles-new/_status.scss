@@ -20,17 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*************************************************** MIXINS */
-@mixin statusStyle($bg, $fg, $ic) {
-    background: $bg !important;
-    background-color: $bg !important;
-    color: $fg !important;
+@mixin statusStyle($bg, $fg, $imp: false) {
+    $impStr: null;
+    @if $imp {
+        $impStr: !important;
+    }
+    background: $bg $impStr;
+    background-color: $bg $impStr;
+    color: $fg $impStr;
+}
+
+@mixin statusIcon($ic, $glyph: null, $imp: false) {
+    $impStr: null;
+    @if $imp {
+        $impStr: !important;
+    }
     &:before {
         color: $ic;
         display: inline-block;
         font-family: symbolsfont;
-        font-size: 0.7em;
+        font-size: 0.8em;
         margin-right: $interiorMargin;
+        @if $glyph != null {
+            content: $glyph $impStr;
+        }
     }
+}
+
+@mixin statusStyleCombined($bg, $fg, $ic) {
+    @include statusStyle($bg, $fg, $imp: true);
+    @include statusIcon($ic);
 }
 
 @mixin elementStatusColors($c) {
@@ -47,16 +66,45 @@
     }
 }
 
-.is-limit--yellow {
-    @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg, $colorLimitYellowIc);
-    &.is-limit--upr:before { content: $glyph-icon-arrow-up; }
-    &.is-limit--lwr:before { content: $glyph-icon-arrow-down; }
+@mixin andUprLwr {
+    &.is-limit--upr:before { content: $glyph-icon-arrow-up !important; }
+    &.is-limit--lwr:before { content: $glyph-icon-arrow-down !important; }
 }
 
-.is-limit--red {
-    @include statusStyle($colorLimitRedBg, $colorLimitRedFg, $colorLimitRedIc);
-    &.is-limit--upr:before { content: $glyph-icon-arrow-double-up; }
-    &.is-limit--lwr:before { content: $glyph-icon-arrow-double-down; }
+/*************************************************** STYLES */
+*:not(tr) {
+    &.is-limit--yellow {
+        @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg, true);
+        @include statusIcon($colorLimitYellowIc, $glyph-icon-alert-rect);
+        @include andUprLwr();
+    }
+
+    &.is-limit--red {
+        @include statusStyle($colorLimitRedBg, $colorLimitRedFg, true);
+        @include statusIcon($colorLimitRedIc, $glyph-icon-alert-triangle);
+        @include andUprLwr();
+    }
+}
+
+tr {
+    &.is-limit--yellow {
+        @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg);
+        td:first-child {
+            @include statusIcon($colorLimitYellowIc, $glyph-icon-alert-rect);
+        }
+        td { color: $colorLimitYellowFg; }
+    }
+
+    &.is-limit--red {
+        @include statusStyle($colorLimitRedBg, $colorLimitRedFg);
+        td:first-child {
+            @include statusIcon($colorLimitRedIc, $glyph-icon-alert-triangle);
+        }
+        td { color: $colorLimitRedFg; }
+    }
+
+    &.is-limit--upr { td:first-child:before {  content: $glyph-icon-arrow-up !important; } }
+    &.is-limit--lwr { td:first-child:before {  content: $glyph-icon-arrow-down !important; } }
 }
 
 /*************************************************** STATUS */

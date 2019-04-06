@@ -23,7 +23,8 @@
  <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-text-view"
              :style="style">
             {{ item.text }}
@@ -59,8 +60,7 @@
                 y: 1,
                 width: 10,
                 height: 5,
-                text: element.text,
-                useGrid: true
+                text: element.text
             };
         },
         inject: ['openmct'],

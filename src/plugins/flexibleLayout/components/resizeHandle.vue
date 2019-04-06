@@ -79,10 +79,12 @@ export default {
     mounted() {
         document.addEventListener('dragstart', this.setDragging);
         document.addEventListener('dragend', this.unsetDragging);
+        document.addEventListener('drop', this.unsetDragging);
     },
     destroyed() {
         document.removeEventListener('dragstart', this.setDragging);
         document.removeEventListener('dragend', this.unsetDragging);
+        document.removeEventListener('drop', this.unsetDragging);
     }
 }
 </script>

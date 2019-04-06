@@ -37,15 +37,15 @@ define([
             key: 'table-configuration',
             name: 'Telemetry Table Configuration',
             canView: function (selection) {
-                if (selection.length === 0) {
+                if (selection.length === 0 || selection[0].length === 0) {
                     return false;
                 }
-                let object = selection[0].context.item;
+                let object = selection[0][0].context.item;
                 return object && object.type === 'table';
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[0].context.item;
+                let domainObject = selection[0][0].context.item;
                 let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
                 return {
                     show: function (element) {
@@ -62,8 +62,11 @@ define([
                         });
                     },
                     destroy: function () {
-                        component.$destroy();
-                        component = undefined;
+                        if (component) {
+                            component.$destroy();
+                            component = undefined;
+                        }
+
                         tableConfiguration = undefined;
                     }
                 }

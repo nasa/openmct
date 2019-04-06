@@ -170,6 +170,7 @@ $editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
 $editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
 $editFrameSelectedMovebarColorFg: pullForward($editFrameMovebarColorFg, 15%);
 $editFrameMovebarH: 10px; // Height of move bar in layout frame
+$editMarqueeBorder: 1px dashed $editFrameColorSelected;
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -226,6 +227,8 @@ $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
 $paletteItemBorderOuterColorSelected: black;
 $paletteItemBorderInnerColorSelected: white;
 $paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
+$mixedSettingBg: (transparent rgba($editUIBaseColorHov, 0.9)); // Used in .c-click-icon--mixed
+$mixedSettingBgSize: 10px;
 
 // Forms
 $colorCheck: $colorKey;
@@ -387,8 +390,10 @@ $colorLoadingFg: #776ba2;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 
 // Transitions
-$transIn: all 50ms ease-in-out;
-$transOut: all 250ms ease-in-out;
+$transInTime: 50ms;
+$transOutTime: 250ms;
+$transIn: all $transInTime ease-in-out;
+$transOut: all $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 

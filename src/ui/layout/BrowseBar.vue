@@ -43,7 +43,8 @@
             </div>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
+                <button v-if="notebookEnabled" 
+                    class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
                     title="New Notebook entry" 
                     @click="snapshot()">
                 </button>
@@ -118,7 +119,10 @@ const PLACEHOLDER_OBJECT = {};
                             label: 'Ok',
                             emphasis: true,
                             callback: () => {
-                                this.openmct.editor.cancel();
+                                this.openmct.editor.cancel().then(() => {
+                                    //refresh object view
+                                    this.openmct.layout.$refs.browseObject.show(this.domainObject, this.viewKey, false);
+                                });
                                 dialog.dismiss();
                             }
                         },
@@ -167,7 +171,8 @@ const PLACEHOLDER_OBJECT = {};
                 showSaveMenu: false,
                 domainObject: PLACEHOLDER_OBJECT,
                 viewKey: undefined,
-                isEditing: this.openmct.editor.isEditing()
+                isEditing: this.openmct.editor.isEditing(),
+                notebookEnabled: false
             }
         },
         computed: {
@@ -213,7 +218,11 @@ const PLACEHOLDER_OBJECT = {};
             }
         },
         mounted: function () {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+
+            if (this.openmct.types.get('notebook')) {
+                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+                this.notebookEnabled = true;
+            }
 
             document.addEventListener('click', this.closeViewAndSaveMenu);
             window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
@@ -222,7 +231,20 @@ const PLACEHOLDER_OBJECT = {};
                 this.isEditing = isEditing;
             });
         },
+        watch: {
+            domainObject() {
+                if (this.mutationObserver) {
+                    this.mutationObserver();
+                }
+                this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
+                    this.domainObject = domainObject;
+                });
+            }
+        },
         beforeDestroy: function () {
+            if (this.mutationObserver) {
+                this.mutationObserver();
+            }
             document.removeEventListener('click', this.closeViewAndSaveMenu);
             window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }

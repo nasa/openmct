@@ -30,9 +30,9 @@
             </line>
         </svg>
 
-        <div class="c-frame-edit">
-            <div class="c-frame-edit__move"
-                 @mousedown="startDrag($event)"></div>
+        <div class="c-frame-edit__move"
+             @mousedown="startDrag($event)"></div>
+        <div class="c-frame-edit" v-if="showFrameEdit">
             <div class="c-frame-edit__handle"
                  :class="startHandleClass"
                  @mousedown="startDrag($event, 'start')"></div>
@@ -66,8 +66,7 @@
                 y: 10,
                 x2: 10,
                 y2: 5,
-                stroke: '#717171',
-                useGrid: true
+                stroke: '#717171'
             };
         },
         inject: ['openmct'],
@@ -76,24 +75,31 @@
             gridSize: Array,
             initSelect: Boolean,
             index: Number,
+            multiSelect: Boolean
         },
         data() {
             return {
-                dragPosition: undefined
+                dragPosition: undefined,
+                dragging: undefined,
+                selection: []
             };
         },
         computed: {
+            showFrameEdit() {
+                let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
+                return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
+            },
             position() {
                 let {x, y, x2, y2} = this.item;
-                if (this.dragPosition) {
+                if (this.dragging && this.dragPosition) {
                     ({x, y, x2, y2} = this.dragPosition);
                 }
                 return {x, y, x2, y2};
             },
             style() {
                 let {x, y, x2, y2} = this.position;
-                let width = this.gridSize[0] * Math.abs(x - x2);
-                let height = this.gridSize[1] * Math.abs(y - y2);
+                let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
+                let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
                 let left = this.gridSize[0] * Math.min(x, x2);
                 let top = this.gridSize[1] * Math.min(y, y2);
                 return {
@@ -175,13 +181,27 @@
                 event.preventDefault();
                 let pxDeltaX = this.startPosition[0] - event.pageX;
                 let pxDeltaY = this.startPosition[1] - event.pageY;
-                this.dragPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
+                let newPosition = this.calculateDragPosition(pxDeltaX, pxDeltaY);
+
+                if (!this.dragging) {
+                    if (!_.isEqual(newPosition, this.dragPosition)) {
+                        let gridDelta = [event.pageX - this.startPosition[0], event.pageY - this.startPosition[1]];
+                        this.dragPosition = newPosition;
+                        this.$emit('move', this.toGridDelta(gridDelta));
+                    }
+                } else {
+                    this.dragPosition = newPosition;
+                }
             },
             endDrag(event) {
                 document.body.removeEventListener('mousemove', this.continueDrag);
                 document.body.removeEventListener('mouseup', this.endDrag);
                 let {x, y, x2, y2} = this.dragPosition;
-                this.$emit('endDrag', this.item, {x, y, x2, y2});
+                if (!this.dragging) {
+                    this.$emit('endMove');
+                } else {
+                    this.$emit('endLineResize', this.item, {x, y, x2, y2});
+                }
                 this.dragPosition = undefined;
                 this.dragging = undefined;
                 event.preventDefault();
@@ -191,6 +211,7 @@
                 let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
                 let {x, y, x2, y2} = this.item;
                 let dragPosition = {x, y, x2, y2};
+
                 if (this.dragging === 'start') {
                     dragPosition.x -= gridDeltaX;
                     dragPosition.y -= gridDeltaY;
@@ -205,6 +226,14 @@
                     dragPosition.y2 -= gridDeltaY;
                 }
                 return dragPosition;
+            },
+            setSelection(selection) {
+                this.selection = selection;
+            },
+            toGridDelta(pixelDelta) {
+                return pixelDelta.map((v, i) => {
+                    return Math.round(v / this.gridSize[i]);
+                });
             }
         },
         watch: {
@@ -217,6 +246,7 @@
             }
         },
         mounted() {
+            this.openmct.selection.on('change', this.setSelection);
             this.context = {
                 layoutItem: this.item,
                 index: this.index
@@ -228,6 +258,7 @@
             if (this.removeSelectable) {
                 this.removeSelectable();
             }
+            this.openmct.selection.off('change', this.setSelection);
         }
     }
  </script>
