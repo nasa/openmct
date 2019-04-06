@@ -121,7 +121,7 @@ const PLACEHOLDER_OBJECT = {};
                             callback: () => {
                                 this.openmct.editor.cancel().then(() => {
                                     //refresh object view
-                                    this.openmct.layout.$refs.browseObject.show(this.domainObject, this.viewKey, false);
+                                    this.openmct.layout.$refs.browseObject.show(this.domainObject, this.viewKey, true);
                                 });
                                 dialog.dismiss();
                             }
