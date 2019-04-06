@@ -1,7 +1,7 @@
 <template>
 <div class="c-properties c-properties--properties">
     <div class="c-properties__header">Properties</div>
-    <ul class="c-properties__section" v-if="!multiSelect">
+    <ul class="c-properties__section" v-if="!multiSelect && !singleSelectNonObject">
         <li class="c-properties__row">
             <div class="c-properties__label">Title</div>
             <div class="c-properties__value">{{ item.name }}</div>
@@ -26,6 +26,7 @@
         </li>
     </ul>
     <div class="c-properties__row--span-all" v-if="multiSelect">No properties to display for multiple items</div>
+    <div class="c-properties__row--span-all" v-if="singleSelectNonObject">No properties to display for this item</div>
 </div>
 </template>
 
@@ -81,6 +82,9 @@ export default {
                         }, this.item)
                     };
                 });
+        },
+        singleSelectNonObject() {
+            return Object.keys(this.item).length === 0 && !this.multiSelect;
         }
     },
     mounted() {
