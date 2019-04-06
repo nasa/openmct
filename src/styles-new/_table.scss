@@ -53,6 +53,24 @@ table {
     a { color: $colorBtnMajorBg; }
 }
 
+.is-editing {
+    td.is-selectable {
+        &:hover {
+            background: rgba($editUIColorBg, 0.1);
+            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+        }
+
+        &[s-selected] {
+            background: $editUIColorBg !important;
+            border: 1px solid $editUIColorFg !important;
+            color: $editUIColorFg !important;
+            box-shadow: $editFrameSelectedShdw;
+            z-index: 2;
+        }
+    }
+}
+
+/******************************************************** C-TABLE */
 div.c-table {
     // When c-table is used as a wrapper element in more complex table views
     height: 100%;

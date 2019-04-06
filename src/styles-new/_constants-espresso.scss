@@ -79,7 +79,7 @@ $colorKeyHov: #26d8ff;
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
-$uiColor: #00b2ff; // Resize bars, splitter bars, etc.
+$uiColor: #0093ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
@@ -143,6 +143,8 @@ $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
+$editUIColorBg: $editUIColor;
+$editUIColorFg: #fff;
 $editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
