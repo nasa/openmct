@@ -66,7 +66,7 @@ define(
                 name: "Properties",
                 rows: this.properties.map(function (property, index) {
                     // Property definition is same as form row definition
-                    var row = Object.create(property.getDefinition());
+                    var row = JSON.parse(JSON.stringify(property.getDefinition()));
 
                     // Use index as the key into the formValue;
                     // this correlates to the indexing provided by
