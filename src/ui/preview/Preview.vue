@@ -63,7 +63,11 @@
         }
 
         &__object-view {
+            background: $colorBodyBg;
+            border: 1px solid $colorInteriorBorder;
             flex: 1 1 auto;
+            overflow: auto;
+            padding: $interiorMargin;
 
             > div:not([class]) {
                 // Target an immediate child div without a class and make it display: contents
