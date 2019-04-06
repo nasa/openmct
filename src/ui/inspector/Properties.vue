@@ -84,7 +84,7 @@ export default {
                 });
         },
         singleSelectNonObject() {
-            return Object.keys(this.item).length === 0 && !this.multiSelect;
+            return !this.item.identifier && !this.multiSelect;
         }
     },
     mounted() {
