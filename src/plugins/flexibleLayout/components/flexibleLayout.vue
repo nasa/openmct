@@ -571,8 +571,7 @@ export default {
             });
         },
         setSelectionToParent() {
-             let currentSelection = this.openmct.selection.selected;
-             this.openmct.selection.select(currentSelection.slice(1));
+            this.$el.click();
         },
         allowContainerDrop(event, index) {
             if (!event.dataTransfer.types.includes('containerid')) {
