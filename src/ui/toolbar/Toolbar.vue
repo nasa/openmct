@@ -115,7 +115,7 @@
                 let value = undefined;
                 let applicableSelectedItems = toolbarItem.applicableSelectedItems;
 
-                if (!applicableSelectedItems) {
+                if (!applicableSelectedItems && !toolbarItem.property) {
                     return value;
                 }
 
@@ -123,9 +123,14 @@
                     value = this.getFormValue(domainObject, toolbarItem);
                 } else {
                     let values = [];
-                    applicableSelectedItems.forEach(selectionPath => {
-                        values.push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath)));
-                    });
+
+                    if (applicableSelectedItems) {
+                        applicableSelectedItems.forEach(selectionPath => {
+                            values.push(this.getPropertyValue(domainObject, toolbarItem, selectionPath));
+                        });
+                    } else {
+                        values.push(this.getPropertyValue(domainObject, toolbarItem));
+                    }
 
                     // If all values are the same, use it, otherwise mark the item as non-specific.
                     if (values.every(value => value === values[0])) {
@@ -138,14 +143,29 @@
 
                 return value;
             },
+            getPropertyValue(domainObject, toolbarItem, selectionPath, formKey) {
+                let property = this.getItemProperty(toolbarItem, selectionPath);
+
+                if (formKey) {
+                    property = property + "." + formKey;
+                }
+
+                return _.get(domainObject, property);
+            },
             getFormValue(domainObject, toolbarItem) {
                 let value = {};
                 let values = {};
+
                 toolbarItem.formKeys.map(key => {
                     values[key] = [];
-                    toolbarItem.applicableSelectedItems.forEach(selectionPath => {
-                        values[key].push(_.get(domainObject, this.getItemProperty(toolbarItem, selectionPath) + "." + key));
-                    });
+
+                    if (toolbarItem.applicableSelectedItems) {
+                        toolbarItem.applicableSelectedItems.forEach(selectionPath => {
+                            values[key].push(this.getPropertyValue(domainObject, toolbarItem, selectionPath, key));
+                        });
+                    } else {
+                        values[key].push(this.getPropertyValue(domainObject, toolbarItem, undefined, key));
+                    }
                 });
 
                 for (const key in values) {
@@ -192,18 +212,34 @@
                     this.structure.map(s => {
                         if (s.formKeys) {
                             s.formKeys.forEach(key => {
-                                item.applicableSelectedItems.forEach(selectionPath => {
-                                    this.openmct.objects.mutate(item.domainObject,
-                                        this.getItemProperty(item, selectionPath) + "." + key, value[key]);
-                                });
+                                if (item.applicableSelectedItems) {
+                                    item.applicableSelectedItems.forEach(selectionPath => {
+                                        this.mutateObject(item, value[key], selectionPath, key);
+                                    });
+                                } else {
+                                    this.mutateObject(item, value[key], undefined, key);
+                                }
                             });
                         }
                     });
                 } else {
-                    item.applicableSelectedItems.forEach(selectionPath => {
-                        this.openmct.objects.mutate(item.domainObject, this.getItemProperty(item, selectionPath), value);    
-                    });
+                    if (item.applicableSelectedItems) {
+                        item.applicableSelectedItems.forEach(selectionPath => {
+                            this.mutateObject(item, value, selectionPath);
+                        });
+                    } else {
+                        this.mutateObject(item, value);
+                    }
                 }
+            },
+            mutateObject(item, value, selectionPath, formKey) {
+                let property = this.getItemProperty(item, selectionPath);
+
+                if (formKey) {
+                    property = property + "." + formKey;
+                }
+
+                this.openmct.objects.mutate(item.domainObject, property, value);
             },
             triggerMethod(item, event) {
                 if (item.method) {

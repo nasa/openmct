@@ -46,9 +46,7 @@ function ToolbarProvider(openmct) {
                 separator;
 
             separator = {
-                control: "separator",
-                domainObject: primary.context.item,
-                key: "separator"
+                control: "separator"
             };
 
             toggleContainer = {
@@ -203,7 +201,7 @@ function ToolbarProvider(openmct) {
             let toolbar = [
                 toggleContainer,
                 addContainer,
-                toggleFrame ? separator: undefined,
+                toggleFrame ? separator : undefined,
                 toggleFrame,
                 deleteFrame || deleteContainer ? separator : undefined,
                 deleteFrame,
