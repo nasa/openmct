@@ -42,12 +42,7 @@ function ToolbarProvider(openmct) {
                 toggleContainer,
                 deleteContainer,
                 addContainer,
-                toggleFrame,
-                separator;
-
-            separator = {
-                control: "separator"
-            };
+                toggleFrame;
 
             toggleContainer = {
                 control: 'toggle-button',
@@ -67,6 +62,12 @@ function ToolbarProvider(openmct) {
                     }
                 ]
             };
+
+            function getSeparator() {
+                return {
+                    control: "separator"
+                };
+            }
 
             if (primary.context.type === 'frame') {
                 let frameId = primary.context.frameId;
@@ -201,9 +202,9 @@ function ToolbarProvider(openmct) {
             let toolbar = [
                 toggleContainer,
                 addContainer,
-                toggleFrame ? separator : undefined,
+                toggleFrame ? getSeparator() : undefined,
                 toggleFrame,
-                deleteFrame || deleteContainer ? separator : undefined,
+                deleteFrame || deleteContainer ? getSeparator() : undefined,
                 deleteFrame,
                 deleteContainer
             ];
