@@ -28,11 +28,6 @@ export default class Editor extends EventEmitter {
         super();
         this.editing = false;
         this.openmct = openmct;
-        document.addEventListener('drop', (event) => {
-            if (!this.isEditing()) {
-                this.edit();
-            }
-        }, {capture: true});
     }
 
     /**
