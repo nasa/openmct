@@ -137,6 +137,10 @@ define([
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
+                    //Check that telemetry object has not been removed since telemetry was requested.
+                    if (!this.telemetryObjects.includes(telemetryObject)) {
+                        return;
+                    }
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
@@ -194,6 +198,10 @@ define([
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+                //Check that telemetry object has not been removed since telemetry was requested.
+                if (!this.telemetryObjects.includes(telemetryObject)) {
+                    return;
+                }
                 this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             }, subscribeOptions);
         }
