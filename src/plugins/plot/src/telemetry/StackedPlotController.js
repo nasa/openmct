@@ -37,6 +37,11 @@ define([
         this.exportImageService = exportImageService;
         this.$scope = $scope;
         this.cursorGuide = false;
+        this.domainObject = $scope.domainObject.useCapability('adapter');
+        
+        var currentFilters = this.domainObject.configuration.filters;
+
+        $scope.currentFilters = this.currentFilters;
 
         $scope.telemetryObjects = [];
 
@@ -110,6 +115,12 @@ define([
             }
         }
 
+        function onFilterUpdate(filters) {
+            $scope.$broadcast('filters:update', filters);
+
+            currentFilters = filters;
+        }
+
         $scope.$watch('domainObject', onDomainObjectChange);
         $scope.$watch('domainObject.getModel().composition', onCompositionChange);
 
@@ -128,6 +139,12 @@ define([
 
         $scope.$on('plot:highlight:update', function ($e, point) {
             $scope.$broadcast('plot:highlight:set', point);
+        });
+
+        var unobserve = openmct.objects.observe(this.domainObject, 'configuration.filters', onFilterUpdate);
+
+        $scope.$on('$destroy', function () {
+            unobserve();
         });
     }
 

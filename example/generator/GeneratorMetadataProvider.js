@@ -33,7 +33,8 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 1
-                    }
+                    },
+                    filters: ['equals']
                 },
                 {
                     key: "cos",

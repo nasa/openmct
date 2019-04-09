@@ -80,6 +80,8 @@ define([
             'configuration.filters',
             this.updateFiltersAndResubscribe.bind(this)
         );
+
+        this.listenTo($scope, 'filters:update', this.onFiltersUpdate, this);
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -261,6 +263,10 @@ define([
         this.config.series.forEach(function (series) {
             series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
         });
+    };
+
+    PlotController.prototype.onFiltersUpdate = function ($event, updatedFilters) {
+        this.updateFiltersAndResubscribe(updatedFilters);
     };
 
     /**
