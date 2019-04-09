@@ -85,6 +85,10 @@ export default class RemoveAction {
         );
 
         this.openmct.objects.mutate(parent, 'composition', composition);
+
+        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
+        }
     }
 
     appliesTo(objectPath) {

@@ -23,17 +23,18 @@ export default {
         FilterObject
     },
     inject: [
-        'openmct',
-        'providedObject'
+        'openmct'
     ],
     data() {
+        let providedObject = this.openmct.selection.get()[0][0].context.item;
         let persistedFilters = {};
 
-        if (this.providedObject.configuration && this.providedObject.configuration.filters) {
-            persistedFilters = this.providedObject.configuration.filters;
+        if (providedObject.configuration && providedObject.configuration.filters) {
+            persistedFilters = providedObject.configuration.filters;
         }
 
         return {
+            providedObject,
             persistedFilters,
             children: {}
         }
@@ -73,13 +74,14 @@ export default {
         this.composition.on('add', this.addChildren);
         this.composition.on('remove', this.removeChildren);
         this.composition.load();
-
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
+        this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => this.providedObject = mutatedObject);
     },
     beforeDestroy() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();
+        this.unobserveAllMutation();
     }
 }
 </script>

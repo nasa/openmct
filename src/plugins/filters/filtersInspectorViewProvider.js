@@ -42,14 +42,11 @@ define([
             },
             view: function (selection) {
                 let component;
-                let providedObject = selection[0][0].context.item;
-
                 return {
                     show: function (element) {
                         component = new Vue({
                             provide: {
-                                openmct,
-                                providedObject
+                                openmct
                             },
                             components: {
                                 FiltersView: FiltersView.default
