@@ -237,6 +237,7 @@ define ([
         });
         delete this.compositionObjs[objectId];
         this.subscriptions[objectId](); //unsubscribe from telemetry source
+        delete this.subscriptions[objectId];
         this.eventEmitter.emit('remove', identifier);
 
         if (_.isEmpty(this.compositionObjs)) {
