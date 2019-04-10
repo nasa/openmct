@@ -42,7 +42,10 @@
 
                 <!-- Checkbox list, NOT editing -->
                 <template v-if="filter.possibleValues && !isEditing">
-                    <span>{{persistedFilters[filter.comparator].join(', ')}}</span>
+                    <span 
+                        v-if="persistedFilters[filter.comparator]">
+                        {{persistedFilters[filter.comparator].join(', ')}}
+                    </span>
                 </template>
             </div>
         </li>

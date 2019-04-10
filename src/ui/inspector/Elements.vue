@@ -67,6 +67,7 @@
     }
 </style>
 <script>
+import _ from 'lodash';
 import Search from '../components/search.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
@@ -82,7 +83,8 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
             currentSearch: '',
-            isDragging: false
+            isDragging: false,
+            selection: []
         }
     },
     mounted() {
@@ -99,6 +101,10 @@ export default {
             this.showSelection(this.openmct.selection.get());
         },
         showSelection(selection) {
+            if (_.isEqual(this.selection, selection)) {
+                return;
+            }
+            this.selection = selection;
             this.elements = [];
             this.elementsCache = {};
             this.listeners = [];
