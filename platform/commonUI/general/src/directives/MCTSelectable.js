@@ -54,6 +54,7 @@ define(
                     if (isDestroyed) {
                         return;
                     }
+
                     var removeSelectable = openmct.selection.selectable(
                         element[0],
                         scope.$eval(attrs.mctSelectable),

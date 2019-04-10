@@ -51,6 +51,17 @@ mct-plot {
     }
 }
 
+.is-editing {
+    .gl-plot.child-frame {
+        &[s-selected] {
+            border: 1px solid $editUIColorFg !important;
+            color: $editUIColorFg !important;
+            box-shadow: $editFrameSelectedShdw;
+            z-index: 2;
+        }
+    }
+}
+
 .gl-plot {
     color: $colorPlotFg;
     display: flex;
