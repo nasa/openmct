@@ -7,7 +7,8 @@
             }">
             <div class="c-drop-hint"
                  @drop="onDrop"
-                 ref="dropHint">
+                 @dragenter="dragenter"
+                 @dragleave="dragleave">
             </div>
             <div class="c-tabs-view__empty-message"
                  v-if="!tabsList.length > 0">Drag objects here to add them to this view.</div>
@@ -197,13 +198,6 @@ export default {
 
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
-
-        let dropHint = this.$refs.dropHint;
-
-        if (dropHint) {
-            dropHint.addEventListener('dragenter', this.dragenter);
-            dropHint.addEventListener('dragleave', this.dragleave);
-        }
     },
     destroyed() {
         this.composition.off('add', this.addItem);
@@ -212,12 +206,6 @@ export default {
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
-    },
-    beforeDestroy() {
-        let dropHint = this.$refs.dropHint;
-
-        dropHint.removeEventListener('dragenter', this.dragenter);
-        dropHint.removeEventListener('dragleave', this.dragleave);
     }
 }
 </script>
