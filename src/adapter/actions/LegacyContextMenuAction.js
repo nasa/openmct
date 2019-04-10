@@ -33,20 +33,25 @@ export default class LegacyContextMenuAction {
     }
 
     invoke(objectPath) {
-        let context = {
-            category: 'contextual',
-            domainObject: this.openmct.legacyObject(objectPath)
-        }
-        let legacyAction = new this.LegacyAction(context);
+        this.openmct.objects.getRoot().then((root) => {
+            let pathWithRoot = objectPath.slice();
+            pathWithRoot.push(root);
 
-        if (!legacyAction.getMetadata) {
-            let metadata = Object.create(this.LegacyAction.definition);
-            metadata.context = context;
-            legacyAction.getMetadata = function () {
-                return metadata;
-            }.bind(legacyAction);
-        }
-        legacyAction.perform();
+            let context = {
+                category: 'contextual',
+                domainObject: this.openmct.legacyObject(pathWithRoot)
+            }
+            let legacyAction = new this.LegacyAction(context);
+
+            if (!legacyAction.getMetadata) {
+                let metadata = Object.create(this.LegacyAction.definition);
+                metadata.context = context;
+                legacyAction.getMetadata = function () {
+                    return metadata;
+                }.bind(legacyAction);
+            }
+            legacyAction.perform();
+        });
     }
 
     appliesTo(objectPath) {
