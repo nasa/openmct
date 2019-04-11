@@ -176,7 +176,8 @@
                 let options = {
                     start: bounds.start,
                     end: bounds.end,
-                    size: 1
+                    size: 1,
+                    strategy: 'latest'
                 };
                 this.openmct.telemetry.request(this.domainObject, options)
                     .then(data => {
