@@ -88,7 +88,7 @@ define(
                                 tools: {
                                     undo: 'Undo'
                                 }
-                            },
+                            }
                         },
                         saveHandler: function (image, done) {
                             if (save) {
