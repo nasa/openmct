@@ -564,3 +564,10 @@ mct-plot {
         top: 0; bottom: 0;
     }
 }
+
+.s-status-timeconductor-unsynced {
+    .t-object-alert.t-alert-unsynced {
+        @extend .icon-alert-triangle;
+        color: $colorPausedBg;
+    }
+}

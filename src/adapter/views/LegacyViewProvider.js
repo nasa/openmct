@@ -48,12 +48,22 @@ define([
                 let scope = $rootScope.$new();
                 let legacyObject = convertToLegacyObject(domainObject);
                 let isDestroyed = false;
+                let unlistenToStatus;
                 scope.domainObject = legacyObject;
                 scope.model = legacyObject.getModel();
 
 
                 return {
                     show: function (container) {
+                        let statusCapability = legacyObject.getCapability('status');
+                        unlistenToStatus = statusCapability.listen((newStatus) => {
+                            container.classList.remove('s-status-timeconductor-unsynced');
+
+                            if (newStatus.includes('timeconductor-unsynced')) {
+                                container.classList.add('s-status-timeconductor-unsynced');
+                            }
+                        });
+
                         // TODO: implement "gestures" support ?
                         let uses = legacyView.uses || [];
                         let promises = [];
@@ -94,6 +104,7 @@ define([
                     },
                     destroy: function () {
                         scope.$destroy();
+                        unlistenToStatus();
                     }
                 }
             },
