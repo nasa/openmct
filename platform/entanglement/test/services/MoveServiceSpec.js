@@ -227,9 +227,9 @@ define(
                             locationPromise.resolve();
                         });
 
-                        it("removes object from parent without user warning dialog", function () {
+                        it("removes object from parent", function () {
                             expect(actionCapability.perform)
-                                .toHaveBeenCalledWith('remove', true);
+                                .toHaveBeenCalledWith('remove');
                         });
 
                     });
@@ -248,9 +248,9 @@ define(
                             .toHaveBeenCalled();
                     });
 
-                    it("removes object from parent without user warning dialog", function () {
+                    it("removes object from parent", function () {
                         expect(actionCapability.perform)
-                            .toHaveBeenCalledWith('remove', true);
+                            .toHaveBeenCalledWith('remove');
                     });
                 });
 

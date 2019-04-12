@@ -47,7 +47,7 @@ define([], function () {
     /**
      * Perform this action.
      */
-    RemoveAction.prototype.perform = function (skipWarning) {
+    RemoveAction.prototype.perform = function () {
         var dialog,
             domainObject = this.domainObject,
             navigationService = this.navigationService;
