@@ -69,16 +69,17 @@ export default {
                 }
             } else {
                 if (!this.updatedFilters[key]) {
-                    this.updatedFilters[key] = {};
+                    this.$set(this.updatedFilters, key, {});
                 }
-                this.updatedFilters[key][comparator] = [value ? valueName : undefined];
+                this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateTextFilter(key, comparator, value) {
             if (!this.updatedFilters[key]) {
-                this.updatedFilters[key] = {};
+                this.$set(this.updatedFilters, key, {});
+                this.$set(this.updatedFilters[key], comparator, '');
             }
             this.updatedFilters[key][comparator] = value;
             this.$emit('updateFilters', this.keyString, this.updatedFilters);

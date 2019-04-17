@@ -1,7 +1,7 @@
 <template>
 <div class="c-properties c-properties--properties">
     <div class="c-properties__header">Properties</div>
-    <ul class="c-properties__section">
+    <ul class="c-properties__section" v-if="!multiSelect && !singleSelectNonObject">
         <li class="c-properties__row">
             <div class="c-properties__label">Title</div>
             <div class="c-properties__value">{{ item.name }}</div>
@@ -25,6 +25,8 @@
             <div class="c-properties__value">{{ prop.value }}</div>
         </li>
     </ul>
+    <div class="c-properties__row--span-all" v-if="multiSelect">No properties to display for multiple items</div>
+    <div class="c-properties__row--span-all" v-if="singleSelectNonObject">No properties to display for this item</div>
 </div>
 </template>
 
@@ -35,7 +37,8 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            domainObject: {}
+            domainObject: {},
+            multiSelect: false
         }
     },
     computed: {
@@ -79,6 +82,9 @@ export default {
                         }, this.item)
                     };
                 });
+        },
+        singleSelectNonObject() {
+            return !this.item.identifier && !this.multiSelect;
         }
     },
     mounted() {
@@ -90,11 +96,19 @@ export default {
     },
     methods: {
         updateSelection(selection) {
-            if (selection.length === 0) {
+            if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
                 return;
             }
-            this.domainObject = selection[0].context.item;
+
+            if (selection.length > 1) {
+                this.multiSelect = true;
+                this.domainObject = {};
+                return;
+            } else {
+                this.multiSelect = false;
+                this.domainObject = selection[0][0].context.item;
+            }            
         },
         formatTime(unixTime) {
             return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';

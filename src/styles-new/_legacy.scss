@@ -482,6 +482,8 @@ body.mobile.phone {
 
     .widget-edit-holder {
         display: flex; // Overrides `display: none` during Browse mode
+        flex: 1 1 auto;
+
         .flex-accordion-holder {
             // Needed because otherwise accordion elements "creep" when contents expand and contract
             display: block !important;
@@ -497,12 +499,6 @@ body.mobile.phone {
                 // Test data is expanded and rules are collapsed
                 // Make text data take up all the vertical space
                 .flex-accordion-holder { display: flex; }
-                .widget-test-data {
-                    flex-grow: 999999;
-                }
-                .w-widget-test-data-items {
-                    max-height: inherit;
-                }
             }
         }
         &.expanded-widget-rules {

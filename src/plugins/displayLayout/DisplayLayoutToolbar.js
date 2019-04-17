@@ -28,11 +28,17 @@ define([], function () {
             key: "layout",
             description: "A toolbar for objects inside a display layout.",
             forSelection: function (selection) {
-                // Apply the layout toolbar if the selected object
-                // is inside a layout, or the main layout is selected.
-                return (selection &&
-                    ((selection[1] && selection[1].context.item && selection[1].context.item.type === 'layout') ||
-                        (selection[0].context.item && selection[0].context.item.type === 'layout')));
+                if (!selection || selection.length === 0) {
+                    return false;
+                }
+
+                let selectionPath = selection[0];
+                let selectedObject = selectionPath[0];
+                let selectedParent = selectionPath[1];
+
+                // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
+                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
+                    (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
             toolbar: function (selection) {
                 const DIALOG_FORM = {
@@ -73,190 +79,72 @@ define([], function () {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
                 }
 
-                function getPath() {
-                    return `configuration.items[${selection[0].context.index}]`;
+                function getPath(selectionPath) {
+                    return `configuration.items[${selectionPath[0].context.index}]`;
                 }
 
-                let selectedParent = selection[1] && selection[1].context.item,
-                    selectedObject = selection[0].context.item,
-                    layoutItem = selection[0].context.layoutItem,
-                    toolbar = [];
-
-                if (selectedObject && selectedObject.type === 'layout') {
-                    toolbar.push({
-                        control: "menu",
-                        domainObject: selectedObject,
-                        method: function (option) {
-                            let name = option.name.toLowerCase();
-                            let form = DIALOG_FORM[name];
-                            if (form) {
-                                getUserInput(form)
-                                    .then(element => selection[0].context.addElement(name, element));
-                            } else {
-                                selection[0].context.addElement(name);
-                            }
-                        },
-                        key: "add",
-                        icon: "icon-plus",
-                        label: "Add",
-                        options: [
-                            {
-                                "name": "Box",
-                                "class": "icon-box-round-corners"
-                            },
-                            {
-                                "name": "Line",
-                                "class": "icon-line-horz"
-                            },
-                            {
-                                "name": "Text",
-                                "class": "icon-font"
-                            },
-                            {
-                                "name": "Image",
-                                "class": "icon-image"
-                            }
-                        ]
+                function getAllTypes(selection) {
+                    return selection.filter(selectionPath => {
+                        let type = selectionPath[0].context.layoutItem.type;
+                        return type === 'text-view' ||
+                            type === 'telemetry-view' ||
+                            type === 'box-view' ||
+                            type === 'image-view' ||
+                            type === 'line-view' ||
+                            type === 'subobject-view';
                     });
                 }
 
-                if (!layoutItem) {
-                    return toolbar;
-                }
-
-                let separator = {
-                    control: "separator"
-                };
-                let remove = {
-                    control: "button",
-                    domainObject: selectedParent,
-                    icon: "icon-trash",
-                    title: "Delete the selected object",
-                    method: function () {
-                        let removeItem = selection[1].context.removeItem;
-                        let prompt = openmct.overlays.dialog({
-                            iconClass: 'alert',
-                            message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
-                            buttons: [
+                function getAddButton(selection, selectionPath) {
+                    if (selection.length === 1) {
+                        selectionPath = selectionPath || selection[0];
+                        return {
+                            control: "menu",
+                            domainObject: selectionPath[0].context.item,
+                            method: function (option) {
+                                let name = option.name.toLowerCase();
+                                let form = DIALOG_FORM[name];
+                                if (form) {
+                                    getUserInput(form)
+                                        .then(element => selectionPath[0].context.addElement(name, element));
+                                } else {
+                                    selectionPath[0].context.addElement(name);
+                                }
+                            },
+                            key: "add",
+                            icon: "icon-plus",
+                            label: "Add",
+                            options: [
                                 {
-                                    label: 'Ok',
-                                    emphasis: 'true',
-                                    callback: function () {
-                                        removeItem(layoutItem, selection[0].context.index);
-                                        prompt.dismiss();
-                                    }
+                                    "name": "Box",
+                                    "class": "icon-box-round-corners"
                                 },
                                 {
-                                    label: 'Cancel',
-                                    callback: function () {
-                                        prompt.dismiss();
-                                    }
+                                    "name": "Line",
+                                    "class": "icon-line-horz"
+                                },
+                                {
+                                    "name": "Text",
+                                    "class": "icon-font"
+                                },
+                                {
+                                    "name": "Image",
+                                    "class": "icon-image"
                                 }
                             ]
-                        });
+                        };
                     }
-                };
-                let stackOrder = {
-                    control: "menu",
-                    domainObject: selectedParent,
-                    icon: "icon-layers",
-                    title: "Move the selected object above or below other objects",
-                    options: [
-                        {
-                            name: "Move to Top",
-                            value: "top",
-                            class: "icon-arrow-double-up"
-                        },
-                        {
-                            name: "Move Up",
-                            value: "up",
-                            class: "icon-arrow-up"
-                        },
-                        {
-                            name: "Move Down",
-                            value: "down",
-                            class: "icon-arrow-down"
-                        },
-                        {
-                            name: "Move to Bottom",
-                            value: "bottom",
-                            class: "icon-arrow-double-down"
-                        }
-                    ],
-                    method: function (option) {
-                        selection[1].context.orderItem(option.value, selection[0].context.index);
-                    }
-                };
-                let useGrid = {
-                    control: "toggle-button",
-                    domainObject: selectedParent,
-                    property: function () {
-                        return getPath() + ".useGrid";
-                    },
-                    options: [
-                        {
-                            value: false,
-                            icon: "icon-grid-snap-to",
-                            title: "Grid snapping enabled"
-                        },
-                        {
-                            value: true,
-                            icon: "icon-grid-snap-no",
-                            title: "Grid snapping disabled"
-                        }
-                    ]
-                };
-                let x = {
-                    control: "input",
-                    type: "number",
-                    domainObject: selectedParent,
-                    property: function () {
-                        return getPath() + ".x";
-                    },
-                    label: "X:",
-                    title: "X position"
-                },
-                y = {
-                    control: "input",
-                    type: "number",
-                    domainObject: selectedParent,
-                    property: function () {
-                        return getPath() + ".y";
-                    },
-                    label: "Y:",
-                    title: "Y position",
-                },
-                width = {
-                    control: 'input',
-                    type: 'number',
-                    domainObject: selectedParent,
-                    property: function () {
-                        return getPath() + ".width";
-                    },
-                    label: 'W:',
-                    title: 'Resize object width'
-                },
-                height = {
-                    control: 'input',
-                    type: 'number',
-                    domainObject: selectedParent,
-                    property: function () {
-                        return getPath() + ".height";
-                    },
-                    label: 'H:',
-                    title: 'Resize object height'
-                };
+                }
 
-                if (layoutItem.type === 'subobject-view') {
-                    if (toolbar.length > 0) {
-                        toolbar.push(separator);
-                    }
-
-                    toolbar.push({
+                function getToggleFrameButton(selectedParent, selection) {
+                    return {
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".hasFrame";
+                        applicableSelectedItems: selection.filter(selectionPath => 
+                            selectionPath[0].context.layoutItem.type === 'subobject-view'
+                        ),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + ".hasFrame";
                         },
                         options: [
                             {
@@ -270,52 +158,186 @@ define([], function () {
                                 title: "Frame hidden"
                             }
                         ]
-                    });
-                    toolbar.push(separator);
-                    toolbar.push(stackOrder);
-                    toolbar.push(x);
-                    toolbar.push(y);
-                    toolbar.push(width);
-                    toolbar.push(height);
-                    toolbar.push(useGrid);
-                    toolbar.push(separator);
-                    toolbar.push(remove);
-                } else {
+                    };
+                }
+
+                function getRemoveButton(selectedParent, selectionPath, selection) {
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        icon: "icon-trash",
+                        title: "Delete the selected object",
+                        method: function () {
+                            let removeItem = selectionPath[1].context.removeItem;
+                            let prompt = openmct.overlays.dialog({
+                                iconClass: 'alert',
+                                message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
+                                buttons: [
+                                    {
+                                        label: 'Ok',
+                                        emphasis: 'true',
+                                        callback: function () {
+                                            removeItem(getAllTypes(selection));
+                                            prompt.dismiss();
+                                        }
+                                    },
+                                    {
+                                        label: 'Cancel',
+                                        callback: function () {
+                                            prompt.dismiss();
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    };
+                }
+
+                function getStackOrder(selectedParent, selectionPath) {
+                    return {
+                        control: "menu",
+                        domainObject: selectedParent,
+                        icon: "icon-layers",
+                        title: "Move the selected object above or below other objects",
+                        options: [
+                            {
+                                name: "Move to Top",
+                                value: "top",
+                                class: "icon-arrow-double-up"
+                            },
+                            {
+                                name: "Move Up",
+                                value: "up",
+                                class: "icon-arrow-up"
+                            },
+                            {
+                                name: "Move Down",
+                                value: "down",
+                                class: "icon-arrow-down"
+                            },
+                            {
+                                name: "Move to Bottom",
+                                value: "bottom",
+                                class: "icon-arrow-double-down"
+                            }
+                        ],
+                        method: function (option) {
+                            selectionPath[1].context.orderItem(option.value, getAllTypes(selection));
+                        }
+                    };
+                }
+
+                function getXInput(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".x";
+                            },
+                            label: "X:",
+                            title: "X position"
+                        };
+                    }
+                }
+
+                function getYInput(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".y";
+                            },
+                            label: "Y:",
+                            title: "Y position",
+                        };
+                    }
+                }
+
+                function getWidthInput(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: 'input',
+                            type: 'number',
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".width";
+                            },
+                            label: 'W:',
+                            title: 'Resize object width'
+                        };
+                    }
+                }
+
+                function getHeightInput(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: 'input',
+                            type: 'number',
+                            domainObject: selectedParent,
+                            applicableSelectedItems: getAllTypes(selection),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".height";
+                            },
+                            label: 'H:',
+                            title: 'Resize object height'
+                        };
+                    }
+                }
+
+                function getX2Input(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'line-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".x2";
+                            },
+                            label: "X2:",
+                            title: "X2 position"
+                        };
+                    }
+                }
+
+                function getY2Input(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "input",
+                            type: "number",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'line-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".y2";
+                            },
+                            label: "Y2:",
+                            title: "Y2 position",
+                        };
+                    }
+                }
+
+                function getTextSizeMenu(selectedParent, selection) {
                     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
-                    let fill = {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".fill";
-                        },
-                        icon: "icon-paint-bucket",
-                        title: "Set fill color"
-                    },
-                    stroke = {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".stroke";
-                        },
-                        icon: "icon-line-horz",
-                        title: "Set border color"
-                    },
-                    color = {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".color";
-                        },
-                        icon: "icon-font",
-                        mandatory: true,
-                        title: "Set text color",
-                        preventNone: true
-                    },
-                    size = {
+                    return {
                         control: "select-menu",
                         domainObject: selectedParent,
-                        property: function () {
-                            return getPath() + ".size";
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            let type = selectionPath[0].context.layoutItem.type;
+                            return type === 'text-view' || type === 'telemetry-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + ".size";
                         },
                         title: "Set text size",
                         options: TEXT_SIZE.map(size => {
@@ -324,13 +346,128 @@ define([], function () {
                             };
                         })
                     };
+                }
 
-                    if (layoutItem.type === 'telemetry-view') {
-                        let displayMode = {
+                function getFillMenu(selectedParent, selection) {
+                    return {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            let type = selectionPath[0].context.layoutItem.type;
+                            return type === 'text-view' ||
+                                type === 'telemetry-view' ||
+                                type === 'box-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + ".fill";
+                        },
+                        icon: "icon-paint-bucket",
+                        title: "Set fill color"
+                    };
+                }
+
+                function getStrokeMenu(selectedParent, selection) {
+                    return {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            let type = selectionPath[0].context.layoutItem.type;
+                            return type === 'text-view' ||
+                                type === 'telemetry-view' ||
+                                type === 'box-view' ||
+                                type === 'image-view' ||
+                                type === 'line-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + ".stroke";
+                        },
+                        icon: "icon-line-horz",
+                        title: "Set border color"
+                    };
+                }
+
+                function getTextColorMenu(selectedParent, selection) {
+                    return {
+                        control: "color-picker",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            let type = selectionPath[0].context.layoutItem.type;
+                            return type === 'text-view' || type === 'telemetry-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + ".color";
+                        },
+                        icon: "icon-font",
+                        mandatory: true,
+                        title: "Set text color",
+                        preventNone: true
+                    };
+                }
+
+                function getURLButton(selectedParent, selection) {
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            return selectionPath[0].context.layoutItem.type === 'image-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath);
+                        },
+                        icon: "icon-image",
+                        title: "Edit image properties",
+                        dialog: DIALOG_FORM['image']
+                    };
+                }
+
+                function getTextButton(selectedParent, selection) {
+                        return {
+                            control: "button",
+                            domainObject: selectedParent,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'text-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath);
+                            },
+                            icon: "icon-gear",
+                            title: "Edit text properties",
+                            dialog: DIALOG_FORM['text']
+                        };
+                }
+
+                function getTelemetryValueMenu(selectionPath, selection) {
+                    if (selection.length === 1) {
+                        return {
+                            control: "select-menu",
+                            domainObject: selectionPath[1].context.item,
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".value";
+                            },
+                            title: "Set value",
+                            options: openmct.telemetry.getMetadata(selectionPath[0].context.item).values().map(value => {
+                                return {
+                                    name: value.name,
+                                    value: value.key
+                                }
+                            })
+                        };
+                    }
+                }
+
+                function getDisplayModeMenu(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        return {
                             control: "select-menu",
                             domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".displayMode";
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
+                            }),
+                            property: function (selectionPath) {
+                                return getPath(selectionPath) + ".displayMode";
                             },
                             title: "Set display mode",
                             options: [
@@ -347,146 +484,196 @@ define([], function () {
                                     value: "value"
                                 }
                             ]
-                        },
-                        value = {
-                            control: "select-menu",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".value";
-                            },
-                            title: "Set value",
-                            options: openmct.telemetry.getMetadata(selectedObject).values().map(value => {
-                                return {
-                                    name: value.name,
-                                    value: value.key
-                                }
-                            })
                         };
-                        toolbar = [
-                            displayMode,
-                            separator,
-                            value,
-                            separator,
-                            fill,
-                            stroke,
-                            color,
-                            separator,
-                            size,
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            height,
-                            width,
-                            useGrid,
-                            separator,
-                            remove
-                        ];
-                    } else if (layoutItem.type === 'text-view') {
-                        let text = {
-                            control: "button",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath();
-                            },
-                            icon: "icon-gear",
-                            title: "Edit text properties",
-                            dialog: DIALOG_FORM['text']
-                        };
-                        toolbar = [
-                            fill,
-                            stroke,
-                            separator,
-                            color,
-                            size,
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            height,
-                            width,
-                            useGrid,
-                            separator,
-                            text,
-                            separator,
-                            remove
-                        ];
-                    } else if (layoutItem.type === 'box-view') {
-                        toolbar = [
-                            fill,
-                            stroke,
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            height,
-                            width,
-                            useGrid,
-                            separator,
-                            remove
-                        ];
-                    } else if (layoutItem.type === 'image-view') {
-                        let url = {
-                            control: "button",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath();
-                            },
-                            icon: "icon-image",
-                            title: "Edit image properties",
-                            dialog: DIALOG_FORM['image']
-                        };
-                        toolbar = [
-                            stroke,
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            height,
-                            width,
-                            useGrid,
-                            separator,
-                            url,
-                            separator,
-                            remove
-                        ];
-                    } else if (layoutItem.type === 'line-view') {
-                        let x2 = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".x2";
-                            },
-                            label: "X2:",
-                            title: "X2 position"
-                        },
-                        y2 = {
-                            control: "input",
-                            type: "number",
-                            domainObject: selectedParent,
-                            property: function () {
-                                return getPath() + ".y2";
-                            },
-                            label: "Y2:",
-                            title: "Y2 position",
-                        };
-                        toolbar = [
-                            stroke,
-                            separator,
-                            stackOrder,
-                            x,
-                            y,
-                            x2,
-                            y2,
-                            useGrid,
-                            separator,
-                            remove
-                        ];
                     }
                 }
 
-                return toolbar;
+                function getSeparator() {
+                    return {
+                        control: "separator"
+                    };
+                }
+
+                function isMainLayoutSelected(selectionPath) {
+                    let selectedObject = selectionPath[0].context.item;
+                    return selectedObject && selectedObject.type === 'layout' &&
+                        !selectionPath[0].context.layoutItem;
+                }
+
+                if (isMainLayoutSelected(selection[0])) {
+                    return [getAddButton(selection)];
+                }
+
+                let toolbar = {
+                    'add-menu': [],
+                    'toggle-frame': [],
+                    'display-mode': [],
+                    'telemetry-value': [],
+                    'style': [],
+                    'text-style': [],
+                    'position': [],
+                    'text': [],
+                    'url': [],
+                    'remove': [],
+                };
+
+                selection.forEach(selectionPath => {
+                    let selectedParent = selectionPath[1].context.item;
+                    let layoutItem = selectionPath[0].context.layoutItem;
+
+                    if (layoutItem.type === 'subobject-view') {
+                        if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
+                            toolbar['add-menu'] = [getAddButton(selection, selectionPath)];
+                        }
+                        if (toolbar['toggle-frame'].length === 0) {
+                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selection)];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    } else if (layoutItem.type === 'telemetry-view') {
+                        if (toolbar['display-mode'].length === 0) {
+                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selection)];
+                        }
+                        if (toolbar['telemetry-value'].length === 0) {
+                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selection)];
+                        }
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text-style'].length === 0) {
+                            toolbar['text-style'] = [
+                                getTextColorMenu(selectedParent, selection),
+                                getTextSizeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    } else if (layoutItem.type === 'text-view') {
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text-style'].length === 0) {
+                            toolbar['text-style'] = [
+                                getTextColorMenu(selectedParent, selection),
+                                getTextSizeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['text'].length === 0) {
+                            toolbar['text'] = [getTextButton(selectedParent, selection)];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    } else if (layoutItem.type === 'box-view') {
+                        if (toolbar['style'].length < 2) {
+                            toolbar['style'] = [
+                                getFillMenu(selectedParent, selection),
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    } else if (layoutItem.type === 'image-view') {
+                        if (toolbar['style'].length === 0) {
+                            toolbar['style'] = [
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getHeightInput(selectedParent, selection),
+                                getWidthInput(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['url'].length === 0) {
+                            toolbar['url'] = [getURLButton(selectedParent, selection)];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    } else if (layoutItem.type === 'line-view') {
+                        if (toolbar['style'].length === 0) {
+                            toolbar['style'] = [
+                                getStrokeMenu(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['position'].length === 0) {
+                            toolbar['position'] = [
+                                getStackOrder(selectedParent, selectionPath),
+                                getXInput(selectedParent, selection),
+                                getYInput(selectedParent, selection),
+                                getX2Input(selectedParent, selection),
+                                getY2Input(selectedParent, selection)
+                            ];
+                        }
+                        if (toolbar['remove'].length === 0) {
+                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        }
+                    }
+                });
+
+                let toolbarArray = Object.values(toolbar);
+                return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
+                    group = group.filter(control => control !== undefined);
+
+                    if (group.length > 0) {
+                        accumulator.push(group);
+
+                        if (index < toolbarArray.length - 1) {
+                            accumulator.push(getSeparator());
+                        }
+                    }
+
+                    return accumulator;
+                }, []));
             }
         }
     }

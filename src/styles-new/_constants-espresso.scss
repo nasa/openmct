@@ -79,7 +79,7 @@ $colorKeyHov: #26d8ff;
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
-$uiColor: #00b2ff; // Resize bars, splitter bars, etc.
+$uiColor: #0093ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
@@ -143,6 +143,8 @@ $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
+$editUIColorBg: $editUIColor;
+$editUIColorFg: #fff;
 $editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
@@ -159,8 +161,8 @@ $editFrameBorderHov: 1px solid $editFrameColorHov; // Hover on selectable frames
 $editFrameColorSelected: #ccc; // Border of selected frames
 $editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make handle standout
 $editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
-$editFrameSelectedShdw: rgba(black, 0.5) 0 1px 10px 1px;
-$editFrameSelectedBorder: 1px dashed $editFrameColorSelected; // Selected frame element
+$editFrameSelectedShdw: rgba(black, 0.4) 0 1px 5px 1px;
+$editFrameSelectedBorder: 1px solid $editFrameColorHov; // Selected frame element
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
 $editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
 $editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
@@ -168,6 +170,7 @@ $editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
 $editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
 $editFrameSelectedMovebarColorFg: pullForward($editFrameMovebarColorFg, 15%);
 $editFrameMovebarH: 10px; // Height of move bar in layout frame
+$editMarqueeBorder: 1px dashed $editFrameColorSelected;
 
 // Icons
 $colorIconAlias: #4af6f3;
@@ -224,6 +227,8 @@ $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
 $paletteItemBorderOuterColorSelected: black;
 $paletteItemBorderInnerColorSelected: white;
 $paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
+$mixedSettingBg: (transparent rgba($editUIBaseColorHov, 0.7)); // Used in .c-click-icon--mixed
+$mixedSettingBgSize: 5px;
 
 // Forms
 $colorCheck: $colorKey;
@@ -385,8 +390,10 @@ $colorLoadingFg: #776ba2;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 
 // Transitions
-$transIn: all 50ms ease-in-out;
-$transOut: all 250ms ease-in-out;
+$transInTime: 50ms;
+$transOutTime: 250ms;
+$transIn: all $transInTime ease-in-out;
+$transOut: all $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 

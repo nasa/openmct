@@ -25,14 +25,20 @@ define([
             cssClass: representation.cssClass,
             description: representation.description,
             canView: function (selection) {
-                if (!selection[0] || !selection[0].context.item) {
+                if (selection.length === 0 || selection[0].length === 0) {
                     return false;
                 }
-                let domainObject = selection[0].context.item;
-                return domainObject.type === typeDefinition.key;
+
+                let selectionContext = selection[0][0].context;
+
+                if (!selectionContext.item) {
+                    return false;
+                }
+
+                return selectionContext.item.type === typeDefinition.key;
             },
             view: function (selection) {
-                let domainObject = selection[0].context.item;
+                let domainObject = selection[0][0].context.item;
                 let $rootScope = openmct.$injector.get('$rootScope');
                 let templateLinker = openmct.$injector.get('templateLinker');
                 let scope = $rootScope.$new();

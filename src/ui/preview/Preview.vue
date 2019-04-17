@@ -33,7 +33,8 @@
             </div>
             <div class="l-browse-bar__end">
                 <div class="l-browse-bar__actions">
-                    <button class="l-browse-bar__actions__edit c-button icon-notebook" 
+                    <button v-if="notebookEnabled"
+                        class="l-browse-bar__actions__edit c-button icon-notebook" 
                         title="New Notebook entry" 
                         @click="snapshot">
                     </button>
@@ -63,7 +64,11 @@
         }
 
         &__object-view {
+            background: $colorBodyBg;
+            border: 1px solid $colorInteriorBorder;
             flex: 1 1 auto;
+            overflow: auto;
+            padding: $interiorMargin;
 
             > div:not([class]) {
                 // Target an immediate child div without a class and make it display: contents
@@ -97,14 +102,19 @@
 
             return {
                 domainObject: domainObject,
-                type: type
+                type: type,
+                notebookEnabled: false
             };
         },
         mounted() {
             let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
             this.view = viewProvider.view(this.domainObject);
             this.view.show(this.$refs.objectView, false);
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+
+            if (this.openmct.types.get('notebook')) {
+                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+                this.notebookEnabled = true;
+            }
         },
         destroy() {
             this.view.destroy();

@@ -1,7 +1,7 @@
 <template>
     <div class="c-ctrl-wrapper">
         <div class="c-icon-button c-icon-button--menu"
-             :class="options.icon"
+             :class="[options.icon, {'c-click-icon--mixed': nonSpecific}]"
              :title="options.title"
              @click="toggle">
             <div class="c-button__label">{{ selectedName }}</div>
@@ -47,7 +47,11 @@ export default {
             if (selectedOption) {
                 return selectedOption.name || selectedOption.value
             }
-            return '';
+            // If no selected option, then options are non-specific
+            return '??px';
+        },
+        nonSpecific() {
+            return this.options.nonSpecific === true;
         }
     }
 }

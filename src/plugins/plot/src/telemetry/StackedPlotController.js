@@ -79,6 +79,15 @@ define([
                     $scope.$broadcast('plot:tickWidth', _.max(tickWidthMap));
                 }
             }
+
+            function compositionReorder(reorderPlan) {
+                let oldComposition = telemetryObjects.slice();
+
+                reorderPlan.forEach((reorder) => {
+                    telemetryObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
+                });
+            }
+
             thisRequest.pending += 1;
             openmct.objects.get(domainObject.getId())
                 .then(function (obj) {
@@ -89,10 +98,12 @@ define([
                     composition = openmct.composition.get(obj);
                     composition.on('add', addChild);
                     composition.on('remove', removeChild);
+                    composition.on('reorder', compositionReorder);
                     composition.load();
                     unlisten = function () {
                         composition.off('add', addChild);
                         composition.off('remove', removeChild);
+                        composition.off('reorder', compositionReorder);
                     };
                 });
         }

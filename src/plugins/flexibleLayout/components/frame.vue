@@ -79,12 +79,14 @@ export default {
         },
         setSelection() {
             this.$nextTick(function () {
-                let childContext = this.$refs.objectFrame.getSelectionContext();
-                childContext.item = this.domainObject;
-                childContext.type = 'frame';
-                childContext.frameId = this.frame.id;
-                this.unsubscribeSelection = this.openmct.selection.selectable(
-                    this.$refs.frame, childContext, false);
+                if (this.$refs && this.$refs.objectFrame) {
+                    let childContext = this.$refs.objectFrame.getSelectionContext();
+                    childContext.item = this.domainObject;
+                    childContext.type = 'frame';
+                    childContext.frameId = this.frame.id;
+                    this.unsubscribeSelection = this.openmct.selection.selectable(
+                        this.$refs.frame, childContext, false);
+                }
             });
         },
         initDrag(event) {

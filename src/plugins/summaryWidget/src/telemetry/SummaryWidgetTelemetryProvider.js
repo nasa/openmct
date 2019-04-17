@@ -43,7 +43,7 @@ define([
         return evaluator.requestLatest(options)
             .then(function (latestDatum) {
                 this.pool.release(evaluator);
-                return [latestDatum];
+                return latestDatum ? [latestDatum] : [];
             }.bind(this));
     };
 

@@ -23,8 +23,11 @@
 <template>
     <div class="l-layout"
          @dragover="handleDragOver"
-         @click="bypassSelection"
-         @drop="handleDrop">
+         @click.capture="bypassSelection"
+         @drop="handleDrop"
+         :class="{
+            'is-multi-selected': selectedLayoutItems.length > 1
+            }">
         <!-- Background grid -->
         <div class="l-layout__grid-holder c-grid">
             <div class="c-grid__x l-grid l-grid-x"
@@ -39,17 +42,37 @@
                    :is="item.type"
                    :item="item"
                    :key="item.id"
-                   :gridSize="item.useGrid ? gridSize : [1, 1]"
+                   :gridSize="gridSize"
                    :initSelect="initSelectIndex === index"
                    :index="index"
-                   @endDrag="endDrag"
-        >
+                   :multiSelect="selectedLayoutItems.length > 1"
+                   @move="move"
+                   @endMove="endMove"
+                   @endLineResize='endLineResize'>
         </component>
+        <edit-marquee v-if='showMarquee'
+                      :gridSize="gridSize"
+                      :selectedLayoutItems="selectedLayoutItems"
+                      @endResize="endResize">
+        </edit-marquee>
     </div>
 </template>
 
 <style lang="scss">
     @import "~styles/sass-base";
+
+    @mixin displayMarquee($c) {
+        > .c-frame-edit {
+            // All other frames
+            //@include test($c, 0.4);
+            display: block;
+        }
+        > .c-frame > .c-frame-edit {
+            // Line object frame
+            //@include test($c, 0.4);
+            display: block;
+        }
+    }
 
     .l-layout {
         @include abs();
@@ -70,7 +93,7 @@
         .l-shell__main-container {
             &[s-selected],
             &[s-selected-parent] {
-                // Display grid in main layout holder when editing
+                // Display grid and allow edit marquee to display in main layout holder when editing
                 > .l-layout {
                     background: $editUIGridColorBg;
 
@@ -84,7 +107,7 @@
         .l-layout__frame {
             &[s-selected],
             &[s-selected-parent] {
-                // Display grid in nested layouts when editing
+                // Display grid and allow edit marquee to display in nested layouts when editing
                 > * > * > .l-layout {
                     background: $editUIGridColorBg;
                     box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
@@ -95,9 +118,20 @@
                 }
             }
         }
+
+        /*********************** EDIT MARQUEE CONTROL */
+        *[s-selected-parent] {
+            > .l-layout {
+                // When main shell layout is the parent
+                @include displayMarquee(deeppink);
+            }
+            > * > * > * {
+                // When a sub-layout is the parent
+                @include displayMarquee(blue);
+            }
+        }
     }
 </style>
-
 
 <script>
     import uuid from 'uuid';
@@ -108,6 +142,7 @@
     import TextView from './TextView.vue'
     import LineView from './LineView.vue'
     import ImageView from './ImageView.vue'
+    import EditMarquee from './EditMarquee.vue'
 
     const ITEM_TYPE_VIEW_MAP = {
         'subobject-view': SubobjectView,
@@ -123,8 +158,10 @@
         down: -1,
         bottom: Number.NEGATIVE_INFINITY
     };
-
     const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
+
+    let components = ITEM_TYPE_VIEW_MAP;
+    components['edit-marquee'] = EditMarquee;
 
     function getItemDefinition(itemType, ...options) {
         let itemView = ITEM_TYPE_VIEW_MAP[itemType];
@@ -141,7 +178,8 @@
             let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
                 internalDomainObject: domainObject,
-                initSelectIndex: undefined
+                initSelectIndex: undefined,
+                selection: []
             };
         },
         computed: {
@@ -150,81 +188,114 @@
             },
             layoutItems() {
                 return this.internalDomainObject.configuration.items;
+            },
+            selectedLayoutItems() {
+                return this.layoutItems.filter(item => {
+                    return this.itemIsInCurrentSelection(item);
+                });
+            },
+            showMarquee() {
+                let selectionPath = this.selection[0];
+                let singleSelectedLine = this.selection.length === 1 &&
+                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+                return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
             }
         },
         inject: ['openmct', 'options'],
         props: ['domainObject'],
-        components: ITEM_TYPE_VIEW_MAP,
+        components: components,
         methods: {
             addElement(itemType, element) {
                 this.addItem(itemType + '-view', element);
             },
             setSelection(selection) {
-                if (selection.length === 0) {
-                    return;
-                }
-
-                if (this.removeSelectionListener) {
-                    this.removeSelectionListener();
-                }
-
-                let itemIndex = selection[0].context.index;
-
-                if (itemIndex !== undefined) {
-                    this.attachSelectionListener(itemIndex);
-                }
+                this.selection = selection;
             },
-            attachSelectionListener(index) {
-                let path = `configuration.items[${index}].useGrid`;
-                this.removeSelectionListener = this.openmct.objects.observe(this.internalDomainObject, path, function (value) {
-                    let item = this.layoutItems[index];
-
-                    if (value) {
-                        item.x = Math.round(item.x / this.gridSize[0]);
-                        item.y = Math.round(item.y / this.gridSize[1]);
-                        item.width = Math.round(item.width / this.gridSize[0]);
-                        item.height = Math.round(item.height / this.gridSize[1]);
-
-                        if (item.x2) {
-                            item.x2 = Math.round(item.x2 / this.gridSize[0]);
-                        }
-                        if (item.y2) {
-                            item.y2 = Math.round(item.y2 / this.gridSize[1]);
-                        }
-                    } else {
-                        item.x = this.gridSize[0] * item.x;
-                        item.y = this.gridSize[1] * item.y;
-                        item.width = this.gridSize[0] * item.width;
-                        item.height = this.gridSize[1] * item.height;
-
-                        if (item.x2) {
-                            item.x2 = this.gridSize[0] * item.x2;
-                        }
-                        if (item.y2) {
-                            item.y2 = this.gridSize[1] * item.y2;
-                        }
-                    }
-                    item.useGrid = value;
-                    this.mutate(`configuration.items[${index}]`, item);
-                }.bind(this));
+            itemIsInCurrentSelection(item) {
+                return this.selection.some(selectionPath =>
+                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.id === item.id);
             },
             bypassSelection($event) {
                 if (this.dragInProgress) {
                     if ($event) {
                         $event.stopImmediatePropagation();
                     }
+                    this.dragInProgress = false;
                     return;
                 }
             },
-            endDrag(item, updates) {
+            endLineResize(item, updates) {
                 this.dragInProgress = true;
-                setTimeout(function () {
-                    this.dragInProgress = false;
-                }.bind(this), 0);
-
                 let index = this.layoutItems.indexOf(item);
                 Object.assign(item, updates);
                 this.mutate(`configuration.items[${index}]`, item);
+            },
+            endResize(scaleWidth, scaleHeight, marqueeStart, marqueeOffset) {
+                this.dragInProgress = true;
+                this.layoutItems.forEach(item => {
+                    if (this.itemIsInCurrentSelection(item)) {
+                        let itemXInMarqueeSpace = item.x - marqueeStart.x;
+                        let itemXInMarqueeSpaceAfterScale = Math.round(itemXInMarqueeSpace * scaleWidth);
+                        item.x = itemXInMarqueeSpaceAfterScale + marqueeOffset.x + marqueeStart.x;
+
+                        let itemYInMarqueeSpace = item.y - marqueeStart.y;
+                        let itemYInMarqueeSpaceAfterScale = Math.round(itemYInMarqueeSpace * scaleHeight);
+                        item.y = itemYInMarqueeSpaceAfterScale + marqueeOffset.y + marqueeStart.y;
+
+                        if (item.x2) {
+                            let itemX2InMarqueeSpace = item.x2 - marqueeStart.x;
+                            let itemX2InMarqueeSpaceAfterScale = Math.round(itemX2InMarqueeSpace * scaleWidth);
+                            item.x2 = itemX2InMarqueeSpaceAfterScale + marqueeOffset.x + marqueeStart.x;
+                        } else {
+                            item.width = Math.round(item.width * scaleWidth);
+                        }
+
+                        if (item.y2) {
+                            let itemY2InMarqueeSpace = item.y2 - marqueeStart.y;
+                            let itemY2InMarqueeSpaceAfterScale = Math.round(itemY2InMarqueeSpace * scaleHeight);
+                            item.y2 = itemY2InMarqueeSpaceAfterScale + marqueeOffset.y + marqueeStart.y;
+                        } else {
+                            item.height = Math.round(item.height * scaleHeight);
+                        }
+                    }
+                });
+                this.mutate("configuration.items", this.layoutItems);
+            },
+            move(gridDelta) {
+                this.dragInProgress = true;
+
+                if (!this.initialPositions) {
+                    this.initialPositions = {};
+                    _.cloneDeep(this.selectedLayoutItems).forEach(selectedItem => {
+                        if (selectedItem.type === 'line-view') {
+                            this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y, selectedItem.x2, selectedItem.y2];
+                        } else {
+                            this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
+                        }
+                    });
+                }
+
+                let layoutItems = this.layoutItems.map(item => {
+                    if (this.initialPositions[item.id]) {
+                        let startingPosition = this.initialPositions[item.id];
+                        let [startingX, startingY, startingX2, startingY2] = startingPosition;
+                        item.x = startingX + gridDelta[0];
+                        item.y = startingY + gridDelta[1];
+
+                        if (item.x2) {
+                            item.x2 = startingX2 + gridDelta[0];
+                        }
+
+                        if (item.y2) {
+                            item.y2 = startingY2 + gridDelta[1];
+                        }
+                    }
+                    return item;
+                });
+            },
+            endMove() {
+                this.mutate('configuration.items', this.layoutItems);
+                this.initialPositions = undefined;
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
@@ -313,11 +384,15 @@
                     this.objectViewMap[keyString] = true;
                 }
             },
-            removeItem(item, index) {
+            removeItem(selectedItems) {
+                let indices = [];
                 this.initSelectIndex = -1;
-                this.layoutItems.splice(index, 1);
+                selectedItems.forEach(selectedItem => {
+                    indices.push(selectedItem[0].context.index);
+                    this.untrackItem(selectedItem[0].context.layoutItem);
+                });
+                _.pullAt(this.layoutItems, indices);
                 this.mutate("configuration.items", this.layoutItems);
-                this.untrackItem(item);
                 this.$el.click();
             },
             untrackItem(item) {
@@ -383,20 +458,74 @@
                 this.mutate("configuration.items", layoutItems);
                 this.$el.click();
             },
-            orderItem(position, index) {
+            orderItem(position, selectedItems) {
                 let delta = ORDERS[position];
-                let newIndex = Math.max(Math.min(index + delta, this.layoutItems.length - 1), 0);
-                let item = this.layoutItems[index];
+                let indices = [];
+                let newIndex = -1;
+                let items = [];
 
-                if (newIndex !== index) {
-                    this.layoutItems.splice(index, 1);
-                    this.layoutItems.splice(newIndex, 0, item);
-                    this.mutate('configuration.items', this.layoutItems);
+                Object.assign(items, this.layoutItems);
+                this.selectedLayoutItems.forEach(selectedItem => {
+                    indices.push(this.layoutItems.indexOf(selectedItem));
+                });
+                indices.sort((a, b) => a - b);
 
-                    if (this.removeSelectionListener) {
-                        this.removeSelectionListener();
-                        this.attachSelectionListener(newIndex);
+                if (position === 'top' || position === 'up') {
+                    indices.reverse();
+                }
+
+                if (position === 'top' || position === 'bottom') {
+                    this.moveToTopOrBottom(position, indices, items, delta);
+                } else {
+                    this.moveUpOrDown(position, indices, items, delta);
+                }
+
+                this.mutate('configuration.items', this.layoutItems);
+            },
+            moveUpOrDown(position, indices, items, delta) {
+                let previousItemIndex = -1;
+                let newIndex = -1;
+
+                indices.forEach((itemIndex, index) => {
+                    let isAdjacentItemSelected = position === 'up' ?
+                        itemIndex + 1 === previousItemIndex :
+                        itemIndex - 1 === previousItemIndex;
+
+                    if (index > 0 && isAdjacentItemSelected) {
+                        if (position === 'up') {
+                            newIndex -= 1;
+                        } else {
+                            newIndex += 1;
+                        }
+                    } else {
+                        newIndex = Math.max(Math.min(itemIndex + delta, this.layoutItems.length - 1), 0);
                     }
+
+                    previousItemIndex = itemIndex;
+                    this.updateItemOrder(newIndex, itemIndex, items);
+                });
+            },
+            moveToTopOrBottom(position, indices, items, delta) {
+                let newIndex = -1;
+
+                indices.forEach((itemIndex, index) => {
+                    if (index === 0) {
+                        newIndex = Math.max(Math.min(itemIndex + delta, this.layoutItems.length - 1), 0);
+                    } else {
+                        if (position === 'top') {
+                            newIndex -= 1;
+                        } else {
+                            newIndex += 1;
+                        }
+                    }
+
+                    this.updateItemOrder(newIndex, itemIndex, items);
+                });
+            },
+            updateItemOrder(newIndex, itemIndex, items) {
+                if (newIndex !== itemIndex) {
+                    this.layoutItems.splice(itemIndex, 1);
+                    this.layoutItems.splice(newIndex, 0, items[itemIndex]);
                 }
             }
         },
@@ -412,14 +541,10 @@
             this.composition.load();
         },
         destroyed: function () {
-            this.openmct.off('change', this.setSelection);
+            this.openmct.selection.off('change', this.setSelection);
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.unlisten();
-
-            if (this.removeSelectionListener) {
-                this.removeSelectionListener();
-            }
         }
     }
 </script>

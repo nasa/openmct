@@ -34,7 +34,10 @@ export default {
         this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver);
-        this.$el.addEventListener('drop', this.onDrop);
+        this.$el.addEventListener('drop', this.addObjectToParent);
+        this.$el.addEventListener('drop', this.editIfEditable, {
+            capture: true
+        });
     },
     methods: {
         clear() {
@@ -70,15 +73,10 @@ export default {
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
-            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
-
+            let provider = this.getViewProvider();
             if (!provider) {
-                provider = this.openmct.objectViews.get(this.currentObject)[0];
-                if (!provider) {
-                    return;
-                }
+                return;
             }
-
 
             if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
@@ -86,6 +84,7 @@ export default {
                 } else {
                     this.currentView = provider.view(this.currentObject, false);    
                 }
+
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
@@ -133,13 +132,32 @@ export default {
                 event.preventDefault();
             }
         },
-        onDrop(event) {
+        addObjectToParent(event) {
             if (this.hasComposableDomainObject(event)) {
                 let composableDomainObject = this.getComposableDomainObject(event);
                 this.currentObject.composition.push(composableDomainObject.identifier);
                 this.openmct.objects.mutate(this.currentObject, 'composition', this.currentObject.composition);
                 event.preventDefault();
                 event.stopPropagation();
+            }
+        },
+        getViewProvider() {
+            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+
+            if (!provider) {
+                provider = this.openmct.objectViews.get(this.currentObject)[0];
+                if (!provider) {
+                    return;
+                }
+            }
+            return provider;
+        },
+        editIfEditable(event) {
+            let provider = this.getViewProvider();
+            if (provider && 
+                provider.canEdit(this.currentObject) &&
+                !this.openmct.editor.isEditing()) {
+                    this.openmct.editor.edit();
             }
         },
         hasComposableDomainObject(event) {

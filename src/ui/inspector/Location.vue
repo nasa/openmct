@@ -1,7 +1,7 @@
 <template>
 <div class="c-properties c-properties--location">
     <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
-    <ul class="c-properties__section">
+    <ul class="c-properties__section" v-if="!multiSelect">
         <li class="c-properties__row" v-if="originalPath.length">
             <ul class="c-properties__value c-location">
                 <li v-for="pathObject in orderedOriginalPath"
@@ -15,6 +15,7 @@
             </ul>
         </li>
     </ul>
+    <div class="c-properties__row--span-all" v-if="multiSelect">No location to display for multiple items</div>
 </div>
 </template>
 
@@ -72,6 +73,7 @@ export default {
     data() {
         return {
             domainObject: {},
+            multiSelect: false,
             originalPath: [],
             keyString: ''
         }
@@ -106,15 +108,26 @@ export default {
             this.keyString = '';
         },
         updateSelection(selection) {
-            if (!selection.length) {
+            if (!selection.length || !selection[0].length) {
                 this.clearData();
                 return;
-            } else if (!selection[0].context.item && selection[1] && selection[1].context.item) {
-                this.setOriginalPath([selection[1].context.item], true);
+            }  
+
+            if (selection.length > 1) {
+                this.multiSelect = true;
+                return;
+            } else {
+                this.multiSelect = false;
+            }
+            
+            this.domainObject = selection[0][0].context.item;
+            let parentObject = selection[0][1];
+
+            if (!this.domainObject && parentObject && parentObject.context.item) {
+                this.setOriginalPath([parentObject.context.item], true);
+                this.keyString = '';
                 return;
             }
-
-            this.domainObject = selection[0].context.item;
 
             let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 

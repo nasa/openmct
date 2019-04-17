@@ -23,7 +23,8 @@
  <template>
      <layout-frame :item="item"
                    :grid-size="gridSize"
-                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                   @move="(gridDelta) => $emit('move', gridDelta)"
+                   @endMove="() => $emit('endMove')">
         <div class="c-telemetry-view"
              :style="styleObject"
              v-if="domainObject">
@@ -96,10 +97,9 @@
                 displayMode: 'all',
                 value: metadata.getDefaultDisplayValue(),
                 stroke: "transparent",
-                fill: "",
+                fill: "transparent",
                 color: "",
-                size: "13px",
-                useGrid: true
+                size: "13px"
             };
         },
         inject: ['openmct'],
@@ -176,7 +176,8 @@
                 let options = {
                     start: bounds.start,
                     end: bounds.end,
-                    size: 1
+                    size: 1,
+                    strategy: 'latest'
                 };
                 this.openmct.telemetry.request(this.domainObject, options)
                     .then(data => {

@@ -60,6 +60,7 @@ export default function DisplayLayoutPlugin(options) {
                     getSelectionContext() {
                         return {
                             item: domainObject,
+                            supportsMultiSelect: true,
                             addElement: component && component.$refs.displayLayout.addElement,
                             removeItem: component && component.$refs.displayLayout.removeItem,
                             orderItem: component && component.$refs.displayLayout.orderItem

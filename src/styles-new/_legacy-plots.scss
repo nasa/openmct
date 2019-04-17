@@ -51,6 +51,22 @@ mct-plot {
     }
 }
 
+.is-editing {
+    .gl-plot.child-frame {
+        &:hover {
+            background: rgba($editUIColorBg, 0.1);
+            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+        }
+
+        &[s-selected] {
+            border: 1px solid $editUIColorFg !important;
+            color: $editUIColorFg !important;
+            box-shadow: $editFrameSelectedShdw;
+            z-index: 2;
+        }
+    }
+}
+
 .gl-plot {
     color: $colorPlotFg;
     display: flex;
@@ -546,5 +562,12 @@ mct-plot {
     &--v {
         width: 1px;
         top: 0; bottom: 0;
+    }
+}
+
+.s-status-timeconductor-unsynced {
+    .t-object-alert.t-alert-unsynced {
+        @extend .icon-alert-triangle;
+        color: $colorPausedBg;
     }
 }

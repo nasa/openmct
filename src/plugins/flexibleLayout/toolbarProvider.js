@@ -27,28 +27,22 @@ function ToolbarProvider(openmct) {
         key: "flex-layout",
         description: "A toolbar for objects inside a Flexible Layout.",
         forSelection: function (selection) {
-            let context = selection[0].context;
+            let context = selection[0][0].context;
 
             return (context && context.type &&
                 (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
 
-            let primary = selection[0],
-                secondary = selection[1],
-                tertiary = selection[2],
+            let selectionPath = selection[0],
+                primary = selectionPath[0],
+                secondary = selectionPath[1],
+                tertiary = selectionPath[2],
                 deleteFrame,
                 toggleContainer,
                 deleteContainer,
                 addContainer,
-                toggleFrame,
-                separator;
-
-            separator = {
-                control: "separator",
-                domainObject: selection[0].context.item,
-                key: "separator"
-            };
+                toggleFrame;
 
             toggleContainer = {
                 control: 'toggle-button',
@@ -69,6 +63,12 @@ function ToolbarProvider(openmct) {
                 ]
             };
 
+            function getSeparator() {
+                return {
+                    control: "separator"
+                };
+            }
+
             if (primary.context.type === 'frame') {
                 let frameId = primary.context.frameId;
                 let layoutObject = tertiary.context.item;
@@ -77,11 +77,11 @@ function ToolbarProvider(openmct) {
                     .containers;
                 let container = containers
                     .filter(c => c.frames.some(f => f.id === frameId))[0];
-                let frame = container
+                let containerIndex = containers.indexOf(container);
+                let frame = container && container
                     .frames
                     .filter((f => f.id === frameId))[0];
-                let containerIndex = containers.indexOf(container);
-                let frameIndex = container.frames.indexOf(frame);
+                let frameIndex = container && container.frames.indexOf(frame);
 
                 deleteFrame = {
                     control: "button",
@@ -202,9 +202,9 @@ function ToolbarProvider(openmct) {
             let toolbar = [
                 toggleContainer,
                 addContainer,
-                toggleFrame ? separator: undefined,
+                toggleFrame ? getSeparator() : undefined,
                 toggleFrame,
-                deleteFrame || deleteContainer ? separator : undefined,
+                deleteFrame || deleteContainer ? getSeparator() : undefined,
                 deleteFrame,
                 deleteContainer
             ];

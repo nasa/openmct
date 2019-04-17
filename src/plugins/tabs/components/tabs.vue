@@ -7,7 +7,8 @@
             }">
             <div class="c-drop-hint"
                  @drop="onDrop"
-                 ref="dropHint">
+                 @dragenter="dragenter"
+                 @dragleave="dragleave">
             </div>
             <div class="c-tabs-view__empty-message"
                  v-if="!tabsList.length > 0">Drag objects here to add them to this view.</div>
@@ -25,7 +26,7 @@
         <div class="c-tabs-view__object-holder"
             v-for="(tab, index) in tabsList"
             :key="index"
-            :class="{'invisible': !isCurrent(tab)}">
+            :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}">
             <div v-if="currentTab"
                  class="c-tabs-view__object-name l-browse-bar__object-name--w"
                  :class="currentTab.type.definition.cssClass">
@@ -68,6 +69,14 @@
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+
+            &--hidden {
+                height: 1000px;
+                width: 1000px;
+                position: absolute;
+                left: -9999px;
+                top: -9999px;
+            }
         }
 
         &__object-name {
@@ -78,7 +87,10 @@
         }
 
         &__object {
+            display: flex;
+            flex-flow: column nowrap;
             flex: 1 1 auto;
+            height: 0; // Chrome 73 oveflow bug fix
         }
 
         &__empty-message {
@@ -186,13 +198,6 @@ export default {
 
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
-
-        let dropHint = this.$refs.dropHint;
-
-        if (dropHint) {
-            dropHint.addEventListener('dragenter', this.dragenter);
-            dropHint.addEventListener('dragleave', this.dragleave);
-        }
     },
     destroyed() {
         this.composition.off('add', this.addItem);
@@ -201,12 +206,6 @@ export default {
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
-    },
-    beforeDestroy() {
-        let dropHint = this.$refs.dropHint;
-
-        dropHint.removeEventListener('dragenter', this.dragenter);
-        dropHint.removeEventListener('dragleave', this.dragleave);
     }
 }
 </script>
