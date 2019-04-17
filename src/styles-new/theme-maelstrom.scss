@@ -1,8 +1,16 @@
 /**************************************************** OVERRIDES */
 $bgKey: #222632;
 
+body {
+    font-size: 1em;
+}
+
 /************* FRAMES */
 .c-so-view {
+    &__header__name {
+        tranform: translateY(-2px);
+    }
+
     &:not(.c-so-view--no-frame) {
         $bc: #666;
         $bLR: 3px solid transparent;
@@ -88,7 +96,6 @@ $bgKey: #222632;
 *[title*='system-widget'] {
     background: $bgKey !important;
     border-width: 2px !important;
-    font-size: 1.2em;
     justify-content: left !important;
 
     .c-sw__icon {
@@ -107,7 +114,7 @@ $bgKey: #222632;
 
 /**************************************************** INDIVIDUAL ELEMENTS */
 *[title*='passenger-notice'] {
-    font-size: 1.6em;
+    font-size: 1.4em;
     .c-sw__icon {
         font-size: 2.1em;
         margin-right: $interiorMarginLg;
