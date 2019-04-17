@@ -70,6 +70,7 @@
             }
 
             &__name {
+                @include headerFont(1em);
                 @include ellipsize();
                 flex: 0 1 auto;
             }
