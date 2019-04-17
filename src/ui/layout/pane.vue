@@ -194,8 +194,8 @@
                 /********************************* STYLES FOR DESKTOP COLLAPSED PANES, ALL ORIENTATIONS */
                 $d: nth($splitterBtnD, 1);
                 flex-basis: $d;
-                min-width: $d !important;
-                min-height: $d !important;
+                min-width: $d;
+                min-height: $d;
 
                 > .l-pane__handle {
                     display: none;
