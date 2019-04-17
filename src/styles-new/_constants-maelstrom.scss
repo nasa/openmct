@@ -76,7 +76,7 @@ $colorGenBg: #222;
 $colorHeadBg: transparent;
 $colorHeadFg: $colorBodyFg;
 $colorStatusBarBg: $colorHeadBg;
-$colorStatusBarFg: $colorBodyFg;
+$colorStatusBarFg: rgba(white, 0.5);
 $colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
@@ -185,7 +185,7 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, 10%);
+$colorBtnBg: pullForward($colorBodyBg, 30%);
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
 $colorBtnFg: pullForward($colorBodyFg, 10%);
 $colorBtnReverseFg: pullForward($colorBtnFg, 10%);
@@ -372,7 +372,7 @@ $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
-$splitterBtnD: (5px, 35px); // height, width
+$splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: #666;

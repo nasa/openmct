@@ -1,14 +1,7 @@
-/**************************************************** OVERRIDES */
-$bgKey: #222632;
-
-body {
-    font-size: 1em;
-}
-
 /************* FRAMES */
 .c-so-view {
     &__header__name {
-        tranform: translateY(-2px);
+        transform: translateY(-2px);
     }
 
     &:not(.c-so-view--no-frame) {
@@ -23,106 +16,4 @@ body {
         border-right: $bLR !important;;
         padding: 5px 10px 10px 10px !important;
     }
-}
-
-/************* MAIN LAYOUT */
-.l-shell {
-   .l-shell__head,
-   .l-shell__main-view-browse-bar {
-        background: none !important;
-        height: $interiorMargin;
-        overflow: hidden;
-        padding: 0 !important;
-        position: absolute;
-        width: 50%;
-        z-index: 100;
-
-        * { opacity: 0; }
-
-        &:hover {
-        height: 25px;
-        overflow: visible;
-        padding: $interiorMargin !important;
-
-        * { opacity: 1; }
-        }
-    }
-
-    .l-shell__main-view-browse-bar {
-        top: -3px; right: 0;
-    }
-
-    &__pane-main .l-pane__contents > * + * {
-        margin-top: 0 !important;
-    }
-
-    &__main > .l-pane {
-        padding-left: $interiorMargin !important;
-        padding-right: $interiorMargin !important;
-    }
-}
-
-.l-pane {
-    &__contents {
-        overflow: visible !important;
-    }
-
-    &--collapsed {
-        .l-pane__label {
-            display: none !important;
-        }
-
-        .l-pane__collapse-button:before { display: none !important; }
-    }
-}
-
-/************* TIME CONDUCTOR */
-.c-conductor {
-    &__controls {
-        display: none !important;
-    }
-
-    &:hover {
-        .c-conductor__controls { display: flex !important; }
-    }
-}
-
-
-/**************************************************** STYLING BY TITLE */
-*[title*='font-euro'] {
-    @include headerFont();
-}
-
-*[title*='system-widget'] {
-    background: $bgKey !important;
-    border-width: 2px !important;
-    justify-content: left !important;
-
-    .c-sw__icon {
-        $m: $interiorMarginSm;
-        position: absolute;
-        bottom: $m;
-        right: $m;
-    }
-}
-
-*[title*='alert-red'] {
-    .c-sw__icon {
-        color: red !important;
-    }
-}
-
-/**************************************************** INDIVIDUAL ELEMENTS */
-*[title*='passenger-notice'] {
-    font-size: 1.4em;
-    .c-sw__icon {
-        font-size: 2.1em;
-        margin-right: $interiorMarginLg;
-    }
-}
-
-*[title*='Main Console'] {
-    $r: $basicCr;
-    background: $bgKey;
-    border-radius: $r;
 }
