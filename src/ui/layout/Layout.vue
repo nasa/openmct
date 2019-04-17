@@ -64,7 +64,6 @@
         &__status {
             background: $colorStatusBarBg;
             color: $colorStatusBarFg;
-            height: 24px;
             padding: $interiorMarginSm;
         }
 
