@@ -127,3 +127,20 @@ body {
     background: $bgKey;
     border-radius: $r;
 }
+
+*[title*='Elapsed Time'] {
+    .c-timer {
+        overflow: hidden;
+
+        &__value {
+            @include heroFont(5em);
+            line-height: .8em;
+        }
+
+        &__direction {
+            font-size: 2em;
+            opacity: 0.5 !important;
+            transform: translateY(-7px);
+        }
+    }
+}
