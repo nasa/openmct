@@ -289,10 +289,14 @@ const PLACEHOLDER_OBJECT = {};
 
         &__nav-to-parent-button {
             // This is an icon-button
-            $p: $interiorMarginLg;
+            $p: $interiorMargin;
             margin-right: $interiorMargin;
             padding-left: $p;
             padding-right: $p;
+
+            .is-editing & {
+                display: none;
+            }
         }
 
         &__object-name--w {
