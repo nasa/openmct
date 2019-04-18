@@ -3,8 +3,10 @@
         <div class="c-gauge__wrapper">
             <svg class="c-gauge__range" viewBox="0 0 512 512">
                 <text class="c-gauge__curval" transform="translate(256 310)" text-anchor="middle">{{ this.curVal }}</text>
-                <text font-size="35" transform="translate(105 455) rotate(-45)">{{ this.rangeLow }}</text>
-                <text font-size="35" transform="translate(407 455) rotate(45)" text-anchor="end">{{ this.rangeHigh }}</text>
+                <text font-size="35" transform="translate(105 455) rotate(-45)"
+                      v-if="displayMinMax">{{ this.rangeLow }}</text>
+                <text font-size="35" transform="translate(407 455) rotate(45)" text-anchor="end"
+                      v-if="displayMinMax">{{ this.rangeHigh }}</text>
             </svg>
 
             <div class="c-dial">
@@ -135,12 +137,16 @@
             let config = this.domainObject.configuration,
                 rangeLow = config.min,
                 rangeHigh = config.max,
-                limit = config.limit;
+                displayMinMax = config.displayMinMax,
+                limit = config.limit,
+                decimals = config.decimals;
 
             return {
                 rangeLow,
                 rangeHigh,
+                displayMinMax: displayMinMax.indexOf('Yes') !== -1,
                 limit1: limit,
+                decimals,
                 curVal: 0
             }
         },
@@ -156,7 +162,7 @@
                 return this.round((vPercent/100)*270, 2);
             },
             updateValue(datum) {
-                this.curVal = this.formats[this.valueKey].format(datum);
+                this.curVal = this.round(this.formats[this.valueKey].format(datum), this.decimals);
             },
             subscribe(domainObject) {
                 this.metadata = this.openmct.telemetry.getMetadata(domainObject);

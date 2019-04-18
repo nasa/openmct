@@ -37,9 +37,11 @@ define([
                 initialize(domainObject) {
                     domainObject.composition = [];
                     domainObject.configuration = {
-                        min: -10.4,
+                        min: 0,
                         max: 100,
-                        limit: 91.0
+                        displayMinMax: 'Yes',
+                        limit: 90,
+                        decimals: 1
                     };
                 },
                 form: [
@@ -64,6 +66,16 @@ define([
                         ]
                     },
                     {
+                        name: "Display Min/Max",
+                        control: "textfield",
+                        cssClass: "l-input-sm",
+                        key: "displayMinMax",
+                        property: [
+                            "configuration",
+                            "displayMinMax"
+                        ]
+                    },
+                    {
                         name: "Limit",
                         control: "numberfield",
                         cssClass: "l-input-sm l-numeric",
@@ -71,6 +83,16 @@ define([
                         property: [
                             "configuration",
                             "limit"
+                        ]
+                    },
+                    {
+                        name: "Decimals",
+                        control: "numberfield",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "decimals",
+                        property: [
+                            "configuration",
+                            "decimals"
                         ]
                     }
                 ]
