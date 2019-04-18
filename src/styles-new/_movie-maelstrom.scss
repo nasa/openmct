@@ -5,6 +5,11 @@ body {
     font-size: 1em;
 }
 
+/************* CONVENIENCE */
+.u-inspectable[s-selected] {
+    border: none !important;
+}
+
 /************* TIME CONDUCTOR */
 .c-conductor {
     &__controls {
@@ -36,7 +41,7 @@ body {
         overflow: hidden;
         padding: 0 !important;
         position: absolute;
-        width: 50%;
+        width: 10%;
         z-index: 100;
 
         * { opacity: 0; }
@@ -133,7 +138,7 @@ body {
         overflow: hidden;
 
         &__value {
-            @include heroFont(5em);
+            @include heroFont(6em);
             line-height: .8em;
         }
 
