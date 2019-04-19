@@ -142,6 +142,10 @@ body {
 *[title*='pulse-warning'] {
     @include pulse($animName: pulseWarning, $dur: 1500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(0.7), $direction: normal);
 }
+
+*[title*='pulse-passenger-notice--warning'] {
+    @include pulse($animName: pulseWarning, $dur: 1250ms, $prop: background-color, $val0: #aa0000, $val100: #660000, $direction: normal);
+}
 /**************************************************** INDIVIDUAL ELEMENTS */
 *[title*='passenger-notice'] {
     font-size: 1.4em;
@@ -173,3 +177,79 @@ body {
         }
     }
 }
+
+*[title*='boost-phase-widget'] {
+    .c-summary-widget {
+        border-width: 2px;
+        padding: 5px 0;
+
+        &:before,
+        &:after {
+            content: '';
+            display: block;
+            position: absolute;
+        }
+    }
+}
+
+*[title*='boost-phase-widget-left'] {
+    .c-summary-widget {
+        $c: #999;
+        align-items: start;
+        background: rgba($c, 0.1) !important;
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+
+        &:before,
+        &:after {
+            top: 25px; right: 0; bottom: 3%; left: 40%;
+        }
+
+        &:before {
+            @include bgStripes($c: $c, $a: 0.1, $bgsize: 20px, $angle: 0deg);
+        }
+
+        &:after {
+            @include bgStripes($c: $c, $a: 0.1, $bgsize: 63px, $angle: 0deg);
+        }
+    }
+}
+
+*[title*='boost-phase-widget-right'] {
+    .c-summary-widget {
+        $c: #555;
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+
+        &:before {
+            //background: deeppink;
+            @include bgTicks($c: $c, $repeatDir: 'y');
+            background-size: 100% 45px;
+            top: 0px; right: 0; bottom: 0; left: 2px;
+        }
+    }
+}
+
+
+/*
+
+
+@mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
+    $deg: 90deg;
+    @if ($repeatDir != 'x') {
+        $deg: 0deg;
+        $repeatDir: repeat-y;
+    } @else {
+        $repeatDir: repeat-x;
+    }
+
+    background-image: linear-gradient($deg,
+            $c 1px, transparent 1px,
+            transparent 100%
+    );
+    background-repeat: $repeatDir;
+}
+
+ */
