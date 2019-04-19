@@ -25,42 +25,56 @@ body {
     }
 
     &-input {
-        input.c-input--datetime {
-            color: $colorKey;
-            width: 200px;
+        input {
+            &.c-input--datetime,
+            &.c-input--hrs-min-sec {
+                color: $colorTime;
+                width: 200px;
+            }
+
+            &.c-input--hrs-min-sec {
+                width: 80px;
+            }
         }
     }
 }
 
 /************* MAIN LAYOUT */
 .l-shell {
-    .l-shell__head,
-    .l-shell__main-view-browse-bar {
-        background: none !important;
-        height: $interiorMargin;
-        overflow: hidden;
-        padding: 0 !important;
-        position: absolute;
-        width: 10%;
-        z-index: 100;
+    &:not(.is-editing) {
+        .l-shell__head,
+        .l-shell__main-view-browse-bar {
+            background: none !important;
+            height: $interiorMargin;
+            overflow: hidden;
+            padding: 0 !important;
+            position: absolute;
+            width: 30%;
+            z-index: 100;
 
-        * { opacity: 0; }
+            * { opacity: 0; }
 
-        &:hover {
-            height: 25px;
-            overflow: visible;
-            padding: $interiorMargin !important;
+            &:hover {
+                background: #666 !important;
+                height: auto;
+                overflow: visible;
+                padding: $interiorMargin !important;
 
-            * { opacity: 1; }
+                * { opacity: 1; }
+            }
+        }
+
+        .l-shell__pane-main .l-pane__contents > * + * {
+            margin-top: 0;
+        }
+
+        .l-shell__main-container {
+            margin-top: 0 !important;
         }
     }
 
     .l-shell__main-view-browse-bar {
         top: -3px; right: 0;
-    }
-
-    &__pane-main .l-pane__contents > * + * {
-        margin-top: 0 !important;
     }
 
     &__main > .l-pane {
@@ -118,6 +132,16 @@ body {
     }
 }
 
+*[title*='pulse-slow'] {
+    @include pulse($animName: pulseSlow, $dur: 1000ms, $prop: filter, $val0: brightness(1.3), $val100: brightness(0.8), $direction: normal);
+    .c-sw__icon {
+        @include pulse($animName: pulseWarningIcon, $dur: 500ms, $prop: opacity, $val0: 0.1, $val100: 1, $direction: normal);
+    }
+}
+
+*[title*='pulse-warning'] {
+    @include pulse($animName: pulseWarning, $dur: 1500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(0.7), $direction: normal);
+}
 /**************************************************** INDIVIDUAL ELEMENTS */
 *[title*='passenger-notice'] {
     font-size: 1.4em;

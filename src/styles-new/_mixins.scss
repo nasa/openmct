@@ -50,14 +50,14 @@
 }
 
 /************************** EFFECTS */
-@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
-    @keyframes pulse {
-        0%   { opacity: $opacity0; }
-        100% { opacity: $opacity100; }
+@mixin pulse($animName: 'pulse', $dur: 500ms, $iteration: infinite, $prop: opacity, $val0: 0, $val100: 1, $direction: alternate) {
+    @keyframes #{$animName} {
+        0%   { #{$prop}: $val0; }
+        100% { #{$prop}: $val100; }
     }
     animation-name: $animName;
     animation-duration: $dur;
-    animation-direction: alternate;
+    animation-direction: $direction;
     animation-iteration-count: $iteration;
     animation-timing-function: ease-in-out;
 }
