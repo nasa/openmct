@@ -161,21 +161,10 @@ body {
     border-radius: $r;
 }
 
-*[title*='Elapsed Time'] {
-    .c-timer {
-        overflow: hidden;
+*[title*='Event Time Str'] {
 
-        &__value {
-            @include heroFont(6em);
-            line-height: .8em;
-        }
-
-        &__direction {
-            font-size: 2em;
-            opacity: 0.5 !important;
-            transform: translateY(-7px);
-        }
-    }
+    @include heroFont(1.2em);
+    line-height: .8em;
 }
 
 *[title*='boost-phase-widget'] {
@@ -232,24 +221,3 @@ body {
     }
 }
 
-
-/*
-
-
-@mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
-    $deg: 90deg;
-    @if ($repeatDir != 'x') {
-        $deg: 0deg;
-        $repeatDir: repeat-y;
-    } @else {
-        $repeatDir: repeat-x;
-    }
-
-    background-image: linear-gradient($deg,
-            $c 1px, transparent 1px,
-            transparent 100%
-    );
-    background-repeat: $repeatDir;
-}
-
- */
