@@ -24,22 +24,27 @@ define(
     ["../../src/runs/TransactingMutationListener"],
     function (TransactingMutationListener) {
 
-        xdescribe("TransactingMutationListener", function () {
+        describe("TransactingMutationListener", function () {
             var mockTopic,
                 mockMutationTopic,
+                mockCacheService,
                 mockTransactionService,
                 mockDomainObject,
+                mockModel,
                 mockPersistence;
 
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
                     jasmine.createSpyObj('mutation', ['listen']);
+                mockCacheService =
+                    jasmine.createSpyObj('cacheService', [
+                        'put'
+                    ]);
                 mockTransactionService =
                     jasmine.createSpyObj('transactionService', [
                         'isActive',
                         'startTransaction',
-                        'addToTransaction',
                         'commit'
                     ]);
                 mockDomainObject = jasmine.createSpyObj(
@@ -52,18 +57,24 @@ define(
                 );
 
                 mockTopic.and.callFake(function (t) {
-                    return (t === 'mutation') && mockMutationTopic;
+                    expect(t).toBe('mutation');
+                    return mockMutationTopic;
                 });
 
+                mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
+                    expect(c).toBe('persistence');
+                    return mockPersistence;
                 });
+                mockModel = {};
+                mockDomainObject.getModel.and.returnValue(mockModel);
 
                 mockPersistence.persisted.and.returnValue(true);
 
                 return new TransactingMutationListener(
                     mockTopic,
-                    mockTransactionService
+                    mockTransactionService,
+                    mockCacheService
                 );
             });
 
@@ -72,48 +83,27 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            [false, true].forEach(function (isActive) {
-                var verb = isActive ? "is" : "isn't";
+            it("calls persist if the model has changed", function () {
+                mockModel.persisted = Date.now();
 
-                function onlyWhenInactive(expectation) {
-                    return isActive ? expectation.not : expectation;
-                }
+                //Mark the model dirty by setting the mutated date later than the last persisted date.
+                mockModel.modified = mockModel.persisted + 1;
 
-                describe("when a transaction " + verb + " active", function () {
-                    var innerVerb = isActive ? "does" : "doesn't";
+                mockMutationTopic.listen.calls.mostRecent()
+                    .args[0](mockDomainObject);
 
-                    beforeEach(function () {
-                        mockTransactionService.isActive.and.returnValue(isActive);
-                    });
+                expect(mockPersistence.persist).toHaveBeenCalled();
+            });
 
-                    describe("and mutation occurs", function () {
-                        beforeEach(function () {
-                            mockMutationTopic.listen.calls.mostRecent()
-                                .args[0](mockDomainObject);
-                        });
+            it("does not call persist if the model has not changed", function () {
+                mockModel.persisted = Date.now();
 
+                mockModel.modified = mockModel.persisted;
 
-                        it(innerVerb + " start a new transaction", function () {
-                            onlyWhenInactive(
-                                expect(mockTransactionService.startTransaction)
-                            ).toHaveBeenCalled();
-                        });
+                mockMutationTopic.listen.calls.mostRecent()
+                    .args[0](mockDomainObject);
 
-                        it("adds to the active transaction", function () {
-                            expect(mockTransactionService.addToTransaction)
-                                .toHaveBeenCalledWith(
-                                    jasmine.any(Function),
-                                    jasmine.any(Function)
-                                );
-                        });
-
-                        it(innerVerb + " immediately commit", function () {
-                            onlyWhenInactive(
-                                expect(mockTransactionService.commit)
-                            ).toHaveBeenCalled();
-                        });
-                    });
-                });
+                expect(mockPersistence.persist).not.toHaveBeenCalled();
             });
         });
     }
