@@ -26,8 +26,8 @@
             'has-complex-content': complexContent
         }">
         <div class="c-so-view__header">
-            <div class="c-so-view__header__name"
-                 :class="cssClass">
+            <div class="c-so-view__header__icon" :class="cssClass"></div>
+            <div class="c-so-view__header__name">
                 {{ domainObject && domainObject.name }}
             </div>
             <context-menu-drop-down
@@ -63,12 +63,16 @@
             align-items: center;
             margin-bottom: $interiorMargin;
 
+            &__icon {
+                flex: 0 0 auto;
+                margin-right: $interiorMarginSm;
+                opacity: 0.5;
+            }
+
             &__name {
                 @include headerFont(1em);
-                display: flex;
-                &:before {
-                    margin-right: $interiorMarginSm;
-                }
+                @include ellipsize();
+                flex: 0 1 auto;
             }
         }
 
@@ -85,19 +89,6 @@
 
             > .c-so-view__local-controls {
                 top: $interiorMarginSm; right: $interiorMarginSm;
-            }
-        }
-
-        &__name {
-            @include ellipsize();
-            @include headerFont(1.2em);
-            flex: 0 1 auto;
-
-            &:before {
-                // Object type icon
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-                opacity: 0.5;
             }
         }
 

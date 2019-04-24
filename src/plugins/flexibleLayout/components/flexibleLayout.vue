@@ -113,7 +113,8 @@
 
         &__container-holder {
             display: flex;
-            flex: 1 1 100%; // Must needs to be 100% to work
+            flex: 1 1 100%; // Must be 100% to work
+            overflow: auto;
 
             // Columns by default
             flex-direction: row;
