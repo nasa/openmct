@@ -52,13 +52,12 @@
 
         &__tree {
             flex: 1 1 auto;
-            height: 100%;
+            height: 0; // Chrome 73 overflow bug fix
         }
     }
 
     .c-tree {
         @include userSelectNone();
-        height: 100%; // Chrome 73 overflow bug fix
         overflow-x: hidden;
         overflow-y: auto;
         padding-right: $interiorMargin;
