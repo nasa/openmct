@@ -116,7 +116,7 @@
                 this.notebookEnabled = true;
             }
         },
-        destroy() {
+        destroyed() {
             this.view.destroy();
         }
     }
