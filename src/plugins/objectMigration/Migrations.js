@@ -64,35 +64,16 @@ define([
             Object.keys(panels).forEach(key => {
                 let panel = panels[key];
                 let domainObject = childObjects[key];
-
-                if (isTelemetry(domainObject)) {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'telemetry-view',
-                        displayMode: 'all',
-                        value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
-                        stroke: "transparent",
-                        fill: "",
-                        color: "",
-                        size: "13px"
-                    });
-                } else {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'subobject-view',
-                        hasFrame: panel.hasFrame
-                    });
-                }
+                items.push({
+                    width: panel.dimensions[0],
+                    height: panel.dimensions[1],
+                    x: panel.position[0],
+                    y: panel.position[1],
+                    identifier: domainObject.identifier,
+                    id: uuid(),
+                    type: 'subobject-view',
+                    hasFrame: panel.hasFrame
+                });
             });
 
             migratedObject.configuration.items = items;
