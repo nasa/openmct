@@ -64,38 +64,51 @@ define([
             Object.keys(panels).forEach(key => {
                 let panel = panels[key];
                 let domainObject = childObjects[key];
+                let identifier = undefined;
 
                 if (isTelemetry(domainObject)) {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'telemetry-view',
-                        displayMode: 'all',
-                        value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
-                        stroke: "transparent",
-                        fill: "",
-                        color: "",
-                        size: "13px"
+                    // If object is a telemetry point, convert it to a plot and
+                    // replace the object in migratedObject composition with the plot.
+                    identifier = {
+                        key: uuid(),
+                        namespace: migratedObject.identifier.namespace
+                    };
+                    let plotObject = {
+                        identifier: identifier,
+                        location: domainObject.location,
+                        name: domainObject.name,
+                        type: "telemetry.plot.overlay"
+                    };
+                    let plotType = openmct.types.get('telemetry.plot.overlay');
+                    plotType.definition.initialize(plotObject);
+                    plotObject.composition.push(domainObject.identifier);
+                    console.log(plotObject);
+
+                    console.log("composition", migratedObject.composition);
+                    let keyString = openmct.objects.makeKeyString(domainObject.identifier);
+                    let clonedComposition = Object.assign([], migratedObject.composition);
+                    clonedComposition.forEach((identifier, index) => {
+                        if (openmct.objects.makeKeyString(identifier) === keyString) {
+                            migratedObject.composition[index] = plotObject.identifier;
+                        }
                     });
-                } else {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'subobject-view',
-                        hasFrame: panel.hasFrame
-                    });
-                }
+                    console.log("composition", migratedObject.composition);
+                } 
+
+                items.push({
+                    width: panel.dimensions[0],
+                    height: panel.dimensions[1],
+                    x: panel.position[0],
+                    y: panel.position[1],
+                    identifier: identifier || domainObject.identifier,
+                    id: uuid(),
+                    type: 'subobject-view',
+                    hasFrame: panel.hasFrame
+                });
             });
 
             migratedObject.configuration.items = items;
+            console.log('item', {...items});
             migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
             delete migratedObject.layoutGrid;
             delete migratedObject.configuration.layout;
