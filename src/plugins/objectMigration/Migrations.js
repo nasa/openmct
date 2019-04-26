@@ -82,9 +82,8 @@ define([
                     let plotType = openmct.types.get('telemetry.plot.overlay');
                     plotType.definition.initialize(plotObject);
                     plotObject.composition.push(domainObject.identifier);
-                    console.log(plotObject);
+                    openmct.objects.mutate(plotObject, 'persisted', Date.now());
 
-                    console.log("composition", migratedObject.composition);
                     let keyString = openmct.objects.makeKeyString(domainObject.identifier);
                     let clonedComposition = Object.assign([], migratedObject.composition);
                     clonedComposition.forEach((identifier, index) => {
@@ -92,8 +91,7 @@ define([
                             migratedObject.composition[index] = plotObject.identifier;
                         }
                     });
-                    console.log("composition", migratedObject.composition);
-                } 
+                }
 
                 items.push({
                     width: panel.dimensions[0],
@@ -108,7 +106,6 @@ define([
             });
 
             migratedObject.configuration.items = items;
-            console.log('item', {...items});
             migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
             delete migratedObject.layoutGrid;
             delete migratedObject.configuration.layout;
