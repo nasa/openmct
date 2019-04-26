@@ -54,10 +54,11 @@
 
     &:after {
         // App logo
-        top: 0;
-        right: 15%;
-        bottom: 0;
-        left: 15%;
+        $d: 25%;
+        top: $d;
+        right: $d;
+        bottom: $d;
+        left: $d;
     }
 }
 
@@ -75,12 +76,20 @@
 
     &__image,
     &__text {
-        height: 50%;
-        flex: 1 1 0;
+        flex: 1 1 auto;
+    }
+
+    &__image {
+        height: 35%;
     }
 
     &__text {
+        height: 65%;
         overflow: auto;
+        > * + * {
+            border-top: 1px solid $colorInteriorBorder;
+            margin-top: 1em;
+        }
     }
 
     &--licenses {
@@ -107,7 +116,7 @@
 
     h1, h2, h3 {
         font-weight: normal;
-        margin-bottom: 1em;
+        margin-bottom: .25em;
     }
 
     h1 {

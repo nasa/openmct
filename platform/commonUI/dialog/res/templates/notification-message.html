@@ -9,17 +9,17 @@
                          ng-model="ngModel"
                          ng-show="ngModel.progressPerc !== undefined"></mct-include>
         </div>
-        <div class="c-overlay__button-bar">
-            <button ng-repeat="dialogOption in ngModel.options"
+    </div>
+    <div class="c-overlay__button-bar">
+        <button ng-repeat="dialogOption in ngModel.options"
                 class="c-button"
                 ng-click="dialogOption.callback()">
-                    {{dialogOption.label}}
-            </button>
-            <button class="c-button c-button--major"
+            {{dialogOption.label}}
+        </button>
+        <button class="c-button c-button--major"
                 ng-if="ngModel.primaryOption"
                 ng-click="ngModel.primaryOption.callback()">
-                    {{ngModel.primaryOption.label}}
-            </button>
-        </div>
+            {{ngModel.primaryOption.label}}
+        </button>
     </div>
 </div>
