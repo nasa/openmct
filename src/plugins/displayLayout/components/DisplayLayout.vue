@@ -272,6 +272,9 @@
                         } else {
                             this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
                         }
+
+                        this.startingMinX = this.startingMinX !== undefined ? Math.min(this.startingMinX, selectedItem.x) : selectedItem.x;
+                        this.startingMinY = this.startingMinY !== undefined ? Math.min(this.startingMinY, selectedItem.y) : selectedItem.y;
                     });
                 }
 
@@ -279,8 +282,14 @@
                     if (this.initialPositions[item.id]) {
                         let startingPosition = this.initialPositions[item.id];
                         let [startingX, startingY, startingX2, startingY2] = startingPosition;
-                        item.x = startingX + gridDelta[0];
-                        item.y = startingY + gridDelta[1];
+
+                        if (this.startingMinX + gridDelta[0] >= 0) {
+                            item.x = startingX + gridDelta[0];
+                        }
+
+                        if (this.startingMinY + gridDelta[1] >= 0) {
+                            item.y = startingY + gridDelta[1];
+                        }
 
                         if (item.x2) {
                             item.x2 = startingX2 + gridDelta[0];
@@ -296,6 +305,8 @@
             endMove() {
                 this.mutate('configuration.items', this.layoutItems);
                 this.initialPositions = undefined;
+                this.startingMinX = undefined;
+                this.startingMinY = undefined;
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
