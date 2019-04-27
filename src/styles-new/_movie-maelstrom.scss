@@ -10,6 +10,10 @@ body {
     border: none !important;
 }
 
+.c-table.c-telemetry-table {
+    font-size: 0.7em;
+}
+
 /************* TIME CONDUCTOR */
 .c-conductor {
     &__controls {
@@ -141,6 +145,16 @@ body {
 
 *[title*='pulse-warning'] {
     @include pulse($animName: pulseWarning, $dur: 1500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(0.7), $direction: normal);
+}
+
+/**[title*='bad-ring'] {
+    @include pulse($animName: badRing, $dur: 500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(1.0), $direction: alternate);
+}*/
+
+*[title*='Boost Phase Ring Widgets'] {
+    *[title*='Ring Widget'] {
+        filter: saturate(0.7);
+    }
 }
 
 *[title*='pulse-passenger-notice--warning'] {
