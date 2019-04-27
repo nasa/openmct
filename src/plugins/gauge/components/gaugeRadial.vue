@@ -156,6 +156,8 @@
                 return Math.round(val * precision)/precision;
             },
             valToPercent: function(vValue) {
+                // Don't let the current value exceed the high range, or the dial won't display right
+                if (vValue >= this.rangeHigh) { return 100; }
                 return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
             },
             percentToDegrees: function(vPercent) {
