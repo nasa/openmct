@@ -284,7 +284,7 @@ import _ from 'lodash';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
-const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
+const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
 const RESIZE_HOT_ZONE = 10;
 const MOVE_TRIGGER_WAIT = 500;
 const VERTICAL_SCROLL_WIDTH = 30;
@@ -598,7 +598,11 @@ export default {
                     this.calculateTableSize();
                     // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
                     // Need to preserve scroll position in this case.
-                    this.scrollable.scrollTop = scrollTop;
+                    if (this.autoScroll) {
+                        this.scrollToBottom();
+                    } else {
+                        this.scrollable.scrollTop = scrollTop;
+                    }
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
