@@ -45,6 +45,7 @@
         ].forEach(
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
+        openmct.install(openmct.plugins.MaelstromPlugin());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Generator());
