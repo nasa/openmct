@@ -24,7 +24,6 @@ define([
     "./src/actions/MoveAction",
     "./src/actions/CopyAction",
     "./src/actions/LinkAction",
-    "./src/actions/GoToOriginalAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
     "./src/services/LocatingObjectDecorator",
@@ -41,7 +40,6 @@ define([
     MoveAction,
     CopyAction,
     LinkAction,
-    GoToOriginalAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
     LocatingObjectDecorator,
@@ -103,14 +101,6 @@ define([
                         "locationService",
                         "linkService"
                     ]
-                },
-                {
-                    "key": "follow",
-                    "name": "Go To Original",
-                    "description": "Go to the original, un-linked instance of this object.",
-                    "cssClass": "",
-                    "category": "contextual",
-                    "implementation": GoToOriginalAction
                 },
                 {
                     "key": "locate",
