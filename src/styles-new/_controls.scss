@@ -393,6 +393,11 @@ select {
             color: $colorMenuIc;
             font-size: 1em;
             margin-right: $interiorMargin;
+            min-width: 1em;
+        }
+
+        &:not([class]):before {
+             content: ''; // Add this element so that menu items without an icon still indent properly
         }
     }
 }

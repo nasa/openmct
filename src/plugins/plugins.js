@@ -41,7 +41,8 @@ define([
     './tabs/plugin',
     './LADTable/plugin',
     './filters/plugin',
-    './objectMigration/plugin'
+    './objectMigration/plugin',
+    './goToOriginalAction/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -63,7 +64,8 @@ define([
     Tabs,
     LADTable,
     Filters,
-    ObjectMigration
+    ObjectMigration,
+    GoToOriginalAction
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -160,6 +162,7 @@ define([
     plugins.LADTable = LADTable;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
+    plugins.GoToOriginalAction = GoToOriginalAction.default;
 
     return plugins;
 });
