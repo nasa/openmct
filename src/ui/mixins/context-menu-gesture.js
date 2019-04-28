@@ -18,7 +18,7 @@ export default {
 
         this.objectPath.forEach(object => {
             if (object) {
-                this.$once('hook:destroy',
+                this.$once('hook:destroyed',
                     this.openmct.objects.observe(object, '*', updateObject.bind(this, object)))
             }
         });

@@ -70,17 +70,18 @@
                 this.domainObject = newObject;
             });
             this.$once('hook:destroyed', removeListener);
+
             if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
 
             this.openmct.router.on('change:path', this.highlightIfNavigated);
         },
-        destroy() {
+        destroyed() {
+            this.openmct.router.off('change:path', this.highlightIfNavigated);
             if (this.composition) {
                 this.composition.off('add', this.addChild);
                 this.composition.off('remove', this.removeChild);
-                this.openmct.router.off('change:path', this.highlightIfNavigated);
                 delete this.composition;
             }
         },

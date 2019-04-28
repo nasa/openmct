@@ -64,7 +64,6 @@
         &__status {
             background: $colorStatusBarBg;
             color: $colorStatusBarFg;
-            height: 24px;
             padding: $interiorMarginSm;
         }
 
@@ -75,6 +74,7 @@
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
                     @include cClickIconButton();
+                    color: $colorKey !important;
                     position: absolute;
                     right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
                     top: 0;
@@ -186,6 +186,7 @@
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto !important;
+            height: 0; // Chrome 73 overflow bug fix
             overflow: auto;
         }
 

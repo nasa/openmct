@@ -425,12 +425,13 @@
     // Background is displayed on hover
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
+    $pLR: 4px;
+    $pTB: 4px;
+
     @include cControl();
     background: none;
     box-shadow: none;
     cursor: pointer;
-    $pLR: 4px;
-    $pTB: 4px;
     transition: $transOut;
     border-radius: $controlCr;
     padding: $pTB $pLR;

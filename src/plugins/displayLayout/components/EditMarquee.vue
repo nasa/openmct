@@ -116,7 +116,7 @@
                 let height = Number.NEGATIVE_INFINITY;
 
                 this.selectedLayoutItems.forEach(item => {
-                    if (item.x2) {
+                    if (item.x2 !== undefined) {
                         let lineWidth = Math.abs(item.x - item.x2);
                         let lineMinX = Math.min(item.x, item.x2);
                         x = Math.min(lineMinX, x);
@@ -126,7 +126,7 @@
                         width = Math.max(item.width + item.x, width);
                     }
 
-                    if (item.y2) {
+                    if (item.y2 !== undefined) {
                         let lineHeight = Math.abs(item.y - item.y2);
                         let lineMinY = Math.min(item.y, item.y2);
                         y = Math.min(lineMinY, y);
