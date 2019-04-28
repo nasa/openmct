@@ -28,9 +28,7 @@ export default class GoToOriginalAction {
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        let keyString = this._openmct.objects.makeKeyString(objectPath[0].identifier);
-
-        this._openmct.objects.getOriginalPath(keyString)
+        this._openmct.objects.getOriginalPath(objectPath[0].identifier)
             .then((originalPath) => {
                 let url = '#/browse/' + originalPath
                     .map(function (o) {
