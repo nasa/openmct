@@ -20,19 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@import "vendor/normalize.min.css";
-@import "sass-base";
+export default class GoToOriginalAction {
+    constructor(openmct) {
+        this.name = 'Go To Original';
+        this.description = 'Go to the original unlinked instance of this object';
 
-/******************** RENDERS CSS */
-@import "about";
-@import "glyphs";
-@import "global";
-@import "status";
-@import "controls";
-@import "forms";
-@import "table";
-@import "legacy";
-@import "legacy-plots";
-@import "legacy-messages";
-@import "theme-maelstrom";
-@import "movie-maelstrom";
+        this._openmct = openmct;
+    }
+    invoke(objectPath) {
+        this._openmct.objects.getOriginalPath(objectPath[0].identifier)
+            .then((originalPath) => {
+                let url = '#/browse/' + originalPath
+                    .map(function (o) {
+                        return o && this._openmct.objects.makeKeyString(o.identifier);
+                    }.bind(this))
+                    .reverse()
+                    .slice(1)
+                    .join('/');
+
+                window.location.href = url;
+            });
+    }
+    appliesTo(objectPath) {
+        let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
+
+        if (!parentKeystring) {
+            return false;
+        }
+
+        return (parentKeystring !== objectPath[0].location);
+    }
+}

@@ -239,7 +239,7 @@ define([
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
-            this.openmct.time.on('timeSystem', this.refreshData);
+            this.openmct.time.off('timeSystem', this.refreshData);
             if (this.filterObserver) {
                 this.filterObserver();
             }

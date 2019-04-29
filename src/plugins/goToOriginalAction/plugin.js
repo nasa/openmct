@@ -19,20 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import GoToOriginalAction from './goToOriginalAction';
 
-@import "vendor/normalize.min.css";
-@import "sass-base";
-
-/******************** RENDERS CSS */
-@import "about";
-@import "glyphs";
-@import "global";
-@import "status";
-@import "controls";
-@import "forms";
-@import "table";
-@import "legacy";
-@import "legacy-plots";
-@import "legacy-messages";
-@import "theme-maelstrom";
-@import "movie-maelstrom";
+export default function () {
+    return function (openmct) {
+        openmct.contextMenu.registerAction(new GoToOriginalAction(openmct));
+    };
+}

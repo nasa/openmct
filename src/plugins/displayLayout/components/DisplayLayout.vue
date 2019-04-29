@@ -269,33 +269,63 @@
                     _.cloneDeep(this.selectedLayoutItems).forEach(selectedItem => {
                         if (selectedItem.type === 'line-view') {
                             this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y, selectedItem.x2, selectedItem.y2];
+                            this.startingMinX2 = this.startingMinX2 !== undefined ? Math.min(this.startingMinX2, selectedItem.x2) : selectedItem.x2;
+                            this.startingMinY2 = this.startingMinY2 !== undefined ? Math.min(this.startingMinY2, selectedItem.y2) : selectedItem.y2;
                         } else {
                             this.initialPositions[selectedItem.id] = [selectedItem.x, selectedItem.y];
                         }
+
+                        this.startingMinX = this.startingMinX !== undefined ? Math.min(this.startingMinX, selectedItem.x) : selectedItem.x;
+                        this.startingMinY = this.startingMinY !== undefined ? Math.min(this.startingMinY, selectedItem.y) : selectedItem.y;
                     });
                 }
 
                 let layoutItems = this.layoutItems.map(item => {
                     if (this.initialPositions[item.id]) {
-                        let startingPosition = this.initialPositions[item.id];
-                        let [startingX, startingY, startingX2, startingY2] = startingPosition;
-                        item.x = startingX + gridDelta[0];
-                        item.y = startingY + gridDelta[1];
-
-                        if (item.x2) {
-                            item.x2 = startingX2 + gridDelta[0];
-                        }
-
-                        if (item.y2) {
-                            item.y2 = startingY2 + gridDelta[1];
-                        }
+                        this.updateItemPosition(item, gridDelta);
                     }
                     return item;
                 });
             },
+            updateItemPosition(item, gridDelta) {
+                let startingPosition = this.initialPositions[item.id];
+                let [startingX, startingY, startingX2, startingY2] = startingPosition;
+
+                if (this.startingMinX + gridDelta[0] >= 0) {
+                    if (item.x2 !== undefined) {
+                        if (this.startingMinX2 + gridDelta[0] >= 0) {
+                            item.x = startingX + gridDelta[0];
+                        }
+                    } else {
+                        item.x = startingX + gridDelta[0];
+                    }
+                }
+
+                if (this.startingMinY + gridDelta[1] >= 0) {
+                    if (item.y2 !== undefined) {
+                        if (this.startingMinY2 + gridDelta[1] >= 0) {
+                            item.y = startingY + gridDelta[1];
+                        }
+                    } else {
+                        item.y = startingY + gridDelta[1];
+                    }
+                }
+
+                if (item.x2 !== undefined && this.startingMinX2 + gridDelta[0] >= 0 && this.startingMinX + gridDelta[0] >= 0) {
+                    item.x2 = startingX2 + gridDelta[0];
+                }
+
+                if (item.y2 !== undefined && this.startingMinY2 + gridDelta[1] >= 0 && this.startingMinY + gridDelta[1] >= 0) {
+                    item.y2 = startingY2 + gridDelta[1];
+                }
+            },
             endMove() {
                 this.mutate('configuration.items', this.layoutItems);
                 this.initialPositions = undefined;
+                this.startingMinX = undefined;
+                this.startingMinY = undefined;
+                this.startingMinX2 = undefined;
+                this.startingMinY2 = undefined;
             },
             mutate(path, value) {
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);

@@ -44,7 +44,8 @@ define([
     './objectMigration/plugin',
     './gauge/plugin',
     './bignumbers/plugin',
-    './maelstrom-adapters/src/MaelstromPlugin.js'
+    './maelstrom-adapters/src/MaelstromPlugin.js',
+    './goToOriginalAction/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -69,7 +70,8 @@ define([
     ObjectMigration,
     Gauge,
     Bignumbers,
-    MaelstromPlugin
+    MaelstromPlugin,
+    GoToOriginalAction
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -170,6 +172,7 @@ define([
     plugins.LADTable = LADTable;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
+    plugins.GoToOriginalAction = GoToOriginalAction.default;
 
     return plugins;
 });

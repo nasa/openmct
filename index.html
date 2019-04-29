@@ -89,6 +89,7 @@
         openmct.install(openmct.plugins.LADTable());
         openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
         openmct.install(openmct.plugins.ObjectMigration());
+        openmct.install(openmct.plugins.GoToOriginalAction());
         openmct.start();
     </script>
 </html>
