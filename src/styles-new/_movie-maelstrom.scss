@@ -85,6 +85,8 @@ body {
         padding-left: $interiorMargin !important;
         padding-right: $interiorMargin !important;
     }
+
+    &__status { display: none !important; }
 }
 
 .l-pane {
@@ -235,3 +237,34 @@ body {
     }
 }
 
+*[title*="Sys Ovw LAD Table"] {
+    .c-lad-table {
+        tr {
+            background-color: black;
+            color: rgba(white, 0.3);
+            display: block;
+            font-weight: bold;
+            align-items: center;
+            height: 41px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            margin-bottom: 4px;
+            overflow: hidden;
+            padding: 3px;
+            text-transform: uppercase;
+        }
+        thead,
+        tr td:nth-child(1),
+        tr td:nth-child(2) {
+            display: none;
+        }
+
+        td {
+            display: block;
+            width: auto;
+            white-space: normal;
+
+        }
+    }
+
+}

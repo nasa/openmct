@@ -1,5 +1,9 @@
 /************* FRAMES */
 .c-so-view {
+    &__header {
+        transform: translateY(3px);
+    }
+
     &__header__name {
         transform: translateY(-2px);
     }
