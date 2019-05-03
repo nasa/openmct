@@ -78,7 +78,7 @@
     <!-- Content table -->
     <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{ 'max-width': widthWithScroll}">
         <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
-        <table class="c-table__body c-telemetry-table__body"
+        <table class="c-table__body c-telemetry-table__body js-telemetry-table__content"
                :style="{ height: totalHeight + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
@@ -284,7 +284,7 @@ import _ from 'lodash';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
-const AUTO_SCROLL_TRIGGER_HEIGHT = 20;
+const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
 const RESIZE_HOT_ZONE = 10;
 const MOVE_TRIGGER_WAIT = 500;
 const VERTICAL_SCROLL_WIDTH = 30;
@@ -364,42 +364,48 @@ export default {
     },
     methods: {
         updateVisibleRows() {
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(()=> {
 
-            let start = 0;
-            let end = VISIBLE_ROW_COUNT;
-            let filteredRows = this.table.filteredRows.getRows();
-            let filteredRowsLength = filteredRows.length;
+                    let start = 0;
+                    let end = VISIBLE_ROW_COUNT;
+                    let filteredRows = this.table.filteredRows.getRows();
+                    let filteredRowsLength = filteredRows.length;
 
-            this.totalHeight = this.rowHeight * filteredRowsLength - 1;
+                    if (filteredRowsLength < VISIBLE_ROW_COUNT) {
+                        end = filteredRowsLength;
+                    } else {
+                        let firstVisible = this.calculateFirstVisibleRow();
+                        let lastVisible = this.calculateLastVisibleRow();
+                        let totalVisible = lastVisible - firstVisible;
 
-            if (filteredRowsLength < VISIBLE_ROW_COUNT) {
-                end = filteredRowsLength;
-            } else {
-                let firstVisible = this.calculateFirstVisibleRow();
-                let lastVisible = this.calculateLastVisibleRow();
-                let totalVisible = lastVisible - firstVisible;
+                        let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
+                        start = firstVisible - Math.floor(numberOffscreen / 2);
+                        end = lastVisible + Math.ceil(numberOffscreen / 2);
 
-                let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
-                start = firstVisible - Math.floor(numberOffscreen / 2);
-                end = lastVisible + Math.ceil(numberOffscreen / 2);
+                        if (start < 0) {
+                            start = 0;
+                            end = Math.min(VISIBLE_ROW_COUNT, filteredRowsLength);
+                        } else if (end >= filteredRowsLength) {
+                            end = filteredRowsLength;
+                            start = end - VISIBLE_ROW_COUNT + 1;
+                        }
+                    }
+                    this.rowOffset = start;
+                    this.visibleRows = filteredRows.slice(start, end);
 
-                if (start < 0) {
-                    start = 0;
-                    end = Math.min(VISIBLE_ROW_COUNT, filteredRowsLength);
-                } else if (end >= filteredRowsLength) {
-                    end = filteredRowsLength;
-                    start = end - VISIBLE_ROW_COUNT + 1;
-                }
+                    this.updatingView = false;
+                });
             }
-            this.rowOffset = start;
-            this.visibleRows = filteredRows.slice(start, end);
         },
         calculateFirstVisibleRow() {
-            return Math.floor(this.scrollable.scrollTop / this.rowHeight);
+            let scrollTop = this.scrollable.scrollTop;
+            return Math.floor(scrollTop / this.rowHeight);
         },
         calculateLastVisibleRow() {
-            let bottomScroll = this.scrollable.scrollTop + this.scrollable.offsetHeight;
-            return Math.floor(bottomScroll / this.rowHeight);
+            let scrollBottom = this.scrollable.scrollTop + this.scrollable.offsetHeight;
+            return Math.ceil(scrollBottom / this.rowHeight);
         },
         updateHeaders() {
             this.headers = this.table.configuration.getVisibleHeaders();
@@ -443,29 +449,23 @@ export default {
             }
             this.table.sortBy(this.sortOptions);
         },
-        scroll() {
-            if (!this.processingScroll) {
-                this.processingScroll = true;
-                requestAnimationFrame(()=> {
-                    this.updateVisibleRows();
-                    this.synchronizeScrollX();
+        scroll () {
+            this.updateVisibleRows();
+            this.synchronizeScrollX();
 
-                    if (this.shouldSnapToBottom()) {
-                        this.autoScroll = true;
-                    } else {
-                        // If user scrolls away from bottom, disable auto-scroll.
-                        // Auto-scroll will be re-enabled if user scrolls to bottom again.
-                        this.autoScroll = false;
-                    }
-                    this.processingScroll = false;
-                });
+            if (this.shouldSnapToBottom()) {
+                this.autoScroll = true;
+            } else {
+                // If user scrolls away from bottom, disable auto-scroll.
+                // Auto-scroll will be re-enabled if user scrolls to bottom again.
+                this.autoScroll = false;
             }
         },
         shouldSnapToBottom() {
             return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
         },
         scrollToBottom() {
-            this.scrollable.scrollTop = this.scrollable.scrollHeight;
+            this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
         },
         synchronizeScrollX() {
             this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
@@ -477,37 +477,40 @@ export default {
             this.filters[columnKey] = '';
             this.table.filteredRows.setColumnFilter(columnKey, '');
         },
-        rowsAdded(rows) {
+        rowsAdded (rows) {
+            this.setHeight();
+
             let sizingRow;
             if (Array.isArray(rows)) {
                 sizingRow = rows[0];
             } else {
                 sizingRow = rows;
             }
+
             if (!this.sizingRows[sizingRow.objectKeyString]) {
                 this.sizingRows[sizingRow.objectKeyString] = sizingRow;
                 this.$nextTick().then(this.calculateColumnWidths);
             }
 
-            if (!this.updatingView) {
-                this.updatingView = true;
-                requestAnimationFrame(()=> {
-                    this.updateVisibleRows();
-                    if (this.autoScroll) {
-                        this.$nextTick().then(this.scrollToBottom);
-                    }
-                    this.updatingView = false;
-                });
+            if (this.autoScroll) {
+                this.scrollToBottom();
             }
+
+            this.updateVisibleRows();
         },
-        rowsRemoved(rows) {
-            if (!this.updatingView) {
-                this.updatingView = true;
-                requestAnimationFrame(()=> {
-                    this.updateVisibleRows();
-                    this.updatingView = false;
-                });
-            }
+        rowsRemoved (rows) {
+            this.setHeight();
+            this.updateVisibleRows();
+        },
+        /**
+         * Calculates height based on total number of rows, and sets table height.
+         */
+        setHeight() {
+            let filteredRowsLength = this.table.filteredRows.getRows().length;
+            this.totalHeight = this.rowHeight * filteredRowsLength - 1;
+            // Set element height directly to avoid having to wait for Vue to update DOM 
+            // which causes subsequent scroll to use an out of date height.
+            this.contentTable.style.height = this.totalHeight + 'px'; 
         },
         exportAsCSV() {
             const headerKeys = Object.keys(this.headers);
@@ -595,7 +598,11 @@ export default {
                     this.calculateTableSize();
                     // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
                     // Need to preserve scroll position in this case.
-                    this.scrollable.scrollTop = scrollTop;
+                    if (this.autoScroll) {
+                        this.scrollToBottom();
+                    } else {
+                        this.scrollable.scrollTop = scrollTop;
+                    }
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
@@ -608,6 +615,9 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
+        this.rowsAdded = _.throttle(this.rowsAdded, 200);
+        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
+        this.scroll = _.throttle(this.scroll, 100);
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
@@ -621,6 +631,7 @@ export default {
         //Default sort
         this.sortOptions = this.table.filteredRows.sortBy();
         this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
+        this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
         this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
         this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
 
