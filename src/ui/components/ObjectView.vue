@@ -117,8 +117,16 @@ export default {
                 this.currentObject = mutatedObject;
             });
 
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.loadComposition();
+            }
+
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
+        },
+        loadComposition() {
+            return this.composition.load();
         },
         getSelectionContext() {
             if (this.currentView.getSelectionContext) {
@@ -133,10 +141,12 @@ export default {
             }
         },
         addObjectToParent(event) {
-            if (this.hasComposableDomainObject(event)) {
+            if (this.hasComposableDomainObject(event) && this.composition) {
                 let composableDomainObject = this.getComposableDomainObject(event);
-                this.currentObject.composition.push(composableDomainObject.identifier);
-                this.openmct.objects.mutate(this.currentObject, 'composition', this.currentObject.composition);
+                this.loadComposition().then(() => {
+                    this.composition.add(composableDomainObject);
+                });
+
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -155,6 +165,7 @@ export default {
         editIfEditable(event) {
             let provider = this.getViewProvider();
             if (provider && 
+                provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
                     this.openmct.editor.edit();

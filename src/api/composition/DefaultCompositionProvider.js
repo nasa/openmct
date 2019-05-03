@@ -48,22 +48,9 @@ define([
         this.listeningTo = {};
         this.onMutation = this.onMutation.bind(this);
 
-        this.cannotContainDuplicates = this.cannotContainDuplicates.bind(this);
         this.cannotContainItself = this.cannotContainItself.bind(this);
 
-        compositionAPI.addPolicy(this.cannotContainDuplicates);
         compositionAPI.addPolicy(this.cannotContainItself);
-    }
-
-    /**
-     * @private
-     */
-    DefaultCompositionProvider.prototype.cannotContainDuplicates = function (parent, child) {
-        return this.appliesTo(parent) &&
-            parent.composition.findIndex((composeeId) => {
-                return composeeId.namespace === child.identifier.namespace &&
-                    composeeId.key === child.identifier.key;
-            }) === -1;
     }
 
     /**
@@ -199,9 +186,20 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
-        throw new Error('Default Provider does not implement adding.');
-        // TODO: this needs to be synchronized via mutation
+    DefaultCompositionProvider.prototype.add = function (parent, childId) {
+        if (!this.includes(parent, childId)) {
+            parent.composition.push(childId);
+            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+        }
+    };
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.includes = function (parent, childId) {
+        return parent.composition.findIndex(composee => {
+            return composee.namespace === childId.namespace &&
+                composee.key === childId.key;
+        }) !== -1;
     };
 
     DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {

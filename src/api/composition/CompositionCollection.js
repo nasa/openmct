@@ -181,6 +181,9 @@ define([
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
         if (!skipMutate) {
+            if (!this.publicAPI.composition.checkPolicy(this.domainObject, child)) {
+                throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
+            }
             this.provider.add(this.domainObject, child.identifier);
         } else {
             this.emit('add', child);
