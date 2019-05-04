@@ -203,8 +203,31 @@ body {
     }
 }
 
+*[title*='pulse-fast'] {
+    @include pulse($animName: pulseSlow, $dur: 250ms, $prop: filter, $val0: brightness(1.5), $val100: brightness(0.9), $direction: normal);
+}
+
 *[title*='pulse-warning'] {
     @include pulse($animName: pulseWarning, $dur: 1500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(0.7), $direction: normal);
+}
+
+*[title*='Bg Widget'] {
+    // Widgets that provide a flashing red bg for components
+    .c-summary-widget {
+        margin: 50px 40px;
+        border: none !important;
+        border-radius: 30px;
+        &[title*='widget-yellow'] {
+            opacity: 0.15;
+            box-shadow: $ylwKeyBg 0px 0px 25px 25px;
+        }
+
+        &[title*='widget-red'] {
+            opacity: 0.3;
+            box-shadow: $redKeyBg 0px 0px 25px 25px;
+        }
+    }
+
 }
 
 /**************************************************** SECTIONS */
