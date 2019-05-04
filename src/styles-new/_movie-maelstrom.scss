@@ -1,11 +1,45 @@
-/**************************************************** OVERRIDES */
+/**************************************************** CONSTANTS, MIXINS */
 $bgKey: #222632;
+$redKeyBg: #990000;
+$redKeyBrdr: #ff0000;
+$redKeyFg: rgba(white, 0.8);
+$ylwKeyBg: #d67f28;
+$ylwKeyBrdr: #ffbf1a;
+$ylwKeyFg: rgba(white, 0.8);
 
+@mixin widgetOk() {
+    background-color: #bbb !important;
+    border-color: #fff !important;
+    color: #333 !important;
+}
+
+@mixin widgetRed() {
+    background-color: $redKeyBg !important;
+    border-color: $redKeyBrdr !important;
+    color: $redKeyFg !important;
+}
+
+@mixin widgetYellow() {
+    $c: $ylwKeyFg;
+    background-color: $ylwKeyBg !important;
+    border-color: $ylwKeyBrdr !important;
+    color: $ylwKeyFg !important;
+}
+
+/**************************************************** OVERRIDES */
 body {
     font-size: 1em;
 }
 
-/************* CONVENIENCE */
+.c-telemetry-view__value {
+    &[class*='is-limit'] {
+        background: transparent !important;
+        color: inherit !important;
+        &:before { display: none; }
+    }
+}
+
+/**************************************************** CONVENIENCE */
 .u-inspectable[s-selected] {
     border: none !important;
 }
@@ -14,7 +48,11 @@ body {
     font-size: 0.7em;
 }
 
-/************* TIME CONDUCTOR */
+.widget-rule-content .t-rule-message-input {
+    width: 100%;
+}
+
+/**************************************************** TIME CONDUCTOR */
 .c-conductor {
     &__controls {
         display: none !important;
@@ -26,6 +64,21 @@ body {
 
     [class*='__label'] {
         display: none;
+    }
+
+    &__end-fixed {
+        display: none;
+    }
+
+    &__end-delta {
+        &:after {
+            content: '';
+            display: block;
+            background: url('../ui/layout/assets/images/logo-app.svg') center no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 24px;
+        }
     }
 
     &-input {
@@ -43,7 +96,7 @@ body {
     }
 }
 
-/************* MAIN LAYOUT */
+/**************************************************** MAIN LAYOUT */
 .l-shell {
     &:not(.is-editing) {
         .l-shell__head,
@@ -119,23 +172,28 @@ body {
     font-size: 24px;
 }
 
-*[title*='system-widget'] {
-    background: $bgKey !important;
-    border-width: 2px !important;
-    justify-content: left !important;
-
-    .c-sw__icon {
-        $m: $interiorMarginSm;
-        position: absolute;
-        bottom: $m;
-        right: $m;
-    }
-}
-
 *[title*='alert-red'] {
     .c-sw__icon {
         color: red !important;
     }
+}
+
+*[title*='alert-yellow'] {
+    .c-sw__icon {
+        color: $ylwKeyBg !important;
+    }
+}
+
+*[title*='widget-ok'] {
+    @include widgetOk();
+}
+
+*[title*='widget-yellow'] {
+    @include widgetYellow();
+}
+
+*[title*='widget-red'] {
+    @include widgetRed();
 }
 
 *[title*='pulse-slow'] {
@@ -149,40 +207,30 @@ body {
     @include pulse($animName: pulseWarning, $dur: 1500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(0.7), $direction: normal);
 }
 
-/**[title*='bad-ring'] {
-    @include pulse($animName: badRing, $dur: 500ms, $prop: filter, $val0: brightness(1.2), $val100: brightness(1.0), $direction: alternate);
-}*/
+/**************************************************** SECTIONS */
+/************* SYS OVW WIDGETS */
+*[title*='Sys Ovw'] {
+    *[title*='Widget'] {
+        font-size: 1.4em;
+    }
 
-*[title*='Boost Phase Ring Widgets'] {
-    *[title*='Ring Widget'] {
-        filter: saturate(0.7);
+    *[title*='sys-ok'] {
+        @include widgetOk();
+    }
+
+    *[title*='post-ring'] {
+        @include widgetRed();
     }
 }
 
-*[title*='pulse-passenger-notice--warning'] {
-    @include pulse($animName: pulseWarning, $dur: 1250ms, $prop: background-color, $val0: #aa0000, $val100: #660000, $direction: normal);
-}
-/**************************************************** INDIVIDUAL ELEMENTS */
-*[title*='passenger-notice'] {
-    font-size: 1.4em;
-    .c-sw__icon {
-        font-size: 2.1em;
-        margin-right: $interiorMarginLg;
-    }
+/************* VELOCITY COMPONENT */
+*[title*='-not-attained'] {
+    @include widgetRed();
 }
 
-*[title*='Main Console'] {
-    $r: $basicCr;
-    background: $bgKey;
-    border-radius: $r;
-}
+/************* ACCELERATION COMPONENT */
 
-*[title*='Event Time Str'] {
-
-    @include heroFont(1.2em);
-    line-height: .8em;
-}
-
+/************* BOOST PHASE WIDGETS */
 *[title*='boost-phase-widget'] {
     .c-summary-widget {
         border-width: 2px;
@@ -237,6 +285,80 @@ body {
     }
 }
 
+*[title*='Boost Phase Ring Widgets'] {
+    *[title*='Ring Widget'] {
+        //filter: saturate(0.7);
+    }
+
+    *[title*='ring-ok'] {
+        @include widgetOk();
+    }
+
+    *[title*='bad-ring'] {
+        @include widgetRed();
+    }
+
+    *[title*='post-ring'] {
+        @include widgetYellow();
+    }
+}
+
+/************* BOTTOM SYSTEM WIDGETS */
+*[title*='system-widget'] {
+    background: $bgKey !important;
+    border-width: 2px !important;
+    justify-content: left !important;
+
+    .c-sw__icon {
+        $m: $interiorMarginSm;
+        position: absolute;
+        bottom: $m;
+        right: $m;
+    }
+}
+
+*[title*="Bottom System Widgets"] {
+    transform: translateY(-2px);
+}
+
+*[title*='system-widget--hero'] {
+    // Current "tab" in interface
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;
+}
+
+*[title*='system-widget--subtle'] {
+    opacity: 0.7;
+}
+
+/**************************************************** INDIVIDUAL ELEMENTS */
+/************* PASSENGER NOTICE */
+*[title*='passenger-notice'] {
+    font-size: 1.4em;
+    .c-sw__icon {
+        font-size: 2.1em;
+        margin-right: $interiorMarginLg;
+    }
+}
+
+*[title*='pulse-passenger-notice--warning'] {
+    @include pulse($animName: pulseWarning, $dur: 1250ms, $prop: background-color, $val0: #aa0000, $val100: #660000, $direction: normal);
+}
+
+*[title*='Main Console'] {
+    $r: $basicCr;
+    background: $bgKey;
+    border-radius: $r;
+    border-bottom: 2px solid rgb(102,102,102);
+}
+
+*[title*='Event Time Str'] {
+    @include heroFont(1.2em);
+    line-height: .8em;
+}
+
+
 *[title*="Sys Ovw LAD Table"] {
     .c-lad-table {
         tr {
@@ -266,5 +388,6 @@ body {
 
         }
     }
-
 }
+
+
