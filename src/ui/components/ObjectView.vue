@@ -34,10 +34,10 @@ export default {
         this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver);
-        this.$el.addEventListener('drop', this.addObjectToParent);
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
+        this.$el.addEventListener('drop', this.addObjectToParent);
     },
     methods: {
         clear() {

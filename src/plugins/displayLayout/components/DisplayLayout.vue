@@ -331,6 +331,7 @@
                 this.openmct.objects.mutate(this.internalDomainObject, path, value);
             },
             handleDrop($event) {
+                console.log('drop');
                 if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
                     return;
                 }
@@ -457,6 +458,7 @@
                 this.layoutItems.forEach(this.trackItem);
             },
             addChild(child) {
+                console.log('compose');
                 let identifier = this.openmct.objects.makeKeyString(child.identifier);
                 if (this.isTelemetry(child)) {
                     if (!this.telemetryViewMap[identifier]) {
