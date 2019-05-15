@@ -103,7 +103,7 @@ define([
                 var index = _.findIndex(plotObject.configuration.series, function (s) {
                     return _.isEqual(identifier, s.identifier);
                 });
-                this.remove(this.at(index));
+                this.remove(this.at(index), identifier);
                 // Because this is triggered by a composition change, we have
                 // to defer mutation of our plot object, otherwise we might
                 // mutate an outdated version of the plotObject.
