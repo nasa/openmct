@@ -112,6 +112,10 @@ export default {
                 delete this.removeSelectable;
             }
 
+            if (this.composition) {
+                this.composition._destroy();
+            }
+
             this.currentObject = object;
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
@@ -119,6 +123,7 @@ export default {
 
             this.composition = this.openmct.composition.get(this.currentObject);
             if (this.composition) {
+                this.composition._synchronize();
                 this.loadComposition();
             }
 
