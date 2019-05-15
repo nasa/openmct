@@ -57,6 +57,10 @@ export default {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
+
+            if (this.composition) {
+                this.composition._destroy();
+            }
         },
         invokeEditModeHandler(editMode) {
             this.currentView.onEditModeChange(editMode);

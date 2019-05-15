@@ -279,7 +279,9 @@ define([
     };
 
     CompositionCollection.prototype._destroy = function () {
-        this.mutationListener();
+        if (this.mutationListener) {
+            this.mutationListener();
+        }
         delete this.mutationListener;
     };
 
