@@ -322,12 +322,17 @@ define([
             return;
         }
 
+        let xDisplayRange = this.$scope.xAxis.get('displayRange'),
+            yDisplayRange = this.$scope.yAxis.get('displayRange');
+
+        if (!xDisplayRange || !yDisplayRange) {
+            return;
+        }
+
         this.freeze();
         window.clearTimeout(this.stillZooming);
 
-        let xDisplayRange = this.$scope.xAxis.get('displayRange'),
-            yDisplayRange = this.$scope.yAxis.get('displayRange'),
-            xAxisDist = (xDisplayRange.max - xDisplayRange.min),
+        let xAxisDist = (xDisplayRange.max - xDisplayRange.min),
             yAxisDist = (yDisplayRange.max - yDisplayRange.min),
             xDistMouseToMax = xDisplayRange.max - this.positionOverPlot.x,
             xDistMouseToMin = this.positionOverPlot.x - xDisplayRange.min,
