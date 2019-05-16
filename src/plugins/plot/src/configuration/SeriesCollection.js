@@ -97,6 +97,24 @@ define([
                 filters: filters
             }));
         },
+        remove: function (model, identifier) {
+            var index;
+
+            if (!model) {
+                index = _.findIndex(this.models, function (m) {
+                    return _.isEqual(m.domainObject.identifier, identifier);
+                });
+                model = this.models[index];
+            } else {
+                index = this.indexOf(model);
+                if (index === -1) {
+                    throw new Error('model not found in collection.');
+                }
+            }
+
+            this.emit('remove', model, index);
+            this.models.splice(index, 1);
+        },
         removeTelemetryObject: function (identifier) {
             var plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {

@@ -113,19 +113,11 @@ define([
         );
     };
 
-    Collection.prototype.remove = function (model, identifier) {
-        var index;
+    Collection.prototype.remove = function (model) {
+        var index = this.indexOf(model);
 
-        if (!model) {
-            index = _.findIndex(this.models, function (m) {
-                return _.isEqual(m.domainObject.identifier, identifier);
-            });
-            model = this.models[index];
-        } else {
-            index = this.indexOf(model);
-            if (index === -1) {
-                throw new Error('model not found in collection.');
-            }
+        if (index === -1) {
+            throw new Error('model not found in collection.');
         }
 
         this.emit('remove', model, index);
