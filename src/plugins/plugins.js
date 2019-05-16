@@ -23,6 +23,7 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './localTimeSystem/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -46,6 +47,7 @@ define([
 ], function (
     _,
     UTCTimeSystem,
+    LocalTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -81,6 +83,7 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.LocalTimeSystem = LocalTimeSystem;
 
     plugins.ImportExport = ImportExport;
 
