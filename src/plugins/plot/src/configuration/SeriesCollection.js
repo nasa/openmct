@@ -97,40 +97,32 @@ define([
                 filters: filters
             }));
         },
-        remove: function (model, identifier) {
-            var index;
-
-            if (!model) {
-                index = _.findIndex(this.models, function (m) {
-                    return _.isEqual(m.domainObject.identifier, identifier);
-                });
-                model = this.models[index];
-            } else {
-                index = this.indexOf(model);
-                if (index === -1) {
-                    throw new Error('model not found in collection.');
-                }
-            }
-
-            this.emit('remove', model, index);
-            this.models.splice(index, 1);
-        },
         removeTelemetryObject: function (identifier) {
             var plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {
-                var index = _.findIndex(plotObject.configuration.series, function (s) {
+
+                var persistedIndex = _.findIndex(plotObject.configuration.series, function (s) {
                     return _.isEqual(identifier, s.identifier);
                 });
-                this.remove(this.at(index), identifier);
-                // Because this is triggered by a composition change, we have
-                // to defer mutation of our plot object, otherwise we might
-                // mutate an outdated version of the plotObject.
-                setTimeout(function () {
-                    var newPlotObject = this.plot.get('domainObject');
-                    var cSeries = newPlotObject.configuration.series.slice();
-                    cSeries.splice(index, 1);
-                    this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
-                }.bind(this));
+
+                var configIndex = _.findIndex(this.models, function (m) {
+                    return _.isEqual(m.domainObject.identifier, identifier);
+                });
+
+                if (persistedIndex === -1) {
+                    this.remove(this.at(configIndex));
+                } else {
+                    this.remove(this.at(persistedIndex));
+                    // Because this is triggered by a composition change, we have
+                    // to defer mutation of our plot object, otherwise we might
+                    // mutate an outdated version of the plotObject.
+                    setTimeout(function () {
+                        var newPlotObject = this.plot.get('domainObject');
+                        var cSeries = newPlotObject.configuration.series.slice();
+                        cSeries.splice(persistedIndex, 1);
+                        this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
+                    }.bind(this));
+                }
             }
         },
         onSeriesAdd: function (series) {

@@ -282,11 +282,19 @@ define([
     };
 
     MCTPlotController.prototype.zoom = function (zoomDirection, zoomFactor) {
+        var currentXaxis = this.$scope.xAxis.get('displayRange'),
+            currentYaxis = this.$scope.yAxis.get('displayRange');
+
+        // when there is no plot data, the ranges can be undefined
+        // in which case we should not perform zoom
+        if (!currentXaxis || !currentYaxis) {
+            return;
+        }
+
         this.freeze();
         this.trackHistory();
-        var currentXaxis = this.$scope.xAxis.get('displayRange'),
-            currentYaxis = this.$scope.yAxis.get('displayRange'),
-            xAxisDist= (currentXaxis.max - currentXaxis.min) * zoomFactor,
+
+        var xAxisDist= (currentXaxis.max - currentXaxis.min) * zoomFactor,
             yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
         if (zoomDirection === 'in') {
@@ -325,6 +333,8 @@ define([
         let xDisplayRange = this.$scope.xAxis.get('displayRange'),
             yDisplayRange = this.$scope.yAxis.get('displayRange');
 
+        // when there is no plot data, the ranges can be undefined
+        // in which case we should not perform zoom
         if (!xDisplayRange || !yDisplayRange) {
             return;
         }
