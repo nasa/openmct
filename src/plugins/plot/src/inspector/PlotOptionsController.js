@@ -49,8 +49,6 @@ define([
     };
 
     PlotOptionsController.prototype.destroy = function () {
-        //untrack twice to offset strange timing issue
-        configStore.untrack(this.configId);
         configStore.untrack(this.configId);
 
         this.stopListening();
