@@ -472,10 +472,12 @@ export default {
         },
         filterChanged(columnKey) {
             this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+            this.setHeight();
         },
         clearFilter(columnKey) {
             this.filters[columnKey] = '';
             this.table.filteredRows.setColumnFilter(columnKey, '');
+            this.setHeight();
         },
         rowsAdded (rows) {
             this.setHeight();
