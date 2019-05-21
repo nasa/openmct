@@ -80,15 +80,17 @@ define(['zepto'], function ($) {
             var newObj;
 
             seen.push(parent.getId());
-            parentModel.composition.forEach(function (childId, index) {
-                if (!tree[childId] || seen.includes(childId)) {
+
+            parentModel.composition.forEach(function (childId) {
+                let key = childId.key;
+
+                if (!tree[key] || seen.includes(key)) {
                     return;
                 }
 
-                newObj = this.instantiate(tree[childId], childId);
-                parent.getCapability("composition").add(newObj);
+                newObj = this.instantiate(tree[key], key);
                 newObj.getCapability("location")
-                    .setPrimaryLocation(tree[childId].location);
+                    .setPrimaryLocation(tree[key].location);
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }
