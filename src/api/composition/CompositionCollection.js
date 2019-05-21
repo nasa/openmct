@@ -132,9 +132,8 @@ define([
 
         this.listeners[event].splice(index, 1);
         if (this.listeners[event].length === 0) {
-            if (this.mutationListener) {
-                this._destroy();
-            }
+            this._destroy();
+
             // Remove provider listener if this is the last callback to
             // be removed.
             if (this.provider.off && this.provider.on) {
@@ -281,8 +280,8 @@ define([
     CompositionCollection.prototype._destroy = function () {
         if (this.mutationListener) {
             this.mutationListener();
+            delete this.mutationListener;
         }
-        delete this.mutationListener;
     };
 
     /**
