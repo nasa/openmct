@@ -22,8 +22,20 @@ define([
             publicAPI = {};
             publicAPI.objects = jasmine.createSpyObj('ObjectAPI', [
                 'get',
-                'mutate'
+                'mutate',
+                'observe',
+                'areIdsEqual'
             ]);
+
+            publicAPI.objects.areIdsEqual.and.callFake(function (id1, id2) {
+                return id1.namespace === id2.namespace && id1.key === id2.key;
+            });
+
+            publicAPI.composition = jasmine.createSpyObj('CompositionAPI', [
+                'checkPolicy'
+            ]);
+            publicAPI.composition.checkPolicy.and.returnValue(true);
+
             publicAPI.objects.eventEmitter = jasmine.createSpyObj('eventemitter', [
                 'on'
             ]);
@@ -91,7 +103,7 @@ define([
                 beforeEach(function () {
                     listener = jasmine.createSpy('reorderListener');
                     composition.on('reorder', listener);
-                    
+
                     return composition.load();
                 });
                 it('', function () {
@@ -119,49 +131,16 @@ define([
                     expect(newComposition[2].key).toEqual('a');
                 })
             });
-
-            // TODO: Implement add/removal in new default provider.
-            xit('synchronizes changes between instances', function () {
-                var otherComposition = compositionAPI.get(domainObject);
-                var addListener = jasmine.createSpy('addListener');
-                var removeListener = jasmine.createSpy('removeListener');
-                var otherAddListener = jasmine.createSpy('otherAddListener');
-                var otherRemoveListener = jasmine.createSpy('otherRemoveListener');
+            it('supports adding an object to composition', function () {
+                let addListener = jasmine.createSpy('addListener');
+                let mockChildObject = {
+                    identifier: {key: 'mock-key', namespace: ''}
+                };
                 composition.on('add', addListener);
-                composition.on('remove', removeListener);
-                otherComposition.on('add', otherAddListener);
-                otherComposition.on('remove', otherRemoveListener);
+                composition.add(mockChildObject);
 
-                return Promise.all([composition.load(), otherComposition.load()])
-                    .then(function () {
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-                        expect(removeListener).not.toHaveBeenCalled();
-                        expect(otherRemoveListener).not.toHaveBeenCalled();
-
-                        var object = addListener.calls.mostRecent().args[0];
-                        composition.remove(object);
-                        expect(removeListener).toHaveBeenCalled();
-                        expect(otherRemoveListener).toHaveBeenCalled();
-
-                        addListener.reset();
-                        otherAddListener.reset();
-                        composition.add(object);
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-
-                        removeListener.reset();
-                        otherRemoveListener.reset();
-                        otherComposition.remove(object);
-                        expect(removeListener).toHaveBeenCalled();
-                        expect(otherRemoveListener).toHaveBeenCalled();
-
-                        addListener.reset();
-                        otherAddListener.reset();
-                        otherComposition.add(object);
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-                    });
+                expect(domainObject.composition.length).toBe(4);
+                expect(domainObject.composition[3]).toEqual(mockChildObject.identifier);
             });
         });
 
@@ -184,7 +163,9 @@ define([
                                 key: 'thing'
                             }
                         ]);
-                    }
+                    },
+                    add: jasmine.createSpy('add'),
+                    remove: jasmine.createSpy('remove')
                 };
                 domainObject = {
                     identifier: {
@@ -212,6 +193,25 @@ define([
                     expect(loadedObject).toEqual({
                         identifier: {namespace: 'custom', key: 'thing'}
                     });
+                });
+            });
+            describe('Calling add or remove', function () {
+                let mockChildObject;
+
+                beforeEach(function () {
+                    mockChildObject = {
+                        identifier: {key: 'mock-key', namespace: ''}
+                    };
+                    composition.add(mockChildObject);
+                });
+
+                it('calls add on the provider', function () {
+                    expect(customProvider.add).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
+                });
+
+                it('calls remove on the provider', function () {
+                    composition.remove(mockChildObject);
+                    expect(customProvider.remove).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
                 });
             });
         });

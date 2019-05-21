@@ -34,10 +34,10 @@ export default {
         this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver);
-        this.$el.addEventListener('drop', this.addObjectToParent);
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
+        this.$el.addEventListener('drop', this.addObjectToParent);
     },
     methods: {
         clear() {
@@ -56,6 +56,10 @@ export default {
             if (this.removeSelectable) {
                 this.removeSelectable();
                 delete this.removeSelectable;
+            }
+
+            if (this.composition) {
+                this.composition._destroy();
             }
         },
         invokeEditModeHandler(editMode) {
@@ -112,13 +116,26 @@ export default {
                 delete this.removeSelectable;
             }
 
+            if (this.composition) {
+                this.composition._destroy();
+            }
+
             this.currentObject = object;
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
             });
 
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.composition._synchronize();
+                this.loadComposition();
+            }
+
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
+        },
+        loadComposition() {
+            return this.composition.load();
         },
         getSelectionContext() {
             if (this.currentView.getSelectionContext) {
@@ -133,10 +150,12 @@ export default {
             }
         },
         addObjectToParent(event) {
-            if (this.hasComposableDomainObject(event)) {
+            if (this.hasComposableDomainObject(event) && this.composition) {
                 let composableDomainObject = this.getComposableDomainObject(event);
-                this.currentObject.composition.push(composableDomainObject.identifier);
-                this.openmct.objects.mutate(this.currentObject, 'composition', this.currentObject.composition);
+                this.loadComposition().then(() => {
+                    this.composition.add(composableDomainObject);
+                });
+
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -155,6 +174,7 @@ export default {
         editIfEditable(event) {
             let provider = this.getViewProvider();
             if (provider && 
+                provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
                     this.openmct.editor.edit();
