@@ -109,6 +109,10 @@ define([
                     return _.isEqual(m.domainObject.identifier, identifier);
                 });
 
+                /*
+                    when cancelling out of edit mode, the config store and domain object are out of sync
+                    thus it is necesarry to check both and remove the models that are no longer in composition
+                */
                 if (persistedIndex === -1) {
                     this.remove(this.at(configIndex));
                 } else {
