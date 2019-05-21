@@ -263,11 +263,11 @@ body {
         }
 
         .gl-plot-axis-area.gl-plot-y {
-            width: 22px;
+            width: 22px !important;
         }
 
         .gl-plot-wrapper-display-area-and-x-axis {
-            left: 24px;
+            left: 24px !important;
         }
     }
 }
@@ -391,8 +391,13 @@ body {
     }
 }
 
+
+*[title*='pulse-passenger-notice--nominal'] {
+    @include pulse($animName: pulseNominal, $dur: 1000ms, $prop: filter, $val0: brightness(1.4), $val100:brightness(1.0), $direction: alternate);
+}
+
 *[title*='pulse-passenger-notice--warning'] {
-    @include pulse($animName: pulseWarning, $dur: 1250ms, $prop: background-color, $val0: #aa0000, $val100: #660000, $direction: normal);
+    @include pulse($animName: pulseWarning, $dur: 750ms, $prop: background-color, $val0: #aa0000, $val100: #340000, $direction: normal);
 }
 
 *[title*='Main Console'] {
