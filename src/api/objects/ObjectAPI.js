@@ -24,6 +24,7 @@ define([
     'lodash',
     './object-utils',
     './MutableObject',
+    './MutableDomainObject',
     './RootRegistry',
     './RootObjectProvider',
     'EventEmitter'
@@ -31,6 +32,7 @@ define([
     _,
     utils,
     MutableObject,
+    MutableDomainObject,
     RootRegistry,
     RootObjectProvider,
     EventEmitter
@@ -176,6 +178,10 @@ define([
     ObjectAPI.prototype.addRoot = function (key) {
         this.rootRegistry.addRoot(key);
     };
+
+    ObjectAPI.prototype.getMutable = function (object) {
+        return MutableDomainObject.default.createMutable(object, this.eventEmitter);
+    }
 
     /**
      * Modify a domain object.
