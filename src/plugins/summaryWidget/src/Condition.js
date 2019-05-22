@@ -25,6 +25,8 @@ define([
      * @param {ConditionManager} conditionManager A ConditionManager instance for populating
      *                                            selects with configuration data
      */
+    const SELECT_VALUE_OPTION = '- Select value -';
+
     function Condition(conditionConfig, index, conditionManager) {
         eventHelpers.extend(this);
         this.config = conditionConfig;
@@ -69,17 +71,16 @@ define([
          * @private
          */
         function onValueInput(event) {
-            var elem = event.target,
-                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
-                inputIndex = self.valueInputs.indexOf(elem);
+            let elem = event.target;
+            let numberValue = Number(elem.value);
+            let value = isNaN(numberValue) ? elem.value : numberValue;
+            let inputIndex = self.valueInputs.indexOf(elem);
 
-            if (elem.tagName.toUpperCase() === 'INPUT') {
-                self.eventEmitter.emit('change', {
-                    value: value,
-                    property: 'values[' + inputIndex + ']',
-                    index: self.index
-                });
-            }
+            self.eventEmitter.emit('change', {
+                value: value,
+                property: 'values[' + inputIndex + ']',
+                index: self.index
+            });
         }
 
         this.listenTo(this.deleteButton, 'click', this.remove, this);
@@ -108,8 +109,7 @@ define([
         Object.values(this.selects).forEach(function (select) {
             $('.t-configuration', self.domElement).append(select.getDOM());
         });
-
-        this.listenTo($(this.domElement), 'input', onValueInput);
+        this.listenTo($('.t-value-inputs', this.domElement), 'input', onValueInput);
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -185,15 +185,29 @@ define([
             inputCount = evaluator.getInputCount(operation);
             inputType = evaluator.getInputType(operation);
             while (index < inputCount) {
-                if (!this.config.values[index]) {
-                    this.config.values[index] = (inputType === 'number' ? 0 : '');
+                if (inputType === 'select') {
+                    newInput = $('<select>' + this.generateSelectOptions() + '</select>');
+                } else {
+                    if (!this.config.values[index]) {
+                        this.config.values[index] = (inputType === 'number' ? 0 : '');
+                    }
+                    newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
                 }
-                newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
+
                 this.valueInputs.push(newInput.get(0));
                 inputArea.append(newInput);
                 index += 1;
             }
         }
+    };
+
+    Condition.prototype.generateSelectOptions = function () {
+        let telemetryMetadata = this.conditionManager.getTelemetryMetadata(this.config.object);
+        let options = '<option value="">' + SELECT_VALUE_OPTION + '</option>';
+        telemetryMetadata[this.config.key].enumerations.forEach(enumeration => {
+            options += '<option value="' + enumeration.value + '">'+ enumeration.string + '</option>';
+        });
+        return options;
     };
 
     return Condition;

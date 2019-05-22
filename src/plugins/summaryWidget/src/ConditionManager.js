@@ -130,7 +130,9 @@ define ([
         this.telemetryTypesById[objectId] = {};
         Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
             var type;
-            if (valueMetadata.hints.hasOwnProperty('range')) {
+            if (valueMetadata.enumerations !== undefined) {
+                type = 'enum';
+            } else if (valueMetadata.hints.hasOwnProperty('range')) {
                 type = 'number';
             } else if (valueMetadata.hints.hasOwnProperty('domain')) {
                 type = 'number';
@@ -164,6 +166,7 @@ define ([
      * @private
      */
     ConditionManager.prototype.handleSubscriptionCallback = function (objId, datum) {
+        console.log('objId', objId, 'datum', datum);
         this.subscriptionCache[objId] = datum;
         this.eventEmitter.emit('receiveTelemetry');
     };
@@ -236,6 +239,7 @@ define ([
                 id.namespace === identifier.namespace;
         });
         delete this.compositionObjs[objectId];
+        delete this.subscriptionCache[objectId];
         this.subscriptions[objectId](); //unsubscribe from telemetry source
         delete this.subscriptions[objectId];
         this.eventEmitter.emit('remove', identifier);
