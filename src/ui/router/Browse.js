@@ -7,7 +7,6 @@ define([
     return function install(openmct) {
         let navigateCall = 0;
         let browseObject;
-        let unobserve = undefined;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
 
@@ -35,9 +34,8 @@ define([
             navigateCall++;
             let currentNavigation = navigateCall;
 
-            if (unobserve) {
-                unobserve();
-                unobserve = undefined;
+            if (browseObject) {
+                browseObject.$destroy();
             }
 
             //Split path into object identifiers
@@ -49,23 +47,18 @@ define([
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
                 }
-
-                let navigatedObject = objects[objects.length - 1];
-
                 // FIXME: this is a hack to support create action, intended to
                 // expose the current routed path.  We need to rewrite the
                 // navigation service and router to expose a clear and minimal
                 // API for this.
-                openmct.router.path = objects.reverse();
+                objects = objects.reverse();
+                openmct.router.path = objects;
+                objects[0] = openmct.objects.getMutable(objects[0]);
 
-                unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
-                    openmct.router.path[0] = newObject;
-                });
+                browseObject = objects[0];
+                openmct.layout.$refs.browseBar.domainObject = browseObject;
 
-                openmct.layout.$refs.browseBar.domainObject = navigatedObject;
-                browseObject = navigatedObject;
-
-                if (!navigatedObject) {
+                if (!browseObject) {
                     openmct.layout.$refs.browseObject.clear();
                     return;
                 }
@@ -75,12 +68,12 @@ define([
 
                 document.title = browseObject.name; //change document title to current object in main view
 
-                if (currentProvider && currentProvider.canView(navigatedObject)) {
-                    viewObject(navigatedObject,  currentProvider);
+                if (currentProvider && currentProvider.canView(browseObject)) {
+                    viewObject(browseObject,  currentProvider);
                     return;
                 }
 
-                let defaultProvider = openmct.objectViews.get(navigatedObject)[0];
+                let defaultProvider = openmct.objectViews.get(browseObject)[0];
                 if (defaultProvider) {
                     openmct.router.updateParams({
                         view: defaultProvider.key

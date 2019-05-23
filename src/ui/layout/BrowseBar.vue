@@ -95,7 +95,7 @@ const PLACEHOLDER_OBJECT = {};
             updateName(event) {
                 // TODO: handle isssues with contenteditable text escaping.
                 if (event.target.innerText !== this.domainObject.name) {
-                    this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
+                    this.domainObject.$set('name', event.target.innerText);
                 }
             },
             updateNameOnEnterKeyPress (event) {
@@ -231,20 +231,7 @@ const PLACEHOLDER_OBJECT = {};
                 this.isEditing = isEditing;
             });
         },
-        watch: {
-            domainObject() {
-                if (this.mutationObserver) {
-                    this.mutationObserver();
-                }
-                this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
-                    this.domainObject = domainObject;
-                });
-            }
-        },
         beforeDestroy: function () {
-            if (this.mutationObserver) {
-                this.mutationObserver();
-            }
             document.removeEventListener('click', this.closeViewAndSaveMenu);
             window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }

@@ -57,10 +57,6 @@ export default {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
-
-            if (this.composition) {
-                this.composition._destroy();
-            }
         },
         invokeEditModeHandler(editMode) {
             this.currentView.onEditModeChange(editMode);
@@ -107,27 +103,15 @@ export default {
             }
         },
         show(object, viewKey, immediatelySelect) {
-            if (this.unlisten) {
-                this.unlisten();
-            }
-
             if (this.removeSelectable) {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
 
-            if (this.composition) {
-                this.composition._destroy();
-            }
-
             this.currentObject = object;
-            this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
-                this.currentObject = mutatedObject;
-            });
 
             this.composition = this.openmct.composition.get(this.currentObject);
             if (this.composition) {
-                this.composition._synchronize();
                 this.loadComposition();
             }
 
