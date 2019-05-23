@@ -29,6 +29,7 @@ define([
     "./res/templates/search.html",
     "./res/templates/search-menu.html",
     "raw-loader!./src/services/GenericSearchWorker.js",
+    "raw-loader!./src/services/BareBonesSearchWorker.js",
     'legacyRegistry'
 ], function (
     SearchController,
@@ -39,6 +40,7 @@ define([
     searchTemplate,
     searchMenuTemplate,
     searchWorkerText,
+    BareBonesSearchWorkerText,
     legacyRegistry
 ) {
 
@@ -116,8 +118,8 @@ define([
             ],
             "workers": [
                 {
-                    "key": "genericSearchWorker",
-                    "scriptText": searchWorkerText
+                    "key": "bareBonesSearchWorker",
+                    "scriptText": BareBonesSearchWorkerText
                 }
             ]
         }

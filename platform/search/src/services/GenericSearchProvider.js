@@ -101,7 +101,7 @@ define([
      * @returns worker the created search worker.
      */
     GenericSearchProvider.prototype.startWorker = function (workerService) {
-        var worker = workerService.run('genericSearchWorker'),
+        var worker = workerService.run('bareBonesSearchWorker'),
             provider = this;
 
         worker.addEventListener('message', function (messageEvent) {
@@ -249,9 +249,7 @@ define([
 
         modelResults.hits = event.data.results.map(function (hit) {
             return {
-                id: hit.item.id,
-                model: hit.item.model,
-                score: hit.matchCount
+                id: hit.id
             };
         });
 
