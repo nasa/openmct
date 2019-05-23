@@ -148,7 +148,6 @@ define([
             });
             configStore.add(configId, config);
         }
-        configStore.track(configId);
         return config;
     };
 
@@ -157,7 +156,8 @@ define([
     };
 
     PlotController.prototype.destroy = function () {
-        configStore.untrack(this.config.id);
+        configStore.deleteStore(this.config.id);
+
         this.stopListening();
         if (this.checkForSize) {
             clearInterval(this.checkForSize);
