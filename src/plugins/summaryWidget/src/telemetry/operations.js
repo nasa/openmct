@@ -199,7 +199,7 @@ define([
             appliesTo: ['enum'],
             inputCount: 1,
             getDescription: function (values) {
-                return ' is ' + values[0];
+                return ' == ' + values[0];
             }
         },
         enumValueIsNot: {
@@ -210,7 +210,7 @@ define([
             appliesTo: ['enum'],
             inputCount: 1,
             getDescription: function (values) {
-                return ' is not ' + values[0];
+                return ' != ' + values[0];
             }
         }
     };

@@ -25,8 +25,6 @@ define([
      * @param {ConditionManager} conditionManager A ConditionManager instance for populating
      *                                            selects with configuration data
      */
-    const SELECT_VALUE_OPTION = '- Select value -';
-
     function Condition(conditionConfig, index, conditionManager) {
         eventHelpers.extend(this);
         this.config = conditionConfig;
