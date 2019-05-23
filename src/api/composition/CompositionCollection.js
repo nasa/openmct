@@ -74,9 +74,6 @@ define([
         if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
-        if (!this.mutationListener) {
-            this._synchronize();
-        }
         if (this.provider.on && this.provider.off) {
             if (event === 'add') {
                 this.provider.on(
@@ -132,8 +129,6 @@ define([
 
         this.listeners[event].splice(index, 1);
         if (this.listeners[event].length === 0) {
-            this._destroy();
-
             // Remove provider listener if this is the last callback to
             // be removed.
             if (this.provider.off && this.provider.on) {
@@ -269,19 +264,6 @@ define([
      */
     CompositionCollection.prototype.onProviderRemove = function (child) {
         this.remove(child, true);
-    };
-
-    CompositionCollection.prototype._synchronize = function () {
-        this.mutationListener = this.publicAPI.objects.observe(this.domainObject, '*', (newDomainObject) => {
-            this.domainObject = JSON.parse(JSON.stringify(newDomainObject));
-        });
-    };
-
-    CompositionCollection.prototype._destroy = function () {
-        if (this.mutationListener) {
-            this.mutationListener();
-            delete this.mutationListener;
-        }
     };
 
     /**

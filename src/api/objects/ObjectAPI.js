@@ -23,7 +23,6 @@
 define([
     'lodash',
     './object-utils',
-    './MutableObject',
     './MutableDomainObject',
     './RootRegistry',
     './RootObjectProvider',
@@ -31,7 +30,6 @@ define([
 ], function (
     _,
     utils,
-    MutableObject,
     MutableDomainObject,
     RootRegistry,
     RootObjectProvider,
@@ -180,6 +178,9 @@ define([
     };
 
     ObjectAPI.prototype.getMutable = function (object) {
+        if (object instanceof MutableDomainObject.default) {
+            return object;
+        }
         return MutableDomainObject.default.createMutable(object, this.eventEmitter);
     }
 
@@ -192,9 +193,13 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        var mutableObject =
-            new MutableObject(this.eventEmitter, domainObject);
-        return mutableObject.set(path, value);
+        if (domainObject instanceof MutableDomainObject.default) {
+            domainObject.$set(path, value);
+        } else {
+            let mutable = this.getMutable(domainObject);
+            mutable.$set(path, value);
+            mutable.$destroy();
+        }
     };
 
     /**
@@ -207,10 +212,14 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject =
-            new MutableObject(this.eventEmitter, domainObject);
-        mutableObject.on(path, callback);
-        return mutableObject.stopListening.bind(mutableObject);
+        if (domainObject instanceof MutableDomainObject.default) {
+            return domainObject.$observe(path, callback);
+        } else {
+            let mutable = this.getMutable(domainObject);
+            mutable.$observe(path, callback);
+
+            return () => mutable.$destroy();
+        }
     };
 
     /**

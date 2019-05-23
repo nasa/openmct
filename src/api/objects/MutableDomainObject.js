@@ -29,7 +29,7 @@ class MutableDomainObject {
         this._eventEmitter = eventEmitter;
         this._observers = [];
     }
-    observe(path, callback) {
+    $observe(path, callback) {
         var fullPath = qualifiedEventName(this, path);
         var eventOff =
             this._eventEmitter.off.bind(this._eventEmitter, fullPath, callback);
@@ -39,7 +39,7 @@ class MutableDomainObject {
 
         return eventOff;
     }
-    set(path, value) {
+    $set(path, value) {
         _.set(this, path, value);
         _.set(this, 'modified', Date.now());
 
@@ -61,22 +61,27 @@ class MutableDomainObject {
         //TODO: Emit events for listeners of child properties when parent changes.
         // Do it at observer time - also register observers for parent attribute path.
     }
-    destroy() {
+    $destroy() {
         this._observers.forEach(observer => observer());
         this._observers = [];
     }
-}
 
-MutableDomainObject.createMutable = function (object, mutationTopic) {
-    let mutable = Object.create(new MutableDomainObject(mutationTopic));
-    Object.assign(mutable, object);
-    mutable.observe('$_synchronize_model', (updatedObject) => {
-        let clone = JSON.parse(JSON.stringify(updatedObject));
-        Object.assign(mutable, clone);
+    static createMutable(object, mutationTopic) {
+        let mutable = Object.create(new MutableDomainObject(mutationTopic));
+        Object.assign(mutable, object);
+        mutable.$observe('$_synchronize_model', (updatedObject) => {
+            let clone = JSON.parse(JSON.stringify(updatedObject));
+            clearObject(this);
+            Object.assign(mutable, clone);
+        })
+        return mutable;
+    }
+}
+function clearObject(object) {
+    Object.keys(object).forEach(propertyName => {
+        delete object[propertyName];
     })
-    return mutable;
 }
-
 function qualifiedEventName(object, eventName) {
     var keystring = utils.makeKeyString(object.identifier);
 

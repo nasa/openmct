@@ -74,7 +74,7 @@ define([
                 });
 
                 it('to stay synchronized when mutated', function () {
-                    mutable.set('otherAttribute', 'new-attribute-value');
+                    mutable.$set('otherAttribute', 'new-attribute-value');
                     expect(mutableSecondInstance.otherAttribute).toBe('new-attribute-value');
                 });
 
@@ -84,7 +84,7 @@ define([
                     return new Promise(function (resolve) {
                         mutationCallback.and.callFake(resolve);
                         mutableSecondInstance.observe('otherAttribute', mutationCallback);
-                        mutable.set('otherAttribute', 'some-new-value')
+                        mutable.$set('otherAttribute', 'some-new-value')
                     }).then(function () {
                         expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
                     });
@@ -102,7 +102,7 @@ define([
                         mutableSecondInstance.observe('objectAttribute.embeddedObject', embeddedObjectCallback);
                         mutableSecondInstance.observe('objectAttribute', objectAttributeCallback);
 
-                        mutable.set('objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
+                        mutable.$set('objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
                     }).then(function () {
                         expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
                         expect(embeddedObjectCallback).toHaveBeenCalledWith({
