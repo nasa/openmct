@@ -36,7 +36,7 @@ define([], function () {
         this.inputValidators = {
             number: this.validateNumberInput,
             string: this.validateStringInput,
-            enum: this.validateStringInput
+            enum: this.validateNumberInput
         };
 
         /**
@@ -300,13 +300,11 @@ define([], function () {
                             condition.operation, condition.values);
                         conditionDefined = true;
                     } catch (e) {
-                        // console.log('malformed condition');
                         //ignore malformed condition
                     }
                 }
 
                 if (conditionDefined) {
-                    console.log("conditionDefined", "conditionValue", conditionValue);
                     active = (mode === 'all' && !firstRuleEvaluated ? true : active);
                     firstRuleEvaluated = true;
                     if (mode === 'any') {
@@ -329,7 +327,6 @@ define([], function () {
      * @return {boolean} The value of this condition
      */
     ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
-        console.log('subscriptionCache', this.subscriptionCache, "key", key, "values", values);
         var cache = (this.useTestCache ? this.testCache : this.subscriptionCache),
             telemetryValue,
             op,
@@ -337,7 +334,8 @@ define([], function () {
             validator;
 
         if (cache[object] && typeof cache[object][key] !== 'undefined') {
-            telemetryValue = [cache[object][key]];
+            let value = cache[object][key];
+            telemetryValue = [isNaN(Number(value)) ? value : Number(value)];
         }
 
         op = this.operations[operation] && this.operations[operation].operation;
