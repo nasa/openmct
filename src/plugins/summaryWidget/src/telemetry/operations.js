@@ -193,7 +193,7 @@ define([
         },
         enumValueIs: {
             operation: function (input) {
-                return typeof input[0] === input[1];
+                return input[0] === input[1];
             },
             text: 'is',
             appliesTo: ['enum'],
@@ -204,7 +204,7 @@ define([
         },
         enumValueIsNot: {
             operation: function (input) {
-                return typeof input[0] !== input[1];
+                return input[0] !== input[1];
             },
             text: 'is not',
             appliesTo: ['enum'],

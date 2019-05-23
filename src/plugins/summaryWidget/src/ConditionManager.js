@@ -165,10 +165,16 @@ define ([
      * @param {datum} datum The new data from the telemetry source
      * @private
      */
-    ConditionManager.prototype.handleSubscriptionCallback = function (objId, datum) {
-        console.log('objId', objId, 'datum', datum);
-        this.subscriptionCache[objId] = datum;
+    ConditionManager.prototype.handleSubscriptionCallback = function (objId, telemetryDatum) {
+        this.subscriptionCache[objId] = this.createNormalizedDatum(objId, telemetryDatum);
         this.eventEmitter.emit('receiveTelemetry');
+    };
+
+    ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDatum) {
+        return Object.values(this.telemetryMetadataById[objId]).reduce((normalizedDatum, metadatum) => {
+            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+            return normalizedDatum;
+        }, {});
     };
 
     /**

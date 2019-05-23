@@ -71,10 +71,9 @@ define([
          * @private
          */
         function onValueInput(event) {
-            let elem = event.target;
-            let numberValue = Number(elem.value);
-            let value = isNaN(numberValue) ? elem.value : numberValue;
-            let inputIndex = self.valueInputs.indexOf(elem);
+            var elem = event.target,
+                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber),
+                inputIndex = self.valueInputs.indexOf(elem);
 
             self.eventEmitter.emit('change', {
                 value: value,

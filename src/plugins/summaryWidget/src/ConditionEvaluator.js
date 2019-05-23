@@ -36,7 +36,7 @@ define([], function () {
         this.inputValidators = {
             number: this.validateNumberInput,
             string: this.validateStringInput,
-            enum: this.validateNumberInput
+            enum: this.validateStringInput
         };
 
         /**
@@ -222,7 +222,7 @@ define([], function () {
             },
             enumValueIs: {
                 operation: function (input) {
-                    return typeof input[0] === input[1];
+                    return input[0] === input[1];
                 },
                 text: 'is',
                 appliesTo: ['enum'],
@@ -233,7 +233,7 @@ define([], function () {
             },
             enumValueIsNot: {
                 operation: function (input) {
-                    return typeof input[0] !== input[1];
+                    return input[0] !== input[1];
                 },
                 text: 'is not',
                 appliesTo: ['enum'],
@@ -300,12 +300,13 @@ define([], function () {
                             condition.operation, condition.values);
                         conditionDefined = true;
                     } catch (e) {
-                        console.log('malformed condition');
+                        // console.log('malformed condition');
                         //ignore malformed condition
                     }
                 }
 
                 if (conditionDefined) {
+                    console.log("conditionDefined", "conditionValue", conditionValue);
                     active = (mode === 'all' && !firstRuleEvaluated ? true : active);
                     firstRuleEvaluated = true;
                     if (mode === 'any') {
