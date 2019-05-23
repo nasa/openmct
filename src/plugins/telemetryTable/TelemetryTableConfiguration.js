@@ -36,11 +36,8 @@ define([
 
             this.addColumnsForObject = this.addColumnsForObject.bind(this);
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
-            this.objectMutated = this.objectMutated.bind(this);
-            //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-            this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
 
-            this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
+            this.unlistenFromMutation = domainObject.$observe('configuration', configuration => this.updateListeners(configuration));
         }
 
         getConfiguration() {
@@ -61,15 +58,8 @@ define([
          * @private
          * @param {*} object 
          */
-        objectMutated(object) {
-            //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
-            this.domainObject = object;
-            //Was it the configuration that changed?
-            if (!_.eq(object.configuration, this.oldConfiguration)) {
-                //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-                this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
-                this.emit('change', object.configuration);
-            }
+        updateListeners(configuration) {
+            this.emit('change', configuration);
         }
 
         addColumnsForAllObjects(objects) {
