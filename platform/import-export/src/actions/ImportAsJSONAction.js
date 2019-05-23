@@ -82,15 +82,15 @@ define(['zepto'], function ($) {
             seen.push(parent.getId());
 
             parentModel.composition.forEach(function (childId) {
-                let key = childId.key;
+                let keystring = this.openmct.objects.makeKeyString(childId);
 
-                if (!tree[key] || seen.includes(key)) {
+                if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
 
-                newObj = this.instantiate(tree[key], key);
+                newObj = this.instantiate(tree[keystring], keystring);
                 newObj.getCapability("location")
-                    .setPrimaryLocation(tree[key].location);
+                    .setPrimaryLocation(tree[keystring].location);
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }
