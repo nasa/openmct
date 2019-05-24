@@ -132,6 +132,12 @@ export default {
                 this.currentObject = mutatedObject;
             });
 
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.composition._synchronize();
+                this.loadComposition();
+            }
+
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
         },

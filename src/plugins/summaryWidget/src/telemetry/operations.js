@@ -174,7 +174,7 @@ define([
                 return typeof input[0] === 'undefined';
             },
             text: 'is undefined',
-            appliesTo: ['string', 'number'],
+            appliesTo: ['string', 'number', 'enum'],
             inputCount: 0,
             getDescription: function () {
                 return ' is undefined';
@@ -185,10 +185,32 @@ define([
                 return typeof input[0] !== 'undefined';
             },
             text: 'is defined',
-            appliesTo: ['string', 'number'],
+            appliesTo: ['string', 'number', 'enum'],
             inputCount: 0,
             getDescription: function () {
                 return ' is defined';
+            }
+        },
+        enumValueIs: {
+            operation: function (input) {
+                return input[0] === input[1];
+            },
+            text: 'is',
+            appliesTo: ['enum'],
+            inputCount: 1,
+            getDescription: function (values) {
+                return ' == ' + values[0];
+            }
+        },
+        enumValueIsNot: {
+            operation: function (input) {
+                return input[0] !== input[1];
+            },
+            text: 'is not',
+            appliesTo: ['enum'],
+            inputCount: 1,
+            getDescription: function (values) {
+                return ' != ' + values[0];
             }
         }
     };

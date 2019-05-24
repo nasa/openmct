@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './components/LadTable.vue',
+    './components/LADTable.vue',
     'vue'
 ], function (
     LadTableComponent,

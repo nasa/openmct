@@ -49,7 +49,6 @@ define([
     };
 
     PlotOptionsController.prototype.destroy = function () {
-        configStore.untrack(this.configId);
         this.stopListening();
         this.unlisten();
     };
@@ -60,7 +59,7 @@ define([
             this.$timeout(this.setUpScope.bind(this));
             return;
         }
-        configStore.track(this.configId);
+
         this.config = this.$scope.config = config;
         this.$scope.plotSeries = [];
 
