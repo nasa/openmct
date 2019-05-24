@@ -18,10 +18,39 @@
                     <span class="c-tree__item__label">Loading...</span>
                 </div>
             </li>
-            <tree-item v-for="child in children"
-                       :key="child.id"
-                       :node="child">
-            </tree-item>
+            <template v-if="children.length">
+                
+                <li v-if="page > 1 && children.length > page_threshold"
+                    @click="previousPage"
+                    class="c-tree__item-h"
+                    style="font-size: 0.7em">
+                    <div class="c-tree__item">
+                        <a class="c-tree__item__label c-object-label"
+                            style="padding: 0;">
+                            <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-up"></div>
+                            <div class="c-tree__item__name c-object-label__name">Load Earlier Items</div>
+                        </a>
+                    </div>
+                </li>
+
+                <tree-item v-for="child in splitChildren"
+                        :key="child.id"
+                        :node="child">
+                </tree-item>
+
+                <li v-if="page < lastPage && children.length > page_threshold"
+                    @click="nextPage"
+                    class="c-tree__item-h"
+                    style="font-size: 0.7em">
+                    <div class="c-tree__item">
+                        <a class="c-tree__item__label c-object-label"
+                            style="padding: 0;">
+                            <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-down"></div>
+                            <div class="c-tree__item__name c-object-label__name">Load More Items</div>
+                        </a>
+                    </div>
+                </li>
+            </template>
         </ul>
     </li>
 </template>
@@ -29,6 +58,8 @@
 <script>
     import viewControl from '../components/viewControl.vue';
     import ObjectLabel from '../components/ObjectLabel.vue';
+
+    const PAGE_THRESHOLD = 25;
 
     export default {
         name: 'tree-item',
@@ -44,7 +75,9 @@
                 loaded: false,
                 isNavigated: this.navigateToPath === this.openmct.router.currentLocation.path,
                 children: [],
-                expanded: false
+                expanded: false,
+                page: 1,
+                page_threshold: PAGE_THRESHOLD
             }
         },
         computed: {
@@ -55,6 +88,19 @@
                 }
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
+            },
+            splitChildren() {
+                if (this.children.length > this.page_threshold) {
+                    let maxIndex = this.page * this.page_threshold,
+                        minIndex = maxIndex - this.page_threshold;
+
+                    return this.children.slice(minIndex, maxIndex);
+                } else {
+                    return this.children;
+                }
+            },
+            lastPage() {
+                return Math.floor(this.children.length / this.page_threshold);
             }
         },
         mounted() {
@@ -125,6 +171,16 @@
                     this.isNavigated = true;
                 } else if (oldPath === this.navigateToPath) {
                     this.isNavigated = false;
+                }
+            },
+            nextPage() {
+                if (this.page <= this.lastPage) {
+                    this.page += 1;
+                }
+            },
+            previousPage() {
+                if (this.page >= 1) {
+                    this.page -= 1;
                 }
             }
         },
