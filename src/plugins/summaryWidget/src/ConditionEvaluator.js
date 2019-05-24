@@ -24,7 +24,8 @@ define([], function () {
          */
         this.inputTypes = {
             number: 'number',
-            string: 'text'
+            string: 'text',
+            enum: 'select'
         };
 
         /**
@@ -34,7 +35,8 @@ define([], function () {
          */
         this.inputValidators = {
             number: this.validateNumberInput,
-            string: this.validateStringInput
+            string: this.validateStringInput,
+            enum: this.validateNumberInput
         };
 
         /**
@@ -201,7 +203,7 @@ define([], function () {
                     return typeof input[0] === 'undefined';
                 },
                 text: 'is undefined',
-                appliesTo: ['string', 'number'],
+                appliesTo: ['string', 'number', 'enum'],
                 inputCount: 0,
                 getDescription: function () {
                     return ' is undefined';
@@ -212,10 +214,32 @@ define([], function () {
                     return typeof input[0] !== 'undefined';
                 },
                 text: 'is defined',
-                appliesTo: ['string', 'number'],
+                appliesTo: ['string', 'number', 'enum'],
                 inputCount: 0,
                 getDescription: function () {
                     return ' is defined';
+                }
+            },
+            enumValueIs: {
+                operation: function (input) {
+                    return input[0] === input[1];
+                },
+                text: 'is',
+                appliesTo: ['enum'],
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' == ' + values[0];
+                }
+            },
+            enumValueIsNot: {
+                operation: function (input) {
+                    return input[0] !== input[1];
+                },
+                text: 'is not',
+                appliesTo: ['enum'],
+                inputCount: 1,
+                getDescription: function (values) {
+                    return ' != ' + values[0];
                 }
             }
         };
@@ -310,13 +334,16 @@ define([], function () {
             validator;
 
         if (cache[object] && typeof cache[object][key] !== 'undefined') {
-            telemetryValue = [cache[object][key]];
+            let value = cache[object][key];
+            telemetryValue = [isNaN(Number(value)) ? value : Number(value)];
         }
+
         op = this.operations[operation] && this.operations[operation].operation;
         input = telemetryValue && telemetryValue.concat(values);
         validator = op && this.inputValidators[this.operations[operation].appliesTo[0]];
+
         if (op && input && validator) {
-            if (this.operations[operation].appliesTo.length === 2) {
+            if (this.operations[operation].appliesTo.length > 1) {
                 return (this.validateNumberInput(input) || this.validateStringInput(input)) && op(input);
             } else {
                 return validator(input) && op(input);
@@ -372,7 +399,7 @@ define([], function () {
     };
 
     /**
-     * Returns true only of the given operation applies to a given type
+     * Returns true only if the given operation applies to a given type
      * @param {string} key The key of the operation
      * @param {string} type The value type to query
      * @returns {boolean} True if the condition applies, false otherwise

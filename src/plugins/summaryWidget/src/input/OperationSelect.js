@@ -110,9 +110,11 @@ define([
 
         type = self.manager.getTelemetryPropertyType(self.config.object, key);
 
-        self.operationKeys = operations.filter(function (operation) {
-            return self.evaluator.operationAppliesTo(operation, type);
-        });
+        if (type !== undefined) {
+            self.operationKeys = operations.filter(function (operation) {
+                return self.evaluator.operationAppliesTo(operation, type);
+            });
+        }
     };
 
     OperationSelect.prototype.destroy = function () {
