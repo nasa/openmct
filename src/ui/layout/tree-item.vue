@@ -82,6 +82,7 @@
             if (this.composition) {
                 this.composition.off('add', this.addChild);
                 this.composition.off('remove', this.removeChild);
+                this.children.forEach(child => child.$destroy());
                 delete this.composition;
             }
         },
@@ -101,6 +102,7 @@
         },
         methods: {
             addChild (child) {
+                child = this.openmct.objects.getMutable(child);
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
                     object: child,
@@ -110,8 +112,16 @@
             },
             removeChild(identifier) {
                 let removeId = this.openmct.objects.makeKeyString(identifier);
+                let removed = [];
                 this.children = this.children
-                    .filter(c => c.id !== removeId);
+                    .filter(c => {
+                        if(c.id !== removeId) {
+                            removed.push(c);
+                            return true
+                        }
+                        return false;
+                    });
+                removed.forEach(removedChild => removed.$destroy());
             },
             finishLoading () {
                 this.isLoading = false;

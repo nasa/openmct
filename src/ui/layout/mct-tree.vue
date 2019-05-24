@@ -201,6 +201,7 @@
             getAllChildren() {
                 this.isLoading = true;
                 this.openmct.objects.get('ROOT')
+                    .then(root => this.openmct.objects.getMutable(root))
                     .then(root => {
                         return this.openmct.composition.get(root).load()
                     })
@@ -217,8 +218,14 @@
                     });
             },
             getFilteredChildren() {
+                if (this.filteredTreeItems) {
+                    this.filteredTreeItems.forEach(filteredTreeItem => filteredTreeItem.destroy());
+                }
+
                 this.searchService.query(this.searchValue).then(children => {
-                    this.filteredTreeItems = children.hits.map(child => {
+                    this.filteredTreeItems = children.hits
+                        .map(child => this.openmct.objects.getMutable(child))
+                        .map(child => {
                         
                         let context = child.object.getCapability('context'),
                             object = child.object.useCapability('adapter'),
