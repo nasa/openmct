@@ -74,6 +74,13 @@ export default {
             if (!this.currentObject) {
                 return;
             }
+            
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.composition._synchronize();
+                this.loadComposition();
+            }
+
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
@@ -124,12 +131,6 @@ export default {
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
             });
-
-            this.composition = this.openmct.composition.get(this.currentObject);
-            if (this.composition) {
-                this.composition._synchronize();
-                this.loadComposition();
-            }
 
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
