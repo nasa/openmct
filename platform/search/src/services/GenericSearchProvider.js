@@ -58,6 +58,8 @@ define([
 
         this.pendingQueries = {};
 
+        this.useBareBones = true;
+
         this.worker = this.startWorker(workerService);
         this.indexOnMutation(topic);
 
@@ -101,8 +103,14 @@ define([
      * @returns worker the created search worker.
      */
     GenericSearchProvider.prototype.startWorker = function (workerService) {
-        var worker = workerService.run('bareBonesSearchWorker'),
-            provider = this;
+        var provider = this,
+            worker;
+
+        if (this.useBareBones) {
+            worker = workerService.run('bareBonesSearchWorker');
+        } else {
+            worker = workerService.run('genericSearchWorker');
+        }
 
         worker.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
@@ -242,16 +250,34 @@ define([
             return;
         }
 
-        var pendingQuery = this.pendingQueries[event.data.queryId],
+        var pendingQuery,
+            modelResults;
+
+        if (this.useBareBones) {
+            pendingQuery = this.pendingQueries[event.data.queryId];
             modelResults = {
                 total: event.data.total
             };
 
-        modelResults.hits = event.data.results.map(function (hit) {
-            return {
-                id: hit.id
+            modelResults.hits = event.data.results.map(function (hit) {
+                return {
+                    id: hit.id
+                };
+            });
+        } else {
+            pendingQuery = this.pendingQueries[event.data.queryId];
+            modelResults = {
+                total: event.data.total
             };
-        });
+
+            modelResults.hits = event.data.results.map(function (hit) {
+                return {
+                    id: hit.item.id,
+                    model: hit.item.model,
+                    score: hit.matchCount
+                };
+            });
+        }
 
         pendingQuery.resolve(modelResults);
         delete this.pendingQueries[event.data.queryId];

@@ -120,6 +120,10 @@ define([
                 {
                     "key": "bareBonesSearchWorker",
                     "scriptText": BareBonesSearchWorkerText
+                },
+                {
+                    "key": "genericSearchWorker",
+                    "scriptText": searchWorkerText
                 }
             ]
         }

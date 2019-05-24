@@ -56,7 +56,6 @@
         query.inputLowerCase = query.inputClean.toLocaleLowerCase();
         query.terms = query.inputLowerCase.split(TERM_SPLITTER);
         query.exactTerms = query.inputClean.split(TERM_SPLITTER);
-        console.log(query);
         return query;
     }
 
@@ -150,12 +149,11 @@
         return message;
     }
 
-    // self.onmessage = function (event) {
-    //     if (event.data.request === 'index') {
-    //         console.log('indexing');
-    //         indexItem(event.data.id, event.data.model);
-    //     } else if (event.data.request === 'search') {
-    //         self.postMessage(search(event.data));
-    //     }
-    // };
+    self.onmessage = function (event) {
+        if (event.data.request === 'index') {
+            indexItem(event.data.id, event.data.model);
+        } else if (event.data.request === 'search') {
+            self.postMessage(search(event.data));
+        }
+    };
 }());
