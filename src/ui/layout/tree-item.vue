@@ -28,7 +28,7 @@
                         <a class="c-tree__item__label c-object-label"
                             style="padding: 0;">
                             <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-up"></div>
-                            <div class="c-tree__item__name c-object-label__name">Load Earlier Items</div>
+                            <div class="c-tree__item__name c-object-label__name">Load Last {{page_threshold}} items</div>
                         </a>
                     </div>
                 </li>
@@ -46,7 +46,7 @@
                         <a class="c-tree__item__label c-object-label"
                             style="padding: 0;">
                             <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-down"></div>
-                            <div class="c-tree__item__name c-object-label__name">Load More Items</div>
+                            <div class="c-tree__item__name c-object-label__name">Load Next {{page_threshold}} items</div>
                         </a>
                     </div>
                 </li>
