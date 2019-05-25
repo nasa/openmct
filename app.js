@@ -8,7 +8,7 @@
  */
 
 (function () {
-    "use strict";
+    'use strict';
 
     var BUNDLE_FILE = 'bundles.json',
         options = require('minimist')(process.argv.slice(2)),
@@ -27,19 +27,20 @@
         options[opt] = Array.isArray(options[opt]) ?
                 options[opt] : [options[opt]];
     });
+
     options.include = options.include.concat(options.i);
     options.exclude = options.exclude.concat(options.x);
 
     // Show command line options
     if (options.help || options.h) {
-        console.log("\nUsage: node app.js [options]\n");
-        console.log("Options:");
-        console.log("  --help, -h               Show this message.");
-        console.log("  --port, -p <number>      Specify port.");
-        console.log("  --include, -i <bundle>   Include the specified bundle.");
-        console.log("  --exclude, -x <bundle>   Exclude the specified bundle.");
-        console.log("  --directory, -D <bundle>   Serve files from specified directory.");
-        console.log("");
+        console.log('\nUsage: node app.js [options]\n');
+        console.log('Options:');
+        console.log('  --help, -h               Show this message.');
+        console.log('  --port, -p <number>      Specify port.');
+        console.log('  --include, -i <bundle>   Include the specified bundle.');
+        console.log('  --exclude, -x <bundle>   Exclude the specified bundle.');
+        console.log('  --directory, -D <bundle>   Serve files from specified directory.');
+        console.log('');
         process.exit(0);
     }
 
