@@ -19,8 +19,22 @@
                 </div>
             </li>
             <template v-if="children.length">
+
+                <li v-if="children.length > page_threshold"
+                    class="c-tree__item-h"
+                    style="font-size: 0.7em">
+                    <div class="c-tree__item">
+                        <a class="c-tree__item__label c-object-label">
+                            <search 
+                                :value="searchValue"
+                                @input="searchChildren"
+                                @clear="searchChildren">
+                            </search>
+                        </a>
+                    </div>
+                </li>
                 
-                <li v-if="page > 1 && children.length > page_threshold"
+                <!-- <li v-if="page > 1 && children.length > page_threshold"
                     @click="previousPage"
                     class="c-tree__item-h"
                     style="font-size: 0.7em">
@@ -31,14 +45,18 @@
                             <div class="c-tree__item__name c-object-label__name">Load Last {{page_threshold}} items</div>
                         </a>
                     </div>
-                </li>
+                </li> -->
+                
+                <div :style="style"
+                     @scroll="scrollPage"
+                     ref="scrollParent">
+                    <tree-item v-for="child in filteredAndPagedChildren"
+                            :key="child.id"
+                            :node="child">
+                    </tree-item>
+                </div>
 
-                <tree-item v-for="child in splitChildren"
-                        :key="child.id"
-                        :node="child">
-                </tree-item>
-
-                <li v-if="page < lastPage && children.length > page_threshold"
+                <!-- <li v-if="page < lastPage && children.length > page_threshold"
                     @click="nextPage"
                     class="c-tree__item-h"
                     style="font-size: 0.7em">
@@ -46,10 +64,10 @@
                         <a class="c-tree__item__label c-object-label"
                             style="padding: 0;">
                             <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-down"></div>
-                            <div class="c-tree__item__name c-object-label__name">Load Next {{page_threshold}} items</div>
+                            <div class="c-tree__item__name c-object-label__name">Load More Items</div>
                         </a>
                     </div>
-                </li>
+                </li> -->
             </template>
         </ul>
     </li>
@@ -58,8 +76,9 @@
 <script>
     import viewControl from '../components/viewControl.vue';
     import ObjectLabel from '../components/ObjectLabel.vue';
+    import Search from '../components/search.vue';
 
-    const PAGE_THRESHOLD = 25;
+    const PAGE_THRESHOLD = 50;
 
     export default {
         name: 'tree-item',
@@ -77,7 +96,10 @@
                 children: [],
                 expanded: false,
                 page: 1,
-                page_threshold: PAGE_THRESHOLD
+                page_threshold: PAGE_THRESHOLD,
+                searchValue: '',
+                filteredChildren: [],
+                scrollTop: 0
             }
         },
         computed: {
@@ -89,18 +111,43 @@
                 let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
                 return parentKeyString !== this.node.object.location;
             },
-            splitChildren() {
-                if (this.children.length > this.page_threshold) {
+            filteredAndPagedChildren() {
+                if (this.searchValue) {
+                    this.filteredChildren = this.children.filter((child) => {
+                        let searchLowCase = this.searchValue.toLowerCase(),
+                            nameLowerCase = child.object.name.toLowerCase();
+
+                        return nameLowerCase.includes(searchLowCase);
+                    })
+                } else {
+                    this.filteredChildren = this.children;
+                }
+
+                if (this.filteredChildren.length > this.page_threshold) {
                     let maxIndex = this.page * this.page_threshold,
                         minIndex = maxIndex - this.page_threshold;
 
-                    return this.children.slice(minIndex, maxIndex);
+                    return this.filteredChildren.slice(minIndex, maxIndex);
                 } else {
-                    return this.children;
+                    return this.filteredChildren;
                 }
             },
             lastPage() {
-                return Math.floor(this.children.length / this.page_threshold);
+                return Math.floor(this.filteredChildren.length / this.page_threshold);
+            },
+            style() {
+                let numChildren = this.filteredChildren.length;
+
+                if (!this.$refs.scrollParent || numChildren === 0) {
+                    return {};
+                }
+                
+                if ((numChildren * 20) > this.$refs.scrollParent.offsetHeight) {
+                    return {
+                        "overflow-y": 'scroll',
+                        "max-height": (this.page_threshold * 10) + 'px'
+                    }
+                }
             }
         },
         mounted() {
@@ -174,7 +221,7 @@
                 }
             },
             nextPage() {
-                if (this.page <= this.lastPage) {
+                if (this.page < this.lastPage) {
                     this.page += 1;
                 }
             },
@@ -182,11 +229,40 @@
                 if (this.page >= 1) {
                     this.page -= 1;
                 }
+            },
+            searchChildren(input) {
+                this.searchValue = input;
+                this.page = 1;
+            },
+            scrollPage(event) {
+                let offsetHeight = event.target.offsetHeight,
+                    scrollTop = event.target.scrollTop,
+                    changePage = true;
+
+                window.clearTimeout(this.scrollLoading);
+
+                if (scrollTop > this.scrollTop && scrollTop > offsetHeight) {
+                    this.scrollLoading = window.setTimeout(() => {
+                        if (this.page < this.lastPage) {
+                            this.nextPage();
+                            event.target.scrollTop = 1;
+                        }
+                    }, 250);
+                } else if (this.scrollTop <= this.scrollTop && scrollTop <= 0) {
+                     this.scrollLoading = window.setTimeout(() => {
+                        if (this.page > 1) {
+                            this.previousPage();
+                            event.target.scrollTop = offsetHeight - 1;
+                        }
+                    }, 250);
+                }
+                this.scrollTop = scrollTop;
             }
         },
         components: {
             viewControl,
-            ObjectLabel
+            ObjectLabel,
+            Search
         }
     }
 </script>
