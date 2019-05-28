@@ -21,33 +21,34 @@
 
             <template v-if="children.length">
 
-                <li v-show="!showSearchComponent"
-                    @click="toggleSearchComponent"
-                    class="c-tree__item-h"
-                    style="font-size: 0.5em;">
-                    <div class="c-tree__item icon-magnify">
-                    </div>
-                </li>
-                
-                <li v-if="children.length > page_threshold"
-                    v-show="showSearchComponent"
-                    class="c-tree__item-h"
-                    style="font-size: 0.7em">
-                    <div class="c-tree__item">
-                        <a class="c-tree__item__label c-object-label">
-                            <search 
-                                :value="searchValue"
-                                @input="searchChildren"
-                                @clear="searchChildren"
-                                style="min-width: 80%;">
-                            </search>
-                            <div style="padding: 2px; margin-left: 10%;"
-                                class="icon-x"
-                                @click="toggleSearchComponent">
-                            </div>
-                        </a>
-                    </div>
-                </li>
+                <template v-if="children.length > page_threshold">
+                    <li v-show="!showSearchComponent"
+                        @click="toggleSearchComponent"
+                        class="c-tree__item-h"
+                        style="font-size: 0.5em;">
+                        <div class="c-tree__item icon-magnify">
+                        </div>
+                    </li>
+                    
+                    <li v-show="showSearchComponent"
+                        class="c-tree__item-h"
+                        style="font-size: 0.7em">
+                        <div class="c-tree__item">
+                            <a class="c-tree__item__label c-object-label">
+                                <search 
+                                    :value="searchValue"
+                                    @input="searchChildren"
+                                    @clear="searchChildren"
+                                    style="min-width: 80%;">
+                                </search>
+                                <div style="padding: 2px; margin-left: 10%;"
+                                    class="icon-x"
+                                    @click="toggleSearchComponent">
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                </template>
                 
                 <div :style="style"
                      @scroll="scrollPage"
