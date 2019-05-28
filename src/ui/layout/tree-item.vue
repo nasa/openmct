@@ -18,9 +18,19 @@
                     <span class="c-tree__item__label">Loading...</span>
                 </div>
             </li>
+
             <template v-if="children.length">
 
+                <li v-show="!showSearchComponent"
+                    @click="toggleSearchComponent"
+                    class="c-tree__item-h"
+                    style="font-size: 0.5em;">
+                    <div class="c-tree__item icon-magnify">
+                    </div>
+                </li>
+                
                 <li v-if="children.length > page_threshold"
+                    v-show="showSearchComponent"
                     class="c-tree__item-h"
                     style="font-size: 0.7em">
                     <div class="c-tree__item">
@@ -28,24 +38,16 @@
                             <search 
                                 :value="searchValue"
                                 @input="searchChildren"
-                                @clear="searchChildren">
+                                @clear="searchChildren"
+                                style="min-width: 80%;">
                             </search>
+                            <div style="padding: 2px; margin-left: 10%;"
+                                class="icon-x"
+                                @click="toggleSearchComponent">
+                            </div>
                         </a>
                     </div>
                 </li>
-                
-                <!-- <li v-if="page > 1 && children.length > page_threshold"
-                    @click="previousPage"
-                    class="c-tree__item-h"
-                    style="font-size: 0.7em">
-                    <div class="c-tree__item">
-                        <a class="c-tree__item__label c-object-label"
-                            style="padding: 0;">
-                            <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-up"></div>
-                            <div class="c-tree__item__name c-object-label__name">Load Last {{page_threshold}} items</div>
-                        </a>
-                    </div>
-                </li> -->
                 
                 <div :style="style"
                      @scroll="scrollPage"
@@ -55,19 +57,6 @@
                             :node="child">
                     </tree-item>
                 </div>
-
-                <!-- <li v-if="page < lastPage && children.length > page_threshold"
-                    @click="nextPage"
-                    class="c-tree__item-h"
-                    style="font-size: 0.7em">
-                    <div class="c-tree__item">
-                        <a class="c-tree__item__label c-object-label"
-                            style="padding: 0;">
-                            <div class="c-tree__item__type-icon c-object-label__type-icon icon-arrow-down"></div>
-                            <div class="c-tree__item__name c-object-label__name">Load More Items</div>
-                        </a>
-                    </div>
-                </li> -->
             </template>
         </ul>
     </li>
@@ -99,7 +88,8 @@
                 page_threshold: PAGE_THRESHOLD,
                 searchValue: '',
                 filteredChildren: [],
-                scrollTop: 0
+                scrollTop: 0,
+                showSearchComponent: false
             }
         },
         computed: {
@@ -190,6 +180,11 @@
                     this.composition.load().then(this.finishLoading);
                     this.isLoading = true;
                 }
+
+                if (!isExpanded) {
+                    this.page = 1;
+                    this.showSearchComponent = false;
+                }
             }
         },
         methods: {
@@ -257,6 +252,9 @@
                     }, 250);
                 }
                 this.scrollTop = scrollTop;
+            },
+            toggleSearchComponent() {
+                this.showSearchComponent = !this.showSearchComponent;
             }
         },
         components: {
