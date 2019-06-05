@@ -53,6 +53,7 @@
         &__tree {
             flex: 1 1 auto;
             height: 0; // Chrome 73 overflow bug fix
+            padding-right: $interiorMargin;
         }
     }
 
@@ -60,11 +61,12 @@
         @include userSelectNone();
         overflow-x: hidden;
         overflow-y: auto;
-        padding-right: $interiorMargin;
 
         li {
             position: relative;
-            &.c-tree__item-h { display: block; }
+            &.c-tree__item-h {
+                display: block;
+            }
         }
 
         .c-tree {
