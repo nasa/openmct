@@ -79,6 +79,7 @@
 
  <script>
     import LayoutFrame from './LayoutFrame.vue'
+    import printj from 'printj'
 
     const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
           DEFAULT_POSITION = [1, 1];
@@ -143,6 +144,10 @@
                     return;
                 }
 
+                if (this.item.format) {
+                    return printj.sprintf(this.item.format, this.datum[this.valueMetadata.key]);
+                }
+
                 return this.valueFormatter && this.valueFormatter.format(this.datum);
             },
             telemetryClass() {
@@ -168,6 +173,9 @@
                 }
 
                 this.context.index = newIndex;
+            },
+            item(newItem) {
+                this.context.layoutItem = newItem;
             }
         },
         methods: {
@@ -194,6 +202,7 @@
                 }.bind(this));
             },
             updateView(datum) {
+                // TODO: normalize datum
                 this.datum = datum;
             },
             removeSubscription() {
@@ -219,10 +228,14 @@
                 this.context = {
                     item: domainObject,
                     layoutItem: this.item,
-                    index: this.index
+                    index: this.index,
+                    updateTelemetryFormat: this.updateTelemetryFormat
                 };
                 this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.context, this.initSelect);
+            },
+            updateTelemetryFormat(format) {
+                this.$emit('formatChanged', this.item, format);
             }
         },
         mounted() {
