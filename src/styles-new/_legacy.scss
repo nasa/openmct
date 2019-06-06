@@ -859,7 +859,7 @@ mct-indicators mct-include {
             border-radius: $br;
             font-size: .6rem;
             left: 0;
-            bottom: 140%;
+            top: 140%;
             opacity: 0;
             padding: $interiorMarginSm $interiorMargin;
             position: absolute;
@@ -873,8 +873,8 @@ mct-indicators mct-include {
                 content: '';
                 display: block;
                 position: absolute;
-                top: 100%;
-                @include triangle('down', $size: 4px, $ratio: 1, $color: $hbg);
+                bottom: 100%;
+                @include triangle('up', $size: 4px, $ratio: 1, $color: $hbg);
             }
         }
 

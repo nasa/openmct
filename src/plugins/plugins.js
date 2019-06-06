@@ -43,7 +43,8 @@ define([
     './LADTable/plugin',
     './filters/plugin',
     './objectMigration/plugin',
-    './goToOriginalAction/plugin'
+    './goToOriginalAction/plugin',
+    './globalClearIndicator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -67,7 +68,8 @@ define([
     LADTable,
     Filters,
     ObjectMigration,
-    GoToOriginalAction
+    GoToOriginalAction,
+    GlobalClearIndicator
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -166,6 +168,7 @@ define([
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.GlobalClearIndicator = GlobalClearIndicator;
 
     return plugins;
 });

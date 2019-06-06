@@ -5,6 +5,9 @@
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
             <div class="l-shell__controls">
+                <div class="l-shell__status">
+                    <StatusBar></StatusBar>
+                </div>
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
@@ -44,9 +47,6 @@
                 <Inspector :isEditing="isEditing" ref="inspector"></Inspector>
             </pane>
         </multipane>
-        <div class="l-shell__status">
-            <StatusBar></StatusBar>
-        </div>
     </div>
 </template>
 

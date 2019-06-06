@@ -62,6 +62,7 @@ define([
 
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
+            openmct.notifications.on('clear', this.refreshData);
         }
 
         initialize() {
@@ -240,6 +241,7 @@ define([
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
+            this.openmct.notifications.off('clear', this.refreshData);
             if (this.filterObserver) {
                 this.filterObserver();
             }
