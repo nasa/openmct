@@ -62,6 +62,8 @@
         overflow: hidden;
 
         &__status {
+            min-width: 95%;
+            margin-right: 1%;
             background: $colorStatusBarBg;
             color: $colorStatusBarFg;
             padding: $interiorMarginSm;
