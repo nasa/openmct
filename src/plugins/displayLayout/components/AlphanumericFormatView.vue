@@ -23,17 +23,21 @@
 <template>
     <div class="c-properties" v-if="isEditing">
         <div class="c-properties__header">Alphanumeric Format</div>
-        <ul class="c-properties__section" v-if="!multiSelect">
+        <ul class="c-properties__section">
             <li class="c-properties__row">
                 <div class="c-properties__label" title="Printf formatting for the selected telemetry">
                     <label for="telemetryPrintfFormat">Format</label>
                 </div>
                 <div class="c-properties__value">
-                    <input id="telemetryPrintfFormat" type="text" @change="formatTelemetry" :value="telemetryFormat">
+                    <input id="telemetryPrintfFormat"
+                        type="text"
+                        @change="formatTelemetry"
+                        :value="telemetryFormat"
+                        :placeholder="nonMixedFormat ? '' : 'Mixed'"
+                    >
                 </div>
             </li>
         </ul>
-        <div class="c-properties__row--span-all" v-if="multiSelect">No format to display for multiple items</div>
     </div>
 </template>
 
@@ -44,8 +48,8 @@
             let selectionPath = this.openmct.selection.get()[0];
             return {
                 isEditing: this.openmct.editor.isEditing(),
-                telemetryFormat: selectionPath[0].context.layoutItem.format,
-                multiSelect: false
+                telemetryFormat: undefined,
+                nonMixedFormat: false
             }
         },
         methods: {
@@ -53,17 +57,28 @@
                 this.isEditing = isEditing;
             },
             formatTelemetry(event) {
-                let selectionPath = this.openmct.selection.get()[0];
                 let newFormat = event.currentTarget.value;
-                selectionPath[0].context.updateTelemetryFormat(newFormat);
+                let selection = this.openmct.selection.get();
+                selection.forEach(selectionPath => {
+                    selectionPath[0].context.updateTelemetryFormat(newFormat);    
+                });
                 this.telemetryFormat = newFormat;
             },
             handleSelection(selection) {
-                if (selection.length === 0 || selection[0].length === 0) {
+                if (selection.length === 0 || selection[0].length < 2) {
                     return;
                 }
 
-                this.multiSelect = selection.length > 1 ? true : false;
+                let format = selection[0][0].context.layoutItem.format;
+                this.nonMixedFormat = selection.every(selectionPath => {
+                    return selectionPath[0].context.layoutItem.format === format;
+                });
+
+                if (this.nonMixedFormat) {
+                    this.telemetryFormat = format;
+                } else {
+                    this.telemetryFormat = '';
+                }
             }
         },
         mounted() {
