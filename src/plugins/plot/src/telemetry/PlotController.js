@@ -80,6 +80,10 @@ define([
             'configuration.filters',
             this.updateFiltersAndResubscribe.bind(this)
         );
+
+        this.refresh = this.refresh.bind(this);
+
+        this.openmct.notifications.on('clear', this.refresh);
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -166,6 +170,8 @@ define([
         if (this.filterObserver) {
             this.filterObserver();
         }
+
+        this.openmct.notifications.off('clear', this.refresh);
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
@@ -260,6 +266,12 @@ define([
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
         this.config.series.forEach(function (series) {
             series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+        });
+    };
+
+    PlotController.prototype.refresh = function (updatedFilters) {
+        this.config.series.forEach(function (series) {
+            series.refresh();
         });
     };
 
