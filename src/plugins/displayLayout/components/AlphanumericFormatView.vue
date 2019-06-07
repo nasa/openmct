@@ -58,8 +58,7 @@
             },
             formatTelemetry(event) {
                 let newFormat = event.currentTarget.value;
-                let selection = this.openmct.selection.get();
-                selection.forEach(selectionPath => {
+                this.openmct.selection.get().forEach(selectionPath => {
                     selectionPath[0].context.updateTelemetryFormat(newFormat);    
                 });
                 this.telemetryFormat = newFormat;
@@ -74,11 +73,7 @@
                     return selectionPath[0].context.layoutItem.format === format;
                 });
 
-                if (this.nonMixedFormat) {
-                    this.telemetryFormat = format;
-                } else {
-                    this.telemetryFormat = '';
-                }
+                this.telemetryFormat = this.nonMixedFormat ? format : '';
             }
         },
         mounted() {
