@@ -178,9 +178,6 @@ define([
     };
 
     ObjectAPI.prototype.getMutable = function (object) {
-        if (object instanceof MutableDomainObject.default) {
-            return object;
-        }
         return MutableDomainObject.default.createMutable(object, this.eventEmitter);
     }
 
@@ -212,14 +209,10 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        if (domainObject instanceof MutableDomainObject.default) {
-            return domainObject.$observe(path, callback);
-        } else {
-            let mutable = this.getMutable(domainObject);
-            mutable.$observe(path, callback);
+        let mutable = this.getMutable(domainObject);
+        mutable.$observe(path, callback);
 
-            return () => mutable.$destroy();
-        }
+        return () => mutable.$destroy();
     };
 
     /**

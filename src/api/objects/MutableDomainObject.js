@@ -26,8 +26,18 @@ const ANY_OBJECT_EVENT = 'mutation';
 
 class MutableDomainObject {
     constructor(eventEmitter) {
-        this._eventEmitter = eventEmitter;
-        this._observers = [];
+        Object.defineProperties(this, {
+            _eventEmitter: {
+                value: eventEmitter,
+                // Property should not be serialized
+                enumerable: false
+            },
+            _observers: {
+                value: [],
+                // Property should not be serialized
+                enumerable: false
+            }
+        });
     }
     $observe(path, callback) {
         var fullPath = qualifiedEventName(this, path);
@@ -63,7 +73,8 @@ class MutableDomainObject {
     }
     $destroy() {
         this._observers.forEach(observer => observer());
-        this._observers = [];
+        delete this._eventEmitter;
+        delete this._observers;
     }
 
     static createMutable(object, mutationTopic) {
