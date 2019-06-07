@@ -202,7 +202,6 @@
                 }.bind(this));
             },
             updateView(datum) {
-                // TODO: normalize datum
                 this.datum = datum;
             },
             removeSubscription() {
@@ -235,7 +234,6 @@
                     this.$el, this.context, this.initSelect);
             },
             updateTelemetryFormat(format) {
-                console.log('format', format, 'item', this.item);
                 this.$emit('formatChanged', this.item, format);
             }
         },

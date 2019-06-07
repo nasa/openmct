@@ -560,7 +560,7 @@
                 }
             },
             updateTelemetryFormat(item, format) {
-                let index = this.layoutItems.indexOf(item);
+                let index = _.findIndex(this.layoutItems, item);
                 item.format = format;
                 this.mutate(`configuration.items[${index}]`, item);
             }
