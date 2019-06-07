@@ -4,10 +4,9 @@
         }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
-            <div class="l-shell__controls">
-                <div class="l-shell__status">
-                    <StatusBar></StatusBar>
-                </div>
+            <indicators class="l-shell__head-section"></indicators>
+            <notification-banner></notification-banner> <!-- TODO: MAKE SURE THIS PLACEMENT WORKS PROPERLY -->
+            <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
@@ -18,6 +17,8 @@
                 </button>
             </div>
             <app-logo></app-logo>
+            <button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -61,13 +62,13 @@
         flex-flow: column nowrap;
         overflow: hidden;
 
-        &__status {
+/*        &__status {
             min-width: 95%;
             margin-right: 1%;
             background: $colorStatusBarBg;
             color: $colorStatusBarFg;
             padding: $interiorMarginSm;
-        }
+        }*/
 
         &__pane-tree {
             width: 40%;
@@ -165,10 +166,28 @@
             align-items: center;
             background: $colorHeadBg;
             justify-content: space-between;
-            padding: $interiorMargin;
+            padding: $interiorMargin $interiorMargin + 2;
 
             > [class*="__"] + [class*="__"] {
                 margin-left: $interiorMargin;
+            }
+
+            [class*='__collapse-button']:before {
+                content: $glyph-icon-arrow-down;
+                font-size: 1.1em;
+            }
+
+            &-section {
+                // Subdivides elements across the head
+                @include ellipsize();
+                display: flex;
+                flex: 0 1 auto;
+                padding-left: $interiorMargin;
+                
+                + [class*='-section'] {
+                    border-left: 1px solid $colorInteriorBorder;
+                }
+
             }
         }
 
@@ -178,10 +197,8 @@
         }
 
         &__controls {
-            flex: 1 1 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-right: 2.5%;
+            flex: 1 1 auto;
+            /*justify-content: flex-end;*/
         }
 
         /******************************* MAIN AREA */
@@ -268,9 +285,10 @@
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
-    import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';
     import AppLogo from './AppLogo.vue';
+    import Indicators from './status-bar/Indicators.vue';
+    import NotificationBanner from './status-bar/NotificationBanner.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -311,9 +329,10 @@
             multipane,
             pane,
             BrowseBar,
-            StatusBar,
             Toolbar,
-            AppLogo
+            AppLogo,
+            Indicators,
+            NotificationBanner
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
@@ -358,6 +377,9 @@
                 }
 
                 this.hasToolbar = structure.length > 0;
+            },
+            toggleShellHead() {
+                return true;
             }
         }
     }

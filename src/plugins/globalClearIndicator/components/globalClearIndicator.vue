@@ -1,9 +1,7 @@
 <template>
-    <div class="h-indicator">
-        <div class="ls-indicator icon-session"
-            @click="globalClearEmit">
-            <span class="label">Global Clear</span>
-        </div>
+    <div class="c-indicator c-indicator--clickable icon-session"
+         @click="globalClearEmit">
+        <span class="label">Global Clear</span>
     </div>
 </template>
 

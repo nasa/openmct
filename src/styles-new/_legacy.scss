@@ -782,6 +782,10 @@ mct-indicators mct-include {
     display: contents;
 }
 
+/*
+
+    // MOVED TO INDICATORS.VUE
+
 .ls-indicator {
     $bg: rgba(white, 0.2) !important;
     $hbg: $colorStatusBarBg;
@@ -894,13 +898,16 @@ mct-indicators mct-include {
     }
 }
 
-/* Mobile */
+
+
 // Hide the clock indicator when we're phone portrait
 body.phone.portrait {
     .ls-indicator.t-indicator-clock {
         display: none;
     }
 }
+
+*/
 
 /************************************************* DATETIME UI */
 @mixin complexFieldHolder($myW) {

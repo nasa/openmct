@@ -478,6 +478,16 @@
     }
 }
 
+@mixin hasMenu() {
+    &:after {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+        margin-left: floor($interiorMarginSm * 0.8);
+        opacity: 0.5;
+    }
+}
+
 @mixin cSelect($bg, $fg, $arwClr, $shdw) {
     $svgArwClr: str-slice(inspect($arwClr), 2, str-length(inspect($arwClr))); // Remove initial # in color value
     background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;
