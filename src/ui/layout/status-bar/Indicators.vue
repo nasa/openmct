@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<span id='status' class='l-indicators'></span>
+<span class='l-indicators'></span>
 </template>
 
 <style lang="scss">
@@ -29,9 +29,10 @@
     }
 
     .c-indicator {
-        @include cClickIconButton();
+        @include cClickIconButtonLayout();
 
         &--clickable {
+            @include cClickIconButton();
             @include hasMenu();
         }
 

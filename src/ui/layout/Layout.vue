@@ -4,7 +4,7 @@
         }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
-            <indicators class="l-shell__head-section"></indicators>
+            <indicators class="l-shell__head-section l-shell__indicators"></indicators>
             <notification-banner></notification-banner> <!-- TODO: MAKE SURE THIS PLACEMENT WORKS PROPERLY -->
             <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
@@ -180,14 +180,10 @@
             &-section {
                 // Subdivides elements across the head
                 @include ellipsize();
+                border-right: 1px solid $colorInteriorBorder;
                 display: flex;
                 flex: 0 1 auto;
-                padding-left: $interiorMargin;
-                
-                + [class*='-section'] {
-                    border-left: 1px solid $colorInteriorBorder;
-                }
-
+                padding-right: $interiorMargin;
             }
         }
 
@@ -196,7 +192,7 @@
             flex: 0 0 auto;
         }
 
-        &__controls {
+        &__indicators {
             flex: 1 1 auto;
             /*justify-content: flex-end;*/
         }

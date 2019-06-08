@@ -420,20 +420,9 @@
     }
 }
 
-@mixin cClickIconButton() {
-    // A clickable element that just includes the icon
-    // Background is displayed on hover
-    // Padding is included to facilitate a bigger hit area
-    // Make the icon bigger relative to its container
+@mixin cClickIconButtonLayout() {
     $pLR: 4px;
     $pTB: 4px;
-
-    @include cControl();
-    background: none;
-    box-shadow: none;
-    cursor: pointer;
-    transition: $transOut;
-    border-radius: $controlCr;
     padding: $pTB $pLR;
 
     &:before,
@@ -442,6 +431,20 @@
         // Needed for c-togglebutton.
         font-size: 1.25em;
     }
+}
+
+@mixin cClickIconButton() {
+    // A clickable element that just includes the icon
+    // Background is displayed on hover
+    // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
+    @include cControl();
+    @include cClickIconButtonLayout();
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: $transOut;
+    border-radius: $controlCr;
 
     @include hover() {
         transition: $transIn;
