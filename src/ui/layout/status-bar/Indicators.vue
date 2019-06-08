@@ -17,7 +17,6 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<span class='l-indicators'></span>
 </template>
 
 <style lang="scss">

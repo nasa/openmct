@@ -17,8 +17,8 @@
                 </button>
             </div>
             <app-logo></app-logo>
-            <button class="l-shell__head__collapse-button c-button"
-                    @click="toggleShellHead"></button>
+            <!--button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button-->
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -192,9 +192,11 @@
             flex: 0 0 auto;
         }
 
+        &__create-button { margin-right: $interiorMarginLg; }
+
         &__indicators {
             flex: 1 1 auto;
-            /*justify-content: flex-end;*/
+            [class*='indicator-clock'] { order: 99; }
         }
 
         /******************************* MAIN AREA */
