@@ -28,28 +28,15 @@
     }
 
     .c-indicator {
+        @include cControl();
         @include cClickIconButtonLayout();
+        button { text-transform: uppercase; }
 
-        &--clickable {
-            @include cClickIconButton();
-            @include hasMenu();
-        }
-
-        $bg: rgba(white, 0.2) !important;
-        $hbg: $colorStatusBarBg;
-        $hshdw: rgba(white, 0.4) 0 0 3px;
         $br: $controlCr;
-        $hoverYOffset: -35px;
-        /*background: transparent !important;*/
         border-radius: $br;
-        /*display: inline-block;*/
-        /*position: relative;*/
-        //padding: 1px $interiorMarginSm; // Use padding instead of margin to keep hover chatter to a minimum
+        overflow: visible;
+        position: relative;
         text-transform: uppercase;
-
-        &:before {
-            /*display: inline-block;*/
-        }
 
         .label {
             // Hover bubbles that appear when hovering on an Indicator
@@ -62,7 +49,7 @@
                 // Make <a> in label look like buttons
                 transition: $transIn;
                 background: transparent;
-                border: 1px solid rgba($colorStatusBarFg, 0.5);
+                border: 1px solid rgba($colorIndicatorMenuFg, 0.5);
                 border-radius: $br;
                 box-sizing: border-box;
                 color: inherit;
@@ -71,8 +58,8 @@
                 line-height: normal;
                 padding: 0 2px;
                 &:hover {
-                    background: $bg;
-                    color: #fff;
+                    border-color: rgba($colorIndicatorMenuFg, 0.75);
+                    color: $colorIndicatorMenuFgHov;
                 }
             }
 
@@ -107,15 +94,14 @@
 
             .label {
                 transition: all 250ms ease-in 100ms;
-                background: $hbg;
+                background: $colorIndicatorMenuBg;
+                color: $colorIndicatorMenuFg;
                 border-radius: $br;
-                font-size: .6rem;
-                left: 0;
-                top: 140%;
-                opacity: 0;
-                padding: $interiorMarginSm $interiorMargin;
+                left: 3px;
+                top: 130%;
+                padding: $interiorMargin $interiorMargin;
                 position: absolute;
-                transform-origin: 10px 100%;
+                transform-origin: 10px 0;
                 transform: scale(0.0);
                 white-space: nowrap;
                 z-index: 50;
@@ -126,7 +112,17 @@
                     display: block;
                     position: absolute;
                     bottom: 100%;
-                    @include triangle('up', $size: 4px, $ratio: 1, $color: $hbg);
+                    @include triangle('up', $size: 4px, $ratio: 1, $color: $colorIndicatorMenuBg);
+                }
+            }
+
+            @include hover() {
+                background: $colorIndicatorBgHov;
+
+                .label {
+                    box-shadow: $colorIndicatorMenuBgShdw;
+                    transform: scale(1.0);
+                    transition: all 100ms ease-out 0s;
                 }
             }
         }
@@ -151,12 +147,6 @@
 
         mounted() {
             this.openmct.indicators.indicatorObjects.forEach((indicator) => {
-                // So that we can consistently position indicator elements,
-                // guarantee that they are wrapped in an element we control
-                // CH: fuck that...
-                // var wrapperNode = document.createElement('span');
-                // wrapperNode.className = 'u-contents';
-                // wrapperNode.appendChild(indicator.element);
                 this.$el.appendChild(indicator.element);
             });
         }

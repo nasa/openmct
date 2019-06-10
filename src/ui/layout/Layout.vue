@@ -62,14 +62,6 @@
         flex-flow: column nowrap;
         overflow: hidden;
 
-/*        &__status {
-            min-width: 95%;
-            margin-right: 1%;
-            background: $colorStatusBarBg;
-            color: $colorStatusBarFg;
-            padding: $interiorMarginSm;
-        }*/
-
         &__pane-tree {
             width: 40%;
 
@@ -179,11 +171,40 @@
 
             &-section {
                 // Subdivides elements across the head
-                @include ellipsize();
                 border-right: 1px solid $colorInteriorBorder;
                 display: flex;
                 flex: 0 1 auto;
                 padding-right: $interiorMargin;
+            }
+        }
+
+        &--head-expanded {
+            .l-shell__head {
+               // height: 60px; // TODO: convert to a constant or theme constant
+            }
+
+            .l-shell__indicators {
+                @include test();
+                flex-wrap: wrap;
+            }
+
+            .c-indicator {
+                .label {
+                    background: none;
+                    font-size: inherit;
+                    margin-left: $interiorMargin;
+                    padding: 0;
+                    position: relative;
+                    transform: none;
+                    opacity: 1;
+                    top: 0;
+
+                    &:before { display: none; }
+                }
+
+                &:after {
+                    display: none; // Hide disclosure control
+                }
             }
         }
 
@@ -197,6 +218,10 @@
         &__indicators {
             flex: 1 1 auto;
             [class*='indicator-clock'] { order: 99; }
+
+            .c-indicator .label {
+                font-size: 0.9em;
+            }
         }
 
         /******************************* MAIN AREA */
