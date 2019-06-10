@@ -76,7 +76,7 @@ define(['zepto'], function ($) {
         } else {
             var dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
-                message: "We're sorry, but you cannot import that object type into this object",
+                message: "We're sorry, but you cannot import that object type into this object.",
                 buttons: [
                     {
                         label: "Ok",
