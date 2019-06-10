@@ -64,12 +64,30 @@ define(['zepto'], function ($) {
         var tree = this.generateNewIdentifiers(objTree);
         var rootId = tree.rootId;
         var rootObj = this.instantiate(tree.openmct[rootId], rootId);
+        var newStyleParent = parent.useCapability('adapter');
+        var newStyleRootObj = rootObj.useCapability('adapter');
 
-        // Instantiate all objects in tree with their newly genereated ids,
-        // adding each to its rightful parent's composition
-        rootObj.getCapability("location").setPrimaryLocation(parent.getId());
-        this.deepInstantiate(rootObj, tree.openmct, []);
-        parent.getCapability("composition").add(rootObj);
+        if (this.openmct.composition.checkPolicy(newStyleParent, newStyleRootObj)) {
+            // Instantiate all objects in tree with their newly generated ids,
+            // adding each to its rightful parent's composition
+            rootObj.getCapability("location").setPrimaryLocation(parent.getId());
+            this.deepInstantiate(rootObj, tree.openmct, []);
+            parent.getCapability("composition").add(rootObj);
+        } else {
+            var dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "We're sorry, but you cannot import that object type into this object.",
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: function () {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        }
     };
 
     ImportAsJSONAction.prototype.deepInstantiate = function (parent, tree, seen) {
