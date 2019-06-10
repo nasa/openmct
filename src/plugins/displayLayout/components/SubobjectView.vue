@@ -99,7 +99,7 @@
         },
         methods: {
             setObject(domainObject) {
-                this.domainObject = domainObject;
+                this.domainObject = this.openmct.objects.getMutable(domainObject);
                 this.objectPath = [this.domainObject].concat(this.openmct.router.path);
                 this.$nextTick(function () {
                     let childContext = this.$refs.objectFrame.getSelectionContext();
@@ -117,6 +117,7 @@
                 .then(this.setObject);
         },
         destroyed() {
+            this.domainObject.$destroy();
             if (this.removeSelectable) {
                 this.removeSelectable();
             }

@@ -7,6 +7,7 @@ define([
     return function install(openmct) {
         let navigateCall = 0;
         let browseObject;
+        let mutable;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
 
@@ -25,18 +26,18 @@ define([
         });
 
         function viewObject(object, viewProvider) {
-            openmct.layout.$refs.browseObject.show(object, viewProvider.key, true);
-            openmct.layout.$refs.browseBar.domainObject = object;
+            if (mutable) {
+                mutable.$destroy();
+            }
+            mutable = openmct.objects.getMutable(object);
+            openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true);
+            openmct.layout.$refs.browseBar.domainObject = mutable;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
 
         function navigateToPath(path, currentViewKey) {
             navigateCall++;
             let currentNavigation = navigateCall;
-
-            if (browseObject) {
-                browseObject.$destroy();
-            }
 
             //Split path into object identifiers
             if (!Array.isArray(path)) {
@@ -53,7 +54,6 @@ define([
                 // API for this.
                 objects = objects.reverse();
                 openmct.router.path = objects;
-                objects[0] = openmct.objects.getMutable(objects[0]);
 
                 browseObject = objects[0];
                 openmct.layout.$refs.browseBar.domainObject = browseObject;

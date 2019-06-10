@@ -75,6 +75,7 @@ class MutableDomainObject {
         this._observers.forEach(observer => observer());
         delete this._eventEmitter;
         delete this._observers;
+        this._eventEmitter.emit(qualifiedEventName(this, '$_destroy'));
     }
 
     static createMutable(object, mutationTopic) {

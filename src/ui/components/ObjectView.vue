@@ -103,6 +103,10 @@ export default {
             }
         },
         show(object, viewKey, immediatelySelect) {
+            if (this.unlisten) {
+                this.unlisten();
+            }
+
             if (this.removeSelectable) {
                 this.removeSelectable();
                 delete this.removeSelectable;

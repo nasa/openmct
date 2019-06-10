@@ -23,11 +23,13 @@
 define(
     [
         'EventEmitter',
-        'lodash'
+        'lodash',
+        '../api/objects/MutableDomainObject.js'
     ],
     function (
         EventEmitter,
-        _
+        _,
+        MutableDomainObject
 ) {
 
     /**
@@ -74,6 +76,22 @@ define(
             this.setSelectionStyles(selectable);
             this.selected = [selectable];
         }
+        if (this.temporaryMutables) {
+            this.temporaryMutables.forEach(mutable => mutable.$destroy());
+        }
+        this.temporaryMutables = [];
+
+        this.selected.forEach((selectedPath) => {
+            selectedPath.forEach(selection => {
+                if (selection.context.item) {
+                    if (!(selection.context.item instanceof MutableDomainObject.default)) {
+                        let mutable = this.openmct.objects.getMutable(selection.context.item);
+                        this.temporaryMutables.push(mutable);
+                        selection.context.item = mutable;
+                    }
+                }
+            });
+        });
 
         this.emit('change', this.selected);
     };
@@ -216,12 +234,6 @@ define(
         element.addEventListener('click', capture, true);
         element.addEventListener('click', selectCapture);
 
-        if (context.item) {
-            var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
-                context.item = newItem;
-            });
-        }
-
         if (select) {
             element.click();
         }
@@ -229,10 +241,6 @@ define(
         return function () {
             element.removeEventListener('click', capture, true);
             element.removeEventListener('click', selectCapture);
-
-            if (unlisten) {
-                unlisten();
-            }
         };
     };
 
