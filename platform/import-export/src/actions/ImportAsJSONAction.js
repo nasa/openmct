@@ -75,8 +75,8 @@ define(['zepto'], function ($) {
             parent.getCapability("composition").add(rootObj);
         } else {
             var dialog = this.openmct.overlays.dialog({
-                iconClass: 'error',
-                message: `Sorry you cannot import a ${newStyleRootObj.type} into a ${newStyleParent.type}`,
+                iconClass: 'alert',
+                message: `We're sorry, you cannot import a ${newStyleRootObj.type} into a ${newStyleParent.type}`,
                 buttons: [
                     {
                         label: "Ok",
