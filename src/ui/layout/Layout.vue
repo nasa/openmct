@@ -1,19 +1,15 @@
 <template>
     <div class="l-shell" :class="{
-            'is-editing': isEditing,
-            'l-shell--head-expanded': headExpanded,
-            'l-shell--minify-indicators': !headExpanded
+            'is-editing': isEditing
         }">
-        <div class="l-shell__head">
+        <div class="l-shell__head" :class="{
+            'l-shell__head--expanded': headExpanded,
+            'l-shell__head--minify-indicators': !headExpanded
+             }">
             <CreateButton class="l-shell__create-button"></CreateButton>
-            <div class="l-shell__head-section l-shell__indicators">
-                <indicators class="u-contents"></indicators>
-                <button class="l-shell__head__collapse-button c-button"
-                        @click="toggleShellHead"></button>
-            </div>
-            <notification-banner></notification-banner> <!-- TODO: MAKE SURE THIS PLACEMENT WORKS PROPERLY -->
-            <!--<button class="l-shell__head__collapse-button c-button"-->
-                    <!--@click="toggleShellHead"></button>-->
+            <indicators class="l-shell__head-section l-shell__indicators">
+            </indicators>
+            <notification-banner></notification-banner>
             <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
@@ -25,6 +21,8 @@
                 </button>
             </div>
             <app-logo></app-logo>
+            <button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -170,9 +168,16 @@
                 margin-left: $interiorMargin;
             }
 
-            [class*='__collapse-button']:before {
-                content: $glyph-icon-arrow-down;
-                font-size: 1.1em;
+            [class*='__head__collapse-button'] {
+                align-self: start;
+                $p: 6px;
+                padding-left: $p !important;
+                padding-right: $p !important;
+
+                &:before {
+                    content: $glyph-icon-arrow-down;
+                    font-size: 1.1em;
+                }
             }
 
             &-section {
@@ -181,15 +186,17 @@
                 flex: 0 1 auto;
                 padding: 0 $interiorMargin;
             }
-        }
 
-        &--head-expanded {
-            .l-shell__indicators {
-                flex-wrap: wrap;
-            }
+            &--expanded {
+                .c-indicator__label {
+                    transition: none !important;
+                }
 
-            .c-indicator__label {
-                transition: none !important;
+                [class*='__head__collapse-button'] {
+                    &:before {
+                        transform: rotate(180deg);
+                    }
+                }
             }
         }
 
@@ -210,14 +217,8 @@
         &__indicators {
             //@include test();
             flex: 1 1 auto;
+            flex-wrap: wrap;
             [class*='indicator-clock'] { order: 90; }
-            [class*='__collapse-button'] {
-                margin: 6px $interiorMargin;
-                $p: 6px;
-                padding-left: $p !important;
-                padding-right: $p !important;
-                order: 99;
-            }
 
             .c-indicator .label {
                 font-size: 0.9em;
@@ -365,12 +366,18 @@
             this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
+            let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
+            let headExpanded = true;
+            if (storedHeadProps) {
+                headExpanded = JSON.parse(storedHeadProps).expanded;
+            }
+
             return {
                 fullScreen: false,
                 conductorComponent: undefined,
                 isEditing: false,
                 hasToolbar: false,
-                headExpanded: false
+                headExpanded
             }
         },
         computed: {
@@ -381,6 +388,15 @@
         methods: {
             toggleShellHead() {
                 this.headExpanded = !this.headExpanded;
+
+                window.localStorage.setItem(
+                    'openmct-shell-head',
+                    JSON.stringify(
+                        {
+                            expanded: this.headExpanded
+                        }
+                    )
+                );
             },
             fullScreenToggle() {
                 if (this.fullScreen) {

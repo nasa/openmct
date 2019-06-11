@@ -61,7 +61,7 @@
 }
 
 @mixin indicatorStatusColors($c) {
-    &:before, .count {
+    &:before, .c-indicator__count {
         color: $c;
     }
 }

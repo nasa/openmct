@@ -92,7 +92,10 @@
                 margin-right: $interiorMarginSm;
             }
         }
+    }
 
+    .c-indicator__count {
+        display: none; // Only displays when Indicator is minified, see below
     }
 
     [class*='minify-indicators'] {
@@ -103,11 +106,11 @@
                 .c-indicator__label {
                     box-shadow: $colorIndicatorMenuBgShdw;
                     transform: scale(1.0);
-                    transition: all 100ms ease-out 0s;
+                    transition: transform 100ms ease-out 100ms;
                 }
             }
             .c-indicator__label {
-                transition: transform 250ms ease-in 100ms;
+                transition: transform 250ms ease-in 200ms;
                 background: $colorIndicatorMenuBg;
                 color: $colorIndicatorMenuFg;
                 border-radius: $controlCr;
@@ -128,6 +131,10 @@
                     bottom: 100%;
                     @include triangle('up', $size: 4px, $ratio: 1, $color: $colorIndicatorMenuBg);
                 }
+            }
+
+            .c-indicator__count {
+                display: inline-block;
             }
         }
     }
