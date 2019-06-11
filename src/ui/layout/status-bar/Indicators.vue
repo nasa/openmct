@@ -27,6 +27,7 @@
         @include cClickIconButtonLayout();
         button { text-transform: uppercase; }
 
+        background: none !important;
         border-radius: $controlCr;
         overflow: visible;
         position: relative;
@@ -135,6 +136,7 @@
 
             .c-indicator__count {
                 display: inline-block;
+                margin-left: $interiorMarginSm;
             }
         }
     }
