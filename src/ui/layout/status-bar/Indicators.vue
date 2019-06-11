@@ -22,57 +22,19 @@
 <style lang="scss">
     @import "~styles/sass-base";
 
-    .l-indicators {
-        display: flex;
-        align-items: center;
-    }
-
     .c-indicator {
         @include cControl();
         @include cClickIconButtonLayout();
         button { text-transform: uppercase; }
 
-        $br: $controlCr;
-        border-radius: $br;
+        border-radius: $controlCr;
         overflow: visible;
         position: relative;
         text-transform: uppercase;
 
-        .label {
-            // Hover bubbles that appear when hovering on an Indicator
-            display: inline-block;
 
-            a,
-            button,
-            s-button,
-            .c-button {
-                // Make <a> in label look like buttons
-                transition: $transIn;
-                background: transparent;
-                border: 1px solid rgba($colorIndicatorMenuFg, 0.5);
-                border-radius: $br;
-                box-sizing: border-box;
-                color: inherit;
-                font-size: inherit;
-                height: auto;
-                line-height: normal;
-                padding: 0 2px;
-                &:hover {
-                    border-color: rgba($colorIndicatorMenuFg, 0.75);
-                    color: $colorIndicatorMenuFgHov;
-                }
-            }
-
-            [class*='icon-'] {
-                // If any elements within label include the class 'icon-*' then deal with their :before's
-                &:before {
-                    font-size: 0.8em;
-                    margin-right: $interiorMarginSm;
-                }
-            }
-        }
-
-        &.no-collapse {
+        &.no-minify {
+            // For items that cannot be minified
             display: flex;
             flex-flow: row nowrap;
             align-items: center;
@@ -87,23 +49,75 @@
             }
         }
 
-        &:not(.no-collapse) {
+        &:not(.no-minify) {
             &:before {
                 margin-right: 0 !important;
             }
+        }
+    }
 
-            .label {
-                transition: all 250ms ease-in 100ms;
+    .c-indicator__label {
+        // Label element. Appears as a hover bubble element when Indicators are minified;
+        // Appears as an inline element when not.
+        display: inline-block;
+        transition:none;
+        white-space: nowrap;
+
+        a,
+        button,
+        s-button,
+        .c-button {
+            // Make <a> in label look like buttons
+            transition: $transIn;
+            background: transparent;
+            border: 1px solid rgba($colorIndicatorMenuFg, 0.5);
+            border-radius: $controlCr;
+            box-sizing: border-box;
+            color: inherit;
+            font-size: inherit;
+            height: auto;
+            line-height: normal;
+            padding: 0 2px;
+            &:hover {
+                background: rgba($colorIndicatorMenuFg, 0.1);
+                border-color: rgba($colorIndicatorMenuFg, 0.75);
+                color: $colorIndicatorMenuFgHov;
+            }
+        }
+
+        [class*='icon-'] {
+            // If any elements within label include the class 'icon-*' then deal with their :before's
+            &:before {
+                font-size: 0.8em;
+                margin-right: $interiorMarginSm;
+            }
+        }
+
+    }
+
+    [class*='minify-indicators'] {
+        // All styles for minified Indicators should go in here
+        .c-indicator:not(.no-minify) {
+            @include hover() {
+                background: $colorIndicatorBgHov;
+                .c-indicator__label {
+                    box-shadow: $colorIndicatorMenuBgShdw;
+                    transform: scale(1.0);
+                    transition: all 100ms ease-out 0s;
+                }
+            }
+            .c-indicator__label {
+                transition: transform 250ms ease-in 100ms;
                 background: $colorIndicatorMenuBg;
                 color: $colorIndicatorMenuFg;
-                border-radius: $br;
-                left: 3px;
+                border-radius: $controlCr;
+                left: 0;
                 top: 130%;
                 padding: $interiorMargin $interiorMargin;
                 position: absolute;
                 transform-origin: 10px 0;
                 transform: scale(0.0);
-                white-space: nowrap;
+                overflow: visible;
                 z-index: 50;
 
                 &:before {
@@ -115,20 +129,6 @@
                     @include triangle('up', $size: 4px, $ratio: 1, $color: $colorIndicatorMenuBg);
                 }
             }
-
-            @include hover() {
-                background: $colorIndicatorBgHov;
-
-                .label {
-                    box-shadow: $colorIndicatorMenuBgShdw;
-                    transform: scale(1.0);
-                    transition: all 100ms ease-out 0s;
-                }
-            }
-        }
-
-        &.float-right {
-            float: right;
         }
     }
 

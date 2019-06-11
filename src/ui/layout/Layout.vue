@@ -1,11 +1,19 @@
 <template>
     <div class="l-shell" :class="{
-            'is-editing': isEditing
+            'is-editing': isEditing,
+            'l-shell--head-expanded': headExpanded,
+            'l-shell--minify-indicators': !headExpanded
         }">
         <div class="l-shell__head">
             <CreateButton class="l-shell__create-button"></CreateButton>
-            <indicators class="l-shell__head-section l-shell__indicators"></indicators>
+            <div class="l-shell__head-section l-shell__indicators">
+                <indicators class="u-contents"></indicators>
+                <button class="l-shell__head__collapse-button c-button"
+                        @click="toggleShellHead"></button>
+            </div>
             <notification-banner></notification-banner> <!-- TODO: MAKE SURE THIS PLACEMENT WORKS PROPERLY -->
+            <!--<button class="l-shell__head__collapse-button c-button"-->
+                    <!--@click="toggleShellHead"></button>-->
             <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
@@ -17,8 +25,6 @@
                 </button>
             </div>
             <app-logo></app-logo>
-            <!--button class="l-shell__head__collapse-button c-button"
-                    @click="toggleShellHead"></button-->
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -155,7 +161,7 @@
         }
 
         &__head {
-            align-items: center;
+            align-items: stretch;
             background: $colorHeadBg;
             justify-content: space-between;
             padding: $interiorMargin $interiorMargin + 2;
@@ -171,41 +177,27 @@
 
             &-section {
                 // Subdivides elements across the head
-                border-right: 1px solid $colorInteriorBorder;
                 display: flex;
                 flex: 0 1 auto;
-                padding-right: $interiorMargin;
+                padding: 0 $interiorMargin;
             }
         }
 
         &--head-expanded {
-            .l-shell__head {
-               // height: 60px; // TODO: convert to a constant or theme constant
-            }
-
             .l-shell__indicators {
-                @include test();
                 flex-wrap: wrap;
             }
 
-            .c-indicator {
-                .label {
-                    background: none;
-                    font-size: inherit;
-                    margin-left: $interiorMargin;
-                    padding: 0;
-                    position: relative;
-                    transform: none;
-                    opacity: 1;
-                    top: 0;
-
-                    &:before { display: none; }
-                }
-
-                &:after {
-                    display: none; // Hide disclosure control
-                }
+            .c-indicator__label {
+                transition: none !important;
             }
+        }
+
+        &__controls {
+            $brdr: 1px solid $colorInteriorBorder;
+            border-right: $brdr;
+            border-left: $brdr;
+            align-items: start;
         }
 
         &__create-button,
@@ -216,8 +208,16 @@
         &__create-button { margin-right: $interiorMarginLg; }
 
         &__indicators {
+            //@include test();
             flex: 1 1 auto;
-            [class*='indicator-clock'] { order: 99; }
+            [class*='indicator-clock'] { order: 90; }
+            [class*='__collapse-button'] {
+                margin: 6px $interiorMargin;
+                $p: 6px;
+                padding-left: $p !important;
+                padding-right: $p !important;
+                order: 99;
+            }
 
             .c-indicator .label {
                 font-size: 0.9em;
@@ -369,7 +369,8 @@
                 fullScreen: false,
                 conductorComponent: undefined,
                 isEditing: false,
-                hasToolbar: false
+                hasToolbar: false,
+                headExpanded: false
             }
         },
         computed: {
@@ -378,6 +379,9 @@
             }
         },
         methods: {
+            toggleShellHead() {
+                this.headExpanded = !this.headExpanded;
+            },
             fullScreenToggle() {
                 if (this.fullScreen) {
                     this.fullScreen = false;
@@ -400,9 +404,6 @@
                 }
 
                 this.hasToolbar = structure.length > 0;
-            },
-            toggleShellHead() {
-                return true;
             }
         }
     }

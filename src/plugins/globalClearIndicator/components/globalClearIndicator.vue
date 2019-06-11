@@ -1,6 +1,6 @@
 <template>
     <div class="c-indicator c-indicator--clickable icon-session">
-        <span class="label">
+        <span class="label c-indicator__label">
             <button @click="globalClearEmit">Clear All Data</button>
         </span>
     </div>
