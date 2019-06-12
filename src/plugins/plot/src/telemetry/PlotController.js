@@ -74,6 +74,7 @@ define([
         this.followTimeConductor();
 
         this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+        this.keyString = this.openmct.objects.makeKeyString(this.newStyleDomainObject.identifier);
 
         this.filterObserver = this.openmct.objects.observe(
             this.newStyleDomainObject,
@@ -81,9 +82,9 @@ define([
             this.updateFiltersAndResubscribe.bind(this)
         );
 
-        this.refresh = this.refresh.bind(this);
+        this.clearData = this.clearData.bind(this);
 
-        this.openmct.notifications.on('clear', this.refresh);
+        this.openmct.notifications.on('clear', this.clearData);
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -171,7 +172,7 @@ define([
             this.filterObserver();
         }
 
-        this.openmct.notifications.off('clear', this.refresh);
+        this.openmct.notifications.off('clear', this.clearData);
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
@@ -269,10 +270,20 @@ define([
         });
     };
 
-    PlotController.prototype.refresh = function (updatedFilters) {
-        this.config.series.forEach(function (series) {
-            series.refresh();
-        });
+    PlotController.prototype.clearData = function (domainObject) {
+        if (domainObject) {
+            let clearObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+            if (clearObjectKeyString === this.keyString) {
+                this.config.series.forEach(function (series) {
+                    series.refresh();
+                });
+            }
+        } else {
+            this.config.series.forEach(function (series) {
+                series.refresh();
+            });
+        }
     };
 
     /**

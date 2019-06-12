@@ -47,6 +47,7 @@ define([
             this.telemetryObjects = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -55,6 +56,7 @@ define([
             this.requestDataFor = this.requestDataFor.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
+            this.clearData = this.clearData.bind(this);
 
             this.filterObserver = undefined;
 
@@ -62,7 +64,7 @@ define([
 
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
-            openmct.notifications.on('clear', this.refreshData);
+            openmct.notifications.on('clear', this.clearData);
         }
 
         initialize() {
@@ -235,13 +237,25 @@ define([
             }
         }
 
+        clearData(domainObject) {
+            if (domainObject) {
+                let clearObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+                if (clearObjectKeyString === this.keyString) {
+                    this.refreshData();
+                }
+            } else {
+                this.refreshData();
+            }
+        }
+
         destroy() {
             this.boundedRows.destroy();
             this.filteredRows.destroy();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
-            this.openmct.notifications.off('clear', this.refreshData);
+            this.openmct.notifications.off('clear', this.clearData);
             if (this.filterObserver) {
                 this.filterObserver();
             }

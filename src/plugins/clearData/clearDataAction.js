@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,29 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/globalClearIndicator.vue',
-    'vue'
-], function (
-    GlobaClearIndicator,
-    Vue
-) {
-    return function plugin() {
-        return function install(openmct) {
-            let component = new Vue ({
-                    provide: {
-                        openmct
-                    },
-                    components: {
-                        GlobalClearIndicator: GlobaClearIndicator.default
-                    },
-                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                }),
-                indicator = {
-                    element: component.$mount().$el
-                };
+export default class ClearDataAction {
+    constructor(openmct, appliesToObjects) {
+        this.name = 'Clear Data';
+        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
 
-            openmct.indicators.add(indicator);
-        };
-    };
-});
+        this._openmct = openmct;
+        this._appliesToObjects = appliesToObjects;
+    }
+    invoke(objectPath) {
+        this._openmct.notifications.emit('clear', objectPath[0]);
+    }
+    appliesTo(objectPath) {
+        let contextualDomainObject = objectPath[0];
+
+        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
+    }
+}
