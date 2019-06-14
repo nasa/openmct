@@ -21,53 +21,49 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils',
-    './components/table-configuration.vue',
-    './TelemetryTableConfiguration',
+    './components/AlphanumericFormatView.vue',
     'vue'
-], function (
-    objectUtils,
-    TableConfigurationComponent,
-    TelemetryTableConfiguration,
-    Vue
-) {
+], function (AlphanumericFormatView, Vue) {
 
-    function TableConfigurationViewProvider(openmct) {
+    function AlphanumericFormatViewProvider(openmct, options) {
+        function isTelemetryObject(selectionPath) {
+            let selectedObject = selectionPath[0].context.item;
+            let parentObject = selectionPath[1].context.item;
+            return parentObject && 
+                parentObject.type === 'layout' &&
+                selectedObject &&
+                openmct.telemetry.isTelemetryObject(selectedObject) &&
+                !options.showAsView.includes(selectedObject.type)
+        }
+
         return {
-            key: 'table-configuration',
-            name: 'Telemetry Table Configuration',
+            key: 'alphanumeric-format',
+            name: 'Alphanumeric Format',
             canView: function (selection) {
-                if (selection.length !== 1 || selection[0].length === 0) {
+                if (selection.length === 0 || selection[0].length === 1) {
                     return false;
                 }
-                let object = selection[0][0].context.item;
-                return object && object.type === 'table';
+
+                return selection.every(isTelemetryObject);
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[0][0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
                 return {
                     show: function (element) {
                         component = new Vue({
                             provide: {
-                                openmct,
-                                tableConfiguration
+                                openmct
                             },
                             components: {
-                                TableConfiguration: TableConfigurationComponent.default
+                                AlphanumericFormatView: AlphanumericFormatView.default
                             },
-                            template: '<table-configuration></table-configuration>',
+                            template: '<alphanumeric-format-view></alphanumeric-format-view>',
                             el: element
                         });
                     },
                     destroy: function () {
-                        if (component) {
-                            component.$destroy();
-                            component = undefined;
-                        }
-
-                        tableConfiguration = undefined;
+                        component.$destroy();
+                        component = undefined;
                     }
                 }
             },
@@ -76,5 +72,6 @@ define([
             }
         }
     }
-    return TableConfigurationViewProvider;
+
+    return AlphanumericFormatViewProvider;
 });
