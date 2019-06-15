@@ -42,13 +42,18 @@ define([
 
         return http.get(url)
             .then(function (resp) {
-                var dsn,
+                var data = '',
+                    dsn,
                     parser = new DsnParser(config);
 
                 dsn = parser.parseXml(resp.request.responseXML);
-                return dsn.data.hasOwnProperty(domainObject.identifier.key)
-                    ? dsn.data[domainObject.identifier.key]
-                    : '';
+                if (dsn.data.hasOwnProperty(domainObject.identifier.key)) {
+                    data = typeof dsn.data[domainObject.identifier.key] === 'object'
+                        ? dsn.data[domainObject.identifier.key]
+                        : {[domainObject.identifier.key]: dsn.data[domainObject.identifier.key]}
+                }
+
+                return data;
             });
     }
 
