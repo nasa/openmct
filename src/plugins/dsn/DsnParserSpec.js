@@ -172,7 +172,7 @@ define([
             });
 
             it('with a timestamp element', function () {
-               expect(dsn.data.timestamp).toBe(1549708172928);
+                expect(dsn.data.timestamp).toBe(1549708172928);
             });
         });
     });
