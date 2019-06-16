@@ -2,11 +2,13 @@
 define([
     'text!./res/dsn-dictionary.json',
     './DsnUtils',
-    './DsnParser'
+    './DsnParser',
+    './res/http'
 ], function (
     baseDictionary,
     DsnUtils,
-    DsnParser
+    DsnParser,
+    http
 ) {
     'use strict';
 
