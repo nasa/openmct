@@ -8,8 +8,6 @@ define([
     testXmlConfigResponse,
     testXmlResponse
 ) {
-    'use strict';
-
     describe('DsnParser', function () {
         var domParser = new DOMParser(),
             dsnParser = new DsnParser();

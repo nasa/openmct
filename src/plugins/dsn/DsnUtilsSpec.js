@@ -4,8 +4,6 @@ define([
 ], function (
     DsnUtils
 ) {
-    'use strict';
-
     describe('DsnUtils', function () {
         it('deserializes a domain object identifier', function () {
             var identifier = DsnUtils.deserializeIdentifier('deep.space.network:canberra');
