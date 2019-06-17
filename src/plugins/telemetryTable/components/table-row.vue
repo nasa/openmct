@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<tr :style="{ top: rowTop }" :class="rowLimitClass">
+<tr :style="{ top: rowTop, background: marked ? 'red' : '' }" 
+    :class="rowLimitClass"
+    @click="markRow">
     <td v-for="(title, key) in headers" 
         :key="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
@@ -69,6 +71,11 @@ export default {
             type: Number,
             required: false,
             default: 0
+        },
+        marked: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     methods: {
@@ -79,6 +86,13 @@ export default {
             this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
+        },
+        markRow: function () {
+            if (this.marked) {
+                this.$emit('unmark', this.rowIndex);
+            } else {
+                this.$emit('mark', this.rowIndex);
+            }
         }
     },
     // TODO: use computed properties

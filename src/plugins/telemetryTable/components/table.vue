@@ -24,9 +24,15 @@
      :class="{'loading': loading}">
     <div class="c-table__control-bar c-control-bar">
         <button class="c-button icon-download labeled"
-           v-on:click="exportAsCSV()"
+           v-on:click="exportAllDataAsCSV()"
            title="Export This View's Data">
             <span class="c-button__label">Export As CSV</span>
+        </button>
+        <button class="c-button icon-download labeled"
+            v-show="markCounter > 0"
+            v-on:click="exportMarkedDataAsCSV()"
+            title="Export Marked Rows As CSV">
+            <span class="c-button__label">Export Marked Rows</span>
         </button>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
@@ -82,12 +88,16 @@
                :style="{ height: totalHeight + 'px'}">
             <tbody>
                 <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
+                    :key="rowIndex"
                     :headers="headers"
                     :columnWidths="columnWidths"
                     :rowIndex="rowIndex"
                     :rowOffset="rowOffset"
                     :rowHeight="rowHeight"
-                    :row="row">
+                    :row="row"
+                    :marked="row.marked"
+                    @mark="markRow"
+                    @unmark="unmarkRow">
                 </telemetry-table-row>
             </tbody>
         </table>
@@ -328,7 +338,8 @@ export default {
             dropOffsetLeft: undefined,
             isDropTargetActive: false,
             isAutosizeEnabled: configuration.autosize,
-            scrollW: 0
+            scrollW: 0,
+            markCounter: 0
         }
     },
     computed: {
@@ -514,14 +525,26 @@ export default {
             // which causes subsequent scroll to use an out of date height.
             this.contentTable.style.height = this.totalHeight + 'px'; 
         },
-        exportAsCSV() {
+        exportAsCSV(data) {
             const headerKeys = Object.keys(this.headers);
-            const justTheData = this.table.filteredRows.getRows()
-                .map(row => row.getFormattedDatum(this.headers));
-            this.csvExporter.export(justTheData, {
+
+            this.csvExporter.export(data, {
                 filename: this.table.domainObject.name + '.csv',
                 headers: headerKeys
             });
+        },
+        exportAllDataAsCSV() {
+            const justTheData = this.table.filteredRows.getRows()
+                .map(row => row.getFormattedDatum(this.headers));
+
+            this.exportAsCSV(justTheData);
+        },
+        exportMarkedDataAsCSV() {
+            const data = this.table.filteredRows.getRows()
+                .filter(row => row.marked === true)
+                .map(row => row.getFormattedDatum(this.headers));
+
+            this.exportAsCSV(data);
         },
         outstandingRequests(loading) {
             this.loading = loading;
@@ -611,7 +634,14 @@ export default {
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
-
+        markRow(rowIndex) {
+            this.markCounter += 1;
+            this.$set(this.visibleRows[rowIndex], 'marked', true);
+        },
+        unmarkRow(rowIndex) {
+            this.markCounter -= 1;
+            this.$set(this.visibleRows[rowIndex], 'marked', false);
+        }
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
