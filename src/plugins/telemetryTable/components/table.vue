@@ -34,6 +34,12 @@
             title="Export Marked Rows As CSV">
             <span class="c-button__label">Export Marked Rows</span>
         </button>
+        <button class="c-button icon-x labeled"
+            v-show="markCounter > 0"
+            v-on:click="unmarkAllRows()"
+            title="Unmark All Rows">
+            <span class="c-button__label">Unmark All Rows</span>
+        </button>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
@@ -641,6 +647,13 @@ export default {
         unmarkRow(rowIndex) {
             this.markCounter -= 1;
             this.$set(this.visibleRows[rowIndex], 'marked', false);
+        },
+        unmarkAllRows() {
+            let allRows = this.table.filteredRows.getRows();
+
+            allRows.forEach(row => row.marked = false);
+
+            this.markCounter = 0;
         }
     },
     created() {
