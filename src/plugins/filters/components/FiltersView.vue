@@ -75,13 +75,11 @@ export default {
         this.composition.on('remove', this.removeChildren);
         this.composition.load();
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
-        this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => this.providedObject = mutatedObject);
     },
     beforeDestroy() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();
-        this.unobserveAllMutation();
     }
 }
 </script>

@@ -118,9 +118,6 @@ export default {
             }
 
             if (this.parentObject) {
-                this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
-                    this.parentObject = updatedModel;
-                });
                 this.composition = this.openmct.composition.get(this.parentObject);
 
                 if (this.composition) {
@@ -141,8 +138,7 @@ export default {
         },
         addElement(element) {
             let keyString = this.openmct.objects.makeKeyString(element.identifier);
-            this.elementsCache[keyString] = 
-                JSON.parse(JSON.stringify(element));
+            this.elementsCache[keyString] = element;
             this.applySearch(this.currentSearch);
         },
         reorderElements() {
@@ -182,9 +178,6 @@ export default {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
 
-        if (this.mutationUnobserver) {
-            this.mutationUnobserver();
-        }
         if (this.compositionUnlistener) {
             this.compositionUnlistener();
         }

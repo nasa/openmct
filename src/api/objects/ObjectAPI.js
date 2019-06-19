@@ -190,6 +190,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
+        console.warn('DEPRECATION WARNING: The .mutate() function in the Object API is now deprecated. Please use getMutable() ');
         if (domainObject instanceof MutableDomainObject.default) {
             domainObject.$set(path, value);
         } else {
@@ -209,6 +210,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
+        console.warn('DEPRECATION WARNING: The .observe() function in the Object API is now deprecated. Please use getMutable() ');
         let mutable = this.getMutable(domainObject);
         mutable.$observe(path, callback);
 
