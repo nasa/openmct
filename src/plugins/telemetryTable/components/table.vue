@@ -103,7 +103,8 @@
                     :row="row"
                     :marked="row.marked"
                     @mark="markRow"
-                    @unmark="unmarkRow">
+                    @unmark="unmarkRow"
+                    @markMultiple="markMultipleRows">
                 </telemetry-table-row>
             </tbody>
         </table>
@@ -413,6 +414,7 @@ export default {
                     this.visibleRows = filteredRows.slice(start, end);
 
                     this.updatingView = false;
+                    this.visibleRowsUpdated = true;
                 });
             }
         },
@@ -641,6 +643,7 @@ export default {
             }, RESIZE_POLL_INTERVAL);
         },
         markRow(rowIndex) {
+            this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
             this.markCounter += 1;
             this.$set(this.visibleRows[rowIndex], 'marked', true);
         },
@@ -654,6 +657,33 @@ export default {
             allRows.forEach(row => row.marked = false);
 
             this.markCounter = 0;
+        },
+        markMultipleRows(rowIndex) {
+            console.log('shift click');
+            if (this.firstMarkedRow === undefined) {
+                this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
+            } else {
+                this.lastMarkedRow = rowIndex + this.calculateFirstVisibleRow();
+                let allRows = this.table.filteredRows.getRows();
+
+                /*
+                When visible rows get updated, the calculation is up by 1/4 of the Visible Row Count
+                because of the rows that are offscreen
+                */
+                if (this.visibleRowsUpdated) {
+                    this.lastMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
+                    console.log(this.lastMarkedRow);
+                    this.visibleRowsUpdated = false;
+                }
+
+                for (let i = this.firstMarkedRow + 1; i <= this.lastMarkedRow; i++) {
+                    allRows[i].marked = true;
+                    this.markCounter++;
+                }
+
+                this.firstMarkedRow = undefined;
+                this.lastMarkedRow = undefined;
+            }
         }
     },
     created() {

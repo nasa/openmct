@@ -87,11 +87,16 @@ export default {
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
         },
-        markRow: function () {
-            if (this.marked) {
-                this.$emit('unmark', this.rowIndex);
+        markRow: function (event) {
+            if (event.shiftKey) {
+                this.$emit('markMultiple', this.rowIndex);
+                
             } else {
-                this.$emit('mark', this.rowIndex);
+                if (this.marked) {
+                    this.$emit('unmark', this.rowIndex);
+                } else {
+                    this.$emit('mark', this.rowIndex);
+                }
             }
         }
     },
