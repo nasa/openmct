@@ -414,7 +414,6 @@ export default {
                     this.visibleRows = filteredRows.slice(start, end);
 
                     this.updatingView = false;
-                    this.visibleRowsUpdated = true;
                 });
             }
         },
@@ -479,6 +478,7 @@ export default {
                 // Auto-scroll will be re-enabled if user scrolls to bottom again.
                 this.autoScroll = false;
             }
+            this.visibleRowsUpdated = true;
         },
         shouldSnapToBottom() {
             return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
@@ -656,29 +656,46 @@ export default {
 
             allRows.forEach(row => row.marked = false);
 
+            this.firstMarkedRow = undefined;
+            this.lastMarkedRow = undefined;
+            this.visibleRowsUpdated = false;
             this.markCounter = 0;
         },
         markMultipleRows(rowIndex) {
-            console.log('shift click');
             if (this.firstMarkedRow === undefined) {
                 this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
             } else {
                 this.lastMarkedRow = rowIndex + this.calculateFirstVisibleRow();
                 let allRows = this.table.filteredRows.getRows();
 
-                /*
-                When visible rows get updated, the calculation is up by 1/4 of the Visible Row Count
-                because of the rows that are offscreen
-                */
-                if (this.visibleRowsUpdated) {
-                    this.lastMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
-                    console.log(this.lastMarkedRow);
-                    this.visibleRowsUpdated = false;
-                }
+                //support selection backwards
+                if (this.lastMarkedRow < this.firstMarkedRow) {
+                    /*
+                    When visible rows get updated, the calculation is down by 1/4 of the Visible Row Count
+                    because of the rows that are offscreen
+                    */
+                    if (this.visibleRowsUpdated) {
+                        this.firstMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
+                        this.visibleRowsUpdated = false;
+                    }
 
-                for (let i = this.firstMarkedRow + 1; i <= this.lastMarkedRow; i++) {
-                    allRows[i].marked = true;
-                    this.markCounter++;
+                    for (let i = this.firstMarkedRow - 1; i >= this.lastMarkedRow; i--) {
+                        allRows[i].marked = true;
+                        this.markCounter++;
+                    }
+                } else {
+                    /*
+                    When visible rows get updated, the calculation is up by 1/4 of the Visible Row Count
+                    because of the rows that are offscreen
+                    */
+                    if (this.visibleRowsUpdated) {
+                        this.lastMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
+                        this.visibleRowsUpdated = false;
+                    }
+                    for (let i = this.firstMarkedRow + 1; i <= this.lastMarkedRow; i++) {
+                        allRows[i].marked = true;
+                        this.markCounter++;
+                    }
                 }
 
                 this.firstMarkedRow = undefined;
