@@ -11,7 +11,7 @@ export default {
     inject: ['openmct'],
     methods: {
         globalClearEmit() {
-            this.openmct.objectViews.emit('clear');
+            this.openmct.objectViews.emit('clearData');
         }
     }
 }

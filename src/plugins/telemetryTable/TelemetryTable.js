@@ -175,7 +175,6 @@ define([
         }
 
         refreshData(bounds, isTick) {
-            console.log('refreshing');
             if (!isTick) {
                 this.filteredRows.clear();
                 this.boundedRows.clear();

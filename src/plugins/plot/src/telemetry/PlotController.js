@@ -63,8 +63,11 @@ define([
 
         $scope.pending = 0;
 
+        this.clearData = this.clearData.bind(this);
+
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
+        this.listenTo($scope, 'clearData', this.clearData);
 
         this.config = this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
@@ -81,10 +84,6 @@ define([
             'configuration.filters',
             this.updateFiltersAndResubscribe.bind(this)
         );
-
-        this.clearData = this.clearData.bind(this);
-
-        this.openmct.notifications.on('clear', this.clearData);
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -171,8 +170,6 @@ define([
         if (this.filterObserver) {
             this.filterObserver();
         }
-
-        this.openmct.notifications.off('clear', this.clearData);
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
@@ -270,20 +267,10 @@ define([
         });
     };
 
-    PlotController.prototype.clearData = function (domainObject) {
-        if (domainObject) {
-            let clearObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-            if (clearObjectKeyString === this.keyString) {
-                this.config.series.forEach(function (series) {
-                    series.refresh();
-                });
-            }
-        } else {
-            this.config.series.forEach(function (series) {
-                series.refresh();
-            });
-        }
+    PlotController.prototype.clearData = function () {
+        this.config.series.forEach(function (series) {
+            series.refresh();
+        });
     };
 
     /**

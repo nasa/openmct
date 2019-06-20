@@ -62,7 +62,7 @@ export default {
                 this.composition._destroy();
             }
 
-            this.openmct.objectViews.off('clear', this.clearData);
+            this.openmct.objectViews.off('clearData', this.clearData);
         },
         invokeEditModeHandler(editMode) {
             this.currentView.onEditModeChange(editMode);
@@ -115,7 +115,7 @@ export default {
                     this.$el, this.getSelectionContext(), true);
             }
 
-            this.openmct.objectViews.on('clear', this.clearData);
+            this.openmct.objectViews.on('clearData', this.clearData);
         },
         show(object, viewKey, immediatelySelect) {
             if (this.unlisten) {
@@ -193,13 +193,14 @@ export default {
             return JSON.parse(serializedDomainObject);
         },
         clearData(domainObject) {
-
             if (domainObject) {
                 let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
                     currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
-
-                if (this.currentView.onClearData) {
-                    this.currentView.onClearData();
+                
+                if (clearKeyString === currentObjectKeyString) {
+                    if (this.currentView.onClearData) {
+                        this.currentView.onClearData();
+                    }
                 }
             } else {
                 if (this.currentView.onClearData) {
