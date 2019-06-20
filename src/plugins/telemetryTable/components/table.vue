@@ -22,7 +22,8 @@
 <template>
 <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
      :class="{'loading': loading}">
-    <div class="c-table__control-bar c-control-bar">
+    <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}"><slot></slot></div>
+    <div v-if="allowExport" class="c-table__control-bar c-control-bar">
         <button class="c-button icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
@@ -40,7 +41,7 @@
                         :key="key"
                         :headerKey="key"
                         :headerIndex="headerIndex"
-                        @sort="sortBy(key)"
+                        @sort="allowSorting && sortBy(key)"
                         @resizeColumn="resizeColumn"
                         @dropTargetOffsetChanged="setDropTargetOffset"
                         @dropTargetActive="dropTargetActive"
@@ -300,6 +301,18 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        allowExport: {
+            type: Boolean,
+            default: true
+        },
+        allowFiltering: {
+            'type': Boolean,
+            'default': true
+        },
+        allowSorting: {
+            'type': Boolean,
+            'default': true
         }
     },
     data() {
@@ -611,6 +624,10 @@ export default {
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
+        clearRowsAndRerender() {
+            this.visibleRows = [];
+            this.$nextTick().then(this.updateVisibleRows);
+        }
 
     },
     created() {
@@ -624,6 +641,7 @@ export default {
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('refresh', this.clearRowsAndRerender);
 
         this.table.filteredRows.on('add', this.rowsAdded);
         this.table.filteredRows.on('remove', this.rowsRemoved);
@@ -649,6 +667,7 @@ export default {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('refresh', this.clearRowsAndRerender);
 
         this.table.filteredRows.off('add', this.rowsAdded);
         this.table.filteredRows.off('remove', this.rowsRemoved);

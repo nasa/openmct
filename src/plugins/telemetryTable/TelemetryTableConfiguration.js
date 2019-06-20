@@ -22,9 +22,8 @@
 
 define([
     'lodash',
-    'EventEmitter',
-    './TelemetryTableColumn'
-], function (_, EventEmitter, TelemetryTableColumn) {
+    'EventEmitter'
+], function (_, EventEmitter) {
 
     class TelemetryTableConfiguration extends EventEmitter {
         constructor(domainObject, openmct) {
@@ -34,7 +33,6 @@ define([
             this.openmct = openmct;
             this.columns = {};
 
-            this.addColumnsForObject = this.addColumnsForObject.bind(this);
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
             this.objectMutated = this.objectMutated.bind(this);
             //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
@@ -48,6 +46,7 @@ define([
             configuration.hiddenColumns = configuration.hiddenColumns || {};
             configuration.columnWidths = configuration.columnWidths || {};
             configuration.columnOrder = configuration.columnOrder || [];
+            configuration.cellFormat = configuration.cellFormat || {};
             configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
 
             return configuration;
@@ -65,26 +64,17 @@ define([
             //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
             this.domainObject = object;
             //Was it the configuration that changed?
-            if (!_.eq(object.configuration, this.oldConfiguration)) {
+            if (object.configuration !== undefined && !_.eq(object.configuration, this.oldConfiguration)) {
                 //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
                 this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
                 this.emit('change', object.configuration);
             }
         }
 
-        addColumnsForAllObjects(objects) {
-            objects.forEach(object => this.addColumnsForObject(object, false));
-        }
-
-        addColumnsForObject(telemetryObject) {
-            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+        addSingleColumnForObject(telemetryObject, column, position) {
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            this.columns[objectKeyString] = [];
-
-            metadataValues.forEach(metadatum => {
-                let column = new TelemetryTableColumn(this.openmct, metadatum);
-                this.columns[objectKeyString].push(column);
-            });
+            this.columns[objectKeyString] = this.columns[objectKeyString] || [];
+            this.columns[objectKeyString].splice(position, 0, column);
         }
 
         removeColumnsForObject(objectIdentifier) {

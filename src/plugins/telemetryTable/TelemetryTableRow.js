@@ -42,12 +42,16 @@ define([], function () {
             return column && column.getFormattedValue(this.datum[key]);
         }
 
-        getRowLimitClass() {
-            if (!this.rowLimitClass) {
+        getCellComponentName(key) {
+            return this.columns[key].getCellComponentName();
+        }
+
+        getRowClass() {
+            if (!this.rowClass) {
                 let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
-                this.rowLimitClass = limitEvaluation && limitEvaluation.cssClass;
+                this.rowClass = limitEvaluation && limitEvaluation.cssClass;
             }
-            return this.rowLimitClass;
+            return this.rowClass;
         }
 
         getCellLimitClasses() {

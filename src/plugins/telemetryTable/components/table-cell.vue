@@ -19,48 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(function () {
-    class TelemetryTableColumn {
-        constructor (openmct, metadatum) {
-            this.metadatum = metadatum;
-            this.formatter = openmct.telemetry.getValueFormatter(metadatum);
-            this.titleValue = this.metadatum.name;
+<template>
+    <td>{{formattedValue}}</td>
+</template>
+<script>
+export default {
+    inject: ['openmct'],
+    props: {
+        row: {
+            type: Object,
+            required: true
+        },
+        columnKey: {
+            type: String,
+            require: true
         }
-
-        getKey() {
-            return this.metadatum.key;
+    },
+    computed: {
+        formattedValue() {
+            return this.row.getFormattedValue(this.columnKey);
         }
-
-        getTitle() {
-            return this.metadatum.name;
-        }
-
-        getMetadatum() {
-            return this.metadatum;
-        }
-
-        getCellComponentName() {
-            return 'table-cell';
-        }
-
-        hasValueForDatum(telemetryDatum) {
-            return telemetryDatum.hasOwnProperty(this.metadatum.source);
-        }
-
-        getRawValue(telemetryDatum) {
-            return telemetryDatum[this.metadatum.source];
-        }
-
-        getFormattedValue(telemetryDatum) {
-            let formattedValue = this.formatter.format(telemetryDatum);
-            if (formattedValue !== undefined && typeof formattedValue !== 'string') {
-                return formattedValue.toString();
-            } else {
-                return formattedValue;
-            }
-        }
-
-    };
-
-    return TelemetryTableColumn;
-});
+    }
+};
+</script>
