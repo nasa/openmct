@@ -29,7 +29,7 @@ export default class ClearDataAction {
         this._appliesToObjects = appliesToObjects;
     }
     invoke(objectPath) {
-        this._openmct.notifications.emit('clear', objectPath[0]);
+        this._openmct.objectViews.emit('clear', objectPath[0]);
     }
     appliesTo(objectPath) {
         let contextualDomainObject = objectPath[0];
