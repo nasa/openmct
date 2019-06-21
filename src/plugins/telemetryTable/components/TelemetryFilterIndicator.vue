@@ -1,5 +1,6 @@
 <template>
     <div v-if="filterNames.length > 0" style="background-color: teal; color: white;">
+        <span v-if="mixed">Mixed-</span>
         <span v-for="(name, index) in filterNames">
             {{name}}
             <span v-if="index < filterNames.length - 1">,</span>
@@ -13,26 +14,26 @@
         data() {
             return {
                 filterNames: [],
-                telemetryFilters: {}
+                telemetryFilters: {},
+                mixed: false
             }           
         },
         methods: {
             isTelemetryObject(domainObject) {
                 return domainObject.hasOwnProperty('telemetry');
             },
-            getFilterNames() {
+            setFilterNames() {
                 let names = [];
-                let composition = this.openmct.composition.get(this.table.domainObject);
+                let composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
                 composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let metadataKeys = this.telemetryFilters[keyString];
+                        let filters = this.telemetryFilters[keyString];
 
-                        if (metadataKeys !== undefined) {
+                        if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-
-                            Object.keys(metadataKeys).forEach(key => {
+                            Object.keys(filters).forEach(key => {
                                 metadataValues.forEach(metadaum => {
 
                                     if (key === metadaum.key) {
@@ -42,23 +43,35 @@
                             });
                         }
                     });
-
                     this.filterNames = Array.from(new Set(names));
                 });
             },
             handleConfigurationChanges(configuration) {
                 if (!_.eq(this.telemetryFilters, configuration.filters)) {
-                    let filters = configuration.filters || {};
-                    this.telemetryFilters = JSON.parse(JSON.stringify(filters));
-                    this.getFilterNames();    
+                    this.updateFilters(configuration.filters || {});
                 }
+            },
+            checkFiltersForMixedValues() {
+                let valueToCompare = this.telemetryFilters[Object.keys(this.telemetryFilters)[0]];
+                let mixed = false;
+                Object.values(this.telemetryFilters).forEach(value => {
+                    if (!_.isEqual(valueToCompare, value)) {
+                        mixed = true;
+                        return;
+                    }
+                });
+                this.mixed = mixed;
+            },
+            updateFilters(filters) {
+                this.telemetryFilters = JSON.parse(JSON.stringify(filters));
+                this.setFilterNames();
+                this.checkFiltersForMixedValues();
             }
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
-            this.telemetryFilters = JSON.parse(JSON.stringify(filters));
-            this.getFilterNames();
             this.table.configuration.on('change', this.handleConfigurationChanges);
+            this.updateFilters(filters);
         },
         destroyed() {
             this.table.configuration.off('change', this.handleConfigurationChanges);
