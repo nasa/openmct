@@ -39,10 +39,6 @@ define(function () {
             return this.metadatum;
         }
 
-        getCellComponentName() {
-            return 'table-cell';
-        }
-
         hasValueForDatum(telemetryDatum) {
             return telemetryDatum.hasOwnProperty(this.metadatum.source);
         }

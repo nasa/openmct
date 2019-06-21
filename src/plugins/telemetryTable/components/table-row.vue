@@ -49,7 +49,7 @@ export default {
             rowClass: this.row.getRowClass(),
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
-                components[header] = this.row.getCellComponentName(header);
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
                 return components
             }, {})
         }
