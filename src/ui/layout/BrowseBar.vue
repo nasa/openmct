@@ -19,28 +19,11 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
-                 v-if="views.length > 1">
-                <button class="c-button--menu"
-                     :class="currentView.cssClass"
-                     title="Switch view type"
-                     @click.stop="toggleViewMenu">
-                    <span class="c-button__label">
-                          {{ currentView.name }}
-                    </span>
-                </button>
-                <div class="c-menu" v-show="showViewMenu">
-                    <ul>
-                        <li v-for="(view, index) in views"
-                            @click="setView(view)"
-                            :key="index"
-                            :class="view.cssClass"
-                            :title="view.name">
-                            {{ view.name }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <view-switcher
+                :currentView="currentView"
+                :views="views"
+                @setView="setView">
+            </view-switcher>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
                 <button v-if="notebookEnabled" 
@@ -77,14 +60,15 @@
 
 <script>
 import NotebookSnapshot from '../utils/notebook-snapshot';
+import ViewSwitcher from './ViewSwitcher.vue';
 const PLACEHOLDER_OBJECT = {};
 
     export default {
         inject: ['openmct'],
+        components: {
+            ViewSwitcher
+        },
         methods: {
-            toggleViewMenu() {
-                this.showViewMenu = !this.showViewMenu;
-            },
             toggleSaveMenu() {
                 this.showSaveMenu = !this.showSaveMenu;
             },

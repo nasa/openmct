@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<tr :style="{ top: rowTop }" :class="rowLimitClass">
+<tr :style="{ top: rowTop }" 
+    :class="rowLimitClass"
+    @contextmenu="getDomainObjectPath">
     <td v-for="(title, key) in headers" 
         :key="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
@@ -34,6 +36,7 @@
 
 <script>
 export default {
+    inject: ['openmct'],
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
@@ -79,6 +82,16 @@ export default {
             this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowLimitClass = row.getRowLimitClass();
             this.cellLimitClasses = row.getCellLimitClasses();
+        },
+        getDomainObjectPath: function (event) {
+            event.preventDefault();
+
+            this.openmct.objects.getOriginalPath(this.row.objectKeyString).then((path) => {
+                this.showContextMenu(path, event);
+            });
+        },
+        showContextMenu: function (path, event) {
+            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y);
         }
     },
     // TODO: use computed properties
