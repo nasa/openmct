@@ -1,9 +1,9 @@
 <template>
-    <div v-if="filterNames.length > 0" style="background-color: teal; color: white;">
-        <span v-if="mixed">Mixed-</span>
-        <span v-for="(name, index) in filterNames">
+    <div v-if="filterNames.length > 0" class="c-filter-indication"
+        :class="{'c-filter-indication--mixed':mixed}">
+        <span v-for="(name, index) in filterNames"
+              class="c-filter-indication__label">
             {{name}}
-            <span v-if="index < filterNames.length - 1">,</span>
         </span>
     </div>
 </template>
