@@ -280,6 +280,7 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
+import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 
 const VISIBLE_ROW_COUNT = 100;
@@ -296,7 +297,7 @@ export default {
         TableColumnHeader,
         search
     },
-    inject: ['table', 'openmct', 'csvExporter'],
+    inject: ['table', 'openmct'],
     props: {
         isEditing: {
             type: Boolean,
@@ -634,6 +635,7 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
+        this.csvExporter = new CSVExporter();
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);

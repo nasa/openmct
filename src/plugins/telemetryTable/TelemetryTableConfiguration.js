@@ -74,6 +74,7 @@ define([
         addSingleColumnForObject(telemetryObject, column, position) {
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.columns[objectKeyString] = this.columns[objectKeyString] || [];
+            position = position || this.columns[objectKeyString].length;
             this.columns[objectKeyString].splice(position, 0, column);
         }
 
