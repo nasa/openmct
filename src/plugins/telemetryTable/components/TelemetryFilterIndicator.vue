@@ -1,6 +1,9 @@
 <template>
-    <div v-if="filterNames.length > 0" class="c-filter-indication"
+    <div v-if="filterNames.length > 0"
+        :title=title
+        class="c-filter-indication"
         :class="{'c-filter-indication--mixed':mixed}">
+        <span class="c-filter-indication__mixed">{{label}}</span>
         <span v-for="(name, index) in filterNames"
               class="c-filter-indication__label">
             {{name}}
@@ -8,14 +11,63 @@
     </div>
 </template>
 
+<style lang="scss">
+    @import "~styles/sass-base";
+    .c-filter-indication {
+        @include userSelectNone();
+        background: $colorFilterBg;
+        color: $colorFilterFg;
+        display: flex;
+        align-items: center;
+        font-size: 0.9em;
+        margin-top: $interiorMarginSm;
+        padding: 2px;
+        text-transform: uppercase;
+
+        &:before {
+            font-family: symbolsfont-12px;
+            content: $glyph-icon-filter;
+            display: block;
+            font-size: 12px;
+            margin-right: $interiorMarginSm;
+        }
+
+        &__mixed {
+            font-weight: bold;
+            margin-right: $interiorMarginSm;
+        }
+
+        &--mixed {
+            .c-filter-indication__mixed {
+                font-style: italic;
+            }
+        }
+
+        &__label {
+            + .c-filter-indication__label {
+                &:before {
+                    content: ',';
+                }
+            }
+        }
+    }
+</style>
+
 <script>
+    const FILTER_INDICATOR_LABEL = 'Filters:';
+    const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
+    const FILTER_INDICATOR_TITLE = 'Data filters are being applied to this view.';
+    const FILTER_INDICATOR_TITLE_MIXED = 'A mix of data filter values are being applied to this view.';
+
     export default {
         inject: ['openmct', 'table'],
         data() {
             return {
                 filterNames: [],
                 telemetryFilters: {},
-                mixed: false
+                mixed: false,
+                label: FILTER_INDICATOR_LABEL,
+                title: FILTER_INDICATOR_TITLE
             }           
         },
         methods: {
@@ -62,10 +114,20 @@
                 });
                 this.mixed = mixed;
             },
+            setLabels() {
+                if (this.mixed) {
+                    this.label = FILTER_INDICATOR_LABEL_MIXED;
+                    this.title = FILTER_INDICATOR_TITLE_MIXED;
+                } else {
+                    this.label = FILTER_INDICATOR_LABEL;
+                    this.title = FILTER_INDICATOR_TITLE;
+                }
+            },
             updateFilters(filters) {
                 this.telemetryFilters = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
                 this.checkFiltersForMixedValues();
+                this.setLabels();
             }
         },
         mounted() {
