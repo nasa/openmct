@@ -24,6 +24,7 @@ const webpackConfig = {
     output: {
         filename: '[name].js',
         library: '[name]',
+        libraryTarget: 'umd',
         path: path.resolve(__dirname, 'dist')
     },
     resolve: {

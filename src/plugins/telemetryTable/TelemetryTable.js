@@ -26,6 +26,7 @@ define([
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
     './TelemetryTableRow',
+    './TelemetryTableColumn',
     './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
@@ -33,6 +34,7 @@ define([
     BoundedTableRowCollection,
     FilteredTableRowCollection,
     TelemetryTableRow,
+    TelemetryTableColumn,
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
@@ -94,8 +96,6 @@ define([
                 this.tableComposition.load().then((composition) => {
 
                     composition = composition.filter(this.isTelemetryObject);
-
-                    this.configuration.addColumnsForAllObjects(composition);
                     composition.forEach(this.addTelemetryObject);
 
                     this.tableComposition.on('add', this.addTelemetryObject);
@@ -105,7 +105,7 @@ define([
         }
 
         addTelemetryObject(telemetryObject) {
-            this.configuration.addColumnsForObject(telemetryObject, true);
+            this.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
             this.telemetryObjects.push(telemetryObject);
@@ -132,6 +132,13 @@ define([
             this.emit('object-removed', objectIdentifier);
         }
 
+        /**
+         * @private
+         */
+        createRow(datum, columnMap, keyString, limitEvaluator) {
+            return new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
+        }
+
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
@@ -145,7 +152,7 @@ define([
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+                    let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows.add(telemetryRows);
                 }).finally(() => {
                     this.decrementOutstandingRequests();
@@ -191,6 +198,19 @@ define([
             }, {});
         }
 
+        addColumnsForObject(telemetryObject) {
+            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            metadataValues.forEach(metadatum => {
+                let column = this.createColumn(metadatum);
+                this.configuration.addSingleColumnForObject(telemetryObject, column);
+            });
+        }
+
+        createColumn(metadatum) {
+            return new TelemetryTableColumn(this.openmct, metadatum);
+        }
+
         subscribeTo(telemetryObject) {
             let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -202,7 +222,7 @@ define([
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
                 }
-                this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+                this.boundedRows.add(this.createRow(datum, columnMap, keyString, limitEvaluator));
             }, subscribeOptions);
         }
 
