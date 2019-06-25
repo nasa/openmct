@@ -17,7 +17,8 @@ define([
                     format: "utc",
                     hints: {
                         domain: 1
-                    }
+                    },
+                    filters: ["equals"]
                 },
                 {
                     key: "yesterday",
@@ -33,7 +34,8 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 1
-                    }
+                    },
+                    filters: ["equals"]
                 },
                 {
                     key: "cos",
@@ -41,7 +43,8 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 2
-                    }
+                    },
+                    filters: ["equals"]
                 }
             ]
         },
@@ -57,7 +60,9 @@ define([
                     format: "utc",
                     hints: {
                         domain: 1
-                    }
+                    },
+                    filters: ["equals"]
+
                 },
                 {
                     key: "state",
@@ -83,7 +88,8 @@ define([
                     name: "Value",
                     hints: {
                         range: 2
-                    }
+                    },
+                    filters: ["equals"]
                 }
             ]
         }
