@@ -20,6 +20,7 @@
     /******************************* LIST ITEM */
     .c-list-item {
         &__name a {
+            color: $colorItemFg;
             display: flex;
 
             > * + * { margin-left: $interiorMarginSm; }
@@ -55,12 +56,8 @@
         }
 
         &--unknown {
-            opacity: 0.7;
+            @include isUnknown();
             filter: $filterItemUnknown;
-            font-style: italic;
-            .c-list-item__type-icon {
-                font-style: normal;
-            }
         }
     }
 </style>

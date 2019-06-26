@@ -42,14 +42,7 @@
         }
 
         &--unknown {
-            > * {
-                opacity: 0.7;
-                filter: $filterItemUnknown;
-            }
-
-            .c-object-label__name {
-                font-style: italic;
-            }
+            @include isUnknown();
         }
     }
 </style>

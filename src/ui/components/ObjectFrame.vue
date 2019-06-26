@@ -25,8 +25,10 @@
             'c-so-view--no-frame': !hasFrame,
             'has-complex-content': complexContent
         }">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__icon" :class="cssClass"></div>
+        <div class="c-so-view__header"
+            :class="{'c-so-view__header--unknown': cssClass.indexOf('unknown') !== -1}">
+            <div class="c-so-view__header__icon"
+                 :class="cssClass"></div>
             <div class="c-so-view__header__name">
                 {{ domainObject && domainObject.name }}
             </div>
@@ -73,6 +75,10 @@
                 @include headerFont(1em);
                 @include ellipsize();
                 flex: 0 1 auto;
+            }
+
+            &--unknown {
+                @include isUnknown();
             }
         }
 

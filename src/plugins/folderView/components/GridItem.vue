@@ -34,10 +34,13 @@
         padding: $interiorMarginLg;
 
         &__type-icon {
-            filter: $colorKeyFilter;
             flex: 0 0 $gridItemMobile;
             font-size: floor($gridItemMobile / 2);
             margin-right: $interiorMarginLg;
+            &:before {
+                filter: $colorKeyFilter;
+                height: 100%;
+            }
         }
 
         &.is-alias {
@@ -49,16 +52,17 @@
         }
 
         &--unknown {
-            [class*='__'] {
+            @include isUnknown();
+            /*[class*='__'] {
                 opacity: 0.7;
             }
             
             [class*='__name'],
             [class*='__metadata'] {
                 font-style: italic;
-            }
+            }*/
 
-            [class*='type-icon'] {
+            [class*='__type-icon__glyph'] {
                 filter: $filterItemUnknown;
             }
         }
@@ -109,7 +113,7 @@
 
             &:hover {
                 filter: $filterItemHoverFg;
-                transition: $transIn;
+                //transition: $transIn;
 
                 .c-grid-item__type-icon {
                     transform: scale(1);

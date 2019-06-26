@@ -62,11 +62,11 @@
 
         tbody tr {
             background: $colorListItemBg;
-            transition: $transOut;
         }
 
         body.desktop & {
             tbody tr {
+                transition: $transOut;
                 cursor: pointer;
 
                 &:hover {

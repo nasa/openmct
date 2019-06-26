@@ -36,10 +36,14 @@
 }
 
 @mixin glyphBg($glyphUrl) {
-    background-image: $glyphUrl;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
+    &:before {
+        content: '';
+        display: block;
+        background-image: $glyphUrl;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
 }
 
 [class*="icon-"] {
@@ -94,6 +98,22 @@
         top: auto; left: 0; bottom: 10%; right: auto;
         transform-origin: left bottom;
         transform: scale(0.5);
+    }
+}
+
+@mixin isUnknown() {
+    // Common styles to be applied to tree items, object labels, grid and list item views
+    font-style: italic;
+    opacity: 0.7;
+
+    [class*='icon']:before,
+    [class*='icon']:after {
+        font-style: normal; // Prevent symbolsfont element from being italicized;
+    }
+
+    [class*='icon']:before {
+        // Target :before to avoid affecting alias indicator
+        filter: $filterItemUnknown;
     }
 }
 
