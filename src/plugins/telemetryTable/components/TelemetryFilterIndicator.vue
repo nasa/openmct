@@ -2,11 +2,11 @@
     <div v-if="filterNames.length > 0"
         :title=title
         class="c-filter-indication"
-        :class="{'c-filter-indication--mixed':mixed}">
-        <span class="c-filter-indication__mixed">{{label}}</span>
+        :class="{ 'c-filter-indication--mixed': mixed }">
+        <span class="c-filter-indication__mixed">{{ label }}</span>
         <span v-for="(name, index) in filterNames"
               class="c-filter-indication__label">
-            {{name}}
+            {{ name }}
         </span>
     </div>
 </template>
