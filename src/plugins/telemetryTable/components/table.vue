@@ -106,6 +106,7 @@
             :row="sizingRowData">
         </telemetry-table-row>
     </table>
+    <telemetry-filter-indicator></telemetry-filter-indicator>
 </div>
 </template>
 
@@ -280,6 +281,7 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
+import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 
@@ -295,7 +297,8 @@ export default {
     components: {
         TelemetryTableRow,
         TableColumnHeader,
-        search
+        search,
+        TelemetryFilterIndicator
     },
     inject: ['table', 'openmct'],
     props: {
