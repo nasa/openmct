@@ -66,8 +66,8 @@
                 filterNames: [],
                 telemetryFilters: {},
                 mixed: false,
-                label: FILTER_INDICATOR_LABEL,
-                title: FILTER_INDICATOR_TITLE
+                label: '',
+                title: ''
             }           
         },
         methods: {
