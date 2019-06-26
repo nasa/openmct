@@ -79,9 +79,6 @@ a {
     color: $colorA;
     cursor: pointer;
     text-decoration: none;
-    &:hover {
-        color: $colorAHov;
-    }
 }
 
 body, html {

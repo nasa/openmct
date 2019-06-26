@@ -1,6 +1,6 @@
 <template>
     <tr class="c-list-item"
-        :class="{ 'is-alias': item.isAlias === true }"
+        :class="{ 'is-alias': item.isAlias === true, 'c-list-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1 }"
         @click="navigate">
         <td class="c-list-item__name">
             <a :href="objectLink" ref="objectLink">
@@ -51,6 +51,15 @@
                     transform-origin: bottom left;
                     transform: scale(0.65);
                 }
+            }
+        }
+
+        &--unknown {
+            opacity: 0.7;
+            filter: $filterItemUnknown;
+            font-style: italic;
+            .c-list-item__type-icon {
+                font-style: normal;
             }
         }
     }

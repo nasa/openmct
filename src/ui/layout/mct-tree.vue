@@ -83,6 +83,7 @@
 
             &:hover {
                 background: $colorItemTreeHoverBg;
+                > * { filter: $filterItemHoverFg; }
             }
 
             &.is-navigated-object,

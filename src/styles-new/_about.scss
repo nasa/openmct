@@ -108,6 +108,10 @@
 
     a {
         color: $colorAboutLink;
+
+        &:hover {
+            color: $colorAHov;
+        }
     }
 
     em {

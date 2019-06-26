@@ -1,6 +1,6 @@
 <template>
     <a class="l-grid-view__item c-grid-item"
-        :class="{ 'is-alias': item.isAlias === true }"
+        :class="{ 'is-alias': item.isAlias === true, 'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1 }"
         :href="objectLink">
         <div class="c-grid-item__type-icon"
              :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'">
@@ -45,6 +45,21 @@
             [class*='__type-icon'] {
                 @include isAlias();
                 color: $colorIconAliasForKeyFilter;
+            }
+        }
+
+        &--unknown {
+            [class*='__'] {
+                opacity: 0.7;
+            }
+            
+            [class*='__name'],
+            [class*='__metadata'] {
+                font-style: italic;
+            }
+
+            [class*='type-icon'] {
+                filter: $filterItemUnknown;
             }
         }
 
@@ -93,11 +108,10 @@
             transition: background $transOutMs ease-in-out;
 
             &:hover {
-                background: $colorItemBgHov;
+                filter: $filterItemHoverFg;
                 transition: $transIn;
 
                 .c-grid-item__type-icon {
-                    filter: $colorKeyFilterHov;
                     transform: scale(1);
                     transition: $transInBounce;
                 }

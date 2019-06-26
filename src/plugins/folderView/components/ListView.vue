@@ -70,7 +70,8 @@
                 cursor: pointer;
 
                 &:hover {
-                    background: $colorListItemBgHov;
+                    background: $colorItemTreeHoverBg;
+                    filter: $filterItemHoverFg;
                     transition: $transIn;
                 }
             }
