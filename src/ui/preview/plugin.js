@@ -23,6 +23,13 @@ import PreviewAction from './PreviewAction.js';
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new PreviewAction(openmct));
-    }
+        openmct.contextMenu.registerAction(new PreviewAction(openmct)); 
+
+        let ViewHistoricalDataAction  = new PreviewAction(openmct);
+
+        ViewHistoricalDataAction.name = 'View Historical Data';
+        ViewHistoricalDataAction.description = 'View Historical Data in a Table or Plot';
+
+        openmct.contextMenu.registerAction(ViewHistoricalDataAction);
+    };
 }

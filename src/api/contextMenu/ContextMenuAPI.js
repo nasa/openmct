@@ -72,12 +72,20 @@ class ContextMenuAPI {
     /**
      * @private
      */
-    _showContextMenuForObjectPath(objectPath, x, y) {
+    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
+
         let applicableActions = this._allActions.filter((action) => {
-            if (action.appliesTo === undefined) {
-                return true;
+            if (actionsToBeIncluded) {
+                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.name)) {
+                    return true;
+                }
+                return action.appliesTo && actionsToBeIncluded.includes(action.name);
+            } else {
+                if (action.appliesTo === undefined) {
+                    return true;
+                }
+                return action.appliesTo(objectPath);
             }
-            return action.appliesTo(objectPath);
         });
 
         if (this._activeContextMenu) {

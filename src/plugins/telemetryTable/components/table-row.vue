@@ -35,6 +35,12 @@
 </style>
 
 <script>
+
+const CONTEXT_MENU_ACTIONS = [
+    'View Historical Data',
+    'Remove'
+];
+
 export default {
     inject: ['openmct'],
     data: function () {
@@ -91,7 +97,7 @@ export default {
             });
         },
         showContextMenu: function (path, event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y);
+            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     },
     // TODO: use computed properties
