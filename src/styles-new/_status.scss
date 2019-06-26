@@ -159,3 +159,16 @@ tr {
         @include indicatorStatusColors($colorStatusError);
     }
 }
+
+.s-status {
+    &--partial {
+        // Partially completed things, such as a file downloading or process that's running
+        background-color: $colorStatusPartialBg;
+    }
+
+    &--complete {
+        // Completed things, such as a file downloaded or process that's finished
+        background-color: $colorStatusCompleteBg;
+    }
+}
+
