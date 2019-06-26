@@ -83,13 +83,6 @@
 
             &:hover {
                 background: $colorItemTreeHoverBg;
-                .c-tree__item__type-icon:before {
-                    color: $colorItemTreeIconHover;
-                }
-
-                .c-tree__item__name {
-                    color: $colorItemTreeHoverFg;
-                }
             }
 
             &.is-navigated-object,

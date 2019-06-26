@@ -1,5 +1,6 @@
 <template>
 <a class="c-tree__item__label c-object-label"
+   :class="{'c-object-label--unknown': typeClass.indexOf('icon-object-unknown') !== -1}"
     draggable="true"
     @dragstart="dragStart"
     @click="navigateOrPreview"
@@ -38,6 +39,16 @@
             margin-right: $interiorMarginSm;
             color: $colorItemTreeIcon;
             width: $treeTypeIconW;
+        }
+
+        &--unknown {
+            > * {
+                color: $colorItemTreeMissingFg !important;
+            }
+
+            .c-object-label__name {
+                font-style: italic;
+            }
         }
     }
 </style>
