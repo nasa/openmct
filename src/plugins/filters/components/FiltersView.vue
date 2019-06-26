@@ -1,6 +1,7 @@
 <template>
     <ul class="tree c-tree c-properties__section" v-if="Object.keys(children).length">
         <h2 class="c-properties__header">Filters</h2>
+        <global-filters></global-filters>
         <filter-object 
             v-for="(child, key) in children"
             :key="key"
@@ -17,10 +18,12 @@
 
 <script>
 import FilterObject from './FilterObject.vue';
+import GlobalFilters from './GlobalFilters.vue'
 
 export default {
     components: {
-        FilterObject
+        FilterObject,
+        GlobalFilters
     },
     inject: [
         'openmct'
