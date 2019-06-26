@@ -60,9 +60,15 @@ button {
     }
 }
 
-/********* Icon Buttons */
+/********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+}
+
+.c-click-link {
+    // A clickable element, typically inline, with an icon and label
+    @include cControl();
+    cursor: pointer;
 }
 
 .c-icon-button,
