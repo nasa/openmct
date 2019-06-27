@@ -19,12 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import PreviewAction from './PreviewAction.js';
-import ViewHistoricalDataAction from './ViewHistoricalDataAction';
 
-export default function () {
-    return function (openmct) {
-        openmct.contextMenu.registerAction(new PreviewAction(openmct));
-        openmct.contextMenu.registerAction(new ViewHistoricalDataAction(openmct));
-    };
+import PreviewAction from './PreviewAction';
+
+export default class ViewHistoricalDataAction extends PreviewAction {
+    constructor(openmct) {
+        super(openmct);
+
+        this.name = 'View Historical Data';
+        this.description = 'View Historical Data in a Table or Plot';
+        this.cssClass = 'icon-eye-open';
+    }
+
+    appliesTo(objectPath, actionsToBeIncluded) {
+        if (!actionsToBeIncluded) {
+            return false;
+        }
+        return !this._isNavigatedObject(objectPath) && actionsToBeIncluded.includes(this.name);
+    }
 }

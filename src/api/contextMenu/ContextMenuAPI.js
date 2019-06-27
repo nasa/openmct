@@ -79,7 +79,7 @@ class ContextMenuAPI {
                 if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.name)) {
                     return true;
                 }
-                return action.appliesTo && actionsToBeIncluded.includes(action.name);
+                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.name);
             } else {
                 if (action.appliesTo === undefined) {
                     return true;
