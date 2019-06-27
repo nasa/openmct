@@ -75,11 +75,12 @@ class ContextMenuAPI {
     _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
 
         let applicableActions = this._allActions.filter((action) => {
+
             if (actionsToBeIncluded) {
-                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.name)) {
+                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
                     return true;
                 }
-                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.name);
+                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
             } else {
                 if (action.appliesTo === undefined) {
                     return true;

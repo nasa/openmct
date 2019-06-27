@@ -27,6 +27,7 @@ export default class ViewHistoricalDataAction extends PreviewAction {
         super(openmct);
 
         this.name = 'View Historical Data';
+        this.key = 'viewHistoricalData';
         this.description = 'View Historical Data in a Table or Plot';
         this.cssClass = 'icon-eye-open';
     }
@@ -35,6 +36,6 @@ export default class ViewHistoricalDataAction extends PreviewAction {
         if (!actionsToBeIncluded) {
             return false;
         }
-        return !this._isNavigatedObject(objectPath) && actionsToBeIncluded.includes(this.name);
+        return !this._isNavigatedObject(objectPath) && actionsToBeIncluded.includes(this.key);
     }
 }

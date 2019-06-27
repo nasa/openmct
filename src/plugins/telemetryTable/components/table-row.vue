@@ -22,7 +22,7 @@
 <template>
 <tr :style="{ top: rowTop }" 
     :class="rowClass"
-    @contextmenu="getDomainObjectPath">
+    v-on="listeners">
     <component
         v-for="(title, key) in headers"
         :key="key"
@@ -42,11 +42,6 @@
 </style>
 
 <script>
-
-const CONTEXT_MENU_ACTIONS = [
-    'View Historical Data',
-    'Remove'
-];
 import TableCell from './table-cell.vue';
 
 export default {
@@ -109,7 +104,7 @@ export default {
             });
         },
         showContextMenu: function (path, event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
+            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, this.row.getContextMenuActions());
         },
         selectCell(element, columnKey) {
             //TODO: This is a hack. Cannot get parent this way.
@@ -139,6 +134,17 @@ export default {
     },
     components: {
         TableCell
+    },
+    computed: {
+        listeners() {
+            if (this.row.getContextMenuActions().length) {
+                return {
+                    contextmenu: this.getDomainObjectPath
+                }
+            } else {
+                return null;
+            }
+        }
     }
 }
 </script>

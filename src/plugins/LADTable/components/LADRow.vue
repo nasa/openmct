@@ -39,7 +39,8 @@
 const CONTEXT_MENU_ACTIONS = [
     'View Historical Data',
     'Remove'
-]
+];
+
 export default {
     inject: ['openmct'],
     props: ['domainObject'],
