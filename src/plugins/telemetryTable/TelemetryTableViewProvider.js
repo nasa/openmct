@@ -22,12 +22,10 @@
 
 define([
     './components/table.vue',
-    '../../exporters/CSVExporter',
     './TelemetryTable',
     'vue'
 ], function (
     TableComponent,
-    CSVExporter,
     TelemetryTable,
     Vue
 ) {
@@ -51,7 +49,6 @@ define([
                 return domainObject.type === 'table';
             },
             view(domainObject) {
-                let csvExporter = new CSVExporter.default();
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
@@ -67,7 +64,6 @@ define([
                             },
                             provide: {
                                 openmct,
-                                csvExporter,
                                 table
                             },
                             el: element,

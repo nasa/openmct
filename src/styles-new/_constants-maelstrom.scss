@@ -105,6 +105,8 @@ $colorStatusAlertFilter: invert(78%) sepia(26%) saturate(1160%) hue-rotate(324de
 $colorStatusError: #da0004;
 $colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351deg) brightness(111%) contrast(115%);
 $colorStatusBtnBg: #666; // Where is this used?
+$colorStatusPartialBg: #3f5e8b;
+$colorStatusCompleteBg: #457638;
 $colorAlert: #ff3c00;
 $colorAlertFg: #fff;
 $colorWarningHi: #990000;
@@ -119,6 +121,8 @@ $colorInfo: #2294a2;
 $colorInfoFg: #fff;
 $colorOk: #33cc33;
 $colorOkFg: #fff;
+$colorFilterBg: #44449c;
+$colorFilterFg: #8984e9;
 
 // States
 $colorPausedBg: #ff9900;

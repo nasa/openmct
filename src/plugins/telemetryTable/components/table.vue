@@ -22,7 +22,8 @@
 <template>
 <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
      :class="{'loading': loading}">
-    <div class="c-table__control-bar c-control-bar">
+    <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}"><slot></slot></div>
+    <div v-if="allowExport" class="c-table__control-bar c-control-bar">
         <button class="c-button icon-download labeled"
            v-on:click="exportAsCSV()"
            title="Export This View's Data">
@@ -40,7 +41,7 @@
                         :key="key"
                         :headerKey="key"
                         :headerIndex="headerIndex"
-                        @sort="sortBy(key)"
+                        @sort="allowSorting && sortBy(key)"
                         @resizeColumn="resizeColumn"
                         @dropTargetOffsetChanged="setDropTargetOffset"
                         @dropTargetActive="dropTargetActive"
@@ -105,6 +106,7 @@
             :row="sizingRowData">
         </telemetry-table-row>
     </table>
+    <telemetry-filter-indicator></telemetry-filter-indicator>
 </div>
 </template>
 
@@ -279,6 +281,8 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
+import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
+import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 
 const VISIBLE_ROW_COUNT = 100;
@@ -293,13 +297,26 @@ export default {
     components: {
         TelemetryTableRow,
         TableColumnHeader,
-        search
+        search,
+        TelemetryFilterIndicator
     },
-    inject: ['table', 'openmct', 'csvExporter'],
+    inject: ['table', 'openmct'],
     props: {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        allowExport: {
+            type: Boolean,
+            default: true
+        },
+        allowFiltering: {
+            'type': Boolean,
+            'default': true
+        },
+        allowSorting: {
+            'type': Boolean,
+            'default': true
         }
     },
     data() {
@@ -611,12 +628,17 @@ export default {
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
+        clearRowsAndRerender() {
+            this.visibleRows = [];
+            this.$nextTick().then(this.updateVisibleRows);
+        }
 
     },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
+        this.csvExporter = new CSVExporter();
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
@@ -624,6 +646,7 @@ export default {
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('refresh', this.clearRowsAndRerender);
 
         this.table.filteredRows.on('add', this.rowsAdded);
         this.table.filteredRows.on('remove', this.rowsRemoved);
@@ -649,6 +672,7 @@ export default {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('refresh', this.clearRowsAndRerender);
 
         this.table.filteredRows.off('add', this.rowsAdded);
         this.table.filteredRows.off('remove', this.rowsRemoved);

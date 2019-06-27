@@ -21,13 +21,20 @@
  *****************************************************************************/
 <template>
 <tr :style="{ top: rowTop }" 
-    :class="rowLimitClass"
+    :class="rowClass"
     @contextmenu="getDomainObjectPath">
-    <td v-for="(title, key) in headers" 
+    <component
+        v-for="(title, key) in headers"
         :key="key"
+        :is="componentList[key]"
+        :columnKey="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :title="formattedRow[key]"
-        :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
+        :class="cellLimitClasses[key]"
+        class="is-selectable"
+        @click="selectCell($event.currentTarget, key)"
+        :row="row">
+    </component>
 </tr>
 </template>
 
@@ -40,6 +47,7 @@ const CONTEXT_MENU_ACTIONS = [
     'View Historical Data',
     'Remove'
 ];
+import TableCell from './table-cell.vue';
 
 export default {
     inject: ['openmct'],
@@ -47,8 +55,12 @@ export default {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
             formattedRow: this.row.getFormattedDatum(this.headers),
-            rowLimitClass: this.row.getRowLimitClass(),
-            cellLimitClasses: this.row.getCellLimitClasses()
+            rowClass: this.row.getRowClass(),
+            cellLimitClasses: this.row.getCellLimitClasses(),
+            componentList: Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+                return components
+            }, {})
         }
     },
     props: {
@@ -86,7 +98,7 @@ export default {
         },
         formatRow: function (row) {
             this.formattedRow = row.getFormattedDatum(this.headers);
-            this.rowLimitClass = row.getRowLimitClass();
+            this.rowClass = row.getRowClass();
             this.cellLimitClasses = row.getCellLimitClasses();
         },
         getDomainObjectPath: function (event) {
@@ -98,6 +110,23 @@ export default {
         },
         showContextMenu: function (path, event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        },
+        selectCell(element, columnKey) {
+            //TODO: This is a hack. Cannot get parent this way.
+            this.openmct.selection.select([{
+                element: element,
+                context: {
+                    type: 'table-cell',
+                    row: this.row.objectKeyString,
+                    column: columnKey
+                }
+            },{
+                element: this.openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: this.openmct.router.path[0]
+                }
+            }], false);
+            event.stopPropagation();
         }
     },
     // TODO: use computed properties
@@ -107,6 +136,9 @@ export default {
             handler: 'formatRow',
             deep: false
         }
+    },
+    components: {
+        TableCell
     }
 }
 </script>
