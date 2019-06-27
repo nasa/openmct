@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-    <tr>
+    <tr @contextmenu="getDomainObjectPath">
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
         <td :class="valueClass">
@@ -35,6 +35,11 @@
 </style>
 
 <script>
+
+const CONTEXT_MENU_ACTIONS = [
+    'View Historical Data',
+    'Remove'
+]
 export default {
     inject: ['openmct'],
     props: ['domainObject'],
@@ -73,11 +78,22 @@ export default {
                 .request(this.domainObject, {strategy: 'latest'})
                 .then((array) => this.updateValues(array[array.length - 1]));
 
+        },
+        getDomainObjectPath(event) {
+            event.preventDefault();
+
+            this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
+                this.showContextMenu(path, event);
+            });
+        },
+        showContextMenu(path, event) {
+            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     },
     mounted() {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         this.limitEvaluator = openmct
             .telemetry
