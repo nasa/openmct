@@ -14,13 +14,14 @@
             </div>
         </div>
         <ul class="grid-properties" v-if="expanded">
+            <!-- <div>Use global filter</div> -->
             <filter-field
-                    v-for="field in filterObject.valuesWithFilters"
-                    :key="field.key"
-                    :filterField="field"
-                    :persistedFilters="persistedFilters[field.key]"
-                    @onUserSelect="collectUserSelects"
-                    @onTextEnter="updateTextFilter">
+                v-for="field in filterObject.valuesWithFilters"
+                :key="field.key"
+                :filterField="field"
+                :persistedFilters="persistedFilters[field.key]"
+                @onUserSelect="collectUserSelects"
+                @onTextEnter="updateTextFilter">
             </filter-field>
         </ul>
     </li>
@@ -51,7 +52,14 @@ export default {
         return {
             expanded: false,
             objectCssClass: undefined,
-            updatedFilters: this.persistedFilters
+            useGlobal: Boolean
+        }
+    },
+    watch: {
+        persistedFilters(newPersistedFilters) {            
+            console.log('watch-newFilters', newPersistedFilters, 'persistedFilters', this.persistedFilters ,'updatedFilters', this.updatedFilters);    
+            this.updatedFilters = JSON.parse(JSON.stringify(newPersistedFilters));
+            console.log('new-updatedFilters', this.updatedFilters);
         }
     },
     methods: {
@@ -77,6 +85,7 @@ export default {
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateTextFilter(key, comparator, value) {
+            // this.$emit('updateFilters', key, comparator, value, this.keyString);
             if (value.trim() === '') {
                 if (this.updatedFilters[key]) {
                     delete this.updatedFilters[key];
@@ -97,6 +106,14 @@ export default {
         let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
         this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
         this.objectCssClass = type.definition.cssClass;
+        this.updatedFilters = JSON.parse(JSON.stringify(this.persistedFilters));
+        
+        if (!this.updatedFilters.useGlobal) {
+            this.updatedFilters.useGlobal = true;
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
+        }
+
+        this.useGlobal = this.updatedFilters.useGlobal;
     }
 }
 </script>
