@@ -81,7 +81,6 @@ export default {
     },
     data() {
         return {
-            expanded: false,
             isEditing: this.openmct.editor.isEditing()
         }
     },

@@ -69,11 +69,23 @@ export default {
                 this.$set(this.children, keyString, childObject);
             }
 
+            let childExist = this.persistedFilters[keyString] !== undefined;
+
             valuesWithFilters.forEach(field => {
                 if (!this.globalFilters[field.key]) {
                     this.globalFilters[field.key] = {};                    
                 }
-                this.globalObject[field.key] = field;
+                if (!this.globalObject[field.key]) {
+                    this.globalObject[field.key] = field;
+                }
+                if (!childExist) {
+                    if (!this.persistedFilters[keyString]) {
+                        this.persistedFilters[keyString] = {};
+                        this.persistedFilters[keyString].useGlobal = true;
+                    }
+                    
+                    this.persistedFilters[keyString][field.key] = this.globalFilters[field.key];
+                }
             });
         },
         removeChildren(identifier) {

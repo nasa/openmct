@@ -69,7 +69,8 @@
         },
         data() {
             return {
-                expanded: false
+                expanded: false,
+                updatedFilters: this.globalFilters
             }
         },
         watch: {
@@ -95,12 +96,13 @@
                     this.$set(this.updatedFilters, key, {});
                     this.$set(this.updatedFilters[key], comparator, '');
                 }
-                this.updatedFilters[key][comparator] = value;
+                this.$set(this.updatedFilters[key], comparator, value);
+                // this.updatedFilters[key][comparator] = value;
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             }
         },
         mounted() {
-            this.updatedFilters = JSON.parse(JSON.stringify(this.globalFilters));
+            // this.updatedFilters = JSON.parse(JSON.stringify(this.globalFilters));
         }
     }
 </script>
