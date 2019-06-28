@@ -74,9 +74,14 @@
             }
         },
         watch: {
-            globalFilters(newGlobalFilters) {            
-                console.log('watch-newGlobalFilters', newGlobalFilters, 'globalFilters', this.globalFilters ,'updatedFilters', this.updatedFilters);    
-                this.updatedFilters = JSON.parse(JSON.stringify(newGlobalFilters));
+            globalFilters: {
+                handler: function checkFilters(newGlobalFilters) {
+                    console.log('newGlobalFilters', newGlobalFilters);                    
+                    console.log('globalFilters:', this.globalFilters);
+                    console.log('updatedFilters:', this.updatedFilters);
+                    // this.updatedFilters = JSON.parse(JSON.stringify(newGlobalFilters));
+                },
+                deep: true
             }
         },
         methods: {
@@ -96,6 +101,7 @@
                     this.$set(this.updatedFilters, key, {});
                     this.$set(this.updatedFilters[key], comparator, '');
                 }
+
                 this.$set(this.updatedFilters[key], comparator, value);
                 // this.updatedFilters[key][comparator] = value;
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);

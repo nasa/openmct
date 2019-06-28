@@ -73,17 +73,19 @@ export default {
 
             valuesWithFilters.forEach(field => {
                 if (!this.globalFilters[field.key]) {
-                    this.globalFilters[field.key] = {};                    
+                    this.$set(this.globalFilters, field.key, {});
                 }
+
                 if (!this.globalObject[field.key]) {
-                    this.globalObject[field.key] = field;
+                    this.$set(this.globalObject, field.key, field);
                 }
+
                 if (!childExist) {
                     if (!this.persistedFilters[keyString]) {
                         this.persistedFilters[keyString] = {};
                         this.persistedFilters[keyString].useGlobal = true;
                     }
-                    
+
                     this.persistedFilters[keyString][field.key] = this.globalFilters[field.key];
                 }
             });
@@ -117,6 +119,7 @@ export default {
             this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
         },
         updateGlobalFilters(filters) {
+            console.log('global filters updated');
             this.globalFilters = filters;
         },
         containsField(keyString, field) {
