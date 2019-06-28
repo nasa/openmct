@@ -78,10 +78,11 @@
                 let names = [];
                 let composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
-                composition.load().then((domainObjects) => {
+                composition && composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.telemetryFilters[keyString];
+                        this.domainObjectsKeyString[keyString] = '';
 
                         if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
@@ -112,6 +113,11 @@
                         return;
                     }
                 });
+
+                if (mixed === false && _.size(this.telemetryFilters) !== _.size(this.domainObjectsKeyString)) {
+                    mixed = true;
+                }
+
                 this.mixed = mixed;
             },
             setLabels() {
@@ -128,15 +134,38 @@
                 this.setFilterNames();
                 this.checkFiltersForMixedValues();
                 this.setLabels();
+            },
+            addChildren(child) {
+                let keyString = this.openmct.objects.makeKeyString(child.identifier);
+                this.domainObjectsKeyString[keyString] = '';
+                this.checkFiltersForMixedValues();
+                this.setLabels();
+            },
+            removeChildren(identifier) {
+                let keyString = this.openmct.objects.makeKeyString(identifier);
+                delete this.domainObjectsKeyString[keyString];
             }
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
+            this.domainObjectsKeyString = {};
+            this.composition = this.openmct.composition.get(this.table.configuration.domainObject);
+
+            if (this.composition) {
+                this.composition.on('add', this.addChildren);
+                this.composition.on('remove', this.removeChildren);
+            }
+
             this.table.configuration.on('change', this.handleConfigurationChanges);
             this.updateFilters(filters);
         },
         destroyed() {
             this.table.configuration.off('change', this.handleConfigurationChanges);
+
+            if (this.composition) {
+                this.composition.off('add', this.addChildren);
+                this.composition.off('remove', this.removeChildren);
+            }
         }
     }
 </script>
