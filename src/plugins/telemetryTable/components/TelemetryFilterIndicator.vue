@@ -76,9 +76,8 @@
             },
             setFilterNames() {
                 let names = [];
-                let composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
-                composition && composition.load().then((domainObjects) => {
+                this.composition && this.composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.telemetryFilters[keyString];
