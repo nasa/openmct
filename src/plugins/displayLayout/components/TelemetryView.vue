@@ -23,6 +23,7 @@
  <template>
      <layout-frame :item="item"
                    :grid-size="gridSize"
+                   :class="{'c-telemetry-view--unknown': domainObject.type.indexOf('unknown') !== -1}"
                    @move="(gridDelta) => $emit('move', gridDelta)"
                    @endMove="() => $emit('endMove')">
         <div class="c-telemetry-view"
@@ -49,6 +50,19 @@
     .c-telemetry-view {
         display: flex;
         align-items: stretch;
+
+        &--unknown .c-telemetry-view__label-text {
+            @include isUnknown();
+            display: flex;
+            align-items: center;
+            &:before {
+                content: $glyph-icon-object-unknown;
+                font-family: symbolsfont;
+                font-style: normal;
+                display: inline-block;
+                margin-right: $interiorMarginSm;
+            }
+        }
 
         > * {
             // Label and value holders
