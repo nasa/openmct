@@ -81,7 +81,7 @@
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.telemetryFilters[keyString];
-                        this.domainObjectsKeyString[keyString] = '';
+                        this.domainObjectsKeyString.add(keyString);
 
                         if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
@@ -113,7 +113,7 @@
                     }
                 });
 
-                if (mixed === false && _.size(this.telemetryFilters) !== _.size(this.domainObjectsKeyString)) {
+                if (mixed === false && _.size(this.telemetryFilters) !== this.domainObjectsKeyString.length) {
                     mixed = true;
                 }
 
@@ -136,7 +136,7 @@
             },
             addChildren(child) {
                 let keyString = this.openmct.objects.makeKeyString(child.identifier);
-                this.domainObjectsKeyString[keyString] = '';
+                this.domainObjectsKeyString.delete(keyString);
                 this.checkFiltersForMixedValues();
                 this.setLabels();
             },
@@ -147,7 +147,7 @@
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
-            this.domainObjectsKeyString = {};
+            this.domainObjectsKeyString = new Set();
             this.composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
             if (this.composition) {
