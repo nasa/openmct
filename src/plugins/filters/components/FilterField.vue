@@ -14,6 +14,7 @@
                            type="text"
                            placeholder="Enter Value"
                            :id="`${filter}filterControl`"
+                           :disabled="useGlobal"
                            :value="persistedValue(filter)"
                            @change="updateFilterValue($event, filter)">
                 </template>
@@ -26,6 +27,7 @@
                         <input class="c-checkbox-list__input"
                                type="checkbox"
                                :id="`${value}filterControl`"
+                               :disabled="useGlobal"
                                @change="onUserSelect($event, filter.comparator, value)"
                                :checked="isChecked(filter.comparator, value)">
                         <span class="c-checkbox-list__value">
@@ -71,7 +73,8 @@ export default {
         'openmct'
     ],
     props: {
-        filterField: Object, 
+        filterField: Object,
+        useGlobal: Boolean,
         persistedFilters: {
             type: Object,
             default: () => {

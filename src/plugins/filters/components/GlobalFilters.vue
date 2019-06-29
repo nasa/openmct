@@ -17,6 +17,7 @@
                 :key="field.key"
                 :filterField="field"
                 :persistedFilters="globalFilters[field.key]"
+                @onUserSelect="collectUserSelects"
                 @onTextEnter="updateTextFilter">     
             </filter-field>
         </ul>
@@ -76,10 +77,9 @@
         watch: {
             globalFilters: {
                 handler: function checkFilters(newGlobalFilters) {
-                    console.log('newGlobalFilters', newGlobalFilters);                    
+                    console.log('newGlobalFilters', newGlobalFilters);
                     console.log('globalFilters:', this.globalFilters);
                     console.log('updatedFilters:', this.updatedFilters);
-                    // this.updatedFilters = JSON.parse(JSON.stringify(newGlobalFilters));
                 },
                 deep: true
             }
@@ -87,6 +87,24 @@
         methods: {
             toggleExpanded() {
                 this.expanded = !this.expanded;
+            },
+            collectUserSelects(key, comparator, valueName, value) {
+                let filterValue = this.updatedFilters[key];
+
+                if (filterValue && filterValue[comparator]) {
+                    if (value === false) {
+                        filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                    } else {
+                        filterValue[comparator].push(valueName);
+                    }
+                } else {
+                    if (!this.updatedFilters[key]) {
+                        this.$set(this.updatedFilters, key, {});
+                    }
+                    this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
+                }
+
+                this.$emit('persistGlobalFilters', key, this.updatedFilters);
             },
             updateTextFilter(key, comparator, value) {
                 if (value.trim() === '') {
@@ -103,12 +121,11 @@
                 }
 
                 this.$set(this.updatedFilters[key], comparator, value);
-                // this.updatedFilters[key][comparator] = value;
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             }
         },
         mounted() {
-            // this.updatedFilters = JSON.parse(JSON.stringify(this.globalFilters));
+
         }
     }
 </script>

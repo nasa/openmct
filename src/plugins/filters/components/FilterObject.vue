@@ -19,6 +19,7 @@
                 v-for="field in filterObject.valuesWithFilters"
                 :key="field.key"
                 :filterField="field"
+                :useGlobal="persistedFilters.useGlobal"
                 :persistedFilters="persistedFilters[field.key]"
                 @onUserSelect="collectUserSelects"
                 @onTextEnter="updateTextFilter">
@@ -52,15 +53,12 @@ export default {
         return {
             expanded: false,
             objectCssClass: undefined,
-            useGlobal: Boolean,
             updatedFilters: this.persistedFilters
         }
     },
     watch: {
         persistedFilters(newPersistedFilters) {            
-            console.log('watch-newFilters', newPersistedFilters, 'persistedFilters', this.persistedFilters ,'updatedFilters', this.updatedFilters);    
-            // this.updatedFilters = JSON.parse(JSON.stringify(newPersistedFilters));
-            console.log('new-updatedFilters', this.updatedFilters);
+            console.log('watch-newFilters', newPersistedFilters, 'persistedFilters', this.persistedFilters ,'updatedFilters', this.updatedFilters);
         }
     },
     methods: {
@@ -98,7 +96,7 @@ export default {
                 this.$set(this.updatedFilters, key, {});
                 this.$set(this.updatedFilters[key], comparator, '');
             }
-            // this.updatedFilters[key][comparator] = value;
+
             this.$set(this.updatedFilters[key], comparator, value);
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         }
@@ -107,15 +105,6 @@ export default {
         let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
         this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
         this.objectCssClass = type.definition.cssClass;
-        // this.updatedFilters = JSON.parse(JSON.stringify(this.persistedFilters));
-        
-        // if (!this.updatedFilters.useGlobal) {
-        //     // this.updatedFilters.useGlobal = true;
-        //     this.$set(this.updatedFilters, "useGlobal", true);
-        //     this.$emit('updateFilters', this.keyString, this.updatedFilters);
-        // }
-
-        this.useGlobal = this.updatedFilters.useGlobal;
     }
 }
 </script>

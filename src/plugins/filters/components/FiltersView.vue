@@ -38,8 +38,8 @@ export default {
         let persistedFilters = {};
         let globalFilters = {};
 
-        if (providedObject.configuration && providedObject.configuration.filters) {
-            persistedFilters = providedObject.configuration.filters;
+        if (configuration && configuration.filters) {
+            persistedFilters = configuration.filters;
         }
 
         if (configuration && configuration.globalFilters) {
@@ -119,7 +119,6 @@ export default {
             this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
         },
         updateGlobalFilters(filters) {
-            console.log('global filters updated');
             this.globalFilters = filters;
         },
         containsField(keyString, field) {
