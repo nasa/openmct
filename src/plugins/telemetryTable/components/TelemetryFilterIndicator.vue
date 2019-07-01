@@ -116,7 +116,7 @@
 
                 // If the filtered telemetry is not mixed at this point, check the number of available objects
                 // with the number of filtered telemetry. If they are not equal, the filters must be mixed.
-                if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.length) {
+                if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.size) {
                     mixed = true;
                 }
 
@@ -134,18 +134,21 @@
             updateFilters(filters) {
                 this.filteredTelemetry = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
-                this.checkFiltersForMixedValues();
-                this.setLabels();
+                this.updateIndicatorLabel();
             },
             addChildren(child) {
                 let keyString = this.openmct.objects.makeKeyString(child.identifier);
                 this.telemetryKeyStrings.add(keyString);
-                this.checkFiltersForMixedValues();
-                this.setLabels();
+                this.updateIndicatorLabel();
             },
             removeChildren(identifier) {
                 let keyString = this.openmct.objects.makeKeyString(identifier);
                 this.telemetryKeyStrings.delete(keyString);
+                this.updateIndicatorLabel();
+            },
+            updateIndicatorLabel() {
+                this.checkFiltersForMixedValues();
+                this.setLabels();
             }
         },
         mounted() {
