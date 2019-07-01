@@ -22,7 +22,7 @@
 <template>
     <div class="c-so-view has-local-controls"
         :class="{
-            'c-so-view--no-frame': !hasFrame,
+            'c-so-view--no-frame': !hasFrame && cssClass.indexOf('unknown') === -1,
             'has-complex-content': complexContent
         }">
         <div class="c-so-view__header"

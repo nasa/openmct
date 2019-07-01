@@ -22,7 +22,7 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  :title="domainObject && domainObject.name"
+                  :title="domainObject && domainObject.name + ': ' + domainObject.type"
                   @move="(gridDelta) => $emit('move', gridDelta)"
                   @endMove="() => $emit('endMove')">
         <object-frame v-if="domainObject"

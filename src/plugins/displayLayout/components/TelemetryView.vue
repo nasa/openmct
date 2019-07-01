@@ -23,13 +23,14 @@
  <template>
      <layout-frame :item="item"
                    :grid-size="gridSize"
+                   :title="domainObject && domainObject.name + ': ' + domainObject.type"
                    :class="{'c-telemetry-view--unknown': domainObject.type.indexOf('unknown') !== -1}"
                    @move="(gridDelta) => $emit('move', gridDelta)"
                    @endMove="() => $emit('endMove')">
         <div class="c-telemetry-view"
              :style="styleObject"
              v-if="domainObject">
-            <div v-if="showLabel"
+            <div v-if="showLabel || domainObject.type.indexOf('unknown') !== -1"
                   class="c-telemetry-view__label">
                 <div class="c-telemetry-view__label-text">{{ domainObject.name }}</div>
             </div>
@@ -51,16 +52,24 @@
         display: flex;
         align-items: stretch;
 
-        &--unknown .c-telemetry-view__label-text {
-            @include isUnknown();
-            display: flex;
-            align-items: center;
-            &:before {
-                content: $glyph-icon-object-unknown;
-                font-family: symbolsfont;
-                font-style: normal;
-                display: inline-block;
-                margin-right: $interiorMarginSm;
+        &--unknown {
+            .c-telemetry-view__label-text {
+                @include isUnknown();
+                display: flex;
+                align-items: center;
+                &:before {
+                    content: $glyph-icon-object-unknown;
+                    font-family: symbolsfont;
+                    font-style: normal;
+                    display: inline-block;
+                    margin-right: $interiorMarginSm;
+                }
+            }
+
+            &.no-frame {
+                background-color: deeppink !important;
+                // Negate no-frame styles to allow header to show
+
             }
         }
 
