@@ -64,7 +64,7 @@
         data() {
             return {
                 filterNames: [],
-                telemetryFilters: {},
+                filteredTelemetry: {},
                 mixed: false,
                 label: '',
                 title: ''
@@ -80,8 +80,8 @@
                 this.composition && this.composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let filters = this.telemetryFilters[keyString];
-                        this.domainObjectsKeyString.add(keyString);
+                        let filters = this.filteredTelemetry[keyString];
+                        this.telemetryKeyStrings.add(keyString);
 
                         if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
@@ -99,21 +99,24 @@
                 });
             },
             handleConfigurationChanges(configuration) {
-                if (!_.eq(this.telemetryFilters, configuration.filters)) {
+                if (!_.eq(this.filteredTelemetry, configuration.filters)) {
                     this.updateFilters(configuration.filters || {});
                 }
             },
             checkFiltersForMixedValues() {
-                let valueToCompare = this.telemetryFilters[Object.keys(this.telemetryFilters)[0]];
+                let valueToCompare = this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]];
                 let mixed = false;
-                Object.values(this.telemetryFilters).forEach(value => {
+
+                Object.values(this.filteredTelemetry).forEach(value => {
                     if (!_.isEqual(valueToCompare, value)) {
                         mixed = true;
                         return;
                     }
                 });
 
-                if (mixed === false && _.size(this.telemetryFilters) !== this.domainObjectsKeyString.length) {
+                // If the filtered telemetry is not mixed at this point, check the number of available objects
+                // with the number of filtered telemetry. If they are not equal, the filters must be mixed.
+                if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.length) {
                     mixed = true;
                 }
 
@@ -129,25 +132,25 @@
                 }
             },
             updateFilters(filters) {
-                this.telemetryFilters = JSON.parse(JSON.stringify(filters));
+                this.filteredTelemetry = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
                 this.checkFiltersForMixedValues();
                 this.setLabels();
             },
             addChildren(child) {
                 let keyString = this.openmct.objects.makeKeyString(child.identifier);
-                this.domainObjectsKeyString.delete(keyString);
+                this.telemetryKeyStrings.add(keyString);
                 this.checkFiltersForMixedValues();
                 this.setLabels();
             },
             removeChildren(identifier) {
                 let keyString = this.openmct.objects.makeKeyString(identifier);
-                delete this.domainObjectsKeyString[keyString];
+                this.telemetryKeyStrings.delete(keyString);
             }
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
-            this.domainObjectsKeyString = new Set();
+            this.telemetryKeyStrings = new Set();
             this.composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
             if (this.composition) {
