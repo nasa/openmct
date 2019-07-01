@@ -22,7 +22,7 @@
 
 import ClearDataAction from '../clearDataAction.js';
 
-fdescribe('Clear Data Action', function () {
+describe('Clear Data Action', function () {
     var mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']),
         openmct = {objectViews: mockObjectViews},
         mockObjectPath = [
