@@ -65,12 +65,6 @@
                     margin-right: $interiorMarginSm;
                 }
             }
-
-            &.no-frame {
-                background-color: deeppink !important;
-                // Negate no-frame styles to allow header to show
-
-            }
         }
 
         > * {
