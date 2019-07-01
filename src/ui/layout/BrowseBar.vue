@@ -5,7 +5,12 @@
                 class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
                 @click="goToParent"></button>
             <div class="l-browse-bar__object-name--w"
-                 :class="type.cssClass">
+                 :class="[
+                     {
+                        'l-browse-bar--unknown': type.cssClass.indexOf('unknown') !== -1
+                     },
+                    type.cssClass
+                 ]">
                 <span
                     class="l-browse-bar__object-name c-input-inline"
                     @blur="updateName"
@@ -315,6 +320,10 @@ const PLACEHOLDER_OBJECT = {};
 
         &__object-name {
             flex: 0 1 auto;
+        }
+
+        &--unknown {
+            @include isUnknown();
         }
     }
 </style>
