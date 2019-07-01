@@ -106,6 +106,8 @@
     font-style: italic;
     opacity: 0.7;
 
+    &[class*='icon']:before,
+    &[class*='icon']:after,
     [class*='icon']:before,
     [class*='icon']:after {
         font-style: normal; // Prevent symbolsfont element from being italicized;

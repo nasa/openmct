@@ -16,7 +16,10 @@
                 v-for="(tab,index) in tabsList"
                 :key="index"
                 :class="[
-                    {'is-current': isCurrent(tab)},
+                    {
+                    'is-current': isCurrent(tab),
+                    'c-tab--unknown': tab.type.definition.cssClass.indexOf('unknown') !== -1
+                    },
                     tab.type.definition.cssClass
                 ]"
                 @click="showTab(tab)">
@@ -29,7 +32,12 @@
             :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}">
             <div v-if="currentTab"
                  class="c-tabs-view__object-name l-browse-bar__object-name--w"
-                 :class="currentTab.type.definition.cssClass">
+                 :class="[
+                 {
+                    'c-tabs-view__object--unknown': tab.type.definition.cssClass.indexOf('unknown') !== -1
+                 },
+                    currentTab.type.definition.cssClass
+                 ]">
                 <div class="l-browse-bar__object-name">
                     {{currentTab.domainObject.name}}
                 </div>
@@ -100,6 +108,13 @@
             text-align: center;
             line-height: $h;
             width: 100%;
+        }
+    }
+
+    .c-tab,
+    .c-tabs-view__object {
+        &--unknown {
+            @include isUnknown();
         }
     }
 </style>
