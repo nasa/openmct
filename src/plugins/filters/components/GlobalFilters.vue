@@ -16,7 +16,7 @@
                 v-for="field in globalObject"
                 :key="field.key"
                 :filterField="field"
-                :persistedFilters="globalFilters[field.key]"
+                :persistedFilters="updatedFilters[field.key]"
                 @onUserSelect="collectUserSelects"
                 @onTextEnter="updateTextFilter">     
             </filter-field>
@@ -71,15 +71,13 @@
         data() {
             return {
                 expanded: false,
-                updatedFilters: this.globalFilters
+                updatedFilters: JSON.parse(JSON.stringify(this.globalFilters))
             }
         },
         watch: {
             globalFilters: {
                 handler: function checkFilters(newGlobalFilters) {
-                    console.log('newGlobalFilters', newGlobalFilters);
-                    console.log('globalFilters:', this.globalFilters);
-                    console.log('updatedFilters:', this.updatedFilters);
+                    this.updatedFilters = JSON.parse(JSON.stringify(newGlobalFilters));
                 },
                 deep: true
             }
