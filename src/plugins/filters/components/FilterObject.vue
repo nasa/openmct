@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <ul class="grid-properties" v-if="expanded">
+        <div v-if="expanded">
             <span v-if="isEditing || persistedFilters.useGlobal">Use global filter</span>
             <input v-if="isEditing"
                 class="c-checkbox-list__input"
@@ -23,6 +23,8 @@
                 @change="onUseGlobalFilter($event)"
                 :disabled="!isEditing"
                 :checked="persistedFilters.useGlobal" />
+        </div>
+        <ul class="grid-properties" v-if="expanded">
             <filter-field
                 v-for="field in filterObject.valuesWithFilters"
                 :key="field.key"
