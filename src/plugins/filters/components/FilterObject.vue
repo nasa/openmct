@@ -13,8 +13,16 @@
                 </div>
             </div>
         </div>
+
         <ul class="grid-properties" v-if="expanded">
-            <!-- <div>Use global filter</div> -->
+            <span v-if="isEditing || persistedFilters.useGlobal">Use global filter</span>
+            <input v-if="isEditing"
+                class="c-checkbox-list__input"
+                type="checkbox"
+                :id="keyString"
+                @change="onUseGlobalFilter($event)"
+                :disabled="!isEditing"
+                :checked="persistedFilters.useGlobal" />
             <filter-field
                 v-for="field in filterObject.valuesWithFilters"
                 :key="field.key"
@@ -53,7 +61,8 @@ export default {
         return {
             expanded: false,
             objectCssClass: undefined,
-            updatedFilters: this.persistedFilters
+            updatedFilters: this.persistedFilters,
+            isEditing: this.openmct.editor.isEditing()
         }
     },
     watch: {
@@ -99,12 +108,23 @@ export default {
 
             this.$set(this.updatedFilters[key], comparator, value);
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
-        }
+        },
+        onUseGlobalFilter(event) {
+            this.updatedFilters.useGlobal = event.target.checked;
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
+        },
+        toggleIsEditing(isEditing) {
+            this.isEditing = isEditing;
+        },
     },
     mounted() {
         let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
         this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
         this.objectCssClass = type.definition.cssClass;
+        this.openmct.editor.on('isEditing', this.toggleIsEditing);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     }
 }
 </script>

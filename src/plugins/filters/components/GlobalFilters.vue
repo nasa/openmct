@@ -123,9 +123,6 @@
                 this.$set(this.updatedFilters[key], comparator, value);
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             }
-        },
-        mounted() {
-
         }
     }
 </script>
