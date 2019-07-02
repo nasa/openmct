@@ -20,8 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<tr :style="{ top: rowTop, background: marked ? 'red' : '' }" 
-    :class="rowLimitClass"
+<tr :style="{ top: rowTop }"
+    :class="[
+        rowLimitClass,
+        {'is-selected': marked}
+    ]"
     @click="markRow">
     <td v-for="(title, key) in headers" 
         :key="key"
