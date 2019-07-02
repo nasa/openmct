@@ -23,18 +23,18 @@
                 @change="onUseGlobalFilter($event)"
                 :disabled="!isEditing"
                 :checked="persistedFilters.useGlobal" />
+            <ul class="grid-properties" v-if="isEditing || (!isEditing && !persistedFilters.useGlobal)">
+                <filter-field
+                    v-for="field in filterObject.valuesWithFilters"
+                    :key="field.key"
+                    :filterField="field"
+                    :useGlobal="persistedFilters.useGlobal"
+                    :persistedFilters="persistedFilters[field.key]"
+                    @onUserSelect="collectUserSelects"
+                    @onTextEnter="updateTextFilter">
+                </filter-field>
+            </ul>
         </div>
-        <ul class="grid-properties" v-if="expanded">
-            <filter-field
-                v-for="field in filterObject.valuesWithFilters"
-                :key="field.key"
-                :filterField="field"
-                :useGlobal="persistedFilters.useGlobal"
-                :persistedFilters="persistedFilters[field.key]"
-                @onUserSelect="collectUserSelects"
-                @onTextEnter="updateTextFilter">
-            </filter-field>
-        </ul>
     </li>
 </template>
 
@@ -65,11 +65,6 @@ export default {
             objectCssClass: undefined,
             updatedFilters: this.persistedFilters,
             isEditing: this.openmct.editor.isEditing()
-        }
-    },
-    watch: {
-        persistedFilters(newPersistedFilters) {            
-            console.log('watch-newFilters', newPersistedFilters, 'persistedFilters', this.persistedFilters ,'updatedFilters', this.updatedFilters);
         }
     },
     methods: {
