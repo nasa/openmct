@@ -26,7 +26,7 @@
         <button class="c-button icon-download labeled"
            v-on:click="exportAllDataAsCSV()"
            title="Export This View's Data">
-            <span class="c-button__label">Export As CSV</span>
+            <span class="c-button__label">Export Table Data</span>
         </button>
         <button class="c-button icon-download labeled"
             v-show="markCounter > 0"
@@ -233,6 +233,10 @@
                 align-items: stretch;
                 position: absolute;
                 height: 18px; // Needed when a row has empty values in its cells
+
+                &.is-selected {
+                    background-color: $colorSelectedBg;
+                }
             }
 
             td {
