@@ -1,10 +1,12 @@
 <template>
-    <li>
+    <li class="c-tree__item-h">
         <div class="c-tree__item menus-to-left"
              @click="toggleExpanded">
+            <div class="c-filter-tree-item__filter-indicator"
+                :class="{'icon-filter': filtersDefined }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="{'c-disclosure-triangle--expanded': expanded}"></span>
-            <div class="c-tree__item__label">
+            <div class="c-tree__item__label c-object-label">
                 <div class="c-object-label">
                     <div class="c-object-label__type-icon"
                          :class="objectCssClass">
@@ -15,15 +17,17 @@
         </div>
 
         <div v-if="expanded">
-            <span v-if="isEditing || persistedFilters.useGlobal">Use global filter</span>
-            <input v-if="isEditing"
-                class="c-checkbox-list__input"
-                type="checkbox"
-                :id="keyString"
-                @change="onUseGlobalFilter($event)"
-                :disabled="!isEditing"
-                :checked="persistedFilters.useGlobal" />
-            <ul class="grid-properties" v-if="isEditing || (!isEditing && !persistedFilters.useGlobal)">
+            <ul class="c-properties" v-if="isEditing || (!isEditing && !persistedFilters.useGlobal)">
+                <div class="c-properties__label span-all"
+                     v-if="isEditing">
+                    <input v-if="isEditing"
+                           class="c-checkbox-list__input"
+                           type="checkbox"
+                           :id="keyString"
+                           @change="onUseGlobalFilter($event)"
+                           :checked="persistedFilters.useGlobal" />
+                    <span>Use global filter</span>
+                </div>
                 <filter-field
                     v-for="field in filterObject.valuesWithFilters"
                     :key="field.key"
@@ -64,6 +68,7 @@ export default {
             expanded: false,
             objectCssClass: undefined,
             updatedFilters: this.persistedFilters,
+            filtersDefined: true, // TODO: Wire this up - should be true when the user has entered filter values, or this item is using global filters and filters have been defined
             isEditing: this.openmct.editor.isEditing()
         }
     },

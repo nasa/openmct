@@ -1,12 +1,12 @@
 <template>
-    <div class="u-contents c-filter-settings">
-        <li class="grid-row c-filter-settings__setting"
+    <div class="c-properties__section c-filter-settings">
+        <li class="c-properties__row c-filter-settings__setting"
             v-for="(filter, index) in filterField.filters"
             :key="index">
-            <div class="grid-cell label">
+            <div class="c-properties__label label">
                 {{ filterField.name }} =
             </div>
-            <div class="grid-cell value">
+            <div class="c-properties__value value">
                 <!-- EDITING -->
                 <!-- String input, editing -->
                 <template v-if="!filter.possibleValues && isEditing">
@@ -44,11 +44,11 @@
 
                 <!-- Checkbox list, NOT editing -->
                 <template v-if="filter.possibleValues && !isEditing">
-                    <span 
+                    <span
                         v-if="persistedFilters[filter.comparator]">
                         {{persistedFilters[filter.comparator].join(', ')}}
                     </span>
-                </template>
+      di        </template>
             </div>
         </li>
     </div>
@@ -56,14 +56,14 @@
 
 <style lang="scss">
     @import "~styles/sass-base";
-
+/*
     .c-filter-settings {
         &__setting {
             .grid-cell.label {
                 white-space: nowrap;
             }
         }
-    }
+    }*/
 </style>
 
 

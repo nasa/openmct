@@ -1,6 +1,9 @@
 <template>
-    <ul class="tree c-tree c-properties__section" v-if="Object.keys(children).length">
-        <h2 class="c-properties__header">Data Filters</h2>
+    <ul class="c-tree c-filter-tree" v-if="Object.keys(children).length">
+        <h2>Data Filters</h2>
+        <div class="c-filter-indication"
+            v-if="filtersApplied">{{ label }}
+        </div>
         <global-filters
             :globalFilters="globalFilters"
             :globalObject="globalObject"
@@ -17,6 +20,23 @@
 </template>
 
 <style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-inspector {
+        .c-filter-indication {
+            border-radius: $smallCr;
+            font-size: inherit;
+            padding: $interiorMarginSm $interiorMargin;
+            text-transform: inherit;
+        }
+        .c-filter-tree {
+            // Filters UI uses a tree-based structure
+            .c-properties {
+                // Add extra margin to account for filter-indicator
+                margin-left: 38px;
+            }
+        }
+    }
 
 </style>
 
@@ -51,7 +71,10 @@ export default {
             persistedFilters,
             globalFilters,
             globalObject: {},
-            children: {}
+            children: {},
+            filtersApplied: true, //TODO: Wire this up - should be true when the user has entered any filter values
+            filtersMixed: true, // TODO: Wire this up - should be true when filter values are mixed
+            label: (true)? 'Mixed filters applied' : 'Filters applied' // TODO: Wire this up
         }
     },
     methods: {

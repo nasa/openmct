@@ -33,7 +33,6 @@
         }
 
         &__mixed {
-            font-weight: bold;
             margin-right: $interiorMarginSm;
         }
 

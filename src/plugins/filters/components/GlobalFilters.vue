@@ -1,24 +1,26 @@
 <template>
-    <li>
+    <li class="c-tree__item-h">
         <div class="c-tree__item menus-to-left"
-            @click="toggleExpanded">
+             @click="toggleExpanded">
+            <div class="c-filter-tree-item__filter-indicator"
+                 :class="{'icon-filter': globalFiltersDefined }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
-                :class="{'c-disclosure-triangle--expanded': expanded}"></span>
-            <div class="c-tree__item__label">
+                  :class="{'c-disclosure-triangle--expanded': expanded}"></span>
+            <div class="c-tree__item__label c-object-label">
                 <div class="c-object-label">
-                    <div class="c-object-label__type-icon c-filter-indication c-filter-indication__global"></div>
+                    <div class="c-object-label__type-icon icon-gear"></div>
                     <div class="c-object-label__name flex-elem grows">Global Filtering</div>
                 </div>
             </div>
         </div>
-        <ul class="grid-properties" v-if="expanded">
+        <ul class="c-properties" v-if="expanded">
             <filter-field
-                v-for="field in globalObject"
-                :key="field.key"
-                :filterField="field"
-                :persistedFilters="updatedFilters[field.key]"
-                @onUserSelect="collectUserSelects"
-                @onTextEnter="updateTextFilter">     
+                    v-for="field in globalObject"
+                    :key="field.key"
+                    :filterField="field"
+                    :persistedFilters="updatedFilters[field.key]"
+                    @onUserSelect="collectUserSelects"
+                    @onTextEnter="updateTextFilter">
             </filter-field>
         </ul>
     </li>
@@ -27,6 +29,7 @@
 <style lang="scss">
     @import "~styles/sass-base";
     .c-filter-indication {
+        // Appears as a block element beneath tables
         @include userSelectNone();
         background: $colorFilterBg;
         color: $colorFilterFg;
@@ -44,9 +47,12 @@
             font-size: 12px;
             margin-right: $interiorMarginSm;
         }
+    }
 
-        &__global {
-            background-color: #fff;
+    .c-filter-tree-item {
+        &__filter-indicator {
+            color: $colorFilterFg;
+            width: 1.2em; // Set width explicitly for layout reasons: will either have class icon-filter, or none.
         }
     }
 </style>
@@ -71,7 +77,8 @@
         data() {
             return {
                 expanded: false,
-                updatedFilters: JSON.parse(JSON.stringify(this.globalFilters))
+                updatedFilters: JSON.parse(JSON.stringify(this.globalFilters)),
+                globalFiltersDefined: true // TODO: Wire this up - should be true when the user has entered global filter values
             }
         },
         watch: {
