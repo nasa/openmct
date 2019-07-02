@@ -346,7 +346,8 @@ export default {
             isDropTargetActive: false,
             isAutosizeEnabled: configuration.autosize,
             scrollW: 0,
-            markCounter: 0
+            markCounter: 0,
+            paused: false
         }
     },
     computed: {
@@ -642,14 +643,29 @@ export default {
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
+        pause() {
+            this.paused = true;
+            this.autoScroll = false;
+            this.table.pause();
+        },
+        unpause() {
+            this.paused = false;
+            this.autoScroll = true;
+            this.table.unpause();
+        },
         markRow(rowIndex) {
             this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
             this.markCounter += 1;
             this.$set(this.visibleRows[rowIndex], 'marked', true);
+            this.pause();
         },
         unmarkRow(rowIndex) {
             this.markCounter -= 1;
             this.$set(this.visibleRows[rowIndex], 'marked', false);
+
+            if (this.markCounter <= 0) {
+                this.unpause();
+            }
         },
         unmarkAllRows() {
             let allRows = this.table.filteredRows.getRows();
@@ -660,6 +676,8 @@ export default {
             this.lastMarkedRow = undefined;
             this.visibleRowsUpdated = false;
             this.markCounter = 0;
+
+            this.unpause();
         },
         markMultipleRows(rowIndex) {
             if (this.firstMarkedRow === undefined) {

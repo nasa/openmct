@@ -45,6 +45,7 @@ define([
             this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
+            this.rowBuffer = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
 
@@ -57,6 +58,7 @@ define([
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
+            this.paused = false;
 
             this.createTableRowCollections();
 
@@ -202,7 +204,14 @@ define([
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
                 }
-                this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+
+                let row = new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
+
+                if (this.paused) {
+                    this.rowBuffer.push(row);
+                } else {
+                    this.boundedRows.add(row);
+                }
             }, subscribeOptions);
         }
 
@@ -232,6 +241,18 @@ define([
                 configuration.sortOptions = sortOptions;
                 this.configuration.updateConfiguration(configuration);
             }
+        }
+
+        pause() {
+            this.paused = true;
+        }
+
+        unpause() {
+            if (this.rowBuffer.length) {
+                this.rowBuffer.forEach((r) => this.boundedRows.add(r));
+                this.rowBuffer = [];
+            }
+            this.paused = false;
         }
 
         destroy() {
