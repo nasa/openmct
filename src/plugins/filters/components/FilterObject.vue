@@ -86,7 +86,13 @@ export default {
 
             if (filterValue && filterValue[comparator]) {
                 if (value === false) {
-                    filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                    let filteredValueName = filterValue[comparator].filter(v => v !== valueName);
+
+                    if (filteredValueName.length === 0) {
+                        delete this.updatedFilters[key];
+                    } else {
+                        filterValue[comparator] = filteredValueName;
+                    }
                 } else {
                     filterValue[comparator].push(valueName);
                 }

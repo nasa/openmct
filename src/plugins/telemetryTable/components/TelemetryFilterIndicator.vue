@@ -63,7 +63,7 @@
         data() {
             return {
                 filterNames: [],
-                telemetryFilters: {},
+                filteredTelemetry: {},
                 mixed: false,
                 label: '',
                 title: ''
@@ -75,12 +75,12 @@
             },
             setFilterNames() {
                 let names = [];
-                let composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
-                composition.load().then((domainObjects) => {
+                this.composition && this.composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let filters = this.telemetryFilters[keyString];
+                        let filters = this.filteredTelemetry[keyString];
+                        this.telemetryKeyStrings.add(keyString);
 
                         if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
@@ -98,19 +98,27 @@
                 });
             },
             handleConfigurationChanges(configuration) {
-                if (!_.eq(this.telemetryFilters, configuration.filters)) {
+                if (!_.eq(this.filteredTelemetry, configuration.filters)) {
                     this.updateFilters(configuration.filters || {});
                 }
             },
             checkFiltersForMixedValues() {
-                let valueToCompare = this.telemetryFilters[Object.keys(this.telemetryFilters)[0]];
+                let valueToCompare = this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]];
                 let mixed = false;
-                Object.values(this.telemetryFilters).forEach(value => {
+
+                Object.values(this.filteredTelemetry).forEach(value => {
                     if (!_.isEqual(valueToCompare, value)) {
                         mixed = true;
                         return;
                     }
                 });
+
+                // If the filtered telemetry is not mixed at this point, check the number of available objects
+                // with the number of filtered telemetry. If they are not equal, the filters must be mixed.
+                if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.size) {
+                    mixed = true;
+                }
+
                 this.mixed = mixed;
             },
             setLabels() {
@@ -123,19 +131,45 @@
                 }
             },
             updateFilters(filters) {
-                this.telemetryFilters = JSON.parse(JSON.stringify(filters));
+                this.filteredTelemetry = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
+                this.updateIndicatorLabel();
+            },
+            addChildren(child) {
+                let keyString = this.openmct.objects.makeKeyString(child.identifier);
+                this.telemetryKeyStrings.add(keyString);
+                this.updateIndicatorLabel();
+            },
+            removeChildren(identifier) {
+                let keyString = this.openmct.objects.makeKeyString(identifier);
+                this.telemetryKeyStrings.delete(keyString);
+                this.updateIndicatorLabel();
+            },
+            updateIndicatorLabel() {
                 this.checkFiltersForMixedValues();
                 this.setLabels();
             }
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
+            this.telemetryKeyStrings = new Set();
+            this.composition = this.openmct.composition.get(this.table.configuration.domainObject);
+
+            if (this.composition) {
+                this.composition.on('add', this.addChildren);
+                this.composition.on('remove', this.removeChildren);
+            }
+
             this.table.configuration.on('change', this.handleConfigurationChanges);
             this.updateFilters(filters);
         },
         destroyed() {
             this.table.configuration.off('change', this.handleConfigurationChanges);
+
+            if (this.composition) {
+                this.composition.off('add', this.addChildren);
+                this.composition.off('remove', this.removeChildren);
+            }
         }
     }
 </script>
