@@ -105,11 +105,11 @@ export default {
 
                 if (!childExist) {
                     if (!this.persistedFilters[keyString]) {
-                        this.persistedFilters[keyString] = {};
-                        this.persistedFilters[keyString].useGlobal = true;
+                        this.$set(this.persistedFilters, keyString, {});
+                        this.$set(this.persistedFilters[keyString], 'useGlobal', true);
                     }
 
-                    this.persistedFilters[keyString][field.key] = this.globalFilters[field.key];
+                    this.$set(this.persistedFilters[keyString], field.key, this.globalFilters[field.key]);
                 }
             });
         },
@@ -140,10 +140,10 @@ export default {
                         this.$set(this.persistedFilters[keyString], key, {});
                     }
 
-                    this.persistedFilters[keyString][key] = userSelects[key];
+                    this.$set(this.persistedFilters[keyString], key, userSelects[key]);
                 }
             });
-            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
+            this.mutateConfigurationFilters();
         },
         updateGlobalFilters(filters) {
             this.globalFilters = filters;

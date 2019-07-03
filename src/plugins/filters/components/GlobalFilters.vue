@@ -86,7 +86,7 @@
                 Object.values(this.globalFilters).forEach(field => {
                     if (!filtersDefined) {
                         Object.values(field).forEach(comparator => {
-                            if (comparator || comparator !== '' || comparator.length > 0) {
+                            if (comparator && (comparator !== '' || comparator.length > 0)) {
                                 filtersDefined = true;
                                 return;
                             }

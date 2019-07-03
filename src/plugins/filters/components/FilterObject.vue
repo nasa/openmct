@@ -38,7 +38,7 @@
                         :key="field.key"
                         :filterField="field"
                         :useGlobal="persistedFilters.useGlobal"
-                        :persistedFilters="persistedFilters[field.key]"
+                        :persistedFilters="updatedFilters[field.key]"
                         @onUserSelect="collectUserSelects"
                         @onTextEnter="updateTextFilter">
                 </filter-field>
@@ -70,8 +70,16 @@ export default {
         return {
             expanded: false,
             objectCssClass: undefined,
-            updatedFilters: this.persistedFilters,
+            updatedFilters: JSON.parse(JSON.stringify(this.persistedFilters)),
             isEditing: this.openmct.editor.isEditing()
+        }
+    },
+    watch: {
+        persistedFilters: {
+            handler: function checkFilters(newpersistedFilters) {
+                this.updatedFilters = JSON.parse(JSON.stringify(newpersistedFilters));
+            },
+            deep: true
         }
     },
     computed: {
@@ -109,7 +117,7 @@ export default {
                     }
                 }
             } else {
-                this.$set(this.updatedFilters[key], comparator, valueName);
+                this.$set(this.updatedFilters[key], comparator, [valueName]);
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
