@@ -14,7 +14,7 @@
     .c-toggle-switch {
         $d: 12px;
         $m: 2px;
-        $br: $basicCr;
+        $br: $d/1.5;
         cursor: pointer;
         overflow: hidden;
         display: inline;
@@ -34,6 +34,7 @@
                 // Knob
                 background: $colorBtnFg; // TODO: make discrete theme constants for these colors
                 border-radius: floor($br * 0.8);
+                box-shadow: rgba(black, 0.4) 0 0 2px;
                 content: '';
                 display: block;
                 position: absolute;

@@ -17,9 +17,27 @@
         </div>
 
         <div v-if="expanded">
-            <ul class="c-properties" v-if="isEditing || (!isEditing && !persistedFilters.useGlobal)">
+            <ul class="c-properties" v-if="!isEditing">
+                <!-- Browse mode -->
                 <div class="c-properties__label span-all"
-                     v-if="isEditing">
+                    v-if="persistedFilters.useGlobal">
+                    Uses global filter
+                </div>
+                <filter-field
+                        v-if="!persistedFilters.useGlobal"
+                        v-for="field in filterObject.valuesWithFilters"
+                        :key="field.key"
+                        :filterField="field"
+                        :useGlobal="persistedFilters.useGlobal"
+                        :persistedFilters="persistedFilters[field.key]"
+                        @onUserSelect="collectUserSelects"
+                        @onTextEnter="updateTextFilter">
+                </filter-field>
+            </ul>
+
+            <ul class="c-properties" v-if="isEditing">
+                <!-- Edit mode -->
+                <div class="c-properties__label span-all">
                     <toggle-switch
                             :id="keyString"
                             @change="onUseGlobalFilter"
@@ -37,7 +55,6 @@
                     @onTextEnter="updateTextFilter">
                 </filter-field>
             </ul>
-            <span v-if="!isEditing && persistedFilters.useGlobal">Use global filter</span>
         </div>
     </li>
 </template>

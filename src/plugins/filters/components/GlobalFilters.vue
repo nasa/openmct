@@ -51,7 +51,7 @@
 
     .c-filter-tree-item {
         &__filter-indicator {
-            color: $colorFilterFg;
+            color: $colorFilterBg;
             width: 1.2em; // Set width explicitly for layout reasons: will either have class icon-filter, or none.
         }
     }

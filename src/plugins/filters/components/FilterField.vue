@@ -3,7 +3,8 @@
         <li class="c-properties__row c-filter-settings__setting"
             v-for="(filter, index) in filterField.filters"
             :key="index">
-            <div class="c-properties__label label">
+            <div class="c-properties__label label"
+                 :disabled="useGlobal">
                 {{ filterField.name }} =
             </div>
             <div class="c-properties__value value">
@@ -12,7 +13,6 @@
                 <template v-if="!filter.possibleValues && isEditing">
                     <input class="c-input--flex"
                            type="text"
-                           placeholder="Enter Value"
                            :id="`${filter}filterControl`"
                            :disabled="useGlobal"
                            :value="persistedValue(filter)"
@@ -53,19 +53,6 @@
         </li>
     </div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-/*
-    .c-filter-settings {
-        &__setting {
-            .grid-cell.label {
-                white-space: nowrap;
-            }
-        }
-    }*/
-</style>
-
 
 <script>
 export default {
