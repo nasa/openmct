@@ -32,20 +32,20 @@
             <span class="c-button__label">Export Table Data</span>
         </button>
         <button class="c-button icon-download labeled"
-            v-show="markCounter > 0"
+            v-show="markedRows.length"
             v-on:click="exportMarkedDataAsCSV()"
             title="Export Marked Rows As CSV">
             <span class="c-button__label">Export Marked Rows</span>
         </button>
         <button class="c-button icon-x labeled"
-            v-show="markCounter > 0"
+            v-show="markedRows.length"
             v-on:click="unmarkAllRows()"
             title="Unmark All Rows">
             <span class="c-button__label">Unmark All Rows</span>
         </button>
         <button class="c-button icon-pause pause-play"
-                :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
-            v-on:click="togglePause()"
+            :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
+            v-on:click="togglePauseByButton()"
             :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
         </button>
     </div>
@@ -112,7 +112,7 @@
                     :marked="row.marked"
                     @mark="markRow"
                     @unmark="unmarkRow"
-                    @markMultiple="markMultipleRows">
+                    @markMultipleConcurrent="markMultipleConcurrentRows">
                 </telemetry-table-row>
             </tbody>
         </table>
@@ -363,7 +363,8 @@ export default {
             isAutosizeEnabled: configuration.autosize,
             scrollW: 0,
             markCounter: 0,
-            paused: false
+            paused: false,
+            markedRows: []
         }
     },
     computed: {
@@ -658,55 +659,77 @@ export default {
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
-        pause() {
+        pause(pausedByButton) {
+            if (pausedByButton) {
+                this.pausedByButton = true;
+            }
             this.paused = true;
             this.table.pause();
         },
-        unpause() {
-            this.paused = false;
-            this.table.unpause();
-        },
-        togglePause() {
-            if (this.paused) {
-                this.unpause();
+        unpause(unpausedByButton) {
+            if (unpausedByButton) {
+                this.paused = false;
+                this.table.unpause();
+                this.markedRows = [];
+                this.pausedByButton = false;
             } else {
-                this.pause();
+                if (!this.pausedByButton) {
+                    this.paused = false;
+                    this.table.unpause();
+                    this.markedRows = [];
+                }
+            }
+            
+        },
+        togglePauseByButton() {
+            if (this.paused) {
+                this.unpause(true);
+            } else {
+                this.pause(true);
             }
         },
-        markRow(rowIndex) {
-            this.markCounter += 1;
-            this.$set(this.visibleRows[rowIndex], 'marked', true);
-            this.pause();
-
-            this.firstMarkedRow = this.visibleRows[rowIndex];
+        undoMarkedRows(unpause) {
+            this.markedRows.forEach(r => r.marked = false);
+            this.markedRows = [];
         },
         unmarkRow(rowIndex) {
-            this.markCounter -= 1;
-            this.$set(this.visibleRows[rowIndex], 'marked', false);
-
-            if (this.markCounter <= 0) {
-                this.unpause();
-                this.markCounter = 0;
-            }
-        },
-        unmarkAllRows() {
-            let allRows = this.table.filteredRows.getRows();
-
-            allRows.forEach(row => row.marked = false);
-
-            this.markCounter = 0;
-
+            this.undoMarkedRows();
             this.unpause();
         },
-        markMultipleRows(rowIndex) {
-            if (!this.firstMarkedRow) {
-                this.firstMarkedRow = this.visibleRows[rowIndex];
+        markRow(rowIndex) {
+            if (this.markedRows.length) {
+                this.undoMarkedRows();
+            }
+
+            let markedRow = this.visibleRows[rowIndex];
+
+            this.$set(markedRow, 'marked', true);
+            this.pause();
+            this.markedRows.push(markedRow);
+        },
+        unmarkAllRows(skipUnpause) {
+            this.markedRows.forEach(row => row.marked = false);
+            this.markedRows = [];
+            this.unpause();
+        },
+        markMultipleConcurrentRows(rowIndex) {
+
+            if (!this.markedRows.length) {
+                this.markRow(rowIndex);
             } else {
-                this.lastMarkedRow = this.visibleRows[rowIndex];
+                if (this.markedRows.length > 1) {
+                    this.markedRows.forEach((r,i) => {
+                        if (i !== 0) {
+                            r.marked = false;
+                        }
+                    });
+                    this.markedRows.splice(1);
+                }
+                let lastRowToBeMarked = this.visibleRows[rowIndex];
 
                 let allRows = this.table.filteredRows.getRows(),
-                    firstRowIndex = allRows.indexOf(this.firstMarkedRow),
-                    lastRowIndex = allRows.indexOf(this.lastMarkedRow);
+                    firstRowIndex = allRows.indexOf(this.markedRows[0]),
+                    lastRowIndex = allRows.indexOf(lastRowToBeMarked);
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
@@ -717,12 +740,12 @@ export default {
                 }
 
                 for (var i = firstRowIndex + 1; i <= lastRowIndex; i++) {
-                    allRows[i].marked = true;
+                    let row = allRows[i];
+                    row.marked = true;
+                    this.markedRows.push(row);
                 }
 
                 this.$forceUpdate();
-                this.firstMarkedRow = undefined;
-                this.lastMarkedRow = undefined;
             }
         }
     },

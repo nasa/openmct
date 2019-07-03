@@ -102,7 +102,7 @@ export default {
         },
         markRow: function (event) {
             if (event.shiftKey) {
-                this.$emit('markMultiple', this.rowIndex);
+                this.$emit('markMultipleConcurrent', this.rowIndex);
             } else {
                 if (this.marked) {
                     this.$emit('unmark', this.rowIndex);
