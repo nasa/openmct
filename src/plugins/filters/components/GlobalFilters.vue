@@ -1,11 +1,11 @@
 <template>
     <li class="c-tree__item-h">
         <div class="c-tree__item menus-to-left"
-             @click="toggleExpanded">
+            @click="toggleExpanded">
             <div class="c-filter-tree-item__filter-indicator"
-                 :class="{'icon-filter': globalFiltersDefined }"></div>
+                :class="{'icon-filter': globalFiltersDefined }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
-                  :class="{'c-disclosure-triangle--expanded': expanded}"></span>
+                :class="{'c-disclosure-triangle--expanded': expanded}"></span>
             <div class="c-tree__item__label c-object-label">
                 <div class="c-object-label">
                     <div class="c-object-label__type-icon icon-gear"></div>
@@ -77,8 +77,23 @@
         data() {
             return {
                 expanded: false,
-                updatedFilters: JSON.parse(JSON.stringify(this.globalFilters)),
-                globalFiltersDefined: true // TODO: Wire this up - should be true when the user has entered global filter values
+                updatedFilters: JSON.parse(JSON.stringify(this.globalFilters))
+            }
+        },
+        computed: {
+            globalFiltersDefined() {
+                let filtersDefined = false;
+                Object.values(this.globalFilters).forEach(field => {
+                    if (!filtersDefined) {
+                        Object.values(field).forEach(comparator => {
+                            if (comparator || comparator !== '' || comparator.length > 0) {
+                                filtersDefined = true;
+                                return;
+                            }
+                        });
+                    }
+                });
+                return filtersDefined;
             }
         },
         watch: {
@@ -96,36 +111,29 @@
             collectUserSelects(key, comparator, valueName, value) {
                 let filterValue = this.updatedFilters[key];
 
-                if (filterValue && filterValue[comparator]) {
-                    if (value === false) {
-                        filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
-                    } else {
+                if (filterValue[comparator]) {
+                    if (value === true) {
                         filterValue[comparator].push(valueName);
+                    } else {
+                        if (filterValue[comparator].length === 1) {
+                            this.$set(this.updatedFilters, key, {});
+                        } else {
+                            filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                        }
                     }
                 } else {
-                    if (!this.updatedFilters[key]) {
-                        this.$set(this.updatedFilters, key, {});
-                    }
-                    this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
+                    this.$set(this.updatedFilters[key], comparator, [valueName]);
                 }
 
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             },
             updateTextFilter(key, comparator, value) {
                 if (value.trim() === '') {
-                    if (this.updatedFilters[key]) {
-                        delete this.updatedFilters[key];
-                        this.$emit('persistGlobalFilters', key, this.updatedFilters);
-                    }
-                    return;
-                }
-
-                if (!this.updatedFilters[key]) {
                     this.$set(this.updatedFilters, key, {});
-                    this.$set(this.updatedFilters[key], comparator, '');
+                } else {
+                    this.$set(this.updatedFilters[key], comparator, value);
                 }
 
-                this.$set(this.updatedFilters[key], comparator, value);
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             }
         }
