@@ -72,8 +72,8 @@ export default {
             globalFilters,
             globalObject: {},
             children: {},
-            filtersApplied: true, //TODO: Wire this up - should be true when the user has entered any filter values
-            filtersMixed: true, // TODO: Wire this up - should be true when filter values are mixed
+            filtersApplied: false, //TODO: Wire this up - should be true when the user has entered any filter values
+            filtersMixed: false, // TODO: Wire this up - should be true when filter values are mixed
             label: (true) ? 'Mixed filters applied' : 'Filters applied' // TODO: Wire this up
         }
     },
@@ -115,10 +115,13 @@ export default {
         },
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
+            // TODO: update globalFitlers to remove object's filters
+            // if no other object in the composition have this objects filter,
+            // remove the filter from global filters.
             this.$delete(this.children, keyString);
             delete this.persistedFilters[keyString];
             this.mutateConfigurationFilters();
-            // TODO: update globalFitlers to remove object's filters
+
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;

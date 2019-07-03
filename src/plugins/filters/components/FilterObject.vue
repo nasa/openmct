@@ -71,8 +71,24 @@ export default {
             expanded: false,
             objectCssClass: undefined,
             updatedFilters: this.persistedFilters,
-            filtersDefined: true, // TODO: Wire this up - should be true when the user has entered filter values, or this item is using global filters and filters have been defined
             isEditing: this.openmct.editor.isEditing()
+        }
+    },
+    computed: {
+        filtersDefined() {
+            // Should return true if filters have been defined for this object
+            let isFiltersDefined = false;
+            Object.values(this.persistedFilters).forEach(comparator => {
+                if (!isFiltersDefined && typeof(comparator) === 'object') {
+                    Object.values(comparator).forEach(value => {
+                        if (value && (value !== '' || value.length > 0)) {
+                            isFiltersDefined = true;
+                            return;
+                        }
+                    });
+                }
+            });
+            return isFiltersDefined;
         }
     },
     methods: {
@@ -82,42 +98,29 @@ export default {
         collectUserSelects(key, comparator, valueName, value) {
             let filterValue = this.updatedFilters[key];
 
-            if (filterValue && filterValue[comparator]) {
-                if (value === false) {
-                    let filteredValueName = filterValue[comparator].filter(v => v !== valueName);
-
-                    if (filteredValueName.length === 0) {
-                        delete this.updatedFilters[key];
-                    } else {
-                        filterValue[comparator] = filteredValueName;
-                    }
-                } else {
+            if (filterValue[comparator]) {
+                if (value === true) {
                     filterValue[comparator].push(valueName);
+                } else {
+                    if (filterValue[comparator].length === 1) {
+                        this.$set(this.updatedFilters, key, {});
+                    } else {
+                        filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                    }
                 }
             } else {
-                if (!this.updatedFilters[key]) {
-                    this.$set(this.updatedFilters, key, {});
-                }
-                this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
+                this.$set(this.updatedFilters[key], comparator, valueName);
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateTextFilter(key, comparator, value) {
             if (value.trim() === '') {
-                if (this.updatedFilters[key]) {
-                    delete this.updatedFilters[key];
-                    this.$emit('updateFilters', this.keyString, this.updatedFilters);
-                }
-                return;
-            }
-
-            if (!this.updatedFilters[key]) {
                 this.$set(this.updatedFilters, key, {});
-                this.$set(this.updatedFilters[key], comparator, '');
+            } else {
+                this.$set(this.updatedFilters[key], comparator, value);
             }
 
-            this.$set(this.updatedFilters[key], comparator, value);
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         onUseGlobalFilter(checked) {
