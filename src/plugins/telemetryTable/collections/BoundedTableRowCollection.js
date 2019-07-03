@@ -43,7 +43,8 @@ define(
                 this.sortByTimeSystem(openmct.time.timeSystem());
 
                 this.lastBounds = openmct.time.bounds();
-                openmct.time.on('bounds', this.bounds);
+
+                this.subscribeToBounds();
             }
 
             addOne(item) {
@@ -140,8 +141,16 @@ define(
                 return this.parseTime(row.datum[this.sortOptions.key]);
             }
 
-            destroy() {
+            unsubscribeFromBounds() {
                 this.openmct.time.off('bounds', this.bounds);
+            }
+
+            subscribeToBounds() {
+                this.openmct.time.on('bounds', this.bounds);
+            }
+
+            destroy() {
+                this.unsubscribeFromBounds();
             }
         }
         return BoundedTableRowCollection;

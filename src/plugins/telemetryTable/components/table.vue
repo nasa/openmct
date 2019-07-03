@@ -21,7 +21,10 @@
  *****************************************************************************/
 <template>
 <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
-     :class="{'loading': loading}">
+     :class="{
+         'loading': loading,
+         'paused' : paused
+        }">
     <div class="c-table__control-bar c-control-bar">
         <button class="c-button icon-download labeled"
            v-on:click="exportAllDataAsCSV()"
@@ -39,6 +42,11 @@
             v-on:click="unmarkAllRows()"
             title="Unmark All Rows">
             <span class="c-button__label">Unmark All Rows</span>
+        </button>
+        <button class="c-button icon-pause pause-play"
+                :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
+            v-on:click="togglePause()"
+            :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
         </button>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
@@ -287,6 +295,10 @@
         }
     }
 
+    .paused {
+        border: 1px solid #ff9900;
+    }
+
     /******************************* LEGACY */
     .s-status-taking-snapshot,
     .overlay.snapshot {
@@ -483,7 +495,6 @@ export default {
                 // Auto-scroll will be re-enabled if user scrolls to bottom again.
                 this.autoScroll = false;
             }
-            this.visibleRowsUpdated = true;
         },
         shouldSnapToBottom() {
             return this.scrollable.scrollTop >= (this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT);
@@ -649,19 +660,25 @@ export default {
         },
         pause() {
             this.paused = true;
-            this.autoScroll = false;
             this.table.pause();
         },
         unpause() {
             this.paused = false;
-            this.autoScroll = true;
             this.table.unpause();
         },
+        togglePause() {
+            if (this.paused) {
+                this.unpause();
+            } else {
+                this.pause();
+            }
+        },
         markRow(rowIndex) {
-            this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
             this.markCounter += 1;
             this.$set(this.visibleRows[rowIndex], 'marked', true);
             this.pause();
+
+            this.firstMarkedRow = this.visibleRows[rowIndex];
         },
         unmarkRow(rowIndex) {
             this.markCounter -= 1;
@@ -669,6 +686,7 @@ export default {
 
             if (this.markCounter <= 0) {
                 this.unpause();
+                this.markCounter = 0;
             }
         },
         unmarkAllRows() {
@@ -676,50 +694,33 @@ export default {
 
             allRows.forEach(row => row.marked = false);
 
-            this.firstMarkedRow = undefined;
-            this.lastMarkedRow = undefined;
-            this.visibleRowsUpdated = false;
             this.markCounter = 0;
 
             this.unpause();
         },
         markMultipleRows(rowIndex) {
-            if (this.firstMarkedRow === undefined) {
-                this.firstMarkedRow = rowIndex + this.calculateFirstVisibleRow();
+            if (!this.firstMarkedRow) {
+                this.firstMarkedRow = this.visibleRows[rowIndex];
             } else {
-                this.lastMarkedRow = rowIndex + this.calculateFirstVisibleRow();
-                let allRows = this.table.filteredRows.getRows();
+                this.lastMarkedRow = this.visibleRows[rowIndex];
 
-                //support selection backwards
-                if (this.lastMarkedRow < this.firstMarkedRow) {
-                    /*
-                    When visible rows get updated, the calculation is down by 1/4 of the Visible Row Count
-                    because of the rows that are offscreen
-                    */
-                    if (this.visibleRowsUpdated) {
-                        this.firstMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
-                        this.visibleRowsUpdated = false;
-                    }
+                let allRows = this.table.filteredRows.getRows(),
+                    firstRowIndex = allRows.indexOf(this.firstMarkedRow),
+                    lastRowIndex = allRows.indexOf(this.lastMarkedRow);
 
-                    for (let i = this.firstMarkedRow - 1; i >= this.lastMarkedRow; i--) {
-                        allRows[i].marked = true;
-                        this.markCounter++;
-                    }
-                } else {
-                    /*
-                    When visible rows get updated, the calculation is up by 1/4 of the Visible Row Count
-                    because of the rows that are offscreen
-                    */
-                    if (this.visibleRowsUpdated) {
-                        this.lastMarkedRow -= (Math.floor(VISIBLE_ROW_COUNT/4));
-                        this.visibleRowsUpdated = false;
-                    }
-                    for (let i = this.firstMarkedRow + 1; i <= this.lastMarkedRow; i++) {
-                        allRows[i].marked = true;
-                        this.markCounter++;
-                    }
+                //supports backward selection
+                if (lastRowIndex < firstRowIndex) {
+                    let temp = lastRowIndex;
+                
+                    lastRowIndex = firstRowIndex;
+                    firstRowIndex = temp - 1;
                 }
 
+                for (var i = firstRowIndex + 1; i <= lastRowIndex; i++) {
+                    allRows[i].marked = true;
+                }
+
+                this.$forceUpdate();
                 this.firstMarkedRow = undefined;
                 this.lastMarkedRow = undefined;
             }

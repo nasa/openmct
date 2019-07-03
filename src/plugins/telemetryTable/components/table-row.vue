@@ -21,6 +21,7 @@
  *****************************************************************************/
 <template>
 <tr :style="{ top: rowTop }"
+    class="noselect"
     :class="[
         rowLimitClass,
         {'is-selected': marked}
@@ -35,6 +36,15 @@
 </template>
 
 <style>
+    .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+    }
 </style>
 
 <script>
@@ -93,7 +103,6 @@ export default {
         markRow: function (event) {
             if (event.shiftKey) {
                 this.$emit('markMultiple', this.rowIndex);
-                
             } else {
                 if (this.marked) {
                     this.$emit('unmark', this.rowIndex);
