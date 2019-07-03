@@ -26,6 +26,9 @@
                            :id="keyString"
                            @change="onUseGlobalFilter($event)"
                            :checked="persistedFilters.useGlobal" />
+                    <toggle-switch>
+
+                    </toggle-switch>
                     <span>Use global filter</span>
                 </div>
                 <filter-field
@@ -48,11 +51,13 @@
 
 <script>
 import FilterField from './FilterField.vue';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 export default {
     inject: ['openmct'],
     components: {
-        FilterField
+        FilterField,
+        ToggleSwitch
     },
     props: {
         filterObject: Object, 

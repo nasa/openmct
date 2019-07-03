@@ -1,0 +1,65 @@
+<template>
+    <label class="c-toggle-switch">
+        <input type="checkbox" />
+        <span class="c-toggle-switch__slider"></span>
+    </label>
+</template>
+
+<script>
+    export default {
+        name: "ToggleSwitch.vue"
+    }
+</script>
+
+<style lang="scss">
+    @import "~styles/sass-base";
+
+    .c-toggle-switch {
+        $d: 12px;
+        $m: 2px;
+        $br: $basicCr;
+        cursor: pointer;
+        overflow: hidden;
+        display: inline;
+        vertical-align: middle;
+
+        &__slider {
+            background: $colorBtnBg; // TODO: make discrete theme constants for these colors
+            border-radius: $br;
+            //box-shadow: inset rgba($colorBtnFg, 0.4) 0 0 0 1px;
+            display: inline-block;
+            height: $d + ($m*2);
+            position: relative;
+            transform: translateY(2px); // TODO: get this to work without this kind of hack!
+            width: $d*2 + $m*2;
+
+            &:before {
+                // Knob
+                background: $colorBtnFg; // TODO: make discrete theme constants for these colors
+                border-radius: floor($br * 0.8);
+                content: '';
+                display: block;
+                position: absolute;
+                height: $d; width: $d;
+                top: $m; left: $m; right: auto;
+                transition: transform 100ms ease-in-out;
+            }
+        }
+
+        input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+
+            &:checked {
+                + .c-toggle-switch__slider {
+                    background: $colorKey; // TODO: make discrete theme constants for these colors
+                    &:before {
+                        transform: translateX(100%);
+                    }
+                }
+            }
+        }
+    }
+
+</style>
