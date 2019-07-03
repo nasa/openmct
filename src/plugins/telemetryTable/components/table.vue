@@ -704,15 +704,19 @@ export default {
             this.unpause();
         },
         markRow(rowIndex) {
-            if (this.markedRows.length) {
+            let insertMethod = 'unshift';
+
+            if (this.markedRows.length && !this.ctrlKeyPressed) {
                 this.undoMarkedRows();
+                insertMethod = 'push';
             }
 
             let markedRow = this.visibleRows[rowIndex];
 
             this.$set(markedRow, 'marked', true);
             this.pause();
-            this.markedRows.push(markedRow);
+
+            this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
             this.markedRows.forEach(row => row.marked = false);
@@ -754,6 +758,17 @@ export default {
 
                 this.$forceUpdate();
             }
+        },
+        keydown(event) {
+            if ((event.ctrlKey || event.metaKey)) {
+                this.ctrlKeyPressed = true;
+            }
+        },
+        keyup(event) {
+            if ((event.ctrlKey || event.key.toLowerCase() === 'meta')) {
+                console.log('up');
+                this.ctrlKeyPressed = false;
+            }
         }
     },
     created() {
@@ -787,6 +802,9 @@ export default {
         this.calculateScrollbarWidth();
 
         this.table.initialize();
+
+        document.addEventListener('keydown', this.keydown);
+        document.addEventListener('keyup', this.keyup);
     },
     destroyed() {
         this.table.off('object-added', this.addObject);
@@ -805,6 +823,9 @@ export default {
         this.table.configuration.destroy();
 
         this.table.destroy();
+
+        document.removeEventListener('keydown', this.keydown);
+        document.removeEventListener('keyup', this.keyup);
     }
 }
 </script>
