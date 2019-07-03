@@ -48,7 +48,7 @@
                         v-if="persistedFilters[filter.comparator]">
                         {{persistedFilters[filter.comparator].join(', ')}}
                     </span>
-      di        </template>
+                </template>
             </div>
         </li>
     </div>

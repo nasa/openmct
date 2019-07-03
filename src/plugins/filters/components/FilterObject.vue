@@ -20,14 +20,10 @@
             <ul class="c-properties" v-if="isEditing || (!isEditing && !persistedFilters.useGlobal)">
                 <div class="c-properties__label span-all"
                      v-if="isEditing">
-                    <input v-if="isEditing"
-                           class="c-checkbox-list__input"
-                           type="checkbox"
-                           :id="keyString"
-                           @change="onUseGlobalFilter($event)"
-                           :checked="persistedFilters.useGlobal" />
-                    <toggle-switch>
-
+                    <toggle-switch
+                            :id="keyString"
+                            @change="onUseGlobalFilter"
+                            :checked="persistedFilters.useGlobal">
                     </toggle-switch>
                     <span>Use global filter</span>
                 </div>
@@ -41,6 +37,7 @@
                     @onTextEnter="updateTextFilter">
                 </filter-field>
             </ul>
+            <span v-if="!isEditing && persistedFilters.useGlobal">Use global filter</span>
         </div>
     </li>
 </template>
@@ -122,8 +119,8 @@ export default {
             this.$set(this.updatedFilters[key], comparator, value);
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        onUseGlobalFilter(event) {
-            this.updatedFilters.useGlobal = event.target.checked;
+        onUseGlobalFilter(checked) {
+            this.updatedFilters.useGlobal = checked;
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         toggleIsEditing(isEditing) {

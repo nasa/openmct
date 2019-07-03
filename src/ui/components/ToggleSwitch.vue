@@ -1,15 +1,12 @@
 <template>
     <label class="c-toggle-switch">
-        <input type="checkbox" />
+        <input type="checkbox"
+                :id="id"
+                :checked="checked"
+                @change="onUserSelect($event)"/>
         <span class="c-toggle-switch__slider"></span>
     </label>
 </template>
-
-<script>
-    export default {
-        name: "ToggleSwitch.vue"
-    }
-</script>
 
 <style lang="scss">
     @import "~styles/sass-base";
@@ -63,3 +60,18 @@
     }
 
 </style>
+
+<script>
+    export default {
+        inject: ['openmct'],
+        props: {
+            id: String,
+            checked: Boolean
+        },
+        methods: {
+            onUserSelect(event) {
+                this.$emit('change', event.target.checked);
+            }
+        }
+    }
+</script>
