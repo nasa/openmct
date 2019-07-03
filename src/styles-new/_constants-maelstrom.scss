@@ -123,6 +123,7 @@ $colorOk: #33cc33;
 $colorOkFg: #fff;
 $colorFilterBg: #44449c;
 $colorFilterFg: #8984e9;
+$colorFilter: $colorFilterFg; // Standalone against $colorBodyBg
 
 // States
 $colorPausedBg: #ff9900;
