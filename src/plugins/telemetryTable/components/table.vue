@@ -20,12 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
-     :class="{
-         'loading': loading,
-         'paused' : paused
-        }">
-    <div class="c-table__control-bar c-control-bar">
+<div class="c-table-wrapper">
+    <div class="c-table-control-bar c-control-bar">
         <button class="c-button icon-download labeled"
            v-on:click="exportAllDataAsCSV()"
            title="Export This View's Data">
@@ -43,82 +39,92 @@
             title="Unmark All Rows">
             <span class="c-button__label">Unmark All Rows</span>
         </button>
-        <button class="c-button icon-pause pause-play"
+        <div class="c-separator"></div>
+        <button class="c-button icon-pause pause-play labeled"
                 :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
             v-on:click="togglePause()"
             :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
+            <span class="c-button__label">
+                {{paused ? 'Play' : 'Pause'}}
+            </span>
         </button>
     </div>
-    <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
-    <!-- Headers table -->
-    <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
-        <table class="c-table__headers c-telemetry-table__headers">
-            <thead>
-                <tr class="c-telemetry-table__headers__labels">
-                    <table-column-header
-                        v-for="(title, key, headerIndex) in headers"
-                        :key="key"
-                        :headerKey="key"
-                        :headerIndex="headerIndex"
-                        @sort="sortBy(key)"
-                        @resizeColumn="resizeColumn"
-                        @dropTargetOffsetChanged="setDropTargetOffset"
-                        @dropTargetActive="dropTargetActive"
-                        @reorderColumn="reorderColumn"
-                        @resizeColumnEnd="updateConfiguredColumnWidths"
-                        :columnWidth="columnWidths[key]"
-                        :sortOptions="sortOptions"
-                        :isEditing="isEditing"
-                    ><span class="c-telemetry-table__headers__label">{{title}}</span>
-                    </table-column-header>
-                </tr>
-                <tr class="c-telemetry-table__headers__filter">
-                    <table-column-header
-                        v-for="(title, key, headerIndex) in headers"
-                        :key="key"
-                        :headerKey="key"
-                        :headerIndex="headerIndex"
-                        @resizeColumn="resizeColumn"
-                        @dropTargetOffsetChanged="setDropTargetOffset"
-                        @dropTargetActive="dropTargetActive"
-                        @reorderColumn="reorderColumn"
-                        @resizeColumnEnd="updateConfiguredColumnWidths"
-                        :columnWidth="columnWidths[key]"
-                        :isEditing="isEditing"
-                        >
-                        <search class="c-table__search"
-                            v-model="filters[key]"
-                            v-on:input="filterChanged(key)"
-                            v-on:clear="clearFilter(key)" />
-                    </table-column-header>
-                </tr>
-            </thead>
-        </table>
-    </div>
-    <!-- Content table -->
-    <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{ 'max-width': widthWithScroll}">
-        <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
-        <table class="c-table__body c-telemetry-table__body js-telemetry-table__content"
-               :style="{ height: totalHeight + 'px'}">
-            <tbody>
-                <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
-                    :key="rowIndex"
-                    :headers="headers"
-                    :columnWidths="columnWidths"
-                    :rowIndex="rowIndex"
-                    :rowOffset="rowOffset"
-                    :rowHeight="rowHeight"
-                    :row="row"
-                    :marked="row.marked"
-                    @mark="markRow"
-                    @unmark="unmarkRow"
-                    @markMultiple="markMultipleRows">
-                </telemetry-table-row>
-            </tbody>
-        </table>
-    </div>
-    <!-- Sizing table -->
-    <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
+
+    <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
+         :class="{
+         'loading': loading,
+         'paused' : paused
+        }">
+        <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
+        <!-- Headers table -->
+        <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
+            <table class="c-table__headers c-telemetry-table__headers">
+                <thead>
+                    <tr class="c-telemetry-table__headers__labels">
+                        <table-column-header
+                            v-for="(title, key, headerIndex) in headers"
+                            :key="key"
+                            :headerKey="key"
+                            :headerIndex="headerIndex"
+                            @sort="sortBy(key)"
+                            @resizeColumn="resizeColumn"
+                            @dropTargetOffsetChanged="setDropTargetOffset"
+                            @dropTargetActive="dropTargetActive"
+                            @reorderColumn="reorderColumn"
+                            @resizeColumnEnd="updateConfiguredColumnWidths"
+                            :columnWidth="columnWidths[key]"
+                            :sortOptions="sortOptions"
+                            :isEditing="isEditing"
+                        ><span class="c-telemetry-table__headers__label">{{title}}</span>
+                        </table-column-header>
+                    </tr>
+                    <tr class="c-telemetry-table__headers__filter">
+                        <table-column-header
+                            v-for="(title, key, headerIndex) in headers"
+                            :key="key"
+                            :headerKey="key"
+                            :headerIndex="headerIndex"
+                            @resizeColumn="resizeColumn"
+                            @dropTargetOffsetChanged="setDropTargetOffset"
+                            @dropTargetActive="dropTargetActive"
+                            @reorderColumn="reorderColumn"
+                            @resizeColumnEnd="updateConfiguredColumnWidths"
+                            :columnWidth="columnWidths[key]"
+                            :isEditing="isEditing"
+                            >
+                            <search class="c-table__search"
+                                v-model="filters[key]"
+                                v-on:input="filterChanged(key)"
+                                v-on:clear="clearFilter(key)" />
+                        </table-column-header>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- Content table -->
+        <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{ 'max-width': widthWithScroll}">
+            <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
+            <table class="c-table__body c-telemetry-table__body js-telemetry-table__content"
+                   :style="{ height: totalHeight + 'px'}">
+                <tbody>
+                    <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
+                        :key="rowIndex"
+                        :headers="headers"
+                        :columnWidths="columnWidths"
+                        :rowIndex="rowIndex"
+                        :rowOffset="rowOffset"
+                        :rowHeight="rowHeight"
+                        :row="row"
+                        :marked="row.marked"
+                        @mark="markRow"
+                        @unmark="unmarkRow"
+                        @markMultiple="markMultipleRows">
+                    </telemetry-table-row>
+                </tbody>
+            </table>
+        </div>
+        <!-- Sizing table -->
+        <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
         <tr>
             <template v-for="(title, key) in headers">
             <th :key="key" :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}">{{title}}</th>
@@ -130,7 +136,8 @@
             :row="sizingRowData">
         </telemetry-table-row>
     </table>
-</div>
+    </div>
+</div><!-- closes c-table-wrapper -->
 </template>
 
 <style lang="scss">
