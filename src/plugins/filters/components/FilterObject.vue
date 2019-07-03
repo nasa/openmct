@@ -17,14 +17,23 @@
         </div>
 
         <div v-if="expanded">
-            <ul class="c-properties" v-if="!isEditing">
-                <!-- Browse mode -->
+            <ul class="c-properties">
                 <div class="c-properties__label span-all"
-                    v-if="persistedFilters.useGlobal">
+                     v-if="!isEditing && persistedFilters.useGlobal">
                     Uses global filter
                 </div>
+
+                <div class="c-properties__label span-all"
+                     v-if="isEditing">
+                    <toggle-switch
+                            :id="keyString"
+                            @change="onUseGlobalFilter"
+                            :checked="persistedFilters.useGlobal">
+                    </toggle-switch>
+                    Use global filter
+                </div>
                 <filter-field
-                        v-if="!persistedFilters.useGlobal"
+                        v-if="(!persistedFilters.useGlobal && !isEditing) || isEditing"
                         v-for="field in filterObject.valuesWithFilters"
                         :key="field.key"
                         :filterField="field"
@@ -34,34 +43,9 @@
                         @onTextEnter="updateTextFilter">
                 </filter-field>
             </ul>
-
-            <ul class="c-properties" v-if="isEditing">
-                <!-- Edit mode -->
-                <div class="c-properties__label span-all">
-                    <toggle-switch
-                            :id="keyString"
-                            @change="onUseGlobalFilter"
-                            :checked="persistedFilters.useGlobal">
-                    </toggle-switch>
-                    <span>Use global filter</span>
-                </div>
-                <filter-field
-                    v-for="field in filterObject.valuesWithFilters"
-                    :key="field.key"
-                    :filterField="field"
-                    :useGlobal="persistedFilters.useGlobal"
-                    :persistedFilters="persistedFilters[field.key]"
-                    @onUserSelect="collectUserSelects"
-                    @onTextEnter="updateTextFilter">
-                </filter-field>
-            </ul>
         </div>
     </li>
 </template>
-
-<style lang="scss">
-
-</style>
 
 <script>
 import FilterField from './FilterField.vue';
