@@ -82,6 +82,7 @@ export default {
             let keyString = this.openmct.objects.makeKeyString(child.identifier),
                 metadata = this.openmct.telemetry.getMetadata(child),
                 valuesWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
+                childExist = this.persistedFilters[keyString] !== undefined,
                 childObject = {
                     name: child.name,
                     domainObject: child,
@@ -91,8 +92,6 @@ export default {
             if (childObject.valuesWithFilters.length) {
                 this.$set(this.children, keyString, childObject);
             }
-
-            let childExist = this.persistedFilters[keyString] !== undefined;
 
             valuesWithFilters.forEach(field => {
                 if (!this.globalFilters[field.key]) {
@@ -115,13 +114,43 @@ export default {
         },
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
-            // TODO: update globalFitlers to remove object's filters
-            // if no other object in the composition have this objects filter,
-            // remove the filter from global filters.
-            this.$delete(this.children, keyString);
-            delete this.persistedFilters[keyString];
-            this.mutateConfigurationFilters();
+            let globalFiltersToRemove = this.getGlobalFiltersToRemove(keyString);
 
+            if (globalFiltersToRemove.length > 0) {
+                globalFiltersToRemove.forEach(filter => {
+                    this.$delete(this.globalFilters, filter);
+                    this.$delete(this.globalObject, filter);
+                });
+                this.mutateConfigurationGlobalFilters();
+            }
+
+            this.$delete(this.children, keyString);
+            this.$delete(this.persistedFilters, keyString);
+            this.mutateConfigurationFilters();
+        },
+        getGlobalFiltersToRemove(keyString) {
+            let filtersToRemove = new Set();
+            let valuesWithFilters = this.children[keyString].valuesWithFilters;
+            let filterMatched = false;
+
+            valuesWithFilters.forEach(metadata => {
+                let count = 0;
+                Object.keys(this.children).forEach(childKeyString => {
+                    if (childKeyString !== keyString) {
+                        filterMatched = this.children[childKeyString].valuesWithFilters.some(childMetadata => childMetadata.key === metadata.key);
+
+                        if (filterMatched) {
+                            ++count;
+                        }
+                    }
+                });
+
+                if (count === 0) {
+                    filtersToRemove.add(metadata.key);
+                }
+            });
+
+            return Array.from(filtersToRemove);
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
@@ -132,7 +161,7 @@ export default {
         },
         persistGlobalFilters(key, userSelects) {
             this.globalFilters[key] = userSelects[key];
-            this.openmct.objects.mutate(this.providedObject, 'configuration.globalFilters', this.globalFilters);
+            this.mutateConfigurationGlobalFilters();
 
             Object.keys(this.children).forEach(keyString => {
                 if (this.persistedFilters[keyString].useGlobal !== false && this.containsField(keyString, key)) {
@@ -160,6 +189,9 @@ export default {
         },
         mutateConfigurationFilters() {
             this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
+        },
+        mutateConfigurationGlobalFilters() {
+            this.openmct.objects.mutate(this.providedObject, 'configuration.globalFilters', this.globalFilters);
         }
     },
     mounted(){
