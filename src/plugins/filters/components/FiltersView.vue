@@ -130,10 +130,9 @@ export default {
         },
         getGlobalFiltersToRemove(keyString) {
             let filtersToRemove = new Set();
-            let valuesWithFilters = this.children[keyString].valuesWithFilters;
             let filterMatched = false;
 
-            valuesWithFilters.forEach(metadata => {
+            this.children[keyString].valuesWithFilters.forEach(metadata => {
                 let count = 0;
                 Object.keys(this.children).forEach(childKeyString => {
                     if (childKeyString !== keyString) {
@@ -152,8 +151,18 @@ export default {
 
             return Array.from(filtersToRemove);
         },
-        persistFilters(keyString, userSelects) {
-            this.persistedFilters[keyString] = userSelects;
+        persistFilters(keyString, updatedFilters, useGlobalValues) {
+            this.persistedFilters[keyString] = updatedFilters;
+
+            if (useGlobalValues) {
+                console.log(this.persistedFilters[keyString]);
+                Object.keys(this.persistedFilters[keyString]).forEach(key => {
+                    if (typeof(this.persistedFilters[keyString][key]) === 'object') {
+                        this.persistedFilters[keyString][key]  = this.globalFilters[key];
+                    }
+                });
+            }
+
             this.mutateConfigurationFilters();
         },
         updatePersistedFilters(filters) {

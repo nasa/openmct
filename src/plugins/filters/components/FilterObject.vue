@@ -133,7 +133,7 @@ export default {
         },
         onUseGlobalFilter(checked) {
             this.updatedFilters.useGlobal = checked;
-            this.$emit('updateFilters', this.keyString, this.updatedFilters);
+            this.$emit('updateFilters', this.keyString, this.updatedFilters, checked);
         },
         toggleIsEditing(isEditing) {
             this.isEditing = isEditing;
