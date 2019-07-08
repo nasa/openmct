@@ -37,8 +37,8 @@
 <script>
 
 const CONTEXT_MENU_ACTIONS = [
-    'View Historical Data',
-    'Remove'
+    'viewHistoricalData',
+    'remove'
 ];
 
 export default {
