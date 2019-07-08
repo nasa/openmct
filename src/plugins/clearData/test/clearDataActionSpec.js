@@ -20,22 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import ClearDataActionPlugin  from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
-describe('Clear Data Action', function () {
+fdescribe('When the Clear Data Plugin is installed,', function () {
     var mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']),
-        openmct = {objectViews: mockObjectViews},
+        mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']),
+        mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']),
+        openmct = {
+            objectViews: mockObjectViews,
+            indicators: mockIndicatorProvider,
+            contextMenu: mockContextMenuProvider,
+            install: function (plugin) {
+                plugin(this);
+            }
+        },
         mockObjectPath = [
             {name: 'mockObject1'},
             {name: 'mockObject2'}
-        ],
-        action;
+        ];
 
-    beforeEach(function () {
-        action = new ClearDataAction(openmct);
+    it('Global Clear Indicator is installed', function () {
+        openmct.install(ClearDataActionPlugin([]));
+
+        expect(mockIndicatorProvider.add).toHaveBeenCalled();
     });
 
-    it('emits a clearData event when invoked', function () {
+    it('Clear Data context menu action is installed', function () {
+        openmct.install(ClearDataActionPlugin([]));
+
+        expect(mockContextMenuProvider.registerAction).toHaveBeenCalled();
+    });
+
+    it('clear data action emits a clearData event when invoked', function () {
+        let action = new ClearDataAction(openmct);
+
         action.invoke(mockObjectPath);
 
         expect(mockObjectViews.emit).toHaveBeenCalledWith('clearData', mockObjectPath[0]);
