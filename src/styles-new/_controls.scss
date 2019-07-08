@@ -270,7 +270,10 @@ input[type=number]::-webkit-outer-spin-button {
 // SELECTS
 select {
     @include appearanceNone();
-    @include themedSelect();
+    background-color: $colorSelectBg;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
+    color: $colorSelectFg;
+    box-shadow: $shdwSelect;
     background-repeat: no-repeat, no-repeat;
     background-position: right .4em top 80%, 0 0;
     border: none;

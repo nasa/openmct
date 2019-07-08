@@ -120,7 +120,8 @@
             </div>
 
             <div class="gl-plot-label gl-plot-y-label" ng-if="yKeyOptions.length > 1 && series.length === 1">
-                <select ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
+                <select  class="gl-plot-y-label__select"
+                         ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
                     <option ng-repeat="option in yKeyOptions"
                             value="{{option.name}}"
                             ng-selected="option.name == yAxisLabel">
