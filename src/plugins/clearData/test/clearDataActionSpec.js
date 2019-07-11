@@ -23,7 +23,7 @@
 import ClearDataActionPlugin  from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
-fdescribe('When the Clear Data Plugin is installed,', function () {
+describe('When the Clear Data Plugin is installed,', function () {
     var mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']),
         mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']),
         mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']),
