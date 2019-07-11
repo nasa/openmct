@@ -70,9 +70,6 @@ $colorBodyFgEm: #333;
 $colorGenBg: #fff;
 $colorHeadBg: #eee;
 $colorHeadFg: $colorBodyFg;
-$colorStatusBarBg: #000;
-$colorStatusBarFg: #999;
-$colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
@@ -281,6 +278,11 @@ $colorIndicatorAvailable: $colorKey;
 $colorIndicatorDisabled: #444;
 $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #666;
+$colorIndicatorBgHov: rgba($colorHeadFg, 0.1);
+$colorIndicatorMenuBg: white;
+$colorIndicatorMenuBgShdw: rgba(black, 0.6) 0 0 6px;
+$colorIndicatorMenuFg: $colorHeadFg;
+$colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
 $colorTelemFresh: pullForward($colorBodyFg, 20%);

@@ -100,7 +100,7 @@ define(
         }
 
         CouchIndicator.prototype.getCssClass = function () {
-            return "icon-database " + this.state.statusClass;
+            return "c-indicator--clickable icon-database " + this.state.statusClass;
         };
 
         CouchIndicator.prototype.getGlyphClass = function () {

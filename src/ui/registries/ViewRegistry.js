@@ -21,7 +21,7 @@
  *****************************************************************************/
 /*global console */
 
-define([], function () {
+define(['EventEmitter'], function (EventEmitter) {
     const DEFAULT_VIEW_PRIORITY = 100;
 
     /**
@@ -31,8 +31,11 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
+        EventEmitter.apply(this);
         this.providers = {};
     }
+
+    ViewRegistry.prototype = Object.create(EventEmitter.prototype);
 
 
     /**

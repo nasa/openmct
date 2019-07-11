@@ -49,6 +49,7 @@ define([
             this.telemetryObjects = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -260,6 +261,7 @@ define([
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
+
             if (this.filterObserver) {
                 this.filterObserver();
             }
