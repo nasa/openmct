@@ -74,9 +74,6 @@ $colorBodyFgEm: #fff;
 $colorGenBg: #222;
 $colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
-$colorStatusBarBg: $colorHeadBg;
-$colorStatusBarFg: $colorBodyFg;
-$colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #26d8ff;
@@ -105,10 +102,12 @@ $colorStatusAlertFilter: invert(78%) sepia(26%) saturate(1160%) hue-rotate(324de
 $colorStatusError: #da0004;
 $colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351deg) brightness(111%) contrast(115%);
 $colorStatusBtnBg: #666; // Where is this used?
+$colorStatusPartialBg: #3f5e8b;
+$colorStatusCompleteBg: #457638;
 $colorAlert: #ff3c00;
 $colorAlertFg: #fff;
-$colorWarningHi: #990000;
-$colorWarningHiFg: #FF9594;
+$colorWarningHi: #ff0000;
+$colorWarningHiFg: #ffdad0;
 $colorWarningLo: #ff9900;
 $colorWarningLoFg: #523400;
 $colorDiagnostic: #a4b442;
@@ -119,6 +118,8 @@ $colorInfo: #2294a2;
 $colorInfoFg: #fff;
 $colorOk: #33cc33;
 $colorOkFg: #fff;
+$colorFilterBg: #44449c;
+$colorFilterFg: #8984e9;
 
 // States
 $colorPausedBg: #ff9900;
@@ -281,6 +282,11 @@ $colorIndicatorAvailable: $colorKey;
 $colorIndicatorDisabled: #555555;
 $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #777777;
+$colorIndicatorBgHov: rgba($colorHeadFg, 0.1);
+$colorIndicatorMenuBg: $colorHeadBg;
+$colorIndicatorMenuBgShdw: rgba(white, 0.6) 0 0 6px;
+$colorIndicatorMenuFg: $colorHeadFg;
+$colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
 $colorTelemFresh: pullForward($colorBodyFg, 20%);

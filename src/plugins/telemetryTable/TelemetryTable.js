@@ -26,6 +26,7 @@ define([
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
     './TelemetryTableRow',
+    './TelemetryTableColumn',
     './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
@@ -33,6 +34,7 @@ define([
     BoundedTableRowCollection,
     FilteredTableRowCollection,
     TelemetryTableRow,
+    TelemetryTableColumn,
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
@@ -49,6 +51,7 @@ define([
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -96,8 +99,6 @@ define([
                 this.tableComposition.load().then((composition) => {
 
                     composition = composition.filter(this.isTelemetryObject);
-
-                    this.configuration.addColumnsForAllObjects(composition);
                     composition.forEach(this.addTelemetryObject);
 
                     this.tableComposition.on('add', this.addTelemetryObject);
@@ -107,7 +108,7 @@ define([
         }
 
         addTelemetryObject(telemetryObject) {
-            this.configuration.addColumnsForObject(telemetryObject, true);
+            this.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
             this.telemetryObjects.push(telemetryObject);
@@ -134,6 +135,13 @@ define([
             this.emit('object-removed', objectIdentifier);
         }
 
+        /**
+         * @private
+         */
+        createRow(datum, columnMap, keyString, limitEvaluator) {
+            return new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
+        }
+
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
@@ -147,7 +155,7 @@ define([
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-                    let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+                    let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows.add(telemetryRows);
                 }).finally(() => {
                     this.decrementOutstandingRequests();
@@ -193,6 +201,19 @@ define([
             }, {});
         }
 
+        addColumnsForObject(telemetryObject) {
+            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            metadataValues.forEach(metadatum => {
+                let column = this.createColumn(metadatum);
+                this.configuration.addSingleColumnForObject(telemetryObject, column);
+            });
+        }
+
+        createColumn(metadatum) {
+            return new TelemetryTableColumn(this.openmct, metadatum);
+        }
+
         subscribeTo(telemetryObject) {
             let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -206,7 +227,7 @@ define([
                 }
 
                 if (!this.paused) {
-                    let row = new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
+                    let row = this.createRow(datum, columnMap, keyString, limitEvaluator);
                     this.boundedRows.add(row);
                 }
             }, subscribeOptions);
@@ -257,6 +278,7 @@ define([
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
+
             if (this.filterObserver) {
                 this.filterObserver();
             }

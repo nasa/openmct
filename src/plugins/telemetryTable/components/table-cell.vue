@@ -19,40 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define(
-    [],
-    function () {
-
-        var LOCAL_STORAGE_WARNING = [
-            "Using browser local storage for persistence.",
-            "Anything you create or change will only be saved",
-            "in this browser on this machine."
-        ].join(' ');
-
-        /**
-         * Indicator for local storage persistence. Provides a minimum
-         * level of feedback indicating that local storage is in use.
-         * @constructor
-         * @memberof platform/persistence/local
-         * @implements {Indicator}
-         */
-        function LocalStorageIndicator() {
+<template>
+    <td>{{formattedValue}}</td>
+</template>
+<script>
+export default {
+    inject: ['openmct'],
+    props: {
+        row: {
+            type: Object,
+            required: true
+        },
+        columnKey: {
+            type: String,
+            require: true
         }
-
-        LocalStorageIndicator.prototype.getCssClass = function () {
-            return "c-indicator--clickable icon-database s-status-caution";
-        };
-        LocalStorageIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
-        };
-        LocalStorageIndicator.prototype.getText = function () {
-            return "Off-line storage";
-        };
-        LocalStorageIndicator.prototype.getDescription = function () {
-            return LOCAL_STORAGE_WARNING;
-        };
-
-        return LocalStorageIndicator;
+    },
+    computed: {
+        formattedValue() {
+            return this.row.getFormattedValue(this.columnKey);
+        }
     }
-);
+};
+</script>

@@ -377,6 +377,19 @@ define([
                 delete this.unsubscribe;
             }
             this.fetch();
+        },
+
+        /**
+         * Clears the plot series, unsubscribes and resubscribes
+         * @public
+         */
+        refresh: function () {
+            this.reset();
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                delete this.unsubscribe;
+            }
+            this.fetch();
         }
     });
 

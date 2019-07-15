@@ -30,10 +30,10 @@
 }
 
 @font-face {
-    // Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json to generate font files
+    // Use https://icomoon.io/app with icomoon-project-Open-MCT-Symbols-12px.json to generate font files
     font-family: 'symbolsfont-12px';
-    src: url('./fonts/openmct-symbols-12px.woff') format('woff'),
-    url('./fonts/openmct-symbols-12px.ttf') format('truetype');
+    src: url('./fonts/Open-MCT-Symbols-12px.woff') format('woff'),
+    url('./fonts/Open-MCT-Symbols-12px.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -77,6 +77,8 @@
 .icon-grippy-ew {  @include glyphBefore($glyph-icon-grippy-ew); }
 .icon-columns {  @include glyphBefore($glyph-icon-columns); }
 .icon-rows {  @include glyphBefore($glyph-icon-rows); }
+.icon-filter {  @include glyphBefore($glyph-icon-filter); }
+.icon-filter-outline {  @include glyphBefore($glyph-icon-filter-outline); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -164,6 +166,8 @@
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
+.icon-filter-12px {  @include glyphBefore($glyph-icon-filter,'symbolsfont-12px'); }
+.icon-filter-outline-12px {  @include glyphBefore($glyph-icon-filter-outline,'symbolsfont-12px'); }
 .icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }
 .icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
 .icon-list-view-12px {  @include glyphBefore($glyph-icon-list-view,'symbolsfont-12px'); }

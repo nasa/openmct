@@ -49,6 +49,21 @@ button {
         }
     }
 
+    &[class*='__collapse-button'] {
+        box-shadow: none;
+        background: $splitterBtnColorBg;
+        color: $splitterBtnColorFg;
+        border-radius: $smallCr;
+        font-size: 6px;
+        line-height: 90%;
+        padding: 3px 15px;
+
+        @include hover() {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+    }
+
     &.is-active {
         background: $colorBtnActiveBg;
         color: $colorBtnActiveFg;
@@ -60,9 +75,15 @@ button {
     }
 }
 
-/********* Icon Buttons */
+/********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+}
+
+.c-click-link {
+    // A clickable element, typically inline, with an icon and label
+    @include cControl();
+    cursor: pointer;
 }
 
 .c-icon-button,
@@ -70,13 +91,7 @@ button {
     @include cClickIconButton();
 
     &--menu {
-        &:after {
-            content: $glyph-icon-arrow-down;
-            font-family: symbolsfont;
-            font-size: 0.7em;
-            margin-left: floor($interiorMarginSm * 0.8);
-            opacity: 0.5;
-        }
+        @include hasMenu();
     }
 }
 
@@ -126,7 +141,7 @@ button {
 
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
-// Provides a downward arrow icon that when clicked displays a context menu
+// Provides a downward arrow icon that when clicked displays additional options and/or info.
 // Always placed AFTER an element
 .c-disclosure-button {
     @include cClickIcon();
