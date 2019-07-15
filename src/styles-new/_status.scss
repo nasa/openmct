@@ -61,7 +61,7 @@
 }
 
 @mixin indicatorStatusColors($c) {
-    &:before, .count {
+    &:before, .c-indicator__count {
         color: $c;
     }
 }
@@ -127,7 +127,7 @@ tr {
 .s-status-icon-ok:before { content: $glyph-icon-check; }
 
 /*************************************************** INDICATOR COLORING */
-.ls-indicator {
+.c-indicator {
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
     }

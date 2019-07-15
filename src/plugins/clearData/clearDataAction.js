@@ -20,39 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+export default class ClearDataAction {
+    constructor(openmct, appliesToObjects) {
+        this.name = 'Clear Data';
+        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
 
-        var LOCAL_STORAGE_WARNING = [
-            "Using browser local storage for persistence.",
-            "Anything you create or change will only be saved",
-            "in this browser on this machine."
-        ].join(' ');
-
-        /**
-         * Indicator for local storage persistence. Provides a minimum
-         * level of feedback indicating that local storage is in use.
-         * @constructor
-         * @memberof platform/persistence/local
-         * @implements {Indicator}
-         */
-        function LocalStorageIndicator() {
-        }
-
-        LocalStorageIndicator.prototype.getCssClass = function () {
-            return "c-indicator--clickable icon-database s-status-caution";
-        };
-        LocalStorageIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
-        };
-        LocalStorageIndicator.prototype.getText = function () {
-            return "Off-line storage";
-        };
-        LocalStorageIndicator.prototype.getDescription = function () {
-            return LOCAL_STORAGE_WARNING;
-        };
-
-        return LocalStorageIndicator;
+        this._openmct = openmct;
+        this._appliesToObjects = appliesToObjects;
     }
-);
+    invoke(objectPath) {
+        this._openmct.objectViews.emit('clearData', objectPath[0]);
+    }
+    appliesTo(objectPath) {
+        let contextualDomainObject = objectPath[0];
+
+        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
+    }
+}

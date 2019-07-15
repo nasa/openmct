@@ -73,6 +73,9 @@ define([
                     onEditModeChange(isEditing) {
                         component.isEditing = isEditing;
                     },
+                    onClearData() {
+                        table.refreshData();
+                    },
                     destroy: function (element) {
                         component.$destroy();
                         component = undefined;

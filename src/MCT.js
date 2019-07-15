@@ -246,12 +246,21 @@ define([
         this.branding = BrandingAPI.default;
 
         this.legacyRegistry = defaultRegistry;
+
+        // Plugin's that are installed by default
+
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
+        this.install(this.plugins.ImportExport());
+        this.install(this.plugins.FolderView());
+        this.install(this.plugins.Tabs());
+        this.install(this.plugins.FlexibleLayout());
+        this.install(this.plugins.LADTable());
+        this.install(this.plugins.GoToOriginalAction());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
             this.install(buildInfoPlugin(BUILD_CONSTANTS));

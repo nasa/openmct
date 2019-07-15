@@ -148,21 +148,6 @@
                 font-size: floor(12px * .9);
             }
 
-            &__collapse-button {
-                box-shadow: none;
-                background: $splitterBtnColorBg;
-                color: $splitterBtnColorFg;
-                border-radius: $smallCr;
-                font-size: 6px;
-                line-height: 90%;
-                padding: 3px 15px;
-
-                @include hover() {
-                    background: $colorBtnBgHov;
-                    color: $colorBtnFgHov;
-                }
-            }
-
             &__label {
                 // Name of the pane
                 @include ellipsize();

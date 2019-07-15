@@ -63,8 +63,11 @@ define([
 
         $scope.pending = 0;
 
+        this.clearData = this.clearData.bind(this);
+
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
+        this.listenTo($scope, 'clearData', this.clearData);
 
         this.config = this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
@@ -74,6 +77,7 @@ define([
         this.followTimeConductor();
 
         this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+        this.keyString = this.openmct.objects.makeKeyString(this.newStyleDomainObject.identifier);
 
         this.filterObserver = this.openmct.objects.observe(
             this.newStyleDomainObject,
@@ -260,6 +264,12 @@ define([
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
         this.config.series.forEach(function (series) {
             series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+        });
+    };
+
+    PlotController.prototype.clearData = function () {
+        this.config.series.forEach(function (series) {
+            series.refresh();
         });
     };
 
