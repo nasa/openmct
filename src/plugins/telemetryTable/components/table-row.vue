@@ -33,8 +33,7 @@
         :columnKey="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :title="formattedRow[key]"
-        :class="cellLimitClasses[key]"
-        class="is-selectable"
+        :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
         @click="selectCell($event.currentTarget, key)"
         :row="row">
     </component>
@@ -66,6 +65,10 @@ export default {
             componentList: Object.keys(this.headers).reduce((components, header) => {
                 components[header] = this.row.getCellComponentName(header) || 'table-cell';
                 return components
+            }, {}),
+            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+                selectable[columnKeys] = this.row.columns[columnKeys].isSelectable();
+                return selectable;
             }, {})
         }
     },
@@ -124,21 +127,23 @@ export default {
             }
         },
         selectCell(element, columnKey) {
-            //TODO: This is a hack. Cannot get parent this way.
-            this.openmct.selection.select([{
-                element: element,
-                context: {
-                    type: 'table-cell',
-                    row: this.row.objectKeyString,
-                    column: columnKey
-                }
-            },{
-                element: this.openmct.layout.$refs.browseObject.$el,
-                context: {
-                    item: this.openmct.router.path[0]
-                }
-            }], false);
-            event.stopPropagation();
+            if (this.selectableColumns[columnKey]) {
+                 //TODO: This is a hack. Cannot get parent this way.
+                this.openmct.selection.select([{
+                    element: element,
+                    context: {
+                        type: 'table-cell',
+                        row: this.row.objectKeyString,
+                        column: columnKey
+                    }
+                },{
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: this.openmct.router.path[0]
+                    }
+                }], false);
+                event.stopPropagation();
+            }
         }
     },
     // TODO: use computed properties

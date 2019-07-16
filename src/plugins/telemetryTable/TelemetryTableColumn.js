@@ -56,7 +56,11 @@ define(function () {
             }
         }
 
-    };
+        isSelectable() {
+            return false;
+        }
+
+    }
 
     return TelemetryTableColumn;
 });
