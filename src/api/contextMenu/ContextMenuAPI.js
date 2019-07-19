@@ -49,6 +49,8 @@ class ContextMenuAPI {
      *           a single sentence or short paragraph) of this kind of view
      * @property {string} cssClass the CSS class to apply to labels for this
      *           view (to add icons, for instance)
+     * @property {string} key unique key to identify the context menu action
+     *           (used in custom context menu's eg table rows, to identify which actions to include)
      */
     /**
      * @method appliesTo

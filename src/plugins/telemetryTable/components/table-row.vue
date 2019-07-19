@@ -96,15 +96,12 @@ export default {
             this.rowClass = row.getRowClass();
             this.cellLimitClasses = row.getCellLimitClasses();
         },
-        getDomainObjectPath: function (event) {
+        showContextMenu: function (event) {
             event.preventDefault();
 
             this.openmct.objects.getOriginalPath(this.row.objectKeyString).then((path) => {
-                this.showContextMenu(path, event);
+                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, this.row.getContextMenuActions());
             });
-        },
-        showContextMenu: function (path, event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, this.row.getContextMenuActions());
         },
         selectCell(element, columnKey) {
             //TODO: This is a hack. Cannot get parent this way.
@@ -139,7 +136,7 @@ export default {
         listeners() {
             if (this.row.getContextMenuActions().length) {
                 return {
-                    contextmenu: this.getDomainObjectPath
+                    contextmenu: this.showContextMenu
                 }
             } else {
                 return null;

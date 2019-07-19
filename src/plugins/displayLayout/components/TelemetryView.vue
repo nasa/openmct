@@ -28,7 +28,7 @@
         <div class="c-telemetry-view"
              :style="styleObject"
              v-if="domainObject"
-             @contextmenu.prevent="getDomainObjectPath">
+             @contextmenu.prevent="showContextMenu">
             <div v-if="showLabel"
                   class="c-telemetry-view__label">
                 <div class="c-telemetry-view__label-text">{{ domainObject.name }}</div>
@@ -239,12 +239,9 @@
             updateTelemetryFormat(format) {
                 this.$emit('formatChanged', this.item, format);
             },
-            showContextMenu(path, event) {
-                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
-            },
-            getDomainObjectPath(event) {
-                this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
-                    this.showContextMenu(path, event);
+            showContextMenu(event) {
+                 this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
+                    this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
                 });
             }
         },

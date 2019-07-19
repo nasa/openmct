@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -21,7 +22,7 @@
  *****************************************************************************/
 
 <template>
-    <tr @contextmenu="getDomainObjectPath">
+    <tr @contextmenu.prevent="showContextMenu">
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
         <td :class="valueClass">
@@ -84,11 +85,13 @@ export default {
             event.preventDefault();
 
             this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
-                this.showContextMenu(path, event);
+                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
             });
         },
-        showContextMenu(path, event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        showContextMenu(event) {
+            this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
+                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
+            });
         }
     },
     mounted() {
