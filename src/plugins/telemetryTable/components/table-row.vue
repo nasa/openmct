@@ -67,7 +67,7 @@ export default {
                 return components
             }, {}),
             selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
-                selectable[columnKeys] = this.row.columns[columnKeys].isSelectable();
+                selectable[columnKeys] = this.row.columns[columnKeys].selectable;
                 return selectable;
             }, {})
         }
@@ -116,13 +116,19 @@ export default {
             this.cellLimitClasses = row.getCellLimitClasses();
         },
         markRow: function (event) {
+            let keyCtrlModifier = false;
+
+            if (event.ctrlKey || event.metaKey) {
+                keyCtrlModifier = true;
+            }
+
             if (event.shiftKey) {
                 this.$emit('markMultipleConcurrent', this.rowIndex);
             } else {
                 if (this.marked) {
-                    this.$emit('unmark', this.rowIndex);
+                    this.$emit('unmark', this.rowIndex, keyCtrlModifier);
                 } else {
-                    this.$emit('mark', this.rowIndex);
+                    this.$emit('mark', this.rowIndex, keyCtrlModifier);
                 }
             }
         },

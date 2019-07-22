@@ -41,8 +41,11 @@
                 title="Unmark All Rows">
             <span class="c-button__label">Unmark All Rows</span>
         </button>
-        <div class="c-separator"></div>
-        <button class="c-button icon-pause pause-play labeled"
+        <div v-if="enableMarking"
+            class="c-separator">
+        </div>
+        <button v-if="enableMarking"
+                class="c-button icon-pause pause-play labeled"
                 :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
                 v-on:click="togglePauseByButton()"
                 :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
@@ -362,6 +365,10 @@ export default {
         allowSorting: {
             'type': Boolean,
             'default': true
+        },
+        enableMarking: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -729,10 +736,14 @@ export default {
             this.undoMarkedRows();
             this.unpause();
         },
-        markRow(rowIndex) {
+        markRow(rowIndex, keyModifier) {
+            if (!this.enableMarking) {
+                return;
+            }
+
             let insertMethod = 'unshift';
 
-            if (this.markedRows.length && !this.ctrlKeyPressed) {
+            if (this.markedRows.length && !keyModifier) {
                 this.undoMarkedRows();
                 insertMethod = 'push';
             }
@@ -750,6 +761,9 @@ export default {
             this.unpause();
         },
         markMultipleConcurrentRows(rowIndex) {
+            if (!this.enableMarking) {
+                return;
+            }
 
             if (!this.markedRows.length) {
                 this.markRow(rowIndex);
@@ -781,18 +795,6 @@ export default {
                     row.marked = true;
                     this.markedRows.push(row);
                 }
-
-                this.$forceUpdate();
-            }
-        },
-        keydown(event) {
-            if ((event.ctrlKey || event.metaKey)) {
-                this.ctrlKeyPressed = true;
-            }
-        },
-        keyup(event) {
-            if ((event.ctrlKey || event.key.toLowerCase() === 'meta')) {
-                this.ctrlKeyPressed = false;
             }
         }
     },
@@ -829,9 +831,6 @@ export default {
         this.calculateScrollbarWidth();
 
         this.table.initialize();
-
-        document.addEventListener('keydown', this.keydown);
-        document.addEventListener('keyup', this.keyup);
     },
     destroyed() {
         this.table.off('object-added', this.addObject);
@@ -851,9 +850,6 @@ export default {
         this.table.configuration.destroy();
 
         this.table.destroy();
-
-        document.removeEventListener('keydown', this.keydown);
-        document.removeEventListener('keyup', this.keyup);
     }
 }
 </script>

@@ -47,7 +47,6 @@ define([
             this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
-            this.rowBuffer = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
