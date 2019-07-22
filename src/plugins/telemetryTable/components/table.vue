@@ -53,6 +53,7 @@
                     {{paused ? 'Play' : 'Pause'}}
                 </span>
         </button>
+        <slot name="buttons"></slot>
     </div>
 
     <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
