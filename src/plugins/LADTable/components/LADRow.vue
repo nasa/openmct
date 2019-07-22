@@ -43,14 +43,18 @@ const CONTEXT_MENU_ACTIONS = [
 ];
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'objectPath'],
     props: ['domainObject'],
     data() {
+        let currentObjectPath = this.objectPath.slice();
+        currentObjectPath.unshift(this.domainObject);
+
         return {
             name: this.domainObject.name,
             timestamp: '---',
             value: '---',
-            valueClass: ''
+            valueClass: '',
+            currentObjectPath
         }
     },
     methods: {
@@ -89,9 +93,7 @@ export default {
             });
         },
         showContextMenu(event) {
-            this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
-                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
-            });
+           this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     },
     mounted() {

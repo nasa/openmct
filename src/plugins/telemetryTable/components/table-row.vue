@@ -45,7 +45,7 @@
 import TableCell from './table-cell.vue';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'objectPath'],
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
@@ -99,8 +99,11 @@ export default {
         showContextMenu: function (event) {
             event.preventDefault();
 
-            this.openmct.objects.getOriginalPath(this.row.objectKeyString).then((path) => {
-                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, this.row.getContextMenuActions());
+            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+                let contextualObjectPath = this.objectPath.slice();
+                contextualObjectPath.unshift(domainObject);
+
+                this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
             });
         },
         selectCell(element, columnKey) {

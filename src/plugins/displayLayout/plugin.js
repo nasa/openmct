@@ -37,7 +37,7 @@ export default function DisplayLayoutPlugin(options) {
             canEdit: function (domainObject) {
                 return domainObject.type === 'layout';
             },
-            view: function (domainObject) {
+            view: function (domainObject, isEditing, o) {
                 let component;
                 return {
                     show(container) {
@@ -49,13 +49,14 @@ export default function DisplayLayoutPlugin(options) {
                             provide: {
                                 openmct,
                                 objectUtils,
-                                options
+                                options,
+                                objectPath: o.objectPath
                             },
                             el: container,
                             data () {
                                 return {
                                     domainObject: domainObject
-                                }
+                                };
                             }
                         });
                     },

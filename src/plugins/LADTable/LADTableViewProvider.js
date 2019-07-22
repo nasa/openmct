@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'LadTable';
             },
-            view: function (domainObject) {
+            view: function (domainObject, isEditing, options) {
                 let component;
 
                 return {
@@ -49,7 +49,8 @@ define([
                             },
                             provide: {
                                 openmct,
-                                domainObject
+                                domainObject,
+                                objectPath: options.objectPath
                             },
                             el: element,
                             template: '<lad-table-component></lad-table-component>'

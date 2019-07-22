@@ -105,7 +105,7 @@
                 size: "13px"
             };
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'objectPath'],
         props: {
             item: Object,
             gridSize: Array,
@@ -165,7 +165,8 @@
             return {
                 datum: undefined,
                 formats: undefined,
-                domainObject: undefined
+                domainObject: undefined,
+                currentObjectPath: undefined
             }
         },
         watch: {
@@ -227,6 +228,9 @@
                 this.requestHistoricalData();
                 this.subscribeToObject();
 
+                this.currentObjectPath = this.objectPath.slice();
+                this.currentObjectPath.unshift(this.domainObject);
+
                 this.context = {
                     item: domainObject,
                     layoutItem: this.item,
@@ -240,9 +244,7 @@
                 this.$emit('formatChanged', this.item, format);
             },
             showContextMenu(event) {
-                 this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
-                    this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
-                });
+                this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
             }
         },
         mounted() {

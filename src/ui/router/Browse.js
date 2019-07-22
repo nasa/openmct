@@ -8,6 +8,7 @@ define([
         let navigateCall = 0;
         let browseObject;
         let unobserve = undefined;
+        let currentObjectPath;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
 
@@ -26,7 +27,9 @@ define([
         });
 
         function viewObject(object, viewProvider) {
-            openmct.layout.$refs.browseObject.show(object, viewProvider.key, true);
+            currentObjectPath = openmct.router.path;
+
+            openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
             openmct.layout.$refs.browseBar.domainObject = object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }

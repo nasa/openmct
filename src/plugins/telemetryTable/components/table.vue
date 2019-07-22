@@ -300,7 +300,7 @@ export default {
         search,
         TelemetryFilterIndicator
     },
-    inject: ['table', 'openmct'],
+    inject: ['table', 'openmct', 'objectPath'],
     props: {
         isEditing: {
             type: Boolean,
