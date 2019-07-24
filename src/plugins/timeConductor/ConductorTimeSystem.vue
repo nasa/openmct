@@ -60,7 +60,9 @@ export default {
                 .filter(menuOption => menuOption.clock === (clock && clock.key))
                 .map(menuOption => JSON.parse(JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem))));
         },
-
+        bothTimeSystemsUtcBased(timeSystem1, timeSystem2) {
+            return timeSystem1.isUTCBased && timeSystem2.isUTCBased;
+        },
         setTimeSystemFromView(timeSystem) {
             if (timeSystem.key !== this.selectedTimeSystem.key) {
                 let activeClock = this.openmct.time.clock();
@@ -69,7 +71,15 @@ export default {
                     timeSystem: timeSystem.key
                 });
                 if (activeClock === undefined) {
-                    this.openmct.time.timeSystem(timeSystem.key, configuration.bounds);
+                    let bounds;
+
+                    if (this.bothTimeSystemsUtcBased(this.selectedTimeSystem, timeSystem)) {
+                        bounds = this.openmct.time.bounds();
+                    } else {
+                        bounds = configuration.bounds;
+                    }
+
+                    this.openmct.time.timeSystem(timeSystem.key, bounds);
                 } else {
                     this.openmct.time.timeSystem(timeSystem.key);
                     this.openmct.time.clockOffsets(configuration.clockOffsets);
