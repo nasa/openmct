@@ -23,9 +23,9 @@ define([
             });
 
             afterAll(function () {
-                dsn = {};
+                dsn = null;
                 dsnParser = null;
-                dsnXml = {};
+                dsnXml = null;
             });
 
             it('with no child elements', function () {
@@ -48,9 +48,9 @@ define([
             });
 
             afterAll(function () {
-                dsn = {};
+                dsn = null;
                 dsnParser = null;
-                dsnXml = {};
+                dsnXml = null;
             });
 
             it('with an unknown element', function () {
@@ -71,9 +71,9 @@ define([
             });
 
             afterAll(function () {
-                dsn = {};
+                dsn = null;
                 dsnParser = null;
-                dsnXml = {};
+                dsnXml = null;
             });
 
             it('with a sites element', function () {
@@ -103,9 +103,9 @@ define([
             });
 
             afterAll(function () {
-                dsn = {};
+                dsn = null;
                 dsnParser = null;
-                dsnXml = {};
+                dsnXml = null;
             });
 
             it('with a station element', function () {
