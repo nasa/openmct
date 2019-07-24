@@ -9,20 +9,22 @@ define([
     testXmlResponse
 ) {
     describe('DsnParser', function () {
-        var domParser = new DOMParser(),
-            dsnParser = new DsnParser();
+        var domParser = new DOMParser();
 
         describe('parses a response', function () {
             var dsn,
+                dsnParser,
                 dsnXml;
 
             beforeAll(function () {
                 dsnXml = domParser.parseFromString('<dsn></dsn>', 'application/xml');
+                dsnParser = new DsnParser();
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
             afterAll(function () {
                 dsn = {};
+                dsnParser = null;
                 dsnXml = {};
             });
 
@@ -34,17 +36,20 @@ define([
 
         describe('parses a response', function () {
             var dsn,
+                dsnParser,
                 dsnXml,
                 xml;
 
             beforeAll(function () {
                 xml = '<dsn><spacecraft id="1" name="VGR1" friendlyName="Voyager 1" /></dsn>';
                 dsnXml = domParser.parseFromString(xml, 'application/xml');
+                dsnParser = new DsnParser();
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
             afterAll(function () {
                 dsn = {};
+                dsnParser = null;
                 dsnXml = {};
             });
 
@@ -56,15 +61,18 @@ define([
 
         describe('parses a config response', function () {
             var dsn,
+                dsnParser,
                 dsnXml;
 
             beforeAll(function () {
                 dsnXml = domParser.parseFromString(testXmlConfigResponse, 'application/xml');
+                dsnParser = new DsnParser();
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
             afterAll(function () {
                 dsn = {};
+                dsnParser = null;
                 dsnXml = {};
             });
 
@@ -85,15 +93,18 @@ define([
 
         describe('parses a response', function () {
             var dsn,
+                dsnParser,
                 dsnXml;
 
             beforeAll(function () {
                 dsnXml = domParser.parseFromString(testXmlResponse, 'application/xml');
+                dsnParser = new DsnParser();
                 dsn = dsnParser.parseXml(dsnXml);
             });
 
             afterAll(function () {
                 dsn = {};
+                dsnParser = null;
                 dsnXml = {};
             });
 
