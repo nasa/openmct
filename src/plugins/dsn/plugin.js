@@ -49,7 +49,12 @@ define([
 
                 dsn = parser.parseXml(resp.request.responseXML);
                 if (dsn.data.hasOwnProperty(domainObject.identifier.key)) {
-                    data = typeof dsn.data[domainObject.identifier.key] === 'object' ? dsn.data[domainObject.identifier.key] : {[domainObject.identifier.key]: dsn.data[domainObject.identifier.key]};
+                    if (typeof dsn.data[domainObject.identifier.key] === 'object') {
+                        data = dsn.data[domainObject.identifier.key];
+                    } else {
+                        data = {};
+                        data[domainObject.identifier.key] = dsn.data[domainObject.identifier.key];
+                    }
                 }
 
                 return data;
