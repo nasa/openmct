@@ -25,9 +25,7 @@ define([], function () {
      * @returns {(number|string)} The parsed attribute as a floating point number or a string.
      */
     function parseTelemetryAsFloatOrString(element, attribute) {
-        return isNaN(parseFloat(element.getAttribute(attribute)))
-            ? element.getAttribute(attribute)
-            : parseFloat(element.getAttribute(attribute));
+        return isNaN(parseFloat(element.getAttribute(attribute))) ? element.getAttribute(attribute) : parseFloat(element.getAttribute(attribute));
     }
 
     /**
@@ -39,9 +37,7 @@ define([], function () {
      * @returns {(number|string)} The parsed attribute as an integer or a string.
      */
     function parseTelemetryAsIntegerOrString(element, attribute) {
-        return isNaN(parseInt(element.getAttribute(attribute)))
-            ? element.getAttribute(attribute)
-            : parseInt(element.getAttribute(attribute), 10);
+        return isNaN(parseInt(element.getAttribute(attribute))) ? element.getAttribute(attribute) : parseInt(element.getAttribute(attribute), 10);
     }
 
     /**

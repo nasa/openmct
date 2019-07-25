@@ -49,9 +49,7 @@ define([
 
                 dsn = parser.parseXml(resp.request.responseXML);
                 if (dsn.data.hasOwnProperty(domainObject.identifier.key)) {
-                    data = typeof dsn.data[domainObject.identifier.key] === 'object'
-                        ? dsn.data[domainObject.identifier.key]
-                        : {[domainObject.identifier.key]: dsn.data[domainObject.identifier.key]}
+                    data = typeof dsn.data[domainObject.identifier.key] === 'object' ? dsn.data[domainObject.identifier.key] : {[domainObject.identifier.key]: dsn.data[domainObject.identifier.key]}
                 }
 
                 return data;
@@ -162,14 +160,10 @@ define([
                 key: 'angle-to-string',
                 format: function (angle) {
                     // Assumes angle is in degrees
-                    return typeof angle === 'number'
-                        ? angle.toFixed(2) + ' deg'
-                        : angle;
+                    return typeof angle === 'number' ? angle.toFixed(2) + ' deg' : angle;
                 },
                 parse: function (angle) {
-                    return typeof angle === 'string'
-                        ? parseFloat(angle)
-                        : angle;
+                    return typeof angle === 'string' ? parseFloat(angle) : angle;
                 },
                 validate: function (angle) {
                     return !isNaN(parseFloat(angle));
@@ -180,14 +174,10 @@ define([
                 key: 'wind-speed-to-string',
                 format: function (windSpeed) {
                     // Assumes wind speed is in km/hr
-                    return typeof windSpeed === 'number'
-                        ? windSpeed.toFixed(2) + ' km/hr'
-                        : windSpeed;
+                    return typeof windSpeed === 'number' ? windSpeed.toFixed(2) + ' km/hr' : windSpeed;
                 },
                 parse: function (windSpeed) {
-                    return typeof windSpeed === 'string'
-                        ? parseFloat(windSpeed)
-                        : windSpeed;
+                    return typeof windSpeed === 'string' ? parseFloat(windSpeed) : windSpeed;
                 },
                 validate: function (windSpeed) {
                     return !isNaN(parseFloat(windSpeed));
@@ -218,9 +208,7 @@ define([
                     }
                 },
                 parse: function (dataRate) {
-                    return typeof dataRate === 'string'
-                        ? parseFloat(dataRate)
-                        : dataRate;
+                    return typeof dataRate === 'string' ? parseFloat(dataRate) : dataRate;
                 },
                 validate: function (dataRate) {
                     return !isNaN(parseFloat(dataRate));
@@ -248,9 +236,7 @@ define([
                     }
                 },
                 parse: function (frequency) {
-                    return typeof frequency === 'string'
-                        ? parseFloat(frequency)
-                        : frequency;
+                    return typeof frequency === 'string' ? parseFloat(frequency) : frequency;
                 },
                 validate: function (frequency) {
                     return !isNaN(parseFloat(frequency));
@@ -272,9 +258,7 @@ define([
                     }
                 },
                 parse: function (power) {
-                    return typeof power === 'string'
-                        ? parseFloat(power)
-                        : power;
+                    return typeof power === 'string' ? parseFloat(power) : power;
                 },
                 validate: function (power) {
                     return !isNaN(parseFloat(power));
@@ -309,9 +293,7 @@ define([
                     }
                 },
                 parse: function (distance) {
-                    return typeof distance === 'string'
-                        ? parseFloat(distance)
-                        : distance;
+                    return typeof distance === 'string' ? parseFloat(distance) : distance;
                 },
                 validate: function (distance) {
                     return !isNaN(parseFloat(distance));
@@ -343,9 +325,7 @@ define([
                     }
                 },
                 parse: function (lightTime) {
-                    return typeof lightTime === 'string'
-                        ? parseFloat(lightTime)
-                        : lightTime;
+                    return typeof lightTime === 'string' ? parseFloat(lightTime) : lightTime;
                 },
                 validate: function (lightTime) {
                     return !isNaN(parseFloat(lightTime));
