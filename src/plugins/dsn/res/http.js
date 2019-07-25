@@ -8,8 +8,6 @@
     }
 })(this, function (root) {
 
-    'use strict';
-
     var exports = {};
 
     var generateResponse = function (req) {

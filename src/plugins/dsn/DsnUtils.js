@@ -1,6 +1,5 @@
 
 define([], function () {
-    'use strict';
 
     /**
      * Converts a domain object's identifier to an object.

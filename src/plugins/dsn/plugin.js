@@ -10,7 +10,6 @@ define([
     DsnParser,
     http
 ) {
-    'use strict';
 
     var compositionProvider,
         config,

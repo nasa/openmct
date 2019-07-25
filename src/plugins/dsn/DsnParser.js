@@ -4,7 +4,6 @@ define([
 ], function (
     DsnUtils
 ) {
-    'use strict';
 
     /**
      * Construct a new Deep Space Network parser.
