@@ -162,7 +162,7 @@ export default {
                     }
                 });
             }
-
+        
             this.mutateConfigurationFilters();
         },
         updatePersistedFilters(filters) {

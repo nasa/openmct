@@ -29,6 +29,7 @@
            title="Export This View's Data">
             <span class="c-button__label">Export As CSV</span>
         </button>
+        <slot name="buttons"></slot>
     </div>
     <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
     <!-- Headers table -->
