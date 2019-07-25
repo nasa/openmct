@@ -79,8 +79,7 @@ define([
 
     compositionProvider = {
         appliesTo: function (domainObject) {
-            return domainObject.identifier.namespace === DSN_NAMESPACE
-                    && domainObject.composition !== undefined;
+            return domainObject.identifier.namespace === DSN_NAMESPACE && domainObject.composition !== undefined;
         },
         load: function (domainObject) {
             if (domainObject.identifier.key === DSN_KEY) {
