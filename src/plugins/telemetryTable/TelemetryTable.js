@@ -49,6 +49,7 @@ define([
             this.telemetryObjects = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+            this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
@@ -219,7 +220,10 @@ define([
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
                 }
-                this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
+
+                if (!this.paused) {
+                    this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
+                }
             }, subscribeOptions);
         }
 
@@ -253,6 +257,17 @@ define([
                 configuration.sortOptions = sortOptions;
                 this.configuration.updateConfiguration(configuration);
             }
+        }
+
+        pause() {
+            this.paused = true;
+            this.boundedRows.unsubscribeFromBounds();
+        }
+
+        unpause() {
+            this.paused = false;
+            this.boundedRows.subscribeToBounds();
+            this.refreshData();
         }
 
         destroy() {
