@@ -85,13 +85,6 @@ export default {
                 .then((array) => this.updateValues(array[array.length - 1]));
 
         },
-        getDomainObjectPath(event) {
-            event.preventDefault();
-
-            this.openmct.objects.getOriginalPath(this.keyString).then((path) => {
-                this.openmct.contextMenu._showContextMenuForObjectPath(path, event.x, event.y, CONTEXT_MENU_ACTIONS);
-            });
-        },
         showContextMenu(event) {
            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
