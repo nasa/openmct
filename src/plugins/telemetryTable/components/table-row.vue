@@ -26,7 +26,7 @@
         rowClass,
         {'is-selected': marked}
     ]"
-    @click="markRow">
+    v-on="listeners">
     <component v-for="(title, key) in headers" 
         :key="key"
         :is="componentList[key]"
@@ -56,6 +56,7 @@
 import TableCell from './table-cell.vue';
 
 export default {
+    inject: ['openmct', 'objectPath'],
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
@@ -150,6 +151,16 @@ export default {
                 }], false);
                 event.stopPropagation();
             }
+        },
+         showContextMenu: function (event) {
+            event.preventDefault();
+
+            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+                let contextualObjectPath = this.objectPath.slice();
+                contextualObjectPath.unshift(domainObject);
+
+                this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
+            });
         }
     },
     // TODO: use computed properties
@@ -162,6 +173,19 @@ export default {
     },
     components: {
         TableCell
+    },
+    computed: {
+        listeners() {
+            let listenersObject = {
+                click: this.markRow
+            }
+
+            if (this.row.getContextMenuActions().length) {
+                listenersObject.contextmenu = this.showContextMenu;
+            }
+            
+            return listenersObject;
+        }
     }
 }
 </script>

@@ -27,7 +27,8 @@
                    @endMove="() => $emit('endMove')">
         <div class="c-telemetry-view"
              :style="styleObject"
-             v-if="domainObject">
+             v-if="domainObject"
+             @contextmenu.prevent="showContextMenu">
             <div v-if="showLabel"
                   class="c-telemetry-view__label">
                 <div class="c-telemetry-view__label-text">{{ domainObject.name }}</div>
@@ -82,7 +83,8 @@
     import printj from 'printj'
 
     const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
-          DEFAULT_POSITION = [1, 1];
+          DEFAULT_POSITION = [1, 1],
+          CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
 
     export default {
         makeDefinition(openmct, gridSize, domainObject, position) {
@@ -103,7 +105,7 @@
                 size: "13px"
             };
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'objectPath'],
         props: {
             item: Object,
             gridSize: Array,
@@ -163,7 +165,8 @@
             return {
                 datum: undefined,
                 formats: undefined,
-                domainObject: undefined
+                domainObject: undefined,
+                currentObjectPath: undefined
             }
         },
         watch: {
@@ -218,11 +221,15 @@
             },
             setObject(domainObject) {
                 this.domainObject = domainObject;
+                this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
                 this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
                 this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
                 this.requestHistoricalData();
                 this.subscribeToObject();
+
+                this.currentObjectPath = this.objectPath.slice();
+                this.currentObjectPath.unshift(this.domainObject);
 
                 this.context = {
                     item: domainObject,
@@ -235,6 +242,9 @@
             },
             updateTelemetryFormat(format) {
                 this.$emit('formatChanged', this.item, format);
+            },
+            showContextMenu(event) {
+                this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
             }
         },
         mounted() {

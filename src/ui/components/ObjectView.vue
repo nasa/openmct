@@ -9,7 +9,8 @@ export default {
     props: {
         view: String,
         object: Object,
-        showEditView: Boolean
+        showEditView: Boolean,
+        objectPath: Array
     },
     destroyed() {
         this.clear();
@@ -91,17 +92,19 @@ export default {
                 return;
             }
 
+            let objectPath = this.currentObjectPath || this.objectPath;
+
             if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.currentObject);
+                    this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false);    
+                    this.currentView = provider.view(this.currentObject, false, objectPath);    
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing());
+                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -117,7 +120,7 @@ export default {
 
             this.openmct.objectViews.on('clearData', this.clearData);
         },
-        show(object, viewKey, immediatelySelect) {
+        show(object, viewKey, immediatelySelect, currentObjectPath) {
             if (this.unlisten) {
                 this.unlisten();
             }
@@ -132,6 +135,11 @@ export default {
             }
 
             this.currentObject = object;
+
+            if (currentObjectPath) {
+                this.currentObjectPath = currentObjectPath;
+            }
+
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
             });

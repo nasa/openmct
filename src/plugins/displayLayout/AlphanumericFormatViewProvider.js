@@ -46,13 +46,14 @@ define([
 
                 return selection.every(isTelemetryObject);
             },
-            view: function (selection) {
+            view: function (domainObject, isEditing, objectPath) {
                 let component;
                 return {
                     show: function (element) {
                         component = new Vue({
                             provide: {
-                                openmct
+                                openmct,
+                                objectPath
                             },
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default

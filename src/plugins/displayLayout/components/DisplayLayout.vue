@@ -202,7 +202,7 @@
                 return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
             }
         },
-        inject: ['openmct', 'options'],
+        inject: ['openmct', 'options', 'objectPath'],
         props: ['domainObject'],
         components: components,
         methods: {

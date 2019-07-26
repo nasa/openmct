@@ -29,7 +29,7 @@ define([], function () {
             this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
         }
-        
+
         getFormattedDatum(headers) {
             return Object.keys(headers).reduce((formattedDatum, columnKey) => {
                 formattedDatum[columnKey] = this.getFormattedValue(columnKey);
@@ -62,11 +62,15 @@ define([], function () {
                 this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
                     let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
                     alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
-                    
+
                     return alarmStateMap;
                 }, {});
             }
             return this.cellLimitClasses;
+        }
+
+        getContextMenuActions() {
+            return [];
         }
     }
 

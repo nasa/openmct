@@ -211,6 +211,10 @@ $btnStdH: 24px;
 $colorCursorGuide: rgba(black, 0.6);
 $shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
 $colorLocalControlOvrBg: rgba($colorBodyFg, 0.8);
+$colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
+$colorSelectFg: $colorBtnFg;
+$colorSelectArw: lighten($colorBtnBg, 20%);
+$shdwSelect: none;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -423,8 +427,4 @@ $createBtnTextTransform: uppercase;
 
 @mixin themedButton($c: $colorBtnBg) {
     background: $c;
-}
-
-@mixin themedSelect($bg: $colorBtnBg, $fg: $colorBtnFg) {
-    @include cSelect($bg, $fg, lighten($bg, 20%), none);
 }

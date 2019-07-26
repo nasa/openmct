@@ -115,9 +115,21 @@
                  width: (tickWidth + 30) + 'px'
              }">
 
-            <div class="gl-plot-label gl-plot-y-label">
+            <div class="gl-plot-label gl-plot-y-label" ng-if="!yKeyOptions">
                 {{ yAxis.get('label') }}
             </div>
+
+            <div class="gl-plot-label gl-plot-y-label" ng-if="yKeyOptions.length > 1 && series.length === 1">
+                <select  class="gl-plot-y-label__select"
+                         ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
+                    <option ng-repeat="option in yKeyOptions"
+                            value="{{option.name}}"
+                            ng-selected="option.name == yAxisLabel">
+                        {{option.name}}
+                    </option>
+                </select>
+            </div>
+            
 
             <mct-ticks axis="yAxis">
                 <div ng-repeat="tick in ticks track by tick.text"
@@ -165,7 +177,7 @@
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
                     <div class="c-button-set c-button-set--strip-h">
                         <button class="c-button icon-minus"
-                                ng-click="plot.zoom('out', 0.2)"
+                                ng-click="plot.toggleYAxis()"
                                 title="Zoom out">
                         </button>
                         <button class="c-button icon-plus"

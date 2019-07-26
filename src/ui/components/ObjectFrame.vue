@@ -44,7 +44,8 @@
             class="c-so-view__object-view"
             ref="objectView"
             :object="domainObject"
-            :show-edit-view="showEditView">
+            :show-edit-view="showEditView"
+            :object-path="objectPath">
         </object-view>
     </div>
 </template>

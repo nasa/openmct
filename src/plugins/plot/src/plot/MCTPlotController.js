@@ -93,6 +93,8 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
+        this.$scope.yAxisLabel = this.config.yAxis.get('label');
+
         this.cursorGuideVertical = this.$element[0].querySelector('.js-cursor-guide--v');
         this.cursorGuideHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
         this.cursorGuide = false;
@@ -103,9 +105,27 @@ define([
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
         this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
-
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+
+        this.setUpYAxisOptions();
+    };
+
+    MCTPlotController.prototype.setUpYAxisOptions = function () {
+        if (this.$scope.series.length === 1) {
+            let metadata = this.$scope.series[0].metadata;
+
+            this.$scope.yKeyOptions = metadata
+                .valuesForHints(['range'])
+                .map(function (o) {
+                    return {
+                        name: o.name,
+                        key: o.key
+                    };
+                });
+        } else {
+            this.$scope.yKeyOptions = undefined;
+        }
     };
 
     MCTPlotController.prototype.onXAxisChange = function (displayBounds) {
@@ -491,6 +511,14 @@ define([
 
     MCTPlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
+    };
+
+    MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {
+        let yAxisObject = options.filter(o => o.name === label)[0];
+
+        if (yAxisObject) {
+            series.emit('change:yKey', yAxisObject.key);
+        }
     };
 
     return MCTPlotController;

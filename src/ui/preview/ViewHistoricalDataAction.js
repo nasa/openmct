@@ -20,35 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class GoToOriginalAction {
+import PreviewAction from './PreviewAction';
+
+export default class ViewHistoricalDataAction extends PreviewAction {
     constructor(openmct) {
-        this.name = 'Go To Original';
-        this.key = 'goToOriginal';
-        this.description = 'Go to the original unlinked instance of this object';
+        super(openmct);
 
-        this._openmct = openmct;
-    }
-    invoke(objectPath) {
-        this._openmct.objects.getOriginalPath(objectPath[0].identifier)
-            .then((originalPath) => {
-                let url = '#/browse/' + originalPath
-                    .map(function (o) {
-                        return o && this._openmct.objects.makeKeyString(o.identifier);
-                    }.bind(this))
-                    .reverse()
-                    .slice(1)
-                    .join('/');
-
-                window.location.href = url;
-            });
-    }
-    appliesTo(objectPath) {
-        let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
-
-        if (!parentKeystring) {
-            return false;
-        }
-
-        return (parentKeystring !== objectPath[0].location);
+        this.name = 'View Historical Data';
+        this.key = 'viewHistoricalData';
+        this.description = 'View Historical Data in a Table or Plot';
+        this.cssClass = 'icon-eye-open';
+        this.hideInDefaultMenu = true;
     }
 }

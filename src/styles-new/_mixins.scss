@@ -585,6 +585,11 @@
     }
 }
 
+@function svgColorFromHex($hexColor) {
+    // Remove initial # in color value
+    @return str-slice(inspect($hexColor), 2, str-length(inspect($hexColor)));
+}
+
 @mixin test($c: deeppink, $a: 0.3) {
     background: rgba($c, $a) !important;
     background-color: rgba($c, $a) !important;

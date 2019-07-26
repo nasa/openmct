@@ -44,7 +44,7 @@ import lodash from 'lodash';
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'objectPath'],
     components: {
         LadRow
     },
