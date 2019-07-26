@@ -129,7 +129,7 @@
                 this.viewContainer.classList.add('c-object-view','u-contents');
                 this.$refs.objectView.append(this.viewContainer);
 
-                this.view = this.currentView.view(this.domainObject);
+                this.view = this.currentView.view(this.domainObject, false, this.objectPath);
                 this.view.show(this.viewContainer, false);
             }
         },

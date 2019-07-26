@@ -30,12 +30,6 @@ export default class ViewHistoricalDataAction extends PreviewAction {
         this.key = 'viewHistoricalData';
         this.description = 'View Historical Data in a Table or Plot';
         this.cssClass = 'icon-eye-open';
-    }
-
-    appliesTo(objectPath, actionsToBeIncluded) {
-        if (!actionsToBeIncluded) {
-            return false;
-        }
-        return !this._isNavigatedObject(objectPath) && actionsToBeIncluded.includes(this.key);
+        this.hideInDefaultMenu = true;
     }
 }

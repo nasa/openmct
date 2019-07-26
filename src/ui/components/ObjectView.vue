@@ -92,21 +92,19 @@ export default {
                 return;
             }
 
-            let options = {
-                objectPath: this.currentObjectPath || this.objectPath
-            }
+            let objectPath = this.currentObjectPath || this.objectPath;
 
             if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.currentObject, true, options);
+                    this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false, options);    
+                    this.currentView = provider.view(this.currentObject, false, objectPath);    
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), options);
+                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);

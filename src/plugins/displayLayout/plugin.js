@@ -37,7 +37,7 @@ export default function DisplayLayoutPlugin(options) {
             canEdit: function (domainObject) {
                 return domainObject.type === 'layout';
             },
-            view: function (domainObject, isEditing, o) {
+            view: function (domainObject, isEditing, objectPath) {
                 let component;
                 return {
                     show(container) {
@@ -50,7 +50,7 @@ export default function DisplayLayoutPlugin(options) {
                                 openmct,
                                 objectUtils,
                                 options,
-                                objectPath: o.objectPath
+                                objectPath
                             },
                             el: container,
                             data () {
