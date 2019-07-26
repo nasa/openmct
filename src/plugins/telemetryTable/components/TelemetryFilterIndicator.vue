@@ -57,6 +57,7 @@
     const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
     const FILTER_INDICATOR_TITLE = 'Data filters are being applied to this view.';
     const FILTER_INDICATOR_TITLE_MIXED = 'A mix of data filter values are being applied to this view.';
+    const USE_GLOBAL = 'useGlobal';
 
     export default {
         inject: ['openmct', 'table'],
@@ -80,17 +81,19 @@
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.filteredTelemetry[keyString];
-                        this.telemetryKeyStrings.add(keyString);
 
                         if (filters !== undefined) {
                             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-                            Object.keys(filters).forEach(key => {
-                                metadataValues.forEach(metadaum => {
+                            filters = _.omit(filters, [USE_GLOBAL]);
 
-                                    if (key === metadaum.key) {
-                                        names.push(metadaum.name);
-                                    }
-                                });
+                            Object.keys(filters).forEach(key => {
+                                if (!_.isEmpty(filters[key])) {
+                                    metadataValues.forEach(metadaum => {
+                                        if (key === metadaum.key) {
+                                            names.push(metadaum.name);
+                                        }
+                                    });
+                                }
                             });
                         }
                     });
@@ -103,18 +106,20 @@
                 }
             },
             checkFiltersForMixedValues() {
-                let valueToCompare = this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]];
+                let valueToCompare = _.omit(this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]], [USE_GLOBAL]);
                 let mixed = false;
 
                 Object.values(this.filteredTelemetry).forEach(value => {
+                    value = _.omit(value, [USE_GLOBAL]);
+
                     if (!_.isEqual(valueToCompare, value)) {
                         mixed = true;
                         return;
                     }
                 });
 
-                // If the filtered telemetry is not mixed at this point, check the number of available objects
-                // with the number of filtered telemetry. If they are not equal, the filters must be mixed.
+                // If filtered telemetry is not mixed at this point, check the number of available telemetry objects
+                // against the number of filtered telemetry objects. If they are not equal, the filters must be mixed.
                 if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.size) {
                     mixed = true;
                 }
