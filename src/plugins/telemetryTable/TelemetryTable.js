@@ -49,6 +49,7 @@ define([
             this.telemetryObjects = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+            this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
@@ -133,13 +134,6 @@ define([
             this.emit('object-removed', objectIdentifier);
         }
 
-        /**
-         * @private
-         */
-        createRow(datum, columnMap, keyString, limitEvaluator) {
-            return new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
-        }
-
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
@@ -152,12 +146,15 @@ define([
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-
-                    let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
-                    this.boundedRows.add(telemetryRows);
+                    this.processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator);
                 }).finally(() => {
                     this.decrementOutstandingRequests();
                 });
+        }
+
+        processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
+            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+            this.boundedRows.add(telemetryRows);
         }
 
         /**
@@ -223,8 +220,15 @@ define([
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
                 }
-                this.boundedRows.add(this.createRow(datum, columnMap, keyString, limitEvaluator));
+
+                if (!this.paused) {
+                    this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
+                }
             }, subscribeOptions);
+        }
+
+        processRealtimeDatum(datum, columnMap, keyString, limitEvaluator) {
+            this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
         }
 
         isTelemetryObject(domainObject) {
@@ -253,6 +257,17 @@ define([
                 configuration.sortOptions = sortOptions;
                 this.configuration.updateConfiguration(configuration);
             }
+        }
+
+        pause() {
+            this.paused = true;
+            this.boundedRows.unsubscribeFromBounds();
+        }
+
+        unpause() {
+            this.paused = false;
+            this.boundedRows.subscribeToBounds();
+            this.refreshData();
         }
 
         destroy() {

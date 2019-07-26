@@ -68,7 +68,7 @@ define([
                                 objectPath
                             },
                             el: element,
-                            template: '<table-component :isEditing="isEditing"></table-component>'
+                            template: '<table-component :isEditing="isEditing" :enableMarking="true"></table-component>'
                         });
                     },
                     onEditModeChange(isEditing) {

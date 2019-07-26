@@ -603,13 +603,13 @@ select {
     margin-right: $m;
 }
 
+.c-separator {
+    @include cToolbarSeparator();
+}
+
 .c-toolbar {
     > * + * {
         margin-left: 2px;
-    }
-
-    &__button {
-
     }
 
     &__separator {

@@ -25,7 +25,7 @@ import Vue from 'vue'
 import objectUtils from '../../api/objects/object-utils.js'
 import DisplayLayoutType from './DisplayLayoutType.js'
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
-import AlphaNumericFormatViewProvider from './AlphaNumericFormatViewProvider.js'
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'
 
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
