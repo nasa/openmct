@@ -22,16 +22,16 @@
                 <!-- Checkbox list, editing -->
                 <template v-if="filter.possibleValues && isEditing">
                     <div class="c-checkbox-list__row"
-                         v-for="value in filter.possibleValues"
-                         :key="value">
+                         v-for="option in filter.possibleValues"
+                         :key="option.value">
                         <input class="c-checkbox-list__input"
                                type="checkbox"
-                               :id="`${value}filterControl`"
+                               :id="`${option.value}filterControl`"
                                :disabled="useGlobal"
-                               @change="onUserSelect($event, filter.comparator, value)"
-                               :checked="isChecked(filter.comparator, value)">
+                               @change="onUserSelect($event, filter.comparator, option.value)"
+                               :checked="isChecked(filter.comparator, option.value)">
                         <span class="c-checkbox-list__value">
-                            {{ value }}
+                            {{ option.label }}
                         </span>
                     </div>
                 </template>

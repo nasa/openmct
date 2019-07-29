@@ -90,7 +90,20 @@
                                 if (!_.isEmpty(filters[key])) {
                                     metadataValues.forEach(metadaum => {
                                         if (key === metadaum.key) {
-                                            names.push(metadaum.name);
+
+                                            if (typeof metadaum.filters[0] === "object") {
+                                                Object.values(filters[key]).forEach(filter => {
+                                                    filter.forEach(filterValue => {
+                                                        metadaum.filters[0].possibleValues.forEach(option => {
+                                                            if (option.value === filterValue) {
+                                                                names.push(option.label);
+                                                            }
+                                                        });
+                                                    });
+                                                });
+                                            } else {
+                                                names.push(metadaum.name);
+                                            }
                                         }
                                     });
                                 }
