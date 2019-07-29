@@ -81,36 +81,40 @@
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.filteredTelemetry[keyString];
+                        let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
                         if (filters !== undefined) {
-                            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
                             filters = _.omit(filters, [USE_GLOBAL]);
-
-                            Object.keys(filters).forEach(key => {
-                                if (!_.isEmpty(filters[key])) {
-                                    metadataValues.forEach(metadaum => {
-                                        if (key === metadaum.key) {
-
-                                            if (typeof metadaum.filters[0] === "object") {
-                                                Object.values(filters[key]).forEach(filter => {
-                                                    filter.forEach(filterValue => {
-                                                        metadaum.filters[0].possibleValues.forEach(option => {
-                                                            if (option.value === filterValue) {
-                                                                names.push(option.label);
-                                                            }
-                                                        });
-                                                    });
-                                                });
-                                            } else {
-                                                names.push(metadaum.name);
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+                            this.collectFiltersName(filters, metadataValues, names);
                         }
                     });
                     this.filterNames = Array.from(new Set(names));
+                });
+            },
+            collectFiltersName(filters, metadataValues, names) {
+                Object.keys(filters).forEach(key => {
+                    if (!_.isEmpty(filters[key])) {
+                        metadataValues.forEach(metadatum => {
+                            if (key === metadatum.key) {
+                                if (typeof metadatum.filters[0] === "object") {
+                                    this.readFilterLabels(filters[key], metadatum, names);
+                                } else {
+                                    names.push(metadatum.name);
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+            readFilterLabels(filterObject, metadatum, names) {
+                Object.values(filterObject).forEach(comparator => {
+                    comparator.forEach(filterValue => {
+                        metadatum.filters[0].possibleValues.forEach(option => {
+                            if (option.value === filterValue) {
+                                names.push(option.label);
+                            }
+                        });
+                    });
                 });
             },
             handleConfigurationChanges(configuration) {
