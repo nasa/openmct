@@ -34,7 +34,7 @@
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :title="formattedRow[key]"
         :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
-        @click="selectCell($event.currentTarget, key)"
+        :objectPath="objectPath"
         :row="row">
     </component>
 </tr>
@@ -85,6 +85,10 @@ export default {
         columnWidths: {
             type: Object,
             required: true
+        },
+        objectPath: {
+            type: Array,
+            required: false
         },
         rowIndex: {
             type: Number,

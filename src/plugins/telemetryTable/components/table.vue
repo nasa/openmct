@@ -120,6 +120,7 @@
                         :headers="headers"
                         :columnWidths="columnWidths"
                         :rowIndex="rowIndex"
+                        :objectPath="objectPath"
                         :rowOffset="rowOffset"
                         :rowHeight="rowHeight"
                         :row="row"
