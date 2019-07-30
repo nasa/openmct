@@ -107,6 +107,7 @@ define([
         this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+        this.listenTo(this.config.yAxis, 'change:yAxisLabel')
 
         this.setUpYAxisOptions();
     };
@@ -123,6 +124,14 @@ define([
                         key: o.key
                     };
                 });
+
+            //  set yAxisLabel if none is set yet
+            if (this.$scope.yAxisLabel === 'none') {
+                let yKey = this.$scope.series[0].model.yKey,
+                    yKeyModel = this.$scope.yKeyOptions.filter(o => o.key === yKey)[0];
+
+                this.$scope.yAxisLabel = yKeyModel.name;
+            }
         } else {
             this.$scope.yKeyOptions = undefined;
         }

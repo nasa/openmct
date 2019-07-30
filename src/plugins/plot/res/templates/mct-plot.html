@@ -124,7 +124,7 @@
                          ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
                     <option ng-repeat="option in yKeyOptions"
                             value="{{option.name}}"
-                            ng-selected="option.name == yAxisLabel">
+                            ng-selected="option.name === yAxisLabel">
                         {{option.name}}
                     </option>
                 </select>
@@ -177,7 +177,7 @@
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
                     <div class="c-button-set c-button-set--strip-h">
                         <button class="c-button icon-minus"
-                                ng-click="plot.toggleYAxis()"
+                                ng-click="plot.zoom('out', 0.2)"
                                 title="Zoom out">
                         </button>
                         <button class="c-button icon-plus"
