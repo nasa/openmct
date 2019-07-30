@@ -107,7 +107,6 @@ define([
         this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
-        this.listenTo(this.config.yAxis, 'change:yAxisLabel')
 
         this.setUpYAxisOptions();
     };
