@@ -34,11 +34,11 @@
                 </div>
                 <filter-field
                         v-if="(!persistedFilters.useGlobal && !isEditing) || isEditing"
-                        v-for="field in filterObject.valuesWithFilters"
-                        :key="field.key"
-                        :filterField="field"
+                        v-for="metadatum in filterObject.metadataWithFilters"
+                        :key="metadatum.key"
+                        :filterField="metadatum"
                         :useGlobal="persistedFilters.useGlobal"
-                        :persistedFilters="updatedFilters[field.key]"
+                        :persistedFilters="updatedFilters[metadatum.key]"
                         @onUserSelect="collectUserSelects"
                         @onTextEnter="updateTextFilter">
                 </filter-field>

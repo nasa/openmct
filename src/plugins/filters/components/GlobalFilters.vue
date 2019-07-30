@@ -15,10 +15,10 @@
         </div>
         <ul class="c-properties" v-if="expanded">
             <filter-field
-                    v-for="field in globalObject"
-                    :key="field.key"
-                    :filterField="field"
-                    :persistedFilters="updatedFilters[field.key]"
+                    v-for="metadatum in globalMetadata"
+                    :key="metadatum.key"
+                    :filterField="metadatum"
+                    :persistedFilters="updatedFilters[metadatum.key]"
                     @onUserSelect="collectUserSelects"
                     @onTextEnter="updateTextFilter">
             </filter-field>
@@ -66,7 +66,7 @@
             FilterField
         },
         props: {
-            globalObject: Object,
+            globalMetadata: Object,
             globalFilters: {
                 type: Object,
                 default: () => {
