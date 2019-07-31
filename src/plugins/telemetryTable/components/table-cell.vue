@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <td>{{formattedValue}}</td>
+    <td @click="selectCell($event.currentTarget, columnKey)">{{formattedValue}}</td>
 </template>
 <script>
 export default {
@@ -33,11 +33,38 @@ export default {
         columnKey: {
             type: String,
             require: true
+        },
+        objectPath: {
+            type: Array,
+            require: false
         }
+    },
+    methods: {
+        selectCell(element, columnKey) {
+            if (this.isSelectable) {
+                this.openmct.selection.select([{
+                    element: element,
+                    context: {
+                        type: 'table-cell',
+                        row: this.row.objectKeyString,
+                        column: columnKey
+                    }
+                },{
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: this.objectPath[0]
+                    }
+                }], false);
+                event.stopPropagation();
+            }
+        },
     },
     computed: {
         formattedValue() {
             return this.row.getFormattedValue(this.columnKey);
+        },
+        isSelectable() {
+            return this.row.columns[this.columnKey].selectable;
         }
     }
 };
