@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <td @click="selectCell($event.currentTarget, columnKey)">{{formattedValue}}</td>
+    <td @click="selectCell($event.currentTarget, columnKey)" :title="formattedValue">{{formattedValue}}</td>
 </template>
 <script>
 export default {
