@@ -84,16 +84,13 @@ export default {
     },
     computed: {
         filtersDefined() {
-            // Should return true if filters have been defined for this object
+            // Should be true when the user has entered any filter values.
             let isFiltersDefined = false;
+
             Object.values(this.persistedFilters).forEach(comparator => {
-                if (!isFiltersDefined && typeof(comparator) === 'object') {
-                    Object.values(comparator).forEach(value => {
-                        if (value && (value !== '' || value.length > 0)) {
-                            isFiltersDefined = true;
-                            return;
-                        }
-                    });
+                if (!isFiltersDefined && typeof(comparator) === 'object' && !_.isEmpty(comparator)) {
+                    isFiltersDefined = true;
+                    return;
                 }
             });
             return isFiltersDefined;

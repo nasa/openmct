@@ -43,6 +43,9 @@
     import FilterObject from './FilterObject.vue';
     import GlobalFilters from './GlobalFilters.vue'
 
+    const FILTER_VIEW_TITLE = 'Filters applied';
+    const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';
+
     export default {
         components: {
             FilterObject,
@@ -70,10 +73,39 @@
                 persistedFilters,
                 globalFilters,
                 globalMetadata: {},
-                children: {},
-                filtersApplied: false, // TODO: Wire this up - Should be true when the user has entered any filter values
-                filtersMixed: false, // TODO: Wire this up - should be true when filter values are mixed
-                label: (true) ? 'Mixed filters applied' : 'Filters applied' // TODO: Wire this up
+                children: {}
+            }
+        },
+        computed: {
+            filtersApplied() {
+                // Should be true when the user has entered any filter values.
+                let isFiltersApplied = false;
+
+                Object.values(this.persistedFilters).forEach(filters => {
+                    if (isFiltersApplied) {
+                        return;
+                    }
+
+                    Object.values(filters).forEach(comparator => {
+                        if (typeof(comparator) === 'object' && !_.isEmpty(comparator)) {
+                            isFiltersApplied = true;
+                            return;
+                        }
+                    });
+                });
+                return isFiltersApplied;
+            },
+            label() {
+                if (this.filtersApplied) {
+                    if (this.filtersMixed) {
+                        return FILTER_VIEW_TITLE_MIXED;
+                    } else {
+                        return FILTER_VIEW_TITLE;
+                    }
+                }
+            },
+            filtersMixed() {
+                // Should be true when filter values are mixed.
             }
         },
         methods: {
@@ -166,7 +198,6 @@
             },
             updatePersistedFilters(filters) {
                 this.persistedFilters = filters;
-                // TODO: 
             },
             persistGlobalFilters(key, userSelects) {
                 this.globalFilters[key] = userSelects[key];
