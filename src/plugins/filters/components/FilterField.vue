@@ -44,9 +44,8 @@
 
                 <!-- Checkbox list, NOT editing -->
                 <template v-if="filter.possibleValues && !isEditing">
-                    <span
-                        v-if="persistedFilters[filter.comparator]">
-                        {{persistedFilters[filter.comparator].join(', ')}}
+                    <span v-if="persistedFilters[filter.comparator]">
+                        {{ getFilterLabels(filter) }}
                     </span>
                 </template>
             </div>
@@ -93,6 +92,23 @@ export default {
         },
         updateFilterValue(event, comparator) {
             this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
+        },
+        getFilterLabels(filter) {
+            return this.persistedFilters[filter.comparator].reduce((accum, filterValue) => {
+                let filterLabel = filter.possibleValues.reduce((label, possibleValue) => {
+                    if (filterValue === possibleValue.value) {
+                        label = possibleValue.label;
+                    }
+
+                    return label;
+                }, '');
+
+                if (filterLabel !== '') {
+                    accum.push(filterLabel)
+                }
+
+                return accum;
+            }, []).join(', ');
         }
     },
     mounted() {
