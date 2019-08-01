@@ -2,7 +2,7 @@
     <div v-if="filterNames.length > 0"
         :title=title
         class="c-filter-indication"
-        :class="{ 'c-filter-indication--mixed': mixed }">
+        :class="{ 'c-filter-indication--mixed': filtersMixed }">
         <span class="c-filter-indication__mixed">{{ label }}</span>
         <span v-for="(name, index) in filterNames"
               class="c-filter-indication__label">
@@ -64,11 +64,36 @@
         data() {
             return {
                 filterNames: [],
-                filteredTelemetry: {},
-                mixed: false,
-                label: '',
-                title: ''
+                filteredTelemetry: {}
             }           
+        },
+        computed: {
+            filtersMixed() {
+                let filtersToCompare = _.omit(this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]], [USE_GLOBAL]);
+                let mixed = false;
+
+                Object.values(this.filteredTelemetry).forEach(filters => {
+                    if (!_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]))) {
+                        mixed = true;
+                        return;
+                    }
+                });
+                return mixed;
+            },
+            label() {
+                if (this.filtersMixed) {
+                    return FILTER_INDICATOR_LABEL_MIXED;
+                } else {
+                    return FILTER_INDICATOR_LABEL;
+                }
+            },
+            title() {
+                if (this.filtersMixed) {
+                    return FILTER_INDICATOR_TITLE_MIXED;
+                } else {
+                    return FILTER_INDICATOR_TITLE;
+                }
+            }
         },
         methods: {
             isTelemetryObject(domainObject) {
@@ -84,8 +109,7 @@
                         let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
                         if (filters !== undefined) {
-                            filters = _.omit(filters, [USE_GLOBAL]);
-                            this.collectFiltersName(filters, metadataValues, names);
+                            this.collectFiltersName(_.omit(filters, [USE_GLOBAL]), metadataValues, names);
                         }
                     });
                     this.filterNames = Array.from(new Set(names));
@@ -122,54 +146,17 @@
                     this.updateFilters(configuration.filters || {});
                 }
             },
-            checkFiltersForMixedValues() {
-                let valueToCompare = _.omit(this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]], [USE_GLOBAL]);
-                let mixed = false;
-
-                Object.values(this.filteredTelemetry).forEach(value => {
-                    value = _.omit(value, [USE_GLOBAL]);
-
-                    if (!_.isEqual(valueToCompare, value)) {
-                        mixed = true;
-                        return;
-                    }
-                });
-
-                // If filtered telemetry is not mixed at this point, check the number of available telemetry objects
-                // against the number of filtered telemetry objects. If they are not equal, the filters must be mixed.
-                if (mixed === false && _.size(this.filteredTelemetry) !== this.telemetryKeyStrings.size) {
-                    mixed = true;
-                }
-
-                this.mixed = mixed;
-            },
-            setLabels() {
-                if (this.mixed) {
-                    this.label = FILTER_INDICATOR_LABEL_MIXED;
-                    this.title = FILTER_INDICATOR_TITLE_MIXED;
-                } else {
-                    this.label = FILTER_INDICATOR_LABEL;
-                    this.title = FILTER_INDICATOR_TITLE;
-                }
-            },
             updateFilters(filters) {
                 this.filteredTelemetry = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
-                this.updateIndicatorLabel();
             },
             addChildren(child) {
                 let keyString = this.openmct.objects.makeKeyString(child.identifier);
                 this.telemetryKeyStrings.add(keyString);
-                this.updateIndicatorLabel();
             },
             removeChildren(identifier) {
                 let keyString = this.openmct.objects.makeKeyString(identifier);
                 this.telemetryKeyStrings.delete(keyString);
-                this.updateIndicatorLabel();
-            },
-            updateIndicatorLabel() {
-                this.checkFiltersForMixedValues();
-                this.setLabels();
             }
         },
         mounted() {
