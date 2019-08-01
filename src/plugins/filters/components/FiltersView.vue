@@ -107,7 +107,6 @@
                         return;
                     }
                 });
-                console.log('filtersMixed', mixed);
                 return mixed;
             },
             label() {
@@ -122,38 +121,44 @@
         },
         methods: {
             addChildren(child) {
-                let keyString = this.openmct.objects.makeKeyString(child.identifier),
-                    metadata = this.openmct.telemetry.getMetadata(child),
-                    metadataWithFilters = metadata.valueMetadatas.filter((value) => value.filters),
-                    childExist = this.persistedFilters[keyString] !== undefined,
-                    childObject = {
-                        name: child.name,
-                        domainObject: child,
-                        metadataWithFilters
-                    };
+                let keyString = this.openmct.objects.makeKeyString(child.identifier);
+                let metadata = this.openmct.telemetry.getMetadata(child);
+                let metadataWithFilters = metadata.valueMetadatas.filter(value => value.filters);
+                let childExist = this.persistedFilters[keyString] !== undefined;
+                let mutateFilters = false;
+                let childObject = {
+                    name: child.name,
+                    domainObject: child,
+                    metadataWithFilters
+                };
 
-                if (childObject.metadataWithFilters.length) {
+                if (metadataWithFilters.length) {
                     this.$set(this.children, keyString, childObject);
-                }
 
-                metadataWithFilters.forEach(metadatum => {
-                    if (!this.globalFilters[metadatum.key]) {
-                        this.$set(this.globalFilters, metadatum.key, {});
-                    }
-
-                    if (!this.globalMetadata[metadatum.key]) {
-                        this.$set(this.globalMetadata, metadatum.key, metadatum);
-                    }
-
-                    if (!childExist) {
-                        if (!this.persistedFilters[keyString]) {
-                            this.$set(this.persistedFilters, keyString, {});
-                            this.$set(this.persistedFilters[keyString], 'useGlobal', true);
+                    metadataWithFilters.forEach(metadatum => {
+                        if (!this.globalFilters[metadatum.key]) {
+                            this.$set(this.globalFilters, metadatum.key, {});
                         }
 
-                        this.$set(this.persistedFilters[keyString], metadatum.key, this.globalFilters[metadatum.key]);
-                    }
-                });
+                        if (!this.globalMetadata[metadatum.key]) {
+                            this.$set(this.globalMetadata, metadatum.key, metadatum);
+                        }
+
+                        if (!childExist) {
+                            if (!this.persistedFilters[keyString]) {
+                                this.$set(this.persistedFilters, keyString, {});
+                                this.$set(this.persistedFilters[keyString], 'useGlobal', true);
+                                mutateFilters = true;
+                            }
+
+                            this.$set(this.persistedFilters[keyString], metadatum.key, this.globalFilters[metadatum.key]);
+                        }
+                    });
+                }
+
+                if (mutateFilters) {
+                    this.mutateConfigurationFilters();
+                }
             },
             removeChildren(identifier) {
                 let keyString = this.openmct.objects.makeKeyString(identifier);
@@ -198,7 +203,6 @@
                 this.persistedFilters[keyString] = updatedFilters;
 
                 if (useGlobalValues) {
-                    console.log(this.persistedFilters[keyString]);
                     Object.keys(this.persistedFilters[keyString]).forEach(key => {
                         if (typeof(this.persistedFilters[keyString][key]) === 'object') {
                             this.persistedFilters[keyString][key]  = this.globalFilters[key];
