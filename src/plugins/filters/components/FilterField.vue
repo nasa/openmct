@@ -95,17 +95,13 @@ export default {
         },
         getFilterLabels(filter) {
             return this.persistedFilters[filter.comparator].reduce((accum, filterValue) => {
-                let filterLabel = filter.possibleValues.reduce((label, possibleValue) => {
+                accum.push(filter.possibleValues.reduce((label, possibleValue) => {
                     if (filterValue === possibleValue.value) {
                         label = possibleValue.label;
                     }
 
                     return label;
-                }, '');
-
-                if (filterLabel !== '') {
-                    accum.push(filterLabel)
-                }
+                }, ''));
 
                 return accum;
             }, []).join(', ');
