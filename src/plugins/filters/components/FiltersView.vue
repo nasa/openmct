@@ -58,22 +58,12 @@
         data() {
             let providedObject = this.openmct.selection.get()[0][0].context.item;
             let configuration = providedObject.configuration;
-            let persistedFilters = {};
-            let globalFilters = {};
-
-            if (configuration && configuration.filters) {
-                persistedFilters = configuration.filters;
-            }
-
-            if (configuration && configuration.globalFilters) {
-                globalFilters = configuration.globalFilters;
-            }
 
             return {
-                providedObject,
-                persistedFilters,
-                globalFilters,
+                persistedFilters: (configuration && configuration.filters) || {},
+                globalFilters: (configuration && configuration.globalFilters) || {},
                 globalMetadata: {},
+                providedObject,
                 children: {}
             }
         },
