@@ -45,6 +45,7 @@
 
     const FILTER_VIEW_TITLE = 'Filters applied';
     const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';
+    const USE_GLOBAL = 'useGlobal';
 
     export default {
         components: {
@@ -95,6 +96,20 @@
                 });
                 return isFiltersApplied;
             },
+            filtersMixed() {
+                // Should be true when filter values are mixed.
+                let filtersToCompare = _.omit(this.persistedFilters[Object.keys(this.persistedFilters)[0]], [USE_GLOBAL]);
+                let mixed = false;
+
+                Object.values(this.persistedFilters).forEach(filters => {
+                    if (!_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]))) {
+                        mixed = true;
+                        return;
+                    }
+                });
+                console.log('filtersMixed', mixed);
+                return mixed;
+            },
             label() {
                 if (this.filtersApplied) {
                     if (this.filtersMixed) {
@@ -103,9 +118,6 @@
                         return FILTER_VIEW_TITLE;
                     }
                 }
-            },
-            filtersMixed() {
-                // Should be true when filter values are mixed.
             }
         },
         methods: {
