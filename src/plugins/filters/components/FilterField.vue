@@ -28,7 +28,7 @@
                                type="checkbox"
                                :id="`${option.value}filterControl`"
                                :disabled="useGlobal"
-                               @change="onUserSelect($event, filter.comparator, option.value)"
+                               @change="updateFilterValue($event, filter.comparator, option.value)"
                                :checked="isChecked(filter.comparator, option.value)">
                         <span class="c-checkbox-list__value">
                             {{ option.label }}
@@ -77,9 +77,6 @@ export default {
         toggleIsEditing(isEditing) {
             this.isEditing = isEditing;
         },
-        onUserSelect(event, comparator, value){
-            this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
-        },
         isChecked(comparator, value) {
             if (this.persistedFilters[comparator] && this.persistedFilters[comparator].includes(value)) {
                 return true;
@@ -90,8 +87,12 @@ export default {
         persistedValue(comparator) {
             return this.persistedFilters && this.persistedFilters[comparator];
         },
-        updateFilterValue(event, comparator) {
-            this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
+        updateFilterValue(event, comparator, value) {
+            if (value !== undefined) {
+                this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
+            } else {
+                this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
+            }
         },
         getFilterLabels(filter) {
             return this.persistedFilters[filter.comparator].reduce((accum, filterValue) => {
