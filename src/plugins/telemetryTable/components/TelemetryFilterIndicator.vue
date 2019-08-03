@@ -96,13 +96,11 @@
             }
         },
         methods: {
-            isTelemetryObject(domainObject) {
-                return domainObject.hasOwnProperty('telemetry');
-            },
             setFilterNames() {
                 let names = [];
+                let composition = this.openmct.composition.get(this.table.configuration.domainObject);
 
-                this.composition && this.composition.load().then((domainObjects) => {
+                composition && composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
                         let filters = this.filteredTelemetry[keyString];
@@ -112,7 +110,7 @@
                             this.collectFiltersName(_.omit(filters, [USE_GLOBAL]), metadataValues, names);
                         }
                     });
-                    this.filterNames = Array.from(new Set(names));
+                    this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
                 });
             },
             collectFiltersName(filters, metadataValues, names) {
@@ -149,36 +147,15 @@
             updateFilters(filters) {
                 this.filteredTelemetry = JSON.parse(JSON.stringify(filters));
                 this.setFilterNames();
-            },
-            addChildren(child) {
-                let keyString = this.openmct.objects.makeKeyString(child.identifier);
-                this.telemetryKeyStrings.add(keyString);
-            },
-            removeChildren(identifier) {
-                let keyString = this.openmct.objects.makeKeyString(identifier);
-                this.telemetryKeyStrings.delete(keyString);
             }
         },
         mounted() {
             let filters = this.table.configuration.getConfiguration().filters || {};
-            this.telemetryKeyStrings = new Set();
-            this.composition = this.openmct.composition.get(this.table.configuration.domainObject);
-
-            if (this.composition) {
-                this.composition.on('add', this.addChildren);
-                this.composition.on('remove', this.removeChildren);
-            }
-
             this.table.configuration.on('change', this.handleConfigurationChanges);
             this.updateFilters(filters);
         },
         destroyed() {
             this.table.configuration.off('change', this.handleConfigurationChanges);
-
-            if (this.composition) {
-                this.composition.off('add', this.addChildren);
-                this.composition.off('remove', this.removeChildren);
-            }
         }
     }
 </script>
