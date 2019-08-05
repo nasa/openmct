@@ -168,21 +168,21 @@
             },
             getGlobalFiltersToRemove(keyString) {
                 let filtersToRemove = new Set();
-                let filterMatched = false;
 
                 this.children[keyString].metadataWithFilters.forEach(metadatum => {
-                    let count = 0;
+                    let keepFilter = false
                     Object.keys(this.children).forEach(childKeyString => {
                         if (childKeyString !== keyString) {
-                            filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
+                            let filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
 
                             if (filterMatched) {
-                                ++count;
+                                keepFilter = true;
+                                return;
                             }
                         }
                     });
 
-                    if (count === 0) {
+                    if (!keepFilter) {
                         filtersToRemove.add(metadatum.key);
                     }
                 });
@@ -205,9 +205,10 @@
             updatePersistedFilters(filters) {
                 this.persistedFilters = filters;
             },
-            persistGlobalFilters(key, userSelects) {
-                this.globalFilters[key] = userSelects[key];
+            persistGlobalFilters(key, filters) {
+                this.globalFilters[key] = filters[key];
                 this.mutateConfigurationGlobalFilters();
+                let mutateFilters = false;
 
                 Object.keys(this.children).forEach(keyString => {
                     if (this.persistedFilters[keyString].useGlobal !== false && this.containsField(keyString, key)) {
@@ -215,10 +216,14 @@
                             this.$set(this.persistedFilters[keyString], key, {});
                         }
 
-                        this.$set(this.persistedFilters[keyString], key, userSelects[key]);
+                        this.$set(this.persistedFilters[keyString], key, filters[key]);
+                        mutateFilters = true;
                     }
                 });
-                this.mutateConfigurationFilters();
+
+                if (mutateFilters) {
+                    this.mutateConfigurationFilters();
+                }
             },
             updateGlobalFilters(filters) {
                 this.globalFilters = filters;

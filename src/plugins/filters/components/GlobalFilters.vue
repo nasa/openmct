@@ -15,12 +15,12 @@
         </div>
         <ul class="c-properties" v-if="expanded">
             <filter-field
-                    v-for="metadatum in globalMetadata"
-                    :key="metadatum.key"
-                    :filterField="metadatum"
-                    :persistedFilters="updatedFilters[metadatum.key]"
-                    @onUserSelect="collectUserSelects"
-                    @onTextEnter="updateTextFilter">
+                v-for="metadatum in globalMetadata"
+                :key="metadatum.key"
+                :filterField="metadatum"
+                :persistedFilters="updatedFilters[metadatum.key]"
+                @onUserSelect="updateFilterWithSelectedValue"
+                @onTextEnter="updateFilterWithTextValue">
             </filter-field>
         </ul>
     </li>
@@ -108,7 +108,7 @@
             toggleExpanded() {
                 this.expanded = !this.expanded;
             },
-            collectUserSelects(key, comparator, valueName, value) {
+            updateFilterWithSelectedValue(key, comparator, valueName, value) {
                 let filterValue = this.updatedFilters[key];
 
                 if (filterValue[comparator]) {
@@ -127,7 +127,7 @@
 
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             },
-            updateTextFilter(key, comparator, value) {
+            updateFilterWithTextValue(key, comparator, value) {
                 if (value.trim() === '') {
                     this.$set(this.updatedFilters, key, {});
                 } else {
