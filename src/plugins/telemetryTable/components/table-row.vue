@@ -32,7 +32,6 @@
         :is="componentList[key]"
         :columnKey="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
-        :title="formattedRow[key]"
         :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
         :objectPath="objectPath"
         :row="row">
@@ -60,7 +59,6 @@ export default {
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-            formattedRow: this.row.getFormattedDatum(this.headers),
             rowClass: this.row.getRowClass(),
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
@@ -116,7 +114,6 @@ export default {
             this.rowTop = (rowOffset + this.rowIndex) * this.rowHeight + 'px';
         },
         formatRow: function (row) {
-            this.formattedRow = row.getFormattedDatum(this.headers);
             this.rowClass = row.getRowClass();
             this.cellLimitClasses = row.getCellLimitClasses();
         },
