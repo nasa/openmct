@@ -20,36 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * This bundle adds the Web Page object type, which can be used to embed
- * other web pages with layouts.
- * @namespace platform/features/pages
- */
-define(
-    [],
-    function () {
+define([
+    './webPage'
+], function (
+    WebPage
+) {
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objectViews.addProvider(new WebPage(openmct));
 
-        /**
-         * Controller for embedded web pages; serves simply as a
-         * wrapper for `$sce` to mark pages as trusted.
-         * @constructor
-         * @memberof platform/features/pages
-         */
-        function EmbeddedPageController($sce) {
-            this.$sce = $sce;
-        }
-
-        /**
-         * Alias of `$sce.trustAsResourceUrl`.
-         * @param {string} url the URL to trust
-         * @returns {string} the trusted URL
-         */
-        EmbeddedPageController.prototype.trust = function (url) {
-            return this.$sce.trustAsResourceUrl(url);
+            openmct.types.addType('webPage', {
+                name: "Web Page",
+                description: "Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.",
+                creatable: true,
+                cssClass: 'icon-page',
+                form: [
+                    {
+                        "key": "url",
+                        "name": "URL",
+                        "control": "textfield",
+                        "required": true,
+                        "cssClass": "l-input-lg"
+                    }
+                ]
+            });
         };
-
-
-        return EmbeddedPageController;
-    }
-
-);
+    };
+});
