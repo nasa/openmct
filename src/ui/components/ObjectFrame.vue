@@ -44,7 +44,8 @@
             class="c-so-view__object-view"
             ref="objectView"
             :object="domainObject"
-            :show-edit-view="showEditView">
+            :show-edit-view="showEditView"
+            :object-path="objectPath">
         </object-view>
     </div>
 </template>
@@ -123,7 +124,12 @@
         .c-click-icon,
         .c-button {
             // Shrink buttons a bit when they appear in a frame
-            font-size: 0.8em;
+            align-items: baseline;
+            font-size: 0.85em;
+            padding: 3px 5px;
+            &:before {
+                font-size: 0.8em;
+            }
         }
     }
 </style>

@@ -76,23 +76,43 @@ div.c-table {
     height: 100%;
 }
 
+.c-table-wrapper {
+    // Wraps .c-control-bar and .c-table
+    @include abs();
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    > .c-table {
+        height: auto;
+        flex: 1 1 auto;
+    }
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+}
+
+.c-table-control-bar {
+    display: flex;
+    flex: 0 0 auto;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+}
+
 .c-table {
     // Can be used by any type of table, scrolling, LAD, etc.
     $min-w: 50px;
 
     width: 100%;
 
-    &__control-bar,
     &__headers-w {
         flex: 0 0 auto;
     }
 
     /******************************* ELEMENTS */
-
-    &__control-bar {
-        margin-bottom: $interiorMarginSm;
-    }
-
     thead tr,
     &.c-table__headers {
         background: $colorTabHeaderBg;

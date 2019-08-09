@@ -22,12 +22,10 @@
 
 define([
     './components/table.vue',
-    '../../exporters/CSVExporter',
     './TelemetryTable',
     'vue'
 ], function (
     TableComponent,
-    CSVExporter,
     TelemetryTable,
     Vue
 ) {
@@ -50,8 +48,7 @@ define([
             canEdit(domainObject) {
                 return domainObject.type === 'table';
             },
-            view(domainObject) {
-                let csvExporter = new CSVExporter.default();
+            view(domainObject, isEditing, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
@@ -67,15 +64,18 @@ define([
                             },
                             provide: {
                                 openmct,
-                                csvExporter,
-                                table
+                                table,
+                                objectPath
                             },
                             el: element,
-                            template: '<table-component :isEditing="isEditing"></table-component>'
+                            template: '<table-component :isEditing="isEditing" :enableMarking="true"></table-component>'
                         });
                     },
                     onEditModeChange(isEditing) {
                         component.isEditing = isEditing;
+                    },
+                    onClearData() {
+                        table.refreshData();
                     },
                     destroy: function (element) {
                         component.$destroy();

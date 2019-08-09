@@ -167,6 +167,7 @@ export default {
             this.xAxis.scale(this.xScale);
             this.xAxis.tickFormat(utcMultiTimeFormat);
             this.axisElement.call(this.xAxis);
+            this.setScale();
         },
         getActiveFormatter() {
             let timeSystem = this.openmct.time.timeSystem();

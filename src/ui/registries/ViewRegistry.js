@@ -21,7 +21,7 @@
  *****************************************************************************/
 /*global console */
 
-define([], function () {
+define(['EventEmitter'], function (EventEmitter) {
     const DEFAULT_VIEW_PRIORITY = 100;
 
     /**
@@ -31,8 +31,11 @@ define([], function () {
      * @memberof module:openmct
      */
     function ViewRegistry() {
+        EventEmitter.apply(this);
         this.providers = {};
     }
+
+    ViewRegistry.prototype = Object.create(EventEmitter.prototype);
 
 
     /**
@@ -220,11 +223,11 @@ define([], function () {
     /**
      * Provide a view of this object.
      *
-     * When called by Open MCT, this may include additional arguments
-     * which are on the path to the object to be viewed; for instance,
-     * when viewing "A Folder" within "My Items", this method will be
-     * invoked with "A Folder" (as a domain object) as the first argument,
-     * and "My Items" as the second argument.
+     * When called by Open MCT, the following arguments will be passed to it:
+     * @param {object} domainObject - the domainObject that the view is provided for
+     * @param {boolean} isEditing - A boolean value indicating wether openmct is in a global edit mode
+     * @param {array} objectPath - The current contextual object path of the view object
+     *                             eg current domainObject is located under MyItems which is under Root
      *
      * @method view
      * @memberof module:openmct.ViewProvider#

@@ -1,9 +1,9 @@
 <span class="h-indicator" ng-controller="NotificationLaunchController">
     <!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
-    <div class="ls-indicator icon-bell s-status-available"><span class="label">
-        <a ng-click="newInfo()">Success</a>
-        <a ng-click="newError()">Error</a>
-        <a ng-click="newAlert()">Alert</a>
-        <a ng-click="newProgress()">Progress</a>
+    <div class="c-indicator c-indicator--clickable icon-bell s-status-available"><span class="label c-indicator__label">
+        <button ng-click="newInfo()">Success</button>
+        <button ng-click="newError()">Error</button>
+        <button ng-click="newAlert()">Alert</button>
+        <button ng-click="newProgress()">Progress</button>
     </span></div>
 </span>

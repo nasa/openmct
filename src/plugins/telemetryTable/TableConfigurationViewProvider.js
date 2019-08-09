@@ -37,7 +37,7 @@ define([
             key: 'table-configuration',
             name: 'Telemetry Table Configuration',
             canView: function (selection) {
-                if (selection.length === 0 || selection[0].length === 0) {
+                if (selection.length !== 1 || selection[0].length === 0) {
                     return false;
                 }
                 let object = selection[0][0].context.item;

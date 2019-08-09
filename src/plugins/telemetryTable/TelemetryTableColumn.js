@@ -21,10 +21,11 @@
  *****************************************************************************/
 define(function () {
     class TelemetryTableColumn {
-        constructor (openmct, metadatum) {
+        constructor (openmct, metadatum, options = {selectable: false}) {
             this.metadatum = metadatum;
             this.formatter = openmct.telemetry.getValueFormatter(metadatum);
             this.titleValue = this.metadatum.name;
+            this.selectable = options.selectable;
         }
 
         getKey() {
@@ -55,8 +56,7 @@ define(function () {
                 return formattedValue;
             }
         }
-
-    };
+    }
 
     return TelemetryTableColumn;
 });

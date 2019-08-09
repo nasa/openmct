@@ -59,14 +59,18 @@ export default {
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
             this.$delete(this.children, keyString);
-            this.persistFilters(keyString);
+            delete this.persistedFilters[keyString];
+            this.mutateConfigurationFilters();
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
-            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
+            this.mutateConfigurationFilters();
         },
         updatePersistedFilters(filters) {
             this.persistedFilters = filters;
+        },
+        mutateConfigurationFilters() {
+            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
         }
     },
     mounted(){

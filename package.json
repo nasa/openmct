@@ -1,9 +1,10 @@
 {
   "name": "openmct",
-  "version": "0.14.0-SNAPSHOT",
+  "version": "1.0.0-beta",
   "description": "The Open MCT core platform",
   "dependencies": {},
   "devDependencies": {
+    "acorn": "6.2.0",
     "angular": "1.4.14",
     "angular-route": "1.4.14",
     "babel-eslint": "8.2.6",
@@ -55,7 +56,7 @@
     "node-bourbon": "^4.2.3",
     "node-sass": "^4.9.2",
     "painterro": "^0.2.65",
-    "printj": "^1.1.0",
+    "printj": "^1.2.1",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",
     "split": "^1.0.0",

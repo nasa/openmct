@@ -25,10 +25,6 @@ import _ from 'lodash';
         },
         methods: {
             updateSelection(selection) {
-                if (_.isEqual(this.selection, selection)) {
-                    return;
-                }
-
                 this.selection = selection;
 
                 if (this.selectedViews) {
@@ -36,10 +32,6 @@ import _ from 'lodash';
                         selectedView.destroy();
                     });
                     this.$el.innerHTML = '';
-                }
-
-                if (selection.length > 1) {
-                    return;
                 }
 
                 this.selectedViews = this.openmct.inspectorViews.get(selection);

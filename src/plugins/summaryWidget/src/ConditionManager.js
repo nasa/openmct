@@ -130,7 +130,9 @@ define ([
         this.telemetryTypesById[objectId] = {};
         Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
             var type;
-            if (valueMetadata.hints.hasOwnProperty('range')) {
+            if (valueMetadata.enumerations !== undefined) {
+                type = 'enum';
+            } else if (valueMetadata.hints.hasOwnProperty('range')) {
                 type = 'number';
             } else if (valueMetadata.hints.hasOwnProperty('domain')) {
                 type = 'number';
@@ -163,9 +165,16 @@ define ([
      * @param {datum} datum The new data from the telemetry source
      * @private
      */
-    ConditionManager.prototype.handleSubscriptionCallback = function (objId, datum) {
-        this.subscriptionCache[objId] = datum;
+    ConditionManager.prototype.handleSubscriptionCallback = function (objId, telemetryDatum) {
+        this.subscriptionCache[objId] = this.createNormalizedDatum(objId, telemetryDatum);
         this.eventEmitter.emit('receiveTelemetry');
+    };
+
+    ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDatum) {
+        return Object.values(this.telemetryMetadataById[objId]).reduce((normalizedDatum, metadatum) => {
+            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+            return normalizedDatum;
+        }, {});
     };
 
     /**
@@ -236,6 +245,7 @@ define ([
                 id.namespace === identifier.namespace;
         });
         delete this.compositionObjs[objectId];
+        delete this.subscriptionCache[objectId];
         this.subscriptions[objectId](); //unsubscribe from telemetry source
         delete this.subscriptions[objectId];
         this.eventEmitter.emit('remove', identifier);

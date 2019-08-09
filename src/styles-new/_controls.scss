@@ -49,6 +49,21 @@ button {
         }
     }
 
+    &[class*='__collapse-button'] {
+        box-shadow: none;
+        background: $splitterBtnColorBg;
+        color: $splitterBtnColorFg;
+        border-radius: $smallCr;
+        font-size: 6px;
+        line-height: 90%;
+        padding: 3px 15px;
+
+        @include hover() {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+    }
+
     &.is-active {
         background: $colorBtnActiveBg;
         color: $colorBtnActiveFg;
@@ -60,9 +75,15 @@ button {
     }
 }
 
-/********* Icon Buttons */
+/********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+}
+
+.c-click-link {
+    // A clickable element, typically inline, with an icon and label
+    @include cControl();
+    cursor: pointer;
 }
 
 .c-icon-button,
@@ -70,13 +91,7 @@ button {
     @include cClickIconButton();
 
     &--menu {
-        &:after {
-            content: $glyph-icon-arrow-down;
-            font-family: symbolsfont;
-            font-size: 0.7em;
-            margin-left: floor($interiorMarginSm * 0.8);
-            opacity: 0.5;
-        }
+        @include hasMenu();
     }
 }
 
@@ -126,7 +141,7 @@ button {
 
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
-// Provides a downward arrow icon that when clicked displays a context menu
+// Provides a downward arrow icon that when clicked displays additional options and/or info.
 // Always placed AFTER an element
 .c-disclosure-button {
     @include cClickIcon();
@@ -264,7 +279,10 @@ input[type=number]::-webkit-outer-spin-button {
 // SELECTS
 select {
     @include appearanceNone();
-    @include themedSelect();
+    background-color: $colorSelectBg;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
+    color: $colorSelectFg;
+    box-shadow: $shdwSelect;
     background-repeat: no-repeat, no-repeat;
     background-position: right .4em top 80%, 0 0;
     border: none;
@@ -585,13 +603,13 @@ select {
     margin-right: $m;
 }
 
+.c-separator {
+    @include cToolbarSeparator();
+}
+
 .c-toolbar {
     > * + * {
         margin-left: 2px;
-    }
-
-    &__button {
-
     }
 
     &__separator {

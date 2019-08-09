@@ -46,12 +46,13 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
         openmct.install(openmct.plugins.MaelstromPlugin());
+        openmct.install(openmct.plugins.Bignumbers());
+        openmct.install(openmct.plugins.Gauge());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.install(openmct.plugins.ImportExport());
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.panel"
         }));
@@ -81,15 +82,9 @@
         }));
         openmct.install(openmct.plugins.SummaryWidget());
         openmct.install(openmct.plugins.Notebook());
-        openmct.install(openmct.plugins.FolderView());
-        openmct.install(openmct.plugins.Tabs());
-        openmct.install(openmct.plugins.Gauge());
-        openmct.install(openmct.plugins.Bignumbers());
-        openmct.install(openmct.plugins.FlexibleLayout());
-        openmct.install(openmct.plugins.LADTable());
         openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
         openmct.install(openmct.plugins.ObjectMigration());
-        openmct.install(openmct.plugins.GoToOriginalAction());
+        openmct.install(openmct.plugins.ClearData(['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked']));
         openmct.start();
     </script>
 </html>

@@ -23,6 +23,7 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './localTimeSystem/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -42,13 +43,15 @@ define([
     './LADTable/plugin',
     './filters/plugin',
     './objectMigration/plugin',
+    './goToOriginalAction/plugin',
+    './clearData/plugin',
     './gauge/plugin',
     './bignumbers/plugin',
-    './maelstrom-adapters/src/MaelstromPlugin.js',
-    './goToOriginalAction/plugin'
+    './maelstrom-adapters/src/MaelstromPlugin.js'
 ], function (
     _,
     UTCTimeSystem,
+    LocalTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -68,10 +71,11 @@ define([
     LADTable,
     Filters,
     ObjectMigration,
+    GoToOriginalAction,
+    ClearData,
     Gauge,
     Bignumbers,
-    MaelstromPlugin,
-    GoToOriginalAction
+    MaelstromPlugin
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -87,6 +91,7 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.LocalTimeSystem = LocalTimeSystem;
 
     plugins.ImportExport = ImportExport;
 
@@ -166,13 +171,14 @@ define([
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
-    plugins.Gauge = Gauge;
-    plugins.Bignumbers = Bignumbers;
     plugins.FlexibleLayout = FlexibleLayout;
     plugins.LADTable = LADTable;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.ClearData = ClearData;
+    plugins.Gauge = Gauge;
+    plugins.Bignumbers = Bignumbers;
 
     return plugins;
 });

@@ -23,6 +23,7 @@
 export default class GoToOriginalAction {
     constructor(openmct) {
         this.name = 'Go To Original';
+        this.key = 'goToOriginal';
         this.description = 'Go to the original unlinked instance of this object';
 
         this._openmct = openmct;

@@ -23,6 +23,8 @@
 </style>
 
 <script>
+import TelemetryTableColumn from '../TelemetryTableColumn';
+
 export default {
     inject: ['tableConfiguration', 'openmct'],
     data() {
@@ -43,7 +45,7 @@ export default {
             this.tableConfiguration.updateConfiguration(this.configuration);
         },
         addObject(domainObject) {
-            this.tableConfiguration.addColumnsForObject(domainObject, true);
+                this.addColumnsForObject(domainObject, true);
             this.updateHeaders(this.tableConfiguration.getAllHeaders());
         },
         removeObject(objectIdentifier) {
@@ -56,6 +58,17 @@ export default {
         toggleAutosize() {
             this.configuration.autosize = !this.configuration.autosize;
             this.tableConfiguration.updateConfiguration(this.configuration);
+        },
+        addColumnsForAllObjects(objects) {
+            objects.forEach(object => this.addColumnsForObject(object, false));
+        },
+        addColumnsForObject(telemetryObject) {
+            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            metadataValues.forEach(metadatum => {
+                let column = new TelemetryTableColumn(this.openmct, metadatum);
+                this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
+            });
         }
     },
     mounted() {
@@ -65,7 +78,7 @@ export default {
 
         compositionCollection.load()
             .then((composition) => {
-                this.tableConfiguration.addColumnsForAllObjects(composition);
+                this.addColumnsForAllObjects(composition);
                 this.updateHeaders(this.tableConfiguration.getAllHeaders());
 
                 compositionCollection.on('add', this.addObject);

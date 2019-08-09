@@ -9,7 +9,8 @@ export default {
     props: {
         view: String,
         object: Object,
-        showEditView: Boolean
+        showEditView: Boolean,
+        objectPath: Array
     },
     destroyed() {
         this.clear();
@@ -34,10 +35,10 @@ export default {
         this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver);
-        this.$el.addEventListener('drop', this.addObjectToParent);
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
+        this.$el.addEventListener('drop', this.addObjectToParent);
     },
     methods: {
         clear() {
@@ -57,6 +58,12 @@ export default {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
+
+            if (this.composition) {
+                this.composition._destroy();
+            }
+
+            this.openmct.objectViews.off('clearData', this.clearData);
         },
         invokeEditModeHandler(editMode) {
             this.currentView.onEditModeChange(editMode);
@@ -70,6 +77,13 @@ export default {
             if (!this.currentObject) {
                 return;
             }
+            
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.composition._synchronize();
+                this.loadComposition();
+            }
+
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
@@ -78,17 +92,19 @@ export default {
                 return;
             }
 
+            let objectPath = this.currentObjectPath || this.objectPath;
+
             if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.currentObject);
+                    this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false);    
+                    this.currentView = provider.view(this.currentObject, false, objectPath);    
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing());
+                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -101,8 +117,10 @@ export default {
                 this.removeSelectable = openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
+
+            this.openmct.objectViews.on('clearData', this.clearData);
         },
-        show(object, viewKey, immediatelySelect) {
+        show(object, viewKey, immediatelySelect, currentObjectPath) {
             if (this.unlisten) {
                 this.unlisten();
             }
@@ -112,13 +130,25 @@ export default {
                 delete this.removeSelectable;
             }
 
+            if (this.composition) {
+                this.composition._destroy();
+            }
+
             this.currentObject = object;
+
+            if (currentObjectPath) {
+                this.currentObjectPath = currentObjectPath;
+            }
+
             this.unlisten = this.openmct.objects.observe(this.currentObject, '*', (mutatedObject) => {
                 this.currentObject = mutatedObject;
             });
 
             this.viewKey = viewKey;
             this.updateView(immediatelySelect);
+        },
+        loadComposition() {
+            return this.composition.load();
         },
         getSelectionContext() {
             if (this.currentView.getSelectionContext) {
@@ -133,10 +163,12 @@ export default {
             }
         },
         addObjectToParent(event) {
-            if (this.hasComposableDomainObject(event)) {
+            if (this.hasComposableDomainObject(event) && this.composition) {
                 let composableDomainObject = this.getComposableDomainObject(event);
-                this.currentObject.composition.push(composableDomainObject.identifier);
-                this.openmct.objects.mutate(this.currentObject, 'composition', this.currentObject.composition);
+                this.loadComposition().then(() => {
+                    this.composition.add(composableDomainObject);
+                });
+
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -155,6 +187,7 @@ export default {
         editIfEditable(event) {
             let provider = this.getViewProvider();
             if (provider && 
+                provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
                     this.openmct.editor.edit();
@@ -166,6 +199,22 @@ export default {
         getComposableDomainObject(event) {
             let serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
             return JSON.parse(serializedDomainObject);
+        },
+        clearData(domainObject) {
+            if (domainObject) {
+                let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
+                    currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
+                
+                if (clearKeyString === currentObjectKeyString) {
+                    if (this.currentView.onClearData) {
+                        this.currentView.onClearData();
+                    }
+                }
+            } else {
+                if (this.currentView.onClearData) {
+                    this.currentView.onClearData();
+                }
+            }
         }
     }
 }

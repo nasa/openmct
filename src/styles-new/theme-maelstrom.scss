@@ -13,11 +13,7 @@
         $bLR: 3px solid transparent;
         $br: 20px;
         background: none !important;
-        border-radius: $br;
-        border-top: 4px solid $bc !important;
-        border-bottom: 2px solid $bc !important;
-        border-left: $bLR !important;;
-        border-right: $bLR !important;;
-        padding: 5px 10px 10px 10px !important;
+        border: none !important;
+        padding: 0 !important;
     }
 }
