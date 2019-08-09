@@ -124,12 +124,8 @@
         .c-click-icon,
         .c-button {
             // Shrink buttons a bit when they appear in a frame
-            align-items: baseline;
             font-size: 0.85em;
             padding: 3px 5px;
-            &:before {
-                font-size: 0.8em;
-            }
         }
     }
 </style>
