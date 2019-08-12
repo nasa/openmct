@@ -110,7 +110,7 @@ export default {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
             // serialize domain object anyway, because some views can drag-and-drop objects without composition 
-            // (eg. notabook.)
+            // (eg. notebook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }

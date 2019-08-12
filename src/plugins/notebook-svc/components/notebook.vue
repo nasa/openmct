@@ -1,5 +1,7 @@
 <template>
-    <div class="c-notebook">
+    <div class="c-notebook"
+        @dragover.stop
+        @drop.stop>
         <div class="c-notebook__head">
             <search class="c-notebook__search"
                     :value="searchValue"
@@ -113,8 +115,29 @@ export default {
             let entryPos = this.findEntry(entryId),
                 entries = this.domainObject.entries;
             
-            entries.splice(entryPos, 1);
-            this.openmct.objects.mutate(this.domainObject, 'entries', entries);
+            if (entryPos !== -1) {
+                let dialog = this.openmct.overlays.dialog({
+                    iconClass: 'alert',
+                    message: 'This action will permanently delete this entry. Do you wish to continue?',
+                    buttons: [
+                        {
+                            label: "Ok",
+                            emphasis: true,
+                            callback: () => {
+                                entries.splice(entryPos, 1);
+                                this.openmct.objects.mutate(this.domainObject, 'entries', entries);
+                                dialog.dismiss();
+                            }
+                        },
+                        {
+                            label: "Cancel",
+                            callback: () => {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            }
         },
         applySearch(entries) {
             return entries.filter((entry) => {
@@ -148,6 +171,9 @@ export default {
                 currentEntryEmbeds.push(newEmbed);
                 this.openmct.objects.mutate(this.domainObject, 'entries[' + entryPos + '].embeds', currentEntryEmbeds);
             }
+        },
+        onDrop() {
+            console.log('droped');
         }
     },
     computed: {

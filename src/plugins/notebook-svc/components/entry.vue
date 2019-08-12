@@ -1,7 +1,7 @@
 <template>
         <li class="c-notebook__entry c-ne has-local-controls"
             @dragover.prevent
-            @drop="onTreeItemDrop">
+            @drop.prevent="onTreeItemDrop">
             <div class="c-ne__time-and-content">
                 <div class="c-ne__time">
                     <span>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</span>
@@ -38,7 +38,7 @@
 import NotebookEmbed from './embed.vue';
 
 export default {
-    inject: ['openmct', 'formatTime'],
+    inject: ['formatTime'],
     props: ['entry'],
     components: {
         NotebookEmbed

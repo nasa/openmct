@@ -35,7 +35,7 @@ define([
 
             installed = true;
 
-            openmct.legacyRegistry.register('notebook', {
+            openmct.legacyRegistry.register('notebook-old', {
                 name: 'Notebook Plugin',
                 extensions: {
                     types: [
@@ -73,10 +73,10 @@ define([
                 }
             });
 
-            openmct.legacyRegistry.enable('notebook');
+            openmct.legacyRegistry.enable('notebook-old');
 
             openmct.objectViews.addProvider({
-                key: 'notebook-vue',
+                key: 'notebook-old',
                 name: 'Notebook View',
                 cssClass: 'icon-notebook',
                 canView: function (domainObject) {

@@ -29,7 +29,9 @@ export default class Editor extends EventEmitter {
         this.editing = false;
         this.openmct = openmct;
         document.addEventListener('drop', (event) => {
-            if (!this.isEditing()) {
+            let hasComposableDomainObject = event.dataTransfer.types.includes('openmct/composable-domain-object');
+
+            if (hasComposableDomainObject && !this.isEditing()) {
                 this.edit();
             }
         }, {capture: true});

@@ -29,11 +29,11 @@ define([
 ) {
     function NotebookViewProvider(openmct) {
         return {
-            key: 'notebook-svc',
+            key: 'notebook',
             name: 'Notebook',
             cssClass: 'icon-notebook',
             canView: function (domainObject) {
-                return domainObject.type === 'notebook-svc';
+                return domainObject.type === 'notebook';
             },
             view: function (domainObject) {
                 let component;

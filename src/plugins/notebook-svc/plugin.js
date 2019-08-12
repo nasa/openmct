@@ -30,7 +30,7 @@ define([
         return function install(openmct) {
             openmct.objectViews.addProvider(new NotebookViewProvider(openmct));
 
-            openmct.types.addType('notebook-svc', {
+            openmct.types.addType('notebook', {
                 name: "Notebook SVC",
                 creatable: true,
                 description: "Create and save timestamped notes with embedded object snapshots.",
