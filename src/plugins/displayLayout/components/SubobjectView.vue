@@ -22,10 +22,12 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  :title="domainObject && domainObject.name"
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <object-frame v-if="domainObject"
                       :domain-object="domainObject"
-                      :object-path="objectPath"
+                      :object-path="currentObjectPath"
                       :has-frame="item.hasFrame"
                       :show-edit-view="false"
                       ref="objectFrame">
@@ -66,11 +68,10 @@
                 x: position[0],
                 y: position[1],
                 identifier: domainObject.identifier,
-                hasFrame: hasFrameByDefault(domainObject.type),
-                useGrid: true
+                hasFrame: hasFrameByDefault(domainObject.type)
             };
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'objectPath'],
         props: {
             item: Object,
             gridSize: Array,
@@ -80,7 +81,7 @@
         data() {
             return {
                 domainObject: undefined,
-                objectPath: []
+                currentObjectPath: []
             }
         },
         components: {
@@ -99,7 +100,7 @@
         methods: {
             setObject(domainObject) {
                 this.domainObject = domainObject;
-                this.objectPath = [this.domainObject].concat(this.openmct.router.path);
+                this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
                 this.$nextTick(function () {
                     let childContext = this.$refs.objectFrame.getSelectionContext();
                     childContext.item = domainObject;

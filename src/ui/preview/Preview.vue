@@ -33,7 +33,13 @@
             </div>
             <div class="l-browse-bar__end">
                 <div class="l-browse-bar__actions">
-                    <button class="l-browse-bar__actions__edit c-button icon-notebook" 
+                    <view-switcher
+                        :views="views"
+                        :currentView="currentView"
+                        @setView="setView">
+                    </view-switcher>
+                    <button v-if="notebookEnabled"
+                        class="l-browse-bar__actions__edit c-button icon-notebook" 
                         title="New Notebook entry" 
                         @click="snapshot">
                     </button>
@@ -63,7 +69,11 @@
         }
 
         &__object-view {
+            background: $colorBodyBg;
+            border: 1px solid $colorInteriorBorder;
             flex: 1 1 auto;
+            overflow: auto;
+            padding: $interiorMargin;
 
             > div:not([class]) {
                 // Target an immediate child div without a class and make it display: contents
@@ -75,20 +85,52 @@
 
  <script>
     import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
+    import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
     import NotebookSnapshot from '../utils/notebook-snapshot';
 
     export default {
         components: {
-            ContextMenuDropDown
+            ContextMenuDropDown,
+            ViewSwitcher
         },
         inject: [
             'openmct',
             'objectPath'
         ],
+        computed: {
+            views() {
+                return this
+                    .openmct
+                    .objectViews
+                    .get(this.domainObject);
+            },
+            currentView() {
+                return this.views.filter(v => v.key === this.viewKey)[0] || {};
+            }
+        },
         methods: {
             snapshot() {
                 let element = document.getElementsByClassName("l-preview-window__object-view")[0];
                 this.notebookSnapshot.capture(this.domainObject, element);
+            },
+            clear() {
+                if (this.view) {
+                    this.view.destroy();
+                    this.$refs.objectView.innerHTML = '';
+                }
+                delete this.view;
+                delete this.viewContainer;
+            },
+            setView(view) {
+                this.clear();
+            
+                this.viewKey = view.key;
+                this.viewContainer = document.createElement('div');
+                this.viewContainer.classList.add('c-object-view','u-contents');
+                this.$refs.objectView.append(this.viewContainer);
+
+                this.view = this.currentView.view(this.domainObject, false, this.objectPath);
+                this.view.show(this.viewContainer, false);
             }
         },
         data() {
@@ -97,16 +139,21 @@
 
             return {
                 domainObject: domainObject,
-                type: type
+                type: type,
+                notebookEnabled: false,
+                viewKey: undefined
             };
         },
         mounted() {
-            let viewProvider = this.openmct.objectViews.get(this.domainObject)[0];
-            this.view = viewProvider.view(this.domainObject);
-            this.view.show(this.$refs.objectView, false);
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+            let view = this.openmct.objectViews.get(this.domainObject)[0];
+            this.setView(view);
+
+            if (this.openmct.types.get('notebook')) {
+                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+                this.notebookEnabled = true;
+            }
         },
-        destroy() {
+        destroyed() {
             this.view.destroy();
         }
     }

@@ -49,6 +49,9 @@ class ContextMenuAPI {
      *           a single sentence or short paragraph) of this kind of view
      * @property {string} cssClass the CSS class to apply to labels for this
      *           view (to add icons, for instance)
+     * @property {string} key unique key to identify the context menu action
+     *           (used in custom context menu eg table rows, to identify which actions to include)
+     * @property {boolean} hideInDefaultMenu optional flag to hide action from showing in the default context menu (tree item)
      */
     /**
      * @method appliesTo
@@ -72,12 +75,21 @@ class ContextMenuAPI {
     /**
      * @private
      */
-    _showContextMenuForObjectPath(objectPath, x, y) {
+    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
+
         let applicableActions = this._allActions.filter((action) => {
-            if (action.appliesTo === undefined) {
-                return true;
+
+            if (actionsToBeIncluded) {
+                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
+                    return true;
+                }
+                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
+            } else {
+                if (action.appliesTo === undefined) {
+                    return true;
+                }
+                return action.appliesTo(objectPath) && !action.hideInDefaultMenu;
             }
-            return action.appliesTo(objectPath);
         });
 
         if (this._activeContextMenu) {

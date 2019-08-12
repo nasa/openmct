@@ -52,7 +52,7 @@
 
 <script>
     import lodash from 'lodash';
-    import LadRow from './LadRow.vue';
+    import LadRow from './LADRow.vue';
 
     export default {
     inject: ['openmct', 'domainObject'],

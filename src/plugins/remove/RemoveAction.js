@@ -23,6 +23,7 @@
 export default class RemoveAction {
     constructor(openmct) {
         this.name = 'Remove';
+        this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
         this.cssClass = "icon-trash";
 
@@ -85,6 +86,10 @@ export default class RemoveAction {
         );
 
         this.openmct.objects.mutate(parent, 'composition', composition);
+
+        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
+        }
     }
 
     appliesTo(objectPath) {

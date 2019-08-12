@@ -25,6 +25,8 @@ import Vue from 'vue'
 import objectUtils from '../../api/objects/object-utils.js'
 import DisplayLayoutType from './DisplayLayoutType.js'
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'
+
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
         openmct.objectViews.addProvider({
@@ -35,7 +37,7 @@ export default function DisplayLayoutPlugin(options) {
             canEdit: function (domainObject) {
                 return domainObject.type === 'layout';
             },
-            view: function (domainObject) {
+            view: function (domainObject, isEditing, objectPath) {
                 let component;
                 return {
                     show(container) {
@@ -47,19 +49,21 @@ export default function DisplayLayoutPlugin(options) {
                             provide: {
                                 openmct,
                                 objectUtils,
-                                options
+                                options,
+                                objectPath
                             },
                             el: container,
                             data () {
                                 return {
                                     domainObject: domainObject
-                                }
+                                };
                             }
                         });
                     },
                     getSelectionContext() {
                         return {
                             item: domainObject,
+                            supportsMultiSelect: true,
                             addElement: component && component.$refs.displayLayout.addElement,
                             removeItem: component && component.$refs.displayLayout.removeItem,
                             orderItem: component && component.$refs.displayLayout.orderItem
@@ -75,7 +79,8 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
         openmct.types.addType('layout', DisplayLayoutType());
-        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
+        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
+        openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'layout' && child.type === 'folder') {
                 return false;

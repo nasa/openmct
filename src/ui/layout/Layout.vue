@@ -2,9 +2,15 @@
     <div class="l-shell" :class="{
             'is-editing': isEditing
         }">
-        <div class="l-shell__head">
+        <div class="l-shell__head" :class="{
+            'l-shell__head--expanded': headExpanded,
+            'l-shell__head--minify-indicators': !headExpanded
+             }">
             <CreateButton class="l-shell__create-button"></CreateButton>
-            <div class="l-shell__controls">
+            <indicators class="l-shell__head-section l-shell__indicators">
+            </indicators>
+            <notification-banner></notification-banner>
+            <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
                     @click="openInNewTab"
                     target="_blank">
@@ -15,6 +21,8 @@
                 </button>
             </div>
             <app-logo></app-logo>
+            <button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -44,9 +52,6 @@
                 <Inspector :isEditing="isEditing" ref="inspector"></Inspector>
             </pane>
         </multipane>
-        <div class="l-shell__status">
-            <StatusBar></StatusBar>
-        </div>
     </div>
 </template>
 
@@ -61,13 +66,6 @@
         flex-flow: column nowrap;
         overflow: hidden;
 
-        &__status {
-            background: $colorStatusBarBg;
-            color: $colorStatusBarFg;
-            height: 24px;
-            padding: $interiorMarginSm;
-        }
-
         &__pane-tree {
             width: 40%;
 
@@ -75,6 +73,7 @@
                 // For mobile, collapse button becomes menu icon
                 body.mobile & {
                     @include cClickIconButton();
+                    color: $colorKey !important;
                     position: absolute;
                     right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
                     top: 0;
@@ -160,14 +159,52 @@
         }
 
         &__head {
-            align-items: center;
+            align-items: stretch;
             background: $colorHeadBg;
             justify-content: space-between;
-            padding: $interiorMargin;
+            padding: $interiorMargin $interiorMargin + 2;
 
             > [class*="__"] + [class*="__"] {
                 margin-left: $interiorMargin;
             }
+
+            [class*='__head__collapse-button'] {
+                align-self: start;
+                $p: 6px;
+                padding-left: $p !important;
+                padding-right: $p !important;
+
+                &:before {
+                    content: $glyph-icon-arrow-down;
+                    font-size: 1.1em;
+                }
+            }
+
+            &-section {
+                // Subdivides elements across the head
+                display: flex;
+                flex: 0 1 auto;
+                padding: 0 $interiorMargin;
+            }
+
+            &--expanded {
+                .c-indicator__label {
+                    transition: none !important;
+                }
+
+                [class*='__head__collapse-button'] {
+                    &:before {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+        }
+
+        &__controls {
+            $brdr: 1px solid $colorInteriorBorder;
+            border-right: $brdr;
+            border-left: $brdr;
+            align-items: start;
         }
 
         &__create-button,
@@ -175,17 +212,24 @@
             flex: 0 0 auto;
         }
 
-        &__controls {
-            flex: 1 1 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-right: 2.5%;
+        &__create-button { margin-right: $interiorMarginLg; }
+
+        &__indicators {
+            //@include test();
+            flex: 1 1 auto;
+            flex-wrap: wrap;
+            [class*='indicator-clock'] { order: 90; }
+
+            .c-indicator .label {
+                font-size: 0.9em;
+            }
         }
 
         /******************************* MAIN AREA */
         &__main-container {
             // Wrapper for main views
             flex: 1 1 auto !important;
+            height: 0; // Chrome 73 overflow bug fix
             overflow: auto;
         }
 
@@ -265,9 +309,10 @@
     import multipane from './multipane.vue';
     import pane from './pane.vue';
     import BrowseBar from './BrowseBar.vue';
-    import StatusBar from './status-bar/StatusBar.vue';
     import Toolbar from '../toolbar/Toolbar.vue';
     import AppLogo from './AppLogo.vue';
+    import Indicators from './status-bar/Indicators.vue';
+    import NotificationBanner from './status-bar/NotificationBanner.vue';
 
     var enterFullScreen = () => {
         var docElm = document.documentElement;
@@ -308,9 +353,10 @@
             multipane,
             pane,
             BrowseBar,
-            StatusBar,
             Toolbar,
-            AppLogo
+            AppLogo,
+            Indicators,
+            NotificationBanner
         },
         mounted() {
             this.openmct.editor.on('isEditing', (isEditing)=>{
@@ -320,11 +366,18 @@
             this.openmct.selection.on('change', this.toggleHasToolbar);
         },
         data: function () {
+            let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
+            let headExpanded = true;
+            if (storedHeadProps) {
+                headExpanded = JSON.parse(storedHeadProps).expanded;
+            }
+
             return {
                 fullScreen: false,
                 conductorComponent: undefined,
                 isEditing: false,
-                hasToolbar: false
+                hasToolbar: false,
+                headExpanded
             }
         },
         computed: {
@@ -333,6 +386,18 @@
             }
         },
         methods: {
+            toggleShellHead() {
+                this.headExpanded = !this.headExpanded;
+
+                window.localStorage.setItem(
+                    'openmct-shell-head',
+                    JSON.stringify(
+                        {
+                            expanded: this.headExpanded
+                        }
+                    )
+                );
+            },
             fullScreenToggle() {
                 if (this.fullScreen) {
                     this.fullScreen = false;
@@ -348,7 +413,7 @@
             toggleHasToolbar(selection) {
                 let structure = undefined;
 
-                if (!selection[0]) {
+                if (!selection || !selection[0]) {
                     structure = [];
                 } else {
                     structure = this.openmct.toolbars.get(selection);

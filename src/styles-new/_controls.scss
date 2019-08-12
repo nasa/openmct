@@ -49,6 +49,21 @@ button {
         }
     }
 
+    &[class*='__collapse-button'] {
+        box-shadow: none;
+        background: $splitterBtnColorBg;
+        color: $splitterBtnColorFg;
+        border-radius: $smallCr;
+        font-size: 6px;
+        line-height: 90%;
+        padding: 3px 15px;
+
+        @include hover() {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+    }
+
     &.is-active {
         background: $colorBtnActiveBg;
         color: $colorBtnActiveFg;
@@ -60,9 +75,15 @@ button {
     }
 }
 
-/********* Icon Buttons */
+/********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+}
+
+.c-click-link {
+    // A clickable element, typically inline, with an icon and label
+    @include cControl();
+    cursor: pointer;
 }
 
 .c-icon-button,
@@ -70,19 +91,22 @@ button {
     @include cClickIconButton();
 
     &--menu {
-        &:after {
-            content: $glyph-icon-arrow-down;
-            font-family: symbolsfont;
-            font-size: 0.7em;
-            margin-left: floor($interiorMarginSm * 0.8);
-            opacity: 0.5;
-        }
+        @include hasMenu();
     }
 }
 
 .c-icon-button {
     .c-icon-button__label {
         margin-left: $interiorMargin;
+    }
+
+    $c1: nth($mixedSettingBg, 1);
+    $c2: nth($mixedSettingBg, 2);
+    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
+
+    &--mixed {
+        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
+        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
     }
 
     &--swatched {
@@ -93,9 +117,9 @@ button {
         justify-content: center;
 
         > [class*='swatch'] {
-            box-shadow: inset rgba(black, 0.2) 0 0 1px;
+            box-shadow: inset rgba($editUIBaseColorFg, 0.2) 0 0 0 1px;
             flex: 0 0 auto;
-            height: 4px;
+            height: 5px;
             width: 100%;
             margin-top: 1px;
         }
@@ -105,12 +129,19 @@ button {
             flex: 1 1 auto;
             font-size: 1.1em;
         }
+
+        &--mixed {
+            // Styling for swatched buttons when settings are mixed
+            > [class*='swatch'] {
+                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+            }
+        }
     }
 }
 
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
-// Provides a downward arrow icon that when clicked displays a context menu
+// Provides a downward arrow icon that when clicked displays additional options and/or info.
 // Always placed AFTER an element
 .c-disclosure-button {
     @include cClickIcon();
@@ -148,8 +179,6 @@ button {
             display: block;
             font-family: symbolsfont;
             font-size: 1rem * $s;
-            transform-origin: center;
-            transition: $transOut;
         }
     }
 
@@ -250,7 +279,10 @@ input[type=number]::-webkit-outer-spin-button {
 // SELECTS
 select {
     @include appearanceNone();
-    @include themedSelect();
+    background-color: $colorSelectBg;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
+    color: $colorSelectFg;
+    box-shadow: $shdwSelect;
     background-repeat: no-repeat, no-repeat;
     background-position: right .4em top 80%, 0 0;
     border: none;
@@ -379,6 +411,11 @@ select {
             color: $colorMenuIc;
             font-size: 1em;
             margin-right: $interiorMargin;
+            min-width: 1em;
+        }
+
+        &:not([class]):before {
+             content: ''; // Add this element so that menu items without an icon still indent properly
         }
     }
 }
@@ -566,6 +603,10 @@ select {
     margin-right: $m;
 }
 
+.c-separator {
+    @include cToolbarSeparator();
+}
+
 .c-toolbar {
     > * + * {
         margin-left: 2px;
@@ -721,6 +762,7 @@ input[type="range"] {
     }
 }
 
+/******************************************************** LOCAL CONTROLS */
 .h-local-controls {
     // Holder for local controls
     &--horz {

@@ -36,7 +36,7 @@ define([
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews',
-    './policies/legacyCompositionPolicyAdapter',
+    './policies/LegacyCompositionPolicyAdapter',
     './actions/LegacyActionAdapter'
 ], function (
     legacyRegistry,

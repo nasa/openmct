@@ -28,6 +28,7 @@ $dirImgs: 'images/';
 $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
+$moveBarOutDelay: 500ms;
 
 /************************** SPATIAL */
 $interiorMarginSm: 3px;
@@ -84,6 +85,8 @@ $waitSpinnerTreeBorderW: 3px;
 /*************** Messages */
 $messageIconD: 80px;
 $messageListIconD: 32px;
+/*************** Tables */
+$tableResizeColHitareaD: 6px;
 
 /************************** MOBILE */
 $mobileMenuIconD: 24px; // Used
@@ -138,6 +141,8 @@ $glyph-icon-grid: '\e922';
 $glyph-icon-grippy-ew: '\e923';
 $glyph-icon-columns: '\e924';
 $glyph-icon-rows: '\e925';
+$glyph-icon-filter: '\e926';
+$glyph-icon-filter-outline: '\e927';
 $glyph-icon-arrows-right-left: '\ea00';
 $glyph-icon-arrows-up-down: '\ea01';
 $glyph-icon-bullet: '\ea02';

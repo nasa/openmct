@@ -45,15 +45,30 @@ define([
             view: function (domainObject) {
                 let $rootScope = openmct.$injector.get('$rootScope');
                 let templateLinker = openmct.$injector.get('templateLinker');
-                let scope = $rootScope.$new();
+                let scope = $rootScope.$new(true);
                 let legacyObject = convertToLegacyObject(domainObject);
                 let isDestroyed = false;
+                let unlistenToStatus;
+                let element;
                 scope.domainObject = legacyObject;
                 scope.model = legacyObject.getModel();
-
+                let child;
+                let parent;
 
                 return {
                     show: function (container) {
+                        parent = container;
+                        child = document.createElement('div');
+                        parent.appendChild(child);
+                        let statusCapability = legacyObject.getCapability('status');
+                        unlistenToStatus = statusCapability.listen((newStatus) => {
+                            child.classList.remove('s-status-timeconductor-unsynced');
+
+                            if (newStatus.includes('timeconductor-unsynced')) {
+                                child.classList.add('s-status-timeconductor-unsynced');
+                            }
+                        });
+
                         // TODO: implement "gestures" support ?
                         let uses = legacyView.uses || [];
                         let promises = [];
@@ -74,12 +89,13 @@ define([
                             uses.forEach(function (key, i) {
                                 scope[key] = results[i];
                             });
+                            element = openmct.$angular.element(child);
                             templateLinker.link(
                                 scope,
-                                openmct.$angular.element(container),
+                                element,
                                 legacyView
                             );
-                            container.classList.add('u-contents');
+                            child.classList.add('u-contents');
                         }
 
                         if (promises.length) {
@@ -92,8 +108,16 @@ define([
                             link();
                         }
                     },
+                    onClearData() {
+                        scope.$broadcast('clearData');
+                    },
                     destroy: function () {
+                        element.off();
+                        element.remove();
                         scope.$destroy();
+                        element = null;
+                        scope = null;
+                        unlistenToStatus();
                     }
                 }
             },

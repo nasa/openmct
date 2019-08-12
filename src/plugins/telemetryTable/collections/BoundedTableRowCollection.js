@@ -31,9 +31,9 @@ define(
     ) {
 
         class BoundedTableRowCollection extends SortedTableRowCollection {
-            constructor (openmct) {
+            constructor(openmct) {
                 super();
-                
+
                 this.futureBuffer = new SortedTableRowCollection();
                 this.openmct = openmct;
 
@@ -43,15 +43,17 @@ define(
                 this.sortByTimeSystem(openmct.time.timeSystem());
 
                 this.lastBounds = openmct.time.bounds();
-                openmct.time.on('bounds', this.bounds);
+
+                this.subscribeToBounds();
             }
 
-            addOne (item) {
+            addOne(item) {
+                let parsedValue = this.getValueForSortColumn(item);
                 // Insert into either in-bounds array, or the future buffer.
-                // Data in the future buffer will be re-evaluated for possible 
+                // Data in the future buffer will be re-evaluated for possible
                 // insertion on next bounds change
-                let beforeStartOfBounds = this.parseTime(item.datum[this.sortOptions.key]) < this.lastBounds.start;
-                let afterEndOfBounds = this.parseTime(item.datum[this.sortOptions.key]) > this.lastBounds.end;
+                let beforeStartOfBounds = parsedValue < this.lastBounds.start;
+                let afterEndOfBounds = parsedValue > this.lastBounds.end;
 
                 if (!afterEndOfBounds && !beforeStartOfBounds) {
                     return super.addOne(item);
@@ -86,13 +88,13 @@ define(
              * @fires TelemetryCollection#discarded
              * @param bounds
              */
-            bounds (bounds) {
+            bounds(bounds) {
                 let startChanged = this.lastBounds.start !== bounds.start;
                 let endChanged = this.lastBounds.end !== bounds.end;
-                
+
                 let startIndex = 0;
                 let endIndex = 0;
-                
+
                 let discarded = [];
                 let added = [];
                 let testValue = {
@@ -135,9 +137,21 @@ define(
                 }
             }
 
-            destroy() {
+            getValueForSortColumn(row) {
+                return this.parseTime(row.datum[this.sortOptions.key]);
+            }
+
+            unsubscribeFromBounds() {
                 this.openmct.time.off('bounds', this.bounds);
             }
+
+            subscribeToBounds() {
+                this.openmct.time.on('bounds', this.bounds);
+            }
+
+            destroy() {
+                this.unsubscribeFromBounds();
+            }
         }
-    return BoundedTableRowCollection;
-});
+        return BoundedTableRowCollection;
+    });

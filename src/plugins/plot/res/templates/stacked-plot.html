@@ -43,12 +43,16 @@
     <div class="l-view-section">
         <div class="c-loading--overlay loading"
              ng-show="!!currentRequest.pending"></div>
-        <div class="gl-plot child-frame"
+        <div class="gl-plot child-frame u-inspectable"
             ng-repeat="telemetryObject in telemetryObjects"
             ng-class="{
                 's-status-timeconductor-unsynced': telemetryObject
                     .getCapability('status')
                     .get('timeconductor-unsynced')
+            }"
+            mct-selectable="{
+                item: telemetryObject.useCapability('adapter'),
+                oldItem: telemetryObject
             }">
             <mct-overlay-plot domain-object="telemetryObject"></mct-overlay-plot>
         </div>

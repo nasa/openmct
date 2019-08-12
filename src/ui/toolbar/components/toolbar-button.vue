@@ -4,14 +4,14 @@
             :title="options.title"
             :class="{
                 [options.icon]: true,
-                'c-icon-button--caution': options.modifier === 'caution'
+                'c-icon-button--caution': options.modifier === 'caution',
+                'c-icon-button--mixed': nonSpecific
             }"
             @click="onClick">
             <div class="c-icon-button__label"
                  v-if="options.label">
                 {{ options.label }}
             </div>
-
         </div>
     </div>
 </template>
@@ -21,6 +21,11 @@ export default {
     inject: ['openmct'],
     props: {
         options: Object
+    },
+    computed: {
+        nonSpecific() {
+            return this.options.nonSpecific === true;
+        }
     },
     methods: {
         onClick(event) {

@@ -51,6 +51,22 @@ mct-plot {
     }
 }
 
+.is-editing {
+    .gl-plot.child-frame {
+        &:hover {
+            background: rgba($editUIColorBg, 0.1);
+            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+        }
+
+        &[s-selected] {
+            border: 1px solid $editUIColorFg !important;
+            color: $editUIColorFg !important;
+            box-shadow: $editFrameSelectedShdw;
+            z-index: 2;
+        }
+    }
+}
+
 .gl-plot {
     color: $colorPlotFg;
     display: flex;
@@ -145,8 +161,7 @@ mct-plot {
             height: auto;
         }
 
-        &.gl-plot-y-label,
-        &.l-plot-y-label {
+        &.gl-plot-y-label {
             $x: -50%;
             $r: -90deg;
             transform-origin: 50% 0;
@@ -156,6 +171,12 @@ mct-plot {
             left: 0;
             top: 50%;
             white-space: nowrap;
+
+            select {
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M0 5l5 5V0L0 5z'/%3e%3c/svg%3e");
+                background-position: left .4em top 50%, 0 0;
+                padding: 1px $interiorMargin 1px 20px;
+            }
         }
     }
 
@@ -546,5 +567,12 @@ mct-plot {
     &--v {
         width: 1px;
         top: 0; bottom: 0;
+    }
+}
+
+.s-status-timeconductor-unsynced {
+    .t-object-alert.t-alert-unsynced {
+        @extend .icon-alert-triangle;
+        color: $colorPausedBg;
     }
 }

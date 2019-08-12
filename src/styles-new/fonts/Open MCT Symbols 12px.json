@@ -1,19 +1,35 @@
 {
   "metadata": {
-    "name": "openmct-symbols-12px",
+    "name": "Open MCT Symbols 12px",
     "lastOpened": 0,
-    "created": 1527031065005
+    "created": 1561483556329
   },
   "iconSets": [
     {
       "selection": [
+        {
+          "order": 12,
+          "id": 10,
+          "name": "icon12-filter",
+          "prevSize": 12,
+          "code": 59686,
+          "tempChar": ""
+        },
+        {
+          "order": 14,
+          "id": 11,
+          "name": "icon12-filter-outline",
+          "prevSize": 12,
+          "code": 59687,
+          "tempChar": ""
+        },
         {
           "order": 9,
           "id": 6,
           "name": "icon12-crosshair",
           "prevSize": 12,
           "code": 59696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 11,
@@ -21,7 +37,7 @@
           "name": "icon12-grippy",
           "prevSize": 12,
           "code": 59697,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 10,
@@ -29,7 +45,7 @@
           "name": "icon12-list-view",
           "prevSize": 12,
           "code": 921666,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 6,
@@ -37,14 +53,14 @@
           "prevSize": 12,
           "code": 921865,
           "name": "icon12-folder",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
       "metadata": {
-        "name": "openmct-symbols-12px",
+        "name": "Open MCT Symbols 12px",
         "importSize": {
-          "width": 279,
+          "width": 384,
           "height": 384
         },
         "designer": "Charles Hacskaylo"
@@ -53,6 +69,28 @@
       "prevSize": 12,
       "icons": [
         {
+          "id": 10,
+          "paths": [
+            "M853.333 0h-682.667c-94.135 0.302-170.364 76.532-170.667 170.638l-0 0.029v682.667c0.302 94.135 76.532 170.364 170.638 170.667l0.029 0h256v-341.333l-341.333-341.333h853.333l-341.333 341.333 1.067 341.333h254.933c94.135-0.302 170.364-76.532 170.667-170.638l0-0.029v-682.667c-0.302-94.135-76.532-170.364-170.638-170.667l-0.029-0z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "icon12-filter"
+          ]
+        },
+        {
+          "id": 11,
+          "paths": [
+            "M853.333 0h-682.667c-94.135 0.302-170.364 76.532-170.667 170.638l-0 0.029v682.667c0.302 94.135 76.532 170.364 170.638 170.667l0.029 0h682.667c94.135-0.302 170.364-76.532 170.667-170.638l0-0.029v-682.667c-0.302-94.135-76.532-170.364-170.638-170.667l-0.029-0zM170.933 853.333h-0.267v-512l256 256v256zM853.067 853.333h-255.2l-0.533-256 256-256v511.733zM853.333 341.333h-682.667v-170.4h682.667z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "icon12-filter-outline"
+          ]
+        },
+        {
           "id": 6,
           "paths": [
             "M597.333 0h-170.667v256h170.667v-256z",
@@ -60,26 +98,11 @@
             "M597.333 768h-170.667v256h170.667v-256z",
             "M256 426.667h-256v170.667h256v-170.667z"
           ],
-          "attrs": [
-            {},
-            {},
-            {},
-            {}
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
+          "attrs": [],
           "grid": 0,
           "tags": [
             "icon12-crosshair"
-          ],
-          "colorPermutations": {
-            "1161751": [
-              {},
-              {},
-              {},
-              {}
-            ]
-          }
+          ]
         },
         {
           "id": 8,
@@ -95,39 +118,12 @@
             "M744.773 511.867c0 51.458-41.715 93.173-93.173 93.173s-93.173-41.715-93.173-93.173c0-51.458 41.715-93.173 93.173-93.173s93.173 41.715 93.173 93.173z",
             "M744.773 791.36c0 51.458-41.715 93.173-93.173 93.173s-93.173-41.715-93.173-93.173c0-51.458 41.715-93.173 93.173-93.173s93.173 41.715 93.173 93.173z"
           ],
-          "attrs": [
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {}
-          ],
+          "attrs": [],
           "width": 745,
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "grid": 0,
           "tags": [
             "icon12-grippy"
-          ],
-          "colorPermutations": {
-            "1161751": [
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {}
-            ]
-          }
+          ]
         },
         {
           "id": 7,
@@ -136,24 +132,11 @@
             "M0 426.667h1024v170.667h-1024v-170.667z",
             "M0 853.333h1024v170.667h-1024v-170.667z"
           ],
-          "attrs": [
-            {},
-            {},
-            {}
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
+          "attrs": [],
           "grid": 0,
           "tags": [
             "icon12-list-view"
-          ],
-          "colorPermutations": {
-            "1161751": [
-              {},
-              {},
-              {}
-            ]
-          }
+          ]
         },
         {
           "id": 3,
@@ -162,40 +145,14 @@
             "M85.333 426.667h853.333c47.128 0 85.333 38.205 85.333 85.333v426.667c0 47.128-38.205 85.333-85.333 85.333h-853.333c-47.128 0-85.333-38.205-85.333-85.333v-426.667c0-47.128 38.205-85.333 85.333-85.333z"
           ],
           "attrs": [],
-          "isMulticolor": false,
           "grid": 0,
           "tags": [
             "icon12-folder"
-          ],
-          "colorPermutations": {
-            "1161751": [
-              {
-                "f": 0
-              },
-              {
-                "f": 0
-              }
-            ]
-          }
+          ]
         }
       ],
       "invisible": false,
-      "colorThemes": [
-        [
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            161,
-            75,
-            1
-          ]
-        ]
-      ],
+      "colorThemes": [],
       "colorThemeIdx": 0
     }
   ],
@@ -206,9 +163,9 @@
     "showQuickUse2": true,
     "showSVGs": true,
     "fontPref": {
-      "prefix": "icon-",
+      "prefix": "openmct-symbols-",
       "metadata": {
-        "fontFamily": "openmct-symbols-12px",
+        "fontFamily": "Open-MCT-Symbols-12px",
         "majorVersion": 1,
         "minorVersion": 0
       },
@@ -217,7 +174,12 @@
         "baseline": 6.25,
         "whitespace": 50
       },
-      "embed": false
+      "embed": false,
+      "noie8": true,
+      "ie7": false,
+      "showMetadata": false,
+      "includeMetadata": false,
+      "showMetrics": true
     },
     "imagePref": {
       "prefix": "icon-",

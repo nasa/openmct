@@ -20,9 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PreviewAction from './PreviewAction.js';
+import ViewHistoricalDataAction from './ViewHistoricalDataAction';
 
 export default function () {
     return function (openmct) {
         openmct.contextMenu.registerAction(new PreviewAction(openmct));
-    }
+        openmct.contextMenu.registerAction(new ViewHistoricalDataAction(openmct));
+    };
 }

@@ -28,13 +28,6 @@ export default class Editor extends EventEmitter {
         super();
         this.editing = false;
         this.openmct = openmct;
-        document.addEventListener('drop', (event) => {
-            let hasComposableDomainObject = event.dataTransfer.types.includes('openmct/composable-domain-object');
-
-            if (hasComposableDomainObject && !this.isEditing()) {
-                this.edit();
-            }
-        }, {capture: true});
     }
 
     /**
@@ -81,9 +74,11 @@ export default class Editor extends EventEmitter {
      * @private
      */
     cancel() {
-        this.getTransactionService().cancel();
+        let cancelPromise = this.getTransactionService().cancel();
         this.editing = false;
         this.emit('isEditing', false);
+
+        return cancelPromise;
     }
 
     /**

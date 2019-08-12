@@ -148,21 +148,6 @@
                 font-size: floor(12px * .9);
             }
 
-            &__collapse-button {
-                box-shadow: none;
-                background: $splitterBtnColorBg;
-                color: $splitterBtnColorFg;
-                border-radius: $smallCr;
-                font-size: 6px;
-                line-height: 90%;
-                padding: 3px 15px;
-
-                @include hover() {
-                    background: $colorBtnBgHov;
-                    color: $colorBtnFgHov;
-                }
-            }
-
             &__label {
                 // Name of the pane
                 @include ellipsize();
@@ -194,8 +179,8 @@
                 /********************************* STYLES FOR DESKTOP COLLAPSED PANES, ALL ORIENTATIONS */
                 $d: nth($splitterBtnD, 1);
                 flex-basis: $d;
-                min-width: $d !important;
-                min-height: $d !important;
+                min-width: $d;
+                min-height: $d;
 
                 > .l-pane__handle {
                     display: none;

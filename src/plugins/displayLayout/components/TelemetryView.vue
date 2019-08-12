@@ -23,10 +23,12 @@
  <template>
      <layout-frame :item="item"
                    :grid-size="gridSize"
-                   @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                   @move="(gridDelta) => $emit('move', gridDelta)"
+                   @endMove="() => $emit('endMove')">
         <div class="c-telemetry-view"
              :style="styleObject"
-             v-if="domainObject">
+             v-if="domainObject"
+             @contextmenu.prevent="showContextMenu">
             <div v-if="showLabel"
                   class="c-telemetry-view__label">
                 <div class="c-telemetry-view__label-text">{{ domainObject.name }}</div>
@@ -78,9 +80,11 @@
 
  <script>
     import LayoutFrame from './LayoutFrame.vue'
+    import printj from 'printj'
 
     const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
-          DEFAULT_POSITION = [1, 1];
+          DEFAULT_POSITION = [1, 1],
+          CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
 
     export default {
         makeDefinition(openmct, gridSize, domainObject, position) {
@@ -96,13 +100,12 @@
                 displayMode: 'all',
                 value: metadata.getDefaultDisplayValue(),
                 stroke: "transparent",
-                fill: "",
+                fill: "transparent",
                 color: "",
-                size: "13px",
-                useGrid: true
+                size: "13px"
             };
         },
-        inject: ['openmct'],
+        inject: ['openmct', 'objectPath'],
         props: {
             item: Object,
             gridSize: Array,
@@ -143,6 +146,10 @@
                     return;
                 }
 
+                if (this.item.format) {
+                    return printj.sprintf(this.item.format, this.datum[this.valueMetadata.key]);
+                }
+
                 return this.valueFormatter && this.valueFormatter.format(this.datum);
             },
             telemetryClass() {
@@ -158,7 +165,8 @@
             return {
                 datum: undefined,
                 formats: undefined,
-                domainObject: undefined
+                domainObject: undefined,
+                currentObjectPath: undefined
             }
         },
         watch: {
@@ -168,6 +176,9 @@
                 }
 
                 this.context.index = newIndex;
+            },
+            item(newItem) {
+                this.context.layoutItem = newItem;
             }
         },
         methods: {
@@ -176,7 +187,8 @@
                 let options = {
                     start: bounds.start,
                     end: bounds.end,
-                    size: 1
+                    size: 1,
+                    strategy: 'latest'
                 };
                 this.openmct.telemetry.request(this.domainObject, options)
                     .then(data => {
@@ -209,19 +221,30 @@
             },
             setObject(domainObject) {
                 this.domainObject = domainObject;
+                this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
                 this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
                 this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
                 this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
                 this.requestHistoricalData();
                 this.subscribeToObject();
 
+                this.currentObjectPath = this.objectPath.slice();
+                this.currentObjectPath.unshift(this.domainObject);
+
                 this.context = {
                     item: domainObject,
                     layoutItem: this.item,
-                    index: this.index
+                    index: this.index,
+                    updateTelemetryFormat: this.updateTelemetryFormat
                 };
                 this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.context, this.initSelect);
+            },
+            updateTelemetryFormat(format) {
+                this.$emit('formatChanged', this.item, format);
+            },
+            showContextMenu(event) {
+                this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
             }
         },
         mounted() {

@@ -23,17 +23,18 @@ export default {
         FilterObject
     },
     inject: [
-        'openmct',
-        'providedObject'
+        'openmct'
     ],
     data() {
+        let providedObject = this.openmct.selection.get()[0][0].context.item;
         let persistedFilters = {};
 
-        if (this.providedObject.configuration && this.providedObject.configuration.filters) {
-            persistedFilters = this.providedObject.configuration.filters;
+        if (providedObject.configuration && providedObject.configuration.filters) {
+            persistedFilters = providedObject.configuration.filters;
         }
 
         return {
+            providedObject,
             persistedFilters,
             children: {}
         }
@@ -58,14 +59,18 @@ export default {
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
             this.$delete(this.children, keyString);
-            this.persistFilters(keyString);
+            delete this.persistedFilters[keyString];
+            this.mutateConfigurationFilters();
         },
         persistFilters(keyString, userSelects) {
             this.persistedFilters[keyString] = userSelects;
-            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
+            this.mutateConfigurationFilters();
         },
         updatePersistedFilters(filters) {
             this.persistedFilters = filters;
+        },
+        mutateConfigurationFilters() {
+            this.openmct.objects.mutate(this.providedObject, 'configuration.filters', this.persistedFilters);
         }
     },
     mounted(){
@@ -73,13 +78,14 @@ export default {
         this.composition.on('add', this.addChildren);
         this.composition.on('remove', this.removeChildren);
         this.composition.load();
-
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
+        this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => this.providedObject = mutatedObject);
     },
     beforeDestroy() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();
+        this.unobserveAllMutation();
     }
 }
 </script>

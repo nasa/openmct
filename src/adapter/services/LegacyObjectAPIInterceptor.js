@@ -57,8 +57,10 @@ define([
         }.bind(this);
 
         handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
-            this.eventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
+            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
+                keystring = utils.makeKeyString(newStyleObject.identifier);
+
+            this.eventEmitter.emit(keystring + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
         }.bind(this);
 

@@ -64,37 +64,45 @@ define([
             Object.keys(panels).forEach(key => {
                 let panel = panels[key];
                 let domainObject = childObjects[key];
+                let identifier = undefined;
 
                 if (isTelemetry(domainObject)) {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        useGrid: true,
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'telemetry-view',
-                        displayMode: 'all',
-                        value: openmct.telemetry.getMetadata(domainObject).getDefaultDisplayValue(),
-                        stroke: "transparent",
-                        fill: "",
-                        color: "",
-                        size: "13px"
-                    });
-                } else {
-                    items.push({
-                        width: panel.dimensions[0],
-                        height: panel.dimensions[1],
-                        x: panel.position[0],
-                        y: panel.position[1],
-                        useGrid: true,
-                        identifier: domainObject.identifier,
-                        id: uuid(),
-                        type: 'subobject-view',
-                        hasFrame: panel.hasFrame
+                    // If object is a telemetry point, convert it to a plot and
+                    // replace the object in migratedObject composition with the plot.
+                    identifier = {
+                        key: uuid(),
+                        namespace: migratedObject.identifier.namespace
+                    };
+                    let plotObject = {
+                        identifier: identifier,
+                        location: domainObject.location,
+                        name: domainObject.name,
+                        type: "telemetry.plot.overlay"
+                    };
+                    let plotType = openmct.types.get('telemetry.plot.overlay');
+                    plotType.definition.initialize(plotObject);
+                    plotObject.composition.push(domainObject.identifier);
+                    openmct.objects.mutate(plotObject, 'persisted', Date.now());
+
+                    let keyString = openmct.objects.makeKeyString(domainObject.identifier);
+                    let clonedComposition = Object.assign([], migratedObject.composition);
+                    clonedComposition.forEach((identifier, index) => {
+                        if (openmct.objects.makeKeyString(identifier) === keyString) {
+                            migratedObject.composition[index] = plotObject.identifier;
+                        }
                     });
                 }
+
+                items.push({
+                    width: panel.dimensions[0],
+                    height: panel.dimensions[1],
+                    x: panel.position[0],
+                    y: panel.position[1],
+                    identifier: identifier || domainObject.identifier,
+                    id: uuid(),
+                    type: 'subobject-view',
+                    hasFrame: panel.hasFrame
+                });
             });
 
             migratedObject.configuration.items = items;
@@ -104,7 +112,7 @@ define([
             return migratedObject;
         }
 
-        function migrateFixedPositionConfiguration(elements, telemetryObjects) {
+        function migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize) {
             const DEFAULT_STROKE = "transparent";
             const DEFAULT_SIZE = "13px";
             const DEFAULT_COLOR = "";
@@ -117,9 +125,15 @@ define([
                     y: element.y,
                     width: element.width,
                     height: element.height,
-                    useGrid: element.useGrid,
                     id: uuid()
                 };
+
+                if (!element.useGrid) {
+                    item.x = Math.round(item.x / gridSize[0]);
+                    item.y = Math.round(item.y / gridSize[1]);
+                    item.width = Math.round(item.width / gridSize[0]);
+                    item.height = Math.round(item.height / gridSize[1]);
+                }
 
                 if (element.type === "fixed.telemetry") {
                     item.type = "telemetry-view";
@@ -163,7 +177,9 @@ define([
         return [
             {
                 check(domainObject) {
-                    return domainObject.type === 'layout' && domainObject.configuration.layout;
+                    return domainObject.type === 'layout' &&
+                        domainObject.configuration &&
+                        domainObject.configuration.layout;
                 },
                 migrate(domainObject) {
                     let childObjects = {};
@@ -182,7 +198,9 @@ define([
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'telemetry.fixed' && domainObject.configuration['fixed-display'];
+                    return domainObject.type === 'telemetry.fixed' &&
+                        domainObject.configuration &&
+                        domainObject.configuration['fixed-display'];
                 },
                 migrate(domainObject) {
                     const DEFAULT_GRID_SIZE = [64, 16];
@@ -192,10 +210,11 @@ define([
                         name: domainObject.name,
                         type: "layout"
                     };
+                    let gridSize = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
                     let layoutType = openmct.types.get('layout');
                     layoutType.definition.initialize(newLayoutObject);
                     newLayoutObject.composition = domainObject.composition;
-                    newLayoutObject.configuration.layoutGrid = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
+                    newLayoutObject.configuration.layoutGrid = gridSize;
 
                     let elements = domainObject.configuration['fixed-display'].elements;
                     let telemetryObjects = {};
@@ -211,7 +230,7 @@ define([
                     return Promise.all(promises)
                         .then(function () {
                             newLayoutObject.configuration.items =
-                                migrateFixedPositionConfiguration(elements, telemetryObjects);
+                                migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize);
                             return newLayoutObject;
                         });
                 }
@@ -219,6 +238,7 @@ define([
             {
                 check(domainObject) {
                     return domainObject.type === 'table' &&
+                        domainObject.configuration &&
                         domainObject.configuration.table;
                 },
                 migrate(domainObject) {

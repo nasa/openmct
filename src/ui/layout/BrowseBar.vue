@@ -19,31 +19,15 @@
         </div>
 
         <div class="l-browse-bar__end">
-            <div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
-                 v-if="views.length > 1">
-                <button class="c-button--menu"
-                     :class="currentView.cssClass"
-                     title="Switch view type"
-                     @click.stop="toggleViewMenu">
-                    <span class="c-button__label">
-                          {{ currentView.name }}
-                    </span>
-                </button>
-                <div class="c-menu" v-show="showViewMenu">
-                    <ul>
-                        <li v-for="(view, index) in views"
-                            @click="setView(view)"
-                            :key="index"
-                            :class="view.cssClass"
-                            :title="view.name">
-                            {{ view.name }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <view-switcher
+                :currentView="currentView"
+                :views="views"
+                @setView="setView">
+            </view-switcher>
             <!-- Action buttons -->
             <div class="l-browse-bar__actions">
-                <button class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
+                <button v-if="notebookEnabled" 
+                    class="l-browse-bar__actions__notebook-entry c-button icon-notebook" 
                     title="New Notebook entry" 
                     @click="snapshot()">
                 </button>
@@ -76,14 +60,15 @@
 
 <script>
 import NotebookSnapshot from '../utils/notebook-snapshot';
+import ViewSwitcher from './ViewSwitcher.vue';
 const PLACEHOLDER_OBJECT = {};
 
     export default {
         inject: ['openmct'],
+        components: {
+            ViewSwitcher
+        },
         methods: {
-            toggleViewMenu() {
-                this.showViewMenu = !this.showViewMenu;
-            },
             toggleSaveMenu() {
                 this.showSaveMenu = !this.showSaveMenu;
             },
@@ -118,7 +103,10 @@ const PLACEHOLDER_OBJECT = {};
                             label: 'Ok',
                             emphasis: true,
                             callback: () => {
-                                this.openmct.editor.cancel();
+                                this.openmct.editor.cancel().then(() => {
+                                    //refresh object view
+                                    this.openmct.layout.$refs.browseObject.show(this.domainObject, this.viewKey, true);
+                                });
                                 dialog.dismiss();
                             }
                         },
@@ -167,7 +155,8 @@ const PLACEHOLDER_OBJECT = {};
                 showSaveMenu: false,
                 domainObject: PLACEHOLDER_OBJECT,
                 viewKey: undefined,
-                isEditing: this.openmct.editor.isEditing()
+                isEditing: this.openmct.editor.isEditing(),
+                notebookEnabled: false
             }
         },
         computed: {
@@ -213,7 +202,11 @@ const PLACEHOLDER_OBJECT = {};
             }
         },
         mounted: function () {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+
+            if (this.openmct.types.get('notebook')) {
+                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+                this.notebookEnabled = true;
+            }
 
             document.addEventListener('click', this.closeViewAndSaveMenu);
             window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
@@ -222,7 +215,20 @@ const PLACEHOLDER_OBJECT = {};
                 this.isEditing = isEditing;
             });
         },
+        watch: {
+            domainObject() {
+                if (this.mutationObserver) {
+                    this.mutationObserver();
+                }
+                this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
+                    this.domainObject = domainObject;
+                });
+            }
+        },
         beforeDestroy: function () {
+            if (this.mutationObserver) {
+                this.mutationObserver();
+            }
             document.removeEventListener('click', this.closeViewAndSaveMenu);
             window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
         }
@@ -267,10 +273,14 @@ const PLACEHOLDER_OBJECT = {};
 
         &__nav-to-parent-button {
             // This is an icon-button
-            $p: $interiorMarginLg;
+            $p: $interiorMargin;
             margin-right: $interiorMargin;
             padding-left: $p;
             padding-right: $p;
+
+            .is-editing & {
+                display: none;
+            }
         }
 
         &__object-name--w {

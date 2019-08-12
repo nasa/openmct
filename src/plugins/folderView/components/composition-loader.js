@@ -14,6 +14,7 @@ export default {
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
+        this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         if (!this.composition) {
             return;
         }
@@ -34,7 +35,7 @@ export default {
             this.items.push({
                 model: child,
                 type: type.definition,
-                isAlias: this.domainObject.identifier.key !== child.location,
+                isAlias: this.keystring !== child.location,
                 objectPath: [child].concat(this.openmct.router.path),
                 objectKeyString: this.openmct.objects.makeKeyString(child.identifier)
             });

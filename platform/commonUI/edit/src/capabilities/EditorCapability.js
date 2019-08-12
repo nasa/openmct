@@ -64,7 +64,6 @@ define(
          * @returns boolean
          */
         EditorCapability.prototype.inEditContext = function () {
-            console.warn('DEPRECATION WARNING: isEditing checks must be done via openmct.editor.');
             return this.openmct.editor.isEditing();
         };
 
@@ -74,7 +73,6 @@ define(
          * @returns {*}
          */
         EditorCapability.prototype.isEditContextRoot = function () {
-            console.warn('DEPRECATION WARNING: isEditing checks must be done via openmct.editor.');
             return this.openmct.editor.isEditing();
         };
 

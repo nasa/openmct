@@ -23,7 +23,8 @@
 <template>
     <layout-frame :item="item"
                   :grid-size="gridSize"
-                  @endDrag="(item, updates) => $emit('endDrag', item, updates)">
+                  @move="(gridDelta) => $emit('move', gridDelta)"
+                  @endMove="() => $emit('endMove')">
         <div class="c-image-view"
              :style="style">
         </div>
@@ -56,8 +57,7 @@
                 y: 1,
                 width: 10,
                 height: 5,
-                url: element.url,
-                useGrid: true
+                url: element.url
             };
         },
         inject: ['openmct'],

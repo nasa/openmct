@@ -59,7 +59,8 @@ export default {
             default() {
                 return [];
             }
-        }
+        },
+        navigateToPath: String
     },
     data() {
         return {

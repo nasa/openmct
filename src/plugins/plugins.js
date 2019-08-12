@@ -23,6 +23,7 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './localTimeSystem/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -42,10 +43,13 @@ define([
     './LADTable/plugin',
     './notebook-svc/plugin',
     './filters/plugin',
-    './objectMigration/plugin'
+    './objectMigration/plugin',
+    './goToOriginalAction/plugin',
+    './clearData/plugin'
 ], function (
     _,
     UTCTimeSystem,
+    LocalTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -65,7 +69,9 @@ define([
     LADTable,
     NotebookSVC,
     Filters,
-    ObjectMigration
+    ObjectMigration,
+    GoToOriginalAction,
+    ClearData
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -81,6 +87,7 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.LocalTimeSystem = LocalTimeSystem;
 
     plugins.ImportExport = ImportExport;
 
@@ -163,6 +170,8 @@ define([
     plugins.NotebookSVC = NotebookSVC;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
+    plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.ClearData = ClearData;
 
     return plugins;
 });

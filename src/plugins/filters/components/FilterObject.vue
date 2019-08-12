@@ -63,22 +63,37 @@ export default {
 
             if (filterValue && filterValue[comparator]) {
                 if (value === false) {
-                    filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                    let filteredValueName = filterValue[comparator].filter(v => v !== valueName);
+
+                    if (filteredValueName.length === 0) {
+                        delete this.updatedFilters[key];
+                    } else {
+                        filterValue[comparator] = filteredValueName;
+                    }
                 } else {
                     filterValue[comparator].push(valueName);
                 }
             } else {
                 if (!this.updatedFilters[key]) {
-                    this.updatedFilters[key] = {};
+                    this.$set(this.updatedFilters, key, {});
                 }
-                this.updatedFilters[key][comparator] = [value ? valueName : undefined];
+                this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateTextFilter(key, comparator, value) {
+            if (value.trim() === '') {
+                if (this.updatedFilters[key]) {
+                    delete this.updatedFilters[key];
+                    this.$emit('updateFilters', this.keyString, this.updatedFilters);
+                }
+                return;
+            }
+
             if (!this.updatedFilters[key]) {
-                this.updatedFilters[key] = {};
+                this.$set(this.updatedFilters, key, {});
+                this.$set(this.updatedFilters[key], comparator, '');
             }
             this.updatedFilters[key][comparator] = value;
             this.$emit('updateFilters', this.keyString, this.updatedFilters);

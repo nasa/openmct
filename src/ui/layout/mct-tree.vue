@@ -52,13 +52,12 @@
 
         &__tree {
             flex: 1 1 auto;
-            height: 100%;
+            height: 0; // Chrome 73 overflow bug fix
         }
     }
 
     .c-tree {
         @include userSelectNone();
-        height: 100%; // Chrome 73 overflow bug fix
         overflow-x: hidden;
         overflow-y: auto;
         padding-right: $interiorMargin;
@@ -211,7 +210,8 @@
                                 return {
                                     id: this.openmct.objects.makeKeyString(c.identifier),
                                     object: c,
-                                    objectPath: [c]
+                                    objectPath: [c],
+                                    navigateToParent: '/browse'
                             };
                         });
                     });
@@ -222,18 +222,23 @@
                         
                         let context = child.object.getCapability('context'),
                             object = child.object.useCapability('adapter'),
-                            objectPath = [];
+                            objectPath = [],
+                            navigateToParent;
 
                         if (context) {
                             objectPath = context.getPath().slice(1)
                                 .map(oldObject => oldObject.useCapability('adapter'))
-                                .reverse();  
+                                .reverse();
+                            navigateToParent = '/browse/' + objectPath.slice(1)
+                                .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
+                                .join('/');
                         }
 
                         return {
                             id: this.openmct.objects.makeKeyString(object.identifier),
                             object,
-                            objectPath
+                            objectPath,
+                            navigateToParent
                         }
                     });
                 });
