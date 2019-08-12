@@ -46,8 +46,7 @@ define([
     './goToOriginalAction/plugin',
     './clearData/plugin',
     './gauge/plugin',
-    './bignumbers/plugin',
-    './maelstrom-adapters/src/MaelstromPlugin.js'
+    './bignumbers/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -74,8 +73,7 @@ define([
     GoToOriginalAction,
     ClearData,
     Gauge,
-    Bignumbers,
-    MaelstromPlugin
+    Bignumbers
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -107,10 +105,7 @@ define([
      * to exclusively.
      */
     plugins.AutoflowView = AutoflowPlugin;
-
     plugins.Conductor = TimeConductorPlugin.default;
-
-    plugins.MaelstromPlugin = MaelstromPlugin.default;
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
