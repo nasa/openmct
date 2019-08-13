@@ -97,41 +97,51 @@
                 composition && composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let filters = this.filteredTelemetry[keyString];
                         let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                        let filters = this.filteredTelemetry[keyString];
 
                         if (filters !== undefined) {
-                            this.collectFiltersName(_.omit(filters, [USE_GLOBAL]), metadataValues, names);
+                            names.push(this.getFilterNamesFromMetadata(filters, metadataValues));
                         }
                     });
+
+                    names = _.flatten(names);
                     this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
                 });
             },
-            collectFiltersName(filters, metadataValues, names) {
+            getFilterNamesFromMetadata(filters, metadataValues) {
+                let filterNames = [];
+                filters = _.omit(filters, [USE_GLOBAL]);
+
                 Object.keys(filters).forEach(key => {
                     if (!_.isEmpty(filters[key])) {
                         metadataValues.forEach(metadatum => {
                             if (key === metadatum.key) {
                                 if (typeof metadatum.filters[0] === "object") {
-                                    this.readFilterLabels(filters[key], metadatum, names);
+                                    filterNames.push(this.getFilterLabels(filters[key], metadatum));
                                 } else {
-                                    names.push(metadatum.name);
+                                    filterNames.push(metadatum.name);
                                 }
                             }
                         });
                     }
                 });
+
+                return _.flatten(filterNames);
             },
-            readFilterLabels(filterObject, metadatum, names) {
+            getFilterLabels(filterObject, metadatum, ) {
+                let filterLabels = [];
                 Object.values(filterObject).forEach(comparator => {
                     comparator.forEach(filterValue => {
                         metadatum.filters[0].possibleValues.forEach(option => {
                             if (option.value === filterValue) {
-                                names.push(option.label);
+                                filterLabels.push(option.label);
                             }
                         });
                     });
                 });
+
+                return filterLabels;
             },
             handleConfigurationChanges(configuration) {
                 if (!_.eq(this.filteredTelemetry, configuration.filters)) {
