@@ -89,9 +89,9 @@ export default {
         },
         updateFilterValue(event, comparator, value) {
             if (value !== undefined) {
-                this.$emit('onUserSelect', this.filterField.key, comparator, value, event.target.checked);
+                this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
             } else {
-                this.$emit('onTextEnter', this.filterField.key, comparator, event.target.value);
+                this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
             }
         },
         getFilterLabels(filter) {

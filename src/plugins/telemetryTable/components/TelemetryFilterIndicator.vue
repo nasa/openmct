@@ -2,7 +2,7 @@
     <div v-if="filterNames.length > 0"
         :title=title
         class="c-filter-indication"
-        :class="{ 'c-filter-indication--mixed': filtersMixed }">
+        :class="{ 'c-filter-indication--mixed': hasMixedFilters }">
         <span class="c-filter-indication__mixed">{{ label }}</span>
         <span v-for="(name, index) in filterNames"
               class="c-filter-indication__label">
@@ -68,27 +68,21 @@
             }           
         },
         computed: {
-            filtersMixed() {
+            hasMixedFilters() {
                 let filtersToCompare = _.omit(this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]], [USE_GLOBAL]);
-                let mixed = false;
-
-                Object.values(this.filteredTelemetry).forEach(filters => {
-                    if (!_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]))) {
-                        mixed = true;
-                        return;
-                    }
+                return Object.values(this.filteredTelemetry).some(filters => {
+                    return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
                 });
-                return mixed;
             },
             label() {
-                if (this.filtersMixed) {
+                if (this.hasMixedFilters) {
                     return FILTER_INDICATOR_LABEL_MIXED;
                 } else {
                     return FILTER_INDICATOR_LABEL;
                 }
             },
             title() {
-                if (this.filtersMixed) {
+                if (this.hasMixedFilters) {
                     return FILTER_INDICATOR_TITLE_MIXED;
                 } else {
                     return FILTER_INDICATOR_TITLE;

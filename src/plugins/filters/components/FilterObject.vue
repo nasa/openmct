@@ -3,7 +3,7 @@
         <div class="c-tree__item menus-to-left"
              @click="toggleExpanded">
             <div class="c-filter-tree-item__filter-indicator"
-                :class="{'icon-filter': filtersDefined }"></div>
+                :class="{'icon-filter': hasActiveFilters }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="{'c-disclosure-triangle--expanded': expanded}"></span>
             <div class="c-tree__item__label c-object-label">
@@ -27,7 +27,7 @@
                      v-if="isEditing">
                     <toggle-switch
                             :id="keyString"
-                            @change="onUseGlobalFilter"
+                            @change="useGlobalFilter"
                             :checked="persistedFilters.useGlobal">
                     </toggle-switch>
                     Use global filter
@@ -39,8 +39,8 @@
                         :filterField="metadatum"
                         :useGlobal="persistedFilters.useGlobal"
                         :persistedFilters="updatedFilters[metadatum.key]"
-                        @onUserSelect="collectUserSelects"
-                        @onTextEnter="updateTextFilter">
+                        @filterSelected="updateFiltersWithSelectedValue"
+                        @filterTextValueChanged="updateFiltersWithTextValue">
                 </filter-field>
             </ul>
         </div>
@@ -83,24 +83,18 @@ export default {
         }
     },
     computed: {
-        filtersDefined() {
+        hasActiveFilters() {
             // Should be true when the user has entered any filter values.
-            let isFiltersDefined = false;
-
-            Object.values(this.persistedFilters).forEach(comparator => {
-                if (!isFiltersDefined && typeof(comparator) === 'object' && !_.isEmpty(comparator)) {
-                    isFiltersDefined = true;
-                    return;
-                }
+            return Object.values(this.persistedFilters).some(comparator => {
+                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
             });
-            return isFiltersDefined;
         }
     },
     methods: {
         toggleExpanded() {
             this.expanded = !this.expanded;
         },
-        collectUserSelects(key, comparator, valueName, value) {
+        updateFiltersWithSelectedValue(key, comparator, valueName, value) {
             let filterValue = this.updatedFilters[key];
 
             if (filterValue[comparator]) {
@@ -119,7 +113,7 @@ export default {
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        updateTextFilter(key, comparator, value) {
+        updateFiltersWithTextValue(key, comparator, value) {
             if (value.trim() === '') {
                 this.$set(this.updatedFilters, key, {});
             } else {
@@ -128,7 +122,7 @@ export default {
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        onUseGlobalFilter(checked) {
+        useGlobalFilter(checked) {
             this.updatedFilters.useGlobal = checked;
             this.$emit('updateFilters', this.keyString, this.updatedFilters, checked);
         },

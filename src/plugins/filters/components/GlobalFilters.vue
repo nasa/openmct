@@ -3,7 +3,7 @@
         <div class="c-tree__item menus-to-left"
             @click="toggleExpanded">
             <div class="c-filter-tree-item__filter-indicator"
-                :class="{'icon-filter': globalFiltersDefined }"></div>
+                :class="{'icon-filter': hasActiveGlobalFilters }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
                 :class="{'c-disclosure-triangle--expanded': expanded}"></span>
             <div class="c-tree__item__label c-object-label">
@@ -19,8 +19,8 @@
                 :key="metadatum.key"
                 :filterField="metadatum"
                 :persistedFilters="updatedFilters[metadatum.key]"
-                @onUserSelect="updateFilterWithSelectedValue"
-                @onTextEnter="updateFilterWithTextValue">
+                @filterSelected="updateFiltersWithSelectedValue"
+                @filterTextValueChanged="updateFiltersWithTextValue">
             </filter-field>
         </ul>
     </li>
@@ -81,19 +81,12 @@
             }
         },
         computed: {
-            globalFiltersDefined() {
-                let filtersDefined = false;
-                Object.values(this.globalFilters).forEach(field => {
-                    if (!filtersDefined) {
-                        Object.values(field).forEach(comparator => {
-                            if (comparator && (comparator !== '' || comparator.length > 0)) {
-                                filtersDefined = true;
-                                return;
-                            }
-                        });
-                    }
+            hasActiveGlobalFilters() {
+                return Object.values(this.globalFilters).some(field => {
+                    return Object.values(field).some(comparator => {
+                        return (comparator && (comparator !== '' || comparator.length > 0));
+                    });
                 });
-                return filtersDefined;
             }
         },
         watch: {
@@ -108,7 +101,7 @@
             toggleExpanded() {
                 this.expanded = !this.expanded;
             },
-            updateFilterWithSelectedValue(key, comparator, valueName, value) {
+            updateFiltersWithSelectedValue(key, comparator, valueName, value) {
                 let filterValue = this.updatedFilters[key];
 
                 if (filterValue[comparator]) {
@@ -127,7 +120,7 @@
 
                 this.$emit('persistGlobalFilters', key, this.updatedFilters);
             },
-            updateFilterWithTextValue(key, comparator, value) {
+            updateFiltersWithTextValue(key, comparator, value) {
                 if (value.trim() === '') {
                     this.$set(this.updatedFilters, key, {});
                 } else {

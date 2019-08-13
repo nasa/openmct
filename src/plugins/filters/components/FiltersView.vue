@@ -2,7 +2,7 @@
     <ul class="c-tree c-filter-tree" v-if="Object.keys(children).length">
         <h2>Data Filters</h2>
         <div class="c-filter-indication"
-            v-if="filtersApplied">{{ label }}
+            v-if="hasActiveFilters">{{ label }}
         </div>
         <global-filters
             :globalFilters="globalFilters"
@@ -68,40 +68,24 @@
             }
         },
         computed: {
-            filtersApplied() {
+            hasActiveFilters() {
                 // Should be true when the user has entered any filter values.
-                let isFiltersApplied = false;
-
-                Object.values(this.persistedFilters).forEach(filters => {
-                    if (isFiltersApplied) {
-                        return;
-                    }
-
-                    Object.values(filters).forEach(comparator => {
-                        if (typeof(comparator) === 'object' && !_.isEmpty(comparator)) {
-                            isFiltersApplied = true;
-                            return;
-                        }
+                return Object.values(this.persistedFilters).some(filters => {
+                    return Object.values(filters).some(comparator => {
+                        return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
                     });
                 });
-                return isFiltersApplied;
             },
-            filtersMixed() {
+            hasMixedFilters() {
                 // Should be true when filter values are mixed.
                 let filtersToCompare = _.omit(this.persistedFilters[Object.keys(this.persistedFilters)[0]], [USE_GLOBAL]);
-                let mixed = false;
-
-                Object.values(this.persistedFilters).forEach(filters => {
-                    if (!_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]))) {
-                        mixed = true;
-                        return;
-                    }
+                return Object.values(this.persistedFilters).some(filters => {
+                    return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
                 });
-                return mixed;
             },
             label() {
-                if (this.filtersApplied) {
-                    if (this.filtersMixed) {
+                if (this.hasActiveFilters) {
+                    if (this.hasMixedFilters) {
                         return FILTER_VIEW_TITLE_MIXED;
                     } else {
                         return FILTER_VIEW_TITLE;
@@ -110,15 +94,15 @@
             }
         },
         methods: {
-            addChildren(child) {
-                let keyString = this.openmct.objects.makeKeyString(child.identifier);
-                let metadata = this.openmct.telemetry.getMetadata(child);
+            addChildren(domainObject) {
+                let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+                let metadata = this.openmct.telemetry.getMetadata(domainObject);
                 let metadataWithFilters = metadata.valueMetadatas.filter(value => value.filters);
-                let childExist = this.persistedFilters[keyString] !== undefined;
+                let hasFiltersWithKeyString = this.persistedFilters[keyString] !== undefined;
                 let mutateFilters = false;
                 let childObject = {
-                    name: child.name,
-                    domainObject: child,
+                    name: domainObject.name,
+                    domainObject: domainObject,
                     metadataWithFilters
                 };
 
@@ -134,7 +118,7 @@
                             this.$set(this.globalMetadata, metadatum.key, metadatum);
                         }
 
-                        if (!childExist) {
+                        if (!hasFiltersWithKeyString) {
                             if (!this.persistedFilters[keyString]) {
                                 this.$set(this.persistedFilters, keyString, {});
                                 this.$set(this.persistedFilters[keyString], 'useGlobal', true);
