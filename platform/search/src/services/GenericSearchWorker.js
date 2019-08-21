@@ -144,8 +144,6 @@
         message.results = results
             .slice(0, data.maxResults);
 
-        console.log(message);
-
         return message;
     }
 
