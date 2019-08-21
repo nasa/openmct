@@ -64,14 +64,17 @@
             // TODO: should have context menu.
             // TODO: should support drag/drop composition
             // TODO: set isAlias per tree-item
+
             this.domainObject = this.node.object;
             let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
                 this.domainObject = newObject;
             });
+
             this.$once('hook:destroyed', removeListener);
             if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
+
             this.openmct.router.on('change:path', this.highlightIfNavigated);
         },
         destroyed() {
