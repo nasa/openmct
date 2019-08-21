@@ -108,6 +108,9 @@ define([
                             link();
                         }
                     },
+                    onClearData() {
+                        scope.$broadcast('clearData');
+                    },
                     destroy: function () {
                         element.off();
                         element.remove();

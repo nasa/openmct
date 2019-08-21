@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -21,7 +22,7 @@
  *****************************************************************************/
 
 <template>
-    <tr>
+    <tr @contextmenu.prevent="showContextMenu">
         <td>{{name}}</td>
         <td>{{timestamp}}</td>
         <td :class="valueClass">
@@ -35,15 +36,25 @@
 </style>
 
 <script>
+
+const CONTEXT_MENU_ACTIONS = [
+    'viewHistoricalData',
+    'remove'
+];
+
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'objectPath'],
     props: ['domainObject'],
     data() {
+        let currentObjectPath = this.objectPath.slice();
+        currentObjectPath.unshift(this.domainObject);
+
         return {
             name: this.domainObject.name,
             timestamp: '---',
             value: '---',
-            valueClass: ''
+            valueClass: '',
+            currentObjectPath
         }
     },
     methods: {
@@ -73,11 +84,15 @@ export default {
                 .request(this.domainObject, {strategy: 'latest'})
                 .then((array) => this.updateValues(array[array.length - 1]));
 
+        },
+        showContextMenu(event) {
+           this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     },
     mounted() {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         this.limitEvaluator = openmct
             .telemetry

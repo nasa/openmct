@@ -64,12 +64,30 @@ define(['zepto'], function ($) {
         var tree = this.generateNewIdentifiers(objTree);
         var rootId = tree.rootId;
         var rootObj = this.instantiate(tree.openmct[rootId], rootId);
+        var newStyleParent = parent.useCapability('adapter');
+        var newStyleRootObj = rootObj.useCapability('adapter');
 
-        // Instantiate all objects in tree with their newly genereated ids,
-        // adding each to its rightful parent's composition
-        rootObj.getCapability("location").setPrimaryLocation(parent.getId());
-        this.deepInstantiate(rootObj, tree.openmct, []);
-        parent.getCapability("composition").add(rootObj);
+        if (this.openmct.composition.checkPolicy(newStyleParent, newStyleRootObj)) {
+            // Instantiate all objects in tree with their newly generated ids,
+            // adding each to its rightful parent's composition
+            rootObj.getCapability("location").setPrimaryLocation(parent.getId());
+            this.deepInstantiate(rootObj, tree.openmct, []);
+            parent.getCapability("composition").add(rootObj);
+        } else {
+            var dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "We're sorry, but you cannot import that object type into this object.",
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: function () {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        }
     };
 
     ImportAsJSONAction.prototype.deepInstantiate = function (parent, tree, seen) {
@@ -80,15 +98,17 @@ define(['zepto'], function ($) {
             var newObj;
 
             seen.push(parent.getId());
-            parentModel.composition.forEach(function (childId, index) {
-                if (!tree[childId] || seen.includes(childId)) {
+
+            parentModel.composition.forEach(function (childId) {
+                let keystring = this.openmct.objects.makeKeyString(childId);
+
+                if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
 
-                newObj = this.instantiate(tree[childId], childId);
-                parent.getCapability("composition").add(newObj);
+                newObj = this.instantiate(tree[keystring], keystring);
                 newObj.getCapability("location")
-                    .setPrimaryLocation(tree[childId].location);
+                    .setPrimaryLocation(tree[keystring].location);
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }

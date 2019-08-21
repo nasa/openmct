@@ -4,14 +4,14 @@
         <div class="c-properties__header">Table Column Size</div>
         <ul class="c-properties__section">
             <li class="c-properties__row">
-                <div class="c-properties__label" title="Show or Hide Column"><label for="AutoSizeControl">Auto-size</label></div>
+                <div class="c-properties__label" title="Auto-size table"><label for="AutoSizeControl">Auto-size</label></div>
                 <div class="c-properties__value"><input type="checkbox" id="AutoSizeControl" :checked="configuration.autosize !== false" @change="toggleAutosize()"></div>            
             </li>
         </ul>
         <div class="c-properties__header">Table Column Visibility</div>
         <ul class="c-properties__section">
             <li class="c-properties__row" v-for="(title, key) in headers">
-                <div class="c-properties__label" title="Show or Hide Column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
+                <div class="c-properties__label" title="Show or hide column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
                 <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
             </li>
         </ul>
@@ -23,6 +23,8 @@
 </style>
 
 <script>
+import TelemetryTableColumn from '../TelemetryTableColumn';
+
 export default {
     inject: ['tableConfiguration', 'openmct'],
     data() {
@@ -43,7 +45,7 @@ export default {
             this.tableConfiguration.updateConfiguration(this.configuration);
         },
         addObject(domainObject) {
-            this.tableConfiguration.addColumnsForObject(domainObject, true);
+                this.addColumnsForObject(domainObject, true);
             this.updateHeaders(this.tableConfiguration.getAllHeaders());
         },
         removeObject(objectIdentifier) {
@@ -56,6 +58,17 @@ export default {
         toggleAutosize() {
             this.configuration.autosize = !this.configuration.autosize;
             this.tableConfiguration.updateConfiguration(this.configuration);
+        },
+        addColumnsForAllObjects(objects) {
+            objects.forEach(object => this.addColumnsForObject(object, false));
+        },
+        addColumnsForObject(telemetryObject) {
+            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            metadataValues.forEach(metadatum => {
+                let column = new TelemetryTableColumn(this.openmct, metadatum);
+                this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
+            });
         }
     },
     mounted() {
@@ -65,7 +78,7 @@ export default {
 
         compositionCollection.load()
             .then((composition) => {
-                this.tableConfiguration.addColumnsForAllObjects(composition);
+                this.addColumnsForAllObjects(composition);
                 this.updateHeaders(this.tableConfiguration.getAllHeaders());
 
                 compositionCollection.on('add', this.addObject);

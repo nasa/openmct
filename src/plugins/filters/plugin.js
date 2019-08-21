@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './filtersInspectorViewProvider'
+    './FiltersInspectorViewProvider'
 ], function (
     FiltersInspectorViewProvider
 ) {

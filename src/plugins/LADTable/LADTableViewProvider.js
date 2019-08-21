@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './components/LadTable.vue',
+    './components/LADTable.vue',
     'vue'
 ], function (
     LadTableComponent,
@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'LadTable';
             },
-            view: function (domainObject) {
+            view: function (domainObject, isEditing, objectPath) {
                 let component;
 
                 return {
@@ -49,7 +49,8 @@ define([
                             },
                             provide: {
                                 openmct,
-                                domainObject
+                                domainObject,
+                                objectPath
                             },
                             el: element,
                             template: '<lad-table-component></lad-table-component>'

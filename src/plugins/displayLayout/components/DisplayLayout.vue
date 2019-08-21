@@ -48,7 +48,8 @@
                    :multiSelect="selectedLayoutItems.length > 1"
                    @move="move"
                    @endMove="endMove"
-                   @endLineResize='endLineResize'>
+                   @endLineResize='endLineResize'
+                   @formatChanged='updateTelemetryFormat'>
         </component>
         <edit-marquee v-if='showMarquee'
                       :gridSize="gridSize"
@@ -201,7 +202,7 @@
                 return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
             }
         },
-        inject: ['openmct', 'options'],
+        inject: ['openmct', 'options', 'objectPath'],
         props: ['domainObject'],
         components: components,
         methods: {
@@ -557,6 +558,11 @@
                     this.layoutItems.splice(itemIndex, 1);
                     this.layoutItems.splice(newIndex, 0, items[itemIndex]);
                 }
+            },
+            updateTelemetryFormat(item, format) {
+                let index = _.findIndex(this.layoutItems, item);
+                item.format = format;
+                this.mutate(`configuration.items[${index}]`, item);
             }
         },
         mounted() {

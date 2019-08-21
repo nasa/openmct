@@ -26,6 +26,7 @@ const OUTSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "properties", "move", "li
 export default class LegacyContextMenuAction {
     constructor(openmct, LegacyAction) {
         this.openmct = openmct;
+        this.key = LegacyAction.definition.key;
         this.name = LegacyAction.definition.name;
         this.description = LegacyAction.definition.description;
         this.cssClass = LegacyAction.definition.cssClass;

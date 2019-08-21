@@ -61,7 +61,7 @@
 }
 
 @mixin indicatorStatusColors($c) {
-    &:before, .count {
+    &:before, .c-indicator__count {
         color: $c;
     }
 }
@@ -127,7 +127,7 @@ tr {
 .s-status-icon-ok:before { content: $glyph-icon-check; }
 
 /*************************************************** INDICATOR COLORING */
-.ls-indicator {
+.c-indicator {
     &.s-status-info {
         @include indicatorStatusColors($colorInfo);
     }
@@ -159,3 +159,16 @@ tr {
         @include indicatorStatusColors($colorStatusError);
     }
 }
+
+.s-status {
+    &--partial {
+        // Partially completed things, such as a file downloading or process that's running
+        background-color: $colorStatusPartialBg;
+    }
+
+    &--complete {
+        // Completed things, such as a file downloaded or process that's finished
+        background-color: $colorStatusCompleteBg;
+    }
+}
+

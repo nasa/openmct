@@ -70,9 +70,6 @@ $colorBodyFgEm: #333;
 $colorGenBg: #fff;
 $colorHeadBg: #eee;
 $colorHeadFg: $colorBodyFg;
-$colorStatusBarBg: #000;
-$colorStatusBarFg: #999;
-$colorStatusBarFgHov: #aaa;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
@@ -101,6 +98,8 @@ $colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316de
 $colorStatusError: #da0004;
 $colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%) contrast(114%);
 $colorStatusBtnBg: #666; // Where is this used?
+$colorStatusPartialBg: #c9d6ff;
+$colorStatusCompleteBg: #a4e4b4;
 $colorAlert: #ff3c00;
 $colorAlertFg: #fff;
 $colorWarningHi: #990000;
@@ -115,6 +114,9 @@ $colorInfo: #2294a2;
 $colorInfoFg: #fff;
 $colorOk: #33cc33;
 $colorOkFg: #fff;
+$colorFilterBg: #a29fe2;
+$colorFilterFg: #fff;
+$colorFilter: $colorFilterBg; // Standalone against $colorBodyBg
 
 // States
 $colorPausedBg: #ff9900;
@@ -210,6 +212,10 @@ $btnStdH: 24px;
 $colorCursorGuide: rgba(black, 0.6);
 $shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
 $colorLocalControlOvrBg: rgba($colorBodyFg, 0.8);
+$colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
+$colorSelectFg: $colorBtnFg;
+$colorSelectArw: lighten($colorBtnBg, 20%);
+$shdwSelect: none;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -277,6 +283,11 @@ $colorIndicatorAvailable: $colorKey;
 $colorIndicatorDisabled: #444;
 $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #666;
+$colorIndicatorBgHov: rgba($colorHeadFg, 0.1);
+$colorIndicatorMenuBg: white;
+$colorIndicatorMenuBgShdw: rgba(black, 0.6) 0 0 6px;
+$colorIndicatorMenuFg: $colorHeadFg;
+$colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
@@ -417,8 +428,4 @@ $createBtnTextTransform: uppercase;
 
 @mixin themedButton($c: $colorBtnBg) {
     background: $c;
-}
-
-@mixin themedSelect($bg: $colorBtnBg, $fg: $colorBtnFg) {
-    @include cSelect($bg, $fg, lighten($bg, 20%), none);
 }

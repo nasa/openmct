@@ -20,7 +20,7 @@
         align-items: center;
         flex: 1 1 auto;
         overflow: hidden;
-        padding: $interiorMarginSm;
+        padding: $interiorMarginSm 1px;
         white-space: nowrap;
 
         &__name {
