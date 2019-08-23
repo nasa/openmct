@@ -30,10 +30,10 @@ define(
         _
     ) {
 
-    /**
-     * Manages selection state for Open MCT
-     * @private
-     */
+        /**
+         * Manages selection state for Open MCT
+         * @private
+         */
         function Selection(openmct) {
             EventEmitter.call(this);
 
@@ -44,20 +44,20 @@ define(
         Selection.prototype = Object.create(EventEmitter.prototype);
 
         /**
-     * Gets the selected object.
-     * @public
-     */
+         * Gets the selected object.
+         * @public
+         */
         Selection.prototype.get = function () {
             return this.selected;
         };
 
         /**
-     * Selects the selectable object and emits the 'change' event.
-     *
-     * @param {object} selectable an object with element and context properties
-     * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
-     * @private
-     */
+         * Selects the selectable object and emits the 'change' event.
+         *
+         * @param {object} selectable an object with element and context properties
+         * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
+         * @private
+         */
         Selection.prototype.select = function (selectable, isMultiSelectEvent) {
             if (!Array.isArray(selectable)) {
                 selectable = [selectable];
@@ -79,8 +79,8 @@ define(
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.handleMultiSelect = function (selectable) {
             if (this.elementSelected(selectable)) {
                 this.remove(selectable);
@@ -91,15 +91,15 @@ define(
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.elementSelected = function (selectable) {
             return this.selected.some(selectionPath => _.isEqual(selectionPath, selectable));
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.remove = function (selectable) {
             this.selected = this.selected.filter(selectionPath => !_.isEqual(selectionPath, selectable));
 
@@ -112,8 +112,8 @@ define(
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.setSelectionStyles = function (selectable) {
             this.selected.map(selectionPath => {
                 this.removeSelectionAttributes(selectionPath);
@@ -132,9 +132,9 @@ define(
         };
 
         /*
-     * Adds selection attributes to the selected element and its parent.
-     * @private
-     */
+        * Adds selection attributes to the selected element and its parent.
+        * @private
+        */
         Selection.prototype.addSelectionAttributes = function (selectable) {
             if (selectable[0] && selectable[0].element) {
                 selectable[0].element.setAttribute('s-selected', "");
@@ -146,29 +146,29 @@ define(
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.parentSupportsMultiSelect = function (selectable) {
             return selectable[1] && selectable[1].context.supportsMultiSelect;
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.selectionContainsParent = function (selectable) {
             return this.selected.some(selectionPath => _.isEqual(selectionPath[0], selectable[1]));
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.isPeer = function (selectable) {
             return this.selected.some(selectionPath => _.isEqual(selectionPath[1], selectable[1]));
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.capture = function (selectable) {
             let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
 
@@ -180,8 +180,8 @@ define(
         };
 
         /**
-     * @private
-     */
+         * @private
+         */
         Selection.prototype.selectCapture = function (selectable, event) {
             if (!this.capturing) {
                 return;
@@ -193,19 +193,19 @@ define(
         };
 
         /**
-     * Attaches the click handlers to the element.
-     *
-     * @param element an html element
-     * @param context object which defines item or other arbitrary properties.
-     * e.g. {
-     *          item: domainObject,
-     *          elementProxy: element,
-     *          controller: fixedController
-     *       }
-     * @param select a flag to select the element if true
-     * @returns a function that removes the click handlers from the element
-     * @public
-     */
+         * Attaches the click handlers to the element.
+         *
+         * @param element an html element
+         * @param context object which defines item or other arbitrary properties.
+         * e.g. {
+         *          item: domainObject,
+         *          elementProxy: element,
+         *          controller: fixedController
+         *       }
+         * @param select a flag to select the element if true
+         * @returns a function that removes the click handlers from the element
+         * @public
+         */
         Selection.prototype.selectable = function (element, context, select) {
             let selectable = {
                 context: context,
