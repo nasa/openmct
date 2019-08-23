@@ -27,7 +27,7 @@ function (
     Moment
 ) {
 
-    function EntryController (openmct, domainObject) {
+    function EntryController(openmct, domainObject) {
         this.openmct = openmct;
         this.domainObject = domainObject;
 
@@ -111,7 +111,7 @@ function (
                 domainObject = objectPath[0],
                 domainObjectKey = domainObject.identifier.key,
                 domainObjectType = this.openmct.types.get(domainObject.type),
-                cssClass = domainObjectType && domainObjectType.definition ? 
+                cssClass = domainObjectType && domainObjectType.definition ?
                     domainObjectType.definition.cssClass : 'icon-object-unknown',
                 entryPos = this.entryPosById(entryid),
                 currentEntryEmbeds = this.domainObject.entries[entryPos].embeds,

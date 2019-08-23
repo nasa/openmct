@@ -37,7 +37,7 @@ define(
                 //Synchronize with master collection
                 this.masterCollection.on('add', this.add);
                 this.masterCollection.on('remove', this.remove);
-                
+
                 //Default to master collection's sort options
                 this.sortOptions = masterCollection.sortBy();
             }
@@ -70,9 +70,9 @@ define(
              * @private
              */
             isSubsetOfCurrentFilter(columnKey, filter) {
-                return this.columnFilters[columnKey] && 
+                return this.columnFilters[columnKey] &&
                     filter.startsWith(this.columnFilters[columnKey]) &&
-                    // startsWith check will otherwise fail when filter cleared 
+                    // startsWith check will otherwise fail when filter cleared
                     // because anyString.startsWith('') === true
                     filter !== '';
             }
@@ -91,8 +91,8 @@ define(
                         return false;
                     } else {
                         let formattedValue = row.getFormattedValue(key).toLowerCase();
-                        doesMatchFilters = doesMatchFilters && 
-                            formattedValue.indexOf(this.columnFilters[key]) !== -1;    
+                        doesMatchFilters = doesMatchFilters &&
+                            formattedValue.indexOf(this.columnFilters[key]) !== -1;
                     }
                 }
                 return doesMatchFilters;

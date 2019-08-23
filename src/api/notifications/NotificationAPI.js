@@ -42,7 +42,7 @@ import EventEmitter from 'EventEmitter';
  *
  * @typedef {object} NotificationModel
  * @property {string} message The message to be displayed by the notification
- * @property {number | 'unknown'} [progress] The progres of some ongoing task. Should be a number between 0 and 100, or 
+ * @property {number | 'unknown'} [progress] The progres of some ongoing task. Should be a number between 0 and 100, or
  * with the string literal 'unknown'.
  * @property {string} [progressText] A message conveying progress of some ongoing task.
 
