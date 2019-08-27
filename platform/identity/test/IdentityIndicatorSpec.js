@@ -44,7 +44,7 @@ define(
             it("shows information about the current user", function () {
                 mockPromise.then.calls.mostRecent().args[0]({
                     key: "testuserid",
-                    name: "A User"
+                    name: "Brilj310"
                 });
                 expect(indicator.getCssClass()).toEqual("icon-person");
                 expect(indicator.getText()).toEqual("A User");
