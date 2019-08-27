@@ -53,7 +53,7 @@ export default function DisplayLayoutPlugin(options) {
                                 objectPath
                             },
                             el: container,
-                            data () {
+                            data() {
                                 return {
                                     domainObject: domainObject
                                 };

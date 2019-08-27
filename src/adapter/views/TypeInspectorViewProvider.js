@@ -102,7 +102,7 @@ define([
                 }
             }
         };
-    };
+    }
 
     return TypeInspectorViewProvider;
 

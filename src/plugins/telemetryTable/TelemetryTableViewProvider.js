@@ -60,7 +60,7 @@ define([
                                 }
                             },
                             components: {
-                                TableComponent: TableComponent.default,
+                                TableComponent: TableComponent.default
                             },
                             provide: {
                                 openmct,

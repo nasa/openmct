@@ -195,7 +195,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * OR
      * * Return a {@link openmct.View} from the `view` function defining a read-only view.
      * AND
-     * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an 
+     * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an
      * editing-specific view.
      *
      * @method canEdit
