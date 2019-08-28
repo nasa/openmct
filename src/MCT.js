@@ -259,7 +259,6 @@ define([
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
-        this.install(this.plugins.LADTable());
         this.install(this.plugins.GoToOriginalAction());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {
