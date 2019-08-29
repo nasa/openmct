@@ -733,9 +733,21 @@ export default {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
-        unmarkRow(rowIndex) {
-            this.undoMarkedRows();
-            this.unpause();
+        unmarkRow(rowIndex, ctrlKeyModifier) {
+            if (ctrlKeyModifier) {
+                let row = this.visibleRows[rowIndex],
+                    positionInMarkedArray = this.markedRows.indexOf(row);
+
+                row.marked = false;
+                this.markedRows.splice(positionInMarkedArray, 1); 
+
+                if (this.markedRows.length === 0) {
+                    this.unpause();
+                }
+            } else if (this.markedRows.length) {
+                this.undoMarkedRows();
+                this.markRow(rowIndex);
+            }
         },
         markRow(rowIndex, keyModifier) {
             if (!this.enableMarking) {
@@ -777,7 +789,8 @@ export default {
                     });
                     this.markedRows.splice(1);
                 }
-                let lastRowToBeMarked = this.visibleRows[rowIndex];
+                let lastRowToBeMarked = this.visibleRows[rowIndex],
+                    backwards;
 
                 let allRows = this.table.filteredRows.getRows(),
                     firstRowIndex = allRows.indexOf(this.markedRows[0]),
@@ -785,16 +798,20 @@ export default {
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
-                    let temp = lastRowIndex;
-                
-                    lastRowIndex = firstRowIndex;
-                    firstRowIndex = temp - 1;
-                }
+                    backwards = true;
 
-                for (var i = firstRowIndex + 1; i <= lastRowIndex; i++) {
+                    [firstRowIndex, lastRowIndex] = [lastRowIndex, firstRowIndex];
+                }
+                
+                let baseRow = this.markedRows[0];
+
+                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
-                    this.markedRows.push(row);
+
+                    if (row !== baseRow){
+                        this.markedRows.push(row);
+                    }
                 }
             }
         }
