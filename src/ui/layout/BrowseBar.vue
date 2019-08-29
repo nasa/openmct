@@ -77,9 +77,10 @@ const PLACEHOLDER_OBJECT = {};
                 this.showSaveMenu = false;
             },
             updateName(event) {
-                // TODO: handle isssues with contenteditable text escaping.
-                if (event.target.innerText !== this.domainObject.name) {
+                if (event.target.innerText !== this.domainObject.name && event.target.innerText.match(/\S/)) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
+                } else {
+                    event.target.innerText = this.domainObject.name;
                 }
             },
             updateNameOnEnterKeyPress (event) {
