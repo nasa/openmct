@@ -9,6 +9,8 @@
             <CreateButton class="l-shell__create-button"></CreateButton>
             <indicators class="l-shell__head-section l-shell__indicators">
             </indicators>
+            <button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button>
             <notification-banner></notification-banner>
             <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
@@ -21,8 +23,6 @@
                 </button>
             </div>
             <app-logo></app-logo>
-            <button class="l-shell__head__collapse-button c-button"
-                    @click="toggleShellHead"></button>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -170,9 +170,8 @@
 
             [class*='__head__collapse-button'] {
                 align-self: start;
-                $p: 6px;
-                padding-left: $p !important;
-                padding-right: $p !important;
+                flex: 0 0 auto;
+                margin-top: 4px;
 
                 &:before {
                     content: $glyph-icon-arrow-down;
