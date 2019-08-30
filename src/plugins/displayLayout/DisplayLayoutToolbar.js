@@ -140,7 +140,7 @@ define([], function () {
                     return {
                         control: "toggle-button",
                         domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => 
+                        applicableSelectedItems: selection.filter(selectionPath =>
                             selectionPath[0].context.layoutItem.type === 'subobject-view'
                         ),
                         property: function (selectionPath) {
@@ -254,7 +254,7 @@ define([], function () {
                                 return getPath(selectionPath) + ".y";
                             },
                             label: "Y:",
-                            title: "Y position",
+                            title: "Y position"
                         };
                     }
                 }
@@ -322,7 +322,7 @@ define([], function () {
                                 return getPath(selectionPath) + ".y2";
                             },
                             label: "Y2:",
-                            title: "Y2 position",
+                            title: "Y2 position"
                         };
                     }
                 }
@@ -416,24 +416,24 @@ define([], function () {
                         },
                         icon: "icon-image",
                         title: "Edit image properties",
-                        dialog: DIALOG_FORM['image']
+                        dialog: DIALOG_FORM.image
                     };
                 }
 
                 function getTextButton(selectedParent, selection) {
-                        return {
-                            control: "button",
-                            domainObject: selectedParent,
-                            applicableSelectedItems: selection.filter(selectionPath => {
-                                return selectionPath[0].context.layoutItem.type === 'text-view';
-                            }),
-                            property: function (selectionPath) {
-                                return getPath(selectionPath);
-                            },
-                            icon: "icon-gear",
-                            title: "Edit text properties",
-                            dialog: DIALOG_FORM['text']
-                        };
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            return selectionPath[0].context.layoutItem.type === 'text-view';
+                        }),
+                        property: function (selectionPath) {
+                            return getPath(selectionPath);
+                        },
+                        icon: "icon-gear",
+                        title: "Edit text properties",
+                        dialog: DIALOG_FORM.text
+                    };
                 }
 
                 function getTelemetryValueMenu(selectionPath, selection) {
@@ -514,7 +514,7 @@ define([], function () {
                     'position': [],
                     'text': [],
                     'url': [],
-                    'remove': [],
+                    'remove': []
                 };
 
                 selection.forEach(selectionPath => {
@@ -528,8 +528,8 @@ define([], function () {
                         if (toolbar['toggle-frame'].length === 0) {
                             toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selection)];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -537,8 +537,8 @@ define([], function () {
                                 getWidthInput(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
@@ -547,8 +547,8 @@ define([], function () {
                         if (toolbar['telemetry-value'].length === 0) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selection)];
                         }
-                        if (toolbar['style'].length < 2) {
-                            toolbar['style'] = [
+                        if (toolbar.style.length < 2) {
+                            toolbar.style = [
                                 getFillMenu(selectedParent, selection),
                                 getStrokeMenu(selectedParent, selection)
                             ];
@@ -559,8 +559,8 @@ define([], function () {
                                 getTextSizeMenu(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -568,12 +568,12 @@ define([], function () {
                                 getWidthInput(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'text-view') {
-                        if (toolbar['style'].length < 2) {
-                            toolbar['style'] = [
+                        if (toolbar.style.length < 2) {
+                            toolbar.style = [
                                 getFillMenu(selectedParent, selection),
                                 getStrokeMenu(selectedParent, selection)
                             ];
@@ -584,8 +584,8 @@ define([], function () {
                                 getTextSizeMenu(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -593,21 +593,21 @@ define([], function () {
                                 getWidthInput(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['text'].length === 0) {
-                            toolbar['text'] = [getTextButton(selectedParent, selection)];
+                        if (toolbar.text.length === 0) {
+                            toolbar.text = [getTextButton(selectedParent, selection)];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'box-view') {
-                        if (toolbar['style'].length < 2) {
-                            toolbar['style'] = [
+                        if (toolbar.style.length < 2) {
+                            toolbar.style = [
                                 getFillMenu(selectedParent, selection),
                                 getStrokeMenu(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -615,17 +615,17 @@ define([], function () {
                                 getWidthInput(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'image-view') {
-                        if (toolbar['style'].length === 0) {
-                            toolbar['style'] = [
+                        if (toolbar.style.length === 0) {
+                            toolbar.style = [
                                 getStrokeMenu(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -633,20 +633,20 @@ define([], function () {
                                 getWidthInput(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['url'].length === 0) {
-                            toolbar['url'] = [getURLButton(selectedParent, selection)];
+                        if (toolbar.url.length === 0) {
+                            toolbar.url = [getURLButton(selectedParent, selection)];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     } else if (layoutItem.type === 'line-view') {
-                        if (toolbar['style'].length === 0) {
-                            toolbar['style'] = [
+                        if (toolbar.style.length === 0) {
+                            toolbar.style = [
                                 getStrokeMenu(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['position'].length === 0) {
-                            toolbar['position'] = [
+                        if (toolbar.position.length === 0) {
+                            toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
                                 getXInput(selectedParent, selection),
                                 getYInput(selectedParent, selection),
@@ -654,8 +654,8 @@ define([], function () {
                                 getY2Input(selectedParent, selection)
                             ];
                         }
-                        if (toolbar['remove'].length === 0) {
-                            toolbar['remove'] = [getRemoveButton(selectedParent, selectionPath, selection)];
+                        if (toolbar.remove.length === 0) {
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
                         }
                     }
                 });

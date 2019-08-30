@@ -1,10 +1,12 @@
 <template>
-    <li>
+    <li class="c-tree__item-h">
         <div class="c-tree__item menus-to-left"
              @click="toggleExpanded">
+            <div class="c-filter-tree-item__filter-indicator"
+                :class="{'icon-filter': hasActiveFilters }"></div>
             <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="{'c-disclosure-triangle--expanded': expanded}"></span>
-            <div class="c-tree__item__label">
+            <div class="c-tree__item__label c-object-label">
                 <div class="c-object-label">
                     <div class="c-object-label__type-icon"
                          :class="objectCssClass">
@@ -13,30 +15,47 @@
                 </div>
             </div>
         </div>
-        <ul class="grid-properties" v-if="expanded">
-            <filter-field
-                    v-for="field in filterObject.valuesWithFilters"
-                    :key="field.key"
-                    :filterField="field"
-                    :persistedFilters="persistedFilters[field.key]"
-                    @onUserSelect="collectUserSelects"
-                    @onTextEnter="updateTextFilter">
-            </filter-field>
-        </ul>
+
+        <div v-if="expanded">
+            <ul class="c-properties">
+                <div class="c-properties__label span-all"
+                     v-if="!isEditing && persistedFilters.useGlobal">
+                    Uses global filter
+                </div>
+
+                <div class="c-properties__label span-all"
+                     v-if="isEditing">
+                    <toggle-switch
+                            :id="keyString"
+                            @change="useGlobalFilter"
+                            :checked="persistedFilters.useGlobal">
+                    </toggle-switch>
+                    Use global filter
+                </div>
+                <filter-field
+                        v-if="(!persistedFilters.useGlobal && !isEditing) || isEditing"
+                        v-for="metadatum in filterObject.metadataWithFilters"
+                        :key="metadatum.key"
+                        :filterField="metadatum"
+                        :useGlobal="persistedFilters.useGlobal"
+                        :persistedFilters="updatedFilters[metadatum.key]"
+                        @filterSelected="updateFiltersWithSelectedValue"
+                        @filterTextValueChanged="updateFiltersWithTextValue">
+                </filter-field>
+            </ul>
+        </div>
     </li>
 </template>
 
-<style lang="scss">
-
-</style>
-
 <script>
 import FilterField from './FilterField.vue';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 export default {
     inject: ['openmct'],
     components: {
-        FilterField
+        FilterField,
+        ToggleSwitch
     },
     props: {
         filterObject: Object, 
@@ -51,58 +70,74 @@ export default {
         return {
             expanded: false,
             objectCssClass: undefined,
-            updatedFilters: this.persistedFilters
+            updatedFilters: JSON.parse(JSON.stringify(this.persistedFilters)),
+            isEditing: this.openmct.editor.isEditing()
+        }
+    },
+    watch: {
+        persistedFilters: {
+            handler: function checkFilters(newpersistedFilters) {
+                this.updatedFilters = JSON.parse(JSON.stringify(newpersistedFilters));
+            },
+            deep: true
+        }
+    },
+    computed: {
+        hasActiveFilters() {
+            // Should be true when the user has entered any filter values.
+            return Object.values(this.persistedFilters).some(comparator => {
+                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
+            });
         }
     },
     methods: {
         toggleExpanded() {
             this.expanded = !this.expanded;
         },
-        collectUserSelects(key, comparator, valueName, value) {
+        updateFiltersWithSelectedValue(key, comparator, valueName, value) {
             let filterValue = this.updatedFilters[key];
 
-            if (filterValue && filterValue[comparator]) {
-                if (value === false) {
-                    let filteredValueName = filterValue[comparator].filter(v => v !== valueName);
-
-                    if (filteredValueName.length === 0) {
-                        delete this.updatedFilters[key];
-                    } else {
-                        filterValue[comparator] = filteredValueName;
-                    }
-                } else {
+            if (filterValue[comparator]) {
+                if (value === true) {
                     filterValue[comparator].push(valueName);
+                } else {
+                    if (filterValue[comparator].length === 1) {
+                        this.$set(this.updatedFilters, key, {});
+                    } else {
+                        filterValue[comparator] = filterValue[comparator].filter(v => v !== valueName);
+                    }
                 }
             } else {
-                if (!this.updatedFilters[key]) {
-                    this.$set(this.updatedFilters, key, {});
-                }
-                this.$set(this.updatedFilters[key], comparator, [value ? valueName : undefined]);
+                this.$set(this.updatedFilters[key], comparator, [valueName]);
             }
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        updateTextFilter(key, comparator, value) {
+        updateFiltersWithTextValue(key, comparator, value) {
             if (value.trim() === '') {
-                if (this.updatedFilters[key]) {
-                    delete this.updatedFilters[key];
-                    this.$emit('updateFilters', this.keyString, this.updatedFilters);
-                }
-                return;
+                this.$set(this.updatedFilters, key, {});
+            } else {
+                this.$set(this.updatedFilters[key], comparator, value);
             }
 
-            if (!this.updatedFilters[key]) {
-                this.$set(this.updatedFilters, key, {});
-                this.$set(this.updatedFilters[key], comparator, '');
-            }
-            this.updatedFilters[key][comparator] = value;
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
-        }
+        },
+        useGlobalFilter(checked) {
+            this.updatedFilters.useGlobal = checked;
+            this.$emit('updateFilters', this.keyString, this.updatedFilters, checked);
+        },
+        toggleIsEditing(isEditing) {
+            this.isEditing = isEditing;
+        },
     },
     mounted() {
         let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
         this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
         this.objectCssClass = type.definition.cssClass;
+        this.openmct.editor.on('isEditing', this.toggleIsEditing);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     }
 }
 </script>

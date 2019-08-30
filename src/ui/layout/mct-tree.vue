@@ -81,6 +81,10 @@
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
+
             &:hover {
                 background: $colorItemTreeHoverBg;
                 .c-tree__item__type-icon:before {
@@ -114,10 +118,6 @@
                     color: $colorItemTreeEditingFg;
                     font-style: italic;
                 }
-            }
-
-            &__view-control {
-                margin-right: $interiorMarginSm;
             }
 
             // Object labels in trees

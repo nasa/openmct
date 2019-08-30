@@ -58,7 +58,7 @@ define([
 
         /**
          * @private
-         * @param {*} object 
+         * @param {*} object
          */
         objectMutated(object) {
             //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.

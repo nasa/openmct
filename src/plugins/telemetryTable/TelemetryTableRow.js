@@ -79,7 +79,7 @@ define([], function () {
      * Maps all sources to keys.
      * @private
      * @param {*} telemetryDatum
-     * @param {*} metadataValues 
+     * @param {*} metadataValues
      */
     function createNormalizedDatum(datum, columns) {
         return Object.values(columns).reduce((normalizedDatum, column) => {
