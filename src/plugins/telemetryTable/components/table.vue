@@ -789,8 +789,7 @@ export default {
                     });
                     this.markedRows.splice(1);
                 }
-                let lastRowToBeMarked = this.visibleRows[rowIndex],
-                    backwards;
+                let lastRowToBeMarked = this.visibleRows[rowIndex];
 
                 let allRows = this.table.filteredRows.getRows(),
                     firstRowIndex = allRows.indexOf(this.markedRows[0]),
@@ -798,8 +797,6 @@ export default {
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
-                    backwards = true;
-
                     [firstRowIndex, lastRowIndex] = [lastRowIndex, firstRowIndex];
                 }
                 
