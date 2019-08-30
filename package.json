@@ -2,7 +2,9 @@
   "name": "openmct",
   "version": "1.0.0-beta",
   "description": "The Open MCT core platform",
-  "dependencies": {},
+  "dependencies": {
+    "sass-loader": "^7.1.0"
+  },
   "devDependencies": {
     "acorn": "6.2.0",
     "angular": "1.4.14",
@@ -75,7 +77,7 @@
     "start": "node app.js",
     "lint": "eslint platform src openmct.js",
     "lint:fix": "eslint platform src openmct.js --fix",
-    "build:prod": "NODE_ENV=production webpack",
+    "build:prod": "set NODE_ENV=production webpack",
     "build:dev": "webpack",
     "build:watch": "webpack --watch",
     "test": "karma start --single-run",

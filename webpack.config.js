@@ -74,7 +74,7 @@ const webpackConfig = {
                     devMode ? 'style-loader': MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
-                        loader: 'fast-sass-loader',
+                        loader: 'sass-loader',
                         options: {
                             includePaths: bourbon.includePaths
                         }
