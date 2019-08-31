@@ -110,25 +110,25 @@
     </div>
 
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <div class="gl-plot-axis-area gl-plot-y"
+        <div class="gl-plot-axis-area gl-plot-y has-local-controls"
              ng-style="{
                  width: (tickWidth + 30) + 'px'
              }">
 
-            <div class="gl-plot-label gl-plot-y-label" ng-if="!yKeyOptions">
+            <div class="gl-plot-label gl-plot-y-label"
+                ng-class="{'icon-gear': (yKeyOptions.length > 1 && series.length === 1)}">
                 {{ yAxis.get('label') }}
             </div>
 
-            <div class="gl-plot-label gl-plot-y-label" ng-if="yKeyOptions.length > 1 && series.length === 1">
-                <select  class="gl-plot-y-label__select"
-                         ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
-                    <option ng-repeat="option in yKeyOptions"
-                            value="{{option.name}}"
-                            ng-selected="option.name === yAxisLabel">
-                        {{option.name}}
-                    </option>
-                </select>
-            </div>
+            <select  class="gl-plot-y-label__select local-controls--hidden"
+                     ng-if="yKeyOptions.length > 1 && series.length === 1"
+                     ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
+                <option ng-repeat="option in yKeyOptions"
+                        value="{{option.name}}"
+                        ng-selected="option.name === yAxisLabel">
+                    {{option.name}}
+                </option>
+            </select>
             
 
             <mct-ticks axis="yAxis">
