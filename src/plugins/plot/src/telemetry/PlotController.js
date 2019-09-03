@@ -277,22 +277,18 @@ define([
      * Export view as JPG.
      */
     PlotController.prototype.exportJPG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
     };
 
     /**
      * Export view as PNG.
      */
     PlotController.prototype.exportPNG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
     };
 
     PlotController.prototype.toggleCursorGuide = function ($event) {

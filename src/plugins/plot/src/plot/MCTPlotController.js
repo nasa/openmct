@@ -526,6 +526,7 @@ define([
 
         if (yAxisObject) {
             series.emit('change:yKey', yAxisObject.key);
+            this.$scope.yAxisLabel = label;
         }
     };
 
