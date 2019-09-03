@@ -56,7 +56,7 @@ button {
         border-radius: $smallCr;
         font-size: 6px;
         line-height: 90%;
-        padding: 3px 15px;
+        padding: 3px 10px;
 
         @include hover() {
             background: $colorBtnBgHov;
@@ -263,6 +263,11 @@ input[type=number]::-webkit-outer-spin-button {
         input {
             margin-left: $interiorMarginSm;
         }
+    }
+
+    &--sm {
+        // Small inputs, like small numerics
+        width: 40px;
     }
 }
 
