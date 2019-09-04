@@ -118,7 +118,7 @@ class ApplicationRouter extends EventEmitter {
                 changedParams[key] = value;
             }
         }
-        for (let [key, value] of Object.entries(oldParams)) {
+        for (let key of Object.keys(oldParams)) {
             if (!newParams.hasOwnProperty(key)) {
                 changedParams[key] = undefined;
             }
