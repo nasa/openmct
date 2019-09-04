@@ -3,6 +3,7 @@
 Application router -- must
 
 */
+/*global _,module*/
 
 const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');

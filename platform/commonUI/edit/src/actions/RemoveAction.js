@@ -48,8 +48,7 @@ define([], function () {
      * Perform this action.
      */
     RemoveAction.prototype.perform = function () {
-        var dialog,
-            domainObject = this.domainObject,
+        var domainObject = this.domainObject,
             navigationService = this.navigationService;
         /*
          * Check whether an object ID matches the ID of the object being
