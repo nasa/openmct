@@ -39,7 +39,7 @@ define(['lodash'], function (_) {
                 return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
                     (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
-            toolbar: function (selection) {
+            toolbar: function (selectionObject) {
                 const DIALOG_FORM = {
                     'text': {
                         name: "Text Element Properties",
@@ -221,7 +221,7 @@ define(['lodash'], function (_) {
                             }
                         ],
                         method: function (option) {
-                            selectionPath[1].context.orderItem(option.value, getAllTypes(selection));
+                            selectionPath[1].context.orderItem(option.value, getAllTypes(selectionObject));
                         }
                     };
                 }
@@ -440,11 +440,11 @@ define(['lodash'], function (_) {
                         return {
                             control: "select-menu",
                             domainObject: selectionPath[1].context.item,
-                            applicableSelectedItems: selection.filter(selectionPath => {
-                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
+                            applicableSelectedItems: selection.filter(path => {
+                                return path[0].context.layoutItem.type === 'telemetry-view';
                             }),
-                            property: function (selectionPath) {
-                                return getPath(selectionPath) + ".value";
+                            property: function (path) {
+                                return getPath(path) + ".value";
                             },
                             title: "Set value",
                             options: openmct.telemetry.getMetadata(selectionPath[0].context.item).values().map(value => {
@@ -499,8 +499,8 @@ define(['lodash'], function (_) {
                         !selectionPath[0].context.layoutItem;
                 }
 
-                if (isMainLayoutSelected(selection[0])) {
-                    return [getAddButton(selection)];
+                if (isMainLayoutSelected(selectionObject[0])) {
+                    return [getAddButton(selectionObject)];
                 }
 
                 let toolbar = {
@@ -516,145 +516,145 @@ define(['lodash'], function (_) {
                     'remove': []
                 };
 
-                selection.forEach(selectionPath => {
+                selectionObject.forEach(selectionPath => {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
                     if (layoutItem.type === 'subobject-view') {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
-                            toolbar['add-menu'] = [getAddButton(selection, selectionPath)];
+                            toolbar['add-menu'] = [getAddButton(selectionObject, selectionPath)];
                         }
                         if (toolbar['toggle-frame'].length === 0) {
-                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selection)];
+                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectionObject)];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getHeightInput(selectedParent, selectionObject),
+                                getWidthInput(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
-                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selection)];
+                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectionObject)];
                         }
                         if (toolbar['telemetry-value'].length === 0) {
-                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selection)];
+                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectionObject)];
                         }
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selection),
-                                getStrokeMenu(selectedParent, selection)
+                                getFillMenu(selectedParent, selectionObject),
+                                getStrokeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selection),
-                                getTextSizeMenu(selectedParent, selection)
+                                getTextColorMenu(selectedParent, selectionObject),
+                                getTextSizeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getHeightInput(selectedParent, selectionObject),
+                                getWidthInput(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selection),
-                                getStrokeMenu(selectedParent, selection)
+                                getFillMenu(selectedParent, selectionObject),
+                                getStrokeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selection),
-                                getTextSizeMenu(selectedParent, selection)
+                                getTextColorMenu(selectedParent, selectionObject),
+                                getTextSizeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getHeightInput(selectedParent, selectionObject),
+                                getWidthInput(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.text.length === 0) {
-                            toolbar.text = [getTextButton(selectedParent, selection)];
+                            toolbar.text = [getTextButton(selectedParent, selectionObject)];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     } else if (layoutItem.type === 'box-view') {
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selection),
-                                getStrokeMenu(selectedParent, selection)
+                                getFillMenu(selectedParent, selectionObject),
+                                getStrokeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getHeightInput(selectedParent, selectionObject),
+                                getWidthInput(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     } else if (layoutItem.type === 'image-view') {
                         if (toolbar.style.length === 0) {
                             toolbar.style = [
-                                getStrokeMenu(selectedParent, selection)
+                                getStrokeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getHeightInput(selectedParent, selection),
-                                getWidthInput(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getHeightInput(selectedParent, selectionObject),
+                                getWidthInput(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.url.length === 0) {
-                            toolbar.url = [getURLButton(selectedParent, selection)];
+                            toolbar.url = [getURLButton(selectedParent, selectionObject)];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     } else if (layoutItem.type === 'line-view') {
                         if (toolbar.style.length === 0) {
                             toolbar.style = [
-                                getStrokeMenu(selectedParent, selection)
+                                getStrokeMenu(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selection),
-                                getYInput(selectedParent, selection),
-                                getX2Input(selectedParent, selection),
-                                getY2Input(selectedParent, selection)
+                                getXInput(selectedParent, selectionObject),
+                                getYInput(selectedParent, selectionObject),
+                                getX2Input(selectedParent, selectionObject),
+                                getY2Input(selectedParent, selectionObject)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selection)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
                         }
                     }
                 });
