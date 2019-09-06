@@ -81,22 +81,24 @@ mct-plot {
         margin-top: $interiorMargin; // Keep the top tick label from getting clipped
         position: relative;
         flex: 1 1 auto;
-        .t-object-alert {
+
+        .l-state-indicators {
+            color: $colorPausedBg;
             position: absolute;
             display: block;
             font-size: 1.5em;
+            pointer-events: none;
             top: $interiorMarginSm;
             left: $interiorMarginSm;
             z-index: 2;
-        }
 
-        .t-object-lock {
-            position: absolute;
-            display: block;
-            font-size: 1.5em;
-            top: 5px;
-            left: 30px;
-            z-index: 2;
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
+
+            .t-alert-unsynced {
+                display: none;
+            }
         }
     }
 
@@ -595,8 +597,7 @@ mct-plot {
 }
 
 .s-status-timeconductor-unsynced {
-    .t-object-alert.t-alert-unsynced {
-        @extend .icon-alert-triangle;
-        color: $colorPausedBg;
+    .t-alert-unsynced {
+        display: inline-block !important;
     }
 }

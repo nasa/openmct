@@ -146,12 +146,16 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
-            <!-- TODO: replace lock/unlock icons -->
-            <span class="t-object-lock"
-                  title="This plot currently has locked highlight point.">{{lockHighlightPoint ? 'LOCKED' : 'UNLOCKED' }}</span>
-            <span class="t-object-alert t-alert-unsynced"
-                  title="This plot is not currently displaying the latest data.
-                Reset Pan/zoom to return to view latest data."></span>
+            <!-- TODO: enable lockHighlightPoint -->
+
+            <div class="l-state-indicators">
+                <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                      title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
+                <span class="l-state-indicators__alert-cursor-lock icon-cursor-lock"
+                      title="Telemetry point selection is locked. Click anywhere in the plot to unlock."
+                      ng-if="lockHighlightPoint"></span>
+            </div>
+
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
