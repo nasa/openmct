@@ -447,21 +447,14 @@ mct-plot {
 
 .plot-wrapper-expanded-legend {
     flex: 1 1 auto;
-
-    &.locked-highlight {
-        background-color: #c3c3c3;
-    }
 }
 
 .gl-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
 
-    &.lock-highlight-point {
-        .plot-wrapper-expanded-legend {
-            background-color: #c3c3c3;
-        }
-    }
+    &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
+    &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
 
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {

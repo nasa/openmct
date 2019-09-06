@@ -19,8 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}"
-     ng-class="{'lock-highlight-point': !!lockHighlightPoint}">
+<div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
     <div class="gl-plot-legend"
          ng-class="{ 'hover-on-plot': !!highlights.length }"
          ng-show="legend.get('position') !== 'hidden'">
@@ -30,7 +29,8 @@
         </div>
 
         <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend">
+        <div class="plot-wrapper-collapsed-legend"
+             ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
             <div class="plot-legend-item"
                   ng-repeat="series in series track by $index">
                 <div class="plot-series-swatch-and-name">
@@ -75,7 +75,8 @@
                     </tr>
                 </thead>
                 <tr ng-repeat="series in series" class="plot-legend-item">
-                    <td class="plot-series-swatch-and-name">
+                    <td class="plot-series-swatch-and-name"
+                        ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
                         <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
@@ -146,8 +147,6 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
-            <!-- TODO: enable lockHighlightPoint -->
-
             <div class="l-state-indicators">
                 <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
                       title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
