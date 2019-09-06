@@ -19,7 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
+<div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}"
+     ng-class="{'lock-highlight-point': !!lockHighlightPoint}">
     <div class="gl-plot-legend"
          ng-class="{ 'hover-on-plot': !!highlights.length }"
          ng-show="legend.get('position') !== 'hidden'">
@@ -52,9 +53,7 @@
         </div>
 
         <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend"
-             ng-class="{ 'locked-highlight': !!lockHighlightPoint }"
-        >
+        <div class="plot-wrapper-expanded-legend">
             <table>
                 <thead>
                     <tr>
@@ -147,9 +146,9 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
-            <span class="t-object-alert"
-                  ng-class="{'locked-highlight': !!lockHighlightPoint}"
-                  title="This plot currently has locked highlight point."></span>
+            <!-- TODO: replace lock/unlock icons -->
+            <span class="t-object-lock"
+                  title="This plot currently has locked highlight point.">{{lockHighlightPoint ? 'LOCKED' : 'UNLOCKED' }}</span>
             <span class="t-object-alert t-alert-unsynced"
                   title="This plot is not currently displaying the latest data.
                 Reset Pan/zoom to return to view latest data."></span>

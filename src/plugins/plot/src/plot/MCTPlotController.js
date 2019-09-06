@@ -208,7 +208,7 @@ define([
         this.highlightValues(point);
     };
 
-    MCTPlotController.prototype.lockHighlightPoint = function ($event) {        
+    MCTPlotController.prototype.lockHighlightPoint = function () {        
         if (!this.$scope.highlights.length) {
             return;
         }

@@ -89,6 +89,15 @@ mct-plot {
             left: $interiorMarginSm;
             z-index: 2;
         }
+
+        .t-object-lock {
+            position: absolute;
+            display: block;
+            font-size: 1.5em;
+            top: 5px;
+            left: 30px;
+            z-index: 2;
+        }
     }
 
     .gl-plot-wrapper-display-area-and-x-axis {
@@ -445,6 +454,12 @@ mct-plot {
 .gl-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
+
+    &.lock-highlight-point {
+        .plot-wrapper-expanded-legend {
+            background-color: #c3c3c3;
+        }
+    }
 
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {
