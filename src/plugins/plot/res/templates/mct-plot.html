@@ -52,11 +52,13 @@
         </div>
 
         <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend">
+        <div class="plot-wrapper-expanded-legend"
+             ng-class="{ 'locked-highlight': !!lockHighlightPoint }"
+        >
             <table>
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th ng-click="plot.unlockHighlightPoint()">Name</th>
                         <th ng-if="legend.get('showTimestampWhenExpanded')">
                             Timestamp
                         </th>
@@ -145,6 +147,9 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
+            <span class="t-object-alert"
+                  ng-class="{'locked-highlight': !!lockHighlightPoint}"
+                  title="This plot currently has locked highlight point."></span>
             <span class="t-object-alert t-alert-unsynced"
                   title="This plot is not currently displaying the latest data.
                 Reset Pan/zoom to return to view latest data."></span>

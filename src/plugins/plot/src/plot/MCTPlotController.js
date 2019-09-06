@@ -65,6 +65,7 @@ define([
         }
         this.$canvas = this.$element.find('canvas');
 
+        this.listenTo(this.$canvas, 'dblclick', this.lockHighlightPoint, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
@@ -75,6 +76,7 @@ define([
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
 
+        this.listenTo(this.$canvas, 'dblclick', this.lockHighlightPoint, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
@@ -206,9 +208,25 @@ define([
         this.highlightValues(point);
     };
 
+    MCTPlotController.prototype.lockHighlightPoint = function ($event) {        
+        if (!this.$scope.highlights.length) {
+            return;
+        }
+
+        this.$scope.lockHighlightPoint = true;
+    };
+
+    MCTPlotController.prototype.unlockHighlightPoint = function () {
+        this.$scope.lockHighlightPoint = false;
+    };
+
     MCTPlotController.prototype.highlightValues = function (point) {
         this.highlightPoint = point;
         this.$scope.$emit('plot:highlight:update', point);
+        if (this.$scope.lockHighlightPoint) {
+            return;
+        }
+
         if (!point) {
             this.$scope.highlights = [];
             this.$scope.series.map(function (series) {

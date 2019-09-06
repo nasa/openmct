@@ -436,6 +436,10 @@ mct-plot {
 
 .plot-wrapper-expanded-legend {
     flex: 1 1 auto;
+
+    &.locked-highlight {
+        background-color: #c3c3c3;
+    }
 }
 
 .gl-plot {
