@@ -187,6 +187,11 @@ define([
             }
         }
 
+        clearData() {
+            this.filteredRows.clear();
+            this.boundedRows.clear();
+        }
+
         getColumnMapForObject(objectKeyString) {
             let columns = this.configuration.getColumns();
 

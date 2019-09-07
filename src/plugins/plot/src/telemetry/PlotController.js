@@ -269,7 +269,7 @@ define([
 
     PlotController.prototype.clearData = function () {
         this.config.series.forEach(function (series) {
-            series.refresh();
+            series.reset();
         });
     };
 
