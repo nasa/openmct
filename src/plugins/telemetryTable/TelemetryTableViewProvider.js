@@ -75,7 +75,7 @@ define([
                         component.isEditing = editMode;
                     },
                     onClearData() {
-                        table.refreshData();
+                        table.clearData();
                     },
                     destroy: function (element) {
                         component.$destroy();
