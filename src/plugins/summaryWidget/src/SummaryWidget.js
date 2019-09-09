@@ -252,8 +252,8 @@ define([
         ruleOrder.push(ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
 
-        this.updateDomainObject();
         this.initRule(ruleId, 'Rule');
+        this.updateDomainObject();
         this.refreshRules();
     };
 
@@ -281,8 +281,8 @@ define([
         ruleOrder.splice(ruleOrder.indexOf(sourceRuleId) + 1, 0, ruleId);
         this.domainObject.configuration.ruleOrder = ruleOrder;
         this.domainObject.configuration.ruleConfigById[ruleId] = sourceConfig;
-        this.updateDomainObject();
         this.initRule(ruleId, sourceConfig.name);
+        this.updateDomainObject();
         this.refreshRules();
     };
 
