@@ -87,7 +87,7 @@
                         ><span class="c-telemetry-table__headers__label">{{title}}</span>
                         </table-column-header>
                     </tr>
-                    <tr class="c-telemetry-table__headers__filter">
+                    <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
                         <table-column-header
                             v-for="(title, key, headerIndex) in headers"
                             :key="key"
