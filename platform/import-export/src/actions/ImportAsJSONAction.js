@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define(['zepto'], function ($) {
+define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, objectUtils) {
 
     /**
      * The ImportAsJSONAction is available from context menus and allows a user
@@ -118,11 +117,14 @@ define(['zepto'], function ($) {
     ImportAsJSONAction.prototype.generateNewIdentifiers = function (tree, namespace) {
         // For each domain object in the file, generate new ID, replace in tree
         Object.keys(tree.openmct).forEach(function (domainObjectId) {
-            var newId = this.openmct.objects.makeKeyString({
+            let newId = {
                 namespace: namespace,
                 key: this.identifierService.generate()
-            });
-            tree = this.rewriteId(domainObjectId, newId, tree);
+            };
+
+            let oldId = objectUtils.parseKeyString(domainObjectId);
+
+            tree = this.rewriteId(oldId, newId, tree);
         }, this);
         return tree;
     };
@@ -134,8 +136,23 @@ define(['zepto'], function ($) {
      * @private
      */
     ImportAsJSONAction.prototype.rewriteId = function (oldID, newID, tree) {
-        tree = JSON.stringify(tree).replace(new RegExp(oldID, 'g'), newID);
-        return JSON.parse(tree);
+        let newIdKeyString = this.openmct.objects.makeKeyString(newID);
+        let oldIdKeyString = this.openmct.objects.makeKeyString(oldID);
+        tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+
+        return JSON.parse(tree, (key, value) => {
+            if (Object.prototype.hasOwnProperty.call(value, 'key') &&
+                Object.prototype.hasOwnProperty.call(value, 'namespace') &&
+                value.key === oldID.key &&
+                value.namespace === oldID.namespace) {
+                return {
+                    namespace: newID.namespace,
+                    key: newID.key
+                }
+            } else {
+                return value;
+            }
+        });
     };
 
     ImportAsJSONAction.prototype.getFormModel = function () {
