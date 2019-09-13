@@ -135,20 +135,17 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
      *
      * @private
      */
-    ImportAsJSONAction.prototype.rewriteId = function (oldID, newID, tree) {
-        let newIdKeyString = this.openmct.objects.makeKeyString(newID);
-        let oldIdKeyString = this.openmct.objects.makeKeyString(oldID);
+    ImportAsJSONAction.prototype.rewriteId = function (oldId, newId, tree) {
+        let newIdKeyString = this.openmct.objects.makeKeyString(newId);
+        let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
         tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
 
         return JSON.parse(tree, (key, value) => {
             if (Object.prototype.hasOwnProperty.call(value, 'key') &&
                 Object.prototype.hasOwnProperty.call(value, 'namespace') &&
-                value.key === oldID.key &&
-                value.namespace === oldID.namespace) {
-                return {
-                    namespace: newID.namespace,
-                    key: newID.key
-                }
+                value.key === oldId.key &&
+                value.namespace === oldId.namespace) {
+                return newId
             } else {
                 return value;
             }
