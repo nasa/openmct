@@ -53,6 +53,7 @@
         &__filter-indicator {
             color: $colorFilter;
             width: 1.2em; // Set width explicitly for layout reasons: will either have class icon-filter, or none.
+            flex: 0 0 auto;
         }
     }
 </style>
