@@ -127,9 +127,16 @@ const PLACEHOLDER_OBJECT = {};
                 }
             },
             saveAndFinishEditing() {
+                let dialog = this.openmct.overlays.progressDialog({
+                    progressPerc: 'unknown',
+                    progressText: 'Saving...',
+                });
+
                 return this.openmct.editor.save().then(()=> {
+                    dialog.dismiss();
                     this.openmct.notifications.info('Save successful');
                 }).catch((error) => {
+                    dialog.dismiss();
                     this.openmct.notifications.error('Error saving objects');
                     console.error(error);
                 });
