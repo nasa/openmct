@@ -117,7 +117,7 @@
 
             <div class="gl-plot-label gl-plot-y-label"
                 ng-class="{'icon-gear': (yKeyOptions.length > 1 && series.length === 1)}"
-                ng-bind="yAxisLabel">
+                >{{yAxis.get('label')}}
             </div>
 
             <select  class="gl-plot-y-label__select local-controls--hidden"
