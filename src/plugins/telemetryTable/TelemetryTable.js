@@ -190,6 +190,7 @@ define([
         clearData() {
             this.filteredRows.clear();
             this.boundedRows.clear();
+            this.emit('refresh');
         }
 
         getColumnMapForObject(objectKeyString) {
