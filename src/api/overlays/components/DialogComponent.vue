@@ -20,6 +20,7 @@
                  v-if="message">
                 {{message}}
             </div>
+            <slot></slot>
         </div>
     </div>
 </template>

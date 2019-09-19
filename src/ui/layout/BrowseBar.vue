@@ -129,17 +129,20 @@ const PLACEHOLDER_OBJECT = {};
             saveAndFinishEditing() {
                 let dialog = this.openmct.overlays.progressDialog({
                     progressPerc: 'unknown',
-                    progressText: 'Saving...',
+                    message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
+                    iconClass: 'info',
+                    title: 'Saving...',
                 });
 
-                return this.openmct.editor.save().then(()=> {
-                    dialog.dismiss();
-                    this.openmct.notifications.info('Save successful');
-                }).catch((error) => {
-                    dialog.dismiss();
-                    this.openmct.notifications.error('Error saving objects');
-                    console.error(error);
-                });
+                return this.openmct.editor.save()
+                    .then(()=> {
+                        dialog.dismiss();
+                        this.openmct.notifications.info('Save successful');
+                    }).catch((error) => {
+                        dialog.dismiss();
+                        this.openmct.notifications.error('Error saving objects');
+                        console.error(error);
+                    });
             },
             saveAndContinueEditing() {
                 this.saveAndFinishEditing().then(() => {
