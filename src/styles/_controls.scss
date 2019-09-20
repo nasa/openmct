@@ -271,6 +271,15 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
+input[type=number].c-input-number--no-spinners {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    -moz-appearance: textfield;
+}
+
 .c-labeled-input {
     // An input used in the Toolbar
     // Assumes label is before the input

@@ -261,7 +261,12 @@
                 height: 18px; // Needed when a row has empty values in its cells
 
                 &.is-selected {
-                    background-color: $colorSelectedBg;
+                    background-color: $colorSelectedBg !important;
+                    color: $colorSelectedFg !important;
+                    td {
+                        background: none !important;
+                        color: inherit !important;
+                    }
                 }
             }
 
