@@ -59,13 +59,14 @@ define([
             this.requestDataFor = this.requestDataFor.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
+            this.sortBoundedRowsByTimeSystem = this.sortBoundedRowsByTimeSystem.bind(this);
 
             this.filterObserver = undefined;
 
             this.createTableRowCollections();
 
             openmct.time.on('bounds', this.refreshData);
-            openmct.time.on('timeSystem', this.refreshData);
+            openmct.time.on('timeSystem', this.sortBoundedRowsByTimeSystem);
         }
 
         initialize() {
@@ -182,9 +183,12 @@ define([
             if (!isTick) {
                 this.filteredRows.clear();
                 this.boundedRows.clear();
-                this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
                 this.telemetryObjects.forEach(this.requestDataFor);
             }
+        }
+
+        sortBoundedRowsByTimeSystem(timeSystem) {
+            this.boundedRows.sortByTimeSystem(timeSystem);
         }
 
         clearData() {
