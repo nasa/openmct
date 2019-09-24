@@ -64,7 +64,11 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
 
         var tree = this.generateNewIdentifiers(objTree, namespace);
         var rootId = tree.rootId;
-        var rootObj = this.instantiate(tree.openmct[rootId], rootId);
+
+        var rootModel = tree.openmct[rootId];
+        delete rootModel.persisted;
+
+        var rootObj = this.instantiate(rootModel, rootId);
         var newStyleParent = parent.useCapability('adapter');
         var newStyleRootObj = rootObj.useCapability('adapter');
 
@@ -106,7 +110,10 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
-                newObj = this.instantiate(tree[keystring], keystring);
+                let newModel = tree[keystring];
+                delete newModel.persisted;
+
+                newObj = this.instantiate(newModel, keystring);
                 newObj.getCapability("location")
                     .setPrimaryLocation(tree[keystring].location);
                 this.deepInstantiate(newObj, tree, seen);
