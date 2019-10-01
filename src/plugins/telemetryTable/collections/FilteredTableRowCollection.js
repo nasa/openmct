@@ -90,9 +90,13 @@ define(
                     if (!this.rowHasColumn(row, key)) {
                         return false;
                     } else {
-                        let formattedValue = row.getFormattedValue(key).toLowerCase();
+                        let formattedValue = row.getFormattedValue(key);
+                        if (formattedValue === undefined) {
+                            return false;
+                        }
+
                         doesMatchFilters = doesMatchFilters &&
-                            formattedValue.indexOf(this.columnFilters[key]) !== -1;
+                            formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
                     }
                 }
                 return doesMatchFilters;
