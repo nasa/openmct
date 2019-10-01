@@ -117,6 +117,7 @@
                    :style="{ height: totalHeight + 'px'}">
                 <tbody>
                     <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
+                        v-bind:key="rowIndex"
                         :headers="headers"
                         :columnWidths="columnWidths"
                         :rowIndex="rowIndex"

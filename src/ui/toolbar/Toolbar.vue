@@ -1,6 +1,7 @@
 <template>
     <div class="c-toolbar">
-        <component v-for="item in structure"
+        <component v-for="(item, index) in structure"
+            v-bind:key="index"
             :is="item.control"
             :options="item"
             @click="triggerMethod(item, $event)"
