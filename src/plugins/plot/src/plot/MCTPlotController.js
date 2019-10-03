@@ -219,7 +219,7 @@ define([
         this.$scope.$apply();
 
         if (!this.$scope.highlights.length || !isClick) {
-            return;   
+            return;
         }
 
         this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
@@ -275,6 +275,10 @@ define([
     };
 
     MCTPlotController.prototype.isMouseClick = function () {
+        if (!this.marquee) {
+            return;
+        }
+
         const { start, end } = this.marquee;
 
         return start.x === end.x && start.y === end.y;
