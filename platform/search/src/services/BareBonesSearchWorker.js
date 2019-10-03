@@ -63,7 +63,6 @@
             return indexedItem.name.includes(input);
         });
 
-        console.log(results);
         message.total = results.length;
         message.results = results
             .slice(0, data.maxResults);
