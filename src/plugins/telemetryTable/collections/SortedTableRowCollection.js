@@ -37,7 +37,7 @@ define(
          * @constructor
          */
         class SortedTableRowCollection extends EventEmitter {
-            constructor () {
+            constructor() {
                 super();
 
                 this.dupeCheck = false;

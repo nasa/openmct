@@ -33,7 +33,7 @@ let brandingOptions = {};
  */
 
 /**
- * Set branding options for the application. These will override certain visual elements 
+ * Set branding options for the application. These will override certain visual elements
  * of the application and allow for customization of the application.
  * @param {BrandingOptions} options
  */

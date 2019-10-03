@@ -38,8 +38,8 @@ define([
     './ui/router/ApplicationRouter',
     './ui/router/Browse',
     '../platform/framework/src/Main',
-    './styles-new/core.scss',
-    './styles-new/notebook.scss',
+    './styles/core.scss',
+    './styles/notebook.scss',
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
@@ -259,7 +259,6 @@ define([
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
-        this.install(this.plugins.LADTable());
         this.install(this.plugins.GoToOriginalAction());
 
         if (typeof BUILD_CONSTANTS !== 'undefined') {

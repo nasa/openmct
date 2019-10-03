@@ -107,19 +107,19 @@
                 .c-indicator__label {
                     box-shadow: $colorIndicatorMenuBgShdw;
                     transform: scale(1.0);
-                    transition: transform 100ms ease-out 100ms;
+                    transition: all 100ms ease-out 100ms;
                 }
             }
             .c-indicator__label {
-                transition: transform 250ms ease-in 200ms;
+                transition: all 250ms ease-in 200ms;
                 background: $colorIndicatorMenuBg;
                 color: $colorIndicatorMenuFg;
                 border-radius: $controlCr;
-                left: 0;
+                right: 0;
                 top: 130%;
                 padding: $interiorMargin $interiorMargin;
                 position: absolute;
-                transform-origin: 10px 0;
+                transform-origin: 90% 0;
                 transform: scale(0.0);
                 overflow: visible;
                 z-index: 50;
@@ -130,6 +130,7 @@
                     display: block;
                     position: absolute;
                     bottom: 100%;
+                    right: 8px;
                     @include triangle('up', $size: 4px, $ratio: 1, $color: $colorIndicatorMenuBg);
                 }
             }

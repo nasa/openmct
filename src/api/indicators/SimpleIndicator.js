@@ -32,7 +32,7 @@ define(['zepto', './res/indicator-template.html'],
 
             //Set defaults
             this.text('New Indicator');
-            this.description('A simple indicator');
+            this.description('');
             this.iconClass(DEFAULT_ICON_CLASS);
             this.statusClass('');
         }

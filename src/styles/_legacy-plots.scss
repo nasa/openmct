@@ -126,6 +126,12 @@ mct-plot {
             bottom: nth($plotDisplayArea, 3);
             left: 0;
             width: $plotYBarW;
+
+            &:hover {
+                .gl-plot-y-label__select {
+                    display: block;
+                }
+            }
         }
     }
 
@@ -162,22 +168,25 @@ mct-plot {
         }
 
         &.gl-plot-y-label {
-            $x: -50%;
-            $r: -90deg;
-            transform-origin: 50% 0;
-            transform: translateX($x) rotate($r);
-            display: inline-block;
-            margin-left: $interiorMargin; // Kick off the left edge
-            left: 0;
-            top: 50%;
-            white-space: nowrap;
-
-            select {
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M0 5l5 5V0L0 5z'/%3e%3c/svg%3e");
-                background-position: left .4em top 50%, 0 0;
-                padding: 1px $interiorMargin 1px 20px;
+            display: block;
+            left: 0; top: 0; right: auto; bottom: 0;
+            padding-left: 5px;
+            text-orientation: mixed;
+            overflow: hidden;
+            writing-mode: vertical-lr;
+            &:before {
+                // Icon denoting configurability
+                margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
             }
         }
+    }
+
+    .gl-plot-y-label__select {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 20px;
+        z-index: 10;
     }
 
     .gl-plot-x-options,

@@ -84,7 +84,7 @@ define(
         }
 
         ElasticIndicator.prototype.getCssClass = function () {
-            return "c-indicator--clickable icon-database";
+            return "c-indicator--clickable icon-suitcase";
         };
         ElasticIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;

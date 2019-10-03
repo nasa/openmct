@@ -77,9 +77,10 @@ const PLACEHOLDER_OBJECT = {};
                 this.showSaveMenu = false;
             },
             updateName(event) {
-                // TODO: handle isssues with contenteditable text escaping.
-                if (event.target.innerText !== this.domainObject.name) {
+                if (event.target.innerText !== this.domainObject.name && event.target.innerText.match(/\S/)) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
+                } else {
+                    event.target.innerText = this.domainObject.name;
                 }
             },
             updateNameOnEnterKeyPress (event) {
@@ -126,9 +127,16 @@ const PLACEHOLDER_OBJECT = {};
                 }
             },
             saveAndFinishEditing() {
+                let dialog = this.openmct.overlays.progressDialog({
+                    progressPerc: 'unknown',
+                    progressText: 'Saving...',
+                });
+
                 return this.openmct.editor.save().then(()=> {
+                    dialog.dismiss();
                     this.openmct.notifications.info('Save successful');
                 }).catch((error) => {
+                    dialog.dismiss();
                     this.openmct.notifications.error('Error saving objects');
                     console.error(error);
                 });

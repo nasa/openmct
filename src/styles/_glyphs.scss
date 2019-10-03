@@ -79,6 +79,7 @@
 .icon-rows {  @include glyphBefore($glyph-icon-rows); }
 .icon-filter {  @include glyphBefore($glyph-icon-filter); }
 .icon-filter-outline {  @include glyphBefore($glyph-icon-filter-outline); }
+.icon-suitcase {  @include glyphBefore($glyph-icon-suitcase); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -127,6 +128,7 @@
 .icon-import {  @include glyphBefore($glyph-icon-import); }
 .icon-export {  @include glyphBefore($glyph-icon-export); }
 .icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
+.icon-clear-data {  @include glyphBefore($glyph-icon-clear-data); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
