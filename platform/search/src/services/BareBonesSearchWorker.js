@@ -23,12 +23,12 @@
 /*global self*/
 
 /**
- * Module defining GenericSearchWorker. Created by shale on 07/21/2015.
+ * Module defining BareBonesSearchWorker. Created by deeptailor on 10/03/2019.
  */
 (function () {
 
-    // An array of objects composed of domain object IDs and models
-    // {id: domainObject's ID, model: domainObject's model}
+    // An array of objects composed of domain object IDs and names
+    // {id: domainObject's ID, name: domainObject's name}
     var indexedItems = [];
 
     function indexItem(id, model) {
@@ -63,6 +63,7 @@
             return indexedItem.name.includes(input);
         });
 
+        console.log(results);
         message.total = results.length;
         message.results = results
             .slice(0, data.maxResults);

@@ -58,7 +58,7 @@ define([
 
         this.pendingQueries = {};
 
-        this.useBareBones = true;
+        this.useGenericIndexer = openmct.useGenericIndexer;
 
         this.worker = this.startWorker(workerService);
         this.indexOnMutation(topic);
@@ -106,10 +106,10 @@ define([
         var provider = this,
             worker;
 
-        if (this.useBareBones) {
-            worker = workerService.run('bareBonesSearchWorker');
-        } else {
+        if (this.useGenericIndexer) {
             worker = workerService.run('genericSearchWorker');
+        } else {
+            worker = workerService.run('bareBonesSearchWorker');
         }
 
         worker.addEventListener('message', function (messageEvent) {
@@ -253,18 +253,7 @@ define([
         var pendingQuery,
             modelResults;
 
-        if (this.useBareBones) {
-            pendingQuery = this.pendingQueries[event.data.queryId];
-            modelResults = {
-                total: event.data.total
-            };
-
-            modelResults.hits = event.data.results.map(function (hit) {
-                return {
-                    id: hit.id
-                };
-            });
-        } else {
+        if (this.useGenericIndexer) {
             pendingQuery = this.pendingQueries[event.data.queryId];
             modelResults = {
                 total: event.data.total
@@ -275,6 +264,17 @@ define([
                     id: hit.item.id,
                     model: hit.item.model,
                     score: hit.matchCount
+                };
+            });
+        } else {
+            pendingQuery = this.pendingQueries[event.data.queryId];
+            modelResults = {
+                total: event.data.total
+            };
+
+            modelResults.hits = event.data.results.map(function (hit) {
+                return {
+                    id: hit.id
                 };
             });
         }
