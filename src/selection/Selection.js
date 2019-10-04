@@ -239,6 +239,10 @@ define(
         }
 
         return function () {
+            if (this.temporaryMutables) {
+                this.temporaryMutables.forEach(mutable => mutable.$destroy());
+            }
+            delete this.temporaryMutables;
             element.removeEventListener('click', capture, true);
             element.removeEventListener('click', selectCapture);
         };
