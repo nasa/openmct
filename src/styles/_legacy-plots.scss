@@ -81,13 +81,24 @@ mct-plot {
         margin-top: $interiorMargin; // Keep the top tick label from getting clipped
         position: relative;
         flex: 1 1 auto;
-        .t-object-alert {
+
+        .l-state-indicators {
+            color: $colorPausedBg;
             position: absolute;
             display: block;
             font-size: 1.5em;
+            pointer-events: none;
             top: $interiorMarginSm;
             left: $interiorMarginSm;
             z-index: 2;
+
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
+
+            .t-alert-unsynced {
+                display: none;
+            }
         }
     }
 
@@ -446,6 +457,9 @@ mct-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
 
+    &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
+    &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
+
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {
         // .plot-legend-item is a span of spans.
@@ -580,8 +594,7 @@ mct-plot {
 }
 
 .s-status-timeconductor-unsynced {
-    .t-object-alert.t-alert-unsynced {
-        @extend .icon-alert-triangle;
-        color: $colorPausedBg;
+    .t-alert-unsynced {
+        display: inline-block !important;
     }
 }
