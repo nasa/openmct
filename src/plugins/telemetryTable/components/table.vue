@@ -831,6 +831,7 @@ export default {
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);
         this.table.on('refresh', this.clearRowsAndRerender);
+        this.table.on('update', this.updateVisibleRows);
 
         this.table.filteredRows.on('add', this.rowsAdded);
         this.table.filteredRows.on('remove', this.rowsRemoved);
@@ -857,6 +858,7 @@ export default {
         this.table.off('object-removed', this.removeObject);
         this.table.off('outstanding-requests', this.outstandingRequests);
         this.table.off('refresh', this.clearRowsAndRerender);
+        this.table.off('update', this.updateVisibleRows);
 
         this.table.filteredRows.off('add', this.rowsAdded);
         this.table.filteredRows.off('remove', this.rowsRemoved);
