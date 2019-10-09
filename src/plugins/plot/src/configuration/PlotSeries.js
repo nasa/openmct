@@ -161,7 +161,7 @@ define([
                     var newPoints = _(this.data)
                         .concat(points)
                         .sortBy(this.getXVal)
-                        .uniq(true, this.getXVal)
+                        .uniq(true, point => [this.getXVal(point), point.eu].join())
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
