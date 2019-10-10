@@ -1,5 +1,5 @@
 <template>
-    <div class="c-overlay">
+    <div class="c-overlay" ref="overlay" tabindex="0">
         <div class="c-overlay__blocker"
             @click="destroy">
         </div>
@@ -11,6 +11,8 @@
             <div class="c-overlay__contents" ref="element"></div>
             <div class="c-overlay__button-bar" v-if="buttons">
                 <button class="c-button"
+                        tabindex="0"
+                        ref="buttons"
                         v-for="(button, index) in buttons"
                         :key="index"
                         :class="{'c-button--major': button.emphasis}"
@@ -174,6 +176,9 @@
         inject: ['dismiss', 'element', 'buttons', 'dismissable'],
         mounted() {
             this.$refs.element.appendChild(this.element);
+            setTimeout(() => {
+                this.getFocusElement().focus();
+            }, 0);
         },
         methods: {
             destroy: function () {
@@ -184,6 +189,17 @@
             buttonClickHandler: function (method) {
                 method();
                 this.$emit('destroy');
+            },
+            getFocusElement: function () {
+                if (!this.$refs.buttons) {
+                    return this.$refs.overlay;
+                }
+
+                const focusButton = this.$refs.buttons.filter((button, index) => {
+                    return this.buttons[index].emphasis;
+                });
+
+                return focusButton[0] || this.$refs.buttons[0];
             }
         }
     }
