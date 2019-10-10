@@ -34,7 +34,7 @@ define(
         ControlledPromise
     ) {
 
-        describe("MoveService", function () {
+        xdescribe("MoveService", function () {
 
             var moveService,
                 policyService,

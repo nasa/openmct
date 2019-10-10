@@ -29,7 +29,7 @@ define(
     ],
     function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
-        describe("The export JSON action", function () {
+        xdescribe("The export JSON action", function () {
 
             var context,
                 action,

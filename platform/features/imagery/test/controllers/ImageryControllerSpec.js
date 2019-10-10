@@ -30,7 +30,7 @@ define(
         var MOCK_ELEMENT_TEMPLATE =
             '<div class="l-image-thumbs-wrapper"></div>';
 
-        describe("The Imagery controller", function () {
+        xdescribe("The Imagery controller", function () {
             var $scope,
                 openmct,
                 oldDomainObject,

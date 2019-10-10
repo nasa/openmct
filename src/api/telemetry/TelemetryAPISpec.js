@@ -25,7 +25,7 @@ define([
 ], function (
     TelemetryAPI
 ) {
-    describe('Telemetry API', function () {
+    xdescribe('Telemetry API', function () {
         var openmct;
         var telemetryAPI;
         var mockTypeService;

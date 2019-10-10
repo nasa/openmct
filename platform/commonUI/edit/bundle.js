@@ -27,7 +27,6 @@ define([
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
-    "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
@@ -58,7 +57,6 @@ define([
     EditAndComposeAction,
     EditAction,
     PropertiesAction,
-    RemoveAction,
     SaveAction,
     SaveAndStopEditingAction,
     SaveAsAction,
@@ -156,18 +154,6 @@ define([
                     "description": "Edit properties of this object.",
                     "depends": [
                         "dialogService"
-                    ]
-                },
-                {
-                    "key": "remove",
-                    "category": "legacy",
-                    "implementation": RemoveAction,
-                    "cssClass": "icon-trash",
-                    "name": "Remove",
-                    "description": "Remove this object from its containing object.",
-                    "depends": [
-                        "openmct",
-                        "navigationService"
                     ]
                 },
                 {
