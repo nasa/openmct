@@ -1,5 +1,5 @@
 <template>
-    <div class="c-overlay" ref="overlay" tabindex="0">
+    <div class="c-overlay">
         <div class="c-overlay__blocker"
             @click="destroy">
         </div>
@@ -8,14 +8,15 @@
                 v-if="dismissable"
                 @click="destroy">
             </button>
-            <div class="c-overlay__contents" ref="element"></div>
+            <div class="c-overlay__contents" ref="element" tabindex="0"></div>
             <div class="c-overlay__button-bar" v-if="buttons">
                 <button class="c-button"
                         tabindex="0"
                         ref="buttons"
                         v-for="(button, index) in buttons"
                         :key="index"
-                        :class="{'c-button--major': button.emphasis}"
+                        @focus="focusIndex=index"
+                        :class="{'c-button--major': focusIndex===index}"
                         @click="buttonClickHandler(button.callback)">
                     {{button.label}}
                 </button>
@@ -71,6 +72,7 @@
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+            outline: none;
             overflow: hidden;
         }
 
@@ -173,11 +175,16 @@
 
 <script>
     export default {
+        data: function () {
+            return {
+                focusIndex: -1
+            };
+        },
         inject: ['dismiss', 'element', 'buttons', 'dismissable'],
         mounted() {
             this.$refs.element.appendChild(this.element);
             setTimeout(() => {
-                this.getFocusElement().focus();
+                this.getElementForFocus().focus();
             }, 0);
         },
         methods: {
@@ -190,16 +197,24 @@
                 method();
                 this.$emit('destroy');
             },
-            getFocusElement: function () {
+            getElementForFocus: function () {
+                const defaultElement = this.$refs.element;;
                 if (!this.$refs.buttons) {
-                    return this.$refs.overlay;
+                    return defaultElement;
                 }
 
                 const focusButton = this.$refs.buttons.filter((button, index) => {
+                    if (this.buttons[index].emphasis) {
+                        this.focusIndex = index;
+                    }
                     return this.buttons[index].emphasis;
                 });
 
-                return focusButton[0] || this.$refs.buttons[0];
+                if (!focusButton.length) {
+                    return defaultElement;
+                }
+
+                return focusButton[0];
             }
         }
     }
