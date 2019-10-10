@@ -37,7 +37,7 @@ define(
         var legacyExtensionFunction = MCT.prototype.legacyExtension;
         var legacyIndicatorsRunsFunction;
 
-        describe('The legacy indicators plugin', function () {
+        xdescribe('The legacy indicators plugin', function () {
             beforeEach(function () {
                 mockLegacyExtensionFunction();
 

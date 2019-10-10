@@ -24,7 +24,7 @@ define(
     ["../../src/actions/RemoveAction"],
     function (RemoveAction) {
 
-        describe("The Remove action", function () {
+        xdescribe("The Remove action", function () {
             var action,
                 actionContext,
                 capabilities,

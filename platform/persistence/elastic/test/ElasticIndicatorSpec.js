@@ -24,7 +24,7 @@ define(
     ["../src/ElasticIndicator"],
     function (ElasticIndicator) {
 
-        describe("The ElasticSearch status indicator", function () {
+        xdescribe("The ElasticSearch status indicator", function () {
             var mockHttp,
                 mockInterval,
                 testPath,

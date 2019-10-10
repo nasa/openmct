@@ -31,7 +31,7 @@ define([
     MCT,
     $
 ) {
-    describe("The timer-following indicator", function () {
+    xdescribe("The timer-following indicator", function () {
         var timerService;
         var openmct;
 

@@ -23,7 +23,7 @@
 define(
     ["../src/ComposeActionPolicy"],
     function (ComposeActionPolicy) {
-        describe("The compose action policy", function () {
+        xdescribe("The compose action policy", function () {
             var mockInjector,
                 mockPolicyService,
                 mockTypes,

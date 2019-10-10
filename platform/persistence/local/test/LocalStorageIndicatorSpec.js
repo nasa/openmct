@@ -24,7 +24,7 @@ define(
     ["../src/LocalStorageIndicator"],
     function (LocalStorageIndicator) {
 
-        describe("The local storage status indicator", function () {
+        xdescribe("The local storage status indicator", function () {
             var indicator;
 
             beforeEach(function () {
