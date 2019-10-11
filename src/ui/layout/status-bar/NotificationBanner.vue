@@ -235,7 +235,7 @@
             }
         },
         mounted() {
-            openmct.notifications.on('notification', this.showNotification);
+            this.openmct.notifications.on('notification', this.showNotification);
         }
 
     }
