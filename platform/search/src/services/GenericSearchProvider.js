@@ -44,7 +44,7 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, openmct) {
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
@@ -58,7 +58,7 @@ define([
 
         this.pendingQueries = {};
 
-        this.useGenericIndexer = openmct.useGenericIndexer;
+        this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
 
         this.worker = this.startWorker(workerService);
         this.indexOnMutation(topic);
@@ -106,7 +106,7 @@ define([
         var provider = this,
             worker;
 
-        if (this.useGenericIndexer) {
+        if (this.USE_LEGACY_INDEXER) {
             worker = workerService.run('genericSearchWorker');
         } else {
             worker = workerService.run('bareBonesSearchWorker');
@@ -253,7 +253,7 @@ define([
         var pendingQuery,
             modelResults;
 
-        if (this.useGenericIndexer) {
+        if (this.USE_LEGACY_INDEXER) {
             pendingQuery = this.pendingQueries[event.data.queryId];
             modelResults = {
                 total: event.data.total

@@ -55,6 +55,11 @@ define([
                         "ROOT"
                     ],
                     "priority": "fallback"
+                },
+                {
+                    "key": "USE_LEGACY_INDEXER",
+                    "value": false,
+                    "priority": 2
                 }
             ],
             "controllers": [
@@ -103,6 +108,7 @@ define([
                         "workerService",
                         "topic",
                         "GENERIC_SEARCH_ROOTS",
+                        "USE_LEGACY_INDEXER",
                         "openmct"
                     ]
                 },
