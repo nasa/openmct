@@ -32,14 +32,6 @@ define(
                 mockPromise,
                 handler;
 
-            // function asPromise(value) {
-            //     return (value || {}).then ? value : {
-            //         then: function (callback) {
-            //             return asPromise(callback(value));
-            //         }
-            //     };
-            // }
-
             function makeMockFailure(id, index) {
                 var mockFailure = jasmine.createSpyObj(
                         'failure-' + id,
