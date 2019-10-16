@@ -66,7 +66,8 @@
                         utc: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
-                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
+                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                        square: square(nextStep, data.period, data.amplitude, data.offset, data.phase)
                     }
                 });
                 nextStep += step;
@@ -112,13 +113,20 @@
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
-                cos: cos(nextStep, period, amplitude, offset, phase, randomness)
+                cos: cos(nextStep, period, amplitude, offset, phase, randomness),
+                square: square(nextStep, period, amplitude, offset, phase)
             });
         }
         self.postMessage({
             id: message.id,
             data: data
         });
+    }
+
+    function square(timestamp, period, amplitude, offset, phase) {
+        var sinValue = Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + offset;
+        var value = sinValue > 0 ? amplitude : -amplitude;
+        return value;
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {

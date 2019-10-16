@@ -5,6 +5,38 @@ define([
 ) {
 
     var METADATA_BY_TYPE = {
+        'squareWaveGenerator': {
+            values: [
+                {
+                    key: "name",
+                    name: "Name"
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
+                    hints: {
+                        domain: 1
+                    }
+                },
+                {
+                    key: "yesterday",
+                    name: "Yesterday",
+                    format: "utc",
+                    hints: {
+                        domain: 2
+                    }
+                },
+                {
+                    key: "square",
+                    name: "Square",
+                    formatString: '%d',
+                    hints: {
+                        range: 1
+                    }
+                }
+            ]
+        },
         'generator': {
             values: [
                 {

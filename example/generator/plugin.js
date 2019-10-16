@@ -25,11 +25,13 @@ define([
     "./GeneratorProvider",
     "./SinewaveLimitProvider",
     "./StateGeneratorProvider",
+    "./SquareWaveGeneratorProvider",
     "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
     SinewaveLimitProvider,
     StateGeneratorProvider,
+    SquareWaveGeneratorProvider,
     GeneratorMetadataProvider
 ) {
 
@@ -61,6 +63,80 @@ define([
         });
 
         openmct.telemetry.addProvider(new StateGeneratorProvider());
+
+        openmct.types.addType("squareWaveGenerator", {
+            name: "Square Wave Generator",
+            description: "For development use. Generates example streaming telemetry data using a simple sqaure wave algorithm.",
+            cssClass: "icon-generator-telemetry",
+            creatable: true,
+            form: [
+                {
+                    name: "Period",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "period",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "period"
+                    ]
+                },
+                {
+                    name: "Amplitude",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "amplitude",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "amplitude"
+                    ]
+                },
+                {
+                    name: "Offset",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "offset",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "offset"
+                    ]
+                },
+                {
+                    name: "Data Rate (hz)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "dataRateInHz",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "dataRateInHz"
+                    ]
+                },
+                {
+                    name: "Phase (radians)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "phase",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "phase"
+                    ]
+                }
+            ],
+            initialize: function (object) {
+                object.telemetry = {
+                    period: 10,
+                    amplitude: 5,
+                    offset: 0,
+                    dataRateInHz: 10,
+                    phase: 0
+                };
+            }
+        });
+        openmct.telemetry.addProvider(new SquareWaveGeneratorProvider());
 
         openmct.types.addType("generator", {
             name: "Sine Wave Generator",
