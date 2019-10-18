@@ -55,13 +55,13 @@ define([
 
     FrameworkLayer.prototype.initializeApplication = function (
         angular,
-        legacyRegistry,
+        openmct,
         logLevel
     ) {
         var $http = this.$http,
             $log = this.$log,
             app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
-            loader = new BundleLoader($http, $log, legacyRegistry),
+            loader = new BundleLoader($http, $log, openmct.legacyRegistry),
             resolver = new BundleResolver(
                 new ExtensionResolver(
                     new ImplementationLoader({}),
@@ -77,7 +77,7 @@ define([
             ),
             bootstrapper = new ApplicationBootstrapper(
                 angular,
-                window.document,
+                openmct.element,
                 $log
             ),
             initializer = new FrameworkInitializer(

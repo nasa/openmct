@@ -126,7 +126,7 @@
             let items = [];
 
             this.openmct.types.listKeys().forEach(key => {
-                let menuItem = openmct.types.get(key).definition;
+                let menuItem = this.openmct.types.get(key).definition;
 
                 if (menuItem.creatable) {
                     let menuItemTemplate = {
