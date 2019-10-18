@@ -19,44 +19,79 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import {createWrapper} from '@vue/test-utils';
 
-define([
-    './plugin',
-    'MCT'
-], function (TablePlugin, MCT) {
-    let openmct;
-    let tablePlugin;
-    let target;
+import TablePlugin from './plugin.js';
+import MCT from 'MCT';
 
-    beforeEach((done) => {
-        target = document.createElement('div');
-        openmct = new MCT();
-        tablePlugin = new TablePlugin();
-        openmct.install(openmct.plugins.LocalStorage());
-        openmct.install(tablePlugin);
-        openmct.on('start', done);
-        openmct.start(target);
+let openmct;
+let tablePlugin;
+let element;
+
+beforeEach((done) => {
+    element = document.createElement('div');
+    element.style.width = '640px';
+    element.style.height = '480px';
+    document.body.appendChild(element);
+    openmct = new MCT();
+    tablePlugin = new TablePlugin();
+    openmct.install(openmct.plugins.LocalStorage());
+    openmct.install(openmct.plugins.UTCTimeSystem());
+    openmct.time.timeSystem('utc', {start: 0, end: 1});
+    openmct.install(tablePlugin);
+    openmct.on('start', done);
+    spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+    openmct.start();
+});
+describe("the plugin", () => {
+    it("provides a table view for objects with telemetry", () => {
+        const testTelemetryObject = {
+            id:"test-object",
+            type: "test-object",
+            telemetry: {
+                values: [{
+                    key: "some-key"
+                }]
+            }
+        };
+
+        const applicableViews = openmct.objectViews.get(testTelemetryObject);
+        let tableView = applicableViews.find((viewProvider) => viewProvider.key === 'table');
+        expect(tableView).toBeDefined();
     });
-    fdescribe("the plugin", () => {
-        it("provides a table view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id:"test-object",
-                type: "test-object",
-                telemetry: {
-                    values: [{
-                        key: "some-key"
-                    }]
-                }
-            };
+});
+fdescribe("The table view", () => {
+    it("Renders a column for every item in telemetry metadata",(done) => {
+        const testTelemetryObject = {
+            identifier:{ namespace: "", key: "test-object"},
+            type: "test-object",
+            telemetry: {
+                values: [{
+                    key: "some-key",
+                    name: "Some attribute",
+                    hints: {
+                        domain: 1
+                    }
+                }, {
+                    key: "some-other-key",
+                    name: "Another attribute",
+                    hints: {
+                        range: 1
+                    }
+                }]
+            }
+        };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject);
-            let tableView = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-            expect(tableView).toBeDefined();
-        });
-    });
-    describe("The table view", () => {
-        it("returns true",() => {
-            expect(true).toBe(true);
-        });
+        const applicableViews = openmct.objectViews.get(testTelemetryObject);
+        let tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
+        let tableView = tableViewProvider.view(testTelemetryObject, false, [testTelemetryObject]);
+        tableView.show(element, false);
+        //let wrapper = createWrapper(element);
+        //let headers = wrapper.findAll('.c-telemetry-table__headers__labels');
+        setTimeout(() => {
+            console.log(element);
+            //expect(headers.length).toBe(2);
+            done();
+        }, 500);
     });
 });
