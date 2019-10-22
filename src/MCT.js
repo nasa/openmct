@@ -257,6 +257,7 @@ define([
         this.install(RemoveActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
+        this.install(this.plugins.ImageryPlugin());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.ImportExport());
