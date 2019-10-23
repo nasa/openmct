@@ -1,6 +1,6 @@
 <template>
     <div class="imagery-layout ">
-        <div class="main-image-controller-wrapper c-imagery has-local-controls">
+        <div class="c-imagery has-local-controls">
             <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                 <span class="holder flex-elem grows c-imagery__lc__sliders">
                     <input class="icon-brightness" type="range"
@@ -14,44 +14,42 @@
                 </span>
                 <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
                     <a class="s-icon-button icon-reset t-btn-reset" 
-                        @click="filters={brightness: 100, contrast: 100}"></a>
+                            @click="filters={brightness: 100, contrast: 100}"></a>
                 </span>
             </div>
 
             <div class="s-image-main"
-                :class="{'paused': paused(),'stale':false }">
+                    :class="{'paused': paused(),'stale':false }">
                 <div class="main-image"
-                    :style="{'height': getMainImageSize() + 'px', 'background-image': 'url('+ getImageUrl() + ')', 'filter': 'brightness(' + filters.brightness + '%) contrast(' + filters.contrast + '%)'}">
+                    :style="{'height': `${getMainImageSize()}px`,
+                        'background-image': `url(${getImageUrl()})`,
+                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}">
                 </div>
             </div>
         </div>
         <div class="image-thumbs-wrapper" ref="thumbsWrapper">
             <resize-handle
-                :index="0"
-                :isEditing=true
-                :orientation="'vertical'"
-                @init-move="startContainerResizing"
-                @move="containerResizing"
-                @end-move="endContainerResizing">
+                    :index="0"
+                    :isEditing=true
+                    :orientation="'vertical'"
+                    @init-move="startContainerResizing"
+                    @move="containerResizing"
+                    @end-move="endContainerResizing">
             </resize-handle>
             <div class="l-image-main-controlbar flex-elem l-flex-row">
                 <div class="l-datetime-w flex-elem grows">
                     <a class="c-button show-thumbs sm hidden icon-thumbs-strip"
-                        @click="showThumbsBubble = !showThumbsBubble"></a>
+                            @click="showThumbsBubble = !showThumbsBubble" />
                     <span class="l-time">{{getTime()}}</span>
                 </div>
                 <div class="h-local-controls flex-elem">
                     <a class="c-button icon-pause pause-play"
-                        @click="paused(!paused())"
-                        :class="{'is-paused': paused()}"></a>
-                    <a href=""
-                        class="s-button l-mag s-mag vsm icon-reset"
-                        @click="clipped = false"
-                        title="Not all of image is visible; click to reset."></a>
+                            @click="paused(!paused())"
+                            :class="{'is-paused': paused()}" />
                 </div>
             </div>
-            <div class="thumbs-layout" 
-            :style="[{'height': thumbsHeight + 'px'}]">
+            <div class="thumbs-layout"
+                    :style="[{'height': thumbsHeight + 'px'}]">
                 <div class="l-image-thumb-item"
                         :class="{selected: image.selected}"
                         v-for="(image, index) in imageHistory"

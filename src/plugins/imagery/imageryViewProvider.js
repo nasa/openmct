@@ -6,14 +6,23 @@ define([
     Vue
 ) {
     function ImageryViewProvider(openmct) {
-        const type = 'imagery-layout';
+        const type = 'example.imagery';
+
+        const hasImageTelemetry = function (domainObject) {
+            var metadata = openmct.telemetry.getMetadata(domainObject);
+            if (!metadata) {
+                return false;
+            }
+
+            return metadata.valuesForHints(['image']).length > 0;
+        };
 
         return {
             key: type,
-            name: 'ImageryLayout',
+            name: 'Imagery Layout',
             cssClass: 'icon-image',
             canView: function (domainObject) {
-                return domainObject.type === type;
+                return hasImageTelemetry(domainObject);
             },
             view: function (domainObject) {
                 let component;
@@ -40,9 +49,6 @@ define([
                         component = undefined;
                     }
                 };
-            },
-            priority: function () {
-                return 999;
             }
         }
     }
