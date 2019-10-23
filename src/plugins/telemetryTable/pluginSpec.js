@@ -27,12 +27,21 @@ import MCT from 'MCT';
 let openmct;
 let tablePlugin;
 let element;
+let holder;
+let child;
 
 beforeEach((done) => {
     element = document.createElement('div');
     element.style.width = '640px';
     element.style.height = '480px';
-    document.body.appendChild(element);
+
+    child = document.createElement('div');
+    element.appendChild(child);
+
+    holder = document.createElement('div');
+    holder.style.width = '640px';
+    holder.style.height = '480px';
+
     openmct = new MCT();
     tablePlugin = new TablePlugin();
     openmct.install(openmct.plugins.LocalStorage());
@@ -41,7 +50,7 @@ beforeEach((done) => {
     openmct.install(tablePlugin);
     openmct.on('start', done);
     spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-    openmct.start();
+    openmct.start(holder);
 });
 describe("the plugin", () => {
     it("provides a table view for objects with telemetry", () => {
@@ -85,13 +94,53 @@ fdescribe("The table view", () => {
         const applicableViews = openmct.objectViews.get(testTelemetryObject);
         let tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
         let tableView = tableViewProvider.view(testTelemetryObject, false, [testTelemetryObject]);
-        tableView.show(element, false);
-        //let wrapper = createWrapper(element);
-        //let headers = wrapper.findAll('.c-telemetry-table__headers__labels');
+        tableView.show(child, false);
         setTimeout(() => {
-            console.log(element);
-            //expect(headers.length).toBe(2);
+            let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
+            expect(headers.length).toBe(2);
+            expect(headers[0].innerText).toBe('Some attribute');
+            expect(headers[1].innerText).toBe('Another attribute');
             done();
-        }, 500);
+        });
+    });
+    it("Supports column reordering via drag and drop",(done) => {
+        const testTelemetryObject = {
+            identifier:{ namespace: "", key: "test-object"},
+            type: "test-object",
+            telemetry: {
+                values: [{
+                    key: "some-key",
+                    name: "Some attribute",
+                    hints: {
+                        domain: 1
+                    }
+                }, {
+                    key: "some-other-key",
+                    name: "Another attribute",
+                    hints: {
+                        range: 1
+                    }
+                }]
+            }
+        };
+
+        const applicableViews = openmct.objectViews.get(testTelemetryObject);
+        let tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
+        let tableView = tableViewProvider.view(testTelemetryObject, false, [testTelemetryObject]);
+        tableView.show(child, false);
+        setTimeout(() => {
+            let fromColumn = element.querySelectorAll('th.c-telemetry-table__headers__label');
+            let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
+            expect(headers.length).toBe(2);
+            expect(headers[0].innerText).toBe('Some attribute');
+            expect(headers[1].innerText).toBe('Another attribute');
+            done();
+        });
     });
 });
+
+/**
+ * ToDo
+ * 1. Test reordering columns
+ * 2. Use Vue.$nextTick() instead of setTimeout?
+ */
