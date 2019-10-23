@@ -39,7 +39,7 @@ define(['lodash'], function (_) {
                 return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
                     (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
-            toolbar: function (selectionObject) {
+            toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
                     'text': {
                         name: "Text Element Properties",
@@ -221,7 +221,7 @@ define(['lodash'], function (_) {
                             }
                         ],
                         method: function (option) {
-                            selectionPath[1].context.orderItem(option.value, getAllTypes(selectionObject));
+                            selectionPath[1].context.orderItem(option.value, getAllTypes(selectedObjects));
                         }
                     };
                 }
@@ -499,8 +499,8 @@ define(['lodash'], function (_) {
                         !selectionPath[0].context.layoutItem;
                 }
 
-                if (isMainLayoutSelected(selectionObject[0])) {
-                    return [getAddButton(selectionObject)];
+                if (isMainLayoutSelected(selectedObjects[0])) {
+                    return [getAddButton(selectedObjects)];
                 }
 
                 let toolbar = {
@@ -516,145 +516,145 @@ define(['lodash'], function (_) {
                     'remove': []
                 };
 
-                selectionObject.forEach(selectionPath => {
+                selectedObjects.forEach(selectionPath => {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
                     if (layoutItem.type === 'subobject-view') {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
-                            toolbar['add-menu'] = [getAddButton(selectionObject, selectionPath)];
+                            toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];
                         }
                         if (toolbar['toggle-frame'].length === 0) {
-                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectionObject)];
+                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectedObjects)];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getHeightInput(selectedParent, selectionObject),
-                                getWidthInput(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getHeightInput(selectedParent, selectedObjects),
+                                getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
-                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectionObject)];
+                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
                         }
                         if (toolbar['telemetry-value'].length === 0) {
-                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectionObject)];
+                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selectionObject),
-                                getStrokeMenu(selectedParent, selectionObject)
+                                getFillMenu(selectedParent, selectedObjects),
+                                getStrokeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selectionObject),
-                                getTextSizeMenu(selectedParent, selectionObject)
+                                getTextColorMenu(selectedParent, selectedObjects),
+                                getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getHeightInput(selectedParent, selectionObject),
-                                getWidthInput(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getHeightInput(selectedParent, selectedObjects),
+                                getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selectionObject),
-                                getStrokeMenu(selectedParent, selectionObject)
+                                getFillMenu(selectedParent, selectedObjects),
+                                getStrokeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selectionObject),
-                                getTextSizeMenu(selectedParent, selectionObject)
+                                getTextColorMenu(selectedParent, selectedObjects),
+                                getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getHeightInput(selectedParent, selectionObject),
-                                getWidthInput(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getHeightInput(selectedParent, selectedObjects),
+                                getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.text.length === 0) {
-                            toolbar.text = [getTextButton(selectedParent, selectionObject)];
+                            toolbar.text = [getTextButton(selectedParent, selectedObjects)];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'box-view') {
                         if (toolbar.style.length < 2) {
                             toolbar.style = [
-                                getFillMenu(selectedParent, selectionObject),
-                                getStrokeMenu(selectedParent, selectionObject)
+                                getFillMenu(selectedParent, selectedObjects),
+                                getStrokeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getHeightInput(selectedParent, selectionObject),
-                                getWidthInput(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getHeightInput(selectedParent, selectedObjects),
+                                getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'image-view') {
                         if (toolbar.style.length === 0) {
                             toolbar.style = [
-                                getStrokeMenu(selectedParent, selectionObject)
+                                getStrokeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getHeightInput(selectedParent, selectionObject),
-                                getWidthInput(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getHeightInput(selectedParent, selectedObjects),
+                                getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.url.length === 0) {
-                            toolbar.url = [getURLButton(selectedParent, selectionObject)];
+                            toolbar.url = [getURLButton(selectedParent, selectedObjects)];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'line-view') {
                         if (toolbar.style.length === 0) {
                             toolbar.style = [
-                                getStrokeMenu(selectedParent, selectionObject)
+                                getStrokeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
-                                getXInput(selectedParent, selectionObject),
-                                getYInput(selectedParent, selectionObject),
-                                getX2Input(selectedParent, selectionObject),
-                                getY2Input(selectedParent, selectionObject)
+                                getXInput(selectedParent, selectedObjects),
+                                getYInput(selectedParent, selectedObjects),
+                                getX2Input(selectedParent, selectedObjects),
+                                getY2Input(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectionObject)];
+                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     }
                 });

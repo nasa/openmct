@@ -95,6 +95,16 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        /* eslint-disable no-undef */
+        this.buildInfo = {
+            version: __OPENMCT_VERSION__,
+            buildDate: __OPENMCT_BUILD_DATE__,
+            revision: __OPENMCT_REVISION__,
+            branch: __OPENMCT_BUILD_BRANCH__
+        };
+        /* eslint-enable no-undef */
+
+
         this.legacyBundle = { extensions: {
             services: [
                 {
