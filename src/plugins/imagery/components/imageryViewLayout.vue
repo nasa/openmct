@@ -1,5 +1,6 @@
 <template>
-    <div class="imagery-layout ">
+    <div class="imagery-layout"
+            :class="{'unnsynced': paused() }">
         <div class="c-imagery has-local-controls">
             <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                 <span class="holder flex-elem grows c-imagery__lc__sliders">
@@ -70,6 +71,9 @@
         display: flex;
         flex-direction: column;
 
+        &.unnsynced{
+            @include sUnsynced();
+        }
         .main-image {
             background-position: center;
             background-repeat: no-repeat;
