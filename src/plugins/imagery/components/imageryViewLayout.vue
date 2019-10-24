@@ -1,7 +1,9 @@
 <template>
     <div class="imagery-layout"
-            :class="{'unnsynced': paused() }">
-        <div class="c-imagery has-local-controls">
+                :class="{'unnsynced': paused()}"
+                :style="{'height': `${elementHeight}px`}">
+        <div class="main-image-wrapper c-imagery has-local-controls"
+                :style="{'height': `${imageSize}%`}">
             <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                 <span class="holder flex-elem grows c-imagery__lc__sliders">
                     <input class="icon-brightness" type="range"
@@ -19,28 +21,23 @@
                 </span>
             </div>
 
-            <div class="s-image-main"
-                    :class="{'paused': paused(),'stale':false }">
-                <div class="main-image"
-                    :style="{'height': `${getMainImageSize()}px`,
-                        'background-image': `url(${getImageUrl()})`,
+            <div class="main-image s-image-main"
+                    :class="{'paused': paused(),'stale':false }"
+                    :style="{'background-image': `url(${getImageUrl()})`,
                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}">
-                </div>
             </div>
         </div>
-        <div class="image-thumbs-wrapper" ref="thumbsWrapper">
-            <resize-handle
+        <resize-handle
                     :index="0"
                     :isEditing=true
                     :orientation="'vertical'"
                     @init-move="startContainerResizing"
                     @move="containerResizing"
                     @end-move="endContainerResizing">
-            </resize-handle>
-            <div class="l-image-main-controlbar flex-elem l-flex-row">
+        </resize-handle>
+        <div class="l-image-main-controlbar flex-elem l-flex-row">
                 <div class="l-datetime-w flex-elem grows">
-                    <a class="c-button show-thumbs sm hidden icon-thumbs-strip"
-                            @click="showThumbsBubble = !showThumbsBubble" />
+                    <a class="c-button show-thumbs sm hidden icon-thumbs-strip" />
                     <span class="l-time">{{getTime()}}</span>
                 </div>
                 <div class="h-local-controls flex-elem">
@@ -48,17 +45,16 @@
                             @click="paused(!paused())"
                             :class="{'is-paused': paused()}" />
                 </div>
-            </div>
-            <div class="thumbs-layout"
-                    :style="[{'height': thumbsHeight + 'px'}]">
-                <div class="l-image-thumb-item"
-                        :class="{selected: image.selected}"
-                        v-for="(image, index) in imageHistory"
-                        :key="index"
-                        @click="setSelectedImage(image)">
-                    <img class="l-thumb" v-bind:src="getImageUrl(image)">
-                    <div class="l-time">{{getTime(image)}}</div>
-                </div>
+        </div>
+        <div class="thumbs-layout" ref="thumbsWrapper"
+                :style="{'height': `${100 - imageSize}%`}">
+            <div class="l-image-thumb-item"
+                    :class="{selected: image.selected}"
+                    v-for="(image, index) in imageHistory"
+                    :key="index"
+                    @click="setSelectedImage(image)">
+                <img class="l-thumb" v-bind:src="getImageUrl(image)">
+                <div class="l-time">{{getTime(image)}}</div>
             </div>
         </div>
     </div>
@@ -70,15 +66,21 @@
     .imagery-layout {
         display: flex;
         flex-direction: column;
+        overflow: auto;
 
         &.unnsynced{
             @include sUnsynced();
         }
+
+        .main-image-wrapper {
+            display: block;
+        }
+
         .main-image {
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
-            height: 100px;
+            height: 100%;
             width: 100%;
         }
 
@@ -98,6 +100,9 @@
 import ResizeHandle from  '../../flexibleLayout/components/resizeHandle.vue';
 import _ from 'lodash';
 
+const DEFAULT_IMAGE_SIZE = 80;
+const MIN_IMAGE_SIZE = 30;
+
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -116,19 +121,15 @@ export default {
             image: {
                 selected: ''
             },
+            imageSize: DEFAULT_IMAGE_SIZE,
             imageFormat: '',
             imageHistory: [],
             imageUrl: '',
             isPaused: false,
             lockMove: true,
-            thumbsHeight: 200,
             requestCount: 0,
-            showThumbsBubble: true,
             timeFormat: '',
         }
-    },
-    props: {
-
     },
     methods: {
         datumMatchesMostRecent (datum) {
@@ -203,17 +204,10 @@ export default {
             if (this.lockMove) {
                 return;
             }
-            _.debounce(() => {
-                let percentageMoved = Math.round(delta / this.getElSize() * 100);
-                this.thumbsHeight = this.thumbsHeight - percentageMoved;
-            }, 0)(index, delta, event);
-        },
-        getMainImageSize () {
-            const totalHeight = this.getElSize();
-            if (!totalHeight) {
-                return;
-            }
-            return this.getElSize() - this.$refs.thumbsWrapper.offsetHeight - 10;
+            _.throttle(() => {
+                let percentageMoved = Math.round(delta / this.elementHeight * 100);
+                this.imageSize = Math.min(DEFAULT_IMAGE_SIZE, Math.max(this.imageSize + percentageMoved, MIN_IMAGE_SIZE));
+            }, 1000, { 'trailing': true })(index, delta, event);
         },
         getElSize () {
             if (!this.$el) {
@@ -221,6 +215,7 @@ export default {
             }
 
             this.elementHeight = this.$el.parentElement.offsetHeight;
+
             return this.elementHeight;
         },
         endContainerResizing(event) {
@@ -282,7 +277,8 @@ export default {
         this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         this.subscribe(this.domainObject);
-         window.addEventListener('resize', this.getElSize);
+        this.getElSize();
+        window.addEventListener('resize', this.getElSize);
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.getElSize);
