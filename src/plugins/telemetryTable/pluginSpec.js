@@ -129,16 +129,38 @@ fdescribe("The table view", () => {
         let tableView = tableViewProvider.view(testTelemetryObject, false, [testTelemetryObject]);
         tableView.show(child, false);
         setTimeout(() => {
-            let fromColumn = element.querySelectorAll('th.c-telemetry-table__headers__label');
-            let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(2);
-            expect(headers[0].innerText).toBe('Some attribute');
-            expect(headers[1].innerText).toBe('Another attribute');
-            done();
+            let fromColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[0];
+            let toColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[1];
+            let fromColumnText = fromColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+            let toColumnText = toColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+
+            let dragStartEvent = createMouseEvent('dragstart');
+            let dragEndEvent = createMouseEvent('dragend');
+            fromColumn.dispatchEvent(dragStartEvent);
+            toColumn.dispatchEvent(dragEndEvent);
+
+            setTimeout(() => {
+                let firstColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[0];
+                let secondColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[1];
+                let firstColumnText = firstColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+                let secondColumnText = secondColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+                expect(fromColumnText).not.toEqual(firstColumnText);
+                expect(fromColumnText).toEqual(secondColumnText);
+                expect(toColumnText).not.toEqual(secondColumnText);
+                expect(toColumnText).toEqual(firstColumnText);
+                done();
+            });
         });
     });
 });
 
+function createMouseEvent(event) {
+    return new MouseEvent(event, {
+        bubbles: true,
+        cancelable: true,
+        view: window
+    });
+}
 /**
  * ToDo
  * 1. Test reordering columns
