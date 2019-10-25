@@ -78,7 +78,6 @@ mct-plot {
 
     /*********************** AXIS AND DISPLAY AREA */
     .plot-wrapper-axis-and-display-area {
-        margin-top: $interiorMargin; // Keep the top tick label from getting clipped
         position: relative;
         flex: 1 1 auto;
 
@@ -460,13 +459,14 @@ mct-plot {
     &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
     &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
 
+    &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
+    &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
+    &.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
+    &.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
+
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {
         // .plot-legend-item is a span of spans.
-        &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
-        &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
-        &.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
-        &.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 
         .plot-legend-item {
             display: flex;
@@ -494,7 +494,7 @@ mct-plot {
     /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
         .gl-plot-legend {
-            max-height: 70%;
+            // max-height: 70%;
         }
 
         .plot-wrapper-expanded-legend {
@@ -518,21 +518,27 @@ mct-plot {
         }
     }
 
-    /***************** EITHER SIDE */
+    /***************** LEFT OR RIGHT */
     &.plot-legend-left,
     &.plot-legend-right {
-        // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
+        // General styles when legend is on left or right
+        .gl-plot-legend {
+            max-height: inherit;
+        }
+
         &.plot-legend-expanded {
             // EXPANDED, ON EITHER SIDE
-            flex-direction: column;
+            .gl-plot-legend {
+                width: $plotLegendWidthExpanded;
+            }
         }
 
         &.plot-legend-collapsed {
             // COLLAPSED, ON EITHER SIDE
             .gl-plot-legend {
-                max-height: inherit;
-                width: 25%;
+                width: $plotLegendWidthCollapsed;
             }
+
             .plot-wrapper-collapsed-legend {
                 display: flex;
                 flex-flow: column nowrap;
@@ -557,7 +563,7 @@ mct-plot {
     }
 
     /***************** ON BOTTOM OR RIGHT */
-    &.plot-legend-right:not(.plot-legend-expanded),
+    &.plot-legend-right,
     &.plot-legend-bottom {
         .gl-plot-legend {
             order: 2;
