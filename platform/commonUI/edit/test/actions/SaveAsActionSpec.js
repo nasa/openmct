@@ -25,7 +25,7 @@ define(
     ["../../src/actions/SaveAsAction"],
     function (SaveAsAction) {
 
-        describe("The Save As action", function () {
+        xdescribe("The Save As action", function () {
             var mockDomainObject,
                 mockClonedObject,
                 mockEditorCapability,

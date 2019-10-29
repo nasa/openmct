@@ -87,7 +87,7 @@
                         ><span class="c-telemetry-table__headers__label">{{title}}</span>
                         </table-column-header>
                     </tr>
-                    <tr class="c-telemetry-table__headers__filter">
+                    <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
                         <table-column-header
                             v-for="(title, key, headerIndex) in headers"
                             :key="key"
@@ -261,7 +261,12 @@
                 height: 18px; // Needed when a row has empty values in its cells
 
                 &.is-selected {
-                    background-color: $colorSelectedBg;
+                    background-color: $colorSelectedBg !important;
+                    color: $colorSelectedFg !important;
+                    td {
+                        background: none !important;
+                        color: inherit !important;
+                    }
                 }
             }
 

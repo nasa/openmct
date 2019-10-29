@@ -171,7 +171,7 @@
             [class*='__head__collapse-button'] {
                 align-self: start;
                 flex: 0 0 auto;
-                margin-top: 4px;
+                margin-top: 6px;
 
                 &:before {
                     content: $glyph-icon-arrow-down;
@@ -214,9 +214,9 @@
         &__create-button { margin-right: $interiorMarginLg; }
 
         &__indicators {
-            //@include test();
             flex: 1 1 auto;
             flex-wrap: wrap;
+            justify-content: flex-end;
             [class*='indicator-clock'] { order: 90; }
 
             .c-indicator .label {

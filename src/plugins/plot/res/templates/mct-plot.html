@@ -29,7 +29,8 @@
         </div>
 
         <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend">
+        <div class="plot-wrapper-collapsed-legend"
+             ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
             <div class="plot-legend-item"
                   ng-repeat="series in series track by $index">
                 <div class="plot-series-swatch-and-name">
@@ -74,7 +75,8 @@
                     </tr>
                 </thead>
                 <tr ng-repeat="series in series" class="plot-legend-item">
-                    <td class="plot-series-swatch-and-name">
+                    <td class="plot-series-swatch-and-name"
+                        ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
                         <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
@@ -117,7 +119,7 @@
 
             <div class="gl-plot-label gl-plot-y-label"
                 ng-class="{'icon-gear': (yKeyOptions.length > 1 && series.length === 1)}"
-                ng-bind="yAxisLabel">
+                >{{yAxis.get('label')}}
             </div>
 
             <select  class="gl-plot-y-label__select local-controls--hidden"
@@ -132,7 +134,7 @@
             
 
             <mct-ticks axis="yAxis">
-                <div ng-repeat="tick in ticks track by tick.text"
+                <div ng-repeat="tick in ticks track by tick.value"
                      class="gl-plot-tick gl-plot-y-tick-label"
                      ng-style="{ top: (100 * (max - tick.value) / interval) + '%' }"
                      title="{{:: tick.fullText || tick.text }}"
@@ -145,9 +147,14 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
-            <span class="t-object-alert t-alert-unsynced"
-                  title="This plot is not currently displaying the latest data.
-                Reset Pan/zoom to return to view latest data."></span>
+            <div class="l-state-indicators">
+                <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                      title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
+                <span class="l-state-indicators__alert-cursor-lock icon-cursor-lock"
+                      title="Telemetry point selection is locked. Click anywhere in the plot to unlock."
+                      ng-if="lockHighlightPoint"></span>
+            </div>
+
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
@@ -213,7 +220,7 @@
                  }">
 
                 <mct-ticks axis="xAxis">
-                     <div ng-repeat="tick in ticks track by tick.text"
+                     <div ng-repeat="tick in ticks track by tick.value"
                           class="gl-plot-tick gl-plot-x-tick-label"
                           ng-style="{
                               left: (100 * (tick.value - min) / interval) + '%'

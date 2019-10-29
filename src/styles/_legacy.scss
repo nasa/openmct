@@ -483,6 +483,7 @@ body.mobile.phone {
     .widget-edit-holder {
         display: flex; // Overrides `display: none` during Browse mode
         flex: 1 1 auto;
+        overflow: hidden;
 
         .flex-accordion-holder {
             // Needed because otherwise accordion elements "creep" when contents expand and contract
@@ -630,6 +631,8 @@ body.mobile.phone {
 .c-sw-rule {
     &__grippy-wrapper {
         $d: 8px;
+        flex: 0 0 auto;
+        cursor: move;
         width: $d; height: $d;
         transform: translateY(-1px);
     }

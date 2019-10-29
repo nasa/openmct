@@ -343,6 +343,8 @@ define([
             domElement = document.body;
         }
 
+        this.element = domElement;
+
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -372,8 +374,8 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        const startPromise = new Main();
-        startPromise.run(this.legacyRegistry)
+        const startPromise = new Main()
+        startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
                 // OpenMCT Object provider doesn't operate properly unless
