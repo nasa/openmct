@@ -69,11 +69,12 @@ describe("the plugin", () => {
         expect(tableView).toBeDefined();
     });
 });
-fdescribe("The table view", () => {
+describe("The table view", () => {
     it("Renders a column for every item in telemetry metadata",(done) => {
         const testTelemetryObject = {
             identifier:{ namespace: "", key: "test-object"},
             type: "test-object",
+            name: "Test Object",
             telemetry: {
                 values: [{
                     key: "some-key",
@@ -107,6 +108,7 @@ fdescribe("The table view", () => {
         const testTelemetryObject = {
             identifier:{ namespace: "", key: "test-object"},
             type: "test-object",
+            name: "Test Object",
             telemetry: {
                 values: [{
                     key: "some-key",
@@ -126,28 +128,39 @@ fdescribe("The table view", () => {
 
         const applicableViews = openmct.objectViews.get(testTelemetryObject);
         let tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-        let tableView = tableViewProvider.view(testTelemetryObject, false, [testTelemetryObject]);
-        tableView.show(child, false);
+        let tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
+        tableView.show(child, true);
+
         setTimeout(() => {
-            let fromColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[0];
-            let toColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[1];
+            let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
+            let fromColumn = columns[0];
+            let toColumn = columns[1];
             let fromColumnText = fromColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
             let toColumnText = toColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
 
             let dragStartEvent = createMouseEvent('dragstart');
-            let dragEndEvent = createMouseEvent('dragend');
+            let dragOverEvent = createMouseEvent('dragover');
+            let dropEvent = createMouseEvent('drop');
+            dragStartEvent.dataTransfer =
+                dragOverEvent.dataTransfer =
+                    dropEvent.dataTransfer = new DataTransfer();
+
             fromColumn.dispatchEvent(dragStartEvent);
-            toColumn.dispatchEvent(dragEndEvent);
+            toColumn.dispatchEvent(dragOverEvent);
+            toColumn.dispatchEvent(dropEvent);
 
             setTimeout(() => {
-                let firstColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[0];
-                let secondColumn = element.querySelectorAll('th.c-telemetry-table__headers__label')[1];
+                columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
+                let firstColumn = columns[0];
+                let secondColumn = columns[1];
                 let firstColumnText = firstColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
                 let secondColumnText = secondColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+
                 expect(fromColumnText).not.toEqual(firstColumnText);
                 expect(fromColumnText).toEqual(secondColumnText);
                 expect(toColumnText).not.toEqual(secondColumnText);
                 expect(toColumnText).toEqual(firstColumnText);
+
                 done();
             });
         });

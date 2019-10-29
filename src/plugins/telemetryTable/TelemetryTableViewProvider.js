@@ -53,8 +53,6 @@ define([
                 let component;
                 return {
                     show: function (element, editMode) {
-                        console.log("Rendering into ");
-                        console.log(element);
                         component = new Vue({
                             data() {
                                 return {
