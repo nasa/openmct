@@ -215,9 +215,7 @@ define([
      * Update the widget's appearance from the configuration of the active rule
      */
     SummaryWidget.prototype.updateWidget = function () {
-        const WIDGET_CLASS = 'c-sw js-sw',
-            WIDGET_LABEL_CLASS = 'c-sw__label js-sw__label',
-            WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
+        const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
         var activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
