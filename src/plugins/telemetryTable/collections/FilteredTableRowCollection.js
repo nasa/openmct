@@ -86,7 +86,7 @@ define(
              */
             matchesFilters(row) {
                 let doesMatchFilters = true;
-                for (const key in this.columnFilters) {
+                Object.keys(this.columnFilters).forEach((key) => {
                     if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
                         return false;
                     }
@@ -97,8 +97,7 @@ define(
                     }
 
                     doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
-                }
-
+                });
                 return doesMatchFilters;
             }
 
