@@ -182,10 +182,12 @@
         },
         inject: ['dismiss', 'element', 'buttons', 'dismissable'],
         mounted() {
-            this.$refs.element.appendChild(this.element);
-            setTimeout(() => {
-                this.getElementForFocus().focus();
-            }, 0);
+            const element = this.$refs.element;
+            element.appendChild(this.element);
+            const elementForFocus = this.getElementForFocus() || element;
+            this.$nextTick(() => {
+                elementForFocus.focus();
+            });
         },
         methods: {
             destroy: function () {
