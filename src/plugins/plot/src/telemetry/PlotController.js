@@ -102,7 +102,8 @@ define([
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
-            domain: this.config.xAxis.get('key')
+            domain: this.config.xAxis.get('key'),
+            shouldUseMinMax: this.shouldUseMinMax(series)
         };
 
         series.load(options)
@@ -133,6 +134,11 @@ define([
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this);
+
+        this.listenTo(series, 'change:interpolate', function () {
+            this.loadSeriesData(series);
+        }, this);
+
         this.loadSeriesData(series);
     };
 
@@ -153,6 +159,10 @@ define([
             configStore.add(configId, config);
         }
         return config;
+    };
+
+    PlotController.prototype.shouldUseMinMax = function (series) {
+        return series.model.interpolate !== 'none';
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {

@@ -29,6 +29,7 @@ define([
     "./res/templates/search.html",
     "./res/templates/search-menu.html",
     "raw-loader!./src/services/GenericSearchWorker.js",
+    "raw-loader!./src/services/BareBonesSearchWorker.js",
     'legacyRegistry'
 ], function (
     SearchController,
@@ -39,6 +40,7 @@ define([
     searchTemplate,
     searchMenuTemplate,
     searchWorkerText,
+    BareBonesSearchWorkerText,
     legacyRegistry
 ) {
 
@@ -53,6 +55,11 @@ define([
                         "ROOT"
                     ],
                     "priority": "fallback"
+                },
+                {
+                    "key": "USE_LEGACY_INDEXER",
+                    "value": false,
+                    "priority": 2
                 }
             ],
             "controllers": [
@@ -101,6 +108,7 @@ define([
                         "workerService",
                         "topic",
                         "GENERIC_SEARCH_ROOTS",
+                        "USE_LEGACY_INDEXER",
                         "openmct"
                     ]
                 },
@@ -115,6 +123,10 @@ define([
                 }
             ],
             "workers": [
+                {
+                    "key": "bareBonesSearchWorker",
+                    "scriptText": BareBonesSearchWorkerText
+                },
                 {
                     "key": "genericSearchWorker",
                     "scriptText": searchWorkerText
