@@ -131,7 +131,7 @@ const PLACEHOLDER_OBJECT = {};
                     progressPerc: 'unknown',
                     message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
                     iconClass: 'info',
-                    title: 'Saving...',
+                    title: 'Saving',
                 });
 
                 return this.openmct.editor.save()
