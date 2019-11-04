@@ -41,7 +41,10 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 2
-                    }
+                    },
+                    filters: [{
+                        comparator: 'equals'
+                    }]
                 }
             ]
         },
