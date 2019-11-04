@@ -39,7 +39,9 @@
                 <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject"
-                             :showEditView="true">
+                             :showEditView="true"
+                             data-selectable
+                             >
                 </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent">

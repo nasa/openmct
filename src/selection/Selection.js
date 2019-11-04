@@ -169,6 +169,17 @@ define(
         /**
          * @private
          */
+        Selection.prototype.isSelectable = function (selectable) {
+            if (!selectable || !selectable.element) {
+                return false
+            }
+
+            return !!selectable.element.closest('[data-selectable]');
+        };
+
+        /**
+         * @private
+         */
         Selection.prototype.capture = function (selectable) {
             let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
 
@@ -211,8 +222,14 @@ define(
                 context: context,
                 element: element
             };
+
+            if (!this.isSelectable(selectable)) {
+                return;
+            }
+
             var capture = this.capture.bind(this, selectable);
             var selectCapture = this.selectCapture.bind(this, selectable);
+
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
