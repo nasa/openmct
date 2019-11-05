@@ -255,7 +255,6 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
-        this.install(this.plugins.ImportExport());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
