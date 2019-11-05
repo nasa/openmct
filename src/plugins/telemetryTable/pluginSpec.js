@@ -160,7 +160,7 @@ describe("the plugin", () => {
                     expect(fromColumnText).toEqual(secondColumnText);
                     expect(toColumnText).not.toEqual(secondColumnText);
                     expect(toColumnText).toEqual(firstColumnText);
-    
+
                     done();
                 });
             });
