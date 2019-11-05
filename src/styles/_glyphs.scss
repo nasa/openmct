@@ -166,6 +166,9 @@
 .icon-generator-telemetry {  @include glyphBefore($glyph-icon-generator-telemetry); }
 .icon-generator-events {  @include glyphBefore($glyph-icon-generator-events); }
 .icon-gauge {  @include glyphBefore($glyph-icon-gauge); }
+.icon-spectra {  @include glyphBefore($glyph-icon-spectra); }
+.icon-spectra-telemetry {  @include glyphBefore($glyph-icon-spectra-telemetry); }
+.icon-command {  @include glyphBefore($glyph-icon-command); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
