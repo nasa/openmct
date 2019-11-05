@@ -169,12 +169,12 @@ define(
         /**
          * @private
          */
-        Selection.prototype.isSelectable = function (selectable) {
-            if (!selectable || !selectable.element) {
+        Selection.prototype.isSelectable = function (element) {
+            if (!element) {
                 return false;
             }
 
-            return !!selectable.element.closest('[data-selectable]');
+            return !!element.closest('[data-selectable]');
         };
 
         /**
@@ -223,8 +223,8 @@ define(
                 element: element
             };
 
-            if (!this.isSelectable(selectable)) {
-                return;
+            if (!this.isSelectable(element)) {
+                return () => {};
             }
 
             var capture = this.capture.bind(this, selectable);
