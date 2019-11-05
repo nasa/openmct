@@ -22,15 +22,15 @@
 /*global define*/
 
 define([
-    "./src/ExampleIdentityService",
-    'legacyRegistry'
+    "./src/ExampleIdentityService"
 ], function (
-    ExampleIdentityService,
-    legacyRegistry
+    ExampleIdentityService
 ) {
     "use strict";
 
-    legacyRegistry.register("example/identity", {
+    return {
+        name:"example/identity",
+        definition: {
         "extensions": {
             "components": [
                 {
@@ -44,5 +44,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

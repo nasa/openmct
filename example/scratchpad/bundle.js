@@ -22,15 +22,15 @@
 /*global define*/
 
 define([
-    "./src/ScratchPersistenceProvider",
-    'legacyRegistry'
+    "./src/ScratchPersistenceProvider"
 ], function (
-    ScratchPersistenceProvider,
-    legacyRegistry
+    ScratchPersistenceProvider
 ) {
     "use strict";
 
-    legacyRegistry.register("example/scratchpad", {
+    return {
+        name:"example/scratchpad",
+        definition: {
         "extensions": {
             "roots": [
                 {
@@ -59,5 +59,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

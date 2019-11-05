@@ -23,16 +23,16 @@
 
 define([
     "./src/WatchIndicator",
-    "./src/DigestIndicator",
-    'legacyRegistry'
+    "./src/DigestIndicator"
 ], function (
     WatchIndicator,
-    DigestIndicator,
-    legacyRegistry
+    DigestIndicator
 ) {
     "use strict";
 
-    legacyRegistry.register("example/profiling", {
+    return {
+        name:"example/profiling",
+        definition: {
         "extensions": {
             "indicators": [
                 {
@@ -51,5 +51,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

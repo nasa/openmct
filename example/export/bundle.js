@@ -22,12 +22,13 @@
 /*global define*/
 
 define([
-    'legacyRegistry',
     './ExportTelemetryAsCSVAction'
-], function (legacyRegistry, ExportTelemetryAsCSVAction) {
+], function (ExportTelemetryAsCSVAction) {
     "use strict";
 
-    legacyRegistry.register("example/export", {
+    return {
+        name:"example/export",
+        definition: {
         "name": "Example of using CSV Export",
         "extensions": {
             "actions": [
@@ -41,5 +42,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

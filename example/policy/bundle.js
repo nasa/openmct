@@ -22,15 +22,15 @@
 /*global define*/
 
 define([
-    "./src/ExamplePolicy",
-    'legacyRegistry'
+    "./src/ExamplePolicy"
 ], function (
-    ExamplePolicy,
-    legacyRegistry
+    ExamplePolicy
 ) {
     "use strict";
 
-    legacyRegistry.register("example/policy", {
+    return {
+        name:"example/policy",
+        definition: {
         "name": "Example Policy",
         "description": "Provides an example of using policies to prohibit actions.",
         "extensions": {
@@ -41,5 +41,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

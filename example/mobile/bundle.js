@@ -21,16 +21,12 @@
  *****************************************************************************/
 /*global define*/
 
-define([
-    
-    'legacyRegistry'
-], function (
-    
-    legacyRegistry
-) {
+define([], function () {
     "use strict";
 
-    legacyRegistry.register("example/mobile", {
+    return {
+        name:"example/mobile",
+        definition: {
         "name": "Mobile",
         "description": "Allows elements with pertinence to mobile usage and development",
         "extensions": {
@@ -41,5 +37,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

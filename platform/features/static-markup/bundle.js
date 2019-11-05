@@ -22,35 +22,35 @@
 
 define([
 
-    "./res/markup.html",
-    'legacyRegistry'
+    "./res/markup.html"
 ], function (
-
-    markupTemplate,
-    legacyRegistry
+    markupTemplate
 ) {
 
-    legacyRegistry.register("platform/features/static-markup", {
-        "extensions": {
-            "types": [
-                {
-                    "key": "static.markup",
-                    "name": "Static Markup",
-                    "cssClass": "icon-pencil",
-                    "description": "Static markup sandbox",
-                    "features": [
-                        "creation"
-                    ]
-                }
-            ],
-            "views": [
-                {
-                    "template": markupTemplate,
-                    "name": "Static Markup",
-                    "type": "static.markup",
-                    "key": "static.markup"
-                }
-            ]
+    return {
+        name:"platform/features/static-markup",
+        definition: {
+            "extensions": {
+                "types": [
+                    {
+                        "key": "static.markup",
+                        "name": "Static Markup",
+                        "cssClass": "icon-pencil",
+                        "description": "Static markup sandbox",
+                        "features": [
+                            "creation"
+                        ]
+                    }
+                ],
+                "views": [
+                    {
+                        "template": markupTemplate,
+                        "name": "Static Markup",
+                        "type": "static.markup",
+                        "key": "static.markup"
+                    }
+                ]
+            }
         }
-    });
+    };
 });

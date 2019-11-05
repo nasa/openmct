@@ -23,74 +23,75 @@
 define([
     "./src/ElasticPersistenceProvider",
     "./src/ElasticSearchProvider",
-    "./src/ElasticIndicator",
-    'legacyRegistry'
+    "./src/ElasticIndicator"
 ], function (
     ElasticPersistenceProvider,
     ElasticSearchProvider,
-    ElasticIndicator,
-    legacyRegistry
+    ElasticIndicator
 ) {
 
-    legacyRegistry.register("platform/persistence/elastic", {
-        "name": "ElasticSearch Persistence",
-        "description": "Adapter to read and write objects using an ElasticSearch instance.",
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "provider",
-                    "implementation": ElasticPersistenceProvider,
-                    "depends": [
-                        "$http",
-                        "$q",
-                        "PERSISTENCE_SPACE",
-                        "ELASTIC_ROOT",
-                        "ELASTIC_PATH"
-                    ]
-                },
-                {
-                    "provides": "searchService",
-                    "type": "provider",
-                    "implementation": ElasticSearchProvider,
-                    "depends": [
-                        "$http",
-                        "ELASTIC_ROOT"
-                    ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "PERSISTENCE_SPACE",
-                    "value": "mct"
-                },
-                {
-                    "key": "ELASTIC_ROOT",
-                    "value": "http://localhost:9200",
-                    "priority": "fallback"
-                },
-                {
-                    "key": "ELASTIC_PATH",
-                    "value": "mct/domain_object",
-                    "priority": "fallback"
-                },
-                {
-                    "key": "ELASTIC_INDICATOR_INTERVAL",
-                    "value": 15000,
-                    "priority": "fallback"
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": ElasticIndicator,
-                    "depends": [
-                        "$http",
-                        "$interval",
-                        "ELASTIC_ROOT",
-                        "ELASTIC_INDICATOR_INTERVAL"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/persistence/elastic",
+        definition: {
+            "name": "ElasticSearch Persistence",
+            "description": "Adapter to read and write objects using an ElasticSearch instance.",
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": ElasticPersistenceProvider,
+                        "depends": [
+                            "$http",
+                            "$q",
+                            "PERSISTENCE_SPACE",
+                            "ELASTIC_ROOT",
+                            "ELASTIC_PATH"
+                        ]
+                    },
+                    {
+                        "provides": "searchService",
+                        "type": "provider",
+                        "implementation": ElasticSearchProvider,
+                        "depends": [
+                            "$http",
+                            "ELASTIC_ROOT"
+                        ]
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "PERSISTENCE_SPACE",
+                        "value": "mct"
+                    },
+                    {
+                        "key": "ELASTIC_ROOT",
+                        "value": "http://localhost:9200",
+                        "priority": "fallback"
+                    },
+                    {
+                        "key": "ELASTIC_PATH",
+                        "value": "mct/domain_object",
+                        "priority": "fallback"
+                    },
+                    {
+                        "key": "ELASTIC_INDICATOR_INTERVAL",
+                        "value": 15000,
+                        "priority": "fallback"
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": ElasticIndicator,
+                        "depends": [
+                            "$http",
+                            "$interval",
+                            "ELASTIC_ROOT",
+                            "ELASTIC_INDICATOR_INTERVAL"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

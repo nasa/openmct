@@ -22,15 +22,15 @@
 /*global define*/
 
 define([
-    "./src/BrowserPersistenceProvider",
-    'legacyRegistry'
+    "./src/BrowserPersistenceProvider"
 ], function (
-    BrowserPersistenceProvider,
-    legacyRegistry
+    BrowserPersistenceProvider
 ) {
     "use strict";
 
-    legacyRegistry.register("example/persistence", {
+    return {
+        name:"example/persistence",
+        definition: {
         "extensions": {
             "components": [
                 {
@@ -50,5 +50,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

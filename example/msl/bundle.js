@@ -24,17 +24,16 @@
 define([
     "./src/RemsTelemetryServerAdapter",
     "./src/RemsTelemetryModelProvider",
-    "./src/RemsTelemetryProvider",
-    'legacyRegistry',
-    "module"
+    "./src/RemsTelemetryProvider"
 ], function (
     RemsTelemetryServerAdapter,
     RemsTelemetryModelProvider,
-    RemsTelemetryProvider,
-    legacyRegistry
+    RemsTelemetryProvider
 ) {
     "use strict";
-    legacyRegistry.register("example/msl", {
+    return {
+        name:"example/msl",
+        definition: {
         "name" : "Mars Science Laboratory Data Adapter",
         "extensions" : {
             "types": [
@@ -110,6 +109,7 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });
 

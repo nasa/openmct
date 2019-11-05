@@ -24,52 +24,53 @@ define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
     "./src/NotificationService",
-    "./res/notification-indicator.html",
-    'legacyRegistry'
+    "./res/notification-indicator.html"
 ], function (
     NotificationIndicatorController,
     NotificationIndicator,
     NotificationService,
-    notificationIndicatorTemplate,
-    legacyRegistry
+    notificationIndicatorTemplate
 ) {
 
-    legacyRegistry.register("platform/commonUI/notification", {
-        "extensions": {
-            "templates": [
-                {
-                    "key": "notificationIndicatorTemplate",
-                    "template": notificationIndicatorTemplate
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "NotificationIndicatorController",
-                    "implementation": NotificationIndicatorController,
-                    "depends": [
-                        "$scope",
-                        "openmct",
-                        "dialogService"
-                    ]
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": NotificationIndicator,
-                    "priority": "fallback"
-                }
-            ],
-            "services": [
-                {
-                    "key": "notificationService",
-                    "implementation": function (openmct) {
-                        return new NotificationService.default(openmct);
-                    },
-                    "depends": [
-                        "openmct"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/commonUI/notification",
+        definition: {
+            "extensions": {
+                "templates": [
+                    {
+                        "key": "notificationIndicatorTemplate",
+                        "template": notificationIndicatorTemplate
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "NotificationIndicatorController",
+                        "implementation": NotificationIndicatorController,
+                        "depends": [
+                            "$scope",
+                            "openmct",
+                            "dialogService"
+                        ]
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": NotificationIndicator,
+                        "priority": "fallback"
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "notificationService",
+                        "implementation": function (openmct) {
+                            return new NotificationService.default(openmct);
+                        },
+                        "depends": [
+                            "openmct"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

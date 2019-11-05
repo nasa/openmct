@@ -27,20 +27,20 @@ define([
     "./src/DialogLaunchIndicator",
     "./src/NotificationLaunchIndicator",
     "./res/dialog-launch.html",
-    "./res/notification-launch.html",
-    'legacyRegistry'
+    "./res/notification-launch.html"
 ], function (
     DialogLaunchController,
     NotificationLaunchController,
     DialogLaunchIndicator,
     NotificationLaunchIndicator,
     DialogLaunch,
-    NotificationLaunch,
-    legacyRegistry
+    NotificationLaunch
 ) {
     "use strict";
 
-    legacyRegistry.register("example/notifications", {
+    return {
+        name:"example/notifications",
+        definition: {
         "extensions": {
             "templates": [
                 {
@@ -86,5 +86,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });

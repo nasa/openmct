@@ -22,15 +22,15 @@
 /*global define*/
 
 define([
-    "./src/ExampleFormController",
-    'legacyRegistry'
+    "./src/ExampleFormController"
 ], function (
-    ExampleFormController,
-    legacyRegistry
+    ExampleFormController
 ) {
     "use strict";
 
-    legacyRegistry.register("example/forms", {
+    return {
+        name:"example/forms",
+        definition: {
         "name": "Declarative Forms example",
         "sources": "src",
         "extensions": {
@@ -49,5 +49,6 @@ define([
                 }
             ]
         }
-    });
+    }
+};
 });
