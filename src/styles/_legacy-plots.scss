@@ -395,14 +395,27 @@ mct-plot {
 }
 
 /****************** _LEGEND.SCSS */
-.gl-plot-legend {
-    display: flex;
-    align-items: flex-start;
+.gl-plot-legend,
+.c-plot-legend {
+    &__wrapper {
+        // Holds view-control and both collapsed and expanded legends
+        flex: 1 1 auto;
+    }
 
     &__view-control {
         padding-top: 2px;
         margin-right: $interiorMarginSm;
     }
+
+    &__header {
+        @include propertiesHeader();
+        margin-bottom: 1px;
+    }
+}
+
+.gl-plot-legend {
+    display: flex;
+    align-items: flex-start;
 
     table {
         table-layout: fixed;
