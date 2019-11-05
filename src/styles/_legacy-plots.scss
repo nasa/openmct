@@ -409,7 +409,7 @@ mct-plot {
 
     &__header {
         @include propertiesHeader();
-        margin-bottom: 1px;
+        margin-bottom: $interiorMarginSm;
     }
 }
 
@@ -512,6 +512,7 @@ mct-plot {
 
         .plot-wrapper-expanded-legend {
             overflow-y: auto;
+            table thead th { background: $legendTableHeadBg; }
         }
     }
 
