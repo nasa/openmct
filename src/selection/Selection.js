@@ -171,7 +171,7 @@ define(
          */
         Selection.prototype.isSelectable = function (selectable) {
             if (!selectable || !selectable.element) {
-                return false
+                return false;
             }
 
             return !!selectable.element.closest('[data-selectable]');
