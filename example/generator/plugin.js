@@ -33,7 +33,7 @@ define([
     GeneratorMetadataProvider
 ) {
 
-    return function(openmct){
+    return function (openmct) {
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",

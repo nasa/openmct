@@ -54,8 +54,8 @@ define(
          * @returns {number} A count of the number of data values available in
          * this series
          */
-        RemsTelemetrySeries.prototype.getPointCount = function() {
-                    return this.data.length;
+        RemsTelemetrySeries.prototype.getPointCount = function () {
+            return this.data.length;
         };
         /**
          * The domain value at the given index. The Rems telemetry data is
@@ -64,8 +64,8 @@ define(
          * @param index
          * @returns {number} the time value in ms since 1 January 1970
          */
-        RemsTelemetrySeries.prototype.getDomainValue = function(index) {
-                    return this.data[index].date;
+        RemsTelemetrySeries.prototype.getDomainValue = function (index) {
+            return this.data[index].date;
         };
 
         /**
@@ -75,8 +75,8 @@ define(
          * value of.
          * @returns {number} A floating point number
          */
-        RemsTelemetrySeries.prototype.getRangeValue = function(index) {
-                    return this.data[index].value;
+        RemsTelemetrySeries.prototype.getRangeValue = function (index) {
+            return this.data[index].value;
         };
 
         return RemsTelemetrySeries;

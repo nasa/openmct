@@ -31,24 +31,24 @@ define([
     return {
         name:"example/forms",
         definition: {
-        "name": "Declarative Forms example",
-        "sources": "src",
-        "extensions": {
-            "controllers": [
-                {
-                    "key": "ExampleFormController",
-                    "implementation": ExampleFormController,
-                    "depends": [
-                        "$scope"
-                    ]
-                }
-            ],
-            "routes": [
-                {
-                    "templateUrl": "templates/exampleForm.html"
-                }
-            ]
+            "name": "Declarative Forms example",
+            "sources": "src",
+            "extensions": {
+                "controllers": [
+                    {
+                        "key": "ExampleFormController",
+                        "implementation": ExampleFormController,
+                        "depends": [
+                            "$scope"
+                        ]
+                    }
+                ],
+                "routes": [
+                    {
+                        "templateUrl": "templates/exampleForm.html"
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

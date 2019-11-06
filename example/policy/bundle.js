@@ -31,16 +31,16 @@ define([
     return {
         name:"example/policy",
         definition: {
-        "name": "Example Policy",
-        "description": "Provides an example of using policies to prohibit actions.",
-        "extensions": {
-            "policies": [
-                {
-                    "implementation": ExamplePolicy,
-                    "category": "action"
-                }
-            ]
+            "name": "Example Policy",
+            "description": "Provides an example of using policies to prohibit actions.",
+            "extensions": {
+                "policies": [
+                    {
+                        "implementation": ExamplePolicy,
+                        "category": "action"
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

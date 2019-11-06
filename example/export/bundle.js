@@ -29,19 +29,19 @@ define([
     return {
         name:"example/export",
         definition: {
-        "name": "Example of using CSV Export",
-        "extensions": {
-            "actions": [
-                {
-                    "key": "example.export",
-                    "name": "Export Telemetry as CSV",
-                    "implementation": ExportTelemetryAsCSVAction,
-                    "category": "contextual",
-                    "cssClass": "icon-download",
-                    "depends": [ "exportService" ]
-                }
-            ]
+            "name": "Example of using CSV Export",
+            "extensions": {
+                "actions": [
+                    {
+                        "key": "example.export",
+                        "name": "Export Telemetry as CSV",
+                        "implementation": ExportTelemetryAsCSVAction,
+                        "category": "contextual",
+                        "cssClass": "icon-download",
+                        "depends": ["exportService"]
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

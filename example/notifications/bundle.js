@@ -41,51 +41,51 @@ define([
     return {
         name:"example/notifications",
         definition: {
-        "extensions": {
-            "templates": [
-                {
-                    "key": "dialogLaunchTemplate",
-                    "template": DialogLaunch
-                },
-                {
-                    "key": "notificationLaunchTemplate",
-                    "template": NotificationLaunch
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "DialogLaunchController",
-                    "implementation": DialogLaunchController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "$log",
-                        "dialogService",
-                        "notificationService"
-                    ]
-                },
-                {
-                    "key": "NotificationLaunchController",
-                    "implementation": NotificationLaunchController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "$log",
-                        "notificationService"
-                    ]
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": DialogLaunchIndicator,
-                    "priority": "fallback"
-                },
-                {
-                    "implementation": NotificationLaunchIndicator,
-                    "priority": "fallback"
-                }
-            ]
+            "extensions": {
+                "templates": [
+                    {
+                        "key": "dialogLaunchTemplate",
+                        "template": DialogLaunch
+                    },
+                    {
+                        "key": "notificationLaunchTemplate",
+                        "template": NotificationLaunch
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "DialogLaunchController",
+                        "implementation": DialogLaunchController,
+                        "depends": [
+                            "$scope",
+                            "$timeout",
+                            "$log",
+                            "dialogService",
+                            "notificationService"
+                        ]
+                    },
+                    {
+                        "key": "NotificationLaunchController",
+                        "implementation": NotificationLaunchController,
+                        "depends": [
+                            "$scope",
+                            "$timeout",
+                            "$log",
+                            "notificationService"
+                        ]
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": DialogLaunchIndicator,
+                        "priority": "fallback"
+                    },
+                    {
+                        "implementation": NotificationLaunchIndicator,
+                        "priority": "fallback"
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

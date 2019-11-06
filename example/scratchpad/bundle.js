@@ -31,34 +31,34 @@ define([
     return {
         name:"example/scratchpad",
         definition: {
-        "extensions": {
-            "roots": [
-                {
-                    "id": "scratch:root"
-                }
-            ],
-            "models": [
-                {
-                    "id": "scratch:root",
-                    "model": {
-                        "type": "folder",
-                        "composition": [],
-                        "name": "Scratchpad"
-                    },
-                    "priority": "preferred"
-                }
-            ],
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "provider",
-                    "implementation": ScratchPersistenceProvider,
-                    "depends": [
-                        "$q"
-                    ]
-                }
-            ]
+            "extensions": {
+                "roots": [
+                    {
+                        "id": "scratch:root"
+                    }
+                ],
+                "models": [
+                    {
+                        "id": "scratch:root",
+                        "model": {
+                            "type": "folder",
+                            "composition": [],
+                            "name": "Scratchpad"
+                        },
+                        "priority": "preferred"
+                    }
+                ],
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": ScratchPersistenceProvider,
+                        "depends": [
+                            "$q"
+                        ]
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

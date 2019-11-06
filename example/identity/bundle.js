@@ -31,19 +31,19 @@ define([
     return {
         name:"example/identity",
         definition: {
-        "extensions": {
-            "components": [
-                {
-                    "implementation": ExampleIdentityService,
-                    "provides": "identityService",
-                    "type": "provider",
-                    "depends": [
-                        "dialogService",
-                        "$q"
-                    ]
-                }
-            ]
+            "extensions": {
+                "components": [
+                    {
+                        "implementation": ExampleIdentityService,
+                        "provides": "identityService",
+                        "type": "provider",
+                        "depends": [
+                            "dialogService",
+                            "$q"
+                        ]
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

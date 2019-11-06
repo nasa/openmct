@@ -36,7 +36,7 @@ describe("the plugin", () => {
         const appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
-    
+
         openmct = createOpenMct();
 
         element = document.createElement('div');

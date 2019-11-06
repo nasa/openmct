@@ -28,7 +28,7 @@ define([
 ) {
 
     var RED = {
-            sin: 0.9, 
+            sin: 0.9,
             cos: 0.9
         },
         YELLOW = {
@@ -74,7 +74,7 @@ define([
         return {
             evaluate: function (datum, valueMetadata) {
                 var range = valueMetadata && valueMetadata.key;
-                
+
                 if (datum[range] > RED[range]) {
                     return LIMITS.rh;
                 }

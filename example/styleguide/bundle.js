@@ -24,9 +24,9 @@ define([
     return {
         name:"example/styleguide",
         definition: {
-        "name": "Open MCT Style Guide",
-        "description": "Examples and documentation illustrating UI styles in use in Open MCT.",
-        "extensions":
+            "name": "Open MCT Style Guide",
+            "description": "Examples and documentation illustrating UI styles in use in Open MCT.",
+            "extensions":
         {
             "types": [
                 { "key": "styleguide.intro", "name": "Introduction", "cssClass": "icon-page", "description": "Introduction and overview to the style guide" },
@@ -103,6 +103,6 @@ define([
                 }
             ]
         }
-    }
-};
+        }
+    };
 });

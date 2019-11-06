@@ -27,16 +27,16 @@ define([], function () {
     return {
         name:"example/mobile",
         definition: {
-        "name": "Mobile",
-        "description": "Allows elements with pertinence to mobile usage and development",
-        "extensions": {
-            "stylesheets": [
-                {
-                    "stylesheetUrl": "css/mobile-example.css",
-                    "priority": "mandatory"
-                }
-            ]
+            "name": "Mobile",
+            "description": "Allows elements with pertinence to mobile usage and development",
+            "extensions": {
+                "stylesheets": [
+                    {
+                        "stylesheetUrl": "css/mobile-example.css",
+                        "priority": "mandatory"
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });

@@ -33,24 +33,24 @@ define([
     return {
         name:"example/profiling",
         definition: {
-        "extensions": {
-            "indicators": [
-                {
-                    "implementation": WatchIndicator,
-                    "depends": [
-                        "$interval",
-                        "$rootScope"
-                    ]
-                },
-                {
-                    "implementation": DigestIndicator,
-                    "depends": [
-                        "$interval",
-                        "$rootScope"
-                    ]
-                }
-            ]
+            "extensions": {
+                "indicators": [
+                    {
+                        "implementation": WatchIndicator,
+                        "depends": [
+                            "$interval",
+                            "$rootScope"
+                        ]
+                    },
+                    {
+                        "implementation": DigestIndicator,
+                        "depends": [
+                            "$interval",
+                            "$rootScope"
+                        ]
+                    }
+                ]
+            }
         }
-    }
-};
+    };
 });
