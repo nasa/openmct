@@ -218,14 +218,14 @@ define(
          * @public
          */
         Selection.prototype.selectable = function (element, context, select) {
+            if (!this.isSelectable(element)) {
+                return () => {};
+            }
+
             let selectable = {
                 context: context,
                 element: element
             };
-
-            if (!this.isSelectable(element)) {
-                return () => {};
-            }
 
             var capture = this.capture.bind(this, selectable);
             var selectCapture = this.selectCapture.bind(this, selectable);
