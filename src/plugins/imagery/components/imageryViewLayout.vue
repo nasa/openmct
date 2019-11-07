@@ -47,6 +47,7 @@
                 </div>
         </div>
         <div class="thumbs-layout" ref="thumbsWrapper"
+                @scroll="handleScroll"
                 :style="{'height': `${100 - imageSize}%`}">
             <div class="l-image-thumb-item"
                     :class="{selected: image.selected}"
@@ -110,7 +111,7 @@ export default {
     },
     data() {
         return {
-            autoScroll: this.openmct.time.clock(),
+            autoScroll: true,
             clipped: false,
             date: '',
             elementHeight: this.getElSize(),
@@ -153,6 +154,17 @@ export default {
                 this.timeFormat.format(datum) :
                 this.time;
         },
+        handleScroll () {
+            const thumbsWrapper = this.$refs.thumbsWrapper
+            if (!thumbsWrapper) {
+                return;
+            }
+
+            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
+            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
+                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            this.autoScroll = !disableScroll;
+        },
         paused (state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
@@ -165,6 +177,7 @@ export default {
                 }
                 this.autoScroll = true;
             }
+
             return this.isPaused;
         },
         requestHistory (bounds) {
@@ -186,8 +199,14 @@ export default {
                 }.bind(this));
         },
         scrollToBottom () {
-            if (this.autoScroll) {
-                this.scrollable[0].scrollTop = this.scrollable[0].scrollHeight;
+            if (this.isPaused || !this.$refs.thumbsWrapper) {
+                return;
+            }
+            const scrollHeight = this.$refs.thumbsWrapper.scrollHeight || 0;
+            if (scrollHeight && this.autoScroll) {
+                setTimeout(() => {
+                    this.$refs.thumbsWrapper.scrollTop = scrollHeight;
+                }, 0);
             }
         },
         setSelectedImage (image) {
@@ -279,6 +298,9 @@ export default {
         this.subscribe(this.domainObject);
         this.getElSize();
         window.addEventListener('resize', this.getElSize);
+    },
+    updated() {
+        this.scrollToBottom();
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.getElSize);
