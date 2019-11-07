@@ -30,7 +30,8 @@
     @import "~styles/sass-base";
 
     .c-conductor-axis {
-        $h: 18px;
+        // $h: 18px;
+        $h: 64px;
         $tickYPos: ($h / 2) + 12px;
 
         @include userSelectNone();
@@ -115,6 +116,7 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
+import * as d3 from "d3";
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -245,6 +247,7 @@ export default {
             .attr("height", height);
 
         this.width = this.$refs.axisHolder.clientWidth;
+        console.log(`width: ${this.width}`)
         this.xAxis = d3Axis.axisTop();
         this.dragging = false;
 
@@ -253,6 +256,46 @@ export default {
 
         this.setViewFromTimeSystem(this.openmct.time.timeSystem());
         this.setScale();
+        
+        const node = vis.node()
+
+        const svg = d3.select('svg');
+        const element = svg.node();
+        console.log(element)
+        const domRect = element.getBoundingClientRect();
+        const brushWidth = domRect.width
+        const brushHeight = domRect.height
+
+        console.log(domRect)
+        console.log(domRect.left)
+        console.log(domRect.top)
+        console.log(domRect.right)
+        console.log(domRect.bottom)
+        const x = d3.scaleLinear([0, 10], [0, this.width])
+
+        const brush = d3.brushX()
+            .extent([[0, -brushHeight], [this.width, brushHeight]])
+            .on("start brush end", brushed);
+        
+        this.brush = vis.append("g")
+            .attr("class", "brush")
+            .call(brush)
+            .call(brush.move, [0, this.width].map(x));
+  
+        function brushed () {
+            const selection = d3.event.selection;
+            console.log(selection)
+            const [x0, x1] = selection.map(x.invert);
+            console.log(x0)
+            console.log(x1)
+        }
+
+        vis.selectAll('.overlay')
+        .style({
+        fill: '#4b9e9e',
+        visibility: 'visible'
+        })
+
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
