@@ -1,5 +1,5 @@
 define([
-    './imageryViewProvider',
+    './imageryViewProvider'
 ], function (
     ImageryViewProvider
 ) {
