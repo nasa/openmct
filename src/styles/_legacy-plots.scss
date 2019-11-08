@@ -425,7 +425,9 @@ mct-plot {
             padding: 1px 3px; // Tighter than standard tabular padding
         }
     }
+}
 
+*[class*="-legend"] {
     &.hover-on-plot {
         // User is hovering over the plot to get a value at a point
         .hover-value-enabled {
