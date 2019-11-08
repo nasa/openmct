@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module,BUILD_CONSTANTS*/
+/*global module*/
 
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {

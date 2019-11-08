@@ -138,7 +138,7 @@ define([
         this.listenTo(series, 'change:interpolate', function () {
             this.loadSeriesData(series);
         }, this);
-        
+
         this.loadSeriesData(series);
     };
 
