@@ -23,7 +23,6 @@
     <div class="c-conductor-axis"
          ref="axisHolder"
          @mousedown="dragStart($event)"
-        :class="{'alt-pressed': altPressed}"
     >
     </div>
 </template>
@@ -78,9 +77,7 @@
         }
 
         body.desktop .is-fixed-mode & {
-            &.alt-pressed {
-                @include cursorGrab();
-            }
+            @include cursorGrab();
             background-size: 3px 30%;
             background-color: $colorBodyBgSubtle;
             box-shadow: inset rgba(black, 0.4) 0 1px 1px;
@@ -210,18 +207,20 @@ export default {
         drag($event) {
             if (!this.dragging){
                 this.dragging = true;
-                requestAnimationFrame(()=>{
-                    let deltaX = $event.clientX - this.dragStartX;
-                    let percX = deltaX / this.width;
-                    let bounds = this.openmct.time.bounds();
-                    let deltaTime = bounds.end - bounds.start;
-                    let newStart = bounds.start - percX * deltaTime;
-                    this.$emit('panAxis',{
-                        start: newStart,
-                        end: newStart + deltaTime
-                    });
-                    this.dragging = false;
-                })
+                if (this.altPressed) {
+                    requestAnimationFrame(()=>{
+                        let deltaX = $event.clientX - this.dragStartX;
+                        let percX = deltaX / this.width;
+                        let bounds = this.openmct.time.bounds();
+                        let deltaTime = bounds.end - bounds.start;
+                        let newStart = bounds.start - percX * deltaTime;
+                        this.$emit('panAxis',{
+                            start: newStart,
+                            end: newStart + deltaTime
+                        });
+                    })
+                }
+                this.dragging = false;
             } else {
                 console.log('Rejected drag due to RAF cap');
             }
@@ -238,6 +237,40 @@ export default {
                 this.width = this.$refs.axisHolder.clientWidth;
                 this.setScale();
             }
+        },
+        createBrush() {
+            this.svg = this.svg || d3.select('svg');
+            if (!this.svg) {
+                return;
+            }
+            
+            // const x = d3.scaleLinear([0, 10], [0, this.width])
+            
+            this.svg.append("g")
+                .attr("class", "brush")
+                .call(this.brush);
+        },
+        brushStart () {
+
+        },
+        brushed () {
+
+        },
+        brushEnd () {
+            const selection = d3.event.selection;
+            if (!d3.event.sourceEvent || !selection) {
+                return;
+            }
+            
+            // do something here with selection
+            console.log(selection)
+            // clear brush
+            d3.select('g.brush').call(this.brush.move, null);
+        },
+        destroyBrush() {
+            d3.select('g.brush').remove()
+            // console.log(test)
+            // d3.select('g.brush').call(brush.move, null);
         }
     },
     watch: {
@@ -249,26 +282,26 @@ export default {
         }
     },
     created() {
-        window.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
                 this.altPressed = true
+                this.destroyBrush()
             }
         });
-        window.addEventListener('keyup', (e) => {
+        document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
                 this.altPressed = false
+                this.createBrush()
             }
         });
     },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
-        console.log(axisHolder)
-        let height = axisHolder.offsetHeight;
-        console.log(height)
+        this.height = axisHolder.offsetHeight;
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
             .attr("width", "100%")
-            .attr("height", height);
+            .attr("height", this.height);
 
         this.width = this.$refs.axisHolder.clientWidth;
         this.xAxis = d3Axis.axisTop();
@@ -279,34 +312,19 @@ export default {
 
         this.setViewFromTimeSystem(this.openmct.time.timeSystem());
         this.setScale();
-        
-        const node = vis.node()
-
-        const svg = d3.select('svg');
-        const element = svg.node();
-        const domRect = element.getBoundingClientRect();
-        const brushWidth = domRect.width
-        const brushHeight = domRect.height
-
-        const x = d3.scaleLinear([0, 10], [0, this.width])
-
-        const brush = d3.brushX()
-            .extent([[0, -brushHeight], [this.width, brushHeight]])
-            .on("start brush end", brushed);
-        
-        // this.brush = vis.append("g")
-        //     .attr("class", "brush")
-        //     .call(brush)
-        //     .call(brush.move, [0, this.width].map(x));
-  
-        function brushed () {
-            
-        }
-
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
+
+        // brush setup
+        this.brush = d3.brushX()
+            .extent([[0, -this.height], [this.width, this.height]])
+            .on("start", this.brushStart)
+            .on('brush', this.brushed)
+            .on("end", this.brushEnd);
+        // Zoom/Brush selection on by default    
+        this.createBrush()
     },
     destroyed() {
     }
