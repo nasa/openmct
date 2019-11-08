@@ -22,7 +22,9 @@
 <template>
     <div class="c-conductor-axis"
          ref="axisHolder"
-         @mousedown="dragStart($event)">
+         @mousedown="dragStart($event)"
+        :class="{'alt-pressed': altPressed}"
+    >
     </div>
 </template>
 
@@ -76,7 +78,9 @@
         }
 
         body.desktop .is-fixed-mode & {
-            @include cursorGrab();
+            &.alt-pressed {
+                @include cursorGrab();
+            }
             background-size: 3px 30%;
             background-color: $colorBodyBgSubtle;
             box-shadow: inset rgba(black, 0.4) 0 1px 1px;
@@ -98,6 +102,7 @@
                     transition: $transIn;
                 }
             }
+
         }
 
         .is-realtime-mode & {
@@ -129,6 +134,11 @@ export default {
     inject: ['openmct'],
     props: {
         bounds: Object
+    },
+    data() {
+        return {
+            altPressed: false,
+        }
     },
     methods: {
         setScale() {
@@ -238,16 +248,29 @@ export default {
             deep: true
         }
     },
+    created() {
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = true
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = false
+            }
+        });
+    },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
+        console.log(axisHolder)
         let height = axisHolder.offsetHeight;
+        console.log(height)
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
             .attr("width", "100%")
             .attr("height", height);
 
         this.width = this.$refs.axisHolder.clientWidth;
-        console.log(`width: ${this.width}`)
         this.xAxis = d3Axis.axisTop();
         this.dragging = false;
 
@@ -261,40 +284,24 @@ export default {
 
         const svg = d3.select('svg');
         const element = svg.node();
-        console.log(element)
         const domRect = element.getBoundingClientRect();
         const brushWidth = domRect.width
         const brushHeight = domRect.height
 
-        console.log(domRect)
-        console.log(domRect.left)
-        console.log(domRect.top)
-        console.log(domRect.right)
-        console.log(domRect.bottom)
         const x = d3.scaleLinear([0, 10], [0, this.width])
 
         const brush = d3.brushX()
             .extent([[0, -brushHeight], [this.width, brushHeight]])
             .on("start brush end", brushed);
         
-        this.brush = vis.append("g")
-            .attr("class", "brush")
-            .call(brush)
-            .call(brush.move, [0, this.width].map(x));
+        // this.brush = vis.append("g")
+        //     .attr("class", "brush")
+        //     .call(brush)
+        //     .call(brush.move, [0, this.width].map(x));
   
         function brushed () {
-            const selection = d3.event.selection;
-            console.log(selection)
-            const [x0, x1] = selection.map(x.invert);
-            console.log(x0)
-            console.log(x1)
+            
         }
-
-        vis.selectAll('.overlay')
-        .style({
-        fill: '#4b9e9e',
-        visibility: 'visible'
-        })
 
 
         //Respond to changes in conductor
