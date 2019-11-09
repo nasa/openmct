@@ -264,13 +264,14 @@ export default {
             
             // do something here with selection
             console.log(selection)
+            const [x0, x1] = selection.map(d => this.xScale.invert(d));
+            console.log(`${[x0, x1]}`)
             // clear brush
             d3.select('g.brush').call(this.brush.move, null);
+            // handle resize due to start and end changing
         },
         destroyBrush() {
             d3.select('g.brush').remove()
-            // console.log(test)
-            // d3.select('g.brush').call(brush.move, null);
         }
     },
     watch: {
