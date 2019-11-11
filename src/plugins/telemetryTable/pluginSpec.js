@@ -58,7 +58,7 @@ describe("the plugin", () => {
             type: "test-object",
             telemetry: {
                 values: [{
-                    key: "some-key"
+                    key: "utc"
                 }]
             }
         };
@@ -81,8 +81,9 @@ describe("the plugin", () => {
                 name: "Test Object",
                 telemetry: {
                     values: [{
-                        key: "some-key",
-                        name: "Some attribute",
+                        key: "utc",
+                        name: "Time attribute",
+                        format: "utc",
                         hints: {
                             domain: 1
                         }
@@ -98,48 +99,99 @@ describe("the plugin", () => {
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
-            tableView.show(child, true);
-            return Vue.nextTick();
         });
 
-        it("Renders a column for every item in telemetry metadata",() => {
-            let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(2);
-            expect(headers[0].innerText).toBe('Some attribute');
-            expect(headers[1].innerText).toBe('Another attribute');
-        });
+        describe("columns", () => {
+            beforeEach(() => {
+                tableView.show(child, true);
+                return Vue.nextTick();
+            });
 
-        it("Supports column reordering via drag and drop",() => {
-            let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
-            let fromColumn = columns[0];
-            let toColumn = columns[1];
-            let fromColumnText = fromColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-            let toColumnText = toColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+            it("are rendered for every item in telemetry metadata",() => {
+                let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
+                expect(headers.length).toBe(2);
+                expect(headers[0].innerText).toBe('Time attribute');
+                expect(headers[1].innerText).toBe('Another attribute');
+            });
 
-            let dragStartEvent = createMouseEvent('dragstart');
-            let dragOverEvent = createMouseEvent('dragover');
-            let dropEvent = createMouseEvent('drop');
+            it("Supports reordering via drag and drop",() => {
+                let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
+                let fromColumn = columns[0];
+                let toColumn = columns[1];
+                let fromColumnText = fromColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+                let toColumnText = toColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
 
-            dragStartEvent.dataTransfer =
-                dragOverEvent.dataTransfer =
-                    dropEvent.dataTransfer = new DataTransfer();
+                let dragStartEvent = createMouseEvent('dragstart');
+                let dragOverEvent = createMouseEvent('dragover');
+                let dropEvent = createMouseEvent('drop');
 
-            fromColumn.dispatchEvent(dragStartEvent);
-            toColumn.dispatchEvent(dragOverEvent);
-            toColumn.dispatchEvent(dropEvent);
+                dragStartEvent.dataTransfer =
+                    dragOverEvent.dataTransfer =
+                        dropEvent.dataTransfer = new DataTransfer();
 
-            return Vue.nextTick().then(() => {
-                columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
-                let firstColumn = columns[0];
-                let secondColumn = columns[1];
-                let firstColumnText = firstColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-                let secondColumnText = secondColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+                fromColumn.dispatchEvent(dragStartEvent);
+                toColumn.dispatchEvent(dragOverEvent);
+                toColumn.dispatchEvent(dropEvent);
 
-                expect(fromColumnText).not.toEqual(firstColumnText);
-                expect(fromColumnText).toEqual(secondColumnText);
-                expect(toColumnText).not.toEqual(secondColumnText);
-                expect(toColumnText).toEqual(firstColumnText);
+                return Vue.nextTick().then(() => {
+                    columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
+                    let firstColumn = columns[0];
+                    let secondColumn = columns[1];
+                    let firstColumnText = firstColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+                    let secondColumnText = secondColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
+
+                    expect(fromColumnText).not.toEqual(firstColumnText);
+                    expect(fromColumnText).toEqual(secondColumnText);
+                    expect(toColumnText).not.toEqual(secondColumnText);
+                    expect(toColumnText).toEqual(firstColumnText);
+                });
+            });
+            it("are ordered with domain column first",() => {
+                let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
+                expect(headers[0].innerText).toBe('Time attribute');
             });
         });
+
+        fit("Displays historical telemetry if within bounds", () => {
+            return new Promise((resolve) => {
+                openmct.telemetry.request.and.returnValue(new Promise((innerResolve) => {
+                    resolve();
+                    innerResolve([{
+                        'utc': 10,
+                        'some-other-key': 'Value 1'
+                    }, {
+                        'utc': 20,
+                        'some-other-key': 'Value 1'
+                    }, {
+                        'utc': 30,
+                        'some-other-key': 'Value 1'
+                    }])
+                }));
+                tableView.show(child, true);
+            }).then(Vue.nextTick).then(() => {
+                let rows = element.querySelectorAll('table.c-telemetry-table__body tbody tr');
+                expect(rows.length).toBe(3);
+
+                /*let firstRow = rows[0];
+                let firstRowCells = firstRow.querySelectorAll('td');
+                let secondRow = rows[1];
+                let secondRowCells = firstRow.querySelectorAll('td');
+                let thirdRow = rows[2];
+                let thirdRowCells = firstRow.querySelectorAll('td');*/
+            })
+        });
+        /*
+        it("Does not display historical telemetry if outside of bounds", () => {
+            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([{
+                'utc': 10,
+                'some-other-key': 'Value 1'
+            },{
+                'utc': 20,
+                'some-other-key': 'Value 1'
+            },{
+                'utc': 101,
+                'some-other-key': 'Value 1'
+            }]));
+        });*/
     });
 });

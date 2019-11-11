@@ -4,7 +4,7 @@ export function createOpenMct() {
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
-    openmct.time.timeSystem('utc', {start: 0, end: 1});
+    openmct.time.timeSystem('utc', {start: 0, end: 100});
 
     return openmct;
 }
