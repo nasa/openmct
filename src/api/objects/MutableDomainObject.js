@@ -83,17 +83,14 @@ class MutableDomainObject {
         Object.assign(mutable, object);
         mutable.$observe('$_synchronize_model', (updatedObject) => {
             let clone = JSON.parse(JSON.stringify(updatedObject));
-            clearObject(mutable);
+            let deleted = _.difference(Object.keys(updatedObject), Object.keys(updatedObject));
+            deleted.forEach((propertyName) => delete mutable[propertyName]);
             Object.assign(mutable, clone);
         })
         return mutable;
     }
 }
-function clearObject(object) {
-    Object.keys(object).forEach(propertyName => {
-        delete object[propertyName];
-    })
-}
+
 function qualifiedEventName(object, eventName) {
     var keystring = utils.makeKeyString(object.identifier);
 
