@@ -23,7 +23,7 @@
 
 <template>
     <tr @contextmenu.prevent="showContextMenu">
-        <td>{{name}}</td>
+        <td>{{domainObject.name}}</td>
         <td>{{timestamp}}</td>
         <td :class="valueClass">
             {{value}}
@@ -50,7 +50,6 @@ export default {
         currentObjectPath.unshift(this.domainObject);
 
         return {
-            name: this.domainObject.name,
             timestamp: '---',
             value: '---',
             valueClass: '',
@@ -69,9 +68,6 @@ export default {
             } else {
                 this.valueClass = '';
             }
-        },
-        updateName(name){
-            this.name = name;
         },
         updateTimeSystem(timeSystem) {
             this.value = '---';
@@ -98,14 +94,6 @@ export default {
             .telemetry
             .limitEvaluator(this.domainObject);
 
-        this.stopWatchingMutation = openmct
-            .objects
-            .observe(
-                this.domainObject,
-                '*',
-                this.updateName
-            );
-
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
@@ -126,7 +114,6 @@ export default {
             .then((array) => this.updateValues(array[array.length - 1]));
     },
     destroyed() {
-        this.stopWatchingMutation();
         this.unsubscribe();
         this.openmct.off('timeSystem', this.updateTimeSystem);
     }

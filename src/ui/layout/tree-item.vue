@@ -82,7 +82,7 @@
             if (this.composition) {
                 this.composition.off('add', this.addChild);
                 this.composition.off('remove', this.removeChild);
-                this.children.forEach(child => child.$destroy());
+                this.children.forEach(child => child.object.$destroy());
                 delete this.composition;
             }
         },
@@ -121,7 +121,7 @@
                         }
                         return false;
                     });
-                removed.forEach(removedChild => removed.$destroy());
+                removed.forEach(removedChild => removedChild.object.$destroy());
             },
             finishLoading () {
                 this.isLoading = false;
