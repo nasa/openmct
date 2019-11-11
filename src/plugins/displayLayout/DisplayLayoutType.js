@@ -31,7 +31,7 @@ define(function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     items: [],
-                    layoutGrid: [10, 10],
+                    layoutGrid: [10, 10]
                 };
             },
             form: [

@@ -93,7 +93,7 @@
         &.message-severity-error:before {
             @include legacyMessage();
             content: $glyph-icon-alert-triangle;
-            color: $colorWarningLo;
+            color: $colorWarningHi;
         }
 
         // Messages in a list

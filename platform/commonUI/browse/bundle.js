@@ -21,12 +21,6 @@
  *****************************************************************************/
 
 define([
-    "./src/BrowseController",
-    "./src/PaneController",
-    "./src/InspectorPaneController",
-    "./src/BrowseObjectController",
-    "./src/MenuArrowController",
-    "./src/ObjectHeaderController",
     "./src/navigation/NavigationService",
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
@@ -41,12 +35,6 @@ define([
     "./res/templates/browse/inspector-region.html",
     'legacyRegistry'
 ], function (
-    BrowseController,
-    PaneController,
-    InspectorPaneController,
-    BrowseObjectController,
-    MenuArrowController,
-    ObjectHeaderController,
     NavigationService,
     NavigateAction,
     OrphanNavigationHandler,
@@ -71,70 +59,6 @@ define([
                     "key": "DEFAULT_PATH",
                     "value": "mine",
                     "priority": "fallback"
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "BrowseController",
-                    "implementation": BrowseController,
-                    "depends": [
-                        "$scope",
-                        "$route",
-                        "$location",
-                        "objectService",
-                        "navigationService",
-                        "urlService",
-                        "DEFAULT_PATH"
-                    ]
-                },
-                {
-                    "key": "PaneController",
-                    "implementation": PaneController,
-                    "priority": "preferred",
-                    "depends": [
-                        "$scope",
-                        "agentService",
-                        "$window",
-                        "$location",
-                        "$attrs",
-                        "navigationService"
-                    ]
-                },
-                {
-                    "key": "BrowseObjectController",
-                    "implementation": BrowseObjectController,
-                    "depends": [
-                        "$scope",
-                        "$location",
-                        "$route"
-                    ]
-                },
-                {
-                    "key": "MenuArrowController",
-                    "implementation": MenuArrowController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "InspectorPaneController",
-                    "implementation": InspectorPaneController,
-                    "priority": "preferred",
-                    "depends": [
-                        "$scope",
-                        "agentService",
-                        "$window",
-                        "navigationService",
-                        "$location",
-                        "$attrs"
-                    ]
-                },
-                {
-                    "key": "ObjectHeaderController",
-                    "implementation": ObjectHeaderController,
-                    "depends": [
-                        "$scope"
-                    ]
                 }
             ],
             "representations": [

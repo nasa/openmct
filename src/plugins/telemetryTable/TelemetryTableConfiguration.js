@@ -22,9 +22,8 @@
 
 define([
     'lodash',
-    'EventEmitter',
-    './TelemetryTableColumn'
-], function (_, EventEmitter, TelemetryTableColumn) {
+    'EventEmitter'
+], function (_, EventEmitter) {
 
     class TelemetryTableConfiguration extends EventEmitter {
         constructor(domainObject, openmct) {
@@ -34,7 +33,6 @@ define([
             this.openmct = openmct;
             this.columns = {};
 
-            this.addColumnsForObject = this.addColumnsForObject.bind(this);
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
 
             this.unlistenFromMutation = domainObject.$observe('configuration', configuration => this.updateListeners(configuration));
@@ -45,6 +43,7 @@ define([
             configuration.hiddenColumns = configuration.hiddenColumns || {};
             configuration.columnWidths = configuration.columnWidths || {};
             configuration.columnOrder = configuration.columnOrder || [];
+            configuration.cellFormat = configuration.cellFormat || {};
             configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
 
             return configuration;
@@ -56,25 +55,17 @@ define([
 
         /**
          * @private
-         * @param {*} object 
+         * @param {*} object
          */
         updateListeners(configuration) {
             this.emit('change', configuration);
         }
 
-        addColumnsForAllObjects(objects) {
-            objects.forEach(object => this.addColumnsForObject(object, false));
-        }
-
-        addColumnsForObject(telemetryObject) {
-            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+        addSingleColumnForObject(telemetryObject, column, position) {
             let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            this.columns[objectKeyString] = [];
-
-            metadataValues.forEach(metadatum => {
-                let column = new TelemetryTableColumn(this.openmct, metadatum);
-                this.columns[objectKeyString].push(column);
-            });
+            this.columns[objectKeyString] = this.columns[objectKeyString] || [];
+            position = position || this.columns[objectKeyString].length;
+            this.columns[objectKeyString].splice(position, 0, column);
         }
 
         removeColumnsForObject(objectIdentifier) {

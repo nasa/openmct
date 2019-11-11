@@ -83,7 +83,7 @@ class MutableDomainObject {
         Object.assign(mutable, object);
         mutable.$observe('$_synchronize_model', (updatedObject) => {
             let clone = JSON.parse(JSON.stringify(updatedObject));
-            clearObject(this);
+            clearObject(mutable);
             Object.assign(mutable, clone);
         })
         return mutable;

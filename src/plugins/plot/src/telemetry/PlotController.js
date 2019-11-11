@@ -63,8 +63,11 @@ define([
 
         $scope.pending = 0;
 
+        this.clearData = this.clearData.bind(this);
+
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
+        this.listenTo($scope, 'clearData', this.clearData);
 
         this.config = this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
@@ -74,6 +77,7 @@ define([
         this.followTimeConductor();
 
         this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+        this.keyString = this.openmct.objects.makeKeyString(this.newStyleDomainObject.identifier);
 
         this.filterObserver = this.openmct.objects.observe(
             this.newStyleDomainObject,
@@ -98,7 +102,8 @@ define([
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
-            domain: this.config.xAxis.get('key')
+            domain: this.config.xAxis.get('key'),
+            shouldUseMinMax: this.shouldUseMinMax(series)
         };
 
         series.load(options)
@@ -129,6 +134,11 @@ define([
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this);
+
+        this.listenTo(series, 'change:interpolate', function () {
+            this.loadSeriesData(series);
+        }, this);
+
         this.loadSeriesData(series);
     };
 
@@ -148,8 +158,11 @@ define([
             });
             configStore.add(configId, config);
         }
-        configStore.track(configId);
         return config;
+    };
+
+    PlotController.prototype.shouldUseMinMax = function (series) {
+        return series.model.interpolate !== 'none';
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
@@ -157,7 +170,8 @@ define([
     };
 
     PlotController.prototype.destroy = function () {
-        configStore.untrack(this.config.id);
+        configStore.deleteStore(this.config.id);
+
         this.stopListening();
         if (this.checkForSize) {
             clearInterval(this.checkForSize);
@@ -263,26 +277,28 @@ define([
         });
     };
 
+    PlotController.prototype.clearData = function () {
+        this.config.series.forEach(function (series) {
+            series.reset();
+        });
+    };
+
     /**
      * Export view as JPG.
      */
     PlotController.prototype.exportJPG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
     };
 
     /**
      * Export view as PNG.
      */
     PlotController.prototype.exportPNG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
     };
 
     PlotController.prototype.toggleCursorGuide = function ($event) {

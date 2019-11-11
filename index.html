@@ -27,11 +27,9 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title></title>
         <script src="dist/openmct.js"></script>
-        <link rel="stylesheet" href="dist/styles/openmct.css">
-        <link rel="icon" type="image/png" href="dist/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="dist/favicons/favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="dist/favicons/favicon-16x16.png" sizes="16x16">
-        <link rel="shortcut icon" href="dist/favicons/favicon.ico">
+        <link rel="icon" type="image/png" href="dist/favicons/favicon-96x96.png" sizes="96x96" type="image/x-icon">
+        <link rel="icon" type="image/png" href="dist/favicons/favicon-32x32.png" sizes="32x32" type="image/x-icon">
+        <link rel="icon" type="image/png" href="dist/favicons/favicon-16x16.png" sizes="16x16" type="image/x-icon">
     </head>
     <body>
     </body>
@@ -50,7 +48,6 @@
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.install(openmct.plugins.ImportExport());
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.panel"
         }));
@@ -80,13 +77,10 @@
         }));
         openmct.install(openmct.plugins.SummaryWidget());
         openmct.install(openmct.plugins.Notebook());
-        openmct.install(openmct.plugins.FolderView());
-        openmct.install(openmct.plugins.Tabs());
-        openmct.install(openmct.plugins.FlexibleLayout());
         openmct.install(openmct.plugins.LADTable());
         openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
         openmct.install(openmct.plugins.ObjectMigration());
-        openmct.install(openmct.plugins.GoToOriginalAction());
+        openmct.install(openmct.plugins.ClearData(['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked']));
         openmct.start();
     </script>
 </html>

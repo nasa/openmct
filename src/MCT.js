@@ -38,8 +38,8 @@ define([
     './ui/router/ApplicationRouter',
     './ui/router/Browse',
     '../platform/framework/src/Main',
-    './styles-new/core.scss',
-    './styles-new/notebook.scss',
+    './styles/core.scss',
+    './styles/notebook.scss',
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
@@ -95,12 +95,15 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        /* eslint-disable no-undef */
         this.buildInfo = {
             version: __OPENMCT_VERSION__,
             buildDate: __OPENMCT_BUILD_DATE__,
             revision: __OPENMCT_REVISION__,
             branch: __OPENMCT_BUILD_BRANCH__
         };
+        /* eslint-enable no-undef */
+
 
         this.legacyBundle = { extensions: {
             services: [
@@ -246,16 +249,20 @@ define([
         this.branding = BrandingAPI.default;
 
         this.legacyRegistry = defaultRegistry;
+
+        // Plugin's that are installed by default
+
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
-
-        if (typeof BUILD_CONSTANTS !== 'undefined') {
-            this.install(buildInfoPlugin(BUILD_CONSTANTS));
-        }
+        this.install(this.plugins.ImportExport());
+        this.install(this.plugins.FolderView());
+        this.install(this.plugins.Tabs());
+        this.install(this.plugins.FlexibleLayout());
+        this.install(this.plugins.GoToOriginalAction());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -336,6 +343,8 @@ define([
             domElement = document.body;
         }
 
+        this.element = domElement;
+
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -365,7 +374,8 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        var startPromise = new Main().run(this.legacyRegistry)
+        const startPromise = new Main()
+        startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
                 // OpenMCT Object provider doesn't operate properly unless

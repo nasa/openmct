@@ -24,6 +24,7 @@ const webpackConfig = {
     output: {
         filename: '[name].js',
         library: '[name]',
+        libraryTarget: 'umd',
         path: path.resolve(__dirname, 'dist')
     },
     resolve: {
@@ -35,7 +36,8 @@ const webpackConfig = {
             "bourbon": "bourbon.scss",
             "vue": path.join(__dirname, "node_modules/vue/dist/vue.js"),
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
-            "styles": path.join(__dirname, "src/styles-new")
+            "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
+            "styles": path.join(__dirname, "src/styles")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',

@@ -27,7 +27,7 @@
     cursor: pointer;
     width: 70px;
     height: 20px;
-    background: url('assets/images/logo-app.svg') center no-repeat;
+    background: url('assets/images/logo-openmct.svg') center no-repeat;
 }
 </style>
 <script>

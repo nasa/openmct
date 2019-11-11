@@ -9,7 +9,8 @@ export default {
     props: {
         view: String,
         object: Object,
-        showEditView: Boolean
+        showEditView: Boolean,
+        objectPath: Array
     },
     destroyed() {
         this.clear();
@@ -57,6 +58,8 @@ export default {
                 this.removeSelectable();
                 delete this.removeSelectable;
             }
+
+            this.openmct.objectViews.off('clearData', this.clearData);
         },
         invokeEditModeHandler(editMode) {
             this.currentView.onEditModeChange(editMode);
@@ -70,6 +73,12 @@ export default {
             if (!this.currentObject) {
                 return;
             }
+            
+            this.composition = this.openmct.composition.get(this.currentObject);
+            if (this.composition) {
+                this.loadComposition();
+            }
+
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$el.append(this.viewContainer);
@@ -78,17 +87,19 @@ export default {
                 return;
             }
 
+            let objectPath = this.currentObjectPath || this.objectPath;
+
             if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.currentObject);
+                    this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false);    
+                    this.currentView = provider.view(this.currentObject, false, objectPath);    
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing());
+                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -101,8 +112,10 @@ export default {
                 this.removeSelectable = openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
+
+            this.openmct.objectViews.on('clearData', this.clearData);
         },
-        show(object, viewKey, immediatelySelect) {
+        show(object, viewKey, immediatelySelect, currentObjectPath) {
             if (this.unlisten) {
                 this.unlisten();
             }
@@ -117,6 +130,10 @@ export default {
             this.composition = this.openmct.composition.get(this.currentObject);
             if (this.composition) {
                 this.loadComposition();
+            }
+
+            if (currentObjectPath) {
+                this.currentObjectPath = currentObjectPath;
             }
 
             this.viewKey = viewKey;
@@ -174,6 +191,22 @@ export default {
         getComposableDomainObject(event) {
             let serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
             return JSON.parse(serializedDomainObject);
+        },
+        clearData(domainObject) {
+            if (domainObject) {
+                let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
+                    currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
+                
+                if (clearKeyString === currentObjectKeyString) {
+                    if (this.currentView.onClearData) {
+                        this.currentView.onClearData();
+                    }
+                }
+            } else {
+                if (this.currentView.onClearData) {
+                    this.currentView.onClearData();
+                }
+            }
         }
     }
 }

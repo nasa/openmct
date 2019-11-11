@@ -83,7 +83,7 @@ function (
             mounted: self.focusOnEntry
         };
 
-        var notebookVue = Vue.extend({
+        var NotebookVue = Vue.extend({
             template: NotebookTemplate,
             provide: {openmct: self.openmct, domainObject: self.domainObject},
             components: {
@@ -114,7 +114,7 @@ function (
             }
         });
 
-        this.NotebookVue =  new notebookVue();
+        this.NotebookVue =  new NotebookVue();
         container.appendChild(this.NotebookVue.$mount().$el);
     };
 

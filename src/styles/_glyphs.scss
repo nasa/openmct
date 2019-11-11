@@ -1,0 +1,222 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+@font-face {
+    // Use https://icomoon.io/app with `Icomoon.Open MCT Symbols 2018.json` to generate font files
+    font-family: 'symbolsfont';
+    src: url('./fonts/Open-MCT-Symbols-16px.woff') format('woff'),
+    url('./fonts/Open-MCT-Symbols-16px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    // Use https://icomoon.io/app with icomoon-project-Open-MCT-Symbols-12px.json to generate font files
+    font-family: 'symbolsfont-12px';
+    src: url('./fonts/Open-MCT-Symbols-12px.woff') format('woff'),
+    url('./fonts/Open-MCT-Symbols-12px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/************************** 16 PX CLASSES */
+.icon-alert-rect {  @include glyphBefore($glyph-icon-alert-rect); }
+.icon-alert-triangle {  @include glyphBefore($glyph-icon-alert-triangle); }
+.icon-arrow-up {  @include glyphBefore($glyph-icon-arrow-up); }
+.icon-arrow-double-up {  @include glyphBefore($glyph-icon-arrow-double-up); }
+.icon-arrow-tall-up {  @include glyphBefore($glyph-icon-arrow-tall-up); }
+.icon-arrow-right {  @include glyphBefore($glyph-icon-arrow-right); }
+.icon-arrow-right-equilateral {  @include glyphBefore($glyph-icon-arrow-right-equilateral); }
+.icon-arrow-down {  @include glyphBefore($glyph-icon-arrow-down); }
+.icon-arrow-double-down {  @include glyphBefore($glyph-icon-arrow-double-down); }
+.icon-arrow-tall-down {  @include glyphBefore($glyph-icon-arrow-tall-down); }
+.icon-arrow-left {  @include glyphBefore($glyph-icon-arrow-left); }
+.icon-asterisk {  @include glyphBefore($glyph-icon-asterisk); }
+.icon-bell {  @include glyphBefore($glyph-icon-bell); }
+.icon-box-round-corners {  @include glyphBefore($glyph-icon-box-round-corners); }
+.icon-box-with-arrow {  @include glyphBefore($glyph-icon-box-with-arrow); }
+.icon-check {  @include glyphBefore($glyph-icon-check); }
+.icon-connectivity {  @include glyphBefore($glyph-icon-connectivity); }
+.icon-database-in-brackets {  @include glyphBefore($glyph-icon-database-in-brackets); }
+.icon-eye-open {  @include glyphBefore($glyph-icon-eye-open); }
+.icon-gear {  @include glyphBefore($glyph-icon-gear); }
+.icon-hourglass {  @include glyphBefore($glyph-icon-hourglass); }
+.icon-info {  @include glyphBefore($glyph-icon-info); }
+.icon-link {  @include glyphBefore($glyph-icon-link); }
+.icon-lock {  @include glyphBefore($glyph-icon-lock); }
+.icon-minus {  @include glyphBefore($glyph-icon-minus); }
+.icon-people {  @include glyphBefore($glyph-icon-people); }
+.icon-person {  @include glyphBefore($glyph-icon-person); }
+.icon-plus {  @include glyphBefore($glyph-icon-plus); }
+.icon-plus-in-rect {  @include glyphBefore($glyph-icon-plus-in-rect); }
+.icon-trash {  @include glyphBefore($glyph-icon-trash); }
+.icon-x {  @include glyphBefore($glyph-icon-x); }
+.icon-brackets {  @include glyphBefore($glyph-icon-brackets); }
+.icon-crosshair {  @include glyphBefore($glyph-icon-crosshair); }
+.icon-grippy {  @include glyphBefore($glyph-icon-grippy); }
+.icon-grid {  @include glyphBefore($glyph-icon-grid); }
+.icon-grippy-ew {  @include glyphBefore($glyph-icon-grippy-ew); }
+.icon-columns {  @include glyphBefore($glyph-icon-columns); }
+.icon-rows {  @include glyphBefore($glyph-icon-rows); }
+.icon-filter {  @include glyphBefore($glyph-icon-filter); }
+.icon-filter-outline {  @include glyphBefore($glyph-icon-filter-outline); }
+.icon-suitcase {  @include glyphBefore($glyph-icon-suitcase); }
+.icon-cursor-lock {  @include glyphBefore($glyph-icon-cursor-lock); }
+.icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
+.icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
+.icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
+.icon-calendar {  @include glyphBefore($glyph-icon-calendar); }
+.icon-chain-links {  @include glyphBefore($glyph-icon-chain-links); }
+.icon-download {  @include glyphBefore($glyph-icon-download); }
+.icon-duplicate {  @include glyphBefore($glyph-icon-duplicate); }
+.icon-folder-new {  @include glyphBefore($glyph-icon-folder-new); }
+.icon-fullscreen-collapse {  @include glyphBefore($glyph-icon-fullscreen-collapse); }
+.icon-fullscreen-expand {  @include glyphBefore($glyph-icon-fullscreen-expand); }
+.icon-layers {  @include glyphBefore($glyph-icon-layers); }
+.icon-line-horz {  @include glyphBefore($glyph-icon-line-horz); }
+.icon-magnify {  @include glyphBefore($glyph-icon-magnify); }
+.icon-magnify-in {  @include glyphBefore($glyph-icon-magnify-in); }
+.icon-magnify-out {  @include glyphBefore($glyph-icon-magnify-out); }
+.icon-menu-hamburger {  @include glyphBefore($glyph-icon-menu-hamburger); }
+.icon-move {  @include glyphBefore($glyph-icon-move); }
+.icon-new-window {  @include glyphBefore($glyph-icon-new-window); }
+.icon-paint-bucket {  @include glyphBefore($glyph-icon-paint-bucket); }
+.icon-pencil {  @include glyphBefore($glyph-icon-pencil); }
+.icon-pencil-in-brackets {  @include glyphBefore($glyph-icon-pencil-in-brackets); }
+.icon-play {  @include glyphBefore($glyph-icon-play); }
+.icon-pause {  @include glyphBefore($glyph-icon-pause); }
+.icon-plot-resource {  @include glyphBefore($glyph-icon-plot-resource); }
+.icon-pointer-left {  @include glyphBefore($glyph-icon-pointer-left); }
+.icon-pointer-right {  @include glyphBefore($glyph-icon-pointer-right); }
+.icon-refresh {  @include glyphBefore($glyph-icon-refresh); }
+.icon-save {  @include glyphBefore($glyph-icon-save); }
+.icon-save-as {  @include glyphBefore($glyph-icon-save-as); }
+.icon-sine {  @include glyphBefore($glyph-icon-sine); }
+.icon-font {  @include glyphBefore($glyph-icon-font); }
+.icon-thumbs-strip {  @include glyphBefore($glyph-icon-thumbs-strip); }
+.icon-two-parts-both {  @include glyphBefore($glyph-icon-two-parts-both); }
+.icon-two-parts-one-only {  @include glyphBefore($glyph-icon-two-parts-one-only); }
+.icon-resync {  @include glyphBefore($glyph-icon-resync); }
+.icon-reset {  @include glyphBefore($glyph-icon-reset); }
+.icon-x-in-circle {  @include glyphBefore($glyph-icon-x-in-circle); }
+.icon-brightness {  @include glyphBefore($glyph-icon-brightness); }
+.icon-contrast {  @include glyphBefore($glyph-icon-contrast); }
+.icon-expand {  @include glyphBefore($glyph-icon-expand); }
+.icon-list-view {  @include glyphBefore($glyph-icon-list-view); }
+.icon-grid-snap-to {  @include glyphBefore($glyph-icon-grid-snap-to); }
+.icon-grid-snap-no {  @include glyphBefore($glyph-icon-grid-snap-no); }
+.icon-frame-show {  @include glyphBefore($glyph-icon-frame-show); }
+.icon-frame-hide {  @include glyphBefore($glyph-icon-frame-hide); }
+.icon-import {  @include glyphBefore($glyph-icon-import); }
+.icon-export {  @include glyphBefore($glyph-icon-export); }
+.icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
+.icon-clear-data {  @include glyphBefore($glyph-icon-clear-data); }
+.icon-activity {  @include glyphBefore($glyph-icon-activity); }
+.icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
+.icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
+.icon-clock {  @include glyphBefore($glyph-icon-clock); }
+.icon-database {  @include glyphBefore($glyph-icon-database); }
+.icon-database-query {  @include glyphBefore($glyph-icon-database-query); }
+.icon-dataset {  @include glyphBefore($glyph-icon-dataset); }
+.icon-datatable {  @include glyphBefore($glyph-icon-datatable); }
+.icon-dictionary {  @include glyphBefore($glyph-icon-dictionary); }
+.icon-folder {  @include glyphBefore($glyph-icon-folder); }
+.icon-image {  @include glyphBefore($glyph-icon-image); }
+.icon-layout {  @include glyphBefore($glyph-icon-layout); }
+.icon-object {  @include glyphBefore($glyph-icon-object); }
+.icon-object-unknown {  @include glyphBefore($glyph-icon-object-unknown); }
+.icon-packet {  @include glyphBefore($glyph-icon-packet); }
+.icon-page {  @include glyphBefore($glyph-icon-page); }
+.icon-plot-overlay {  @include glyphBefore($glyph-icon-plot-overlay); }
+.icon-plot-stacked {  @include glyphBefore($glyph-icon-plot-stacked); }
+.icon-session {  @include glyphBefore($glyph-icon-session); }
+.icon-tabular {  @include glyphBefore($glyph-icon-tabular); }
+.icon-tabular-lad {  @include glyphBefore($glyph-icon-tabular-lad); }
+.icon-tabular-lad-set {  @include glyphBefore($glyph-icon-tabular-lad-set); }
+.icon-tabular-realtime {  @include glyphBefore($glyph-icon-tabular-realtime); }
+.icon-tabular-scrolling {  @include glyphBefore($glyph-icon-tabular-scrolling); }
+.icon-telemetry {  @include glyphBefore($glyph-icon-telemetry); }
+.icon-timeline {  @include glyphBefore($glyph-icon-timeline); }
+.icon-timer {  @include glyphBefore($glyph-icon-timer); }
+.icon-topic {  @include glyphBefore($glyph-icon-topic); }
+.icon-box-with-dashed-lines {  @include glyphBefore($glyph-icon-box-with-dashed-lines); }
+.icon-summary-widget {  @include glyphBefore($glyph-icon-summary-widget); }
+.icon-notebook {  @include glyphBefore($glyph-icon-notebook); }
+.icon-tabs-view {  @include glyphBefore($glyph-icon-tabs-view); }
+.icon-flexible-layout {  @include glyphBefore($glyph-icon-flexible-layout); }
+.icon-generator-telemetry {  @include glyphBefore($glyph-icon-generator-telemetry); }
+.icon-generator-events {  @include glyphBefore($glyph-icon-generator-events); }
+.icon-gauge {  @include glyphBefore($glyph-icon-gauge); }
+
+/************************** 12 PX CLASSES */
+// TODO: sync with 16px redo as of 10/25/18
+.icon-filter-12px {  @include glyphBefore($glyph-icon-filter,'symbolsfont-12px'); }
+.icon-filter-outline-12px {  @include glyphBefore($glyph-icon-filter-outline,'symbolsfont-12px'); }
+.icon-crosshair-12px {  @include glyphBefore($glyph-icon-crosshair,'symbolsfont-12px'); }
+.icon-folder-12px {  @include glyphBefore($glyph-icon-folder,'symbolsfont-12px'); }
+.icon-list-view-12px {  @include glyphBefore($glyph-icon-list-view,'symbolsfont-12px'); }
+.icon-grippy-12px {  @include glyphBefore($glyph-icon-grippy,'symbolsfont-12px'); }
+
+/************************** GLYPH BG CLASSES */
+.bg-icon-alert-rect { @include glyphBg($bg-icon-alert-rect); }
+.bg-icon-alert-triangle { @include glyphBg($bg-icon-alert-triangle); }
+.bg-icon-bell { @include glyphBg($bg-icon-bell); }
+.bg-icon-info { @include glyphBg($bg-icon-info); }
+.bg-icon-activity { @include glyphBg($bg-icon-activity); }
+.bg-icon-activity-mode { @include glyphBg($bg-icon-activity-mode); }
+.bg-icon-autoflow-tabular { @include glyphBg($bg-icon-autoflow-tabular); }
+.bg-icon-plus { @include glyphBg($bg-icon-plus); }
+.bg-icon-grippy-ew { @include glyphBg($bg-icon-grippy-ew); }
+.bg-icon-chain-links { @include glyphBg($bg-icon-chain-links); }
+.bg-icon-clock { @include glyphBg($bg-icon-clock); }
+.bg-icon-database { @include glyphBg($bg-icon-database); }
+.bg-icon-database-query { @include glyphBg($bg-icon-database-query); }
+.bg-icon-dataset { @include glyphBg($bg-icon-dataset); }
+.bg-icon-datatable { @include glyphBg($bg-icon-datatable); }
+.bg-icon-dictionary { @include glyphBg($bg-icon-dictionary); }
+.bg-icon-folder { @include glyphBg($bg-icon-folder); }
+.bg-icon-image { @include glyphBg($bg-icon-image); }
+.bg-icon-layout { @include glyphBg($bg-icon-layout); }
+.bg-icon-object { @include glyphBg($bg-icon-object); }
+.bg-icon-object-unknown { @include glyphBg($bg-icon-object-unknown); }
+.bg-icon-packet { @include glyphBg($bg-icon-packet); }
+.bg-icon-page { @include glyphBg($bg-icon-page); }
+.bg-icon-plot-overlay { @include glyphBg($bg-icon-plot-overlay); }
+.bg-icon-plot-stacked { @include glyphBg($bg-icon-plot-stacked); }
+.bg-icon-session { @include glyphBg($bg-icon-session); }
+.bg-icon-tabular { @include glyphBg($bg-icon-tabular); }
+.bg-icon-tabular-lad { @include glyphBg($bg-icon-tabular-lad); }
+.bg-icon-tabular-lad-set { @include glyphBg($bg-icon-tabular-lad-set); }
+.bg-icon-tabular-realtime { @include glyphBg($bg-icon-tabular-realtime); }
+.bg-icon-tabular-scrolling { @include glyphBg($bg-icon-tabular-scrolling); }
+.bg-icon-telemetry { @include glyphBg($bg-icon-telemetry); }
+.bg-icon-timeline { @include glyphBg($bg-icon-timeline); }
+.bg-icon-timer { @include glyphBg($bg-icon-timer); }
+.bg-icon-topic { @include glyphBg($bg-icon-topic); }
+.bg-icon-box-with-dashed-lines { @include glyphBg($bg-icon-box-with-dashed-lines); }
+.bg-icon-summary-widget { @include glyphBg($bg-icon-summary-widget); }
+.bg-icon-notebook { @include glyphBg($bg-icon-notebook); }
+.bg-icon-tabs-view { @include glyphBg($bg-icon-tabs-view); }
+.bg-icon-flexible-layout { @include glyphBg($bg-icon-flexible-layout); }
+.bg-icon-generator-telemetry { @include glyphBg($bg-icon-generator-telemetry); }
+.bg-icon-generator-events { @include glyphBg($bg-icon-generator-events); }
+.bg-icon-gauge { @include glyphBg($bg-icon-gauge); }

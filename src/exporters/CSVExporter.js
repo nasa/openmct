@@ -32,6 +32,6 @@ class CSVExporter {
         let blob = new Blob([csvText], { type: "text/csv" });
         saveAs(blob, filename);
     }
-};
+}
 
 export default CSVExporter;

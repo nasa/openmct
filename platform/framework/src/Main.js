@@ -41,7 +41,7 @@ define(
         function Main() {
         }
 
-        Main.prototype.run = function (legacyRegistry) {
+        Main.prototype.run = function (openmct) {
             // Get a reference to Angular's injector, so we can get $http and $log
             // services, which are useful to the framework layer.
             var injector = angular.injector(['ng']);
@@ -53,7 +53,7 @@ define(
             }
 
             return injector.instantiate(['$http', '$log', FrameworkLayer])
-                .initializeApplication(angular, legacyRegistry, logLevel());
+                .initializeApplication(angular, openmct, logLevel());
         };
 
         return Main;

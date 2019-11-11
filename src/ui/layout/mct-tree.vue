@@ -13,16 +13,31 @@
             v-if="isLoading"></div>
         <!-- end loading -->
 
-        <div class="c-tree-and-search__no-results" v-if="treeItems.length === 0">
+        <div class="c-tree-and-search__no-results" 
+            v-if="(allTreeItems.length === 0) || (searchValue && filteredTreeItems.length === 0)">
             No results found
         </div>
+
+        <!-- main tree -->
         <ul class="c-tree-and-search__tree c-tree"
-            v-if="!isLoading">
-            <tree-item v-for="treeItem in treeItems"
+            v-if="!isLoading"
+            v-show="!searchValue">
+            <tree-item v-for="treeItem in allTreeItems"
                        :key="treeItem.id"
                        :node="treeItem">
             </tree-item>
         </ul>
+        <!-- end main tree -->
+
+        <!-- search tree -->
+        <ul class="c-tree-and-search__tree c-tree"
+            v-if="searchValue">
+            <tree-item v-for="treeItem in filteredTreeItems"
+                    :key="treeItem.id"
+                    :node="treeItem">
+            </tree-item>
+        </ul>
+        <!-- end search tree -->
     </div>
 </template>
 
@@ -81,6 +96,10 @@
             padding: $interiorMargin - $aPad;
             transition: background 150ms ease;
 
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
+
             &:hover {
                 background: $colorItemTreeHoverBg;
                 .c-tree__item__type-icon:before {
@@ -114,10 +133,6 @@
                     color: $colorItemTreeEditingFg;
                     font-style: italic;
                 }
-            }
-
-            &__view-control {
-                margin-right: $interiorMarginSm;
             }
 
             // Object labels in trees
@@ -186,15 +201,6 @@
                 allTreeItems: [],
                 filteredTreeItems: [],
                 isLoading: false
-            }
-        },
-        computed: {
-            treeItems() {
-                if (this.searchValue === '') {
-                    return this.allTreeItems;
-                } else {
-                    return this.filteredTreeItems;
-                }
             }
         },
         methods: {

@@ -43,7 +43,8 @@ define([
     './LADTable/plugin',
     './filters/plugin',
     './objectMigration/plugin',
-    './goToOriginalAction/plugin'
+    './goToOriginalAction/plugin',
+    './clearData/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -67,11 +68,13 @@ define([
     LADTable,
     Filters,
     ObjectMigration,
-    GoToOriginalAction
+    GoToOriginalAction,
+    ClearData
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items'
+        MyItems: 'platform/features/my-items',
+        CouchDB: 'platform/persistence/couch'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -166,6 +169,7 @@ define([
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.ClearData = ClearData;
 
     return plugins;
 });

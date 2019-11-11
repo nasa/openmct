@@ -20,26 +20,55 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<tr :style="{ top: rowTop }" :class="rowLimitClass">
-    <td v-for="(title, key) in headers" 
+<tr :style="{ top: rowTop }"
+    class="noselect"
+    :class="[
+        rowClass,
+        {'is-selected': marked}
+    ]"
+    v-on="listeners">
+    <component v-for="(title, key) in headers" 
         :key="key"
+        :is="componentList[key]"
+        :columnKey="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
-        :title="formattedRow[key]"
-        :class="cellLimitClasses[key]">{{formattedRow[key]}}</td>
+        :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
+        :objectPath="objectPath"
+        :row="row">
+    </component>
 </tr>
 </template>
 
 <style>
+    .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+    }
 </style>
 
 <script>
+import TableCell from './table-cell.vue';
+
 export default {
+    inject: ['openmct', 'objectPath'],
     data: function () {
         return {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-            formattedRow: this.row.getFormattedDatum(this.headers),
-            rowLimitClass: this.row.getRowLimitClass(),
-            cellLimitClasses: this.row.getCellLimitClasses()
+            rowClass: this.row.getRowClass(),
+            cellLimitClasses: this.row.getCellLimitClasses(),
+            componentList: Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+                return components
+            }, {}),
+            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+                selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+                return selectable;
+            }, {})
         }
     },
     props: {
@@ -55,6 +84,10 @@ export default {
             type: Object,
             required: true
         },
+        objectPath: {
+            type: Array,
+            required: false
+        },
         rowIndex: {
             type: Number,
             required: false,
@@ -69,6 +102,11 @@ export default {
             type: Number,
             required: false,
             default: 0
+        },
+        marked: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     methods: {
@@ -76,9 +114,54 @@ export default {
             this.rowTop = (rowOffset + this.rowIndex) * this.rowHeight + 'px';
         },
         formatRow: function (row) {
-            this.formattedRow = row.getFormattedDatum(this.headers);
-            this.rowLimitClass = row.getRowLimitClass();
+            this.rowClass = row.getRowClass();
             this.cellLimitClasses = row.getCellLimitClasses();
+        },
+        markRow: function (event) {
+            let keyCtrlModifier = false;
+
+            if (event.ctrlKey || event.metaKey) {
+                keyCtrlModifier = true;
+            }
+
+            if (event.shiftKey) {
+                this.$emit('markMultipleConcurrent', this.rowIndex);
+            } else {
+                if (this.marked) {
+                    this.$emit('unmark', this.rowIndex, keyCtrlModifier);
+                } else {
+                    this.$emit('mark', this.rowIndex, keyCtrlModifier);
+                }
+            }
+        },
+        selectCell(element, columnKey) {
+            if (this.selectableColumns[columnKey]) {
+                 //TODO: This is a hack. Cannot get parent this way.
+                this.openmct.selection.select([{
+                    element: element,
+                    context: {
+                        type: 'table-cell',
+                        row: this.row.objectKeyString,
+                        column: columnKey
+                    }
+                },{
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: this.openmct.router.path[0]
+                    }
+                }], false);
+                event.stopPropagation();
+            }
+        },
+         showContextMenu: function (event) {
+            event.preventDefault();
+
+            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+                let contextualObjectPath = this.objectPath.slice();
+                contextualObjectPath.unshift(domainObject);
+
+                this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
+            });
         }
     },
     // TODO: use computed properties
@@ -86,7 +169,23 @@ export default {
         rowOffset: 'calculateRowTop',
         row: {
             handler: 'formatRow',
-            deep: false
+            deep: true
+        }
+    },
+    components: {
+        TableCell
+    },
+    computed: {
+        listeners() {
+            let listenersObject = {
+                click: this.markRow
+            }
+
+            if (this.row.getContextMenuActions().length) {
+                listenersObject.contextmenu = this.showContextMenu;
+            }
+            
+            return listenersObject;
         }
     }
 }

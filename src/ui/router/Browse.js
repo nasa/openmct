@@ -8,6 +8,7 @@ define([
         let navigateCall = 0;
         let browseObject;
         let mutable;
+        let currentObjectPath;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
 
@@ -30,7 +31,9 @@ define([
                 mutable.$destroy();
             }
             mutable = openmct.objects.getMutable(object);
-            openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true);
+            currentObjectPath = openmct.router.path;
+
+            openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
             openmct.layout.$refs.browseBar.domainObject = mutable;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }

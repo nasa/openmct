@@ -37,7 +37,7 @@ define(
          * @constructor
          */
         class SortedTableRowCollection extends EventEmitter {
-            constructor () {
+            constructor() {
                 super();
 
                 this.dupeCheck = false;
@@ -60,7 +60,7 @@ define(
                     if (rowsAdded.length > 0) {
                         this.emit('add', rowsAdded);
                     }
-                    this.dupeCheck = true;    
+                    this.dupeCheck = true;
                 } else {
                     let wasAdded = this.addOne(rows);
                     if (wasAdded) {
@@ -115,11 +115,10 @@ define(
                 if (this.rows.length === 0) {
                     return 0;
                 }
-                
-                const sortOptionsKey = this.sortOptions.key;
-                const testRowValue = testRow.datum[sortOptionsKey];
-                const firstValue = this.rows[0].datum[sortOptionsKey];
-                const lastValue = this.rows[this.rows.length - 1].datum[sortOptionsKey];
+
+                const testRowValue = this.getValueForSortColumn(testRow);
+                const firstValue = this.getValueForSortColumn(this.rows[0]);
+                const lastValue = this.getValueForSortColumn(this.rows[this.rows.length - 1]);
 
                 lodashFunction = lodashFunction || _.sortedIndex;
 
@@ -133,7 +132,7 @@ define(
                         return 0;
                     } else {
                         return lodashFunction(rows, testRow, (thisRow) => {
-                            return thisRow.datum[sortOptionsKey];
+                            return this.getValueForSortColumn(thisRow);
                         });
                     }
                 } else {
@@ -147,7 +146,7 @@ define(
                     } else {
                         // Use a custom comparison function to support descending sort.
                         return lodashFunction(rows, testRow, (thisRow) => {
-                            const thisRowValue = thisRow.datum[sortOptionsKey];
+                            const thisRowValue = this.getValueForSortColumn(thisRow);
                             if (testRowValue === thisRowValue) {
                                 return EQUAL;
                             } else if (testRowValue < thisRowValue) {
@@ -206,7 +205,7 @@ define(
                     this.emit('sort');
                 }
                 // Return duplicate to avoid direct modification of underlying object
-                return Object.assign({}, this.sortOptions); 
+                return Object.assign({}, this.sortOptions);
             }
 
             removeAllRowsForObject(objectKeyString) {
@@ -218,25 +217,32 @@ define(
                     }
                     return true;
                 });
+
                 this.emit('remove', removed);
+            }
+
+            getValueForSortColumn(row) {
+                return row.datum[this.sortOptions.key];
             }
 
             remove(removedRows) {
                 this.rows = this.rows.filter(row => {
                     return removedRows.indexOf(row) === -1;
                 });
+
                 this.emit('remove', removedRows);
             }
 
-            getRows () {
+            getRows() {
                 return this.rows;
             }
 
             clear() {
                 let removedRows = this.rows;
                 this.rows = [];
+
                 this.emit('remove', removedRows);
             }
         }
-    return SortedTableRowCollection;
-});
+        return SortedTableRowCollection;
+    });

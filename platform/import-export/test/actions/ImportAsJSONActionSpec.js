@@ -27,7 +27,7 @@ define(
     ],
     function (ImportAsJSONAction, domainObjectFactory) {
 
-        describe("The import JSON action", function () {
+        xdescribe("The import JSON action", function () {
 
             var context = {};
             var action,

@@ -28,6 +28,7 @@ export default class PreviewAction {
          * Metadata
          */
         this.name = 'Preview';
+        this.key = 'preview';
         this.description = 'Preview in large dialog';
         this.cssClass = 'icon-eye-open';
 

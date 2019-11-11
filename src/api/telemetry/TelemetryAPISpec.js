@@ -25,7 +25,7 @@ define([
 ], function (
     TelemetryAPI
 ) {
-    describe('Telemetry API', function () {
+    xdescribe('Telemetry API', function () {
         var openmct;
         var telemetryAPI;
         var mockTypeService;
@@ -329,7 +329,7 @@ define([
                         hints: {
                             priority: 2
                         }
-                        
+
                     },
                     {
                         key: "timestamp",
@@ -365,7 +365,7 @@ define([
                     {
                         key: "name",
                         name: "Name"
-                        
+
                     },
                     {
                         key: "timestamp",
@@ -392,7 +392,7 @@ define([
                     {
                         key: "name",
                         name: "Name"
-                        
+
                     },
                     {
                         key: "timestamp-utc",
@@ -434,7 +434,7 @@ define([
                     {
                         key: "name",
                         name: "Name"
-                        
+
                     },
                     {
                         key: "timestamp-utc",
@@ -486,7 +486,7 @@ define([
                         hints: {
                             priority: 1
                         }
-                        
+
                     },
                     {
                         key: "timestamp-utc",

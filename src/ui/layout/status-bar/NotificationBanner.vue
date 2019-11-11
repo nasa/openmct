@@ -57,20 +57,19 @@
 
     .c-message-banner {
         $closeBtnSize: 7px;
-        $m: 1px;
 
         border-radius: $controlCr;
         @include statusBannerColors($colorStatusDefault, $colorStatusFg);
         cursor: pointer;
-
         display: flex;
         align-items: center;
         left: 50%;
+        top: 50%;
         max-width: 50%;
-        padding: $interiorMargin $interiorMargin $interiorMargin $interiorMarginLg;
+        max-height: 25px;
+        padding: $interiorMarginSm $interiorMargin $interiorMarginSm $interiorMarginLg;
         position: absolute;
-        transform: translateX(-50%);
-        bottom: $m;
+        transform: translate(-50%, -50%);
         z-index: 2;
 
         > * + * {
@@ -236,7 +235,7 @@
             }
         },
         mounted() {
-            openmct.notifications.on('notification', this.showNotification);
+            this.openmct.notifications.on('notification', this.showNotification);
         }
 
     }

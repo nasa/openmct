@@ -22,12 +22,10 @@
 
 define([
     './components/table.vue',
-    '../../exporters/CSVExporter',
     './TelemetryTable',
     'vue'
 ], function (
     TableComponent,
-    CSVExporter,
     TelemetryTable,
     Vue
 ) {
@@ -50,32 +48,34 @@ define([
             canEdit(domainObject) {
                 return domainObject.type === 'table';
             },
-            view(domainObject) {
-                let csvExporter = new CSVExporter.default();
+            view(domainObject, isEditing, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
-                    show: function (element, isEditing) {
+                    show: function (element, editMode) {
                         component = new Vue({
                             data() {
                                 return {
-                                    isEditing: false
+                                    isEditing: editMode
                                 }
                             },
                             components: {
-                                TableComponent: TableComponent.default,
+                                TableComponent: TableComponent.default
                             },
                             provide: {
                                 openmct,
-                                csvExporter,
-                                table
+                                table,
+                                objectPath
                             },
                             el: element,
-                            template: '<table-component :isEditing="isEditing"></table-component>'
+                            template: '<table-component :isEditing="isEditing" :enableMarking="true"></table-component>'
                         });
                     },
-                    onEditModeChange(isEditing) {
-                        component.isEditing = isEditing;
+                    onEditModeChange(editMode) {
+                        component.isEditing = editMode;
+                    },
+                    onClearData() {
+                        table.clearData();
                     },
                     destroy: function (element) {
                         component.$destroy();

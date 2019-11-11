@@ -140,7 +140,8 @@ define([
          * @returns {Promise}
          */
         fetch: function (options) {
-            options = _.extend({}, {size: 1000, strategy: 'minmax', filters: this.filters}, options || {});
+            const strategy = options.shouldUseMinMax ? 'minMax' : undefined;
+            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
                     .telemetry
@@ -371,6 +372,19 @@ define([
          */
         updateFiltersAndRefresh: function (updatedFilters) {
             this.filters = updatedFilters;
+            this.reset();
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                delete this.unsubscribe;
+            }
+            this.fetch();
+        },
+
+        /**
+         * Clears the plot series, unsubscribes and resubscribes
+         * @public
+         */
+        refresh: function () {
             this.reset();
             if (this.unsubscribe) {
                 this.unsubscribe();
