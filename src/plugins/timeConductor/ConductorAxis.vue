@@ -138,6 +138,9 @@ export default {
         }
     },
     methods: {
+        isTimeFixed() {
+            return this.openmct.time.clock() === undefined;
+        },
         setScale() {
             let timeSystem = this.openmct.time.timeSystem();
             let bounds = this.bounds;
@@ -180,9 +183,8 @@ export default {
         },
         getActiveFormatter() {
             let timeSystem = this.openmct.time.timeSystem();
-            let isFixed = this.openmct.time.clock() === undefined;
 
-            if (isFixed) {
+            if (this.isTimeFixed()) {
                 return this.getFormatter(timeSystem.timeFormat);
             } else {
                 return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -194,8 +196,7 @@ export default {
             }).formatter;
         },
         dragStart($event){
-            let isFixed = this.openmct.time.clock() === undefined;
-            if (isFixed){
+            if (this.isTimeFixed()){
                 this.dragStartX = $event.clientX;
 
                 document.addEventListener('mousemove', this.drag);
@@ -265,6 +266,7 @@ export default {
             // do something here with selection
             console.log(selection)
             const [x0, x1] = selection.map(d => this.xScale.invert(d));
+
             console.log(`${[x0, x1]}`)
             // clear brush
             d3.select('g.brush').call(this.brush.move, null);
