@@ -48,6 +48,7 @@
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.LocalTimeSystem());
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.panel"
         }));
@@ -72,7 +73,24 @@
                         start: - THIRTY_MINUTES,
                         end: FIVE_MINUTES
                     }
-                }
+                },
+                {
+                    name: "Fixed",
+                    timeSystem: 'local',
+                    bounds: {
+                        start: Date.now() - THIRTY_MINUTES,
+                        end: Date.now()
+                    }
+                },
+                {
+                    name: "Realtime",
+                    timeSystem: 'local',
+                    clock: 'local',
+                    clockOffsets: {
+                        start: - THIRTY_MINUTES,
+                        end: FIVE_MINUTES
+                    }
+                },
             ]
         }));
         openmct.install(openmct.plugins.SummaryWidget());
