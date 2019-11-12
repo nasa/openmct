@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,18 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@import "vendor/normalize-min";
-@import "sass-base";
+/***************** PLOTLY OVERRIDES */
+.plot-container.plotly {
+    .bglayer .bg {
+        fill: $colorPlotBg !important;
+        fill-opacity: 1 !important;
+        stroke: $colorInteriorBorder;
+        stroke-width: 1 !important;
+    }
 
-/******************** RENDERS CSS */
-@import "about";
-@import "glyphs";
-@import "global";
-@import "status";
-@import "controls";
-@import "forms";
-@import "table";
-@import "legacy";
-@import "legacy-plots";
-@import "plotly";
-@import "legacy-messages";
+    .cartesianlayer .gridlayer {
+        .x,
+        .y {
+            path {
+                opacity: $opacityPlotHash;
+                stroke: $colorPlotHash !important;
+            }
+        }
+    }
+
+    .xtick,
+    .ytick,
+    .g-xtitle,
+    .g-ytitle {
+        text {
+            fill: $colorPlotFg !important;
+            font-size: 12px !important;
+        }
+    }
+}

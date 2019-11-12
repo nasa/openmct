@@ -620,33 +620,3 @@ mct-plot {
         display: inline-block !important;
     }
 }
-
-/***************** PLOTLY OVERRIDES */
-.plot-container.plotly {
-    .bglayer .bg {
-        fill: $colorPlotBg !important;
-        fill-opacity: 1 !important;
-        stroke: $colorInteriorBorder;
-        stroke-width: 1 !important;
-    }
-
-    .cartesianlayer .gridlayer {
-        .x,
-        .y {
-            path {
-                opacity: $opacityPlotHash;
-                stroke: $colorPlotHash !important;
-            }
-        }
-    }
-
-    .xtick,
-    .ytick,
-    .g-xtitle,
-    .g-ytitle {
-        text {
-            fill: $colorPlotFg !important;
-            font-size: 12px !important;
-        }
-    }
-}
