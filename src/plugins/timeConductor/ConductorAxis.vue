@@ -263,14 +263,15 @@ export default {
                 return;
             }
             
-            // do something here with selection
-            console.log(selection)
             const [x0, x1] = selection.map(d => this.xScale.invert(d));
 
-            console.log(`${[x0, x1]}`)
+            this.$emit('zoomAxis', {
+                start: x0,
+                end: x1
+            });
+
             // clear brush
             d3.select('g.brush').call(this.brush.move, null);
-            // handle resize due to start and end changing
         },
         destroyBrush() {
             d3.select('g.brush').remove()

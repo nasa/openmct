@@ -88,9 +88,11 @@
                 </div>
 
                 <conductor-axis
-                        class="c-conductor__ticks"
-                        :bounds="rawBounds"
-                        @panAxis="setViewFromBounds"></conductor-axis>
+                    class="c-conductor__ticks"
+                    :bounds="rawBounds"
+                    @panAxis="setViewFromBounds"
+                    @zoomAxis="setViewFromBounds"
+                ></conductor-axis>
 
             </div>
             <div class="c-conductor__controls">
