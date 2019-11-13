@@ -235,7 +235,17 @@ export default {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
                 this.width = this.$refs.axisHolder.clientWidth;
                 this.setScale();
+                this.destroyBrush();
+                this.initBrush();
+                this.createBrush();
             }
+        },
+        initBrush() {
+            this.brush = d3.brushX()
+                .extent([[0, -this.height], [this.width, this.height]])
+                .on("start", this.brushStart)
+                .on('brush', this.brushed)
+                .on("end", this.brushEnd);
         },
         createBrush() {
             if (!this.isFixed) {
@@ -294,12 +304,14 @@ export default {
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
+                console.log('down')
                 this.altPressed = true;
                 this.destroyBrush();
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
+                console.log('up')
                 this.altPressed = false;
                 this.createBrush();
             }
@@ -327,14 +339,8 @@ export default {
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
 
-        // brush setup
-        this.brush = d3.brushX()
-            .extent([[0, -this.height], [this.width, this.height]])
-            .on("start", this.brushStart)
-            .on('brush', this.brushed)
-            .on("end", this.brushEnd);
-        // Zoom/Brush selection on by default    
-        this.createBrush()
+        this.initBrush();
+        this.createBrush();
     },
     destroyed() {
     }
