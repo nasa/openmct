@@ -238,6 +238,10 @@ export default {
             }
         },
         createBrush() {
+            if (!this.isFixed) {
+                return;
+            }
+
             this.svg = this.svg || d3.select('svg');
             if (!this.svg) {
                 return;
@@ -272,7 +276,10 @@ export default {
             d3.select('g.brush').call(this.brush.move, null);
         },
         destroyBrush() {
-            d3.select('g.brush').remove()
+            const brush = d3.select('g.brush')
+            if (brush){
+                brush.remove();
+            }
         }
     },
     watch: {
@@ -283,7 +290,7 @@ export default {
             deep: true
         },
         isFixed: function(value) {
-            console.log(`isFixed changed to ${value}`)
+            value ? this.createBrush() : this.destroyBrush();
         }
     },
     created() {
