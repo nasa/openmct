@@ -394,14 +394,27 @@ mct-plot {
 }
 
 /****************** _LEGEND.SCSS */
-.gl-plot-legend {
-    display: flex;
-    align-items: flex-start;
+.gl-plot-legend,
+.c-plot-legend {
+    &__wrapper {
+        // Holds view-control and both collapsed and expanded legends
+        flex: 1 1 auto;
+    }
 
     &__view-control {
         padding-top: 2px;
         margin-right: $interiorMarginSm;
     }
+
+    &__header {
+        @include propertiesHeader();
+        margin-bottom: $interiorMarginSm;
+    }
+}
+
+.gl-plot-legend {
+    display: flex;
+    align-items: flex-start;
 
     table {
         table-layout: fixed;
@@ -411,7 +424,9 @@ mct-plot {
             padding: 1px 3px; // Tighter than standard tabular padding
         }
     }
+}
 
+*[class*="-legend"] {
     &.hover-on-plot {
         // User is hovering over the plot to get a value at a point
         .hover-value-enabled {
@@ -499,6 +514,7 @@ mct-plot {
 
         .plot-wrapper-expanded-legend {
             overflow-y: auto;
+            table thead th { background: $legendTableHeadBg; }
         }
     }
 
