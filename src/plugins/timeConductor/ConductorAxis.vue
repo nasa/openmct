@@ -246,9 +246,7 @@ export default {
             if (!this.svg) {
                 return;
             }
-            
-            // const x = d3.scaleLinear([0, 10], [0, this.width])
-            
+
             this.svg.append("g")
                 .attr("class", "brush")
                 .call(this.brush);
@@ -296,14 +294,14 @@ export default {
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
-                this.altPressed = true
-                this.destroyBrush()
+                this.altPressed = true;
+                this.destroyBrush();
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
-                this.altPressed = false
-                this.createBrush()
+                this.altPressed = false;
+                this.createBrush();
             }
         });
     },
