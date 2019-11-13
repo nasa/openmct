@@ -5,7 +5,10 @@ module.exports = {
         "jasmine": true,
         "amd": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/recommended"
+    ],
     "parser": "babel-eslint",
     "parserOptions": {
         "allowImportExportEverywhere": true,
