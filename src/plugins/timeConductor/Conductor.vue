@@ -90,6 +90,7 @@
                 <conductor-axis
                     class="c-conductor__ticks"
                     :bounds="rawBounds"
+                    :isFixed="isFixed"
                     @panAxis="setViewFromBounds"
                     @zoomAxis="setViewFromBounds"
                 ></conductor-axis>

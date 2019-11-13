@@ -130,7 +130,8 @@ const PIXELS_PER_TICK_WIDE = 200;
 export default {
     inject: ['openmct'],
     props: {
-        bounds: Object
+        bounds: Object,
+        isFixed: Boolean
     },
     data() {
         return {
@@ -138,9 +139,6 @@ export default {
         }
     },
     methods: {
-        isTimeFixed() {
-            return this.openmct.time.clock() === undefined;
-        },
         setScale() {
             let timeSystem = this.openmct.time.timeSystem();
             let bounds = this.bounds;
@@ -184,7 +182,7 @@ export default {
         getActiveFormatter() {
             let timeSystem = this.openmct.time.timeSystem();
 
-            if (this.isTimeFixed()) {
+            if (this.isFixed) {
                 return this.getFormatter(timeSystem.timeFormat);
             } else {
                 return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -196,7 +194,7 @@ export default {
             }).formatter;
         },
         dragStart($event){
-            if (this.isTimeFixed()){
+            if (this.isFixed){
                 this.dragStartX = $event.clientX;
 
                 document.addEventListener('mousemove', this.drag);
@@ -283,6 +281,9 @@ export default {
                 this.setScale();
             },
             deep: true
+        },
+        isFixed: function(value) {
+            console.log(`isFixed changed to ${value}`)
         }
     },
     created() {
