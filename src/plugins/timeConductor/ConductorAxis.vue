@@ -134,7 +134,7 @@ export default {
     },
     data() {
         return {
-            altPressed: false,
+            altPressed: false
         }
     },
     methods: {
