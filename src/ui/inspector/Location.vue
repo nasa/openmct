@@ -98,7 +98,7 @@ export default {
     },
     computed: {
         orderedOriginalPath() {
-            return this.originalPath.reverse();
+            return this.originalPath.slice().reverse();
         }
     },
     mounted() {
