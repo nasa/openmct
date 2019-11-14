@@ -144,7 +144,7 @@ export default {
                 }
 
                 // If all values are the same, use it, otherwise mark the item as non-specific.
-                if (values.every(value => value === values[0])) {
+                if (values.every(val => val === values[0])) {
                     value = values[0];
                     toolbarItem.nonSpecific = false;
                 } else {
@@ -180,7 +180,7 @@ export default {
             });
 
             for (const key in values) {
-                if (values[key].every(value => value === values[key][0])) {
+                if (values[key].every(val => val === values[key][0])) {
                     value[key] = values[key][0];
                     toolbarItem.nonSpecific = false;
                 } else {

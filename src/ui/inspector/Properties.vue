@@ -120,8 +120,8 @@ export default {
                 .map((field) => {
                     return {
                         name: field.name,
-                        value: field.path.reduce((object, field) => {
-                            return object[field];
+                        value: field.path.reduce((object, key) => {
+                            return object[key];
                         }, this.item)
                     };
                 });
