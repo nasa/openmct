@@ -20,87 +20,123 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-conductor"
-         :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']">
-        <form class="u-contents" ref="conductorForm" @submit.prevent="updateTimeFromConductor">
-            <div class="c-conductor__time-bounds">
-                <button class="c-input--submit" type="submit" ref="submitButton"></button>
-                <ConductorModeIcon class="c-conductor__mode-icon"></ConductorModeIcon>
+  <div
+    class="c-conductor"
+    :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
+  >
+    <form
+      ref="conductorForm"
+      class="u-contents"
+      @submit.prevent="updateTimeFromConductor"
+    >
+      <div class="c-conductor__time-bounds">
+        <button
+          ref="submitButton"
+          class="c-input--submit"
+          type="submit"
+        />
+        <ConductorModeIcon class="c-conductor__mode-icon" />
 
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
-                     v-if="isFixed">
-                    <!-- Fixed start -->
-                    <div class="c-conductor__start-fixed__label">Start</div>
-                    <input class="c-input--datetime"
-                           type="text" autocorrect="off" spellcheck="false"
-                           ref="startDate"
-                           v-model="formattedBounds.start"
-                           @change="validateAllBounds(); submitForm()" />
-                    <date-picker
-                            v-if="isFixed && isUTCBased"
-                            :default-date-time="formattedBounds.start"
-                            :formatter="timeFormatter"
-                            @date-selected="startDateSelected"></date-picker>
-                </div>
+        <div
+          v-if="isFixed"
+          class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+        >
+          <!-- Fixed start -->
+          <div class="c-conductor__start-fixed__label">
+            Start
+          </div>
+          <input
+            ref="startDate"
+            v-model="formattedBounds.start"
+            class="c-input--datetime"
+            type="text"
+            autocorrect="off"
+            spellcheck="false"
+            @change="validateAllBounds(); submitForm()"
+          >
+          <date-picker
+            v-if="isFixed && isUTCBased"
+            :default-date-time="formattedBounds.start"
+            :formatter="timeFormatter"
+            @date-selected="startDateSelected"
+          />
+        </div>
 
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
-                     v-if="!isFixed">
-                    <!-- RT start -->
-                    <div class="c-direction-indicator icon-minus"></div>
-                    <input class="c-input--hrs-min-sec"
-                           type="text" autocorrect="off"
-                           ref="startOffset"
-                           spellcheck="false"
-                           v-model="offsets.start"
-                           @change="validateAllOffsets(); submitForm()">
-                </div>
+        <div
+          v-if="!isFixed"
+          class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+        >
+          <!-- RT start -->
+          <div class="c-direction-indicator icon-minus" />
+          <input
+            ref="startOffset"
+            v-model="offsets.start"
+            class="c-input--hrs-min-sec"
+            type="text"
+            autocorrect="off"
+            spellcheck="false"
+            @change="validateAllOffsets(); submitForm()"
+          >
+        </div>
 
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-                    <!-- Fixed end and RT 'last update' display -->
-                    <div class="c-conductor__end-fixed__label">
-                        {{ isFixed ? 'End' : 'Updated' }}
-                    </div>
-                    <input class="c-input--datetime"
-                           type="text" autocorrect="off" spellcheck="false"
-                           v-model="formattedBounds.end"
-                           :disabled="!isFixed"
-                           ref="endDate"
-                           @change="validateAllBounds(); submitForm()">
-                    <date-picker
-                            v-if="isFixed && isUTCBased"
-                            class="c-ctrl-wrapper--menus-left"
-                            :default-date-time="formattedBounds.end"
-                            :formatter="timeFormatter"
-                            @date-selected="endDateSelected"></date-picker>
-                </div>
+        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+          <!-- Fixed end and RT 'last update' display -->
+          <div class="c-conductor__end-fixed__label">
+            {{ isFixed ? 'End' : 'Updated' }}
+          </div>
+          <input
+            ref="endDate"
+            v-model="formattedBounds.end"
+            class="c-input--datetime"
+            type="text"
+            autocorrect="off"
+            spellcheck="false"
+            :disabled="!isFixed"
+            @change="validateAllBounds(); submitForm()"
+          >
+          <date-picker
+            v-if="isFixed && isUTCBased"
+            class="c-ctrl-wrapper--menus-left"
+            :default-date-time="formattedBounds.end"
+            :formatter="timeFormatter"
+            @date-selected="endDateSelected"
+          />
+        </div>
 
-                <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
-                     v-if="!isFixed">
-                    <!-- RT end -->
-                    <div class="c-direction-indicator icon-plus"></div>
-                    <input class="c-input--hrs-min-sec"
-                           type="text"
-                           autocorrect="off"
-                           spellcheck="false"
-                           ref="endOffset"
-                           v-model="offsets.end"
-                           @change="validateAllOffsets(); submitForm()">
-                </div>
+        <div
+          v-if="!isFixed"
+          class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
+        >
+          <!-- RT end -->
+          <div class="c-direction-indicator icon-plus" />
+          <input
+            ref="endOffset"
+            v-model="offsets.end"
+            class="c-input--hrs-min-sec"
+            type="text"
+            autocorrect="off"
+            spellcheck="false"
+            @change="validateAllOffsets(); submitForm()"
+          >
+        </div>
 
-                <conductor-axis
-                        class="c-conductor__ticks"
-                        :bounds="rawBounds"
-                        @panAxis="setViewFromBounds"></conductor-axis>
-
-            </div>
-            <div class="c-conductor__controls">
-                <!-- Mode, time system menu buttons and duration slider -->
-                <ConductorMode class="c-conductor__mode-select"></ConductorMode>
-                <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
-            </div>
-            <input type="submit" class="invisible">
-        </form>
-    </div>
+        <conductor-axis
+          class="c-conductor__ticks"
+          :bounds="rawBounds"
+          @panAxis="setViewFromBounds"
+        />
+      </div>
+      <div class="c-conductor__controls">
+        <!-- Mode, time system menu buttons and duration slider -->
+        <ConductorMode class="c-conductor__mode-select" />
+        <ConductorTimeSystem class="c-conductor__time-system-select" />
+      </div>
+      <input
+        type="submit"
+        class="invisible"
+      >
+    </form>
+  </div>
 </template>
 
 <style lang="scss">
@@ -323,7 +359,7 @@ export default {
             durationFormatter: durationFormatter,
             offsets: {
                 start: offsets && durationFormatter.format(Math.abs(offsets.start)),
-                end: offsets && durationFormatter.format(Math.abs(offsets.end)),
+                end: offsets && durationFormatter.format(Math.abs(offsets.end))
             },
             formattedBounds: {
                 start: timeFormatter.format(bounds.start),
@@ -338,6 +374,14 @@ export default {
             showDatePicker: false
         }
     },
+    mounted() {
+        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+
+        this.openmct.time.on('bounds', this.setViewFromBounds);
+        this.openmct.time.on('timeSystem', this.setTimeSystem);
+        this.openmct.time.on('clock', this.setViewFromClock);
+        this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
+    },
     methods: {
         setTimeSystem(timeSystem) {
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
@@ -347,12 +391,12 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setOffsetsFromView($event) {
-            if (this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()) {
                 let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
                 let endOffset = this.durationFormatter.parse(this.offsets.end);
 
                 this.openmct.time.clockOffsets({
-                    start: startOffset, 
+                    start: startOffset,
                     end: endOffset
                 });
             }
@@ -362,7 +406,7 @@ export default {
             }
         },
         setBoundsFromView($event) {
-            if (this.$refs.conductorForm.checkValidity()){
+            if (this.$refs.conductorForm.checkValidity()) {
                 let start = this.timeFormatter.parse(this.formattedBounds.start);
                 let end = this.timeFormatter.parse(this.formattedBounds.end);
 
@@ -404,7 +448,7 @@ export default {
                 [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
             }
         },
-        clearValidationForInput(input){
+        clearValidationForInput(input) {
             input.setCustomValidity('');
             input.title = '';
         },
@@ -419,7 +463,7 @@ export default {
                     formattedDate = this.formattedBounds.end;
                 }
 
-                if (!this.timeFormatter.validate(formattedDate)){
+                if (!this.timeFormatter.validate(formattedDate)) {
                     validationResult = 'Invalid date';
                 } else {
                     let boundsValues = {
@@ -428,8 +472,8 @@ export default {
                     };
                     validationResult = this.openmct.time.validateBounds(boundsValues);
                 }
-                
-                if (validationResult !== true){
+
+                if (validationResult !== true) {
                     input.setCustomValidity(validationResult);
                     input.title = validationResult;
                     return false;
@@ -461,7 +505,7 @@ export default {
                     validationResult = this.openmct.time.validateOffsets(offsetValues);
                 }
 
-                if (validationResult !== true){
+                if (validationResult !== true) {
                     input.setCustomValidity(validationResult);
                     input.title = validationResult;
                     return false;
@@ -482,24 +526,16 @@ export default {
                 format: key
             }).formatter;
         },
-        startDateSelected(date){
+        startDateSelected(date) {
             this.formattedBounds.start = this.timeFormatter.format(date);
             this.validateAllBounds();
             this.submitForm();
         },
-        endDateSelected(date){
+        endDateSelected(date) {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds();
             this.submitForm();
-        },
-    },
-    mounted() {
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-
-        this.openmct.time.on('bounds', this.setViewFromBounds);
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
-        this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
+        }
     }
 }
 </script>

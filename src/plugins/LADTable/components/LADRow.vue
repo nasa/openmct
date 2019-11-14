@@ -22,13 +22,13 @@
  *****************************************************************************/
 
 <template>
-    <tr @contextmenu.prevent="showContextMenu">
-        <td>{{name}}</td>
-        <td>{{timestamp}}</td>
-        <td :class="valueClass">
-            {{value}}
-        </td>
-    </tr>
+  <tr @contextmenu.prevent="showContextMenu">
+    <td>{{ name }}</td>
+    <td>{{ timestamp }}</td>
+    <td :class="valueClass">
+      {{ value }}
+    </td>
+  </tr>
 </template>
 
 <style lang="scss">
@@ -55,38 +55,6 @@ export default {
             value: '---',
             valueClass: '',
             currentObjectPath
-        }
-    },
-    methods: {
-        updateValues(datum) {
-            this.timestamp = this.formats[this.timestampKey].format(datum);
-            this.value = this.formats[this.valueKey].format(datum);
-
-            var limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-
-            if (limit) {
-                this.valueClass = limit.cssClass;
-            } else {
-                this.valueClass = '';
-            }
-        },
-        updateName(name){
-            this.name = name;
-        },
-        updateTimeSystem(timeSystem) {
-            this.value = '---';
-            this.timestamp = '---';
-            this.valueClass = '';
-            this.timestampKey = timeSystem.key;
-
-            this.openmct
-                .telemetry
-                .request(this.domainObject, {strategy: 'latest'})
-                .then((array) => this.updateValues(array[array.length - 1]));
-
-        },
-        showContextMenu(event) {
-           this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     },
     mounted() {
@@ -129,6 +97,38 @@ export default {
         this.stopWatchingMutation();
         this.unsubscribe();
         this.openmct.off('timeSystem', this.updateTimeSystem);
+    },
+    methods: {
+        updateValues(datum) {
+            this.timestamp = this.formats[this.timestampKey].format(datum);
+            this.value = this.formats[this.valueKey].format(datum);
+
+            var limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+
+            if (limit) {
+                this.valueClass = limit.cssClass;
+            } else {
+                this.valueClass = '';
+            }
+        },
+        updateName(name) {
+            this.name = name;
+        },
+        updateTimeSystem(timeSystem) {
+            this.value = '---';
+            this.timestamp = '---';
+            this.valueClass = '';
+            this.timestampKey = timeSystem.key;
+
+            this.openmct
+                .telemetry
+                .request(this.domainObject, {strategy: 'latest'})
+                .then((array) => this.updateValues(array[array.length - 1]));
+
+        },
+        showContextMenu(event) {
+            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        }
     }
 }
 </script>

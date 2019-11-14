@@ -21,72 +21,74 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl">
-        <div 
-            id="js-fl-drag-ghost"
-            class="c-fl__drag-ghost">
-        </div>
+  <div class="c-fl">
+    <div
+      id="js-fl-drag-ghost"
+      class="c-fl__drag-ghost"
+    />
 
-        <div class="c-fl__empty"
-             v-if="areAllContainersEmpty()">
-            <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
-        </div>
-
-        <div class="c-fl__container-holder"
-            :class="{
-                'c-fl--rows': rowsLayout === true
-            }">
-
-            <template v-for="(container, index) in containers">
-
-                <drop-hint
-                    class="c-fl-frame__drop-hint"
-                    v-if="index === 0 && containers.length > 1"
-                    :key="index"
-                    :index="-1"
-                    :allow-drop="allowContainerDrop"
-                    @object-drop-to="moveContainer">
-                </drop-hint>
-
-                <container-component
-                    class="c-fl__container"
-                    :key="container.id"
-                    :index="index"
-                    :container="container"
-                    :rowsLayout="rowsLayout"
-                    :isEditing="isEditing"
-                    @move-frame="moveFrame"
-                    @new-frame="setFrameLocation"
-                    @persist="persist">
-                </container-component>
-
-                <resize-handle
-                    v-if="index !== (containers.length - 1)"
-                    :key="index"
-                    :index="index"
-                    :orientation="rowsLayout ? 'vertical' : 'horizontal'"
-                    :isEditing="isEditing"
-                    @init-move="startContainerResizing"
-                    @move="containerResizing"
-                    @end-move="endContainerResizing">
-                </resize-handle>
-
-                <drop-hint
-                    class="c-fl-frame__drop-hint"
-                    v-if="containers.length > 1"
-                    :key="index"
-                    :index="index"
-                    :allowDrop="allowContainerDrop"
-                    @object-drop-to="moveContainer">
-                </drop-hint>
-            </template>
-        </div>
+    <div
+      v-if="areAllContainersEmpty()"
+      class="c-fl__empty"
+    >
+      <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
     </div>
+
+    <div
+      class="c-fl__container-holder"
+      :class="{
+        'c-fl--rows': rowsLayout === true
+      }"
+    >
+      <template v-for="(container, index) in containers">
+        <drop-hint
+          v-if="index === 0 && containers.length > 1"
+          :key="index"
+          class="c-fl-frame__drop-hint"
+          :index="-1"
+          :allow-drop="allowContainerDrop"
+          @object-drop-to="moveContainer"
+        />
+
+        <container-component
+          :key="container.id"
+          class="c-fl__container"
+          :index="index"
+          :container="container"
+          :rows-layout="rowsLayout"
+          :is-editing="isEditing"
+          @move-frame="moveFrame"
+          @new-frame="setFrameLocation"
+          @persist="persist"
+        />
+
+        <resize-handle
+          v-if="index !== (containers.length - 1)"
+          :key="index"
+          :index="index"
+          :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+          :is-editing="isEditing"
+          @init-move="startContainerResizing"
+          @move="containerResizing"
+          @end-move="endContainerResizing"
+        />
+
+        <drop-hint
+          v-if="containers.length > 1"
+          :key="index"
+          class="c-fl-frame__drop-hint"
+          :index="index"
+          :allow-drop="allowContainerDrop"
+          @object-drop-to="moveContainer"
+        />
+      </template>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
     @import '~styles/sass-base';
-    
+
     @mixin containerGrippy($headerSize, $dir) {
         position: absolute;
         $h: 6px;
@@ -465,14 +467,14 @@ export default {
         ResizeHandle,
         DropHint
     },
+    props: {
+        isEditing: Boolean
+    },
     data() {
         return {
             domainObject: this.layoutObject,
             newFrameLocation: []
         }
-    },
-    props: {
-        isEditing: Boolean
     },
     computed: {
         layoutDirectionStr() {
@@ -489,9 +491,24 @@ export default {
             return this.domainObject.configuration.rowsLayout;
         }
     },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('remove', this.removeChildObject);
+        this.composition.on('add', this.addFrame);
+
+        this.RemoveAction = new RemoveAction(this.openmct);
+
+        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+    },
+    beforeDestroy() {
+        this.composition.off('remove', this.removeChildObject);
+        this.composition.off('add', this.addFrame);
+
+        this.unobserve();
+    },
     methods: {
         areAllContainersEmpty() {
-            return !!!this.containers.filter(container => container.frames.length).length;
+            return !this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
             let container = new Container();
@@ -515,7 +532,7 @@ export default {
             /*
                 add a container when there are no containers in the FL,
                 to prevent user from not being able to add a frame via
-                drag and drop. 
+                drag and drop.
             */
             if (this.containers.length === 0) {
                 this.containers.push(new Container(100));
@@ -589,7 +606,7 @@ export default {
                 return containerPos !== index && (containerPos - 1) !== index
             }
         },
-        persist(index){
+        persist(index) {
             if (index) {
                 this.openmct.objects.mutate(this.domainObject, `configuration.containers[${index}]`, this.containers[index]);
             } else {
@@ -650,28 +667,13 @@ export default {
             this.containers.forEach(container => {
                 container.frames = container.frames.filter(frame => {
                     let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
-                    
+
                     return removeIdentifier !== frameIdentifier;
                 });
             });
 
             this.persist();
         }
-    },
-    mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('remove', this.removeChildObject);
-        this.composition.on('add', this.addFrame);
-
-        this.RemoveAction = new RemoveAction(this.openmct);
-
-        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
-    },
-    beforeDestroy() {
-        this.composition.off('remove', this.removeChildObject);
-        this.composition.off('add', this.addFrame);
-
-        this.unobserve();
     }
 }
 </script>

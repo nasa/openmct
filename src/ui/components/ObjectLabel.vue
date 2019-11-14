@@ -1,13 +1,17 @@
 <template>
-<a class="c-tree__item__label c-object-label"
+  <a
+    class="c-tree__item__label c-object-label"
     draggable="true"
+    :href="objectLink"
     @dragstart="dragStart"
     @click="navigateOrPreview"
-    :href="objectLink">
-    <div class="c-tree__item__type-icon c-object-label__type-icon"
-        :class="typeClass"></div>
+  >
+    <div
+      class="c-tree__item__type-icon c-object-label__type-icon"
+      :class="typeClass"
+    />
     <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
-</a>
+  </a>
 </template>
 
 <style lang="scss">
@@ -67,15 +71,6 @@ export default {
             observedObject: this.domainObject
         };
     },
-    mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
-        }
-        this.previewAction = new PreviewAction(this.openmct);
-    },
     computed: {
         typeClass() {
             let type = this.openmct.types.get(this.observedObject.type);
@@ -85,15 +80,24 @@ export default {
             return type.definition.cssClass;
         }
     },
+    mounted() {
+        if (this.observedObject) {
+            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
+                this.observedObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+        }
+        this.previewAction = new PreviewAction(this.openmct);
+    },
     methods: {
         navigateOrPreview(event) {
-            if (this.openmct.editor.isEditing()){
+            if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
             }
         },
         preview() {
-            if (this.previewAction.appliesTo(this.objectPath)){
+            if (this.previewAction.appliesTo(this.objectPath)) {
                 this.previewAction.invoke(this.objectPath);
             }
         },
@@ -104,13 +108,13 @@ export default {
 
             /*
              * Cannot inspect data transfer objects on dragover/dragenter so impossible to determine composability at
-             * that point. If dragged object can be composed by navigated object, then indicate with presence of 
+             * that point. If dragged object can be composed by navigated object, then indicate with presence of
              * 'composable-domain-object' in data transfer
              */
             if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
-            // serialize domain object anyway, because some views can drag-and-drop objects without composition 
+            // serialize domain object anyway, because some views can drag-and-drop objects without composition
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);

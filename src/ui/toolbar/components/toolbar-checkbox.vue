@@ -1,19 +1,21 @@
 <template>
-    <div class="c-custom-checkbox">
-        <input type="checkbox"
-               :id="uid"
-               :name="options.name"
-               :checked="options.value"
-               :disabled="options.disabled"
-               @change="onChange">
+  <div class="c-custom-checkbox">
+    <input
+      :id="uid"
+      type="checkbox"
+      :name="options.name"
+      :checked="options.value"
+      :disabled="options.disabled"
+      @change="onChange"
+    >
 
-        <label :for="uid">
-            <div class="c-custom-checkbox__box"></div>
-            <div class="c-custom-checkbox__label-text">
-                {{options.name}}
-            </div>
-        </label>
-    </div>
+    <label :for="uid">
+      <div class="c-custom-checkbox__box" />
+      <div class="c-custom-checkbox__label-text">
+        {{ options.name }}
+      </div>
+    </label>
+  </div>
 </template>
 
 <style lang="scss">

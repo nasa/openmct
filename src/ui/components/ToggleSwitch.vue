@@ -1,11 +1,13 @@
 <template>
-    <label class="c-toggle-switch">
-        <input type="checkbox"
-                :id="id"
-                :checked="checked"
-                @change="onUserSelect($event)"/>
-        <span class="c-toggle-switch__slider"></span>
-    </label>
+  <label class="c-toggle-switch">
+    <input
+      :id="id"
+      type="checkbox"
+      :checked="checked"
+      @change="onUserSelect($event)"
+    >
+    <span class="c-toggle-switch__slider" />
+  </label>
 </template>
 
 <style lang="scss">
@@ -63,16 +65,16 @@
 </style>
 
 <script>
-    export default {
-        inject: ['openmct'],
-        props: {
-            id: String,
-            checked: Boolean
-        },
-        methods: {
-            onUserSelect(event) {
-                this.$emit('change', event.target.checked);
-            }
+export default {
+    inject: ['openmct'],
+    props: {
+        id: String,
+        checked: Boolean
+    },
+    methods: {
+        onUserSelect(event) {
+            this.$emit('change', event.target.checked);
         }
     }
+}
 </script>

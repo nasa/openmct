@@ -1,22 +1,53 @@
 <template>
-<div class="c-properties">
+  <div class="c-properties">
     <template v-if="isEditing">
-        <div class="c-properties__header">Table Column Size</div>
-        <ul class="c-properties__section">
-            <li class="c-properties__row">
-                <div class="c-properties__label" title="Auto-size table"><label for="AutoSizeControl">Auto-size</label></div>
-                <div class="c-properties__value"><input type="checkbox" id="AutoSizeControl" :checked="configuration.autosize !== false" @change="toggleAutosize()"></div>            
-            </li>
-        </ul>
-        <div class="c-properties__header">Table Column Visibility</div>
-        <ul class="c-properties__section">
-            <li class="c-properties__row" v-for="(title, key) in headers">
-                <div class="c-properties__label" title="Show or hide column"><label :for="key + 'ColumnControl'">{{title}}</label></div>
-                <div class="c-properties__value"><input type="checkbox" :id="key + 'ColumnControl'" :checked="configuration.hiddenColumns[key] !== true" @change="toggleColumn(key)"></div>
-            </li>
-        </ul>
+      <div class="c-properties__header">
+        Table Column Size
+      </div>
+      <ul class="c-properties__section">
+        <li class="c-properties__row">
+          <div
+            class="c-properties__label"
+            title="Auto-size table"
+          >
+            <label for="AutoSizeControl">Auto-size</label>
+          </div>
+          <div class="c-properties__value">
+            <input
+              id="AutoSizeControl"
+              type="checkbox"
+              :checked="configuration.autosize !== false"
+              @change="toggleAutosize()"
+            >
+          </div>
+        </li>
+      </ul>
+      <div class="c-properties__header">
+        Table Column Visibility
+      </div>
+      <ul class="c-properties__section">
+        <li
+          v-for="(title, key) in headers"
+          class="c-properties__row"
+        >
+          <div
+            class="c-properties__label"
+            title="Show or hide column"
+          >
+            <label :for="key + 'ColumnControl'">{{ title }}</label>
+          </div>
+          <div class="c-properties__value">
+            <input
+              :id="key + 'ColumnControl'"
+              type="checkbox"
+              :checked="configuration.hiddenColumns[key] !== true"
+              @change="toggleColumn(key)"
+            >
+          </div>
+        </li>
+      </ul>
     </template>
-</div>
+  </div>
 </template>
 
 <style>
@@ -34,6 +65,28 @@ export default {
             configuration: this.tableConfiguration.getConfiguration()
         }
     },
+    mounted() {
+        this.unlisteners = [];
+        this.openmct.editor.on('isEditing', this.toggleEdit);
+        let compositionCollection = this.openmct.composition.get(this.tableConfiguration.domainObject);
+
+        compositionCollection.load()
+            .then((composition) => {
+                this.addColumnsForAllObjects(composition);
+                this.updateHeaders(this.tableConfiguration.getAllHeaders());
+
+                compositionCollection.on('add', this.addObject);
+                this.unlisteners.push(compositionCollection.off.bind(compositionCollection, 'add', this.addObject));
+
+                compositionCollection.on('remove', this.removeObject);
+                this.unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject));
+            });
+    },
+    destroyed() {
+        this.tableConfiguration.destroy();
+        this.openmct.editor.off('isEditing', this.toggleEdit);
+        this.unlisteners.forEach((unlisten) => unlisten());
+    },
     methods: {
         updateHeaders(headers) {
             this.headers = headers;
@@ -45,7 +98,7 @@ export default {
             this.tableConfiguration.updateConfiguration(this.configuration);
         },
         addObject(domainObject) {
-                this.addColumnsForObject(domainObject, true);
+            this.addColumnsForObject(domainObject, true);
             this.updateHeaders(this.tableConfiguration.getAllHeaders());
         },
         removeObject(objectIdentifier) {
@@ -70,28 +123,6 @@ export default {
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
             });
         }
-    },
-    mounted() {
-        this.unlisteners = [];
-        this.openmct.editor.on('isEditing', this.toggleEdit);
-        let compositionCollection = this.openmct.composition.get(this.tableConfiguration.domainObject);
-
-        compositionCollection.load()
-            .then((composition) => {
-                this.addColumnsForAllObjects(composition);
-                this.updateHeaders(this.tableConfiguration.getAllHeaders());
-
-                compositionCollection.on('add', this.addObject);
-                this.unlisteners.push(compositionCollection.off.bind(compositionCollection, 'add', this.addObject));
-
-                compositionCollection.on('remove', this.removeObject);
-                this.unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject));
-            });
-    },
-    destroyed() {
-        this.tableConfiguration.destroy();
-        this.openmct.editor.off('isEditing', this.toggleEdit);
-        this.unlisteners.forEach((unlisten) => unlisten());
     }
 }
 </script>

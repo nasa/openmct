@@ -21,17 +21,28 @@
  *****************************************************************************/
 
 <template>
-        <!-- Resize handles -->
-        <div class="c-frame-edit" :style="style">
-            <div class="c-frame-edit__handle c-frame-edit__handle--nw"
-                 @mousedown="startResize([1,1], [-1,-1], $event)"></div>
-            <div class="c-frame-edit__handle c-frame-edit__handle--ne"
-                 @mousedown="startResize([0,1], [1,-1], $event)"></div>
-            <div class="c-frame-edit__handle c-frame-edit__handle--sw"
-                 @mousedown="startResize([1,0], [-1,1], $event)"></div>
-            <div class="c-frame-edit__handle c-frame-edit__handle--se"
-                 @mousedown="startResize([0,0], [1,1], $event)"></div>
-        </div>
+  <!-- Resize handles -->
+  <div
+    class="c-frame-edit"
+    :style="style"
+  >
+    <div
+      class="c-frame-edit__handle c-frame-edit__handle--nw"
+      @mousedown="startResize([1,1], [-1,-1], $event)"
+    />
+    <div
+      class="c-frame-edit__handle c-frame-edit__handle--ne"
+      @mousedown="startResize([0,1], [1,-1], $event)"
+    />
+    <div
+      class="c-frame-edit__handle c-frame-edit__handle--sw"
+      @mousedown="startResize([1,0], [-1,1], $event)"
+    />
+    <div
+      class="c-frame-edit__handle c-frame-edit__handle--se"
+      @mousedown="startResize([0,0], [1,1], $event)"
+    />
+  </div>
 </template>
 
 <style lang="scss">
@@ -95,139 +106,139 @@
 
 
 <script>
-    import LayoutDrag from './../LayoutDrag'
+import LayoutDrag from './../LayoutDrag'
 
-    export default {
-        inject: ['openmct'],
-        props: {
-            selectedLayoutItems: Array,
-            gridSize: Array
-        },        
-        data() {
-            return {
-                dragPosition: undefined
-            }
-        },
-        computed: {
-            style() {
-                let x = Number.POSITIVE_INFINITY;
-                let y = Number.POSITIVE_INFINITY;
-                let width = Number.NEGATIVE_INFINITY;
-                let height = Number.NEGATIVE_INFINITY;
+export default {
+    inject: ['openmct'],
+    props: {
+        selectedLayoutItems: Array,
+        gridSize: Array
+    },
+    data() {
+        return {
+            dragPosition: undefined
+        }
+    },
+    computed: {
+        style() {
+            let x = Number.POSITIVE_INFINITY;
+            let y = Number.POSITIVE_INFINITY;
+            let width = Number.NEGATIVE_INFINITY;
+            let height = Number.NEGATIVE_INFINITY;
 
-                this.selectedLayoutItems.forEach(item => {
-                    if (item.x2 !== undefined) {
-                        let lineWidth = Math.abs(item.x - item.x2);
-                        let lineMinX = Math.min(item.x, item.x2);
-                        x = Math.min(lineMinX, x);
-                        width = Math.max(lineWidth + lineMinX, width);
-                    } else {
-                        x = Math.min(item.x, x);
-                        width = Math.max(item.width + item.x, width);
-                    }
-
-                    if (item.y2 !== undefined) {
-                        let lineHeight = Math.abs(item.y - item.y2);
-                        let lineMinY = Math.min(item.y, item.y2);
-                        y = Math.min(lineMinY, y);
-                        height = Math.max(lineHeight + lineMinY, height);
-                    } else {
-                        y = Math.min(item.y, y);
-                        height = Math.max(item.height + item.y, height);
-                    }
-                });
-
-                if (this.dragPosition) {
-                    [x, y] = this.dragPosition.position;
-                    [width, height] = this.dragPosition.dimensions;
+            this.selectedLayoutItems.forEach(item => {
+                if (item.x2 !== undefined) {
+                    let lineWidth = Math.abs(item.x - item.x2);
+                    let lineMinX = Math.min(item.x, item.x2);
+                    x = Math.min(lineMinX, x);
+                    width = Math.max(lineWidth + lineMinX, width);
                 } else {
-                    width = width - x;
-                    height = height - y;
+                    x = Math.min(item.x, x);
+                    width = Math.max(item.width + item.x, width);
                 }
 
-                this.marqueePosition = {
-                    x: x,
-                    y: y,
-                    width: width,
-                    height: height
+                if (item.y2 !== undefined) {
+                    let lineHeight = Math.abs(item.y - item.y2);
+                    let lineMinY = Math.min(item.y, item.y2);
+                    y = Math.min(lineMinY, y);
+                    height = Math.max(lineHeight + lineMinY, height);
+                } else {
+                    y = Math.min(item.y, y);
+                    height = Math.max(item.height + item.y, height);
                 }
-                return this.getMarqueeStyle(x, y, width, height);
+            });
+
+            if (this.dragPosition) {
+                [x, y] = this.dragPosition.position;
+                [width, height] = this.dragPosition.dimensions;
+            } else {
+                width = width - x;
+                height = height - y;
             }
+
+            this.marqueePosition = {
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            }
+            return this.getMarqueeStyle(x, y, width, height);
+        }
+    },
+    methods: {
+        getMarqueeStyle(x, y, width, height) {
+            return {
+                left: (this.gridSize[0] * x) + 'px',
+                top: (this.gridSize[1] * y) + 'px',
+                width: (this.gridSize[0] * width) + 'px',
+                height: (this.gridSize[1] * height) + 'px'
+            };
         },
-        methods: {
-            getMarqueeStyle(x, y, width, height) {
-                return {
-                    left: (this.gridSize[0] * x) + 'px',
-                    top: (this.gridSize[1] * y) + 'px',
-                    width: (this.gridSize[0] * width) + 'px',
-                    height: (this.gridSize[1] * height) + 'px'
-                };
-            },
-            updatePosition(event) {
-                let currentPosition = [event.pageX, event.pageY];
-                this.initialPosition = this.initialPosition || currentPosition;
-                this.delta = currentPosition.map(function (value, index) {
-                    return value - this.initialPosition[index];
-                }.bind(this));
-            },
-            startResize(posFactor, dimFactor, event) {
-                document.body.addEventListener('mousemove', this.continueResize);
-                document.body.addEventListener('mouseup', this.endResize);
-                this.marqueeStartPosition = {
-                    position: [this.marqueePosition.x, this.marqueePosition.y],
-                    dimensions: [this.marqueePosition.width, this.marqueePosition.height]
-                };
-                this.updatePosition(event);
-                this.activeDrag = new LayoutDrag(this.marqueeStartPosition, posFactor, dimFactor, this.gridSize);
-                event.preventDefault();
-            },
-            continueResize(event) {
-                event.preventDefault();
-                this.updatePosition(event);
-                this.dragPosition = this.activeDrag.getAdjustedPositionAndDimensions(this.delta);
-            },
-            endResize(event) {
-                document.body.removeEventListener('mousemove', this.continueResize);
-                document.body.removeEventListener('mouseup', this.endResize);
-                this.continueResize(event);
+        updatePosition(event) {
+            let currentPosition = [event.pageX, event.pageY];
+            this.initialPosition = this.initialPosition || currentPosition;
+            this.delta = currentPosition.map(function (value, index) {
+                return value - this.initialPosition[index];
+            }.bind(this));
+        },
+        startResize(posFactor, dimFactor, event) {
+            document.body.addEventListener('mousemove', this.continueResize);
+            document.body.addEventListener('mouseup', this.endResize);
+            this.marqueeStartPosition = {
+                position: [this.marqueePosition.x, this.marqueePosition.y],
+                dimensions: [this.marqueePosition.width, this.marqueePosition.height]
+            };
+            this.updatePosition(event);
+            this.activeDrag = new LayoutDrag(this.marqueeStartPosition, posFactor, dimFactor, this.gridSize);
+            event.preventDefault();
+        },
+        continueResize(event) {
+            event.preventDefault();
+            this.updatePosition(event);
+            this.dragPosition = this.activeDrag.getAdjustedPositionAndDimensions(this.delta);
+        },
+        endResize(event) {
+            document.body.removeEventListener('mousemove', this.continueResize);
+            document.body.removeEventListener('mouseup', this.endResize);
+            this.continueResize(event);
 
-                let marqueeStartWidth = this.marqueeStartPosition.dimensions[0];
-                let marqueeStartHeight = this.marqueeStartPosition.dimensions[1];
-                let marqueeStartX = this.marqueeStartPosition.position[0];
-                let marqueeStartY = this.marqueeStartPosition.position[1];
+            let marqueeStartWidth = this.marqueeStartPosition.dimensions[0];
+            let marqueeStartHeight = this.marqueeStartPosition.dimensions[1];
+            let marqueeStartX = this.marqueeStartPosition.position[0];
+            let marqueeStartY = this.marqueeStartPosition.position[1];
 
-                let marqueeEndX = this.dragPosition.position[0];
-                let marqueeEndY = this.dragPosition.position[1];
-                let marqueeEndWidth = this.dragPosition.dimensions[0];
-                let marqueeEndHeight = this.dragPosition.dimensions[1];
+            let marqueeEndX = this.dragPosition.position[0];
+            let marqueeEndY = this.dragPosition.position[1];
+            let marqueeEndWidth = this.dragPosition.dimensions[0];
+            let marqueeEndHeight = this.dragPosition.dimensions[1];
 
-                let scaleWidth =  marqueeEndWidth / marqueeStartWidth;
-                let scaleHeight =  marqueeEndHeight / marqueeStartHeight;
+            let scaleWidth =  marqueeEndWidth / marqueeStartWidth;
+            let scaleHeight =  marqueeEndHeight / marqueeStartHeight;
 
-                let marqueeStart = {
-                    x: marqueeStartX,
-                    y: marqueeStartY,
-                    height: marqueeStartWidth,
-                    width: marqueeStartHeight
-                };
-                let marqueeEnd = {
-                    x: marqueeEndX,
-                    y: marqueeEndY,
-                    width: marqueeEndWidth,
-                    height: marqueeEndHeight
-                };
-                let marqueeOffset = {
-                    x: marqueeEnd.x - marqueeStart.x,
-                    y: marqueeEnd.y - marqueeStart.y
-                };
+            let marqueeStart = {
+                x: marqueeStartX,
+                y: marqueeStartY,
+                height: marqueeStartWidth,
+                width: marqueeStartHeight
+            };
+            let marqueeEnd = {
+                x: marqueeEndX,
+                y: marqueeEndY,
+                width: marqueeEndWidth,
+                height: marqueeEndHeight
+            };
+            let marqueeOffset = {
+                x: marqueeEnd.x - marqueeStart.x,
+                y: marqueeEnd.y - marqueeStart.y
+            };
 
-                this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
-                this.dragPosition = undefined;
-                this.initialPosition = undefined;
-                this.marqueeStartPosition = undefined;
-                this.delta = undefined;
-                event.preventDefault();
-            }
+            this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
+            this.dragPosition = undefined;
+            this.initialPosition = undefined;
+            this.marqueeStartPosition = undefined;
+            this.delta = undefined;
+            event.preventDefault();
         }
     }
+}
 </script>

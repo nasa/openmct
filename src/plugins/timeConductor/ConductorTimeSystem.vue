@@ -20,24 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
-         v-if="selectedTimeSystem.name">
-        <button class="c-button--menu c-time-system-button"
-            :class="selectedTimeSystem.cssClass"
-             @click.prevent="toggle">
-            <span class="c-button__label">{{selectedTimeSystem.name}}</span>
-        </button>
-        <div class="c-menu" v-if="open">
-            <ul>
-                <li @click="setTimeSystemFromView(timeSystem)"
-                    v-for="timeSystem in timeSystems"
-                    :key="timeSystem.key"
-                    :class="timeSystem.cssClass">
-                    {{timeSystem.name}}
-                </li>
-            </ul>
-        </div>
+  <div
+    v-if="selectedTimeSystem.name"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+  >
+    <button
+      class="c-button--menu c-time-system-button"
+      :class="selectedTimeSystem.cssClass"
+      @click.prevent="toggle"
+    >
+      <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
+    </button>
+    <div
+      v-if="open"
+      class="c-menu"
+    >
+      <ul>
+        <li
+          v-for="timeSystem in timeSystems"
+          :key="timeSystem.key"
+          :class="timeSystem.cssClass"
+          @click="setTimeSystemFromView(timeSystem)"
+        >
+          {{ timeSystem.name }}
+        </li>
+      </ul>
     </div>
+  </div>
 </template>
 
 <script>
@@ -54,6 +63,14 @@ export default {
             timeSystems: this.getValidTimesystemsForClock(activeClock)
         };
     },
+    mounted: function () {
+        this.openmct.time.on('timeSystem', this.setViewFromTimeSystem);
+        this.openmct.time.on('clock', this.setViewFromClock);
+    },
+    destroyed: function () {
+        this.openmct.time.off('timeSystem', this.setViewFromTimeSystem);
+        this.openmct.time.on('clock', this.setViewFromClock);
+    },
     methods: {
         getValidTimesystemsForClock(clock) {
             return this.configuration.menuOptions
@@ -64,7 +81,7 @@ export default {
             if (timeSystem.key !== this.selectedTimeSystem.key) {
                 let activeClock = this.openmct.time.clock();
                 let configuration = this.getMatchingConfig({
-                    clock: activeClock && activeClock.key, 
+                    clock: activeClock && activeClock.key,
                     timeSystem: timeSystem.key
                 });
                 if (activeClock === undefined) {
@@ -111,14 +128,6 @@ export default {
             let activeClock = this.openmct.time.clock();
             this.timeSystems = this.getValidTimesystemsForClock(activeClock);
         }
-    },
-    mounted: function () {
-        this.openmct.time.on('timeSystem', this.setViewFromTimeSystem);
-        this.openmct.time.on('clock', this.setViewFromClock);
-    },
-    destroyed: function () {
-        this.openmct.time.off('timeSystem', this.setViewFromTimeSystem);
-        this.openmct.time.on('clock', this.setViewFromClock);
     }
 
 }

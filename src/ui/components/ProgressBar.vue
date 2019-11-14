@@ -1,17 +1,20 @@
 <template>
-    <div class="c-progress-bar">
-        <div class="c-progress-bar__holder">
-            <div class="c-progress-bar__bar"
-                 :class="{'--indeterminate': model.progressPerc === 'unknown' }"
-                 :style="`width: ${model.progressPerc}%;`">
-            </div>
-        </div>
-        <div class="c-progress-bar__text"
-             v-if="model.progressText !== undefined">
-            <span v-if="model.progressPerc > 0">{{model.progressPerc}}% complete. </span>
-            {{model.progressText}}
-        </div>
+  <div class="c-progress-bar">
+    <div class="c-progress-bar__holder">
+      <div
+        class="c-progress-bar__bar"
+        :class="{'--indeterminate': model.progressPerc === 'unknown' }"
+        :style="`width: ${model.progressPerc}%;`"
+      />
     </div>
+    <div
+      v-if="model.progressText !== undefined"
+      class="c-progress-bar__text"
+    >
+      <span v-if="model.progressPerc > 0">{{ model.progressPerc }}% complete. </span>
+      {{ model.progressText }}
+    </div>
+  </div>
 </template>
 
 <style lang="scss">

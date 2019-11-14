@@ -20,26 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<th 
+  <th
     :style="{ width: columnWidth + 'px', 'max-width': columnWidth + 'px'}"
     :draggable="isEditing"
     @mouseup="sort"
     v-on="isEditing ? {
-        dragstart: columnMoveStart,
-        drop: columnMoveEnd,
-        dragleave: hideDropTarget,
-        dragover: dragOverColumn
-    } : {}">
-        <div class="c-telemetry-table__headers__content" :class="[
-            isSortable ? 'is-sortable' : '', 
-            isSortable && sortOptions.key === headerKey ? 'is-sorting' : '', 
-            isSortable && sortOptions.direction].join(' ')">
-            <div class="c-telemetry-table__resize-hitarea"
-                @mousedown="resizeColumnStart"
-            ></div>
-            <slot></slot>
-        </div>
-</th>
+      dragstart: columnMoveStart,
+      drop: columnMoveEnd,
+      dragleave: hideDropTarget,
+      dragover: dragOverColumn
+    } : {}"
+  >
+    <div
+      class="c-telemetry-table__headers__content"
+      :class="[
+        isSortable ? 'is-sortable' : '',
+        isSortable && sortOptions.key === headerKey ? 'is-sorting' : '',
+        isSortable && sortOptions.direction].join(' ')"
+    >
+      <div
+        class="c-telemetry-table__resize-hitarea"
+        @mousedown="resizeColumnStart"
+      />
+      <slot />
+    </div>
+  </th>
 </template>
 <script>
 import _ from 'lodash';
@@ -71,13 +76,13 @@ export default {
             event.preventDefault();
         },
         resizeColumnEnd(event) {
-                this.resizeStartX = undefined;
-                this.resizeStartWidth = undefined;
-                document.removeEventListener('mousemove', this.resizeColumn);
-                event.preventDefault();
-                event.stopPropagation();
+            this.resizeStartX = undefined;
+            this.resizeStartWidth = undefined;
+            document.removeEventListener('mousemove', this.resizeColumn);
+            event.preventDefault();
+            event.stopPropagation();
 
-                this.$emit('resizeColumnEnd');
+            this.$emit('resizeColumnEnd');
         },
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
@@ -94,7 +99,7 @@ export default {
             return [...event.dataTransfer.types].includes(MOVE_COLUMN_DT_TYPE);
         },
         dragOverColumn(event) {
-            if (this.isColumnMoveEvent(event)){
+            if (this.isColumnMoveEvent(event)) {
                 event.preventDefault();
                 this.updateDropOffset(event.currentTarget, event.clientX);
             } else {
@@ -114,19 +119,19 @@ export default {
             this.$emit('dropTargetOffsetChanged', dropOffsetLeft);
             this.$emit('dropTargetActive', true);
         },
-        hideDropTarget(){
+        hideDropTarget() {
             this.$emit('dropTargetActive', false);
         },
-        columnMoveEnd(event){
-            if (this.isColumnMoveEvent(event)){
+        columnMoveEnd(event) {
+            if (this.isColumnMoveEvent(event)) {
                 let toIndex = this.headerIndex;
                 let fromIndex = event.dataTransfer.getData(MOVE_COLUMN_DT_TYPE);
                 if (event.offsetX < event.target.offsetWidth / 2) {
-                    if (toIndex > fromIndex){
+                    if (toIndex > fromIndex) {
                         toIndex--;
                     }
                 } else {
-                    if (toIndex < fromIndex){
+                    if (toIndex < fromIndex) {
                         toIndex++;
                     }
                 }

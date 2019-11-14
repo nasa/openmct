@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-conductor-axis"
-         ref="axisHolder"
-         @mousedown="dragStart($event)">
-    </div>
+  <div
+    ref="axisHolder"
+    class="c-conductor-axis"
+    @mousedown="dragStart($event)"
+  />
 </template>
 
 <style lang="scss">
@@ -128,6 +129,38 @@ export default {
     props: {
         bounds: Object
     },
+    watch: {
+        bounds: {
+            handler(bounds) {
+                this.setScale();
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        let axisHolder = this.$refs.axisHolder;
+        let height = axisHolder.offsetHeight;
+        let vis = d3Selection.select(axisHolder)
+            .append("svg:svg")
+            .attr("width", "100%")
+            .attr("height", height);
+
+        this.width = this.$refs.axisHolder.clientWidth;
+        this.xAxis = d3Axis.axisTop();
+        this.dragging = false;
+
+        // draw x axis with labels. CSS is used to position them.
+        this.axisElement = vis.append("g");
+
+        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
+        this.setScale();
+
+        //Respond to changes in conductor
+        this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
+        setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    },
+    destroyed() {
+    },
     methods: {
         setScale() {
             let timeSystem = this.openmct.time.timeSystem();
@@ -184,9 +217,9 @@ export default {
                 format: key
             }).formatter;
         },
-        dragStart($event){
+        dragStart($event) {
             let isFixed = this.openmct.time.clock() === undefined;
-            if (isFixed){
+            if (isFixed) {
                 this.dragStartX = $event.clientX;
 
                 document.addEventListener('mousemove', this.drag);
@@ -196,7 +229,7 @@ export default {
             }
         },
         drag($event) {
-            if (!this.dragging){
+            if (!this.dragging) {
                 this.dragging = true;
                 requestAnimationFrame(()=>{
                     let deltaX = $event.clientX - this.dragStartX;
@@ -227,38 +260,6 @@ export default {
                 this.setScale();
             }
         }
-    },
-    watch: {
-        bounds: {
-            handler(bounds) {
-                this.setScale();
-            },
-            deep: true
-        }
-    },
-    mounted() {
-        let axisHolder = this.$refs.axisHolder;
-        let height = axisHolder.offsetHeight;
-        let vis = d3Selection.select(axisHolder)
-            .append("svg:svg")
-            .attr("width", "100%")
-            .attr("height", height);
-
-        this.width = this.$refs.axisHolder.clientWidth;
-        this.xAxis = d3Axis.axisTop();
-        this.dragging = false;
-
-        // draw x axis with labels. CSS is used to position them.
-        this.axisElement = vis.append("g");
-
-        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
-        this.setScale();
-
-        //Respond to changes in conductor
-        this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
-        setInterval(this.resize, RESIZE_POLL_INTERVAL);
-    },
-    destroyed() {
     }
 
 }

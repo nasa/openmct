@@ -1,11 +1,13 @@
 <template>
-    <div class="l-multipane"
-         :class="{
-             'l-multipane--vertical': type === 'vertical',
-             'l-multipane--horizontal': type === 'horizontal'
-         }">
-        <slot></slot>
-    </div>
+  <div
+    class="l-multipane"
+    :class="{
+      'l-multipane--vertical': type === 'vertical',
+      'l-multipane--horizontal': type === 'horizontal'
+    }"
+  >
+    <slot />
+  </div>
 </template>
 
 <script>

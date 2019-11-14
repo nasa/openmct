@@ -20,34 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-so-view has-local-controls"
-        :class="{
-            'c-so-view--no-frame': !hasFrame,
-            'has-complex-content': complexContent
-        }">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__icon" :class="cssClass"></div>
-            <div class="c-so-view__header__name">
-                {{ domainObject && domainObject.name }}
-            </div>
-            <context-menu-drop-down
-                    :object-path="objectPath">
-            </context-menu-drop-down>
-        </div>
-        <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
-            <button class="c-button icon-expand"
-                 title="View Large"
-                 @click="expand">
-            </button>
-        </div>
-        <object-view 
-            class="c-so-view__object-view"
-            ref="objectView"
-            :object="domainObject"
-            :show-edit-view="showEditView"
-            :object-path="objectPath">
-        </object-view>
+  <div
+    class="c-so-view has-local-controls"
+    :class="{
+      'c-so-view--no-frame': !hasFrame,
+      'has-complex-content': complexContent
+    }"
+  >
+    <div class="c-so-view__header">
+      <div
+        class="c-so-view__header__icon"
+        :class="cssClass"
+      />
+      <div class="c-so-view__header__name">
+        {{ domainObject && domainObject.name }}
+      </div>
+      <context-menu-drop-down
+        :object-path="objectPath"
+      />
     </div>
+    <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
+      <button
+        class="c-button icon-expand"
+        title="View Large"
+        @click="expand"
+      />
+    </div>
+    <object-view
+      ref="objectView"
+      class="c-so-view__object-view"
+      :object="domainObject"
+      :show-edit-view="showEditView"
+      :object-path="objectPath"
+    />
+  </div>
 </template>
 
 <style lang="scss">
@@ -131,58 +137,58 @@
 </style>
 
 <script>
-    import ObjectView from './ObjectView.vue'
-    import ContextMenuDropDown from './contextMenuDropDown.vue';
+import ObjectView from './ObjectView.vue'
+import ContextMenuDropDown from './contextMenuDropDown.vue';
 
-    const SIMPLE_CONTENT_TYPES = [
-        'clock',
-        'timer',
-        'summary-widget',
-        'hyperlink'
-    ];
+const SIMPLE_CONTENT_TYPES = [
+    'clock',
+    'timer',
+    'summary-widget',
+    'hyperlink'
+];
 
-    export default {
-        inject: ['openmct'],
-        props: {
-            domainObject: Object,
-            objectPath: Array,
-            hasFrame: Boolean,
-            showEditView: {
-                type: Boolean,
-                default: () => true
-            }
+export default {
+    inject: ['openmct'],
+    components: {
+        ObjectView,
+        ContextMenuDropDown
+    },
+    props: {
+        domainObject: Object,
+        objectPath: Array,
+        hasFrame: Boolean,
+        showEditView: {
+            type: Boolean,
+            default: () => true
+        }
+    },
+    data() {
+        let objectType = this.openmct.types.get(this.domainObject.type),
+            cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
+            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+
+        return {
+            cssClass,
+            complexContent
+        }
+    },
+    methods: {
+        expand() {
+            let objectView = this.$refs.objectView,
+                parentElement = objectView.$el,
+                childElement = parentElement.children[0];
+
+            this.openmct.overlays.overlay({
+                element: childElement,
+                size: 'large',
+                onDestroy() {
+                    parentElement.append(childElement);
+                }
+            });
         },
-        components: {
-            ObjectView,
-            ContextMenuDropDown,
-        },
-        methods: {
-            expand() {
-                let objectView = this.$refs.objectView,
-                    parentElement = objectView.$el,
-                    childElement = parentElement.children[0];
-
-                this.openmct.overlays.overlay({
-                    element: childElement,
-                    size: 'large',
-                    onDestroy() {
-                        parentElement.append(childElement);
-                    }
-                });
-            },
-            getSelectionContext() {
-                return this.$refs.objectView.getSelectionContext();
-            }
-        },
-        data() {
-            let objectType = this.openmct.types.get(this.domainObject.type),
-                cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
-                complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
-
-            return {
-                cssClass,
-                complexContent    
-            }
+        getSelectionContext() {
+            return this.$refs.objectView.getSelectionContext();
         }
     }
+}
 </script>

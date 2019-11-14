@@ -1,17 +1,31 @@
 <template>
-    <tr class="c-list-item"
-        :class="{ 'is-alias': item.isAlias === true }"
-        @click="navigate">
-        <td class="c-list-item__name">
-            <a :href="objectLink" ref="objectLink">
-                <div class="c-list-item__type-icon" :class="item.type.cssClass"></div>
-                <div class="c-list-item__name-value">{{item.model.name}}</div>
-            </a>
-        </td>
-        <td class="c-list-item__type">{{ item.type.name }}</td>
-        <td class="c-list-item__date-created">{{ formatTime(item.model.persisted, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-        <td class="c-list-item__date-updated">{{ formatTime(item.model.modified, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z</td>
-    </tr>
+  <tr
+    class="c-list-item"
+    :class="{ 'is-alias': item.isAlias === true }"
+    @click="navigate"
+  >
+    <td class="c-list-item__name">
+      <a
+        ref="objectLink"
+        :href="objectLink"
+      >
+        <div
+          class="c-list-item__type-icon"
+          :class="item.type.cssClass"
+        />
+        <div class="c-list-item__name-value">{{ item.model.name }}</div>
+      </a>
+    </td>
+    <td class="c-list-item__type">
+      {{ item.type.name }}
+    </td>
+    <td class="c-list-item__date-created">
+      {{ formatTime(item.model.persisted, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z
+    </td>
+    <td class="c-list-item__date-updated">
+      {{ formatTime(item.model.modified, 'YYYY-MM-DD HH:mm:ss:SSS') }}Z
+    </td>
+  </tr>
 </template>
 
 <style lang="scss">

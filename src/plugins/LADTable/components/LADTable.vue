@@ -21,22 +21,22 @@
  *****************************************************************************/
 
 <template>
-<table class="c-table c-lad-table">
+  <table class="c-table c-lad-table">
     <thead>
-        <tr>
-            <th>Name</th>
-            <th>Timestamp</th>
-            <th>Value</th>
-        </tr>
+      <tr>
+        <th>Name</th>
+        <th>Timestamp</th>
+        <th>Value</th>
+      </tr>
     </thead>
     <tbody>
-        <lad-row 
-            v-for="item in items"
-            :key="item.key"
-            :domainObject="item.domainObject">
-        </lad-row>
+      <lad-row
+        v-for="item in items"
+        :key="item.key"
+        :domain-object="item.domainObject"
+      />
     </tbody>
-</table>
+  </table>
 </template>
 
 <script>
@@ -52,6 +52,18 @@ export default {
         return {
             items: []
         }
+    },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addItem);
+        this.composition.on('remove', this.removeItem);
+        this.composition.on('reorder', this.reorder);
+        this.composition.load();
+    },
+    destroyed() {
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.reorder);
     },
     methods: {
         addItem(domainObject) {
@@ -72,18 +84,6 @@ export default {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
             });
         }
-    },
-    mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addItem);
-        this.composition.on('remove', this.removeItem);
-        this.composition.on('reorder', this.reorder);
-        this.composition.load();
-    },
-    destroyed() {
-        this.composition.off('add', this.addItem);
-        this.composition.off('remove', this.removeItem);
-        this.composition.off('reorder', this.reorder);
     }
 }
 </script>

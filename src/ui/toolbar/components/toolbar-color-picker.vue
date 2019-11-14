@@ -1,30 +1,40 @@
 <template>
-    <div class="c-ctrl-wrapper">
-        <div class="c-icon-button c-icon-button--swatched"
-             :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
-             :title="options.title"
-             @click="toggle">
-            <div class="c-swatch" :style="{
-                background: options.value
-            }"></div>
-        </div>
-        <div class="c-menu c-palette c-palette--color"
-            v-if="open">
-            <div class="c-palette__item-none"
-                v-if="!this.options.preventNone"
-                @click="select({value: 'transparent'})">
-                <div class="c-palette__item"></div>
-                None
-            </div>
-            <div class="c-palette__items">
-                <div class="c-palette__item"
-                    v-for="color in colorPalette"
-                    :style="{ background: color.value }"
-                    @click="select(color)"
-                    ></div>
-            </div>
-        </div>
+  <div class="c-ctrl-wrapper">
+    <div
+      class="c-icon-button c-icon-button--swatched"
+      :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
+      :title="options.title"
+      @click="toggle"
+    >
+      <div
+        class="c-swatch"
+        :style="{
+          background: options.value
+        }"
+      />
     </div>
+    <div
+      v-if="open"
+      class="c-menu c-palette c-palette--color"
+    >
+      <div
+        v-if="!this.options.preventNone"
+        class="c-palette__item-none"
+        @click="select({value: 'transparent'})"
+      >
+        <div class="c-palette__item" />
+        None
+      </div>
+      <div class="c-palette__items">
+        <div
+          v-for="color in colorPalette"
+          class="c-palette__item"
+          :style="{ background: color.value }"
+          @click="select(color)"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -35,18 +45,6 @@ export default {
     mixins: [toggleMixin],
     props: {
         options: Object
-    },
-    computed: {
-        nonSpecific() {
-            return this.options.nonSpecific === true;
-        }
-    },
-    methods: {
-        select(color) {
-            if (color.value !== this.options.value) {
-                this.$emit('change', color.value, this.options);
-            }
-        }
     },
     data() {
         return {
@@ -133,6 +131,18 @@ export default {
                 { value: '#4c1130' }
             ]
         };
+    },
+    computed: {
+        nonSpecific() {
+            return this.options.nonSpecific === true;
+        }
+    },
+    methods: {
+        select(color) {
+            if (color.value !== this.options.value) {
+                this.$emit('change', color.value, this.options);
+            }
+        }
     }
 }
 </script>

@@ -21,29 +21,34 @@
  *****************************************************************************/
 
 <template>
-    <table class="c-table c-lad-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Timestamp</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <template
-                v-for="primary in primaryTelemetryObjects">
-                <tr class="c-table__group-header"
-                    :key="primary.key">
-                    <td colspan="10">{{primary.domainObject.name}}</td>
-                </tr>
-                <lad-row
-                    v-for="secondary in secondaryTelemetryObjects[primary.key]"
-                    :key="secondary.key"
-                    :domainObject="secondary.domainObject">
-                </lad-row>
-            </template>
-        </tbody>
-    </table>
+  <table class="c-table c-lad-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Timestamp</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template
+        v-for="primary in primaryTelemetryObjects"
+      >
+        <tr
+          :key="primary.key"
+          class="c-table__group-header"
+        >
+          <td colspan="10">
+            {{ primary.domainObject.name }}
+          </td>
+        </tr>
+        <lad-row
+          v-for="secondary in secondaryTelemetryObjects[primary.key]"
+          :key="secondary.key"
+          :domain-object="secondary.domainObject"
+        />
+      </template>
+    </tbody>
+  </table>
 </template>
 
 <style lang="scss">
@@ -51,10 +56,10 @@
 </style>
 
 <script>
-    import lodash from 'lodash';
-    import LadRow from './LADRow.vue';
+import lodash from 'lodash';
+import LadRow from './LADRow.vue';
 
-    export default {
+export default {
     inject: ['openmct', 'domainObject'],
     components: {
         LadRow
@@ -65,6 +70,22 @@
             secondaryTelemetryObjects: {},
             compositions: []
         }
+    },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addPrimary);
+        this.composition.on('remove', this.removePrimary);
+        this.composition.on('reorder', this.reorderPrimary);
+        this.composition.load();
+    },
+    destroyed() {
+        this.composition.off('add', this.addPrimary);
+        this.composition.off('remove', this.removePrimary);
+        this.composition.off('reorder', this.reorderPrimary);
+        this.compositions.forEach(c => {
+            c.composition.off('add', c.addCallback);
+            c.composition.off('remove', c.removeCallback);
+        });
     },
     methods: {
         addPrimary(domainObject) {
@@ -88,7 +109,7 @@
         removePrimary(identifier) {
             let index = _.findIndex(this.primaryTelemetryObjects, (primary) => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
-            
+
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
             this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
@@ -107,7 +128,7 @@
 
                 let array = this.secondaryTelemetryObjects[primary.key];
                 array.push(secondary);
-    
+
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
         },
@@ -121,23 +142,6 @@
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
         }
-    },
-    mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addPrimary);
-        this.composition.on('remove', this.removePrimary);
-        this.composition.on('reorder', this.reorderPrimary);
-        this.composition.load();
-    },
-    destroyed() {
-        this.composition.off('add', this.addPrimary);
-        this.composition.off('remove', this.removePrimary);
-        this.composition.off('reorder', this.reorderPrimary);
-        this.compositions.forEach(c => {
-            c.composition.off('add', c.addCallback);
-            c.composition.off('remove', c.removeCallback);
-        });
     }
 }
 </script>
-  

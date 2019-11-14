@@ -1,24 +1,33 @@
 <template>
-    <div class="c-ctrl-wrapper">
-        <div class="c-icon-button c-icon-button--menu"
-             :class="options.icon"
-             :title="options.title"
-             @click="toggle">
-            <div class="c-icon-button__label"
-                 v-if="options.label">
-                {{ options.label }}
-            </div>
-        </div>
-        <div class="c-menu" v-if="open">
-            <ul>
-                <li v-for="option in options.options"
-                    @click="onClick(option)"
-                    :class="option.class">
-                    {{ option.name }}
-                </li>
-            </ul>
-        </div>
+  <div class="c-ctrl-wrapper">
+    <div
+      class="c-icon-button c-icon-button--menu"
+      :class="options.icon"
+      :title="options.title"
+      @click="toggle"
+    >
+      <div
+        v-if="options.label"
+        class="c-icon-button__label"
+      >
+        {{ options.label }}
+      </div>
     </div>
+    <div
+      v-if="open"
+      class="c-menu"
+    >
+      <ul>
+        <li
+          v-for="option in options.options"
+          :class="option.class"
+          @click="onClick(option)"
+        >
+          {{ option.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script>
