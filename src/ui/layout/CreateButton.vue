@@ -103,7 +103,7 @@ export default {
     },
     computed: {
         sortedItems() {
-            return this.items.sort((a,b) => {
+            return this.items.slice().sort((a,b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
