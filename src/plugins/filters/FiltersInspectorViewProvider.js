@@ -48,11 +48,11 @@ define([
                             provide: {
                                 openmct
                             },
+                            el: element,
                             components: {
                                 FiltersView: FiltersView.default
                             },
-                            template: '<filters-view></filters-view>',
-                            el: element
+                            template: '<filters-view></filters-view>'
                         });
                     },
                     destroy: function () {

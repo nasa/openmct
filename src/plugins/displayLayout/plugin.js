@@ -42,22 +42,22 @@ export default function DisplayLayoutPlugin(options) {
                 return {
                     show(container) {
                         component = new Vue({
+                            el: container,
                             components: {
                                 Layout
                             },
-                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils,
                                 options,
                                 objectPath
                             },
-                            el: container,
                             data() {
                                 return {
                                     domainObject: domainObject
                                 };
-                            }
+                            },
+                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>'
                         });
                     },
                     getSelectionContext() {

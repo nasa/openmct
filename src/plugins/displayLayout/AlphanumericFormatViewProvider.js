@@ -55,11 +55,11 @@ define([
                                 openmct,
                                 objectPath
                             },
+                            el: element,
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default
                             },
-                            template: '<alphanumeric-format-view></alphanumeric-format-view>',
-                            el: element
+                            template: '<alphanumeric-format-view></alphanumeric-format-view>'
                         });
                     },
                     destroy: function () {

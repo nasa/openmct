@@ -44,6 +44,7 @@ define([
                 return {
                     show: function (element) {
                         component =  new Vue({
+                            el: element,
                             components: {
                                 LadTableSet: LadTableSet.default
                             },
@@ -52,7 +53,6 @@ define([
                                 domainObject,
                                 objectPath
                             },
-                            el: element,
                             template: '<lad-table-set></lad-table-set>'
                         });
                     },

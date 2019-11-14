@@ -41,6 +41,7 @@ define([
                 return {
                     show: function (element) {
                         component =  new Vue({
+                            el: element,
                             components: {
                                 gridViewComponent: GridViewComponent.default
                             },
@@ -48,7 +49,6 @@ define([
                                 openmct,
                                 domainObject
                             },
-                            el: element,
                             template: '<grid-view-component></grid-view-component>'
                         });
                     },
