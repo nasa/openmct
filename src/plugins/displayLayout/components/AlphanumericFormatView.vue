@@ -54,7 +54,6 @@
 export default {
     inject: ['openmct'],
     data() {
-        let selectionPath = this.openmct.selection.get()[0];
         return {
             isEditing: this.openmct.editor.isEditing(),
             telemetryFormat: undefined,

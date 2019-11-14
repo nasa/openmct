@@ -186,9 +186,6 @@ export default {
             this.msPerPixel = (bounds.end - bounds.start) / this.width;
         },
         setViewFromTimeSystem(timeSystem) {
-            let format = this.getActiveFormatter();
-            let bounds = this.openmct.time.bounds();
-
             //The D3 scale used depends on the type of time system as d3
             // supports UTC out of the box.
             if (timeSystem.isUTCBased) {

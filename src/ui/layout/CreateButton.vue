@@ -75,11 +75,6 @@
 import CreateAction from '../../../platform/commonUI/edit/src/creation/CreateAction';
 import objectUtils from '../../api/objects/object-utils';
 
-function convertToLegacyObject(domainObject) {
-    let keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let oldModel = objectUtils.toOldFormat(domainObject);
-    return instantiate(oldModel, keyString);
-}
 export default {
     inject: ['openmct'],
     data: function () {

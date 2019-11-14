@@ -305,7 +305,7 @@ export default {
                 });
             }
 
-            let layoutItems = this.layoutItems.map(item => {
+            this.layoutItems.map(item => {
                 if (this.initialPositions[item.id]) {
                     this.updateItemPosition(item, gridDelta);
                 }
@@ -516,7 +516,6 @@ export default {
         orderItem(position, selectedItems) {
             let delta = ORDERS[position];
             let indices = [];
-            let newIndex = -1;
             let items = [];
 
             Object.assign(items, this.layoutItems);

@@ -123,7 +123,6 @@
 <script>
 import ProgressBar from '../../components/ProgressBar.vue';
 let activeNotification = undefined;
-let dialogService = undefined;
 let maximizedDialog = undefined;
 let minimizeButton = {
     label: 'Dismiss',

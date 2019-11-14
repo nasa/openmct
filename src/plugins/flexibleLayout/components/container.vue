@@ -80,7 +80,6 @@
 
 <script>
 import FrameComponent from './frame.vue';
-import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 
