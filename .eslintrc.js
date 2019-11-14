@@ -9,8 +9,9 @@ module.exports = {
         "eslint:recommended",
         "plugin:vue/recommended"
     ],
-    "parser": "babel-eslint",
+    "parser": "vue-eslint-parser",
     "parserOptions": {
+        "parser": "babel-eslint",
         "allowImportExportEverywhere": true,
         "ecmaVersion": 2015,
         "ecmaFeatures": {
