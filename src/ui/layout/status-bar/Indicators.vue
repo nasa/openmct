@@ -16,7 +16,9 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<template />
+<template>
+    <div></div>
+</template>
 
 <style lang="scss">
     @import "~styles/sass-base";
