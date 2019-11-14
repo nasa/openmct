@@ -95,7 +95,7 @@ export default {
             this.$set(this.secondaryTelemetryObjects, primary.key, []);
             this.primaryTelemetryObjects.push(primary);
 
-            let composition = openmct.composition.get(primary.domainObject),
+            let composition = this.openmct.composition.get(primary.domainObject),
                 addCallback = this.addSecondary(primary),
                 removeCallback = this.removeSecondary(primary);
 

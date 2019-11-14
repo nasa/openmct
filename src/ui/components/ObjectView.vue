@@ -113,7 +113,7 @@ export default {
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
-                this.removeSelectable = openmct.selection.selectable(
+                this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
 

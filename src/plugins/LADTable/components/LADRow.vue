@@ -62,11 +62,11 @@ export default {
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-        this.limitEvaluator = openmct
+        this.limitEvaluator = this.openmct
             .telemetry
             .limitEvaluator(this.domainObject);
 
-        this.stopWatchingMutation = openmct
+        this.stopWatchingMutation = this.openmct
             .objects
             .observe(
                 this.domainObject,
