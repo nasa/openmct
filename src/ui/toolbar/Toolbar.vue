@@ -2,7 +2,8 @@
   <div class="c-toolbar">
     <component
       :is="item.control"
-      v-for="item in structure"
+      v-for="(item, index) in structure"
+      :key="index"
       :options="item"
       @click="triggerMethod(item, $event)"
       @change="updateObjectValue"

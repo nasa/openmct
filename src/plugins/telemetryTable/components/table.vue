@@ -153,6 +153,7 @@
           <tbody>
             <telemetry-table-row
               v-for="(row, rowIndex) in visibleRows"
+              :key="rowIndex"
               :headers="headers"
               :column-widths="columnWidths"
               :row-index="rowIndex"
