@@ -27,7 +27,8 @@
       </div>
       <div class="c-palette__items">
         <div
-          v-for="color in colorPalette"
+          v-for="(color, index) in colorPalette"
+          :key="index"
           class="c-palette__item"
           :style="{ background: color.value }"
           @click="select(color)"

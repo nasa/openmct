@@ -8,6 +8,7 @@
     <span class="c-filter-indication__mixed">{{ label }}</span>
     <span
       v-for="(name, index) in filterNames"
+      :key="index"
       class="c-filter-indication__label"
     >
       {{ name }}

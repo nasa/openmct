@@ -28,6 +28,7 @@
       <ul class="c-properties__section">
         <li
           v-for="(title, key) in headers"
+          :key="key"
           class="c-properties__row"
         >
           <div

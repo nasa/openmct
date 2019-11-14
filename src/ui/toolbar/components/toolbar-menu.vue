@@ -19,7 +19,8 @@
     >
       <ul>
         <li
-          v-for="option in options.options"
+          v-for="(option, index) in options.options"
+          :key="index"
           :class="option.class"
           @click="onClick(option)"
         >
