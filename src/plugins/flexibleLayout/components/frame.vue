@@ -54,13 +54,11 @@
 </template>
 
 <script>
-import ResizeHandle from './resizeHandle.vue';
 import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
 
 export default {
     inject: ['openmct'],
     components: {
-        ResizeHandle,
         ObjectFrame
     },
     props: ['frame', 'index', 'containerIndex', 'isEditing'],
