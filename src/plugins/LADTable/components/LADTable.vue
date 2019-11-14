@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import lodash from 'lodash';
 import LadRow from './LADRow.vue';
 
 export default {

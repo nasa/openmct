@@ -5,6 +5,9 @@ module.exports = {
         "jasmine": true,
         "amd": true
     },
+    "globals": {
+        "_": "readonly"
+    },
     "extends": [
         "eslint:recommended",
         "plugin:vue/recommended"

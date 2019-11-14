@@ -47,7 +47,6 @@
   </th>
 </template>
 <script>
-import _ from 'lodash';
 const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';
 
 export default {

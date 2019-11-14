@@ -102,8 +102,6 @@
 </style>
 
 <script>
-
-import lodash from 'lodash';
 import compositionLoader from './composition-loader';
 import ListItem from './ListItem.vue';
 
