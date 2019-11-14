@@ -144,38 +144,21 @@ export default {
             return 3;
         },
         linePosition() {
-            if (this.vectorQuadrant === 1) {
-                return {
+            return this.vectorQuadrant % 2 !== 0
+                // odd vectorQuadrant slopes up
+                ? {
                     x1: '0%',
                     y1: '100%',
                     x2: '100%',
                     y2: '0%'
-                };
-            }
-            if (this.vectorQuadrant === 4) {
-                return {
+                }
+                // even vectorQuadrant slopes down
+                : {
                     x1: '0%',
                     y1: '0%',
                     x2: '100%',
-                    y2: '100%'
+                    y2: '100%'                    
                 };
-            }
-            if (this.vectorQuadrant === 2) {
-                return {
-                    x1: '0%',
-                    y1: '0%',
-                    x2: '100%',
-                    y2: '100%'
-                };
-            }
-            if (this.vectorQuadrant === 3) {
-                return {
-                    x1: '100%',
-                    y1: '0%',
-                    x2: '0%',
-                    y2: '100%'
-                };
-            }
         }
     },
     watch: {

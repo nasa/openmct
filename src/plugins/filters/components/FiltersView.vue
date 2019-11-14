@@ -97,6 +97,7 @@ export default {
                     return FILTER_VIEW_TITLE;
                 }
             }
+            return '';
         }
     },
     mounted() {
