@@ -21,36 +21,36 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     class="c-fl-frame"
     :style="{
-      'flex-basis': `${frame.size}%`
+        'flex-basis': `${frame.size}%`
     }"
-  >
+>
     <div
-      ref="frame"
-      class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
-      draggable="true"
-      @dragstart="initDrag"
+        ref="frame"
+        class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
+        draggable="true"
+        @dragstart="initDrag"
     >
-      <object-frame
-        v-if="domainObject"
-        ref="objectFrame"
-        :domain-object="domainObject"
-        :object-path="objectPath"
-        :has-frame="hasFrame"
-        :show-edit-view="false"
-      />
+        <object-frame
+            v-if="domainObject"
+            ref="objectFrame"
+            :domain-object="domainObject"
+            :object-path="objectPath"
+            :has-frame="hasFrame"
+            :show-edit-view="false"
+        />
 
-      <div
-        v-if="isEditing"
-        v-show="frame.size && frame.size < 100"
-        class="c-fl-frame__size-indicator"
-      >
-        {{ frame.size }}%
-      </div>
+        <div
+            v-if="isEditing"
+            v-show="frame.size && frame.size < 100"
+            class="c-fl-frame__size-indicator"
+        >
+            {{ frame.size }}%
+        </div>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

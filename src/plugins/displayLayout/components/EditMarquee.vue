@@ -21,28 +21,28 @@
  *****************************************************************************/
 
 <template>
-  <!-- Resize handles -->
-  <div
+<!-- Resize handles -->
+<div
     class="c-frame-edit"
     :style="marqueeStyle"
-  >
+>
     <div
-      class="c-frame-edit__handle c-frame-edit__handle--nw"
-      @mousedown="startResize([1,1], [-1,-1], $event)"
+        class="c-frame-edit__handle c-frame-edit__handle--nw"
+        @mousedown="startResize([1,1], [-1,-1], $event)"
     />
     <div
-      class="c-frame-edit__handle c-frame-edit__handle--ne"
-      @mousedown="startResize([0,1], [1,-1], $event)"
+        class="c-frame-edit__handle c-frame-edit__handle--ne"
+        @mousedown="startResize([0,1], [1,-1], $event)"
     />
     <div
-      class="c-frame-edit__handle c-frame-edit__handle--sw"
-      @mousedown="startResize([1,0], [-1,1], $event)"
+        class="c-frame-edit__handle c-frame-edit__handle--sw"
+        @mousedown="startResize([1,0], [-1,1], $event)"
     />
     <div
-      class="c-frame-edit__handle c-frame-edit__handle--se"
-      @mousedown="startResize([0,0], [1,1], $event)"
+        class="c-frame-edit__handle c-frame-edit__handle--se"
+        @mousedown="startResize([0,0], [1,1], $event)"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

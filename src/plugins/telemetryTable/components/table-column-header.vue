@@ -20,31 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <th
+<th
     :style="{ width: columnWidth + 'px', 'max-width': columnWidth + 'px'}"
     :draggable="isEditing"
     @mouseup="sort"
     v-on="isEditing ? {
-      dragstart: columnMoveStart,
-      drop: columnMoveEnd,
-      dragleave: hideDropTarget,
-      dragover: dragOverColumn
+        dragstart: columnMoveStart,
+        drop: columnMoveEnd,
+        dragleave: hideDropTarget,
+        dragover: dragOverColumn
     } : {}"
-  >
+>
     <div
-      class="c-telemetry-table__headers__content"
-      :class="[
-        isSortable ? 'is-sortable' : '',
-        isSortable && sortOptions.key === headerKey ? 'is-sorting' : '',
-        isSortable && sortOptions.direction].join(' ')"
+        class="c-telemetry-table__headers__content"
+        :class="[
+            isSortable ? 'is-sortable' : '',
+            isSortable && sortOptions.key === headerKey ? 'is-sorting' : '',
+            isSortable && sortOptions.direction].join(' ')"
     >
-      <div
-        class="c-telemetry-table__resize-hitarea"
-        @mousedown="resizeColumnStart"
-      />
-      <slot />
+        <div
+            class="c-telemetry-table__resize-hitarea"
+            @mousedown="resizeColumnStart"
+        />
+        <slot />
     </div>
-  </th>
+</th>
 </template>
 <script>
 const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';

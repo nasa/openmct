@@ -1,14 +1,14 @@
 <template>
-  <div class="c-toolbar">
+<div class="c-toolbar">
     <component
-      :is="item.control"
-      v-for="(item, index) in structure"
-      :key="index"
-      :options="item"
-      @click="triggerMethod(item, $event)"
-      @change="updateObjectValue"
+        :is="item.control"
+        v-for="(item, index) in structure"
+        :key="index"
+        :options="item"
+        @click="triggerMethod(item, $event)"
+        @change="updateObjectValue"
     />
-  </div>
+</div>
 </template>
 
 <script>

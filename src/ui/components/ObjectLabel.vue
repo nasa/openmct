@@ -1,17 +1,17 @@
 <template>
-  <a
+<a
     class="c-tree__item__label c-object-label"
     draggable="true"
     :href="objectLink"
     @dragstart="dragStart"
     @click="navigateOrPreview"
-  >
+>
     <div
-      class="c-tree__item__type-icon c-object-label__type-icon"
-      :class="typeClass"
+        class="c-tree__item__type-icon c-object-label__type-icon"
+        :class="typeClass"
     />
     <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
-  </a>
+</a>
 </template>
 
 <style lang="scss">

@@ -1,39 +1,39 @@
 <template>
-  <li class="c-tree__item-h">
+<li class="c-tree__item-h">
     <div
-      class="c-tree__item"
-      :class="{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }"
+        class="c-tree__item"
+        :class="{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }"
     >
-      <view-control
-        v-model="expanded"
-        class="c-tree__item__view-control"
-        :enabled="hasChildren"
-      />
-      <object-label
-        :domain-object="node.object"
-        :object-path="node.objectPath"
-        :navigate-to-path="navigateToPath"
-      />
+        <view-control
+            v-model="expanded"
+            class="c-tree__item__view-control"
+            :enabled="hasChildren"
+        />
+        <object-label
+            :domain-object="node.object"
+            :object-path="node.objectPath"
+            :navigate-to-path="navigateToPath"
+        />
     </div>
     <ul
-      v-if="expanded"
-      class="c-tree"
+        v-if="expanded"
+        class="c-tree"
     >
-      <li
-        v-if="isLoading && !loaded"
-        class="c-tree__item-h"
-      >
-        <div class="c-tree__item loading">
-          <span class="c-tree__item__label">Loading...</span>
-        </div>
-      </li>
-      <tree-item
-        v-for="child in children"
-        :key="child.id"
-        :node="child"
-      />
+        <li
+            v-if="isLoading && !loaded"
+            class="c-tree__item-h"
+        >
+            <div class="c-tree__item loading">
+                <span class="c-tree__item__label">Loading...</span>
+            </div>
+        </li>
+        <tree-item
+            v-for="child in children"
+            :key="child.id"
+            :node="child"
+        />
     </ul>
-  </li>
+</li>
 </template>
 
 <script>

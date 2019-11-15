@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     v-show="isEditing && !isDragging"
     class="c-fl-frame__resize-handle"
     :class="[orientation]"
     @mousedown="mousedown"
-  />
+/>
 </template>
 
 <script>

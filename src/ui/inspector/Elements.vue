@@ -1,51 +1,51 @@
 <template>
-  <div class="c-elements-pool">
+<div class="c-elements-pool">
     <Search
-      class="c-elements-pool__search"
-      :value="currentSearch"
-      @input="applySearch"
-      @clear="applySearch"
+        class="c-elements-pool__search"
+        :value="currentSearch"
+        @input="applySearch"
+        @clear="applySearch"
     />
     <div
-      class="c-elements-pool__elements"
-      :class="{'is-dragging': isDragging}"
+        class="c-elements-pool__elements"
+        :class="{'is-dragging': isDragging}"
     >
-      <ul
-        v-if="elements.length > 0"
-        id="inspector-elements-tree"
-        class="c-tree c-elements-pool__tree"
-      >
-        <li
-          v-for="(element, index) in elements"
-          :key="element.identifier.key"
-          @drop="moveTo(index)"
-          @dragover="allowDrop"
+        <ul
+            v-if="elements.length > 0"
+            id="inspector-elements-tree"
+            class="c-tree c-elements-pool__tree"
         >
-          <div
-            class="c-tree__item c-elements-pool__item"
-            draggable="true"
-            @dragstart="moveFrom(index)"
-          >
-            <span
-              v-if="elements.length > 1 && isEditing"
-              class="c-elements-pool__grippy"
+            <li
+                v-for="(element, index) in elements"
+                :key="element.identifier.key"
+                @drop="moveTo(index)"
+                @dragover="allowDrop"
+            >
+                <div
+                    class="c-tree__item c-elements-pool__item"
+                    draggable="true"
+                    @dragstart="moveFrom(index)"
+                >
+                    <span
+                        v-if="elements.length > 1 && isEditing"
+                        class="c-elements-pool__grippy"
+                    />
+                    <object-label
+                        :domain-object="element"
+                        :object-path="[element, parentObject]"
+                    />
+                </div>
+            </li>
+            <li
+                class="js-last-place"
+                @drop="moveToIndex(elements.length)"
             />
-            <object-label
-              :domain-object="element"
-              :object-path="[element, parentObject]"
-            />
-          </div>
-        </li>
-        <li
-          class="js-last-place"
-          @drop="moveToIndex(elements.length)"
-        />
-      </ul>
-      <div v-if="elements.length === 0">
-        No contained elements
-      </div>
+        </ul>
+        <div v-if="elements.length === 0">
+            No contained elements
+        </div>
     </div>
-  </div>
+</div>
 </template>
 <style lang="scss">
     @import "~styles/sass-base";

@@ -1,20 +1,20 @@
 <template>
-  <div class="c-menu">
+<div class="c-menu">
     <ul>
-      <li
-        v-for="action in actions"
-        :key="action.name"
-        :class="action.cssClass"
-        :title="action.description"
-        @click="action.invoke(objectPath)"
-      >
-        {{ action.name }}
-      </li>
-      <li v-if="actions.length === 0">
-        No actions defined.
-      </li>
+        <li
+            v-for="action in actions"
+            :key="action.name"
+            :class="action.cssClass"
+            :title="action.description"
+            @click="action.invoke(objectPath)"
+        >
+            {{ action.name }}
+        </li>
+        <li v-if="actions.length === 0">
+            No actions defined.
+        </li>
     </ul>
-  </div>
+</div>
 </template>
 
 <script>

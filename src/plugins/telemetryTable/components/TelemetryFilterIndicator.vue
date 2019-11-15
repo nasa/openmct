@@ -1,19 +1,19 @@
 <template>
-  <div
+<div
     v-if="filterNames.length > 0"
     :title="title"
     class="c-filter-indication"
     :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
-  >
+>
     <span class="c-filter-indication__mixed">{{ label }}</span>
     <span
-      v-for="(name, index) in filterNames"
-      :key="index"
-      class="c-filter-indication__label"
+        v-for="(name, index) in filterNames"
+        :key="index"
+        class="c-filter-indication__label"
     >
-      {{ name }}
+        {{ name }}
     </span>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

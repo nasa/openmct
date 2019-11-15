@@ -1,40 +1,40 @@
 <template>
-  <li class="c-tree__item-h">
+<li class="c-tree__item-h">
     <div
-      class="c-tree__item menus-to-left"
-      @click="toggleExpanded"
+        class="c-tree__item menus-to-left"
+        @click="toggleExpanded"
     >
-      <div
-        class="c-filter-tree-item__filter-indicator"
-        :class="{'icon-filter': hasActiveGlobalFilters }"
-      />
-      <span
-        class="c-disclosure-triangle is-enabled flex-elem"
-        :class="{'c-disclosure-triangle--expanded': expanded}"
-      />
-      <div class="c-tree__item__label c-object-label">
-        <div class="c-object-label">
-          <div class="c-object-label__type-icon icon-gear" />
-          <div class="c-object-label__name flex-elem grows">
-            Global Filtering
-          </div>
+        <div
+            class="c-filter-tree-item__filter-indicator"
+            :class="{'icon-filter': hasActiveGlobalFilters }"
+        />
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="{'c-disclosure-triangle--expanded': expanded}"
+        />
+        <div class="c-tree__item__label c-object-label">
+            <div class="c-object-label">
+                <div class="c-object-label__type-icon icon-gear" />
+                <div class="c-object-label__name flex-elem grows">
+                    Global Filtering
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <ul
-      v-if="expanded"
-      class="c-properties"
+        v-if="expanded"
+        class="c-properties"
     >
-      <filter-field
-        v-for="metadatum in globalMetadata"
-        :key="metadatum.key"
-        :filter-field="metadatum"
-        :persisted-filters="updatedFilters[metadatum.key]"
-        @filterSelected="updateFiltersWithSelectedValue"
-        @filterTextValueChanged="updateFiltersWithTextValue"
-      />
+        <filter-field
+            v-for="metadatum in globalMetadata"
+            :key="metadatum.key"
+            :filter-field="metadatum"
+            :persisted-filters="updatedFilters[metadatum.key]"
+            @filterSelected="updateFiltersWithSelectedValue"
+            @filterTextValueChanged="updateFiltersWithTextValue"
+        />
     </ul>
-  </li>
+</li>
 </template>
 
 <style lang="scss">

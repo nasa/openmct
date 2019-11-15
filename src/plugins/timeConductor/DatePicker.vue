@@ -20,68 +20,68 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div
+<div
     ref="calendarHolder"
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper"
-  >
+>
     <a
-      class="c-icon-button icon-calendar"
-      @click="toggle"
+        class="c-icon-button icon-calendar"
+        @click="toggle"
     />
     <div
-      v-if="open"
-      class="c-menu c-menu--mobile-modal c-datetime-picker"
+        v-if="open"
+        class="c-menu c-menu--mobile-modal c-datetime-picker"
     >
-      <div class="c-datetime-picker__close-button">
-        <button
-          class="c-click-icon icon-x-in-circle"
-          @click="toggle"
-        />
-      </div>
-      <div class="c-datetime-picker__pager c-pager l-month-year-pager">
-        <div
-          class="c-pager__prev c-icon-button icon-arrow-left"
-          @click.stop="changeMonth(-1)"
-        />
-        <div class="c-pager__month-year">
-          {{ model.month }} {{ model.year }}
+        <div class="c-datetime-picker__close-button">
+            <button
+                class="c-click-icon icon-x-in-circle"
+                @click="toggle"
+            />
         </div>
-        <div
-          class="c-pager__next c-icon-button icon-arrow-right"
-          @click.stop="changeMonth(1)"
-        />
-      </div>
-      <div class="c-datetime-picker__calendar c-calendar">
-        <ul class="c-calendar__row--header l-cal-row">
-          <li
-            v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']"
-            :key="day"
-          >
-            {{ day }}
-          </li>
-        </ul>
-        <ul
-          v-for="(row, index) in table"
-          :key="index"
-          class="c-calendar__row--body"
-        >
-          <li
-            v-for="(cell, index) in row"
-            :key="index"
-            :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }"
-            @click="select(cell)"
-          >
-            <div class="c-calendar__day--prime">
-              {{ cell.day }}
+        <div class="c-datetime-picker__pager c-pager l-month-year-pager">
+            <div
+                class="c-pager__prev c-icon-button icon-arrow-left"
+                @click.stop="changeMonth(-1)"
+            />
+            <div class="c-pager__month-year">
+                {{ model.month }} {{ model.year }}
             </div>
-            <div class="c-calendar__day--sub">
-              {{ cell.dayOfYear }}
-            </div>
-          </li>
-        </ul>
-      </div>
+            <div
+                class="c-pager__next c-icon-button icon-arrow-right"
+                @click.stop="changeMonth(1)"
+            />
+        </div>
+        <div class="c-datetime-picker__calendar c-calendar">
+            <ul class="c-calendar__row--header l-cal-row">
+                <li
+                    v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']"
+                    :key="day"
+                >
+                    {{ day }}
+                </li>
+            </ul>
+            <ul
+                v-for="(row, index) in table"
+                :key="index"
+                class="c-calendar__row--body"
+            >
+                <li
+                    v-for="(cell, index) in row"
+                    :key="index"
+                    :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }"
+                    @click="select(cell)"
+                >
+                    <div class="c-calendar__day--prime">
+                        {{ cell.day }}
+                    </div>
+                    <div class="c-calendar__day--sub">
+                        {{ cell.dayOfYear }}
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

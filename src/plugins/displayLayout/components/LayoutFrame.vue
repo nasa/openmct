@@ -21,21 +21,21 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     class="l-layout__frame c-frame"
     :class="{
-      'no-frame': !item.hasFrame,
-      'u-inspectable': inspectable
+        'no-frame': !item.hasFrame,
+        'u-inspectable': inspectable
     }"
     :style="style"
-  >
+>
     <slot />
 
     <div
-      class="c-frame-edit__move"
-      @mousedown="startMove([1,1], [0,0], $event)"
+        class="c-frame-edit__move"
+        @mousedown="startMove([1,1], [0,0], $event)"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

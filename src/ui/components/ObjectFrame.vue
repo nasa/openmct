@@ -20,40 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div
+<div
     class="c-so-view has-local-controls"
     :class="{
-      'c-so-view--no-frame': !hasFrame,
-      'has-complex-content': complexContent
+        'c-so-view--no-frame': !hasFrame,
+        'has-complex-content': complexContent
     }"
-  >
+>
     <div class="c-so-view__header">
-      <div
-        class="c-so-view__header__icon"
-        :class="cssClass"
-      />
-      <div class="c-so-view__header__name">
-        {{ domainObject && domainObject.name }}
-      </div>
-      <context-menu-drop-down
-        :object-path="objectPath"
-      />
+        <div
+            class="c-so-view__header__icon"
+            :class="cssClass"
+        />
+        <div class="c-so-view__header__name">
+            {{ domainObject && domainObject.name }}
+        </div>
+        <context-menu-drop-down
+            :object-path="objectPath"
+        />
     </div>
     <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
-      <button
-        class="c-button icon-expand"
-        title="View Large"
-        @click="expand"
-      />
+        <button
+            class="c-button icon-expand"
+            title="View Large"
+            @click="expand"
+        />
     </div>
     <object-view
-      ref="objectView"
-      class="c-so-view__object-view"
-      :object="domainObject"
-      :show-edit-view="showEditView"
-      :object-path="objectPath"
+        ref="objectView"
+        class="c-so-view__object-view"
+        :object="domainObject"
+        :show-edit-view="showEditView"
+        :object-path="objectPath"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

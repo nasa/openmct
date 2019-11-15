@@ -1,8 +1,8 @@
 <template>
-  <div
+<div
     class="c-so-view__context-actions c-disclosure-button"
     @click="showContextMenu"
-  />
+/>
 </template>
 
 <script>

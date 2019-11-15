@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div
+<div
     ref="aboutLogo"
     class="l-shell__app-logo"
     @click="launchAbout"
-  />
+/>
 </template>
 <style lang="scss">
 .l-shell__app-logo {

@@ -1,18 +1,18 @@
 <template>
-  <div
+<div
     class="c-labeled-input"
     :title="options.title"
-  >
+>
     <label :for="uid">
-      <div class="c-labeled-input__label">{{ options.label }}</div>
+        <div class="c-labeled-input__label">{{ options.label }}</div>
     </label>
     <input
-      :id="uid"
-      :type="options.type"
-      :value="options.value"
-      v-bind="options.attrs"
+        :id="uid"
+        :type="options.type"
+        :value="options.value"
+        v-bind="options.attrs"
     >
-  </div>
+</div>
 </template>
 
 <script>

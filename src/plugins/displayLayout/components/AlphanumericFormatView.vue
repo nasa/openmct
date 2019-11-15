@@ -21,33 +21,33 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     v-if="isEditing"
     class="c-properties"
-  >
+>
     <div class="c-properties__header">
-      Alphanumeric Format
+        Alphanumeric Format
     </div>
     <ul class="c-properties__section">
-      <li class="c-properties__row">
-        <div
-          class="c-properties__label"
-          title="Printf formatting for the selected telemetry"
-        >
-          <label for="telemetryPrintfFormat">Format</label>
-        </div>
-        <div class="c-properties__value">
-          <input
-            id="telemetryPrintfFormat"
-            type="text"
-            :value="telemetryFormat"
-            :placeholder="nonMixedFormat ? '' : 'Mixed'"
-            @change="formatTelemetry"
-          >
-        </div>
-      </li>
+        <li class="c-properties__row">
+            <div
+                class="c-properties__label"
+                title="Printf formatting for the selected telemetry"
+            >
+                <label for="telemetryPrintfFormat">Format</label>
+            </div>
+            <div class="c-properties__value">
+                <input
+                    id="telemetryPrintfFormat"
+                    type="text"
+                    :value="telemetryFormat"
+                    :placeholder="nonMixedFormat ? '' : 'Mixed'"
+                    @change="formatTelemetry"
+                >
+            </div>
+        </li>
     </ul>
-  </div>
+</div>
 </template>
 
 <script>

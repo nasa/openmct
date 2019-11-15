@@ -21,69 +21,69 @@
  *****************************************************************************/
 
 <template>
-  <div class="c-fl">
+<div class="c-fl">
     <div
-      id="js-fl-drag-ghost"
-      class="c-fl__drag-ghost"
+        id="js-fl-drag-ghost"
+        class="c-fl__drag-ghost"
     />
 
     <div
-      v-if="areAllContainersEmpty()"
-      class="c-fl__empty"
+        v-if="areAllContainersEmpty()"
+        class="c-fl__empty"
     >
-      <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
+        <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
     </div>
 
     <div
-      class="c-fl__container-holder"
-      :class="{
-        'c-fl--rows': rowsLayout === true
-      }"
+        class="c-fl__container-holder"
+        :class="{
+            'c-fl--rows': rowsLayout === true
+        }"
     >
-      <template v-for="(container, index) in containers">
-        <drop-hint
-          v-if="index === 0 && containers.length > 1"
-          :key="index"
-          class="c-fl-frame__drop-hint"
-          :index="-1"
-          :allow-drop="allowContainerDrop"
-          @object-drop-to="moveContainer"
-        />
+        <template v-for="(container, index) in containers">
+            <drop-hint
+                v-if="index === 0 && containers.length > 1"
+                :key="index"
+                class="c-fl-frame__drop-hint"
+                :index="-1"
+                :allow-drop="allowContainerDrop"
+                @object-drop-to="moveContainer"
+            />
 
-        <container-component
-          :key="container.id"
-          class="c-fl__container"
-          :index="index"
-          :container="container"
-          :rows-layout="rowsLayout"
-          :is-editing="isEditing"
-          @move-frame="moveFrame"
-          @new-frame="setFrameLocation"
-          @persist="persist"
-        />
+            <container-component
+                :key="container.id"
+                class="c-fl__container"
+                :index="index"
+                :container="container"
+                :rows-layout="rowsLayout"
+                :is-editing="isEditing"
+                @move-frame="moveFrame"
+                @new-frame="setFrameLocation"
+                @persist="persist"
+            />
 
-        <resize-handle
-          v-if="index !== (containers.length - 1)"
-          :key="index"
-          :index="index"
-          :orientation="rowsLayout ? 'vertical' : 'horizontal'"
-          :is-editing="isEditing"
-          @init-move="startContainerResizing"
-          @move="containerResizing"
-          @end-move="endContainerResizing"
-        />
+            <resize-handle
+                v-if="index !== (containers.length - 1)"
+                :key="index"
+                :index="index"
+                :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+                :is-editing="isEditing"
+                @init-move="startContainerResizing"
+                @move="containerResizing"
+                @end-move="endContainerResizing"
+            />
 
-        <drop-hint
-          v-if="containers.length > 1"
-          :key="index"
-          class="c-fl-frame__drop-hint"
-          :index="index"
-          :allow-drop="allowContainerDrop"
-          @object-drop-to="moveContainer"
-        />
-      </template>
+            <drop-hint
+                v-if="containers.length > 1"
+                :key="index"
+                class="c-fl-frame__drop-hint"
+                :index="index"
+                :allow-drop="allowContainerDrop"
+                @object-drop-to="moveContainer"
+            />
+        </template>
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

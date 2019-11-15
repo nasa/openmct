@@ -1,54 +1,54 @@
 <template>
-  <div class="c-properties">
+<div class="c-properties">
     <template v-if="isEditing">
-      <div class="c-properties__header">
-        Table Column Size
-      </div>
-      <ul class="c-properties__section">
-        <li class="c-properties__row">
-          <div
-            class="c-properties__label"
-            title="Auto-size table"
-          >
-            <label for="AutoSizeControl">Auto-size</label>
-          </div>
-          <div class="c-properties__value">
-            <input
-              id="AutoSizeControl"
-              type="checkbox"
-              :checked="configuration.autosize !== false"
-              @change="toggleAutosize()"
+        <div class="c-properties__header">
+            Table Column Size
+        </div>
+        <ul class="c-properties__section">
+            <li class="c-properties__row">
+                <div
+                    class="c-properties__label"
+                    title="Auto-size table"
+                >
+                    <label for="AutoSizeControl">Auto-size</label>
+                </div>
+                <div class="c-properties__value">
+                    <input
+                        id="AutoSizeControl"
+                        type="checkbox"
+                        :checked="configuration.autosize !== false"
+                        @change="toggleAutosize()"
+                    >
+                </div>
+            </li>
+        </ul>
+        <div class="c-properties__header">
+            Table Column Visibility
+        </div>
+        <ul class="c-properties__section">
+            <li
+                v-for="(title, key) in headers"
+                :key="key"
+                class="c-properties__row"
             >
-          </div>
-        </li>
-      </ul>
-      <div class="c-properties__header">
-        Table Column Visibility
-      </div>
-      <ul class="c-properties__section">
-        <li
-          v-for="(title, key) in headers"
-          :key="key"
-          class="c-properties__row"
-        >
-          <div
-            class="c-properties__label"
-            title="Show or hide column"
-          >
-            <label :for="key + 'ColumnControl'">{{ title }}</label>
-          </div>
-          <div class="c-properties__value">
-            <input
-              :id="key + 'ColumnControl'"
-              type="checkbox"
-              :checked="configuration.hiddenColumns[key] !== true"
-              @change="toggleColumn(key)"
-            >
-          </div>
-        </li>
-      </ul>
+                <div
+                    class="c-properties__label"
+                    title="Show or hide column"
+                >
+                    <label :for="key + 'ColumnControl'">{{ title }}</label>
+                </div>
+                <div class="c-properties__value">
+                    <input
+                        :id="key + 'ColumnControl'"
+                        type="checkbox"
+                        :checked="configuration.hiddenColumns[key] !== true"
+                        @change="toggleColumn(key)"
+                    >
+                </div>
+            </li>
+        </ul>
     </template>
-  </div>
+</div>
 </template>
 
 <style>

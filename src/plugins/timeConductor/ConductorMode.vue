@@ -20,43 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
+<div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
     <button
-      class="c-button--menu c-mode-button"
-      @click.prevent="toggle"
+        class="c-button--menu c-mode-button"
+        @click.prevent="toggle"
     >
-      <span class="c-button__label">{{ selectedMode.name }}</span>
+        <span class="c-button__label">{{ selectedMode.name }}</span>
     </button>
     <div
-      v-if="open"
-      class="c-menu c-super-menu c-conductor__mode-menu"
+        v-if="open"
+        class="c-menu c-super-menu c-conductor__mode-menu"
     >
-      <div class="c-super-menu__menu">
-        <ul>
-          <li
-            v-for="mode in modes"
-            :key="mode.key"
-            class="menu-item-a"
-            :class="mode.cssClass"
-            @click="setOption(mode)"
-            @mouseover="hoveredMode = mode"
-            @mouseleave="hoveredMode = {}"
-          >
-            {{ mode.name }}
-          </li>
-        </ul>
-      </div>
-      <div class="c-super-menu__item-description">
-        <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]" />
-        <div class="l-item-description__name">
-          {{ hoveredMode.name }}
+        <div class="c-super-menu__menu">
+            <ul>
+                <li
+                    v-for="mode in modes"
+                    :key="mode.key"
+                    class="menu-item-a"
+                    :class="mode.cssClass"
+                    @click="setOption(mode)"
+                    @mouseover="hoveredMode = mode"
+                    @mouseleave="hoveredMode = {}"
+                >
+                    {{ mode.name }}
+                </li>
+            </ul>
         </div>
-        <div class="l-item-description__description">
-          {{ hoveredMode.description }}
+        <div class="c-super-menu__item-description">
+            <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]" />
+            <div class="l-item-description__name">
+                {{ hoveredMode.name }}
+            </div>
+            <div class="l-item-description__description">
+                {{ hoveredMode.description }}
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

@@ -1,12 +1,12 @@
 <template>
-  <span
+<span
     class="c-disclosure-triangle"
     :class="{
-      'c-disclosure-triangle--expanded' : value,
-      'is-enabled' : enabled
+        'c-disclosure-triangle--expanded' : value,
+        'is-enabled' : enabled
     }"
     @click="$emit('input', !value)"
-  />
+/>
 </template>
 
 <script>

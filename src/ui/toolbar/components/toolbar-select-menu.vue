@@ -1,30 +1,30 @@
 <template>
-  <div class="c-ctrl-wrapper">
+<div class="c-ctrl-wrapper">
     <div
-      class="c-icon-button c-icon-button--menu"
-      :class="[options.icon, {'c-click-icon--mixed': nonSpecific}]"
-      :title="options.title"
-      @click="toggle"
+        class="c-icon-button c-icon-button--menu"
+        :class="[options.icon, {'c-click-icon--mixed': nonSpecific}]"
+        :title="options.title"
+        @click="toggle"
     >
-      <div class="c-button__label">
-        {{ selectedName }}
-      </div>
+        <div class="c-button__label">
+            {{ selectedName }}
+        </div>
     </div>
     <div
-      v-if="open"
-      class="c-menu"
+        v-if="open"
+        class="c-menu"
     >
-      <ul>
-        <li
-          v-for="option in options.options"
-          :key="option.value"
-          @click="select(option)"
-        >
-          {{ option.name || option.value }}
-        </li>
-      </ul>
+        <ul>
+            <li
+                v-for="option in options.options"
+                :key="option.value"
+                @click="select(option)"
+            >
+                {{ option.name || option.value }}
+            </li>
+        </ul>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

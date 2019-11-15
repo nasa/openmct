@@ -1,22 +1,22 @@
 <template>
-  <multipane
+<multipane
     class="c-inspector"
     type="vertical"
-  >
+>
     <pane class="c-inspector__properties">
-      <properties />
-      <location />
-      <inspector-views />
+        <properties />
+        <location />
+        <inspector-views />
     </pane>
     <pane
-      v-if="isEditing && hasComposition"
-      class="c-inspector__elements"
-      handle="before"
-      label="Elements"
+        v-if="isEditing && hasComposition"
+        class="c-inspector__elements"
+        handle="before"
+        label="Elements"
     >
-      <elements />
+        <elements />
     </pane>
-  </multipane>
+</multipane>
 </template>
 
 <style lang="scss">

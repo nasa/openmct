@@ -20,26 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <tr
+<tr
     :style="{ top: rowTop }"
     class="noselect"
     :class="[
-      rowClass,
-      {'is-selected': marked}
+        rowClass,
+        {'is-selected': marked}
     ]"
     v-on="listeners"
-  >
+>
     <component
-      :is="componentList[key]"
-      v-for="(title, key) in headers"
-      :key="key"
-      :column-key="key"
-      :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
-      :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
-      :object-path="objectPath"
-      :row="row"
+        :is="componentList[key]"
+        v-for="(title, key) in headers"
+        :key="key"
+        :column-key="key"
+        :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
+        :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
+        :object-path="objectPath"
+        :row="row"
     />
-  </tr>
+</tr>
 </template>
 
 <style>

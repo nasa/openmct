@@ -65,7 +65,18 @@ module.exports = {
             }
         ],
         "dot-notation": "error",
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "vue/html-indent": [
+            "error",
+            4,
+            {
+                "attribute": 1,
+                "baseIndent": 0,
+                "closeBracket": 0,
+                "alignAttributesVertically": true,
+                "ignores": []
+            }
+        ]
     },
     "overrides": [
         {

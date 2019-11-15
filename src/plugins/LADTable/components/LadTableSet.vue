@@ -21,34 +21,34 @@
  *****************************************************************************/
 
 <template>
-  <table class="c-table c-lad-table">
+<table class="c-table c-lad-table">
     <thead>
-      <tr>
-        <th>Name</th>
-        <th>Timestamp</th>
-        <th>Value</th>
-      </tr>
+        <tr>
+            <th>Name</th>
+            <th>Timestamp</th>
+            <th>Value</th>
+        </tr>
     </thead>
     <tbody>
-      <template
-        v-for="primary in primaryTelemetryObjects"
-      >
-        <tr
-          :key="primary.key"
-          class="c-table__group-header"
+        <template
+            v-for="primary in primaryTelemetryObjects"
         >
-          <td colspan="10">
-            {{ primary.domainObject.name }}
-          </td>
-        </tr>
-        <lad-row
-          v-for="secondary in secondaryTelemetryObjects[primary.key]"
-          :key="secondary.key"
-          :domain-object="secondary.domainObject"
-        />
-      </template>
+            <tr
+                :key="primary.key"
+                class="c-table__group-header"
+            >
+                <td colspan="10">
+                    {{ primary.domainObject.name }}
+                </td>
+            </tr>
+            <lad-row
+                v-for="secondary in secondaryTelemetryObjects[primary.key]"
+                :key="secondary.key"
+                :domain-object="secondary.domainObject"
+            />
+        </template>
     </tbody>
-  </table>
+</table>
 </template>
 
 <style lang="scss">

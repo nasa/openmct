@@ -1,35 +1,35 @@
 <template>
-  <div class="c-overlay">
+<div class="c-overlay">
     <div
-      class="c-overlay__blocker"
-      @click="destroy"
+        class="c-overlay__blocker"
+        @click="destroy"
     />
     <div class="c-overlay__outer">
-      <button
-        v-if="dismissable"
-        class="c-click-icon c-overlay__close-button icon-x-in-circle"
-        @click="destroy"
-      />
-      <div
-        ref="element"
-        class="c-overlay__contents"
-      />
-      <div
-        v-if="buttons"
-        class="c-overlay__button-bar"
-      >
         <button
-          v-for="(button, index) in buttons"
-          :key="index"
-          class="c-button"
-          :class="{'c-button--major': button.emphasis}"
-          @click="buttonClickHandler(button.callback)"
+            v-if="dismissable"
+            class="c-click-icon c-overlay__close-button icon-x-in-circle"
+            @click="destroy"
+        />
+        <div
+            ref="element"
+            class="c-overlay__contents"
+        />
+        <div
+            v-if="buttons"
+            class="c-overlay__button-bar"
         >
-          {{ button.label }}
-        </button>
-      </div>
+            <button
+                v-for="(button, index) in buttons"
+                :key="index"
+                class="c-button"
+                :class="{'c-button--major': button.emphasis}"
+                @click="buttonClickHandler(button.callback)"
+            >
+                {{ button.label }}
+            </button>
+        </div>
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

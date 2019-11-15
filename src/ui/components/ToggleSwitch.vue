@@ -1,13 +1,13 @@
 <template>
-  <label class="c-toggle-switch">
+<label class="c-toggle-switch">
     <input
-      :id="id"
-      type="checkbox"
-      :checked="checked"
-      @change="onUserSelect($event)"
+        :id="id"
+        type="checkbox"
+        :checked="checked"
+        @change="onUserSelect($event)"
     >
     <span class="c-toggle-switch__slider" />
-  </label>
+</label>
 </template>
 
 <style lang="scss">

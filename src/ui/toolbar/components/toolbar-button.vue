@@ -1,23 +1,23 @@
 <template>
-  <div class="c-ctrl-wrapper">
+<div class="c-ctrl-wrapper">
     <div
-      class="c-icon-button"
-      :title="options.title"
-      :class="{
-        [options.icon]: true,
-        'c-icon-button--caution': options.modifier === 'caution',
-        'c-icon-button--mixed': nonSpecific
-      }"
-      @click="onClick"
+        class="c-icon-button"
+        :title="options.title"
+        :class="{
+            [options.icon]: true,
+            'c-icon-button--caution': options.modifier === 'caution',
+            'c-icon-button--mixed': nonSpecific
+        }"
+        @click="onClick"
     >
-      <div
-        v-if="options.label"
-        class="c-icon-button__label"
-      >
-        {{ options.label }}
-      </div>
+        <div
+            v-if="options.label"
+            class="c-icon-button__label"
+        >
+            {{ options.label }}
+        </div>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

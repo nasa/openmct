@@ -21,19 +21,19 @@
  *****************************************************************************/
 
 <template>
-  <layout-frame
+<layout-frame
     :item="item"
     :grid-size="gridSize"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
-  >
+>
     <div
-      class="c-text-view"
-      :style="style"
+        class="c-text-view"
+        :style="style"
     >
-      {{ item.text }}
+        {{ item.text }}
     </div>
-  </layout-frame>
+</layout-frame>
 </template>
 
 <style lang="scss">

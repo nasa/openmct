@@ -1,21 +1,21 @@
 <template>
-  <div
+<div
     class="c-search"
     :class="{ 'is-active': active === true }"
-  >
+>
     <input
-      class="c-search__input"
-      tabindex="10000"
-      type="search"
-      v-bind="$attrs"
-      :value="value"
-      v-on="inputListeners"
+        class="c-search__input"
+        tabindex="10000"
+        type="search"
+        v-bind="$attrs"
+        :value="value"
+        v-on="inputListeners"
     >
     <a
-      class="c-search__clear-input icon-x-in-circle"
-      @click="clearInput"
+        class="c-search__clear-input icon-x-in-circle"
+        @click="clearInput"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

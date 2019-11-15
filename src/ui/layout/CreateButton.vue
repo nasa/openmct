@@ -1,40 +1,40 @@
 <template>
-  <div class="c-create-button--w">
+<div class="c-create-button--w">
     <button
-      class="c-create-button c-button--menu c-button--major icon-plus"
-      @click="open"
+        class="c-create-button c-button--menu c-button--major icon-plus"
+        @click="open"
     >
-      <span class="c-button__label">Create</span>
+        <span class="c-button__label">Create</span>
     </button>
     <div
-      v-if="opened"
-      class="c-create-menu c-super-menu"
+        v-if="opened"
+        class="c-create-menu c-super-menu"
     >
-      <div class="c-super-menu__menu">
-        <ul>
-          <li
-            v-for="(item, index) in sortedItems"
-            :key="index"
-            :class="item.class"
-            :title="item.title"
-            @mouseover="showItemDescription(item)"
-            @click="create(item)"
-          >
-            {{ item.name }}
-          </li>
-        </ul>
-      </div>
-      <div class="c-super-menu__item-description">
-        <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]" />
-        <div class="l-item-description__name">
-          {{ selectedMenuItem.name }}
+        <div class="c-super-menu__menu">
+            <ul>
+                <li
+                    v-for="(item, index) in sortedItems"
+                    :key="index"
+                    :class="item.class"
+                    :title="item.title"
+                    @mouseover="showItemDescription(item)"
+                    @click="create(item)"
+                >
+                    {{ item.name }}
+                </li>
+            </ul>
         </div>
-        <div class="l-item-description__description">
-          {{ selectedMenuItem.title }}
+        <div class="c-super-menu__item-description">
+            <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]" />
+            <div class="l-item-description__name">
+                {{ selectedMenuItem.name }}
+            </div>
+            <div class="l-item-description__description">
+                {{ selectedMenuItem.title }}
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

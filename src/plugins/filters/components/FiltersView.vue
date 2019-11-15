@@ -1,28 +1,28 @@
 <template>
-  <ul
+<ul
     v-if="Object.keys(children).length"
     class="c-tree c-filter-tree"
-  >
+>
     <h2>Data Filters</h2>
     <div
-      v-if="hasActiveFilters"
-      class="c-filter-indication"
+        v-if="hasActiveFilters"
+        class="c-filter-indication"
     >
-      {{ label }}
+        {{ label }}
     </div>
     <global-filters
-      :global-filters="globalFilters"
-      :global-metadata="globalMetadata"
-      @persistGlobalFilters="persistGlobalFilters"
+        :global-filters="globalFilters"
+        :global-metadata="globalMetadata"
+        @persistGlobalFilters="persistGlobalFilters"
     />
     <filter-object
-      v-for="(child, key) in children"
-      :key="key"
-      :filter-object="child"
-      :persisted-filters="persistedFilters[key]"
-      @updateFilters="persistFilters"
+        v-for="(child, key) in children"
+        :key="key"
+        :filter-object="child"
+        :persisted-filters="persistedFilters[key]"
+        @updateFilters="persistFilters"
     />
-  </ul>
+</ul>
 </template>
 
 <style lang="scss">

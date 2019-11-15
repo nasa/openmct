@@ -1,56 +1,56 @@
 <template>
-  <div class="c-tree-and-search">
+<div class="c-tree-and-search">
     <div class="c-tree-and-search__search">
-      <search
-        ref="shell-search"
-        class="c-search"
-        :value="searchValue"
-        @input="searchTree"
-        @clear="searchTree"
-      />
+        <search
+            ref="shell-search"
+            class="c-search"
+            :value="searchValue"
+            @input="searchTree"
+            @clear="searchTree"
+        />
     </div>
 
     <!-- loading -->
     <div
-      v-if="isLoading"
-      class="c-tree-and-search__loading loading"
+        v-if="isLoading"
+        class="c-tree-and-search__loading loading"
     />
     <!-- end loading -->
 
     <div
-      v-if="(allTreeItems.length === 0) || (searchValue && filteredTreeItems.length === 0)"
-      class="c-tree-and-search__no-results"
+        v-if="(allTreeItems.length === 0) || (searchValue && filteredTreeItems.length === 0)"
+        class="c-tree-and-search__no-results"
     >
-      No results found
+        No results found
     </div>
 
     <!-- main tree -->
     <ul
-      v-if="!isLoading"
-      v-show="!searchValue"
-      class="c-tree-and-search__tree c-tree"
+        v-if="!isLoading"
+        v-show="!searchValue"
+        class="c-tree-and-search__tree c-tree"
     >
-      <tree-item
-        v-for="treeItem in allTreeItems"
-        :key="treeItem.id"
-        :node="treeItem"
-      />
+        <tree-item
+            v-for="treeItem in allTreeItems"
+            :key="treeItem.id"
+            :node="treeItem"
+        />
     </ul>
     <!-- end main tree -->
 
     <!-- search tree -->
     <ul
-      v-if="searchValue"
-      class="c-tree-and-search__tree c-tree"
+        v-if="searchValue"
+        class="c-tree-and-search__tree c-tree"
     >
-      <tree-item
-        v-for="treeItem in filteredTreeItems"
-        :key="treeItem.id"
-        :node="treeItem"
-      />
+        <tree-item
+            v-for="treeItem in filteredTreeItems"
+            :key="treeItem.id"
+            :node="treeItem"
+        />
     </ul>
     <!-- end search tree -->
-  </div>
+</div>
 </template>
 
 <style lang="scss">

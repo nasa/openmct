@@ -21,61 +21,61 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     class="c-fl-container"
     :style="[{'flex-basis': sizeString}]"
     :class="{'is-empty': !frames.length}"
-  >
+>
     <div
-      v-show="isEditing"
-      class="c-fl-container__header"
-      draggable="true"
-      @dragstart="startContainerDrag"
+        v-show="isEditing"
+        class="c-fl-container__header"
+        draggable="true"
+        @dragstart="startContainerDrag"
     >
-      <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
+        <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
     </div>
 
     <drop-hint
-      class="c-fl-frame__drop-hint"
-      :index="-1"
-      :allow-drop="allowDrop"
-      @object-drop-to="moveOrCreateNewFrame"
+        class="c-fl-frame__drop-hint"
+        :index="-1"
+        :allow-drop="allowDrop"
+        @object-drop-to="moveOrCreateNewFrame"
     />
 
     <div class="c-fl-container__frames-holder">
-      <template
-        v-for="(frame, i) in frames"
-      >
-        <frame-component
-          :key="frame.id"
-          class="c-fl-container__frame"
-          :frame="frame"
-          :index="i"
-          :container-index="index"
-          :is-editing="isEditing"
-        />
+        <template
+            v-for="(frame, i) in frames"
+        >
+            <frame-component
+                :key="frame.id"
+                class="c-fl-container__frame"
+                :frame="frame"
+                :index="i"
+                :container-index="index"
+                :is-editing="isEditing"
+            />
 
-        <drop-hint
-          :key="i"
-          class="c-fl-frame__drop-hint"
-          :index="i"
-          :allow-drop="allowDrop"
-          @object-drop-to="moveOrCreateNewFrame"
-        />
+            <drop-hint
+                :key="i"
+                class="c-fl-frame__drop-hint"
+                :index="i"
+                :allow-drop="allowDrop"
+                @object-drop-to="moveOrCreateNewFrame"
+            />
 
-        <resize-handle
-          v-if="(i !== frames.length - 1)"
-          :key="i"
-          :index="i"
-          :orientation="rowsLayout ? 'horizontal' : 'vertical'"
-          :is-editing="isEditing"
-          @init-move="startFrameResizing"
-          @move="frameResizing"
-          @end-move="endFrameResizing"
-        />
-      </template>
+            <resize-handle
+                v-if="(i !== frames.length - 1)"
+                :key="i"
+                :index="i"
+                :orientation="rowsLayout ? 'horizontal' : 'vertical'"
+                :is-editing="isEditing"
+                @init-move="startFrameResizing"
+                @move="frameResizing"
+                @end-move="endFrameResizing"
+            />
+        </template>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

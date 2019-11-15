@@ -1,36 +1,36 @@
 <template>
-  <div
+<div
     class="l-pane"
     :class="{
-      'l-pane--horizontal-handle-before': type === 'horizontal' && handle === 'before',
-      'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
-      'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
-      'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-      'l-pane--collapsed': collapsed,
-      'l-pane--reacts': !handle,
-      'l-pane--resizing': resizing === true
+        'l-pane--horizontal-handle-before': type === 'horizontal' && handle === 'before',
+        'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
+        'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
+        'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
+        'l-pane--collapsed': collapsed,
+        'l-pane--reacts': !handle,
+        'l-pane--resizing': resizing === true
     }"
-  >
+>
     <div
-      v-if="handle"
-      class="l-pane__handle"
-      @mousedown="start"
+        v-if="handle"
+        class="l-pane__handle"
+        @mousedown="start"
     />
     <div
-      v-if="label"
-      class="l-pane__header"
+        v-if="label"
+        class="l-pane__header"
     >
-      <span class="l-pane__label">{{ label }}</span>
-      <button
-        v-if="collapsable"
-        class="l-pane__collapse-button c-button"
-        @click="toggleCollapse"
-      />
+        <span class="l-pane__label">{{ label }}</span>
+        <button
+            v-if="collapsable"
+            class="l-pane__collapse-button c-button"
+            @click="toggleCollapse"
+        />
     </div>
     <div class="l-pane__contents">
-      <slot />
+        <slot />
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

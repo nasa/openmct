@@ -20,10 +20,10 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-  <div class="c-clock-symbol">
+<div class="c-clock-symbol">
     <div class="hand-little" />
     <div class="hand-big" />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

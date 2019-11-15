@@ -21,22 +21,22 @@
  *****************************************************************************/
 
 <template>
-  <table class="c-table c-lad-table">
+<table class="c-table c-lad-table">
     <thead>
-      <tr>
-        <th>Name</th>
-        <th>Timestamp</th>
-        <th>Value</th>
-      </tr>
+        <tr>
+            <th>Name</th>
+            <th>Timestamp</th>
+            <th>Value</th>
+        </tr>
     </thead>
     <tbody>
-      <lad-row
-        v-for="item in items"
-        :key="item.key"
-        :domain-object="item.domainObject"
-      />
+        <lad-row
+            v-for="item in items"
+            :key="item.key"
+            :domain-object="item.domainObject"
+        />
     </tbody>
-  </table>
+</table>
 </template>
 
 <script>

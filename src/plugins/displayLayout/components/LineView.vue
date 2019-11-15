@@ -21,41 +21,41 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     class="l-layout__frame c-frame no-frame"
     :style="style"
-  >
+>
     <svg
-      width="100%"
-      height="100%"
+        width="100%"
+        height="100%"
     >
-      <line
-        v-bind="linePosition"
-        :stroke="item.stroke"
-        stroke-width="2"
-      />
+        <line
+            v-bind="linePosition"
+            :stroke="item.stroke"
+            stroke-width="2"
+        />
     </svg>
 
     <div
-      class="c-frame-edit__move"
-      @mousedown="startDrag($event)"
+        class="c-frame-edit__move"
+        @mousedown="startDrag($event)"
     />
     <div
-      v-if="showFrameEdit"
-      class="c-frame-edit"
+        v-if="showFrameEdit"
+        class="c-frame-edit"
     >
-      <div
-        class="c-frame-edit__handle"
-        :class="startHandleClass"
-        @mousedown="startDrag($event, 'start')"
-      />
-      <div
-        class="c-frame-edit__handle"
-        :class="endHandleClass"
-        @mousedown="startDrag($event, 'end')"
-      />
+        <div
+            class="c-frame-edit__handle"
+            :class="startHandleClass"
+            @mousedown="startDrag($event, 'start')"
+        />
+        <div
+            class="c-frame-edit__handle"
+            :class="endHandleClass"
+            @mousedown="startDrag($event, 'end')"
+        />
     </div>
-  </div>
+</div>
 </template>
 
 <script>

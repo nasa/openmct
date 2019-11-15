@@ -21,39 +21,39 @@
  *****************************************************************************/
 
 <template>
-  <layout-frame
+<layout-frame
     :item="item"
     :grid-size="gridSize"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
-  >
+>
     <div
-      v-if="domainObject"
-      class="c-telemetry-view"
-      :style="styleObject"
-      @contextmenu.prevent="showContextMenu"
+        v-if="domainObject"
+        class="c-telemetry-view"
+        :style="styleObject"
+        @contextmenu.prevent="showContextMenu"
     >
-      <div
-        v-if="showLabel"
-        class="c-telemetry-view__label"
-      >
-        <div class="c-telemetry-view__label-text">
-          {{ domainObject.name }}
+        <div
+            v-if="showLabel"
+            class="c-telemetry-view__label"
+        >
+            <div class="c-telemetry-view__label-text">
+                {{ domainObject.name }}
+            </div>
         </div>
-      </div>
 
-      <div
-        v-if="showValue"
-        :title="fieldName"
-        class="c-telemetry-view__value"
-        :class="[telemetryClass]"
-      >
-        <div class="c-telemetry-view__value-text">
-          {{ telemetryValue }}
+        <div
+            v-if="showValue"
+            :title="fieldName"
+            class="c-telemetry-view__value"
+            :class="[telemetryClass]"
+        >
+            <div class="c-telemetry-view__value-text">
+                {{ telemetryValue }}
+            </div>
         </div>
-      </div>
     </div>
-  </layout-frame>
+</layout-frame>
 </template>
 
 <style lang="scss">

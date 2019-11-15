@@ -1,93 +1,93 @@
 <template>
-  <div class="l-browse-bar">
+<div class="l-browse-bar">
     <div class="l-browse-bar__start">
-      <button
-        v-if="hasParent"
-        class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
-        @click="goToParent"
-      />
-      <div
-        class="l-browse-bar__object-name--w"
-        :class="type.cssClass"
-      >
-        <span
-          class="l-browse-bar__object-name c-input-inline"
-          contenteditable
-          @blur="updateName"
-          @keydown.enter.prevent
-          @keyup.enter.prevent="updateNameOnEnterKeyPress"
+        <button
+            v-if="hasParent"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            @click="goToParent"
+        />
+        <div
+            class="l-browse-bar__object-name--w"
+            :class="type.cssClass"
         >
-          {{ domainObject.name }}
-        </span>
-      </div>
-      <div
-        class="l-browse-bar__context-actions c-disclosure-button"
-        @click.prevent.stop="showContextMenu"
-      />
+            <span
+                class="l-browse-bar__object-name c-input-inline"
+                contenteditable
+                @blur="updateName"
+                @keydown.enter.prevent
+                @keyup.enter.prevent="updateNameOnEnterKeyPress"
+            >
+                {{ domainObject.name }}
+            </span>
+        </div>
+        <div
+            class="l-browse-bar__context-actions c-disclosure-button"
+            @click.prevent.stop="showContextMenu"
+        />
     </div>
 
     <div class="l-browse-bar__end">
-      <view-switcher
-        :current-view="currentView"
-        :views="views"
-        @setView="setView"
-      />
-      <!-- Action buttons -->
-      <div class="l-browse-bar__actions">
-        <button
-          v-if="notebookEnabled"
-          class="l-browse-bar__actions__notebook-entry c-button icon-notebook"
-          title="New Notebook entry"
-          @click="snapshot()"
+        <view-switcher
+            :current-view="currentView"
+            :views="views"
+            @setView="setView"
         />
-        <button
-          v-if="isViewEditable & !isEditing"
-          class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
-          title="Edit"
-          @click="edit()"
-        />
+        <!-- Action buttons -->
+        <div class="l-browse-bar__actions">
+            <button
+                v-if="notebookEnabled"
+                class="l-browse-bar__actions__notebook-entry c-button icon-notebook"
+                title="New Notebook entry"
+                @click="snapshot()"
+            />
+            <button
+                v-if="isViewEditable & !isEditing"
+                class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
+                title="Edit"
+                @click="edit()"
+            />
 
-        <div
-          v-if="isEditing"
-          class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
-        >
-          <button
-            class="c-button--menu c-button--major icon-save"
-            title="Save"
-            @click.stop="toggleSaveMenu"
-          />
-          <div
-            v-show="showSaveMenu"
-            class="c-menu"
-          >
-            <ul>
-              <li
-                class="icon-save"
-                title="Save and Finish Editing"
-                @click="saveAndFinishEditing"
-              >
-                Save and Finish Editing
-              </li>
-              <li
-                class="icon-save"
-                title="Save and Continue Editing"
-                @click="saveAndContinueEditing"
-              >
-                Save and Continue Editing
-              </li>
-            </ul>
-          </div>
+            <div
+                v-if="isEditing"
+                class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+            >
+                <button
+                    class="c-button--menu c-button--major icon-save"
+                    title="Save"
+                    @click.stop="toggleSaveMenu"
+                />
+                <div
+                    v-show="showSaveMenu"
+                    class="c-menu"
+                >
+                    <ul>
+                        <li
+                            class="icon-save"
+                            title="Save and Finish Editing"
+                            @click="saveAndFinishEditing"
+                        >
+                            Save and Finish Editing
+                        </li>
+                        <li
+                            class="icon-save"
+                            title="Save and Continue Editing"
+                            @click="saveAndContinueEditing"
+                        >
+                            Save and Continue Editing
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button
+                v-if="isEditing"
+                class="l-browse-bar__actions c-button icon-x"
+                title="Cancel Editing"
+                @click="promptUserandCancelEditing()"
+            />
         </div>
-
-        <button
-          v-if="isEditing"
-          class="l-browse-bar__actions c-button icon-x"
-          title="Cancel Editing"
-          @click="promptUserandCancelEditing()"
-        />
-      </div>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

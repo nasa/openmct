@@ -1,41 +1,41 @@
 <template>
-  <div class="c-ctrl-wrapper">
+<div class="c-ctrl-wrapper">
     <div
-      class="c-icon-button c-icon-button--swatched"
-      :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
-      :title="options.title"
-      @click="toggle"
+        class="c-icon-button c-icon-button--swatched"
+        :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
+        :title="options.title"
+        @click="toggle"
     >
-      <div
-        class="c-swatch"
-        :style="{
-          background: options.value
-        }"
-      />
-    </div>
-    <div
-      v-if="open"
-      class="c-menu c-palette c-palette--color"
-    >
-      <div
-        v-if="!this.options.preventNone"
-        class="c-palette__item-none"
-        @click="select({value: 'transparent'})"
-      >
-        <div class="c-palette__item" />
-        None
-      </div>
-      <div class="c-palette__items">
         <div
-          v-for="(color, index) in colorPalette"
-          :key="index"
-          class="c-palette__item"
-          :style="{ background: color.value }"
-          @click="select(color)"
+            class="c-swatch"
+            :style="{
+                background: options.value
+            }"
         />
-      </div>
     </div>
-  </div>
+    <div
+        v-if="open"
+        class="c-menu c-palette c-palette--color"
+    >
+        <div
+            v-if="!this.options.preventNone"
+            class="c-palette__item-none"
+            @click="select({value: 'transparent'})"
+        >
+            <div class="c-palette__item" />
+            None
+        </div>
+        <div class="c-palette__items">
+            <div
+                v-for="(color, index) in colorPalette"
+                :key="index"
+                class="c-palette__item"
+                :style="{ background: color.value }"
+                @click="select(color)"
+            />
+        </div>
+    </div>
+</div>
 </template>
 
 <script>

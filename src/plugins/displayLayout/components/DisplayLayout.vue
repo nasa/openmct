@@ -21,49 +21,49 @@
  *****************************************************************************/
 
 <template>
-  <div
+<div
     class="l-layout"
     :class="{
-      'is-multi-selected': selectedLayoutItems.length > 1
+        'is-multi-selected': selectedLayoutItems.length > 1
     }"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"
-  >
+>
     <!-- Background grid -->
     <div class="l-layout__grid-holder c-grid">
-      <div
-        v-if="gridSize[0] >= 3"
-        class="c-grid__x l-grid l-grid-x"
-        :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
-      />
-      <div
-        v-if="gridSize[1] >= 3"
-        class="c-grid__y l-grid l-grid-y"
-        :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
-      />
+        <div
+            v-if="gridSize[0] >= 3"
+            class="c-grid__x l-grid l-grid-x"
+            :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
+        />
+        <div
+            v-if="gridSize[1] >= 3"
+            class="c-grid__y l-grid l-grid-y"
+            :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
+        />
     </div>
     <component
-      :is="item.type"
-      v-for="(item, index) in layoutItems"
-      :key="item.id"
-      :item="item"
-      :grid-size="gridSize"
-      :init-select="initSelectIndex === index"
-      :index="index"
-      :multi-select="selectedLayoutItems.length > 1"
-      @move="move"
-      @endMove="endMove"
-      @endLineResize="endLineResize"
-      @formatChanged="updateTelemetryFormat"
+        :is="item.type"
+        v-for="(item, index) in layoutItems"
+        :key="item.id"
+        :item="item"
+        :grid-size="gridSize"
+        :init-select="initSelectIndex === index"
+        :index="index"
+        :multi-select="selectedLayoutItems.length > 1"
+        @move="move"
+        @endMove="endMove"
+        @endLineResize="endLineResize"
+        @formatChanged="updateTelemetryFormat"
     />
     <edit-marquee
-      v-if="showMarquee"
-      :grid-size="gridSize"
-      :selected-layout-items="selectedLayoutItems"
-      @endResize="endResize"
+        v-if="showMarquee"
+        :grid-size="gridSize"
+        :selected-layout-items="selectedLayoutItems"
+        @endResize="endResize"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

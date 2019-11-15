@@ -17,28 +17,28 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div
+<div
     v-if="activeModel.message"
     class="c-message-banner"
     :class="[
-      activeModel.severity,
-      {
-        'minimized': activeModel.minimized,
-        'new': !activeModel.minimized
-      }]"
+        activeModel.severity,
+        {
+            'minimized': activeModel.minimized,
+            'new': !activeModel.minimized
+        }]"
     @click="maximize()"
-  >
+>
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
     <progress-bar
-      v-if="activeModel.progressPerc !== undefined"
-      class="c-message-banner__progress-bar"
-      :model="activeModel"
+        v-if="activeModel.progressPerc !== undefined"
+        class="c-message-banner__progress-bar"
+        :model="activeModel"
     />
     <button
-      class="c-message-banner__close-button c-click-icon icon-x-in-circle"
-      @click.stop="dismiss()"
+        class="c-message-banner__close-button c-click-icon icon-x-in-circle"
+        @click.stop="dismiss()"
     />
-  </div>
+</div>
 </template>
 
 <style lang="scss">

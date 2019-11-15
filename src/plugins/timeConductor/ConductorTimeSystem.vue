@@ -20,33 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div
+<div
     v-if="selectedTimeSystem.name"
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
-  >
+>
     <button
-      class="c-button--menu c-time-system-button"
-      :class="selectedTimeSystem.cssClass"
-      @click.prevent="toggle"
+        class="c-button--menu c-time-system-button"
+        :class="selectedTimeSystem.cssClass"
+        @click.prevent="toggle"
     >
-      <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
+        <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
     </button>
     <div
-      v-if="open"
-      class="c-menu"
+        v-if="open"
+        class="c-menu"
     >
-      <ul>
-        <li
-          v-for="timeSystem in timeSystems"
-          :key="timeSystem.key"
-          :class="timeSystem.cssClass"
-          @click="setTimeSystemFromView(timeSystem)"
-        >
-          {{ timeSystem.name }}
-        </li>
-      </ul>
+        <ul>
+            <li
+                v-for="timeSystem in timeSystems"
+                :key="timeSystem.key"
+                :class="timeSystem.cssClass"
+                @click="setTimeSystemFromView(timeSystem)"
+            >
+                {{ timeSystem.name }}
+            </li>
+        </ul>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

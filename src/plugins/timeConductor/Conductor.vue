@@ -20,123 +20,123 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div
+<div
     class="c-conductor"
     :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
-  >
+>
     <form
-      ref="conductorForm"
-      class="u-contents"
-      @submit.prevent="updateTimeFromConductor"
+        ref="conductorForm"
+        class="u-contents"
+        @submit.prevent="updateTimeFromConductor"
     >
-      <div class="c-conductor__time-bounds">
-        <button
-          ref="submitButton"
-          class="c-input--submit"
-          type="submit"
-        />
-        <ConductorModeIcon class="c-conductor__mode-icon" />
+        <div class="c-conductor__time-bounds">
+            <button
+                ref="submitButton"
+                class="c-input--submit"
+                type="submit"
+            />
+            <ConductorModeIcon class="c-conductor__mode-icon" />
 
-        <div
-          v-if="isFixed"
-          class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+            <div
+                v-if="isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+            >
+                <!-- Fixed start -->
+                <div class="c-conductor__start-fixed__label">
+                    Start
+                </div>
+                <input
+                    ref="startDate"
+                    v-model="formattedBounds.start"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllBounds(); submitForm()"
+                >
+                <date-picker
+                    v-if="isFixed && isUTCBased"
+                    :default-date-time="formattedBounds.start"
+                    :formatter="timeFormatter"
+                    @date-selected="startDateSelected"
+                />
+            </div>
+
+            <div
+                v-if="!isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+            >
+                <!-- RT start -->
+                <div class="c-direction-indicator icon-minus" />
+                <input
+                    ref="startOffset"
+                    v-model="offsets.start"
+                    class="c-input--hrs-min-sec"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllOffsets(); submitForm()"
+                >
+            </div>
+
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+                <!-- Fixed end and RT 'last update' display -->
+                <div class="c-conductor__end-fixed__label">
+                    {{ isFixed ? 'End' : 'Updated' }}
+                </div>
+                <input
+                    ref="endDate"
+                    v-model="formattedBounds.end"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    :disabled="!isFixed"
+                    @change="validateAllBounds(); submitForm()"
+                >
+                <date-picker
+                    v-if="isFixed && isUTCBased"
+                    class="c-ctrl-wrapper--menus-left"
+                    :default-date-time="formattedBounds.end"
+                    :formatter="timeFormatter"
+                    @date-selected="endDateSelected"
+                />
+            </div>
+
+            <div
+                v-if="!isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
+            >
+                <!-- RT end -->
+                <div class="c-direction-indicator icon-plus" />
+                <input
+                    ref="endOffset"
+                    v-model="offsets.end"
+                    class="c-input--hrs-min-sec"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllOffsets(); submitForm()"
+                >
+            </div>
+
+            <conductor-axis
+                class="c-conductor__ticks"
+                :bounds="rawBounds"
+                @panAxis="setViewFromBounds"
+            />
+        </div>
+        <div class="c-conductor__controls">
+            <!-- Mode, time system menu buttons and duration slider -->
+            <ConductorMode class="c-conductor__mode-select" />
+            <ConductorTimeSystem class="c-conductor__time-system-select" />
+        </div>
+        <input
+            type="submit"
+            class="invisible"
         >
-          <!-- Fixed start -->
-          <div class="c-conductor__start-fixed__label">
-            Start
-          </div>
-          <input
-            ref="startDate"
-            v-model="formattedBounds.start"
-            class="c-input--datetime"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            @change="validateAllBounds(); submitForm()"
-          >
-          <date-picker
-            v-if="isFixed && isUTCBased"
-            :default-date-time="formattedBounds.start"
-            :formatter="timeFormatter"
-            @date-selected="startDateSelected"
-          />
-        </div>
-
-        <div
-          v-if="!isFixed"
-          class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
-        >
-          <!-- RT start -->
-          <div class="c-direction-indicator icon-minus" />
-          <input
-            ref="startOffset"
-            v-model="offsets.start"
-            class="c-input--hrs-min-sec"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            @change="validateAllOffsets(); submitForm()"
-          >
-        </div>
-
-        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-          <!-- Fixed end and RT 'last update' display -->
-          <div class="c-conductor__end-fixed__label">
-            {{ isFixed ? 'End' : 'Updated' }}
-          </div>
-          <input
-            ref="endDate"
-            v-model="formattedBounds.end"
-            class="c-input--datetime"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            :disabled="!isFixed"
-            @change="validateAllBounds(); submitForm()"
-          >
-          <date-picker
-            v-if="isFixed && isUTCBased"
-            class="c-ctrl-wrapper--menus-left"
-            :default-date-time="formattedBounds.end"
-            :formatter="timeFormatter"
-            @date-selected="endDateSelected"
-          />
-        </div>
-
-        <div
-          v-if="!isFixed"
-          class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
-        >
-          <!-- RT end -->
-          <div class="c-direction-indicator icon-plus" />
-          <input
-            ref="endOffset"
-            v-model="offsets.end"
-            class="c-input--hrs-min-sec"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            @change="validateAllOffsets(); submitForm()"
-          >
-        </div>
-
-        <conductor-axis
-          class="c-conductor__ticks"
-          :bounds="rawBounds"
-          @panAxis="setViewFromBounds"
-        />
-      </div>
-      <div class="c-conductor__controls">
-        <!-- Mode, time system menu buttons and duration slider -->
-        <ConductorMode class="c-conductor__mode-select" />
-        <ConductorTimeSystem class="c-conductor__time-system-select" />
-      </div>
-      <input
-        type="submit"
-        class="invisible"
-      >
     </form>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

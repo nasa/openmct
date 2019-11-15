@@ -1,58 +1,58 @@
 <template>
-  <div class="c-tabs-view">
+<div class="c-tabs-view">
     <div
-      class="c-tabs-view__tabs-holder c-tabs"
-      :class="{
-        'is-dragging': isDragging,
-        'is-mouse-over': allowDrop
-      }"
+        class="c-tabs-view__tabs-holder c-tabs"
+        :class="{
+            'is-dragging': isDragging,
+            'is-mouse-over': allowDrop
+        }"
     >
-      <div
-        class="c-drop-hint"
-        @drop="onDrop"
-        @dragenter="dragenter"
-        @dragleave="dragleave"
-      />
-      <div
-        v-if="!tabsList.length > 0"
-        class="c-tabs-view__empty-message"
-      >
-        Drag objects here to add them to this view.
-      </div>
-      <button
-        v-for="(tab,index) in tabsList"
-        :key="index"
-        class="c-tabs-view__tab c-tab"
-        :class="[
-          {'is-current': isCurrent(tab)},
-          tab.type.definition.cssClass
-        ]"
-        @click="showTab(tab)"
-      >
-        <span class="c-button__label">{{ tab.domainObject.name }}</span>
-      </button>
-    </div>
-    <div
-      v-for="(tab, index) in tabsList"
-      :key="index"
-      class="c-tabs-view__object-holder"
-      :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
-    >
-      <div
-        v-if="currentTab"
-        class="c-tabs-view__object-name l-browse-bar__object-name--w"
-        :class="currentTab.type.definition.cssClass"
-      >
-        <div class="l-browse-bar__object-name">
-          {{ currentTab.domainObject.name }}
+        <div
+            class="c-drop-hint"
+            @drop="onDrop"
+            @dragenter="dragenter"
+            @dragleave="dragleave"
+        />
+        <div
+            v-if="!tabsList.length > 0"
+            class="c-tabs-view__empty-message"
+        >
+            Drag objects here to add them to this view.
         </div>
-      </div>
-      <object-view
-        class="c-tabs-view__object"
-        :object="tab.domainObject"
-      />
+        <button
+            v-for="(tab,index) in tabsList"
+            :key="index"
+            class="c-tabs-view__tab c-tab"
+            :class="[
+                {'is-current': isCurrent(tab)},
+                tab.type.definition.cssClass
+            ]"
+            @click="showTab(tab)"
+        >
+            <span class="c-button__label">{{ tab.domainObject.name }}</span>
+        </button>
     </div>
-  </div>
+    <div
+        v-for="(tab, index) in tabsList"
+        :key="index"
+        class="c-tabs-view__object-holder"
+        :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
+    >
+        <div
+            v-if="currentTab"
+            class="c-tabs-view__object-name l-browse-bar__object-name--w"
+            :class="currentTab.type.definition.cssClass"
+        >
+            <div class="l-browse-bar__object-name">
+                {{ currentTab.domainObject.name }}
+            </div>
+        </div>
+        <object-view
+            class="c-tabs-view__object"
+            :object="tab.domainObject"
+        />
+    </div>
+</div>
 </template>
 
 <style lang="scss">

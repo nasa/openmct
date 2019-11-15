@@ -1,64 +1,64 @@
 <template>
-  <div class="c-table c-table--sortable c-list-view">
+<div class="c-table c-table--sortable c-list-view">
     <table class="c-table__body">
-      <thead class="c-table__header">
-        <tr>
-          <th
-            class="is-sortable"
-            :class="{
-              'is-sorting': sortBy === 'model.name',
-              'asc': ascending,
-              'desc': !ascending
-            }"
-            @click="sort('model.name', true)"
-          >
-            Name
-          </th>
-          <th
-            class="is-sortable"
-            :class="{
-              'is-sorting': sortBy === 'type.name',
-              'asc': ascending,
-              'desc': !ascending
-            }"
-            @click="sort('type.name', true)"
-          >
-            Type
-          </th>
-          <th
-            class="is-sortable"
-            :class="{
-              'is-sorting': sortBy === 'model.persisted',
-              'asc': ascending,
-              'desc': !ascending
-            }"
-            @click="sort('model.persisted', false)"
-          >
-            Created Date
-          </th>
-          <th
-            class="is-sortable"
-            :class="{
-              'is-sorting': sortBy === 'model.modified',
-              'asc': ascending,
-              'desc': !ascending
-            }"
-            @click="sort('model.modified', false)"
-          >
-            Updated Date
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <list-item
-          v-for="item in sortedItems"
-          :key="item.objectKeyString"
-          :item="item"
-          :object-path="item.objectPath"
-        />
-      </tbody>
+        <thead class="c-table__header">
+            <tr>
+                <th
+                    class="is-sortable"
+                    :class="{
+                        'is-sorting': sortBy === 'model.name',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.name', true)"
+                >
+                    Name
+                </th>
+                <th
+                    class="is-sortable"
+                    :class="{
+                        'is-sorting': sortBy === 'type.name',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('type.name', true)"
+                >
+                    Type
+                </th>
+                <th
+                    class="is-sortable"
+                    :class="{
+                        'is-sorting': sortBy === 'model.persisted',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.persisted', false)"
+                >
+                    Created Date
+                </th>
+                <th
+                    class="is-sortable"
+                    :class="{
+                        'is-sorting': sortBy === 'model.modified',
+                        'asc': ascending,
+                        'desc': !ascending
+                    }"
+                    @click="sort('model.modified', false)"
+                >
+                    Updated Date
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <list-item
+                v-for="item in sortedItems"
+                :key="item.objectKeyString"
+                :item="item"
+                :object-path="item.objectPath"
+            />
+        </tbody>
     </table>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

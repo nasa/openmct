@@ -22,13 +22,13 @@
  *****************************************************************************/
 
 <template>
-  <tr @contextmenu.prevent="showContextMenu">
+<tr @contextmenu.prevent="showContextMenu">
     <td>{{ name }}</td>
     <td>{{ timestamp }}</td>
     <td :class="valueClass">
-      {{ value }}
+        {{ value }}
     </td>
-  </tr>
+</tr>
 </template>
 
 <style lang="scss">

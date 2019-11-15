@@ -20,22 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <layout-frame
+<layout-frame
     :item="item"
     :grid-size="gridSize"
     :title="domainObject && domainObject.name"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
-  >
+>
     <object-frame
-      v-if="domainObject"
-      ref="objectFrame"
-      :domain-object="domainObject"
-      :object-path="currentObjectPath"
-      :has-frame="item.hasFrame"
-      :show-edit-view="false"
+        v-if="domainObject"
+        ref="objectFrame"
+        :domain-object="domainObject"
+        :object-path="currentObjectPath"
+        :has-frame="item.hasFrame"
+        :show-edit-view="false"
     />
-  </layout-frame>
+</layout-frame>
 </template>
 
 <script>

@@ -1,84 +1,84 @@
 <template>
-  <div
+<div
     class="l-shell"
     :class="{
-      'is-editing': isEditing
+        'is-editing': isEditing
     }"
-  >
+>
     <div
-      class="l-shell__head"
-      :class="{
-        'l-shell__head--expanded': headExpanded,
-        'l-shell__head--minify-indicators': !headExpanded
-      }"
+        class="l-shell__head"
+        :class="{
+            'l-shell__head--expanded': headExpanded,
+            'l-shell__head--minify-indicators': !headExpanded
+        }"
     >
-      <CreateButton class="l-shell__create-button" />
-      <indicators class="l-shell__head-section l-shell__indicators" />
-      <button
-        class="l-shell__head__collapse-button c-button"
-        @click="toggleShellHead"
-      />
-      <notification-banner />
-      <div class="l-shell__head-section l-shell__controls">
+        <CreateButton class="l-shell__create-button" />
+        <indicators class="l-shell__head-section l-shell__indicators" />
         <button
-          class="c-icon-button c-icon-button--major icon-new-window"
-          title="Open in a new browser tab"
-          target="_blank"
-          @click="openInNewTab"
+            class="l-shell__head__collapse-button c-button"
+            @click="toggleShellHead"
         />
-        <button
-          :class="['c-icon-button c-icon-button--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
-          :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
-          @click="fullScreenToggle"
-        />
-      </div>
-      <app-logo />
+        <notification-banner />
+        <div class="l-shell__head-section l-shell__controls">
+            <button
+                class="c-icon-button c-icon-button--major icon-new-window"
+                title="Open in a new browser tab"
+                target="_blank"
+                @click="openInNewTab"
+            />
+            <button
+                :class="['c-icon-button c-icon-button--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
+                :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
+                @click="fullScreenToggle"
+            />
+        </div>
+        <app-logo />
     </div>
     <multipane
-      class="l-shell__main"
-      type="horizontal"
+        class="l-shell__main"
+        type="horizontal"
     >
-      <pane
-        class="l-shell__pane-tree"
-        handle="after"
-        label="Browse"
-        collapsable
-      >
-        <mct-tree class="l-shell__tree" />
-      </pane>
-      <pane class="l-shell__pane-main">
-        <browse-bar
-          ref="browseBar"
-          class="l-shell__main-view-browse-bar"
-        />
-        <toolbar
-          v-if="toolbar"
-          class="l-shell__toolbar"
-        />
-        <object-view
-          ref="browseObject"
-          class="l-shell__main-container"
-          :show-edit-view="true"
-          data-selectable
-        />
-        <component
-          :is="conductorComponent"
-          class="l-shell__time-conductor"
-        />
-      </pane>
-      <pane
-        class="l-shell__pane-inspector l-pane--holds-multipane"
-        handle="before"
-        label="Inspect"
-        collapsable
-      >
-        <Inspector
-          ref="inspector"
-          :is-editing="isEditing"
-        />
-      </pane>
+        <pane
+            class="l-shell__pane-tree"
+            handle="after"
+            label="Browse"
+            collapsable
+        >
+            <mct-tree class="l-shell__tree" />
+        </pane>
+        <pane class="l-shell__pane-main">
+            <browse-bar
+                ref="browseBar"
+                class="l-shell__main-view-browse-bar"
+            />
+            <toolbar
+                v-if="toolbar"
+                class="l-shell__toolbar"
+            />
+            <object-view
+                ref="browseObject"
+                class="l-shell__main-container"
+                :show-edit-view="true"
+                data-selectable
+            />
+            <component
+                :is="conductorComponent"
+                class="l-shell__time-conductor"
+            />
+        </pane>
+        <pane
+            class="l-shell__pane-inspector l-pane--holds-multipane"
+            handle="before"
+            label="Inspect"
+            collapsable
+        >
+            <Inspector
+                ref="inspector"
+                :is-editing="isEditing"
+            />
+        </pane>
     </multipane>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

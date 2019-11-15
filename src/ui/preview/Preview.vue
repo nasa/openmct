@@ -20,39 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <div class="l-preview-window">
+<div class="l-preview-window">
     <div class="l-browse-bar">
-      <div class="l-browse-bar__start">
-        <div
-          class="l-browse-bar__object-name--w"
-          :class="type.cssClass"
-        >
-          <span class="l-browse-bar__object-name">
-            {{ domainObject.name }}
-          </span>
-          <context-menu-drop-down :object-path="objectPath" />
+        <div class="l-browse-bar__start">
+            <div
+                class="l-browse-bar__object-name--w"
+                :class="type.cssClass"
+            >
+                <span class="l-browse-bar__object-name">
+                    {{ domainObject.name }}
+                </span>
+                <context-menu-drop-down :object-path="objectPath" />
+            </div>
         </div>
-      </div>
-      <div class="l-browse-bar__end">
-        <div class="l-browse-bar__actions">
-          <view-switcher
-            :views="views"
-            :current-view="currentView"
-            @setView="setView"
-          />
-          <button
-            v-if="notebookEnabled"
-            class="l-browse-bar__actions__edit c-button icon-notebook"
-            title="New Notebook entry"
-            @click="snapshot"
-          />
+        <div class="l-browse-bar__end">
+            <div class="l-browse-bar__actions">
+                <view-switcher
+                    :views="views"
+                    :current-view="currentView"
+                    @setView="setView"
+                />
+                <button
+                    v-if="notebookEnabled"
+                    class="l-browse-bar__actions__edit c-button icon-notebook"
+                    title="New Notebook entry"
+                    @click="snapshot"
+                />
+            </div>
         </div>
-      </div>
     </div>
     <div class="l-preview-window__object-view">
-      <div ref="objectView" />
+        <div ref="objectView" />
     </div>
-  </div>
+</div>
 </template>
 <style lang="scss">
     @import '~styles/sass-base';

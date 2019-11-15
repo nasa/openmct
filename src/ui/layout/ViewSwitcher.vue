@@ -1,35 +1,35 @@
 <template>
-  <div
+<div
     v-if="views.length > 1"
     class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
-  >
+>
     <button
-      class="c-button--menu"
-      :class="currentView.cssClass"
-      title="Switch view type"
-      @click.stop="toggleViewMenu"
+        class="c-button--menu"
+        :class="currentView.cssClass"
+        title="Switch view type"
+        @click.stop="toggleViewMenu"
     >
-      <span class="c-button__label">
-        {{ currentView.name }}
-      </span>
+        <span class="c-button__label">
+            {{ currentView.name }}
+        </span>
     </button>
     <div
-      v-show="showViewMenu"
-      class="c-menu"
+        v-show="showViewMenu"
+        class="c-menu"
     >
-      <ul>
-        <li
-          v-for="(view, index) in views"
-          :key="index"
-          :class="view.cssClass"
-          :title="view.name"
-          @click="setView(view)"
-        >
-          {{ view.name }}
-        </li>
-      </ul>
+        <ul>
+            <li
+                v-for="(view, index) in views"
+                :key="index"
+                :class="view.cssClass"
+                :title="view.name"
+                @click="setView(view)"
+            >
+                {{ view.name }}
+            </li>
+        </ul>
     </div>
-  </div>
+</div>
 </template>
 
 <script>

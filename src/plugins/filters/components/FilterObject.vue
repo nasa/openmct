@@ -1,62 +1,62 @@
 <template>
-  <li class="c-tree__item-h">
+<li class="c-tree__item-h">
     <div
-      class="c-tree__item menus-to-left"
-      @click="toggleExpanded"
+        class="c-tree__item menus-to-left"
+        @click="toggleExpanded"
     >
-      <div
-        class="c-filter-tree-item__filter-indicator"
-        :class="{'icon-filter': hasActiveFilters }"
-      />
-      <span
-        class="c-disclosure-triangle is-enabled flex-elem"
-        :class="{'c-disclosure-triangle--expanded': expanded}"
-      />
-      <div class="c-tree__item__label c-object-label">
-        <div class="c-object-label">
-          <div
-            class="c-object-label__type-icon"
-            :class="objectCssClass"
-          />
-          <div class="c-object-label__name flex-elem grows">
-            {{ filterObject.name }}
-          </div>
+        <div
+            class="c-filter-tree-item__filter-indicator"
+            :class="{'icon-filter': hasActiveFilters }"
+        />
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="{'c-disclosure-triangle--expanded': expanded}"
+        />
+        <div class="c-tree__item__label c-object-label">
+            <div class="c-object-label">
+                <div
+                    class="c-object-label__type-icon"
+                    :class="objectCssClass"
+                />
+                <div class="c-object-label__name flex-elem grows">
+                    {{ filterObject.name }}
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div v-if="expanded">
-      <ul class="c-properties">
-        <div
-          v-if="!isEditing && persistedFilters.useGlobal"
-          class="c-properties__label span-all"
-        >
-          Uses global filter
-        </div>
+        <ul class="c-properties">
+            <div
+                v-if="!isEditing && persistedFilters.useGlobal"
+                class="c-properties__label span-all"
+            >
+                Uses global filter
+            </div>
 
-        <div
-          v-if="isEditing"
-          class="c-properties__label span-all"
-        >
-          <toggle-switch
-            :id="keyString"
-            :checked="persistedFilters.useGlobal"
-            @change="useGlobalFilter"
-          />
-          Use global filter
-        </div>
-        <filter-field
-          v-for="metadatum in filterObject.metadataWithFilters"
-          :key="metadatum.key"
-          :filter-field="metadatum"
-          :use-global="persistedFilters.useGlobal"
-          :persisted-filters="updatedFilters[metadatum.key]"
-          @filterSelected="updateFiltersWithSelectedValue"
-          @filterTextValueChanged="updateFiltersWithTextValue"
-        />
-      </ul>
+            <div
+                v-if="isEditing"
+                class="c-properties__label span-all"
+            >
+                <toggle-switch
+                    :id="keyString"
+                    :checked="persistedFilters.useGlobal"
+                    @change="useGlobalFilter"
+                />
+                Use global filter
+            </div>
+            <filter-field
+                v-for="metadatum in filterObject.metadataWithFilters"
+                :key="metadatum.key"
+                :filter-field="metadatum"
+                :use-global="persistedFilters.useGlobal"
+                :persisted-filters="updatedFilters[metadatum.key]"
+                @filterSelected="updateFiltersWithSelectedValue"
+                @filterTextValueChanged="updateFiltersWithTextValue"
+            />
+        </ul>
     </div>
-  </li>
+</li>
 </template>
 
 <script>

@@ -1,10 +1,10 @@
 <template>
-  <div class="c-search c-search--major">
+<div class="c-search c-search--major">
     <input
-      type="search"
-      placeholder="Search"
+        type="search"
+        placeholder="Search"
     >
-  </div>
+</div>
 </template>
 
 <style lang="scss">

@@ -1,40 +1,40 @@
 <template>
-  <div class="c-properties c-properties--location">
+<div class="c-properties c-properties--location">
     <div
-      class="c-properties__header"
-      title="The location of this linked object."
+        class="c-properties__header"
+        title="The location of this linked object."
     >
-      Original Location
+        Original Location
     </div>
     <ul
-      v-if="!multiSelect"
-      class="c-properties__section"
+        v-if="!multiSelect"
+        class="c-properties__section"
     >
-      <li
-        v-if="originalPath.length"
-        class="c-properties__row"
-      >
-        <ul class="c-properties__value c-location">
-          <li
-            v-for="pathObject in orderedOriginalPath"
-            :key="pathObject.key"
-            class="c-location__item"
-          >
-            <object-label
-              :domain-object="pathObject.domainObject"
-              :object-path="pathObject.objectPath"
-            />
-          </li>
-        </ul>
-      </li>
+        <li
+            v-if="originalPath.length"
+            class="c-properties__row"
+        >
+            <ul class="c-properties__value c-location">
+                <li
+                    v-for="pathObject in orderedOriginalPath"
+                    :key="pathObject.key"
+                    class="c-location__item"
+                >
+                    <object-label
+                        :domain-object="pathObject.domainObject"
+                        :object-path="pathObject.objectPath"
+                    />
+                </li>
+            </ul>
+        </li>
     </ul>
     <div
-      v-if="multiSelect"
-      class="c-properties__row--span-all"
+        v-if="multiSelect"
+        class="c-properties__row--span-all"
     >
-      No location to display for multiple items
+        No location to display for multiple items
     </div>
-  </div>
+</div>
 </template>
 
 <style lang="scss">

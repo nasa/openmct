@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-  <td
+<td
     :title="formattedValue"
     @click="selectCell($event.currentTarget, columnKey)"
-  >
+>
     {{ formattedValue }}
-  </td>
+</td>
 </template>
 <script>
 export default {
