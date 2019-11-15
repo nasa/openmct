@@ -24,7 +24,7 @@
   <!-- Resize handles -->
   <div
     class="c-frame-edit"
-    :style="style"
+    :style="marqueeStyle"
   >
     <div
       class="c-frame-edit__handle c-frame-edit__handle--nw"
@@ -155,7 +155,7 @@ export default {
                 width = width - x;
                 height = height - y;
             }
-            
+
             return {
                 x: x,
                 y: y,
@@ -163,24 +163,16 @@ export default {
                 height: height
             }
         },
-        style() {
-            return this.getMarqueeStyle(
-                this.marqueePosition.x,
-                this.marqueePosition.y,
-                this.marqueePosition.width,
-                this.marqueePosition.height
-            );
+        marqueeStyle() {
+            return {
+                left: (this.gridSize[0] * this.marqueePosition.x) + 'px',
+                top: (this.gridSize[1] * this.marqueePosition.y) + 'px',
+                width: (this.gridSize[0] * this.marqueePosition.width) + 'px',
+                height: (this.gridSize[1] * this.marqueePosition.height) + 'px'
+            };
         }
     },
     methods: {
-        getMarqueeStyle(x, y, width, height) {
-            return {
-                left: (this.gridSize[0] * x) + 'px',
-                top: (this.gridSize[1] * y) + 'px',
-                width: (this.gridSize[0] * width) + 'px',
-                height: (this.gridSize[1] * height) + 'px'
-            };
-        },
         updatePosition(event) {
             let currentPosition = [event.pageX, event.pageY];
             this.initialPosition = this.initialPosition || currentPosition;
