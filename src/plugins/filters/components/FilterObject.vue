@@ -47,7 +47,6 @@
         </div>
         <filter-field
           v-for="metadatum in filterObject.metadataWithFilters"
-          v-if="(!persistedFilters.useGlobal && !isEditing) || isEditing"
           :key="metadatum.key"
           :filter-field="metadatum"
           :use-global="persistedFilters.useGlobal"
