@@ -1,6 +1,6 @@
 <template>
     <multipane class="c-imagery-layout" type="vertical">
-        <pane>
+        <pane :style="{'min-height': `300px`}">
             <div class="main-image-wrapper c-imagery has-local-controls">
                 <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                     <span class="holder flex-elem grows c-imagery__lc__sliders">
@@ -38,7 +38,9 @@
                 </div>
             </div>
         </pane>
-        <pane class="c-inspector__elements" handle="before">
+
+        <pane class="c-inspector__elements" handle="before"
+                :style="{'min-height': `100px`}">
             <div class="c-elements-pool">
                 <div class="thumbs-layout" ref="thumbsWrapper"
                         @scroll="handleScroll">
