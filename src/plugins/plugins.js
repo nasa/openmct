@@ -44,7 +44,8 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
-    './clearData/plugin'
+    './clearData/plugin',
+    './myItems/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -69,11 +70,11 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
-    ClearData
+    ClearData,
+    MyItems
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
         CouchDB: 'platform/persistence/couch'
     };
 
@@ -102,6 +103,8 @@ define([
      * to exclusively.
      */
     plugins.AutoflowView = AutoflowPlugin;
+
+    plugins.MyItems = MyItems;
 
     plugins.Conductor = TimeConductorPlugin.default;
 
