@@ -61,13 +61,13 @@
                 </li>
             </ul>
             <ul
-                v-for="(row, index) in table"
-                :key="index"
+                v-for="(row, tableIndex) in table"
+                :key="tableIndex"
                 class="c-calendar__row--body"
             >
                 <li
-                    v-for="(cell, index) in row"
-                    :key="index"
+                    v-for="(cell, rowIndex) in row"
+                    :key="rowIndex"
                     :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }"
                     @click="select(cell)"
                 >
