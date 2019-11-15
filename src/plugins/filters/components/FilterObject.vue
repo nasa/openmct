@@ -46,7 +46,7 @@
                 Use global filter
             </div>
             <filter-field
-                v-for="metadatum in filterObject.metadataWithFilters"
+                v-for="metadatum in activeFilters"
                 :key="metadatum.key"
                 :filter-field="metadatum"
                 :use-global="persistedFilters.useGlobal"
@@ -87,6 +87,15 @@ export default {
         }
     },
     computed: {
+        // do not show filter fields if using global filter
+        // if editing however, show all filter fields
+        activeFilters() {
+            if (!this.isEditing && this.persistedFilters.useGlobal) {
+                return []
+            }
+
+            return this.filterObject.metadataWithFilters
+        },
         hasActiveFilters() {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(comparator => {
