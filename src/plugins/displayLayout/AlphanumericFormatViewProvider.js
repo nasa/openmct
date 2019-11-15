@@ -46,7 +46,7 @@ define([
 
                 return selection.every(isTelemetryObject);
             },
-            view: function (domainObject, isEditing, objectPath) {
+            view: function (domainObject, objectPath) {
                 let component;
                 return {
                     show: function (element) {
