@@ -18,7 +18,7 @@
         class="c-menu c-palette c-palette--color"
     >
         <div
-            v-if="!this.options.preventNone"
+            v-if="!options.preventNone"
             class="c-palette__item-none"
             @click="select({value: 'transparent'})"
         >
