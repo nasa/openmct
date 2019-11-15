@@ -301,7 +301,7 @@
 
 <script>
     import Inspector from '../inspector/Inspector.vue';
-    import MctTree from './mct-tree.vue';
+    import MctTree from './mct-tree-prototype.vue';
     import ObjectView from '../components/ObjectView.vue';
     import MctTemplate from '../legacy/mct-template.vue';
     import CreateButton from './CreateButton.vue';
