@@ -120,7 +120,7 @@ export default {
         }
     },
     computed: {
-        style() {
+        marqueePosition() {
             let x = Number.POSITIVE_INFINITY;
             let y = Number.POSITIVE_INFINITY;
             let width = Number.NEGATIVE_INFINITY;
@@ -155,14 +155,21 @@ export default {
                 width = width - x;
                 height = height - y;
             }
-
-            this.marqueePosition = {
+            
+            return {
                 x: x,
                 y: y,
                 width: width,
                 height: height
             }
-            return this.getMarqueeStyle(x, y, width, height);
+        },
+        style() {
+            return this.getMarqueeStyle(
+                this.marqueePosition.x,
+                this.marqueePosition.y,
+                this.marqueePosition.width,
+                this.marqueePosition.height
+            );
         }
     },
     methods: {
