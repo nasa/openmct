@@ -118,7 +118,7 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import * as d3 from "d3";
+import * as d3Brush from 'd3-brush';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -241,7 +241,7 @@ export default {
             }
         },
         initBrush() {
-            this.brush = d3.brushX()
+            this.brush = d3Brush.brushX()
                 .extent([[0, -this.height], [this.width, this.height]])
                 .on("start", this.brushStart)
                 .on('brush', this.brushed)
@@ -252,7 +252,7 @@ export default {
                 return;
             }
 
-            this.svg = this.svg || d3.select('svg');
+            this.svg = this.svg || d3Selection.select('svg');
             if (!this.svg) {
                 return;
             }
@@ -268,8 +268,8 @@ export default {
 
         },
         brushEnd () {
-            const selection = d3.event.selection;
-            if (!d3.event.sourceEvent || !selection) {
+            const selection = d3Selection.event.selection;
+            if (!d3Selection.event.sourceEvent || !selection) {
                 return;
             }
             
@@ -281,10 +281,10 @@ export default {
             });
 
             // clear brush
-            d3.select('g.brush').call(this.brush.move, null);
+            d3Selection.select('g.brush').call(this.brush.move, null);
         },
         destroyBrush() {
-            const brush = d3.select('g.brush')
+            const brush = d3Selection.select('g.brush')
             if (brush){
                 brush.remove();
             }
