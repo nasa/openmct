@@ -97,9 +97,14 @@
 
             </div>
             <div class="c-conductor__controls">
-                <!-- Mode, time system menu buttons and duration slider -->
                 <ConductorMode class="c-conductor__mode-select"></ConductorMode>
                 <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
+                <ConductorHistory
+                    class="c-conductor__history-select"
+                    :bounds="rawBounds"
+                    :isFixed="isFixed"
+                    :isUTCBased="isUTCBased"
+                ></ConductorHistory>
             </div>
             <input type="submit" class="invisible">
         </form>
@@ -297,6 +302,7 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
+import ConductorHistory from './ConductorHistory.vue'
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const SECONDS = 1000;
@@ -312,7 +318,8 @@ export default {
         ConductorTimeSystem,
         DatePicker,
         ConductorAxis,
-        ConductorModeIcon
+        ConductorModeIcon,
+        ConductorHistory
     },
     data() {
         let bounds = this.openmct.time.bounds();

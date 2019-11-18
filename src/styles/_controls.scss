@@ -432,6 +432,11 @@ select {
              content: ''; // Add this element so that menu items without an icon still indent properly
         }
     }
+    ul {
+        &:not(:last-child) {
+            border-bottom: 1px solid $colorInteriorBorder;
+        }
+    }
 }
 
 .c-menu {

@@ -304,14 +304,12 @@ export default {
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
-                console.log('down')
                 this.altPressed = true;
                 this.destroyBrush();
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
-                console.log('up')
                 this.altPressed = false;
                 this.createBrush();
             }
