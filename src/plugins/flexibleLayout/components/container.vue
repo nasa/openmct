@@ -92,7 +92,15 @@ export default {
         ResizeHandle,
         DropHint
     },
-    props: ['container', 'index', 'rowsLayout', 'isEditing'],
+    props: {
+        container: Object,
+        index: Number,
+        rowsLayout: Boolean,
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     computed: {
         frames() {
             return this.container.frames;

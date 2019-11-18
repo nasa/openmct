@@ -61,7 +61,15 @@ export default {
     components: {
         ObjectFrame
     },
-    props: ['frame', 'index', 'containerIndex', 'isEditing'],
+    props: {
+        frame: Object,
+        index: Number,
+        containerIndex: Number,
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             domainObject: undefined,

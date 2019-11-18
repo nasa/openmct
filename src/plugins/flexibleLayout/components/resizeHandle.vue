@@ -31,7 +31,14 @@
 
 <script>
 export default {
-    props: ['orientation', 'index', 'isEditing'],
+    props: {
+        orientation: String,
+        index: Number,
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             initialPos: 0,

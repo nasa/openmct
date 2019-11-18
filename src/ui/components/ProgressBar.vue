@@ -67,6 +67,8 @@
 
 <script>
 export default {
-    props:['model']
+    props: {
+        model: Object
+    }
 }
 </script>

@@ -34,10 +34,10 @@
 
 <script>
 export default {
-    props: [
-        'currentView',
-        'views'
-    ],
+    props: {
+        currentView: Object,
+        views: Array
+    },
     data() {
         return {
             showViewMenu: false

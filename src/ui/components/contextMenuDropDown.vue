@@ -10,7 +10,9 @@ import contextMenu from '../mixins/context-menu-gesture'
 
 export default {
     mixins: [contextMenu],
-    props: ['objectPath']
+    props: {
+        objectPath: Array
+    }
 }
 </script>
 
