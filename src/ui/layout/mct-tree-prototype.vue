@@ -14,20 +14,24 @@
         <!-- end loading -->
 
         <!-- main tree -->
-        <ul class="c-tree-and-search__tree c-tree"
-            v-if="!isLoading"
-            v-show="!searchValue">
-
+        <template v-if="parentNode && parentNode.id !== 'ROOT'">
             <tree-item
-                v-if="parentNode && parentNode.id !== 'ROOT'"
                 :key="parentNode.id"
                 :node="parentNode"
                 :isExpanded="true"
                 @notExpanded="navigateToParent">
             </tree-item>
 
+            <div style="min-width: 100%; height: 2px; background: rgb(201,201,201);"></div>
+        </template>
+
+        <ul class="c-tree-and-search__tree c-tree"
+            v-if="!isLoading"
+            v-show="!searchValue"
+            @scroll="scrollPage">
+
             <tree-item 
-                v-for="treeItem in allTreeItems"
+                v-for="treeItem in pagedChildren"
                 :key="treeItem.id"
                 :node="treeItem"
                 @expanded="setParentAndLoadChildren">
@@ -199,6 +203,8 @@
     import treeItem from './tree-item-prototype.vue'
     import search from '../components/search.vue';
 
+    const PAGE_THRESHOLD = 50;
+
     export default {
         inject: ['openmct'],
         name: 'mct-tree',
@@ -213,7 +219,23 @@
                 filteredTreeItems: [],
                 isLoading: false,
                 currentObjectPath: [],
-                parentNode: undefined
+                parentNode: undefined,
+                page: 1
+            }
+        },
+        computed: {
+            pagedChildren() {
+                if (this.allTreeItems.length > PAGE_THRESHOLD) {
+                    let maxIndex = this.page * PAGE_THRESHOLD,
+                        minIndex = maxIndex - PAGE_THRESHOLD;
+
+                    return this.allTreeItems.slice(minIndex, maxIndex);
+                } else {
+                    return this.allTreeItems;
+                }
+            },
+            lastPage() {
+                return Math.floor(this.allTreeItems.length / PAGE_THRESHOLD);
             }
         },
         methods: {
@@ -310,6 +332,38 @@
             },
             setParentAndLoadChildren(node){
                 this.getAllChildren(node);
+            },
+            nextPage() {
+                if (this.page < this.lastPage) {
+                    this.page += 1;
+                }
+            },
+            previousPage() {
+                if (this.page >= 1) {
+                    this.page -= 1;
+                }
+            },
+            scrollPage(event) {
+                let offsetHeight = event.target.offsetHeight,
+                    scrollHeight = event.target.scrollHeight,
+                    scrollTop = event.target.scrollTop,
+                    changePage = true;
+
+                if (scrollTop + offsetHeight === scrollHeight) {
+                    this.scrollLoading = window.setTimeout(() => {
+                        if (this.page < this.lastPage) {
+                            this.nextPage();
+                            event.target.scrollTop = 1;
+                        }
+                    }, 500);
+                } else if (scrollTop === 0) {
+                     this.scrollLoading = window.setTimeout(() => {
+                        if (this.page > 1) {
+                            this.previousPage();
+                            event.target.scrollTop = offsetHeight - 1;
+                        }
+                    }, 500);
+                }
             }
         },
         mounted() {
