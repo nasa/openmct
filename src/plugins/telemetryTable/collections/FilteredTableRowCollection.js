@@ -86,15 +86,18 @@ define(
              */
             matchesFilters(row) {
                 let doesMatchFilters = true;
-                for (const key in this.columnFilters) {
-                    if (!this.rowHasColumn(row, key)) {
+                Object.keys(this.columnFilters).forEach((key) => {
+                    if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
                         return false;
-                    } else {
-                        let formattedValue = row.getFormattedValue(key).toLowerCase();
-                        doesMatchFilters = doesMatchFilters &&
-                            formattedValue.indexOf(this.columnFilters[key]) !== -1;
                     }
-                }
+
+                    let formattedValue = row.getFormattedValue(key);
+                    if (formattedValue === undefined) {
+                        return false;
+                    }
+
+                    doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
+                });
                 return doesMatchFilters;
             }
 

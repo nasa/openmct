@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,40 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Module defining MenuArrowController. Created by shale on 06/30/2015.
- */
-define(
-    [],
-    function () {
-
-        /**
-         * A left-click on the menu arrow should display a
-         * context menu. This controller launches the context
-         * menu.
-         * @memberof platform/commonUI/browse
-         * @constructor
-         */
-        function MenuArrowController($scope) {
-            this.$scope = $scope;
-        }
-
-        /**
-         * Show a context menu for the domain object in this scope.
-         *
-         * @param event the browser event which caused this (used to
-         *        position the menu)
-         */
-        MenuArrowController.prototype.showMenu = function (event) {
-            var actionContext = {
-                key: 'menu',
-                domainObject: this.$scope.domainObject,
-                event: event
-            };
-
-            this.$scope.domainObject.getCapability('action').perform(actionContext);
-        };
-
-        return MenuArrowController;
+/***************** PLOTLY OVERRIDES */
+.plot-container.plotly {
+    .bglayer .bg {
+        fill: $colorPlotBg !important;
+        fill-opacity: 1 !important;
+        stroke: $colorInteriorBorder;
+        stroke-width: 1 !important;
     }
-);
+
+    .cartesianlayer .gridlayer {
+        .x,
+        .y {
+            path {
+                opacity: $opacityPlotHash;
+                stroke: $colorPlotHash !important;
+            }
+        }
+    }
+
+    .xtick,
+    .ytick,
+    .g-xtitle,
+    .g-ytitle {
+        text {
+            fill: $colorPlotFg !important;
+            font-size: 12px !important;
+        }
+    }
+}

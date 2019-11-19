@@ -95,12 +95,15 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        /* eslint-disable no-undef */
         this.buildInfo = {
             version: __OPENMCT_VERSION__,
             buildDate: __OPENMCT_BUILD_DATE__,
             revision: __OPENMCT_REVISION__,
             branch: __OPENMCT_BUILD_BRANCH__
         };
+        /* eslint-enable no-undef */
+
 
         this.legacyBundle = { extensions: {
             services: [
@@ -260,10 +263,6 @@ define([
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
-
-        if (typeof BUILD_CONSTANTS !== 'undefined') {
-            this.install(buildInfoPlugin(BUILD_CONSTANTS));
-        }
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -344,6 +343,8 @@ define([
             domElement = document.body;
         }
 
+        this.element = domElement;
+
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -373,7 +374,8 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        var startPromise = new Main().run(this.legacyRegistry)
+        const startPromise = new Main()
+        startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
                 // OpenMCT Object provider doesn't operate properly unless

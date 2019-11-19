@@ -48,7 +48,7 @@ define([
             canEdit(domainObject) {
                 return domainObject.type === 'table';
             },
-            view(domainObject, isEditing, objectPath) {
+            view(domainObject, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {

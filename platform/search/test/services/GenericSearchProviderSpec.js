@@ -29,7 +29,7 @@ define([
     GenericSearchProvider
 ) {
 
-    describe('GenericSearchProvider', function () {
+    xdescribe('GenericSearchProvider', function () {
         var $q,
             $log,
             modelService,

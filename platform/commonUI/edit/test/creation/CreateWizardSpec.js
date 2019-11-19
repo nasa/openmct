@@ -27,7 +27,7 @@ define(
     ["../../src/creation/CreateWizard"],
     function (CreateWizard) {
 
-        describe("The create wizard", function () {
+        xdescribe("The create wizard", function () {
             var mockType,
                 mockParent,
                 mockProperties,
