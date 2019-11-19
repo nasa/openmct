@@ -37,11 +37,11 @@ export default {
         },
         columnKey: {
             type: String,
-            require: true
+            required: true
         },
         objectPath: {
             type: Array,
-            require: false
+            required: false
         }
     },
     computed: {
