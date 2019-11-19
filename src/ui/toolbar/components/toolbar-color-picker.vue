@@ -45,7 +45,10 @@ import toggleMixin from '../../mixins/toggle-mixin';
 export default {
     mixins: [toggleMixin],
     props: {
-        options: Object
+        options: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {

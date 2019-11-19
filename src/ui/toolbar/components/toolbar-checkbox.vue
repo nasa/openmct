@@ -74,7 +74,10 @@ let uniqueId = 100;
 
 export default {
     props: {
-        options: Object
+        options: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         uniqueId++;

@@ -24,7 +24,10 @@
 export default {
     inject: ['openmct'],
     props: {
-        options: Object
+        options: {
+            type: Object,
+            required: true
+        }
     },
     computed: {
         nonSpecific() {

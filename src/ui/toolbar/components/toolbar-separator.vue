@@ -5,7 +5,10 @@
 <script>
 export default {
     props: {
-        options: Object
+        options: {
+            type: Object,
+            required: true
+        }
     }
 }
 </script>

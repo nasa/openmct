@@ -23,6 +23,7 @@ export default {
     props: {
         options: {
             type: Object,
+            required: true,
             validator(value) {
                 return ['number', 'text'].indexOf(value.type) !== -1;
             }

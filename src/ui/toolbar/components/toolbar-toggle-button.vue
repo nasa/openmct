@@ -13,7 +13,8 @@
 export default {
     props: {
         options: {
-            type: Object
+            type: Object,
+            required: true
         }
     },
     computed: {

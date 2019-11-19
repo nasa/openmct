@@ -38,6 +38,7 @@ export default {
     props: {
         options: {
             type: Object,
+            required: true,
             validator(value) {
                 // must pass valid options array.
                 return Array.isArray(value.options) &&
