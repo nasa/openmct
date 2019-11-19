@@ -357,15 +357,19 @@ export default {
     props: {
         handle: {
             type: String,
+            default: '',
             validator: function (value) {
-                return ['before', 'after'].indexOf(value) !== -1;
+                return ['', 'before', 'after'].indexOf(value) !== -1;
             }
         },
         collapsable: {
             type: Boolean,
             default: false
         },
-        label: String
+        label: {
+            type: String,
+            default: ''
+        }
     },
     data() {
         return {
