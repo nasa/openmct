@@ -184,7 +184,10 @@ function getItemDefinition(itemType, ...options) {
 export default {
     components: components,
     props: {
-        domainObject: Object
+        domainObject: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         let domainObject = JSON.parse(JSON.stringify(this.domainObject));

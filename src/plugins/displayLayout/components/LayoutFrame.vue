@@ -180,7 +180,10 @@ import LayoutDrag from './../LayoutDrag'
 export default {
     inject: ['openmct'],
     props: {
-        item: Object,
+        item: {
+            type: Object,
+            required: true
+        },
         gridSize: {
             type: Array,
             required: true,

@@ -122,7 +122,10 @@ export default {
         LayoutFrame
     },
     props: {
-        item: Object,
+        item: {
+            type: Object,
+            required: true
+        },
         gridSize: {
             type: Array,
             required: true,
@@ -130,7 +133,10 @@ export default {
                 && arr.every(el => typeof el === 'number')
         },
         initSelect: Boolean,
-        index: Number
+        index: {
+            type: Number,
+            required: true
+        }
     },
     data() {
         return {

@@ -68,14 +68,20 @@ export default {
         LayoutFrame
     },
     props: {
-        item: Object,
+        item: {
+            type: Object,
+            required: true
+        },
         gridSize: {
             type: Array,
             required: true,
             validator: (arr) => arr && arr.length === 2
                 && arr.every(el => typeof el === 'number')
         },
-        index: Number,
+        index: {
+            type: Number,
+            required: true
+        },
         initSelect: Boolean
     },
     computed: {
