@@ -70,7 +70,10 @@ export default {
         ToggleSwitch
     },
     props: {
-        filterObject: Object,
+        filterObject: {
+            type: Object,
+            required: true
+        },
         persistedFilters: {
             type: Object,
             default: () => {

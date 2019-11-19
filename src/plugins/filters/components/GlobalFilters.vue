@@ -78,7 +78,10 @@ export default {
         FilterField
     },
     props: {
-        globalMetadata: Object,
+        globalMetadata: {
+            type: Object,
+            required: true
+        },
         globalFilters: {
             type: Object,
             default: () => {

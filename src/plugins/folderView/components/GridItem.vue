@@ -168,7 +168,10 @@ import objectLink from '../../../ui/mixins/object-link';
 export default {
     mixins: [contextMenuGesture, objectLink],
     props: {
-        item: Object
+        item: {
+            type: Object,
+            required: true
+        }
     }
 }
 </script>

@@ -69,7 +69,10 @@ export default {
         'openmct'
     ],
     props: {
-        filterField: Object,
+        filterField: {
+            type: Object,
+            required: true
+        },
         useGlobal: Boolean,
         persistedFilters: {
             type: Object,

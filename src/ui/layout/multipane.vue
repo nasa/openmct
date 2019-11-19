@@ -15,6 +15,7 @@ export default {
     props: {
         type: {
             type: String,
+            required: true,
             validator: function (value) {
                 return ['vertical', 'horizontal'].indexOf(value) !== -1;
             }

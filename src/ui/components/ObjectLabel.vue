@@ -57,7 +57,10 @@ export default {
     mixins: [ObjectLink, ContextMenuGesture],
     inject: ['openmct'],
     props: {
-        domainObject: Object,
+        domainObject: {
+            type: Object,
+            required: true
+        },
         objectPath: {
             type: Array,
             default() {

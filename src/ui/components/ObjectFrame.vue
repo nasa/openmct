@@ -154,7 +154,10 @@ export default {
         ContextMenuDropDown
     },
     props: {
-        domainObject: Object,
+        domainObject: {
+            type: Object,
+            required: true
+        },
         objectPath: Array,
         hasFrame: Boolean,
         showEditView: {

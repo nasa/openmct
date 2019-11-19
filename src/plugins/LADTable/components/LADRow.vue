@@ -45,7 +45,10 @@ const CONTEXT_MENU_ACTIONS = [
 export default {
     inject: ['openmct', 'objectPath'],
     props: {
-        domainObject: Object
+        domainObject: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         let currentObjectPath = this.objectPath.slice();

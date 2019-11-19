@@ -48,7 +48,10 @@ export default {
         ObjectLabel
     },
     props: {
-        node: Object
+        node: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         this.navigateToPath = this.buildPathString(this.node.navigateToParent)

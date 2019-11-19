@@ -35,7 +35,10 @@
 <script>
 export default {
     props: {
-        currentView: Object,
+        currentView: {
+            type: Object,
+            required: true
+        },
         views: Array
     },
     data() {

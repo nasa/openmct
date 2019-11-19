@@ -127,7 +127,10 @@ const PIXELS_PER_TICK_WIDE = 200;
 export default {
     inject: ['openmct'],
     props: {
-        bounds: Object
+        bounds: {
+            type: Object,
+            required: true
+        }
     },
     watch: {
         bounds: {

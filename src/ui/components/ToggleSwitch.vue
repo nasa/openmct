@@ -68,7 +68,10 @@
 export default {
     inject: ['openmct'],
     props: {
-        id: String,
+        id: {
+            type: String,
+            required: true
+        },
         checked: Boolean
     },
     methods: {
