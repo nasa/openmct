@@ -123,7 +123,12 @@ export default {
     },
     props: {
         item: Object,
-        gridSize: Array,
+        gridSize: {
+            type: Array,
+            required: true,
+            validator: (arr) => arr && arr.length === 2
+                && arr.every(el => typeof el === 'number')
+        },
         initSelect: Boolean,
         index: Number
     },
