@@ -62,8 +62,14 @@ export default {
         ObjectFrame
     },
     props: {
-        frame: Object,
-        index: Number,
+        frame: {
+            type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
         containerIndex: Number,
         isEditing: {
             type: Boolean,

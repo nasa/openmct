@@ -93,8 +93,14 @@ export default {
         DropHint
     },
     props: {
-        container: Object,
-        index: Number,
+        container: {
+            type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
         rowsLayout: Boolean,
         isEditing: {
             type: Boolean,

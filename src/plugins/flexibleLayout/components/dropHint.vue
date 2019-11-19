@@ -40,7 +40,10 @@
 <script>
 export default {
     props:{
-        index: Number,
+        index: {
+            type: Number,
+            required: true
+        },
         allowDrop: {
             type: Function,
             required: true

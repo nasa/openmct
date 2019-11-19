@@ -32,8 +32,14 @@
 <script>
 export default {
     props: {
-        orientation: String,
-        index: Number,
+        orientation: {
+            type: String,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
         isEditing: {
             type: Boolean,
             default: false
