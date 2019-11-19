@@ -54,7 +54,10 @@
 export default {
     inheritAttrs: false,
     props: {
-        value: String
+        value: {
+            type: String,
+            default: ''
+        }
     },
     data: function () {
         return {
