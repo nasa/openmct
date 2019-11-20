@@ -77,7 +77,8 @@ export default {
         },
         objectPath: {
             type: Array,
-            required: false
+            required: false,
+            default: undefined
         },
         rowIndex: {
             type: Number,

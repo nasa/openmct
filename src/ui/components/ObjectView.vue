@@ -8,10 +8,19 @@ import _ from "lodash"
 export default {
     inject: ["openmct"],
     props: {
-        view: String,
-        object: Object,
+        view: {
+            type: String,
+            default: undefined
+        },
+        object: {
+            type: Object,
+            default: undefined
+        },
         showEditView: Boolean,
-        objectPath: Array
+        objectPath: {
+            type: Array,
+            default: undefined
+        }
     },
     watch: {
         view(newView, oldView) {

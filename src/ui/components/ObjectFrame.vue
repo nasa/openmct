@@ -158,11 +158,14 @@ export default {
             type: Object,
             required: true
         },
-        objectPath: Array,
+        objectPath: {
+            type: Array,
+            default: undefined
+        },
         hasFrame: Boolean,
         showEditView: {
             type: Boolean,
-            default: () => true
+            default: true
         }
     },
     data() {
