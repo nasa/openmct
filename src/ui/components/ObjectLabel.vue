@@ -67,7 +67,10 @@ export default {
                 return [];
             }
         },
-        navigateToPath: String
+        navigateToPath: {
+            type: String,
+            default: undefined
+        }
     },
     data() {
         return {

@@ -70,7 +70,10 @@ export default {
             type: Number,
             required: true
         },
-        containerIndex: Number,
+        containerIndex: {
+            type: Number,
+            required: true
+        },
         isEditing: {
             type: Boolean,
             default: false

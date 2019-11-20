@@ -211,8 +211,14 @@ export default {
     inject: ['openmct'],
     mixins: [toggleMixin],
     props: {
-        defaultDateTime: String,
-        formatter: Object
+        defaultDateTime: {
+            type: String,
+            default: undefined
+        },
+        formatter: {
+            type: Object,
+            required: true
+        }
     },
     data: function () {
         return {
@@ -264,9 +270,7 @@ export default {
         },
 
         updateFromModel(defaultDateTime) {
-            let m;
-
-            m = moment.utc(defaultDateTime);
+            let m = moment.utc(defaultDateTime);
 
             this.date = {
                 year: m.year(),

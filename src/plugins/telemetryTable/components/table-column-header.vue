@@ -52,11 +52,26 @@ const MOVE_COLUMN_DT_TYPE = 'movecolumnfromindex';
 export default {
     inject: ['openmct'],
     props: {
-        headerKey: String,
-        headerIndex: Number,
-        isHeaderTitle: Boolean,
-        sortOptions: Object,
-        columnWidth: Number,
+        headerKey: {
+            type: String,
+            default: undefined
+        },
+        headerIndex: {
+            type: Number,
+            default: undefined
+        },
+        isHeaderTitle: {
+            type: Boolean,
+            default: undefined
+        },
+        sortOptions: {
+            type: Object,
+            default: undefined
+        },
+        columnWidth: {
+            type: Number,
+            default: undefined
+        },
         hotzone: Boolean,
         isEditing: Boolean
     },

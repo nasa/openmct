@@ -111,7 +111,10 @@ import LayoutDrag from './../LayoutDrag'
 export default {
     inject: ['openmct'],
     props: {
-        selectedLayoutItems: Array,
+        selectedLayoutItems: {
+            type: Array,
+            default: undefined
+        },
         gridSize: {
             type: Array,
             required: true,

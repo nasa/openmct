@@ -39,7 +39,10 @@ export default {
             type: Object,
             required: true
         },
-        views: Array
+        views: {
+            type: Array,
+            required: true
+        }
     },
     data() {
         return {
