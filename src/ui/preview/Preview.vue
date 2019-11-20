@@ -19,30 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
- <template>
+<template>
 <div class="l-preview-window">
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <div class="l-browse-bar__object-name--w"
-                :class="type.cssClass">
+            <div
+                class="l-browse-bar__object-name--w"
+                :class="type.cssClass"
+            >
                 <span class="l-browse-bar__object-name">
                     {{ domainObject.name }}
                 </span>
-                <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
+                <context-menu-drop-down :object-path="objectPath" />
             </div>
         </div>
         <div class="l-browse-bar__end">
             <div class="l-browse-bar__actions">
                 <view-switcher
                     :views="views"
-                    :currentView="currentView"
-                    @setView="setView">
-                </view-switcher>
-                <button v-if="notebookEnabled"
+                    :current-view="currentView"
+                    @setView="setView"
+                />
+                <button
+                    v-if="notebookEnabled"
                     class="l-browse-bar__actions__edit c-button icon-notebook"
                     title="New Notebook entry"
-                    @click="snapshot">
-                </button>
+                    @click="snapshot"
+                />
             </div>
         </div>
     </div>
