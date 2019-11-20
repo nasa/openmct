@@ -8,10 +8,6 @@ import _ from "lodash"
 export default {
     inject: ["openmct"],
     props: {
-        view: {
-            type: String,
-            default: undefined
-        },
         object: {
             type: Object,
             default: undefined
@@ -25,10 +21,6 @@ export default {
         }
     },
     watch: {
-        view(newView, oldView) {
-            this.viewKey = newView;
-            this.debounceUpdateView();
-        },
         object(newObject, oldObject) {
             this.currentObject = newObject;
             this.debounceUpdateView();
