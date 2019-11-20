@@ -41,8 +41,7 @@ export default {
         },
         objectPath: {
             type: Array,
-            required: false,
-            default: undefined
+            required: true
         }
     },
     computed: {

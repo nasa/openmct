@@ -58,7 +58,7 @@
 import TableCell from './table-cell.vue';
 
 export default {
-    inject: ['openmct', 'objectPath'],
+    inject: ['openmct'],
     components: {
         TableCell
     },
@@ -77,8 +77,7 @@ export default {
         },
         objectPath: {
             type: Array,
-            required: false,
-            default: undefined
+            required: true
         },
         rowIndex: {
             type: Number,

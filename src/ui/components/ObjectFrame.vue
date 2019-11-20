@@ -160,7 +160,7 @@ export default {
         },
         objectPath: {
             type: Array,
-            default: undefined
+            required: true
         },
         hasFrame: Boolean,
         showEditView: {

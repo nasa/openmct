@@ -190,6 +190,7 @@
                 :headers="headers"
                 :column-widths="configuredColumnWidths"
                 :row="sizingRowData"
+                :object-path="objectPath"
             />
         </table>
         <telemetry-filter-indicator />

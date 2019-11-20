@@ -13,7 +13,7 @@ export default {
     props: {
         objectPath: {
             type: Array,
-            default: undefined
+            required: true
         }
     }
 }

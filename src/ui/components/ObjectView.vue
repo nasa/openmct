@@ -19,7 +19,9 @@ export default {
         showEditView: Boolean,
         objectPath: {
             type: Array,
-            default: undefined
+            default: () => {
+                return [];
+            }
         }
     },
     watch: {

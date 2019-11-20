@@ -63,9 +63,7 @@ export default {
         },
         objectPath: {
             type: Array,
-            default() {
-                return [];
-            }
+            required: true
         },
         navigateToPath: {
             type: String,
