@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1572989474120
+    "created": 1574106570211
   },
   "iconSets": [
     {
@@ -736,12 +736,20 @@
           "tempChar": ""
         },
         {
+          "order": 173,
+          "id": 149,
+          "name": "icon-history",
+          "prevSize": 24,
+          "code": 59953,
+          "tempChar": ""
+        },
+        {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
           "prevSize": 24,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -749,7 +757,7 @@
           "name": "icon-activity-mode",
           "prevSize": 24,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -757,7 +765,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 24,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -765,7 +773,7 @@
           "name": "icon-clock",
           "prevSize": 24,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -773,7 +781,7 @@
           "name": "icon-database",
           "prevSize": 24,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -781,7 +789,7 @@
           "name": "icon-database-query",
           "prevSize": 24,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -789,7 +797,7 @@
           "name": "icon-dataset",
           "prevSize": 24,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -797,7 +805,7 @@
           "name": "icon-datatable",
           "prevSize": 24,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -805,7 +813,7 @@
           "name": "icon-dictionary",
           "prevSize": 24,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -813,7 +821,7 @@
           "name": "icon-folder",
           "prevSize": 24,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -821,7 +829,7 @@
           "name": "icon-image",
           "prevSize": 24,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -829,7 +837,7 @@
           "name": "icon-layout",
           "prevSize": 24,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -837,7 +845,7 @@
           "name": "icon-object",
           "prevSize": 24,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -845,7 +853,7 @@
           "name": "icon-object-unknown",
           "prevSize": 24,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -853,7 +861,7 @@
           "name": "icon-packet",
           "prevSize": 24,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -861,7 +869,7 @@
           "name": "icon-page",
           "prevSize": 24,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -869,7 +877,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -877,7 +885,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -885,7 +893,7 @@
           "name": "icon-session",
           "prevSize": 24,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -893,7 +901,7 @@
           "name": "icon-tabular",
           "prevSize": 24,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -901,7 +909,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 24,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -909,7 +917,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 24,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -917,7 +925,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 24,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -925,7 +933,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 24,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -933,7 +941,7 @@
           "name": "icon-telemetry",
           "prevSize": 24,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
@@ -941,7 +949,7 @@
           "name": "icon-timeline",
           "prevSize": 24,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -949,7 +957,7 @@
           "name": "icon-timer",
           "prevSize": 24,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -957,7 +965,7 @@
           "name": "icon-topic",
           "prevSize": 24,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -965,7 +973,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 24,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -973,7 +981,7 @@
           "name": "icon-summary-widget",
           "prevSize": 24,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -981,7 +989,7 @@
           "name": "icon-notebook",
           "prevSize": 24,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -989,7 +997,7 @@
           "name": "icon-tabs-view",
           "prevSize": 24,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -997,7 +1005,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 24,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1005,7 +1013,7 @@
           "name": "icon-generator-sine",
           "prevSize": 24,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1013,7 +1021,7 @@
           "name": "icon-generator-event",
           "prevSize": 24,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1021,7 +1029,7 @@
           "name": "icon-gauge-v2",
           "prevSize": 24,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
@@ -1029,7 +1037,7 @@
           "name": "icon-spectra",
           "prevSize": 24,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
@@ -1037,7 +1045,7 @@
           "name": "icon-telemetry-spectra",
           "prevSize": 24,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
@@ -1045,7 +1053,7 @@
           "name": "icon-pushbutton",
           "prevSize": 24,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -2215,6 +2223,23 @@
           "grid": 16,
           "tags": [
             "icon-clear-data"
+          ]
+        },
+        {
+          "id": 149,
+          "paths": [
+            "M576 64c-247.4 0-448 200.6-448 448h-128l192 192 192-192h-128c0-85.4 33.2-165.8 93.8-226.2 60.4-60.6 140.8-93.8 226.2-93.8s165.8 33.2 226.2 93.8c60.6 60.4 93.8 140.8 93.8 226.2s-33.2 165.8-93.8 226.2c-60.4 60.6-140.8 93.8-226.2 93.8s-165.8-33.2-226.2-93.8l-90.6 90.6c81 81 193 131.2 316.8 131.2 247.4 0 448-200.6 448-448s-200.6-448-448-448z",
+            "M576 272c-26.6 0-48 21.4-48 48v211.8l142 142c9.4 9.4 21.6 14 34 14s24.6-4.6 34-14c18.8-18.8 18.8-49.2 0-67.8l-114-114v-172c0-26.6-21.4-48-48-48z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-history"
           ]
         },
         {
