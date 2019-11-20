@@ -19,33 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-<template>
+ <template>
 <div class="l-preview-window">
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <div
-                class="l-browse-bar__object-name--w"
-                :class="type.cssClass"
-            >
+            <div class="l-browse-bar__object-name--w"
+                :class="type.cssClass">
                 <span class="l-browse-bar__object-name">
                     {{ domainObject.name }}
                 </span>
-                <context-menu-drop-down :object-path="objectPath" />
+                <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
             </div>
         </div>
         <div class="l-browse-bar__end">
             <div class="l-browse-bar__actions">
                 <view-switcher
                     :views="views"
-                    :current-view="currentView"
-                    @setView="setView"
-                />
-                <button
-                    v-if="notebookEnabled"
+                    :currentView="currentView"
+                    @setView="setView">
+                </view-switcher>
+                <button v-if="notebookEnabled"
                     class="l-browse-bar__actions__edit c-button icon-notebook"
                     title="New Notebook entry"
-                    @click="snapshot"
-                />
+                    @click="snapshot">
+                </button>
             </div>
         </div>
     </div>
@@ -155,7 +152,7 @@ export default {
             this.viewContainer.classList.add('c-object-view','u-contents');
             this.$refs.objectView.append(this.viewContainer);
 
-            this.view = this.currentView.view(this.domainObject, false, this.objectPath);
+            this.view = this.currentView.view(this.domainObject, this.objectPath);
             this.view.show(this.viewContainer, false);
         }
     }
