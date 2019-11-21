@@ -274,7 +274,10 @@ export default {
             }
             
             const [x0, x1] = selection.map(d => this.xScale.invert(d));
-
+            this.openmct.time.bounds({
+                start: x0,
+                end: x1
+            });
             this.$emit('zoomAxis', {
                 start: x0,
                 end: x1
