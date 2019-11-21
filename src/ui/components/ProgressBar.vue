@@ -3,7 +3,7 @@
     <div class="c-progress-bar__holder">
         <div
             class="c-progress-bar__bar"
-            :class="{'--indeterminate': model.progressPerc === 'unknown' }"
+            :class="{'--indeterminate': model.progressPerc === 'unknown'}"
             :style="`width: ${model.progressPerc}%;`"
         />
     </div>
@@ -11,7 +11,7 @@
         v-if="model.progressText !== undefined"
         class="c-progress-bar__text"
     >
-        <span v-if="model.progressPerc > 0">{{ model.progressPerc }}% complete. </span>
+        <span v-if="model.progressPerc > 0">{{ model.progressPerc }}% complete.</span>
         {{ model.progressText }}
     </div>
 </div>

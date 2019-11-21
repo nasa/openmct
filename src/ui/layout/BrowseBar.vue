@@ -244,7 +244,9 @@ export default {
         saveAndFinishEditing() {
             let dialog = this.openmct.overlays.progressDialog({
                 progressPerc: 'unknown',
-                progressText: 'Saving...'
+                message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
+                iconClass: 'info',
+                title: 'Saving'
             });
 
             return this.openmct.editor.save().then(()=> {

@@ -27,6 +27,28 @@
             >
                 {{ button.label }}
             </button>
+            <div
+                ref="element"
+                class="c-overlay__contents"
+                tabindex="0"
+            />
+            <div
+                v-if="buttons"
+                class="c-overlay__button-bar"
+            >
+                <button
+                    v-for="(button, index) in buttons"
+                    ref="buttons"
+                    :key="index"
+                    class="c-button"
+                    tabindex="0"
+                    :class="{'c-button--major': focusIndex===index}"
+                    @focus="focusIndex=index"
+                    @click="buttonClickHandler(button.callback)"
+                >
+                    {{ button.label }}
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -79,6 +101,7 @@
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+            outline: none;
             overflow: hidden;
         }
 
@@ -181,9 +204,17 @@
 
 <script>
 export default {
+    data: function () {
+        return {
+            focusIndex: -1
+        };
+    },
     inject: ['dismiss', 'element', 'buttons', 'dismissable'],
     mounted() {
         this.$refs.element.appendChild(this.element);
+        setTimeout(() => {
+            this.getElementForFocus().focus();
+        }, 0);
     },
     methods: {
         destroy: function () {
@@ -194,6 +225,25 @@ export default {
         buttonClickHandler: function (method) {
             method();
             this.$emit('destroy');
+        },
+        getElementForFocus: function () {
+            const defaultElement = this.$refs.element;
+            if (!this.$refs.buttons) {
+                return defaultElement;
+            }
+
+            const focusButton = this.$refs.buttons.filter((button, index) => {
+                if (this.buttons[index].emphasis) {
+                    this.focusIndex = index;
+                }
+                return this.buttons[index].emphasis;
+            });
+
+            if (!focusButton.length) {
+                return defaultElement;
+            }
+
+            return focusButton[0];
         }
     }
 }
