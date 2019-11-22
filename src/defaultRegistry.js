@@ -55,7 +55,6 @@ define([
     '../platform/exporters/bundle',
     '../platform/features/clock/bundle',
     '../platform/features/imagery/bundle',
-    '../platform/features/my-items/bundle',
     '../platform/features/pages/bundle',
     '../platform/features/hyperlink/bundle',
     '../platform/features/static-markup/bundle',

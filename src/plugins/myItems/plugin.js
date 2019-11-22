@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,31 +21,32 @@
  *****************************************************************************/
 
 define([
-    'legacyRegistry'
 ], function (
-    legacyRegistry
 ) {
+    const namespace = '',
+        key = 'mine';
+    return function plugin() {
+        return function install(openmct) {
+            openmct.objects.addRoot({
+                namespace: namespace,
+                key: key
+            });
 
-    legacyRegistry.register("platform/features/my-items", {
-        "name": "My Items",
-        "description": "Defines a root named My Items",
-        "extensions": {
-            "roots": [
-                {
-                    "id": "mine"
-                }
-            ],
-            "models": [
-                {
-                    "id": "mine",
-                    "model": {
-                        "name": "My Items",
-                        "type": "folder",
-                        "composition": [],
-                        "location": "ROOT"
+            let objectProvider = {
+                get: function (identifier) {
+                    if (identifier.key === key) {
+                        return Promise.resolve({
+                            identifier: identifier,
+                            name: 'My Items',
+                            type: 'folder',
+                            location: 'ROOT',
+                            composition: []
+                        });
                     }
                 }
-            ]
+            };
+
+            openmct.objects.addProvider(namespace, objectProvider);
         }
-    });
+    }
 });
