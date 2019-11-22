@@ -35,10 +35,10 @@
             </ul>
             <ul>
                 <li
-                    v-for="(timeFrame, index) in timeFrames"
+                    v-for="(tick, index) in history"
                     :key="index"
                 >
-                    {{timeFrame.start}} {{timeFrame.end}}
+                    {{tick.start}} {{tick.end}}
                 </li>
                 <!-- <li @click="setTimeSystemFromView(timeSystem)"
                     v-for="timeSystem in timeSystems"
@@ -63,28 +63,40 @@ export default {
     inject: ['openmct'],
     mixins: [toggleMixin],
     props: {
-        bounds: Object,
+        bounds: {
+            type: Object,
+            required: true
+        },
         isFixed: Boolean,
         isUTCBased: Boolean
     },
     data() {
-        let now = new Date() - 500000
         return {
-            timeFrames: [
-                {start: new Date(now), end: new Date(now + 100000)},
-                {start: new Date(now + 100005), end: new Date(now + 500000)}
-            ]
+            history: []
         }
     },
     methods: {
+        getHistory() {
+            const now = (new Date()).getTime()
+            console.log(now)
+            this.history.push(
+                {start: now - 50000, end: now - 15000},
+                {start: now - 10000, end: now - 5000}
+            )
+        },
     },
     watch: {
+        bounds: {
+            handler: function(bounds) {
+                console.log('new bounds from conductor')
+            },
+            deep: true
+        }
     },
     created() {
     },
     mounted() {
-        console.log('bounds')
-        console.log(this.bounds)
+        this.getHistory()
     },
     destroyed() {
     }
