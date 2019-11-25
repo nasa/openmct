@@ -156,7 +156,7 @@ export default {
          showContextMenu: function (event) {
             event.preventDefault();
 
-            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+            this.openmct.objects.getAsMutable(this.row.objectKeyString).then((domainObject) => {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 

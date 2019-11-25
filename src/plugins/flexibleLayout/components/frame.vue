@@ -108,7 +108,7 @@ export default {
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+            this.openmct.objects.getAsMutable(this.frame.domainObjectIdentifier).then((object)=>{
                 this.setDomainObject(object);
             });
         }

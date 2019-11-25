@@ -158,8 +158,17 @@ define([
         return provider.get(identifier);
     };
 
+    /**
+     * Will fetch object, returning it as a MutableDomainObject IF the object is mutable.
+     */
     ObjectAPI.prototype.getAsMutable = function (identifier) {
-        return this.get(identifier).then(this.mutable.bind(this));
+        return this.get(identifier).then((object) => {
+            if (this.isMutable(object)) {
+                return this.mutable(object);
+            } else {
+                return object;
+            }
+        });
     }
 
     ObjectAPI.prototype.delete = function () {
@@ -183,6 +192,9 @@ define([
     };
 
     ObjectAPI.prototype.mutable = function (object) {
+        if (!this.isMutable) {
+            throw `Error: Attempted to create mutable from immutable object ${object.name}`;
+        }
         return MutableDomainObject.default.createMutable(object, this.eventEmitter);
     }
 
