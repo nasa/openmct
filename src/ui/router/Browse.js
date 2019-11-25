@@ -29,12 +29,15 @@ define([
         function viewObject(object, viewProvider) {
             if (mutable) {
                 mutable.$destroy();
+                mutable = undefined;
             }
-            mutable = openmct.objects.getMutable(object);
+            if (openmct.objects.isMutable(object)) {
+                mutable = openmct.objects.mutable(object);
+            }
             currentObjectPath = openmct.router.path;
 
-            openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
-            openmct.layout.$refs.browseBar.domainObject = mutable;
+            openmct.layout.$refs.browseObject.show(mutable || object, viewProvider.key, true, currentObjectPath);
+            openmct.layout.$refs.browseBar.domainObject = mutable || object;
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
 

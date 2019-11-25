@@ -45,7 +45,7 @@ define([
                         }
                     }
                 };
-                mutable = objectAPI.getMutable(testObject);
+                mutable = objectAPI.mutable(testObject);
             });
 
             it('retains own properties', function () {
@@ -70,7 +70,7 @@ define([
                 beforeEach(function () {
                     // Duplicate object to guarantee we are not sharing object instance, which would invalidate test
                     testObjectDuplicate = JSON.parse(JSON.stringify(testObject));
-                    mutableSecondInstance = objectAPI.getMutable(testObjectDuplicate);
+                    mutableSecondInstance = objectAPI.mutable(testObjectDuplicate);
                 });
 
                 it('to stay synchronized when mutated', function () {

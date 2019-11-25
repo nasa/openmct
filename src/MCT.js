@@ -215,7 +215,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name objects
          */
-        this.objects = new api.ObjectAPI();
+        this.objects = new api.ObjectAPI(this.types);
 
         /**
          * An interface for retrieving and interpreting telemetry data associated

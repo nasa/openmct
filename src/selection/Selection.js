@@ -86,7 +86,7 @@ define(
                 selectedPath.forEach(selection => {
                     if (selection.context.item) {
                         if (!(selection.context.item instanceof MutableDomainObject.default)) {
-                            let mutable = this.openmct.objects.getMutable(selection.context.item);
+                            let mutable = this.openmct.objects.mutable(selection.context.item);
                             this.temporaryMutables.push(mutable);
                             selection.context.item = mutable;
                         }

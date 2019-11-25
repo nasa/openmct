@@ -102,7 +102,9 @@
         },
         methods: {
             addChild (child) {
-                child = this.openmct.objects.getMutable(child);
+                if (this.openmct.objects.isMutable(child)) {
+                    child = this.openmct.objects.mutable(child);
+                }
                 this.children.push({
                     id: this.openmct.objects.makeKeyString(child.identifier),
                     object: child,

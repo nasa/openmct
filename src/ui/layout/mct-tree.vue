@@ -207,7 +207,7 @@
             getAllChildren() {
                 this.isLoading = true;
                 this.openmct.objects.get('ROOT')
-                    .then(root => this.openmct.objects.getMutable(root))
+                    .then(root => this.openmct.objects.mutable(root))
                     .then(root => {
                         return this.openmct.composition.get(root).load()
                     })
@@ -230,7 +230,11 @@
 
                 this.searchService.query(this.searchValue).then(children => {
                     this.filteredTreeItems = children.hits
-                        .map(child => this.openmct.objects.getMutable(child))
+                        .map(child => { 
+                            if (this.openmct.objects.isMutable(child)) {
+                                this.openmct.objects.mutable(child);
+                            }
+                        })
                         .map(child => {
                         
                         let context = child.object.getCapability('context'),

@@ -99,7 +99,7 @@
         },
         methods: {
             setObject(domainObject) {
-                this.domainObject = this.openmct.objects.getMutable(domainObject);
+                this.domainObject = domainObject;
                 this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
                 this.$nextTick(function () {
                     let childContext = this.$refs.objectFrame.getSelectionContext();
@@ -113,7 +113,7 @@
             }
         },
         mounted() {
-            this.openmct.objects.get(this.item.identifier)
+            this.openmct.objects.getAsMutable(this.item.identifier)
                 .then(this.setObject);
         },
         destroyed() {

@@ -62,15 +62,16 @@ define([
         };
         this.onProviderAdd = this.onProviderAdd.bind(this);
         this.onProviderRemove = this.onProviderRemove.bind(this);
+        this.mutables = {};
 
-        if (this.domainObject instanceof MutableDomainObject.default) {
-            this.mutables = {};
+        if (this.domainObject instanceof MutableDomainObject.default &&
+            this.publicAPI.objects.isMutable(this.domainObject)) {
             this.returnMutables = true;
             this.domainObject.$observe('$_destroy', () => {
                 Object.values(this.mutables).forEach(mutable => {
                     mutable.$destroy();
                 });
-            })
+            });
         }
     }
 
@@ -189,10 +190,12 @@ define([
             }
             this.provider.add(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables) {
+            if (this.returnMutables && this.publicAPI.objects.isMutable(child)) {
                 let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
-                child = this.publicAPI.objects.getMutable(child);
-                this.mutables[keyString] = child;
+                if (this.publicAPI.objects.isMutable(child)) {
+                    child = this.publicAPI.objects.mutable(child);
+                    this.mutables[keyString] = child;
+                }
             }
             this.emit('add', child);
         }
@@ -207,9 +210,7 @@ define([
      * @name load
      */
     CompositionCollection.prototype.load = function () {
-        if (this.returnMutables) {
-            this.cleanUpMutables();
-        }
+        this.cleanUpMutables();
         return this.provider.load(this.domainObject)
             .then(function (children) {
                 return Promise.all(children.map((c) => this.publicAPI.objects.get(c)));
@@ -240,10 +241,12 @@ define([
         if (!skipMutate) {
             this.provider.remove(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables) {
+            if (this.returnMutables && this.publicAPI.objects.isMutable(child)) {
                 let keyString = this.publicAPI.objects.makeKeyString(child);
-                this.mutables[keyString].$destroy();
-                delete this.mutables[keyString];
+                if (this.mutables[keyString] !== undefined) {
+                    this.mutables[keyString].$destroy();
+                    delete this.mutables[keyString];
+                }
             }
             this.emit('remove', child);
         }

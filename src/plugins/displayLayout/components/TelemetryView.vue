@@ -248,12 +248,13 @@
             }
         },
         mounted() {
-            this.openmct.objects.get(this.item.identifier)
+            this.openmct.objects.getAsMutable(this.item.identifier)
                 .then(this.setObject);
             this.openmct.time.on("bounds", this.refreshData);
         },
         destroyed() {
             this.removeSubscription();
+            this.domainObject.$destroy();
 
             if (this.removeSelectable) {
                 this.removeSelectable();

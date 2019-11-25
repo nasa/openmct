@@ -43,7 +43,8 @@ define([
      * @memberof module:openmct
      */
 
-    function ObjectAPI() {
+    function ObjectAPI(typeRegistry) {
+        this.typeRegistry = typeRegistry;
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
@@ -157,6 +158,10 @@ define([
         return provider.get(identifier);
     };
 
+    ObjectAPI.prototype.getAsMutable = function (identifier) {
+        return this.get(identifier).then(this.mutable.bind(this));
+    }
+
     ObjectAPI.prototype.delete = function () {
         throw new Error('Delete not implemented');
     };
@@ -177,8 +182,15 @@ define([
         this.rootRegistry.addRoot(key);
     };
 
-    ObjectAPI.prototype.getMutable = function (object) {
+    ObjectAPI.prototype.mutable = function (object) {
         return MutableDomainObject.default.createMutable(object, this.eventEmitter);
+    }
+
+    ObjectAPI.prototype.isMutable = function (object) {
+        // Checking for mutability is a bit broken right now. This is an 80% solution,
+        // but does not work in many cases.
+        const type = this.typeRegistry.get(object.type);
+        return type && type.definition.creatable === true;
     }
 
     /**
@@ -190,11 +202,14 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        console.warn('DEPRECATION WARNING: The .mutate() function in the Object API is now deprecated. Please use getMutable() ');
+        if (!this.isMutable(domainObject)) {
+            throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
+        }
+        console.warn('DEPRECATION WARNING: The .mutate() function in the Object API is now deprecated. Please use mutable() ');
         if (domainObject instanceof MutableDomainObject.default) {
             domainObject.$set(path, value);
         } else {
-            let mutable = this.getMutable(domainObject);
+            let mutable = this.mutable(domainObject);
             mutable.$set(path, value);
             mutable.$destroy();
         }
@@ -210,11 +225,14 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        console.warn('DEPRECATION WARNING: The .observe() function in the Object API is now deprecated. Please use getMutable() ');
-        let mutable = this.getMutable(domainObject);
-        mutable.$observe(path, callback);
-
-        return () => mutable.$destroy();
+        console.warn('DEPRECATION WARNING: The .observe() function in the Object API is now deprecated. Please use mutable() ');
+        if (domainObject instanceof MutableDomainObject.default) {
+            return domainObject.$observe(path, callback);
+        } else {
+            let mutable = this.mutable(domainObject);
+            mutable.$observe(path, callback);
+            return () => mutable.$destroy();
+        }
     };
 
     /**
