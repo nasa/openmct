@@ -96,7 +96,7 @@
                 // 2. Get legacy type from legacy api
                 // 3. Instantiate create action with type, parent, context
                 // 4. perform action.
-                return this.openmct.objects.getAsMutable(this.openmct.router.path[0].identifier)
+                return this.openmct.objects.get(this.openmct.router.path[0].identifier)
                     .then((currentObject) => {
                         let legacyContextualParent = this.convertToLegacy(currentObject);
                         let legacyType = this.openmct.$injector.get('typeService').getType(item.key);

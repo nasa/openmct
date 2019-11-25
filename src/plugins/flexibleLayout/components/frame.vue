@@ -116,6 +116,10 @@ export default {
         this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
+        if (this.domainObject.$destroy) {
+            this.domainObject.$destroy();
+        }
+
         if (this.unsubscribeSelection) {
             this.unsubscribeSelection();
         }

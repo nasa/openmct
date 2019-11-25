@@ -567,7 +567,7 @@ export default {
                 });
         },
         removeFromComposition(identifier) {
-            return this.openmct.objects.getAsMutable(identifier).then((childDomainObject) => {
+            return this.openmct.objects.get(identifier).then((childDomainObject) => {
                 this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
             });
         },

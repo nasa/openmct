@@ -14,6 +14,7 @@ define([
 
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
             let navigatePath = results[1];
+            clearMutationListeners();
             navigateToPath(navigatePath, params.view);
         });
 
@@ -50,7 +51,7 @@ define([
                 path = path.split('/');
             }
 
-            return pathToObjects(path).then((objects)=>{
+            return pathToObjects(path).then((objects) => {
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
                 }
@@ -95,7 +96,7 @@ define([
 
         function pathToObjects(path) {
             return Promise.all(path.map((keyString)=>{
-                return openmct.objects.get(keyString);
+                return openmct.objects.getAsMutable(keyString);
             }));
         }
 
@@ -112,6 +113,16 @@ define([
                         }
                     });
             });
+        }
+
+        function clearMutationListeners() {
+            if (openmct.router.path !== undefined) {
+                openmct.router.path.forEach((pathObject) => {
+                    if (pathObject.$destroy) {
+                        pathObject.$destroy();
+                    }
+                });
+            }
         }
     }
 });

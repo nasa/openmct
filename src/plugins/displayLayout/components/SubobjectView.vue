@@ -117,7 +117,9 @@
                 .then(this.setObject);
         },
         destroyed() {
-            this.domainObject.$destroy();
+            if (this.domainObject.$destroy) {
+                this.domainObject.$destroy();
+            }
             if (this.removeSelectable) {
                 this.removeSelectable();
             }
