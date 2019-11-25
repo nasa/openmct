@@ -38,7 +38,7 @@
                     v-for="(tick, index) in history"
                     :key="index"
                 >
-                    {{tick.start}} {{tick.end}}
+                    {{tick.formattedStart}} - {{tick.formattedEnd}} {{formattedTimeSystem}}
                 </li>
                 <!-- <li @click="setTimeSystemFromView(timeSystem)"
                     v-for="timeSystem in timeSystems"
@@ -59,11 +59,22 @@
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
+const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 3
+const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory'
+
 export default {
     inject: ['openmct'],
     mixins: [toggleMixin],
     props: {
         bounds: {
+            type: Object,
+            required: true
+        },
+        formattedBounds: {
+            type: Object,
+            required: true
+        },
+        formatter: {
             type: Object,
             required: true
         },
@@ -75,20 +86,46 @@ export default {
             history: []
         }
     },
+    computed: {
+    },
     methods: {
-        getHistory() {
-            const now = (new Date()).getTime()
-            console.log(now)
-            this.history.push(
-                {start: now - 50000, end: now - 15000},
-                {start: now - 10000, end: now - 5000}
-            )
+        addTick() {
+            const tick = {
+                id: '' + this.bounds.start + this.bounds.end,
+                start: this.bounds.start,
+                end: this.bounds.end,
+                formattedStart: this.formattedBounds.start,
+                formattedEnd: this.formattedBounds.end
+            };
+
+            if (this.history.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
+                this.history.pop();
+            }
+
+            
         },
+        clear() {
+
+        }
     },
     watch: {
         bounds: {
-            handler: function(bounds) {
-                console.log('new bounds from conductor')
+            handler() {
+                console.log('adding tick from bounds change')
+                this.addTick();
+            },
+            deep: true
+        },
+        formatter: {
+            handler() {
+                console.log('adding tick from format change')
+                this.addTick();
+            },
+            deep: true
+        },
+        history: {
+            handler() {
+                localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history))
             },
             deep: true
         }
@@ -96,7 +133,11 @@ export default {
     created() {
     },
     mounted() {
-        this.getHistory()
+        const timeSystem = this.openmct.time.timeSystem();
+        console.log(timeSystem)
+        if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
+            this.history = localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)
+        }
     },
     destroyed() {
     }

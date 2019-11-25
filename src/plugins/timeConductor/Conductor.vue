@@ -99,12 +99,7 @@
             <div class="c-conductor__controls">
                 <ConductorMode class="c-conductor__mode-select"></ConductorMode>
                 <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
-                <ConductorHistory
-                    class="c-conductor__history-select"
-                    :bounds="rawBounds"
-                    :isFixed="isFixed"
-                    :isUTCBased="isUTCBased"
-                ></ConductorHistory>
+
             </div>
             <input type="submit" class="invisible">
         </form>
@@ -353,7 +348,6 @@ export default {
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
             this.durationFormatter = this.getFormatter(
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setOffsetsFromView($event) {
@@ -505,7 +499,6 @@ export default {
     },
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-
         this.openmct.time.on('bounds', this.setViewFromBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);

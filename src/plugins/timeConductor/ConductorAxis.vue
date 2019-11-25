@@ -272,8 +272,9 @@ export default {
             if (!d3Selection.event.sourceEvent || !selection) {
                 return;
             }
-            
-            const [x0, x1] = selection.map(d => this.xScale.invert(d));
+
+            // SMELL
+            const [x0, x1] = selection.map(d => this.xScale.invert(d).getTime());
             this.openmct.time.bounds({
                 start: x0,
                 end: x1
