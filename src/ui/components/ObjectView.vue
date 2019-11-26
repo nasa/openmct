@@ -77,7 +77,7 @@ export default {
             if (!this.currentObject) {
                 return;
             }
-            
+
             this.composition = this.openmct.composition.get(this.currentObject);
             if (this.composition) {
                 this.composition._synchronize();
@@ -98,13 +98,13 @@ export default {
                 if (this.openmct.editor.isEditing()) {
                     this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false, objectPath);    
+                    this.currentView = provider.view(this.currentObject, objectPath);
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
+                this.currentView = provider.view(this.currentObject, objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -186,7 +186,7 @@ export default {
         },
         editIfEditable(event) {
             let provider = this.getViewProvider();
-            if (provider && 
+            if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
@@ -204,7 +204,7 @@ export default {
             if (domainObject) {
                 let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
                     currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
-                
+
                 if (clearKeyString === currentObjectKeyString) {
                     if (this.currentView.onClearData) {
                         this.currentView.onClearData();

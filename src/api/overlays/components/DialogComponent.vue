@@ -20,6 +20,7 @@
                  v-if="message">
                 {{message}}
             </div>
+            <slot></slot>
         </div>
     </div>
 </template>
@@ -44,7 +45,7 @@
 
         &__icon {
             // Holds a background SVG graphic
-            $s: 50px;
+            $s: 80px;
             flex: 0 0 auto;
             min-width: $s;
             min-height: $s;
@@ -61,9 +62,13 @@
         }
 
         // __text elements
-        &__title,
         &__action-text {
-            font-size: 1.2em; // TEMP
+            font-size: 1.2em;
+        }
+
+        &__title {
+            font-size: 1.5em;
+            font-weight: bold;
         }
 
         &--simple {
