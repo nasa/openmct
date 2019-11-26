@@ -99,7 +99,12 @@
             <div class="c-conductor__controls">
                 <ConductorMode class="c-conductor__mode-select"></ConductorMode>
                 <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
-
+                <ConductorHistory
+                    class="c-conductor__history-select"
+                    :bounds="rawBounds"
+                    :time-system="timeSystem"
+                    :is-fixed="isFixed"
+                ></ConductorHistory>
             </div>
             <input type="submit" class="invisible">
         </form>
@@ -324,6 +329,7 @@ export default {
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
 
         return {
+            timeSystem: timeSystem,
             timeFormatter: timeFormatter,
             durationFormatter: durationFormatter,
             offsets: {
@@ -345,6 +351,7 @@ export default {
     },
     methods: {
         setTimeSystem(timeSystem) {
+            this.timeSystem = timeSystem
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
             this.durationFormatter = this.getFormatter(
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);

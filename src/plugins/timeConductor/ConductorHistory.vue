@@ -35,10 +35,10 @@
             </ul>
             <ul>
                 <li
-                    v-for="(tick, index) in history"
+                    v-for="(tick, index) in historyForCurrentTimeSystem"
                     :key="index"
                 >
-                    {{tick.formattedStart}} - {{tick.formattedEnd}} {{formattedTimeSystem}}
+                    {{tick.start}} - {{tick.end}} {{formattedTimeSystem}}
                 </li>
                 <!-- <li @click="setTimeSystemFromView(timeSystem)"
                     v-for="timeSystem in timeSystems"
@@ -70,11 +70,7 @@ export default {
             type: Object,
             required: true
         },
-        formattedBounds: {
-            type: Object,
-            required: true
-        },
-        formatter: {
+        timeSystem: {
             type: Object,
             required: true
         },
@@ -83,25 +79,30 @@ export default {
     },
     data() {
         return {
-            history: []
+            history: {}
         }
     },
     computed: {
+        historyForCurrentTimeSystem() {
+            return this.history[this.timeSystem.key]
+        }
     },
     methods: {
         addTick() {
             const tick = {
-                id: '' + this.bounds.start + this.bounds.end,
                 start: this.bounds.start,
                 end: this.bounds.end,
-                formattedStart: this.formattedBounds.start,
-                formattedEnd: this.formattedBounds.end
             };
 
-            if (this.history.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
-                this.history.pop();
+            const key = this.timeSystem.key;
+            const [...currentHistory] = this.history[key] || []
+            if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
+                currentHistory.shift();
             }
-
+            currentHistory.push(tick)
+            console.log(key)
+            console.log(currentHistory)
+            this.history[key] = currentHistory
             
         },
         clear() {
@@ -116,16 +117,18 @@ export default {
             },
             deep: true
         },
-        formatter: {
+        timeSystem: {
             handler() {
-                console.log('adding tick from format change')
+                console.log('adding tick from time system change')
+                console.log(this.timeSystem)
                 this.addTick();
             },
             deep: true
         },
         history: {
             handler() {
-                localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history))
+                console.log(`persisting history ${this.history.local.length} ${this.history.utc.length}`);
+                localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
             },
             deep: true
         }
@@ -133,10 +136,13 @@ export default {
     created() {
     },
     mounted() {
-        const timeSystem = this.openmct.time.timeSystem();
-        console.log(timeSystem)
+        console.log("mounted")
+        // this.history is an object containing arrays of time system history keyed by the time system key
         if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-            this.history = localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)
+            this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
+        } else {
+            this.history = {};
+            localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
         }
     },
     destroyed() {
