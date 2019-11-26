@@ -29,9 +29,9 @@
             <ul
                 v-if="isUTCBased"
             >
-                <li>Today</li>
-                <li>Yesterday</li>
-                <li>Last 24 hours</li>
+                <li @click="selectHours(24)">Last 24 hours</li>
+                <li @click="selectHours(2)">Last 2 hours</li>
+                <li @click="selectHours(1)">Last hour</li>
             </ul>
             <ul>
                 <li
@@ -55,8 +55,8 @@ import toggleMixin from '../../ui/mixins/toggle-mixin';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 import _ from 'lodash'
 
-const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 5
-const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory'
+const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 20;
+const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
 
 export default {
     inject: ['openmct'],
@@ -69,15 +69,17 @@ export default {
         timeSystem: {
             type: Object,
             required: true
-        },
-        isUTCBased: Boolean
+        }
     },
     data() {
         return {
-            history: {} // contains arrays of history keyed by the time system key
+            history: {} // contains arrays of ticks {start, end}, array key is time system key
         }
     },
     computed: {
+        isUTCBased() {
+            return this.timeSystem.isUTCBased;
+        },
         historyForCurrentTimeSystem() {
             return this.history[this.timeSystem.key]
         }
@@ -110,12 +112,19 @@ export default {
             if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
                 currentHistory.shift();
             }
-            
+
             currentHistory.push(tick);
             this.history[key] = currentHistory;
         },
         selectTick(tick) {
             this.$emit('selectTick', tick);
+        },
+        selectHours(hours) {
+            const now = Date.now();
+            this.selectTick({
+                start: now - hours * 60 * 60 * 1000,
+                end: now
+            });
         },
         formatTime(time) {
             const formatter = this.openmct.telemetry.getValueFormatter({
@@ -123,9 +132,6 @@ export default {
             }).formatter;
 
             return formatter.format(time);
-        },
-        clear(key) {
-            delete this.history[key];
         }
     },
     watch: {
