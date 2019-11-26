@@ -45,7 +45,7 @@
             text-rendering: geometricPrecision;
             width: 100%;
             height: 100%;
-            > g {
+            > g.axis {
                 // Overall Tick holder
                 transform: translateY($tickYPos);
                 path {
@@ -240,8 +240,9 @@ export default {
             }
         },
         initBrush() {
+            // brush extent y coordinate starts at -1 to prevent underlying layer cursor to show
             this.brush = d3Brush.brushX()
-                .extent([[0, -this.height], [this.width, this.height]])
+                .extent([[0, -1], [this.width, this.height]])
                 .on("start", this.brushStart)
                 .on('brush', this.brushed)
                 .on("end", this.brushEnd);
@@ -331,7 +332,8 @@ export default {
         this.dragging = false;
 
         // draw x axis with labels. CSS is used to position them.
-        this.axisElement = vis.append("g");
+        this.axisElement = vis.append("g")
+            .attr("class", "axis");
 
         this.setViewFromTimeSystem(this.openmct.time.timeSystem());
         this.setScale();
