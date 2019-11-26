@@ -31,8 +31,7 @@
     @import "~styles/sass-base";
 
     .c-conductor-axis {
-        // $h: 18px;
-        $h: 64px;
+        $h: 18px;
         $tickYPos: ($h / 2) + 12px;
 
         @include userSelectNone();
