@@ -100,10 +100,11 @@
                 <ConductorMode class="c-conductor__mode-select"></ConductorMode>
                 <ConductorTimeSystem class="c-conductor__time-system-select"></ConductorTimeSystem>
                 <ConductorHistory
+                    v-if="isFixed"
                     class="c-conductor__history-select"
                     :bounds="rawBounds"
                     :time-system="timeSystem"
-                    :is-fixed="isFixed"
+                    @selectTick="setViewFromBounds"
                 ></ConductorHistory>
             </div>
             <input type="submit" class="invisible">

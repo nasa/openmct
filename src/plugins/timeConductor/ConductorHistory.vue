@@ -37,15 +37,10 @@
                 <li
                     v-for="(tick, index) in historyForCurrentTimeSystem"
                     :key="index"
+                    @click="selectTick(tick)"
                 >
-                    {{tick.start}} - {{tick.end}} {{formattedTimeSystem}}
+                    {{ displayTime(tick.start) }} - {{ displayTime(tick.end) }}
                 </li>
-                <!-- <li @click="setTimeSystemFromView(timeSystem)"
-                    v-for="timeSystem in timeSystems"
-                    :key="timeSystem.key"
-                    :class="timeSystem.cssClass">
-                    {{timeSystem.name}}
-                </li> -->
             </ul>
         </div>    
     </div>
@@ -58,8 +53,9 @@
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
+import _ from 'lodash'
 
-const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 3
+const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 5
 const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory'
 
 export default {
@@ -74,12 +70,11 @@ export default {
             type: Object,
             required: true
         },
-        isFixed: Boolean,
         isUTCBased: Boolean
     },
     data() {
         return {
-            history: {}
+            history: {} // contains arrays of history keyed by the time system key
         }
     },
     computed: {
@@ -95,39 +90,51 @@ export default {
             };
 
             const key = this.timeSystem.key;
-            const [...currentHistory] = this.history[key] || []
+            let [...currentHistory] = this.history[key] || [];
+
+            // when choosing an existing entry, remove it and add it back as latest entry
+            currentHistory = currentHistory.filter((entry) => {
+                if (_.isEqual(tick, entry)) {
+                }
+                return !_.isEqual(tick, entry);
+            });
+
             if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
                 currentHistory.shift();
             }
-            currentHistory.push(tick)
-            console.log(key)
-            console.log(currentHistory)
-            this.history[key] = currentHistory
-            
-        },
-        clear() {
+            currentHistory.push(tick);
 
+            this.history[key] = currentHistory;
+        },
+        selectTick(tick) {
+            this.$emit('selectTick', tick);
+        },
+        displayTime(time) {
+            const formatter = this.openmct.telemetry.getValueFormatter({
+                format: this.timeSystem.timeFormat
+            }).formatter;
+
+            return formatter.format(time);
+        },
+        clear(key) {
+            delete this.history[key];
         }
     },
     watch: {
         bounds: {
             handler() {
-                console.log('adding tick from bounds change')
                 this.addTick();
             },
             deep: true
         },
         timeSystem: {
             handler() {
-                console.log('adding tick from time system change')
-                console.log(this.timeSystem)
                 this.addTick();
             },
             deep: true
         },
         history: {
             handler() {
-                console.log(`persisting history ${this.history.local.length} ${this.history.utc.length}`);
                 localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
             },
             deep: true
@@ -136,8 +143,6 @@ export default {
     created() {
     },
     mounted() {
-        console.log("mounted")
-        // this.history is an object containing arrays of time system history keyed by the time system key
         if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
             this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
         } else {
