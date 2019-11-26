@@ -39,7 +39,7 @@
                     :key="index"
                     @click="selectTick(tick)"
                 >
-                    {{ displayTime(tick.start) }} - {{ displayTime(tick.end) }}
+                    {{ formatTime(tick.start) }} - {{ formatTime(tick.end) }}
                 </li>
             </ul>
         </div>    
@@ -83,33 +83,41 @@ export default {
         }
     },
     methods: {
+        getHistoryFromLocalStorage() {
+            if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
+                this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
+            } else {
+                this.history = {};
+                this.persistHistoryToLocalStorage();
+            }
+        },
+        persistHistoryToLocalStorage() {
+            localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
+        },
         addTick() {
+            const key = this.timeSystem.key;
+            let [...currentHistory] = this.history[key] || [];
             const tick = {
                 start: this.bounds.start,
                 end: this.bounds.end,
             };
 
-            const key = this.timeSystem.key;
-            let [...currentHistory] = this.history[key] || [];
-
             // when choosing an existing entry, remove it and add it back as latest entry
             currentHistory = currentHistory.filter((entry) => {
-                if (_.isEqual(tick, entry)) {
-                }
                 return !_.isEqual(tick, entry);
             });
 
             if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
                 currentHistory.shift();
             }
+            
             currentHistory.push(tick);
-
             this.history[key] = currentHistory;
         },
         selectTick(tick) {
             this.$emit('selectTick', tick);
         },
-        displayTime(time) {
+        formatTime(time) {
             const formatter = this.openmct.telemetry.getValueFormatter({
                 format: this.timeSystem.timeFormat
             }).formatter;
@@ -135,23 +143,13 @@ export default {
         },
         history: {
             handler() {
-                localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
+                this.persistHistoryToLocalStorage();
             },
             deep: true
         }
     },
-    created() {
-    },
     mounted() {
-        if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-            this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
-        } else {
-            this.history = {};
-            localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
-        }
-    },
-    destroyed() {
+        this.getHistoryFromLocalStorage();
     }
-
 }
 </script>
