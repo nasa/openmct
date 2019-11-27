@@ -176,9 +176,8 @@
 
     export default {
         data() {
-            let domainObject = JSON.parse(JSON.stringify(this.domainObject));
             return {
-                internalDomainObject: domainObject,
+                internalDomainObject: this.domainObject,
                 initSelectIndex: undefined,
                 selection: []
             };
@@ -566,9 +565,6 @@
             }
         },
         mounted() {
-            this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
-                this.internalDomainObject = JSON.parse(JSON.stringify(obj));
-            }.bind(this));
             this.openmct.selection.on('change', this.setSelection);
             this.initializeItems();
             this.composition = this.openmct.composition.get(this.internalDomainObject);
@@ -580,7 +576,6 @@
             this.openmct.selection.off('change', this.setSelection);
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
-            this.unlisten();
         }
     }
 </script>

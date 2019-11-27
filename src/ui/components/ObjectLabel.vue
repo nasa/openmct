@@ -68,12 +68,6 @@ export default {
         };
     },
     mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
-        }
         this.previewAction = new PreviewAction(this.openmct);
     },
     computed: {

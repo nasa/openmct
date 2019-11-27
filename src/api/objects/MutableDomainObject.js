@@ -36,6 +36,11 @@ class MutableDomainObject {
                 value: [],
                 // Property should not be serialized
                 enumerable: false
+            },
+            isMutable: {
+                value: true,
+                // Property should not be serialized
+                enumerable: false
             }
         });
     }

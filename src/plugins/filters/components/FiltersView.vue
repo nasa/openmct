@@ -235,8 +235,8 @@
             this.composition.on('add', this.addChildren);
             this.composition.on('remove', this.removeChildren);
             this.composition.load();
-            this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
-            this.unobserveGlobalFilters = this.openmct.objects.observe(this.providedObject, 'configuration.globalFilters', this.updateGlobalFilters);
+            this.unobserve = this.providedObject.$observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
+            this.unobserveGlobalFilters = this.providedObject.$observe(this.providedObject, 'configuration.globalFilters', this.updateGlobalFilters);
         },
         beforeDestroy() {
             this.composition.off('add', this.addChildren);

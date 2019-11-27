@@ -81,8 +81,8 @@
                 }
             },
             observeObject(domainObject, id) {
-                let unobserveObject = this.openmct.objects.observe(domainObject, '*', function(newObject) {
-                    this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
+                let unobserveObject = domainObject.$observe('*', function(newObject) {
+                    this.domainObjectsById[id].newObject = newObject;
                     this.updateToolbarAfterMutation();
                 }.bind(this));
                 this.unObserveObjects.push(unobserveObject);

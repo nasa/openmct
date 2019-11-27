@@ -629,9 +629,6 @@ export default {
                 return size;
             }
         },
-        updateDomainObject(newDomainObject) {
-            this.domainObject = newDomainObject;
-        },
         moveContainer(toIndex, event) {
             let containerId = event.dataTransfer.getData('containerid');
             let container = this.containers.filter(c => c.id === containerId)[0];
@@ -664,14 +661,10 @@ export default {
         this.composition.on('add', this.addFrame);
 
         this.RemoveAction = new RemoveAction(this.openmct);
-
-        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.composition.off('remove', this.removeChildObject);
         this.composition.off('add', this.addFrame);
-
-        this.unobserve();
     }
 }
 </script>

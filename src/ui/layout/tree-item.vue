@@ -66,11 +66,7 @@
             // TODO: set isAlias per tree-item
 
             this.domainObject = this.node.object;
-            let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
-                this.domainObject = newObject;
-            });
 
-            this.$once('hook:destroyed', removeListener);
             if (this.openmct.composition.get(this.node.object)) {
                 this.hasChildren = true;
             }
