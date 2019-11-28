@@ -22,33 +22,34 @@
 
 define([
     './src/InspectorController',
-    './src/EditableRegionPolicy',
-    'legacyRegistry'
+    './src/EditableRegionPolicy'
 ], function (
     InspectorController,
-    EditableRegionPolicy,
-    legacyRegistry
+    EditableRegionPolicy
 ) {
 
-    legacyRegistry.register("platform/commonUI/regions", {
-        "extensions": {
-            "controllers": [
-                {
-                    "key": "InspectorController",
-                    "implementation": InspectorController,
-                    "depends": [
-                        "$scope",
-                        "openmct",
-                        "$document"
-                    ]
-                }
-            ],
-            "policies": [
-                {
-                    "category": "region",
-                    "implementation": EditableRegionPolicy
-                }
-            ]
+    return {
+        name:"platform/commonUI/regions",
+        definition: {
+            "extensions": {
+                "controllers": [
+                    {
+                        "key": "InspectorController",
+                        "implementation": InspectorController,
+                        "depends": [
+                            "$scope",
+                            "openmct",
+                            "$document"
+                        ]
+                    }
+                ],
+                "policies": [
+                    {
+                        "category": "region",
+                        "implementation": EditableRegionPolicy
+                    }
+                ]
+            }
         }
-    });
+    };
 });

@@ -22,39 +22,40 @@
 
 define([
     "./src/LocalStoragePersistenceProvider",
-    "./src/LocalStorageIndicator",
-    'legacyRegistry'
+    "./src/LocalStorageIndicator"
 ], function (
     LocalStoragePersistenceProvider,
-    LocalStorageIndicator,
-    legacyRegistry
+    LocalStorageIndicator
 ) {
 
-    legacyRegistry.register("platform/persistence/local", {
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "provider",
-                    "implementation": LocalStoragePersistenceProvider,
-                    "depends": [
-                        "$window",
-                        "$q",
-                        "PERSISTENCE_SPACE"
-                    ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "PERSISTENCE_SPACE",
-                    "value": "mct"
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": LocalStorageIndicator
-                }
-            ]
+    return {
+        name:"platform/persistence/local",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": LocalStoragePersistenceProvider,
+                        "depends": [
+                            "$window",
+                            "$q",
+                            "PERSISTENCE_SPACE"
+                        ]
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "PERSISTENCE_SPACE",
+                        "value": "mct"
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": LocalStorageIndicator
+                    }
+                ]
+            }
         }
-    });
+    };
 });

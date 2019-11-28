@@ -8,8 +8,7 @@ define([
     "./res/templates/glyphs.html",
     "./res/templates/controls.html",
     "./res/templates/input.html",
-    "./res/templates/menus.html",
-    'legacyRegistry'
+    "./res/templates/menus.html"
 ], function (
     ExampleStyleGuideModelProvider,
     MCTExample,
@@ -20,13 +19,14 @@ define([
     glyphsTemplate,
     controlsTemplate,
     inputTemplate,
-    menusTemplate,
-    legacyRegistry
+    menusTemplate
 ) {
-    legacyRegistry.register("example/styleguide", {
-        "name": "Open MCT Style Guide",
-        "description": "Examples and documentation illustrating UI styles in use in Open MCT.",
-        "extensions":
+    return {
+        name:"example/styleguide",
+        definition: {
+            "name": "Open MCT Style Guide",
+            "description": "Examples and documentation illustrating UI styles in use in Open MCT.",
+            "extensions":
         {
             "types": [
                 { "key": "styleguide.intro", "name": "Introduction", "cssClass": "icon-page", "description": "Introduction and overview to the style guide" },
@@ -103,5 +103,6 @@ define([
                 }
             ]
         }
-    });
+        }
+    };
 });
