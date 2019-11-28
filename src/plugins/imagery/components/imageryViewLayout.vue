@@ -130,10 +130,10 @@ export default {
     methods: {
         datumMatchesMostRecent (datum) {
             if (this.imageHistory.length !== 0) {
-                var datumTime = this.timeFormat.format(datum);
-                var datumURL = this.imageFormat.format(datum);
-                var lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
-                var lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
+                const datumTime = this.timeFormat.format(datum);
+                const datumURL = this.imageFormat.format(datum);
+                const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
+                const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
 
                 return datumTime === lastHistoryTime && datumURL === lastHistoryURL;
             }
@@ -178,10 +178,10 @@ export default {
         requestHistory (bounds) {
             this.requestCount++;
             this.imageHistory = [];
-            var requestId = this.requestCount;
+            const requestId = this.requestCount;
             this.openmct.telemetry
                 .request(this.domainObject, bounds)
-                .then(function (values) {
+                .then(function (values = []) {
                     if (this.requestCount > requestId) {
                         return Promise.resolve('Stale request');
                     }
@@ -231,7 +231,7 @@ export default {
             this.imageUrl = '';
             this.openmct.objects.get(this.keystring)
                 .then(function (object) {
-                    var metadata = this.openmct
+                    const metadata = this.openmct
                         .telemetry
                         .getMetadata(this.domainObject);
                     this.timeKey = this.openmct.time.timeSystem().key;
@@ -257,7 +257,7 @@ export default {
             if (this.datumMatchesMostRecent(datum)) {
                 return false;
             };
-            var index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
+            const index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
 
             return true;
