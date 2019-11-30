@@ -35,8 +35,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-frame-edit {
         // In Layouts, this is the editing rect and handles
         display: none; // Set to display: block in DisplayLayout.vue

@@ -71,12 +71,19 @@ const webpackConfig = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    devMode ? 'style-loader': MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'style-loader',
+                        options: {
+                            injectType: 'styleTag' // change to lazyStyleTag and use styles in themes plugin
+                        }
+                    },
                     'css-loader',
                     {
-                        loader: 'fast-sass-loader',
+                        loader: 'sass-loader',
                         options: {
-                            includePaths: bourbon.includePaths
+                            prependData: `
+                                @import "styles/sass-base.scss";
+                            `
                         }
                     }
                 ]

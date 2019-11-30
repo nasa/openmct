@@ -23,8 +23,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     /******************************* GRID ITEMS */
     .c-grid-item {
         // Mobile-first

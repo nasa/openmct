@@ -22,6 +22,7 @@
 
 define([
     'lodash',
+    './themes/plugin',
     './utcTimeSystem/plugin',
     './localTimeSystem/plugin',
     '../../example/generator/plugin',
@@ -47,6 +48,7 @@ define([
     './clearData/plugin'
 ], function (
     _,
+    ThemesPlugin,
     UTCTimeSystem,
     LocalTimeSystem,
     GeneratorPlugin,
@@ -85,6 +87,7 @@ define([
         };
     });
 
+    plugins.Themes = ThemesPlugin.default;
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
 

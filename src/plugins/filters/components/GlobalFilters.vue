@@ -26,9 +26,7 @@
     </li>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-    .c-filter-indication {
+<style lang="scss">    .c-filter-indication {
         // Appears as a block element beneath tables
         @include userSelectNone();
         background: $colorFilterBg;

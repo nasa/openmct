@@ -10,9 +10,7 @@
 </a>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-    .c-object-label {
+<style lang="scss">    .c-object-label {
         // <a> tag and draggable element that holds type icon and name.
         // Used mostly in trees and lists
         border-radius: $controlCr;

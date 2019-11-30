@@ -28,8 +28,6 @@
 </div>
 </template>
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-elements-pool {
         display: flex;
         flex-direction: column;

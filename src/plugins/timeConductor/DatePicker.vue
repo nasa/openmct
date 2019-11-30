@@ -58,8 +58,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     /******************************************************** PICKER */
     .c-datetime-picker {
         @include userSelectNone();

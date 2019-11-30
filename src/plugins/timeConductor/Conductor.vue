@@ -104,8 +104,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-input--submit {
         // Can't use display: none because some browsers will pretend the input doesn't exist, and enter won't work
         visibility: none;

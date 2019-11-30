@@ -9,8 +9,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-toggle-switch {
         $d: 12px;
         $m: 2px;

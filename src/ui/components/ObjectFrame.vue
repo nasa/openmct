@@ -51,8 +51,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-so-view {
         display: flex;
         flex-direction: column;

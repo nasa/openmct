@@ -152,8 +152,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-telemetry-table__drop-target {
         position: absolute;
         width: 2px;

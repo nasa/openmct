@@ -28,8 +28,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-create-button,
     .c-create-menu {
         font-size: 1.1em;

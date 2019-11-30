@@ -45,7 +45,6 @@
  </template>
 
 <style lang="scss">
-    @import '~styles/sass-base';
 
     .c-telemetry-view {
         display: flex;

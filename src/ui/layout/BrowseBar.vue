@@ -247,8 +247,6 @@ const PLACEHOLDER_OBJECT = {};
 </script>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .l-browse-bar {
         display: flex;
         align-items: center;

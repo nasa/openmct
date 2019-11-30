@@ -37,8 +37,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     @mixin statusBannerColors($bg, $fg: $colorStatusFg) {
         $bgPb: 10%;
         $bgPbD: 10%;

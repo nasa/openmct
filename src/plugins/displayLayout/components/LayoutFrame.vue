@@ -37,8 +37,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     /******************* FRAME */
     .c-frame {
         display: flex;

@@ -15,8 +15,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     /******************************************************** PROGRESS BAR */
     @keyframes progress {
         100% { background-position: $progressAnimW center; }

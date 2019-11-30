@@ -85,7 +85,6 @@
 </template>
 
 <style lang="scss">
-    @import '~styles/sass-base';
     
     @mixin containerGrippy($headerSize, $dir) {
         position: absolute;

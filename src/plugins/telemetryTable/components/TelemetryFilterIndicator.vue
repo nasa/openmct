@@ -11,9 +11,7 @@
     </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-    .c-filter-indication {
+<style lang="scss">    .c-filter-indication {
         @include userSelectNone();
         background: $colorFilterBg;
         color: $colorFilterFg;

@@ -60,8 +60,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     @mixin displayMarquee($c) {
         > .c-frame-edit {
             // All other frames

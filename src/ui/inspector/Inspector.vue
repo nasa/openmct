@@ -15,8 +15,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-inspector {
         > [class*="__"] {
             min-height: 50px;

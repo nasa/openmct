@@ -52,7 +52,6 @@
     </div>
 </template>
 <style lang="scss">
-    @import '~styles/sass-base';
 
     .l-preview-window {
         display: flex;

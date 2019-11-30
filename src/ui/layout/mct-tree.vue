@@ -42,8 +42,6 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
-
     .c-tree-and-search {
         display: flex;
         flex-direction: column;
