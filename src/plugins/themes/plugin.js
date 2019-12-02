@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,19 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import core from '../../styles/core.scss';
+import styles from '../../styles/theme-espresso.scss';
 
-@import "vendor/normalize-min";
-// @import "sass-base";
-
-/******************** RENDERS CSS */
-// @import "about";
-// @import "glyphs";
-// @import "global";
-// @import "status";
-// @import "controls";
-// @import "forms";
-// @import "table";
-// @import "legacy";
-// @import "legacy-plots";
-// @import "plotly";
-// @import "legacy-messages";
+export default function ThemesPlugin(options) {
+    return function (openmct) {
+        console.log(styles)
+        core.use();
+        styles.use();
+        // setTimeout(() => {
+        //     styles.unuse();
+        // }, 3000)
+        ThemesPlugin._installed = true;
+    };
+}

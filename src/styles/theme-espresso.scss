@@ -20,18 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@import "vendor/normalize-min";
-// @import "sass-base";
-
-/******************** RENDERS CSS */
-// @import "about";
-// @import "glyphs";
-// @import "global";
-// @import "status";
-// @import "controls";
-// @import "forms";
-// @import "table";
-// @import "legacy";
-// @import "legacy-plots";
-// @import "plotly";
-// @import "legacy-messages";
+// Imports only constants, mixins, etc.
+// Meant for use as a single line import in Vue SFC's.
+// Do not include anything that renders to CSS!
+// @import "constants";
+// @import "constants-mobile.scss";
+@import "constants-espresso"; // TEMP
+// @import "constants-snow"; // TEMP
+//@import "constants-maelstrom";
+@import "mixins";
+@import "animations";
+@import "about";
+@import "glyphs";
+@import "global";
+@import "status";
+@import "controls";
+@import "forms";
+@import "table";
+@import "legacy";
+@import "legacy-plots";
+@import "plotly";
+@import "legacy-messages";

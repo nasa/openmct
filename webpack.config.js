@@ -74,7 +74,7 @@ const webpackConfig = {
                     {
                         loader: 'style-loader',
                         options: {
-                            injectType: 'styleTag' // change to lazyStyleTag and use styles in themes plugin
+                            injectType: 'lazyStyleTag' // change to lazyStyleTag and use styles in themes plugin
                         }
                     },
                     'css-loader',
@@ -82,7 +82,7 @@ const webpackConfig = {
                         loader: 'sass-loader',
                         options: {
                             prependData: `
-                                @import "styles/sass-base.scss";
+                                @import "styles/core.scss";
                             `
                         }
                     }
