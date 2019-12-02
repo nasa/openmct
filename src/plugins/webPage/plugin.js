@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import WebPageViewProvider from './WebPageViewProvider.js';
+import WebPageViewProvider from './WebPageView.js';
 
 export default function plugin() {
     return function install(openmct) {
