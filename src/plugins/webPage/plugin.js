@@ -20,30 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './webPage'
-], function (
-    WebPage
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new WebPage(openmct));
+import WebPageViewProvider from './WebPageViewProvider';
 
-            openmct.types.addType('webPage', {
-                name: "Web Page",
-                description: "Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.",
-                creatable: true,
-                cssClass: 'icon-page',
-                form: [
-                    {
-                        "key": "url",
-                        "name": "URL",
-                        "control": "textfield",
-                        "required": true,
-                        "cssClass": "l-input-lg"
-                    }
-                ]
-            });
-        };
+export default function plugin() {
+    return function install(openmct) {
+        openmct.objectViews.addProvider(new WebPageViewProvider(openmct));
+
+        openmct.types.addType('webPage', {
+            name: "Web Page",
+            description: "Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.",
+            creatable: true,
+            cssClass: 'icon-page',
+            form: [
+                {
+                    "key": "url",
+                    "name": "URL",
+                    "control": "textfield",
+                    "required": true,
+                    "cssClass": "l-input-lg"
+                }
+            ]
+        });
     };
-});
+}

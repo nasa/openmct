@@ -172,7 +172,7 @@ define([
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
     plugins.ClearData = ClearData;
-    plugins.WebPage = WebPagePlugin;
+    plugins.WebPage = WebPagePlugin.default;
 
     return plugins;
 });

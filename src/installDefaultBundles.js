@@ -39,7 +39,6 @@ const DEFAULTS = [
     'platform/telemetry',
     'platform/features/clock',
     'platform/features/imagery',
-    'platform/features/pages',
     'platform/features/hyperlink',
     'platform/features/timeline',
     'platform/forms',

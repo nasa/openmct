@@ -263,6 +263,8 @@ define([
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
+        this.install(this.plugins.ImportExport());
+        this.install(this.plugins.WebPage());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
