@@ -63,10 +63,10 @@ define([
 
             Object.keys(panels).forEach(key => {
                 let panel = panels[key];
-                let domainObject = childObjects[key];
+                let childDomainObject = childObjects[key];
                 let identifier = undefined;
 
-                if (isTelemetry(domainObject)) {
+                if (isTelemetry(childDomainObject)) {
                     // If object is a telemetry point, convert it to a plot and
                     // replace the object in migratedObject composition with the plot.
                     identifier = {
@@ -75,19 +75,19 @@ define([
                     };
                     let plotObject = {
                         identifier: identifier,
-                        location: domainObject.location,
-                        name: domainObject.name,
+                        location: childDomainObject.location,
+                        name: childDomainObject.name,
                         type: "telemetry.plot.overlay"
                     };
                     let plotType = openmct.types.get('telemetry.plot.overlay');
                     plotType.definition.initialize(plotObject);
-                    plotObject.composition.push(domainObject.identifier);
+                    plotObject.composition.push(childDomainObject.identifier);
                     openmct.objects.mutate(plotObject, 'persisted', Date.now());
 
-                    let keyString = openmct.objects.makeKeyString(domainObject.identifier);
+                    let keyString = openmct.objects.makeKeyString(childDomainObject.identifier);
                     let clonedComposition = Object.assign([], migratedObject.composition);
-                    clonedComposition.forEach((identifier, index) => {
-                        if (openmct.objects.makeKeyString(identifier) === keyString) {
+                    clonedComposition.forEach((objIdentifier, index) => {
+                        if (openmct.objects.makeKeyString(objIdentifier) === keyString) {
                             migratedObject.composition[index] = plotObject.identifier;
                         }
                     });
@@ -98,7 +98,7 @@ define([
                     height: panel.dimensions[1],
                     x: panel.position[0],
                     y: panel.position[1],
-                    identifier: identifier || domainObject.identifier,
+                    identifier: identifier || childDomainObject.identifier,
                     id: uuid(),
                     type: 'subobject-view',
                     hasFrame: panel.hasFrame

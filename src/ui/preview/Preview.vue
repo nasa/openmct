@@ -39,8 +39,8 @@
                         @setView="setView">
                     </view-switcher>
                     <button v-if="notebookEnabled"
-                        class="l-browse-bar__actions__edit c-button icon-notebook" 
-                        title="New Notebook entry" 
+                        class="l-browse-bar__actions__edit c-button icon-notebook"
+                        title="New Notebook entry"
                         @click="snapshot">
                     </button>
                 </div>
@@ -123,13 +123,13 @@
             },
             setView(view) {
                 this.clear();
-            
+
                 this.viewKey = view.key;
                 this.viewContainer = document.createElement('div');
                 this.viewContainer.classList.add('c-object-view','u-contents');
                 this.$refs.objectView.append(this.viewContainer);
 
-                this.view = this.currentView.view(this.domainObject, false, this.objectPath);
+                this.view = this.currentView.view(this.domainObject, this.objectPath);
                 this.view.show(this.viewContainer, false);
             }
         },

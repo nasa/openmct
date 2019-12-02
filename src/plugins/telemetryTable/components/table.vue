@@ -87,7 +87,7 @@
                         ><span class="c-telemetry-table__headers__label">{{title}}</span>
                         </table-column-header>
                     </tr>
-                    <tr class="c-telemetry-table__headers__filter">
+                    <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
                         <table-column-header
                             v-for="(title, key, headerIndex) in headers"
                             :key="key"
@@ -261,7 +261,12 @@
                 height: 18px; // Needed when a row has empty values in its cells
 
                 &.is-selected {
-                    background-color: $colorSelectedBg;
+                    background-color: $colorSelectedBg !important;
+                    color: $colorSelectedFg !important;
+                    td {
+                        background: none !important;
+                        color: inherit !important;
+                    }
                 }
             }
 
@@ -733,9 +738,21 @@ export default {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
-        unmarkRow(rowIndex) {
-            this.undoMarkedRows();
-            this.unpause();
+        unmarkRow(rowIndex, ctrlKeyModifier) {
+            if (ctrlKeyModifier) {
+                let row = this.visibleRows[rowIndex],
+                    positionInMarkedArray = this.markedRows.indexOf(row);
+
+                row.marked = false;
+                this.markedRows.splice(positionInMarkedArray, 1); 
+
+                if (this.markedRows.length === 0) {
+                    this.unpause();
+                }
+            } else if (this.markedRows.length) {
+                this.undoMarkedRows();
+                this.markRow(rowIndex);
+            }
         },
         markRow(rowIndex, keyModifier) {
             if (!this.enableMarking) {
@@ -785,16 +802,18 @@ export default {
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
-                    let temp = lastRowIndex;
-                
-                    lastRowIndex = firstRowIndex;
-                    firstRowIndex = temp - 1;
+                    [firstRowIndex, lastRowIndex] = [lastRowIndex, firstRowIndex];
                 }
+                
+                let baseRow = this.markedRows[0];
 
-                for (var i = firstRowIndex + 1; i <= lastRowIndex; i++) {
+                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
-                    this.markedRows.push(row);
+
+                    if (row !== baseRow){
+                        this.markedRows.push(row);
+                    }
                 }
             }
         }
@@ -803,6 +822,7 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
+        console.log("Table mounted");
         this.csvExporter = new CSVExporter();
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);

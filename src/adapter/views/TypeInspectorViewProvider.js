@@ -3,17 +3,6 @@ define([
 ], function (
 
 ) {
-    const DEFAULT_VIEW_PRIORITY = 100;
-
-    const PRIORITY_LEVELS = {
-        "fallback": Number.NEGATIVE_INFINITY,
-        "default": -100,
-        "none": 0,
-        "optional": DEFAULT_VIEW_PRIORITY,
-        "preferred": 1000,
-        "mandatory": Number.POSITIVE_INFINITY
-    };
-
     function TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject) {
         console.warn(`DEPRECATION WARNING: Migrate ${typeDefinition.key} from ${typeDefinition.bundle.path} to use the new Inspector View APIs.  Legacy Inspector view support will be removed soon.`);
         let representation = openmct.$injector.get('representations[]')
@@ -102,7 +91,7 @@ define([
                 }
             }
         };
-    };
+    }
 
     return TypeInspectorViewProvider;
 

@@ -169,7 +169,7 @@ export default {
         rowOffset: 'calculateRowTop',
         row: {
             handler: 'formatRow',
-            deep: false
+            deep: true
         }
     },
     components: {

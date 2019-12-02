@@ -106,8 +106,10 @@
             display: contents;
         }
 
-        &__row + &__row {
-            > [class*="__"] {
+        &__row + &__row,
+        &__section + &__section {
+            [class*="__label"],
+            [class*="__value"] {
                 // Row borders, effected via border-top on child elements of the row
                 border-top: 1px solid $colorInspectorSectionHeaderBg;
             }

@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
 class Container {
-    constructor (size) {
+    constructor(size) {
         this.id = uuid();
         this.frames = [];
         this.size = size;

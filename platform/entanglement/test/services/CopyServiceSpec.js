@@ -42,7 +42,7 @@ define(
             return promise;
         }
 
-        describe("CopyService", function () {
+        xdescribe("CopyService", function () {
             var policyService;
 
             beforeEach(function () {

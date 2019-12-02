@@ -27,7 +27,6 @@ define([
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
-    "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
     "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
@@ -49,8 +48,7 @@ define([
     "./res/templates/library.html",
     "./res/templates/edit-object.html",
     "./res/templates/edit-action-buttons.html",
-    "./res/templates/topbar-edit.html",
-    'legacyRegistry'
+    "./res/templates/topbar-edit.html"
 ], function (
     EditActionController,
     EditPanesController,
@@ -58,7 +56,6 @@ define([
     EditAndComposeAction,
     EditAction,
     PropertiesAction,
-    RemoveAction,
     SaveAction,
     SaveAndStopEditingAction,
     SaveAsAction,
@@ -80,288 +77,277 @@ define([
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
-    topbarEditTemplate,
-    legacyRegistry
+    topbarEditTemplate
 ) {
-
-    legacyRegistry.register("platform/commonUI/edit", {
-        "extensions": {
-            "controllers": [
-                {
-                    "key": "EditActionController",
-                    "implementation": EditActionController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "EditPanesController",
-                    "implementation": EditPanesController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "EditObjectController",
-                    "implementation": EditObjectController,
-                    "depends": [
-                        "$scope",
-                        "$location",
-                        "navigationService"
-                    ]
-                },
-                {
-                    "key": "CreateMenuController",
-                    "implementation": CreateMenuController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "LocatorController",
-                    "implementation": LocatorController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "objectService"
-                    ]
-                }
-            ],
-            "actions": [
-                {
-                    "key": "compose",
-                    "implementation": EditAndComposeAction
-                },
-                {
-                    "key": "edit",
-                    "implementation": EditAction,
-                    "depends": [
-                        "$location",
-                        "navigationService",
-                        "$log"
-                    ],
-                    "description": "Edit",
-                    "category": "view-control",
-                    "cssClass": "major icon-pencil"
-                },
-                {
-                    "key": "properties",
-                    "category": [
-                        "contextual",
-                        "view-control"
-                    ],
-                    "implementation": PropertiesAction,
-                    "cssClass": "major icon-pencil",
-                    "name": "Edit Properties...",
-                    "description": "Edit properties of this object.",
-                    "depends": [
-                        "dialogService"
-                    ]
-                },
-                {
-                    "key": "remove",
-                    "category": "legacy",
-                    "implementation": RemoveAction,
-                    "cssClass": "icon-trash",
-                    "name": "Remove",
-                    "description": "Remove this object from its containing object.",
-                    "depends": [
-                        "openmct",
-                        "navigationService"
-                    ]
-                },
-                {
-                    "key": "save-and-stop-editing",
-                    "category": "save",
-                    "implementation": SaveAndStopEditingAction,
-                    "name": "Save and Finish Editing",
-                    "cssClass": "icon-save labeled",
-                    "description": "Save changes made to these objects.",
-                    "depends": [
-                        "dialogService",
-                        "notificationService"
-                    ]
-                },
-                {
-                    "key": "save",
-                    "category": "save",
-                    "implementation": SaveAction,
-                    "name": "Save and Continue Editing",
-                    "cssClass": "icon-save labeled",
-                    "description": "Save changes made to these objects.",
-                    "depends": [
-                        "dialogService",
-                        "notificationService"
-                    ]
-                },
-                {
-                    "key": "save-as",
-                    "category": "save",
-                    "implementation": SaveAsAction,
-                    "name": "Save As...",
-                    "cssClass": "icon-save labeled",
-                    "description": "Save changes made to these objects.",
-                    "depends": [
-                        "$injector",
-                        "dialogService",
-                        "copyService",
-                        "notificationService",
-                        "openmct"
-                    ],
-                    "priority": "mandatory"
-                },
-                {
-                    "key": "cancel",
-                    "category": "conclude-editing",
-                    "implementation": CancelAction,
-                    // Because we use the name as label for edit buttons and mct-control buttons need
-                    // the label to be set to undefined in order to not apply the labeled CSS rule.
-                    "name": undefined,
-                    "cssClass": "icon-x no-label",
-                    "description": "Discard changes made to these objects.",
-                    "depends": []
-                }
-            ],
-            "policies": [
-                {
-                    "category": "action",
-                    "implementation": EditPersistableObjectsPolicy,
-                    "depends": ["openmct"]
-                },
-                {
-                    "implementation": CreationPolicy,
-                    "category": "creation"
-                }
-            ],
-            "templates": [
-                {
-                    "key": "edit-library",
-                    "template": libraryTemplate
-                }
-            ],
-            "representations": [
-                {
-                    "key": "edit-object",
-                    "template": editObjectTemplate,
-                    "uses": [
-                        "view"
-                    ],
-                    "gestures": [
-                        "drop"
-                    ]
-                },
-                {
-                    "key": "edit-action-buttons",
-                    "template": editActionButtonsTemplate,
-                    "uses": [
-                        "action"
-                    ]
-                },
-                {
-                    "key": "topbar-edit",
-                    "template": topbarEditTemplate
-                },
-                {
-                    "key": "create-button",
-                    "template": createButtonTemplate
-                },
-                {
-                    "key": "create-menu",
-                    "template": createMenuTemplate,
-                    "uses": [
-                        "action"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "capabilityService",
-                    "implementation": TransactionCapabilityDecorator,
-                    "depends": [
-                        "$q",
-                        "transactionManager"
-                    ],
-                    "priority": "fallback"
-                },
-                {
-                    "type": "provider",
-                    "provides": "transactionService",
-                    "implementation": TransactionService,
-                    "depends": [
-                        "$q",
-                        "$log",
-                        "cacheService"
-                    ]
-                },
-                {
-                    "key": "CreateActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": CreateActionProvider,
-                    "depends": [
-                        "typeService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "CreationService",
-                    "provides": "creationService",
-                    "type": "provider",
-                    "implementation": CreationService,
-                    "depends": [
-                        "$q",
-                        "$log"
-                    ]
-                }
-
-            ],
-            "representers": [
-                {
-                    "implementation": EditRepresenter,
-                    "depends": [
-                        "$log"
-                    ]
-                }
-            ],
-            "capabilities": [
-                {
-                    "key": "editor",
-                    "name": "Editor Capability",
-                    "description": "Provides transactional editing capabilities",
-                    "implementation": EditorCapability,
-                    "depends": [
-                        "transactionService",
-                        "openmct"
-                    ]
-                }
-            ],
-            "controls": [
-                {
-                    "key": "locator",
-                    "template": locatorTemplate
-                }
-            ],
-            "services": [
-                {
-                    "key": "transactionManager",
-                    "implementation": TransactionManager,
-                    "depends": [
-                        "transactionService"
-                    ]
-                }
-            ],
-            "runs": [
-                {
-                    depends: [
-                        "toolbars[]",
-                        "openmct"
-                    ],
-                    implementation: function (toolbars, openmct) {
-                        toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
+    return {
+        name: "platform/commonUI/edit",
+        definition: {
+            "extensions": {
+                "controllers": [
+                    {
+                        "key": "EditActionController",
+                        "implementation": EditActionController,
+                        "depends": [
+                            "$scope"
+                        ]
+                    },
+                    {
+                        "key": "EditPanesController",
+                        "implementation": EditPanesController,
+                        "depends": [
+                            "$scope"
+                        ]
+                    },
+                    {
+                        "key": "EditObjectController",
+                        "implementation": EditObjectController,
+                        "depends": [
+                            "$scope",
+                            "$location",
+                            "navigationService"
+                        ]
+                    },
+                    {
+                        "key": "CreateMenuController",
+                        "implementation": CreateMenuController,
+                        "depends": [
+                            "$scope"
+                        ]
+                    },
+                    {
+                        "key": "LocatorController",
+                        "implementation": LocatorController,
+                        "depends": [
+                            "$scope",
+                            "$timeout",
+                            "objectService"
+                        ]
                     }
-                }
-            ]
+                ],
+                "actions": [
+                    {
+                        "key": "compose",
+                        "implementation": EditAndComposeAction
+                    },
+                    {
+                        "key": "edit",
+                        "implementation": EditAction,
+                        "depends": [
+                            "$location",
+                            "navigationService",
+                            "$log"
+                        ],
+                        "description": "Edit",
+                        "category": "view-control",
+                        "cssClass": "major icon-pencil"
+                    },
+                    {
+                        "key": "properties",
+                        "category": [
+                            "contextual",
+                            "view-control"
+                        ],
+                        "implementation": PropertiesAction,
+                        "cssClass": "major icon-pencil",
+                        "name": "Edit Properties...",
+                        "description": "Edit properties of this object.",
+                        "depends": [
+                            "dialogService"
+                        ]
+                    },
+                    {
+                        "key": "save-and-stop-editing",
+                        "category": "save",
+                        "implementation": SaveAndStopEditingAction,
+                        "name": "Save and Finish Editing",
+                        "cssClass": "icon-save labeled",
+                        "description": "Save changes made to these objects.",
+                        "depends": [
+                            "dialogService",
+                            "notificationService"
+                        ]
+                    },
+                    {
+                        "key": "save",
+                        "category": "save",
+                        "implementation": SaveAction,
+                        "name": "Save and Continue Editing",
+                        "cssClass": "icon-save labeled",
+                        "description": "Save changes made to these objects.",
+                        "depends": [
+                            "dialogService",
+                            "notificationService"
+                        ]
+                    },
+                    {
+                        "key": "save-as",
+                        "category": "save",
+                        "implementation": SaveAsAction,
+                        "name": "Save As...",
+                        "cssClass": "icon-save labeled",
+                        "description": "Save changes made to these objects.",
+                        "depends": [
+                            "$injector",
+                            "dialogService",
+                            "copyService",
+                            "notificationService",
+                            "openmct"
+                        ],
+                        "priority": "mandatory"
+                    },
+                    {
+                        "key": "cancel",
+                        "category": "conclude-editing",
+                        "implementation": CancelAction,
+                        // Because we use the name as label for edit buttons and mct-control buttons need
+                        // the label to be set to undefined in order to not apply the labeled CSS rule.
+                        "name": undefined,
+                        "cssClass": "icon-x no-label",
+                        "description": "Discard changes made to these objects.",
+                        "depends": []
+                    }
+                ],
+                "policies": [
+                    {
+                        "category": "action",
+                        "implementation": EditPersistableObjectsPolicy,
+                        "depends": ["openmct"]
+                    },
+                    {
+                        "implementation": CreationPolicy,
+                        "category": "creation"
+                    }
+                ],
+                "templates": [
+                    {
+                        "key": "edit-library",
+                        "template": libraryTemplate
+                    }
+                ],
+                "representations": [
+                    {
+                        "key": "edit-object",
+                        "template": editObjectTemplate,
+                        "uses": [
+                            "view"
+                        ],
+                        "gestures": [
+                            "drop"
+                        ]
+                    },
+                    {
+                        "key": "edit-action-buttons",
+                        "template": editActionButtonsTemplate,
+                        "uses": [
+                            "action"
+                        ]
+                    },
+                    {
+                        "key": "topbar-edit",
+                        "template": topbarEditTemplate
+                    },
+                    {
+                        "key": "create-button",
+                        "template": createButtonTemplate
+                    },
+                    {
+                        "key": "create-menu",
+                        "template": createMenuTemplate,
+                        "uses": [
+                            "action"
+                        ]
+                    }
+                ],
+                "components": [
+                    {
+                        "type": "decorator",
+                        "provides": "capabilityService",
+                        "implementation": TransactionCapabilityDecorator,
+                        "depends": [
+                            "$q",
+                            "transactionManager"
+                        ],
+                        "priority": "fallback"
+                    },
+                    {
+                        "type": "provider",
+                        "provides": "transactionService",
+                        "implementation": TransactionService,
+                        "depends": [
+                            "$q",
+                            "$log",
+                            "cacheService"
+                        ]
+                    },
+                    {
+                        "key": "CreateActionProvider",
+                        "provides": "actionService",
+                        "type": "provider",
+                        "implementation": CreateActionProvider,
+                        "depends": [
+                            "typeService",
+                            "policyService"
+                        ]
+                    },
+                    {
+                        "key": "CreationService",
+                        "provides": "creationService",
+                        "type": "provider",
+                        "implementation": CreationService,
+                        "depends": [
+                            "$q",
+                            "$log"
+                        ]
+                    }
+
+                ],
+                "representers": [
+                    {
+                        "implementation": EditRepresenter,
+                        "depends": [
+                            "$log"
+                        ]
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "key": "editor",
+                        "name": "Editor Capability",
+                        "description": "Provides transactional editing capabilities",
+                        "implementation": EditorCapability,
+                        "depends": [
+                            "transactionService",
+                            "openmct"
+                        ]
+                    }
+                ],
+                "controls": [
+                    {
+                        "key": "locator",
+                        "template": locatorTemplate
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "transactionManager",
+                        "implementation": TransactionManager,
+                        "depends": [
+                            "transactionService"
+                        ]
+                    }
+                ],
+                "runs": [
+                    {
+                        depends: [
+                            "toolbars[]",
+                            "openmct"
+                        ],
+                        implementation: function (toolbars, openmct) {
+                            toolbars.forEach(openmct.toolbars.addProvider, openmct.toolbars);
+                        }
+                    }
+                ]
+            }
         }
-    });
+    };
 });

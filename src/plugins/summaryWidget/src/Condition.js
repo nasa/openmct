@@ -180,7 +180,7 @@ define([
 
         inputArea.html('');
         this.valueInputs = [];
-        this.config.values = [];
+        this.config.values = this.config.values || [];
 
         if (evaluator.getInputCount(operation)) {
             inputCount = evaluator.getInputCount(operation);
@@ -191,8 +191,10 @@ define([
                     newInput = $('<select>' + this.generateSelectOptions() + '</select>');
                     emitChange = true;
                 } else {
-                    this.config.values[index] = inputType === 'number' ? 0 : '';
-                    newInput = $('<input type = "' + inputType + '" value = "' + this.config.values[index] + '"> </input>');
+                    const defaultValue = inputType === 'number' ? 0 : '';
+                    const value = this.config.values[index] || defaultValue;
+                    this.config.values[index] = value;
+                    newInput = $('<input type = "' + inputType + '" value = "' + value + '"></input>');
                 }
 
                 this.valueInputs.push(newInput.get(0));

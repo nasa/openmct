@@ -77,9 +77,10 @@ const PLACEHOLDER_OBJECT = {};
                 this.showSaveMenu = false;
             },
             updateName(event) {
-                // TODO: handle isssues with contenteditable text escaping.
-                if (event.target.innerText !== this.domainObject.name) {
+                if (event.target.innerText !== this.domainObject.name && event.target.innerText.match(/\S/)) {
                     this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
+                } else {
+                    event.target.innerText = this.domainObject.name;
                 }
             },
             updateNameOnEnterKeyPress (event) {
@@ -126,12 +127,22 @@ const PLACEHOLDER_OBJECT = {};
                 }
             },
             saveAndFinishEditing() {
-                return this.openmct.editor.save().then(()=> {
-                    this.openmct.notifications.info('Save successful');
-                }).catch((error) => {
-                    this.openmct.notifications.error('Error saving objects');
-                    console.error(error);
+                let dialog = this.openmct.overlays.progressDialog({
+                    progressPerc: 'unknown',
+                    message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
+                    iconClass: 'info',
+                    title: 'Saving',
                 });
+
+                return this.openmct.editor.save()
+                    .then(()=> {
+                        dialog.dismiss();
+                        this.openmct.notifications.info('Save successful');
+                    }).catch((error) => {
+                        dialog.dismiss();
+                        this.openmct.notifications.error('Error saving objects');
+                        console.error(error);
+                    });
             },
             saveAndContinueEditing() {
                 this.saveAndFinishEditing().then(() => {

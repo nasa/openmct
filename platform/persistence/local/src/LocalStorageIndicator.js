@@ -41,7 +41,7 @@ define(
         }
 
         LocalStorageIndicator.prototype.getCssClass = function () {
-            return "c-indicator--clickable icon-database s-status-caution";
+            return "c-indicator--clickable icon-suitcase s-status-caution";
         };
         LocalStorageIndicator.prototype.getGlyphClass = function () {
             return 'caution';

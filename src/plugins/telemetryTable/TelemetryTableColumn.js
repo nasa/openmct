@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(function () {
     class TelemetryTableColumn {
-        constructor (openmct, metadatum, options = {selectable: false}) {
+        constructor(openmct, metadatum, options = {selectable: false}) {
             this.metadatum = metadatum;
             this.formatter = openmct.telemetry.getValueFormatter(metadatum);
             this.titleValue = this.metadatum.name;

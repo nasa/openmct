@@ -129,7 +129,7 @@ define([
                 return priority;
             }
         };
-    };
+    }
 
     return LegacyViewProvider;
 

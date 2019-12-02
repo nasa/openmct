@@ -72,6 +72,7 @@ define([
                     ]
                 }
             });
+
             openmct.legacyRegistry.enable('platform/import-export');
         };
     };

@@ -9,6 +9,8 @@
             <CreateButton class="l-shell__create-button"></CreateButton>
             <indicators class="l-shell__head-section l-shell__indicators">
             </indicators>
+            <button class="l-shell__head__collapse-button c-button"
+                    @click="toggleShellHead"></button>
             <notification-banner></notification-banner>
             <div class="l-shell__head-section l-shell__controls">
                 <button class="c-icon-button c-icon-button--major icon-new-window" title="Open in a new browser tab"
@@ -21,8 +23,6 @@
                 </button>
             </div>
             <app-logo></app-logo>
-            <button class="l-shell__head__collapse-button c-button"
-                    @click="toggleShellHead"></button>
         </div>
         <multipane class="l-shell__main"
                    type="horizontal">
@@ -39,7 +39,9 @@
                 <toolbar v-if="toolbar" class="l-shell__toolbar"></toolbar>
                 <object-view class="l-shell__main-container"
                              ref="browseObject"
-                             :showEditView="true">
+                             :showEditView="true"
+                             data-selectable
+                             >
                 </object-view>
                 <component class="l-shell__time-conductor"
                     :is="conductorComponent">
@@ -170,9 +172,8 @@
 
             [class*='__head__collapse-button'] {
                 align-self: start;
-                $p: 6px;
-                padding-left: $p !important;
-                padding-right: $p !important;
+                flex: 0 0 auto;
+                margin-top: 6px;
 
                 &:before {
                     content: $glyph-icon-arrow-down;
@@ -215,9 +216,9 @@
         &__create-button { margin-right: $interiorMarginLg; }
 
         &__indicators {
-            //@include test();
             flex: 1 1 auto;
             flex-wrap: wrap;
+            justify-content: flex-end;
             [class*='indicator-clock'] { order: 90; }
 
             .c-indicator .label {

@@ -27,7 +27,7 @@ define(
     ["../../src/creation/CreateAction"],
     function (CreateAction) {
 
-        describe("The create action", function () {
+        xdescribe("The create action", function () {
             var mockType,
                 mockParent,
                 mockContext,

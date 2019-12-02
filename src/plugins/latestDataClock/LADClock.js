@@ -32,7 +32,7 @@ define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) 
 
         this.key = 'test-lad';
         this.mode = 'lad';
-        this.cssClass = 'icon-database';
+        this.cssClass = 'icon-suitcase';
         this.name = 'Latest available data';
         this.description = "Updates when when new data is available";
     }

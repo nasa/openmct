@@ -23,9 +23,9 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 
 module.exports = (config) => {
-
     const webpackConfig = require('./webpack.config.js');
     delete webpackConfig.output;
 
@@ -50,11 +50,17 @@ module.exports = (config) => {
             'coverage',
             'html'
         ],
-        browsers: ['ChromeHeadless'],
+        browsers: browsers,
+        customLaunchers: {
+            ChromeDebugging: {
+                base: 'Chrome',
+                flags: ['--remote-debugging-port=9222'],
+                debug: true
+            }
+        },
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-
         coverageReporter: {
             dir: process.env.CIRCLE_ARTIFACTS ?
                 process.env.CIRCLE_ARTIFACTS + '/coverage' :
@@ -66,22 +72,18 @@ module.exports = (config) => {
                 }
             }
         },
-
         // HTML test reporting.
         htmlReporter: {
             outputDir: "dist/reports/tests",
             preserveDescribeNesting: true,
             foldAll: false
         },
-
         preprocessors: {
             // add webpack as preprocessor
-            'platform/**/*Spec.js': [ 'webpack' ],
-            'src/**/*Spec.js': [ 'webpack' ]
+            'platform/**/*Spec.js': [ 'webpack', 'sourcemap' ],
+            'src/**/*Spec.js': [ 'webpack', 'sourcemap' ]
         },
-
         webpack: webpackConfig,
-
         webpackMiddleware: {
             stats: 'errors-only',
             logLevel: 'warn'
@@ -89,4 +91,3 @@ module.exports = (config) => {
         singleRun: true
     });
 }
-

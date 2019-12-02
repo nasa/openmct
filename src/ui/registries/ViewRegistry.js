@@ -195,7 +195,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * OR
      * * Return a {@link openmct.View} from the `view` function defining a read-only view.
      * AND
-     * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an 
+     * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an
      * editing-specific view.
      *
      * @method canEdit
@@ -225,7 +225,6 @@ define(['EventEmitter'], function (EventEmitter) {
      *
      * When called by Open MCT, the following arguments will be passed to it:
      * @param {object} domainObject - the domainObject that the view is provided for
-     * @param {boolean} isEditing - A boolean value indicating wether openmct is in a global edit mode
      * @param {array} objectPath - The current contextual object path of the view object
      *                             eg current domainObject is located under MyItems which is under Root
      *

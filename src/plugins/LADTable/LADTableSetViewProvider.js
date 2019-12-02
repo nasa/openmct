@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'LadTableSet';
             },
-            view: function (domainObject, isEditing, objectPath) {
+            view: function (domainObject, objectPath) {
                 let component;
 
                 return {

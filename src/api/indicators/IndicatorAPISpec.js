@@ -29,7 +29,7 @@ define(
         MCT,
         MCTIndicators
     ) {
-        describe("The Indicator API", function () {
+        xdescribe("The Indicator API", function () {
             var openmct;
             var directive;
             var holderElement;

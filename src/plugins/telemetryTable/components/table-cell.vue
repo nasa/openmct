@@ -64,7 +64,8 @@ export default {
             return this.row.getFormattedValue(this.columnKey);
         },
         isSelectable() {
-            return this.row.columns[this.columnKey].selectable;
+            let column = this.row.columns[this.columnKey];
+            return column && column.selectable;
         }
     }
 };

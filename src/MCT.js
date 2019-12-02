@@ -22,9 +22,9 @@
 
 define([
     'EventEmitter',
-    'legacyRegistry',
     'uuid',
-    './defaultRegistry',
+    './BundleRegistry',
+    './installDefaultBundles',
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
@@ -38,8 +38,8 @@ define([
     './ui/router/ApplicationRouter',
     './ui/router/Browse',
     '../platform/framework/src/Main',
-    './styles-new/core.scss',
-    './styles-new/notebook.scss',
+    './styles/core.scss',
+    './styles/notebook.scss',
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
@@ -50,9 +50,9 @@ define([
     'vue'
 ], function (
     EventEmitter,
-    legacyRegistry,
     uuid,
-    defaultRegistry,
+    BundleRegistry,
+    installDefaultBundles,
     api,
     OverlayAPI,
     Selection,
@@ -95,12 +95,15 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        /* eslint-disable no-undef */
         this.buildInfo = {
             version: __OPENMCT_VERSION__,
             buildDate: __OPENMCT_BUILD_DATE__,
             revision: __OPENMCT_REVISION__,
             branch: __OPENMCT_BUILD_BRANCH__
         };
+        /* eslint-enable no-undef */
+
 
         this.legacyBundle = { extensions: {
             services: [
@@ -245,7 +248,8 @@ define([
 
         this.branding = BrandingAPI.default;
 
-        this.legacyRegistry = defaultRegistry;
+        this.legacyRegistry = new BundleRegistry();
+        installDefaultBundles(this.legacyRegistry);
 
         // Plugin's that are installed by default
 
@@ -255,16 +259,10 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
-        this.install(this.plugins.ImportExport());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
-        this.install(this.plugins.LADTable());
         this.install(this.plugins.GoToOriginalAction());
-
-        if (typeof BUILD_CONSTANTS !== 'undefined') {
-            this.install(buildInfoPlugin(BUILD_CONSTANTS));
-        }
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -345,6 +343,8 @@ define([
             domElement = document.body;
         }
 
+        this.element = domElement;
+
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -361,8 +361,8 @@ define([
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
 
-        legacyRegistry.register('adapter', this.legacyBundle);
-        legacyRegistry.enable('adapter');
+        this.legacyRegistry.register('adapter', this.legacyBundle);
+        this.legacyRegistry.enable('adapter');
 
         this.router.route(/^\/$/, () => {
             this.router.setPath('/browse/');
@@ -374,7 +374,8 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        var startPromise = new Main().run(this.legacyRegistry)
+        const startPromise = new Main()
+        startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
                 // OpenMCT Object provider doesn't operate properly unless

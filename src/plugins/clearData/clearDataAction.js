@@ -22,8 +22,9 @@
 
 export default class ClearDataAction {
     constructor(openmct, appliesToObjects) {
-        this.name = 'Clear Data';
+        this.name = 'Clear Data for Object';
         this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
+        this.cssClass = 'icon-clear-data';
 
         this._openmct = openmct;
         this._appliesToObjects = appliesToObjects;
