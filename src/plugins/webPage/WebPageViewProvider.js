@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import WebPageComponent from './components/webPage.vue';
+import WebPageComponent from './components/WebPage.vue';
 import Vue from 'vue';
 
 export default function WebPage(openmct) {
