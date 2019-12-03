@@ -310,11 +310,10 @@ export default {
                 });
             }
 
-            this.layoutItems.map(item => {
+            this.layoutItems.forEach(item => {
                 if (this.initialPositions[item.id]) {
                     this.updateItemPosition(item, gridDelta);
                 }
-                return item;
             });
         },
         updateItemPosition(item, gridDelta) {
