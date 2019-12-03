@@ -331,11 +331,6 @@ import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
-// const SECONDS = 1000;
-// const DAYS = 24 * 60 * 60 * SECONDS;
-// const YEARS = 365 * DAYS;
-
-// const RESIZE_POLL_INTERVAL = 200;
 
 export default {
     inject: ['openmct', 'configuration'],
