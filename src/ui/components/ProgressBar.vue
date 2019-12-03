@@ -4,7 +4,7 @@
         <div
             class="c-progress-bar__bar"
             :class="{'--indeterminate': model.progressPerc === 'unknown'}"
-            :style="`width: ${model.progressPerc}%;`"
+            :style="styleBarWidth"
         />
     </div>
     <div
@@ -71,6 +71,11 @@ export default {
         model: {
             type: Object,
             required: true
+        }
+    },
+    computed: {
+        styleBarWidth() {
+            return `width: ${this.model.progressPerc}%;`
         }
     }
 }
