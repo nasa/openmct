@@ -1,7 +1,7 @@
 <template>
-    <div class="l-iframe abs">
-        <iframe :src="currentDomainObject.url"></iframe>
-    </div>
+<div class="l-iframe abs">
+    <iframe :src="currentDomainObject.url" />
+</div>
 </template>
 
 <script>
