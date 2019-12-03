@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,46 +19,43 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
-define([
-    "./src/ScratchPersistenceProvider"
-], function (
-    ScratchPersistenceProvider
-) {
-    "use strict";
+import WebPageComponent from './components/WebPage.vue';
+import Vue from 'vue';
 
+export default function WebPage(openmct) {
     return {
-        name:"example/scratchpad",
-        definition: {
-            "extensions": {
-                "roots": [
-                    {
-                        "id": "scratch:root"
-                    }
-                ],
-                "models": [
-                    {
-                        "id": "scratch:root",
-                        "model": {
-                            "type": "folder",
-                            "composition": [],
-                            "name": "Scratchpad"
+        key: 'webPage',
+        name: 'Web Page',
+        cssClass: 'icon-page',
+        canView: function (domainObject) {
+            return domainObject.type === 'webPage';
+        },
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component =  new Vue({
+                        components: {
+                            WebPageComponent: WebPageComponent
                         },
-                        "priority": "preferred"
-                    }
-                ],
-                "components": [
-                    {
-                        "provides": "persistenceService",
-                        "type": "provider",
-                        "implementation": ScratchPersistenceProvider,
-                        "depends": [
-                            "$q"
-                        ]
-                    }
-                ]
-            }
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        el: element,
+                        template: '<web-page-component></web-page-component>'
+                    });
+                },
+                destroy: function (element) {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return 1;
         }
     };
-});
+}

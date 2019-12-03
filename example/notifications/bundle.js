@@ -27,64 +27,65 @@ define([
     "./src/DialogLaunchIndicator",
     "./src/NotificationLaunchIndicator",
     "./res/dialog-launch.html",
-    "./res/notification-launch.html",
-    'legacyRegistry'
+    "./res/notification-launch.html"
 ], function (
     DialogLaunchController,
     NotificationLaunchController,
     DialogLaunchIndicator,
     NotificationLaunchIndicator,
     DialogLaunch,
-    NotificationLaunch,
-    legacyRegistry
+    NotificationLaunch
 ) {
     "use strict";
 
-    legacyRegistry.register("example/notifications", {
-        "extensions": {
-            "templates": [
-                {
-                    "key": "dialogLaunchTemplate",
-                    "template": DialogLaunch
-                },
-                {
-                    "key": "notificationLaunchTemplate",
-                    "template": NotificationLaunch
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "DialogLaunchController",
-                    "implementation": DialogLaunchController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "$log",
-                        "dialogService",
-                        "notificationService"
-                    ]
-                },
-                {
-                    "key": "NotificationLaunchController",
-                    "implementation": NotificationLaunchController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "$log",
-                        "notificationService"
-                    ]
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": DialogLaunchIndicator,
-                    "priority": "fallback"
-                },
-                {
-                    "implementation": NotificationLaunchIndicator,
-                    "priority": "fallback"
-                }
-            ]
+    return {
+        name:"example/notifications",
+        definition: {
+            "extensions": {
+                "templates": [
+                    {
+                        "key": "dialogLaunchTemplate",
+                        "template": DialogLaunch
+                    },
+                    {
+                        "key": "notificationLaunchTemplate",
+                        "template": NotificationLaunch
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "DialogLaunchController",
+                        "implementation": DialogLaunchController,
+                        "depends": [
+                            "$scope",
+                            "$timeout",
+                            "$log",
+                            "dialogService",
+                            "notificationService"
+                        ]
+                    },
+                    {
+                        "key": "NotificationLaunchController",
+                        "implementation": NotificationLaunchController,
+                        "depends": [
+                            "$scope",
+                            "$timeout",
+                            "$log",
+                            "notificationService"
+                        ]
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": DialogLaunchIndicator,
+                        "priority": "fallback"
+                    },
+                    {
+                        "implementation": NotificationLaunchIndicator,
+                        "priority": "fallback"
+                    }
+                ]
+            }
         }
-    });
+    };
 });

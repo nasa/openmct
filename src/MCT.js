@@ -22,9 +22,9 @@
 
 define([
     'EventEmitter',
-    'legacyRegistry',
     'uuid',
-    './defaultRegistry',
+    './BundleRegistry',
+    './installDefaultBundles',
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
@@ -50,9 +50,9 @@ define([
     'vue'
 ], function (
     EventEmitter,
-    legacyRegistry,
     uuid,
-    defaultRegistry,
+    BundleRegistry,
+    installDefaultBundles,
     api,
     OverlayAPI,
     Selection,
@@ -248,7 +248,8 @@ define([
 
         this.branding = BrandingAPI.default;
 
-        this.legacyRegistry = defaultRegistry;
+        this.legacyRegistry = new BundleRegistry();
+        installDefaultBundles(this.legacyRegistry);
 
         // Plugin's that are installed by default
 
@@ -258,11 +259,12 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
-        this.install(this.plugins.ImportExport());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
+        this.install(this.plugins.ImportExport());
+        this.install(this.plugins.WebPage());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -361,8 +363,8 @@ define([
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
 
-        legacyRegistry.register('adapter', this.legacyBundle);
-        legacyRegistry.enable('adapter');
+        this.legacyRegistry.register('adapter', this.legacyBundle);
+        this.legacyRegistry.enable('adapter');
 
         this.router.route(/^\/$/, () => {
             this.router.setPath('/browse/');

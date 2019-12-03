@@ -22,27 +22,28 @@
 /*global define*/
 
 define([
-    "./src/ExampleIdentityService",
-    'legacyRegistry'
+    "./src/ExampleIdentityService"
 ], function (
-    ExampleIdentityService,
-    legacyRegistry
+    ExampleIdentityService
 ) {
     "use strict";
 
-    legacyRegistry.register("example/identity", {
-        "extensions": {
-            "components": [
-                {
-                    "implementation": ExampleIdentityService,
-                    "provides": "identityService",
-                    "type": "provider",
-                    "depends": [
-                        "dialogService",
-                        "$q"
-                    ]
-                }
-            ]
+    return {
+        name:"example/identity",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "implementation": ExampleIdentityService,
+                        "provides": "identityService",
+                        "type": "provider",
+                        "depends": [
+                            "dialogService",
+                            "$q"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

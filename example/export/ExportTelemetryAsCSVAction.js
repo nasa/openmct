@@ -58,15 +58,15 @@ define([], function () {
                 row,
                 i;
 
-            function copyDomainsToRow(row, index) {
+            function copyDomainsToRow(telemetryRow, index) {
                 domains.forEach(function (domain) {
-                    row[domain.name] = series.getDomainValue(index, domain.key);
+                    telemetryRow[domain.name] = series.getDomainValue(index, domain.key);
                 });
             }
 
-            function copyRangesToRow(row, index) {
+            function copyRangesToRow(telemetryRow, index) {
                 ranges.forEach(function (range) {
-                    row[range.name] = series.getRangeValue(index, range.key);
+                    telemetryRow[range.name] = series.getRangeValue(index, range.key);
                 });
             }
 

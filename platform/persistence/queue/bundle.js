@@ -24,58 +24,59 @@ define([
     "./src/QueuingPersistenceCapabilityDecorator",
     "./src/PersistenceQueue",
     "./src/PersistenceFailureController",
-    "./res/templates/persistence-failure-dialog.html",
-    'legacyRegistry'
+    "./res/templates/persistence-failure-dialog.html"
 ], function (
     QueuingPersistenceCapabilityDecorator,
     PersistenceQueue,
     PersistenceFailureController,
-    persistenceFailureDialogTemplate,
-    legacyRegistry
+    persistenceFailureDialogTemplate
 ) {
 
-    legacyRegistry.register("platform/persistence/queue", {
-        "extensions": {
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "capabilityService",
-                    "implementation": QueuingPersistenceCapabilityDecorator,
-                    "depends": [
-                        "persistenceQueue"
-                    ]
-                }
-            ],
-            "services": [
-                {
-                    "key": "persistenceQueue",
-                    "implementation": PersistenceQueue,
-                    "depends": [
-                        "$q",
-                        "$timeout",
-                        "dialogService",
-                        "PERSISTENCE_QUEUE_DELAY"
-                    ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "PERSISTENCE_QUEUE_DELAY",
-                    "value": 5
-                }
-            ],
-            "templates": [
-                {
-                    "key": "persistence-failure-dialog",
-                    "template": persistenceFailureDialogTemplate
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "PersistenceFailureController",
-                    "implementation": PersistenceFailureController
-                }
-            ]
+    return {
+        name:"platform/persistence/queue",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "type": "decorator",
+                        "provides": "capabilityService",
+                        "implementation": QueuingPersistenceCapabilityDecorator,
+                        "depends": [
+                            "persistenceQueue"
+                        ]
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "persistenceQueue",
+                        "implementation": PersistenceQueue,
+                        "depends": [
+                            "$q",
+                            "$timeout",
+                            "dialogService",
+                            "PERSISTENCE_QUEUE_DELAY"
+                        ]
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "PERSISTENCE_QUEUE_DELAY",
+                        "value": 5
+                    }
+                ],
+                "templates": [
+                    {
+                        "key": "persistence-failure-dialog",
+                        "template": persistenceFailureDialogTemplate
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "PersistenceFailureController",
+                        "implementation": PersistenceFailureController
+                    }
+                ]
+            }
         }
-    });
+    };
 });

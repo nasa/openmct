@@ -917,6 +917,63 @@ export default {
                 }
             }
         }
+<<<<<<< HEAD
+=======
+    },
+    created() {
+        this.filterChanged = _.debounce(this.filterChanged, 500);
+    },
+    mounted() {
+        console.log("Table mounted");
+        this.csvExporter = new CSVExporter();
+        this.rowsAdded = _.throttle(this.rowsAdded, 200);
+        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
+        this.scroll = _.throttle(this.scroll, 100);
+
+        this.table.on('object-added', this.addObject);
+        this.table.on('object-removed', this.removeObject);
+        this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('refresh', this.clearRowsAndRerender);
+
+        this.table.filteredRows.on('add', this.rowsAdded);
+        this.table.filteredRows.on('remove', this.rowsRemoved);
+        this.table.filteredRows.on('sort', this.updateVisibleRows);
+        this.table.filteredRows.on('filter', this.updateVisibleRows);
+
+        //Default sort
+        this.sortOptions = this.table.filteredRows.sortBy();
+        this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
+        this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
+        this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
+        this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
+
+        this.table.configuration.on('change', this.updateConfiguration);
+
+        this.calculateTableSize();
+        this.pollForResize();
+        this.calculateScrollbarWidth();
+
+        this.table.initialize();
+    },
+    destroyed() {
+        this.table.off('object-added', this.addObject);
+        this.table.off('object-removed', this.removeObject);
+        this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('refresh', this.clearRowsAndRerender);
+
+        this.table.filteredRows.off('add', this.rowsAdded);
+        this.table.filteredRows.off('remove', this.rowsRemoved);
+        this.table.filteredRows.off('sort', this.updateVisibleRows);
+        this.table.filteredRows.off('filter', this.updateVisibleRows);
+
+        this.table.configuration.off('change', this.updateConfiguration);
+
+        clearInterval(this.resizePollHandle);
+
+        this.table.configuration.destroy();
+
+        this.table.destroy();
+>>>>>>> topic-core-refactor
     }
 }
 </script>

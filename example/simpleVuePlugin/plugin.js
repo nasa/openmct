@@ -1,10 +1,8 @@
 import Vue from 'Vue';
 import HelloWorld from './HelloWorld.vue';
 
-function SimpleVuePlugin () {
+function SimpleVuePlugin() {
     return function install(openmct) {
-        var views = (openmct.mainViews || openmct.objectViews);
-
         openmct.types.addType('hello-world', {
             name: 'Hello World',
             description: 'An introduction object',

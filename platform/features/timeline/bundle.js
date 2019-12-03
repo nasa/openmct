@@ -21,31 +21,32 @@
  *****************************************************************************/
 
 define([
-    "./res/templates/deprecated-timeline-message.html",
-    'legacyRegistry'
+    "./res/templates/deprecated-timeline-message.html"
 ], function (
-    deprecatedTimelineMessage,
-    legacyRegistry
+    deprecatedTimelineMessage
 ) {
-    legacyRegistry.register('platform/features/timeline', {
-        extensions: {
-            types: [
-                {
-                    key: "timeline",
-                    name: "Timeline",
-                    description: "Timeline, Activity and Activity Mode objects have been deprecated and will no longer be supported. (07/18/2018)",
-                    priority: 502
-                }
-            ],
-            views: [
-                {
-                    key: "timeline",
-                    name: "Timeline",
-                    type: "timeline",
-                    description: "Timeline, Activity and Activity Mode objects have been deprecated and will no longer be supported. (07/18/2018)",
-                    template: deprecatedTimelineMessage
-                }
-            ]
+    return {
+        name: 'platform/features/timeline',
+        definition: {
+            extensions: {
+                types: [
+                    {
+                        key: "timeline",
+                        name: "Timeline",
+                        description: "Timeline, Activity and Activity Mode objects have been deprecated and will no longer be supported. (07/18/2018)",
+                        priority: 502
+                    }
+                ],
+                views: [
+                    {
+                        key: "timeline",
+                        name: "Timeline",
+                        type: "timeline",
+                        description: "Timeline, Activity and Activity Mode objects have been deprecated and will no longer be supported. (07/18/2018)",
+                        template: deprecatedTimelineMessage
+                    }
+                ]
+            }
         }
-    });
+    };
 });
