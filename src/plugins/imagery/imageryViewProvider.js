@@ -1,57 +1,50 @@
-define([
-    './components/imageryViewLayout.vue',
-    'vue'
-], function (
-    ImageryViewLayoutComponent,
-    Vue
-) {
-    function ImageryViewProvider(openmct) {
-        const type = 'example.imagery';
+import ImageryViewLayout from './components/ImageryViewLayout.vue';
+import Vue from 'vue';
 
-        const hasImageTelemetry = function (domainObject) {
-            var metadata = openmct.telemetry.getMetadata(domainObject);
-            if (!metadata) {
-                return false;
-            }
+export default function ImageryViewProvider(openmct) {
+    const type = 'example.imagery';
 
-            return metadata.valuesForHints(['image']).length > 0;
-        };
+    const hasImageTelemetry = function (domainObject) {
+        var metadata = openmct.telemetry.getMetadata(domainObject);
+        if (!metadata) {
+            return false;
+        }
 
-        return {
-            key: type,
-            name: 'Imagery Layout',
-            cssClass: 'icon-image',
-            canView: function (domainObject) {
-                return hasImageTelemetry(domainObject);
-            },
-            view: function (domainObject) {
-                let component;
+        return metadata.valuesForHints(['image']).length > 0;
+    };
 
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            data() {
-                                return {};
-                            },
-                            components: {
-                                ImageryViewLayoutComponent: ImageryViewLayoutComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject
-                            },
-                            el: element,
-                            template: '<imagery-view-layout-component ref="ImageryLayout"></imagery-view-layout-component>'
-                        });
-                    },
-                    destroy: function () {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            }
+    return {
+        key: type,
+        name: 'Imagery Layout',
+        cssClass: 'icon-image',
+        canView: function (domainObject) {
+            return hasImageTelemetry(domainObject);
+        },
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        data() {
+                            return {};
+                        },
+                        components: {
+                            ImageryViewLayout
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        el: element,
+                        template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
         }
     }
-
-    return ImageryViewProvider;
-});
+}

@@ -33,6 +33,7 @@ define([
     './adapter/indicators/legacy-indicators-plugin',
     './plugins/buildInfo/plugin',
     './ui/registries/ViewRegistry',
+    './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
     './ui/router/ApplicationRouter',
@@ -59,6 +60,7 @@ define([
     LegacyIndicatorsPlugin,
     buildInfoPlugin,
     ViewRegistry,
+    ImageryPlugin,
     InspectorViewRegistry,
     ToolbarRegistry,
     ApplicationRouter,
@@ -257,7 +259,7 @@ define([
         this.install(RemoveActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
-        this.install(this.plugins.ImageryPlugin());
+        this.install(ImageryPlugin.default());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.ImportExport());
