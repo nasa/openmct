@@ -140,7 +140,8 @@ define([
          * @returns {Promise}
          */
         fetch: function (options) {
-            const strategy = options.shouldUseMinMax ? 'minMax' : undefined;
+            const strategy = options && options.shouldNotUseMinMax ? undefined : 'minMax';
+
             options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
