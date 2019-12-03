@@ -39,7 +39,6 @@ const DEFAULTS = [
     'platform/telemetry',
     'platform/features/clock',
     'platform/features/imagery',
-    'platform/features/pages',
     'platform/features/hyperlink',
     'platform/features/timeline',
     'platform/forms',
@@ -55,7 +54,6 @@ const DEFAULTS = [
 
 define([
     '../src/adapter/bundle',
-
     '../example/eventGenerator/bundle',
     '../example/export/bundle',
     '../example/forms/bundle',
@@ -68,7 +66,6 @@ define([
     '../example/profiling/bundle',
     '../example/scratchpad/bundle',
     '../example/styleguide/bundle',
-
     '../platform/commonUI/about/bundle',
     '../platform/commonUI/browse/bundle',
     '../platform/commonUI/dialog/bundle',
@@ -87,7 +84,6 @@ define([
     '../platform/features/clock/bundle',
     '../platform/features/imagery/bundle',
     '../platform/features/my-items/bundle',
-    '../platform/features/pages/bundle',
     '../platform/features/hyperlink/bundle',
     '../platform/features/static-markup/bundle',
     '../platform/features/timeline/bundle',
@@ -123,5 +119,5 @@ define([
                 bundleRegistry.enable(bundlePath);
             });
         }
-    }
+    };
 });
