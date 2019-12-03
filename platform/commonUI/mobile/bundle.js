@@ -23,44 +23,45 @@
 define([
     "./src/MCTDevice",
     "./src/AgentService",
-    "./src/DeviceClassifier",
-    'legacyRegistry'
+    "./src/DeviceClassifier"
 ], function (
     MCTDevice,
     AgentService,
-    DeviceClassifier,
-    legacyRegistry
+    DeviceClassifier
 ) {
 
-    legacyRegistry.register("platform/commonUI/mobile", {
-        "extensions": {
-            "directives": [
-                {
-                    "key": "mctDevice",
-                    "implementation": MCTDevice,
-                    "depends": [
-                        "agentService"
-                    ]
-                }
-            ],
-            "services": [
-                {
-                    "key": "agentService",
-                    "implementation": AgentService,
-                    "depends": [
-                        "$window"
-                    ]
-                }
-            ],
-            "runs": [
-                {
-                    "implementation": DeviceClassifier,
-                    "depends": [
-                        "agentService",
-                        "$document"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/commonUI/mobile",
+        definition: {
+            "extensions": {
+                "directives": [
+                    {
+                        "key": "mctDevice",
+                        "implementation": MCTDevice,
+                        "depends": [
+                            "agentService"
+                        ]
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "agentService",
+                        "implementation": AgentService,
+                        "depends": [
+                            "$window"
+                        ]
+                    }
+                ],
+                "runs": [
+                    {
+                        "implementation": DeviceClassifier,
+                        "depends": [
+                            "agentService",
+                            "$document"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

@@ -20,91 +20,88 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+define([], function () {
 
-    'legacyRegistry'
-], function (
-
-    legacyRegistry
-) {
-
-    legacyRegistry.register("platform/framework", {
-        "name": "Open MCT Framework Component",
-        "description": "Framework layer for Open MCT; interprets bundle definitions and serves as an intermediary between Require and Angular",
-        "libraries": "lib",
-        "configuration": {
-            "paths": {
-                "angular": "angular.min"
+    return {
+        name:"platform/framework",
+        definition: {
+            "name": "Open MCT Framework Component",
+            "description": "Framework layer for Open MCT; interprets bundle definitions and serves as an intermediary between Require and Angular",
+            "libraries": "lib",
+            "configuration": {
+                "paths": {
+                    "angular": "angular.min"
+                },
+                "shim": {
+                    "angular": {
+                        "exports": "angular"
+                    }
+                }
             },
-            "shim": {
-                "angular": {
-                    "exports": "angular"
-                }
+            "extensions": {
+                "licenses": [
+                    {
+                        "name": "Blanket.js",
+                        "version": "1.1.5",
+                        "description": "Code coverage measurement and reporting",
+                        "author": "Alex Seville",
+                        "website": "http://blanketjs.org/",
+                        "copyright": "Copyright (c) 2013 Alex Seville",
+                        "license": "license-mit",
+                        "link": "http://opensource.org/licenses/MIT"
+                    },
+                    {
+                        "name": "Jasmine",
+                        "version": "1.3.1",
+                        "description": "Unit testing",
+                        "author": "Pivotal Labs",
+                        "website": "http://jasmine.github.io/",
+                        "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
+                        "license": "license-mit",
+                        "link": "http://opensource.org/licenses/MIT"
+                    },
+                    {
+                        "name": "RequireJS",
+                        "version": "2.1.22",
+                        "description": "Script loader",
+                        "author": "The Dojo Foundation",
+                        "website": "http://requirejs.org/",
+                        "copyright": "Copyright (c) 2010-2015, The Dojo Foundation",
+                        "license": "license-mit",
+                        "link": "https://github.com/jrburke/requirejs/blob/master/LICENSE"
+                    },
+                    {
+                        "name": "AngularJS",
+                        "version": "1.4.4",
+                        "description": "Client-side web application framework",
+                        "author": "Google",
+                        "website": "http://angularjs.org/",
+                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "license": "license-mit",
+                        "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
+                    },
+                    {
+                        "name": "Angular-Route",
+                        "version": "1.4.4",
+                        "description": "Client-side view routing",
+                        "author": "Google",
+                        "website": "http://angularjs.org/",
+                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "license": "license-mit",
+                        "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
+                    },
+                    {
+                        "name": "ES6-Promise",
+                        "version": "3.0.2",
+                        "description": "Promise polyfill for pre-ECMAScript 6 browsers",
+                        "author": "Yehuda Katz, Tom Dale, Stefan Penner and contributors",
+                        "website": "https://github.com/jakearchibald/es6-promise",
+                        "copyright": "Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors",
+                        "license": "license-mit",
+                        "link": "https://github.com/jakearchibald/es6-promise/blob/master/LICENSE"
+                    }
+                ]
             }
-        },
-        "extensions": {
-            "licenses": [
-                {
-                    "name": "Blanket.js",
-                    "version": "1.1.5",
-                    "description": "Code coverage measurement and reporting",
-                    "author": "Alex Seville",
-                    "website": "http://blanketjs.org/",
-                    "copyright": "Copyright (c) 2013 Alex Seville",
-                    "license": "license-mit",
-                    "link": "http://opensource.org/licenses/MIT"
-                },
-                {
-                    "name": "Jasmine",
-                    "version": "1.3.1",
-                    "description": "Unit testing",
-                    "author": "Pivotal Labs",
-                    "website": "http://jasmine.github.io/",
-                    "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
-                    "license": "license-mit",
-                    "link": "http://opensource.org/licenses/MIT"
-                },
-                {
-                    "name": "RequireJS",
-                    "version": "2.1.22",
-                    "description": "Script loader",
-                    "author": "The Dojo Foundation",
-                    "website": "http://requirejs.org/",
-                    "copyright": "Copyright (c) 2010-2015, The Dojo Foundation",
-                    "license": "license-mit",
-                    "link": "https://github.com/jrburke/requirejs/blob/master/LICENSE"
-                },
-                {
-                    "name": "AngularJS",
-                    "version": "1.4.4",
-                    "description": "Client-side web application framework",
-                    "author": "Google",
-                    "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
-                    "license": "license-mit",
-                    "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
-                },
-                {
-                    "name": "Angular-Route",
-                    "version": "1.4.4",
-                    "description": "Client-side view routing",
-                    "author": "Google",
-                    "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
-                    "license": "license-mit",
-                    "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
-                },
-                {
-                    "name": "ES6-Promise",
-                    "version": "3.0.2",
-                    "description": "Promise polyfill for pre-ECMAScript 6 browsers",
-                    "author": "Yehuda Katz, Tom Dale, Stefan Penner and contributors",
-                    "website": "https://github.com/jakearchibald/es6-promise",
-                    "copyright": "Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors",
-                    "license": "license-mit",
-                    "link": "https://github.com/jakearchibald/es6-promise/blob/master/LICENSE"
-                }
-            ]
         }
-    });
+    };
 });

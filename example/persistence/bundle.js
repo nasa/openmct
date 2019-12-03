@@ -22,33 +22,34 @@
 /*global define*/
 
 define([
-    "./src/BrowserPersistenceProvider",
-    'legacyRegistry'
+    "./src/BrowserPersistenceProvider"
 ], function (
-    BrowserPersistenceProvider,
-    legacyRegistry
+    BrowserPersistenceProvider
 ) {
     "use strict";
 
-    legacyRegistry.register("example/persistence", {
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "provider",
-                    "implementation": BrowserPersistenceProvider,
-                    "depends": [
-                        "$q",
-                        "PERSISTENCE_SPACE"
-                    ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "PERSISTENCE_SPACE",
-                    "value": "mct"
-                }
-            ]
+    return {
+        name:"example/persistence",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": BrowserPersistenceProvider,
+                        "depends": [
+                            "$q",
+                            "PERSISTENCE_SPACE"
+                        ]
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "PERSISTENCE_SPACE",
+                        "value": "mct"
+                    }
+                ]
+            }
         }
-    });
+    };
 });

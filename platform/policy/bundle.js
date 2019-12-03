@@ -23,46 +23,47 @@
 define([
     "./src/PolicyActionDecorator",
     "./src/PolicyViewDecorator",
-    "./src/PolicyProvider",
-    'legacyRegistry'
+    "./src/PolicyProvider"
 ], function (
     PolicyActionDecorator,
     PolicyViewDecorator,
-    PolicyProvider,
-    legacyRegistry
+    PolicyProvider
 ) {
 
-    legacyRegistry.register("platform/policy", {
-        "name": "Policy Service",
-        "description": "Provides support for extension-driven decisions.",
-        "sources": "src",
-        "extensions": {
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "actionService",
-                    "implementation": PolicyActionDecorator,
-                    "depends": [
-                        "policyService"
-                    ]
-                },
-                {
-                    "type": "decorator",
-                    "provides": "viewService",
-                    "implementation": PolicyViewDecorator,
-                    "depends": [
-                        "policyService"
-                    ]
-                },
-                {
-                    "type": "provider",
-                    "provides": "policyService",
-                    "implementation": PolicyProvider,
-                    "depends": [
-                        "policies[]"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/policy",
+        definition: {
+            "name": "Policy Service",
+            "description": "Provides support for extension-driven decisions.",
+            "sources": "src",
+            "extensions": {
+                "components": [
+                    {
+                        "type": "decorator",
+                        "provides": "actionService",
+                        "implementation": PolicyActionDecorator,
+                        "depends": [
+                            "policyService"
+                        ]
+                    },
+                    {
+                        "type": "decorator",
+                        "provides": "viewService",
+                        "implementation": PolicyViewDecorator,
+                        "depends": [
+                            "policyService"
+                        ]
+                    },
+                    {
+                        "type": "provider",
+                        "provides": "policyService",
+                        "implementation": PolicyProvider,
+                        "depends": [
+                            "policies[]"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

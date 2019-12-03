@@ -24,63 +24,64 @@ define([
     "./src/IdentityAggregator",
     "./src/IdentityProvider",
     "./src/IdentityCreationDecorator",
-    "./src/IdentityIndicator",
-    'legacyRegistry'
+    "./src/IdentityIndicator"
 ], function (
     IdentityAggregator,
     IdentityProvider,
     IdentityCreationDecorator,
-    IdentityIndicator,
-    legacyRegistry
+    IdentityIndicator
 ) {
 
-    legacyRegistry.register("platform/identity", {
-        "extensions": {
-            "components": [
-                {
-                    "implementation": IdentityAggregator,
-                    "type": "aggregator",
-                    "provides": "identityService",
-                    "depends": [
-                        "$q"
-                    ]
-                },
-                {
-                    "implementation": IdentityProvider,
-                    "type": "provider",
-                    "provides": "identityService",
-                    "depends": [
-                        "$q"
-                    ],
-                    "priority": "fallback"
-                },
-                {
-                    "type": "decorator",
-                    "provides": "creationService",
-                    "implementation": IdentityCreationDecorator,
-                    "depends": [
-                        "identityService"
-                    ]
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": IdentityIndicator,
-                    "depends": [
-                        "identityService"
-                    ]
-                }
-            ],
-            "types": [
-                {
-                    "properties": [
-                        {
-                            "key": "creator",
-                            "name": "Creator"
-                        }
-                    ]
-                }
-            ]
+    return {
+        name:"platform/identity",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "implementation": IdentityAggregator,
+                        "type": "aggregator",
+                        "provides": "identityService",
+                        "depends": [
+                            "$q"
+                        ]
+                    },
+                    {
+                        "implementation": IdentityProvider,
+                        "type": "provider",
+                        "provides": "identityService",
+                        "depends": [
+                            "$q"
+                        ],
+                        "priority": "fallback"
+                    },
+                    {
+                        "type": "decorator",
+                        "provides": "creationService",
+                        "implementation": IdentityCreationDecorator,
+                        "depends": [
+                            "identityService"
+                        ]
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": IdentityIndicator,
+                        "depends": [
+                            "identityService"
+                        ]
+                    }
+                ],
+                "types": [
+                    {
+                        "properties": [
+                            {
+                                "key": "creator",
+                                "name": "Creator"
+                            }
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

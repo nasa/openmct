@@ -24,62 +24,63 @@ define([
     "./src/policies/ImageryViewPolicy",
     "./src/controllers/ImageryController",
     "./src/directives/MCTBackgroundImage",
-    "./res/templates/imagery.html",
-    'legacyRegistry'
+    "./res/templates/imagery.html"
 ], function (
     ImageryViewPolicy,
     ImageryController,
     MCTBackgroundImage,
-    imageryTemplate,
-    legacyRegistry
+    imageryTemplate
 ) {
 
-    legacyRegistry.register("platform/features/imagery", {
-        "name": "Plot view for telemetry",
-        "extensions": {
-            "views": [
-                {
-                    "name": "Imagery",
-                    "key": "imagery",
-                    "cssClass": "icon-image",
-                    "template": imageryTemplate,
-                    "priority": "preferred",
-                    "needs": [
-                        "telemetry"
-                    ],
-                    "editable": false
-                }
-            ],
-            "policies": [
-                {
-                    "category": "view",
-                    "implementation": ImageryViewPolicy,
-                    "depends": [
-                        "openmct"
-                    ]
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "ImageryController",
-                    "implementation": ImageryController,
-                    "depends": [
-                        "$scope",
-                        "$window",
-                        "$element",
-                        "openmct"
-                    ]
-                }
-            ],
-            "directives": [
-                {
-                    "key": "mctBackgroundImage",
-                    "implementation": MCTBackgroundImage,
-                    "depends": [
-                        "$document"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/features/imagery",
+        definition: {
+            "name": "Plot view for telemetry",
+            "extensions": {
+                "views": [
+                    {
+                        "name": "Imagery",
+                        "key": "imagery",
+                        "cssClass": "icon-image",
+                        "template": imageryTemplate,
+                        "priority": "preferred",
+                        "needs": [
+                            "telemetry"
+                        ],
+                        "editable": false
+                    }
+                ],
+                "policies": [
+                    {
+                        "category": "view",
+                        "implementation": ImageryViewPolicy,
+                        "depends": [
+                            "openmct"
+                        ]
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "ImageryController",
+                        "implementation": ImageryController,
+                        "depends": [
+                            "$scope",
+                            "$window",
+                            "$element",
+                            "openmct"
+                        ]
+                    }
+                ],
+                "directives": [
+                    {
+                        "key": "mctBackgroundImage",
+                        "implementation": MCTBackgroundImage,
+                        "depends": [
+                            "$document"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

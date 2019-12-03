@@ -19,12 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const DEFAULTS = [
+    'src/adapter',
+    'platform/framework',
+    'platform/core',
+    'platform/representation',
+    'platform/commonUI/about',
+    'platform/commonUI/browse',
+    'platform/commonUI/edit',
+    'platform/commonUI/dialog',
+    'platform/commonUI/formats',
+    'platform/commonUI/general',
+    'platform/commonUI/inspect',
+    'platform/commonUI/mobile',
+    'platform/commonUI/notification',
+    'platform/containment',
+    'platform/execution',
+    'platform/exporters',
+    'platform/telemetry',
+    'platform/features/clock',
+    'platform/features/imagery',
+    'platform/features/hyperlink',
+    'platform/features/timeline',
+    'platform/forms',
+    'platform/identity',
+    'platform/persistence/aggregator',
+    'platform/persistence/queue',
+    'platform/policy',
+    'platform/entanglement',
+    'platform/search',
+    'platform/status',
+    'platform/commonUI/regions'
+];
 
 define([
-    'legacyRegistry',
-
     '../src/adapter/bundle',
-
     '../example/eventGenerator/bundle',
     '../example/export/bundle',
     '../example/forms/bundle',
@@ -37,7 +66,6 @@ define([
     '../example/profiling/bundle',
     '../example/scratchpad/bundle',
     '../example/styleguide/bundle',
-
     '../platform/commonUI/about/bundle',
     '../platform/commonUI/browse/bundle',
     '../platform/commonUI/dialog/bundle',
@@ -56,7 +84,6 @@ define([
     '../platform/features/clock/bundle',
     '../platform/features/imagery/bundle',
     '../platform/features/my-items/bundle',
-    '../platform/features/pages/bundle',
     '../platform/features/hyperlink/bundle',
     '../platform/features/static-markup/bundle',
     '../platform/features/timeline/bundle',
@@ -74,45 +101,23 @@ define([
     '../platform/search/bundle',
     '../platform/status/bundle',
     '../platform/telemetry/bundle'
-], function (legacyRegistry) {
+], function () {
+    const LEGACY_BUNDLES = Array.from(arguments);
 
-    var DEFAULTS = [
-        'src/adapter',
-        'platform/framework',
-        'platform/core',
-        'platform/representation',
-        'platform/commonUI/about',
-        'platform/commonUI/browse',
-        'platform/commonUI/edit',
-        'platform/commonUI/dialog',
-        'platform/commonUI/formats',
-        'platform/commonUI/general',
-        'platform/commonUI/inspect',
-        'platform/commonUI/mobile',
-        'platform/commonUI/notification',
-        'platform/containment',
-        'platform/execution',
-        'platform/exporters',
-        'platform/telemetry',
-        'platform/features/clock',
-        'platform/features/imagery',
-        'platform/features/pages',
-        'platform/features/hyperlink',
-        'platform/features/timeline',
-        'platform/forms',
-        'platform/identity',
-        'platform/persistence/aggregator',
-        'platform/persistence/queue',
-        'platform/policy',
-        'platform/entanglement',
-        'platform/search',
-        'platform/status',
-        'platform/commonUI/regions'
-    ];
+    return function installDefaultBundles(bundleRegistry) {
+        registerLegacyBundles(LEGACY_BUNDLES);
+        enableDefaultBundles();
 
-    DEFAULTS.forEach(function (bundlePath) {
-        legacyRegistry.enable(bundlePath);
-    });
+        function registerLegacyBundles(bundles) {
+            bundles.forEach((bundle, i) => {
+                bundleRegistry.register(bundle.name, bundle.definition);
+            });
+        }
 
-    return legacyRegistry;
+        function enableDefaultBundles() {
+            DEFAULTS.forEach(function (bundlePath) {
+                bundleRegistry.enable(bundlePath);
+            });
+        }
+    };
 });
