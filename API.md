@@ -101,6 +101,9 @@ This approach includes openmct using a simple script tag, resulting in a global
 variable named `openmct`. This `openmct` object is used subsequently to make 
 API calls. 
 
+Open MCT is packaged as a UMD (Universal Module Definition) module, so common 
+script loaders are also supported.
+
 ```html
 <!DOCTYPE html>
 <html>
