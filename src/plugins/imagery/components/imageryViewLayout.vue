@@ -128,7 +128,7 @@ export default {
         }
     },
     methods: {
-        datumMatchesMostRecent (datum) {
+        datumMatchesMostRecent(datum) {
             if (this.imageHistory.length !== 0) {
                 const datumTime = this.timeFormat.format(datum);
                 const datumURL = this.imageFormat.format(datum);
@@ -137,19 +137,20 @@ export default {
 
                 return datumTime === lastHistoryTime && datumURL === lastHistoryURL;
             }
+
             return false;
         },
-        getImageUrl (datum) {
+        getImageUrl(datum) {
             return datum ?
                 this.imageFormat.format(datum) :
                 this.imageUrl;
         },
-        getTime (datum) {
+        getTime(datum) {
             return datum ?
                 this.timeFormat.format(datum) :
                 this.time;
         },
-        handleScroll () {
+        handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper
             if (!thumbsWrapper) {
                 return;
@@ -160,7 +161,7 @@ export default {
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
-        paused (state) {
+        paused(state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
                 this.isPaused = state;
@@ -170,12 +171,13 @@ export default {
                 } else {
                     this.updateValues(this.imageHistory[this.imageHistory.length - 1]);
                 }
+
                 this.autoScroll = true;
             }
 
             return this.isPaused;
         },
-        requestHistory (bounds) {
+        requestHistory(bounds) {
             this.requestCount++;
             this.imageHistory = [];
             const requestId = this.requestCount;
@@ -193,7 +195,7 @@ export default {
                     this.updateValues(values[values.length - 1]);
                 }.bind(this));
         },
-        scrollToBottom () {
+        scrollToBottom() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 return;
             }
@@ -205,14 +207,14 @@ export default {
 
             setTimeout(() => this.$refs.thumbsWrapper.scrollTop = scrollHeight, 0);
         },
-        setSelectedImage (image) {
+        setSelectedImage(image) {
             this.imageUrl = this.getImageUrl(image);
             this.time = this.getTime(image);
             this.paused(true);
             this.unselectAllImages();
             image.selected = true;
         },
-        getElSize () {
+        getElSize() {
             if (!this.$el) {
                 return;
             }
@@ -220,13 +222,13 @@ export default {
             this.elementHeight = this.$el.parentElement.offsetHeight;
             return this.elementHeight;
         },
-        stopListening () {
+        stopListening() {
             if (this.unsubscribe) {
                 this.unsubscribe();
                 delete this.unsubscribe;
             }
         },
-        subscribe (domainObject) {
+        subscribe(domainObject) {
             this.date = ''
             this.imageUrl = '';
             this.openmct.objects.get(this.keystring)
@@ -250,21 +252,23 @@ export default {
                     this.requestHistory(this.openmct.time.bounds());
                 }.bind(this));
         },
-        unselectAllImages () {
+        unselectAllImages() {
             this.imageHistory.forEach(image => image.selected = false);
         },
-        updateHistory (datum) {
+        updateHistory(datum) {
             if (this.datumMatchesMostRecent(datum)) {
                 return false;
             };
+
             const index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
 
             return true;
         },
-        updateValues (datum) {
+        updateValues(datum) {
             if (this.isPaused) {
                 this.nextDatum = datum;
+
                 return;
             }
 
