@@ -390,9 +390,6 @@ const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
-// const RESIZE_HOT_ZONE = 10;
-// const MOVE_TRIGGER_WAIT = 500;
-// const VERTICAL_SCROLL_WIDTH = 30;
 
 export default {
     components: {
