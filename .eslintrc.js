@@ -77,6 +77,7 @@ module.exports = {
                 "ignores": []
             }
         ],
+        "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off"
     },
     "overrides": [
