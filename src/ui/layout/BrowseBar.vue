@@ -5,7 +5,7 @@
             v-if="hasParent"
             class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
             @click="goToParent"
-        />
+        ></button>
         <div
             class="l-browse-bar__object-name--w"
             :class="type.cssClass"
@@ -23,7 +23,7 @@
         <div
             class="l-browse-bar__context-actions c-disclosure-button"
             @click.prevent.stop="showContextMenu"
-        />
+        ></div>
     </div>
 
     <div class="l-browse-bar__end">
@@ -39,13 +39,13 @@
                 class="l-browse-bar__actions__notebook-entry c-button icon-notebook"
                 title="New Notebook entry"
                 @click="snapshot()"
-            />
+            ></button>
             <button
                 v-if="isViewEditable & !isEditing"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
-            />
+            ></button>
 
             <div
                 v-if="isEditing"
@@ -55,7 +55,7 @@
                     class="c-button--menu c-button--major icon-save"
                     title="Save"
                     @click.stop="toggleSaveMenu"
-                />
+                ></button>
                 <div
                     v-show="showSaveMenu"
                     class="c-menu"
@@ -84,7 +84,7 @@
                 class="l-browse-bar__actions c-button icon-x"
                 title="Cancel Editing"
                 @click="promptUserandCancelEditing()"
-            />
+            ></button>
         </div>
     </div>
 </div>

@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div />
+<div></div>
 </template>
 
 <style lang="scss">

@@ -36,12 +36,12 @@
             v-if="gridSize[0] >= 3"
             class="c-grid__x l-grid l-grid-x"
             :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
-        />
+        ></div>
         <div
             v-if="gridSize[1] >= 3"
             class="c-grid__y l-grid l-grid-y"
             :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
-        />
+        ></div>
     </div>
     <component
         :is="item.type"

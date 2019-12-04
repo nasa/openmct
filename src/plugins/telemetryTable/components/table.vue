@@ -50,7 +50,7 @@
         <div
             v-if="enableMarking"
             class="c-separator"
-        />
+        ></div>
         <button
             v-if="enableMarking"
             class="c-button icon-pause pause-play labeled"
@@ -62,7 +62,7 @@
                 {{ paused ? 'Play' : 'Pause' }}
             </span>
         </button>
-        <slot name="buttons" />
+        <slot name="buttons"></slot>
     </div>
 
     <div
@@ -73,14 +73,14 @@
         }"
     >
         <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">
-            <slot />
+            <slot></slot>
         </div>
 
         <div
             v-if="isDropTargetActive"
             class="c-telemetry-table__drop-target"
             :style="dropTargetStyle"
-        />
+        ></div>
         <!-- Headers table -->
         <div
             ref="headersTable"
@@ -145,7 +145,7 @@
             <div
                 class="c-telemetry-table__scroll-forcer"
                 :style="{ width: totalWidth + 'px' }"
-            />
+            ></div>
             <table
                 class="c-table__body c-telemetry-table__body js-telemetry-table__content"
                 :style="{ height: totalHeight + 'px'}"

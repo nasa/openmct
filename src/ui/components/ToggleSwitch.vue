@@ -6,7 +6,7 @@
         :checked="checked"
         @change="onUserSelect($event)"
     >
-    <span class="c-toggle-switch__slider" />
+    <span class="c-toggle-switch__slider"></span>
 </label>
 </template>
 

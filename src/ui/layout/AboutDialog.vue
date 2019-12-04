@@ -1,13 +1,13 @@
 <template>
 <!-- eslint-disable vue/no-v-html -->
 <div class="c-about c-about--splash">
-    <div class="c-about__image c-splash-image" />
+    <div class="c-about__image c-splash-image"></div>
     <div class="c-about__text s-text">
         <div
             v-if="branding.aboutHtml"
             class="c-about__text__element"
             v-html="branding.aboutHtml"
-        />
+        ></div>
         <div class="c-about__text__element">
             <h1 class="l-title s-title">
                 Open MCT

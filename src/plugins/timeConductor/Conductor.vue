@@ -34,7 +34,7 @@
                 ref="submitButton"
                 class="c-input--submit"
                 type="submit"
-            />
+            ></button>
             <ConductorModeIcon class="c-conductor__mode-icon" />
 
             <div
@@ -67,7 +67,7 @@
                 class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
             >
                 <!-- RT start -->
-                <div class="c-direction-indicator icon-minus" />
+                <div class="c-direction-indicator icon-minus"></div>
                 <input
                     ref="startOffset"
                     v-model="offsets.start"
@@ -108,7 +108,7 @@
                 class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
             >
                 <!-- RT end -->
-                <div class="c-direction-indicator icon-plus" />
+                <div class="c-direction-indicator icon-plus"></div>
                 <input
                     ref="endOffset"
                     v-model="offsets.end"

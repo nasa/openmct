@@ -29,12 +29,12 @@
     }"
     :style="style"
 >
-    <slot />
+    <slot></slot>
 
     <div
         class="c-frame-edit__move"
         @mousedown="startMove([1,1], [0,0], $event)"
-    />
+    ></div>
 </div>
 </template>
 

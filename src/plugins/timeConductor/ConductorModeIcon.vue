@@ -21,8 +21,8 @@
 *****************************************************************************/
 <template>
 <div class="c-clock-symbol">
-    <div class="hand-little" />
-    <div class="hand-big" />
+    <div class="hand-little"></div>
+    <div class="hand-big"></div>
 </div>
 </template>
 

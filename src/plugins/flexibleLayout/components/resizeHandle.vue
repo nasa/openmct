@@ -26,7 +26,7 @@
     class="c-fl-frame__resize-handle"
     :class="[orientation]"
     @mousedown="mousedown"
-/>
+></div>
 </template>
 
 <script>

@@ -24,7 +24,7 @@
     ref="axisHolder"
     class="c-conductor-axis"
     @mousedown="dragStart($event)"
-/>
+></div>
 </template>
 
 <style lang="scss">

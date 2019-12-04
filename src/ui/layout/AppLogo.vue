@@ -24,7 +24,7 @@
     ref="aboutLogo"
     class="l-shell__app-logo"
     @click="launchAbout"
-/>
+></div>
 </template>
 <style lang="scss">
 .l-shell__app-logo {

@@ -41,8 +41,8 @@
         <div
             class="c-telemetry-table__resize-hitarea"
             @mousedown="resizeColumnStart"
-        />
-        <slot />
+        ></div>
+        <slot></slot>
     </div>
 </th>
 </template>

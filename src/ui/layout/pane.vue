@@ -15,7 +15,7 @@
         v-if="handle"
         class="l-pane__handle"
         @mousedown="start"
-    />
+    ></div>
     <div
         v-if="label"
         class="l-pane__header"
@@ -25,10 +25,10 @@
             v-if="collapsable"
             class="l-pane__collapse-button c-button"
             @click="toggleCollapse"
-        />
+        ></button>
     </div>
     <div class="l-pane__contents">
-        <slot />
+        <slot></slot>
     </div>
 </div>
 </template>

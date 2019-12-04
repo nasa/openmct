@@ -30,7 +30,7 @@
     <div
         class="c-box-view"
         :style="style"
-    />
+    ></div>
 </layout-frame>
 </template>
 

@@ -31,7 +31,7 @@
         <div
             class="c-so-view__header__icon"
             :class="cssClass"
-        />
+        ></div>
         <div class="c-so-view__header__name">
             {{ domainObject && domainObject.name }}
         </div>
@@ -44,7 +44,7 @@
             class="c-button icon-expand"
             title="View Large"
             @click="expand"
-        />
+        ></button>
     </div>
     <object-view
         ref="objectView"

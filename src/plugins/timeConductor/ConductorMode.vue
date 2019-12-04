@@ -47,7 +47,7 @@
             </ul>
         </div>
         <div class="c-super-menu__item-description">
-            <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]" />
+            <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]"></div>
             <div class="l-item-description__name">
                 {{ hoveredMode.name }}
             </div>

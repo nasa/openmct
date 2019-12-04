@@ -5,7 +5,7 @@
             class="c-progress-bar__bar"
             :class="{'--indeterminate': model.progressPerc === 'unknown'}"
             :style="styleBarWidth"
-        />
+        ></div>
     </div>
     <div
         v-if="model.progressText !== undefined"

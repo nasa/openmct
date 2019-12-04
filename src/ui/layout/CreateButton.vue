@@ -25,7 +25,7 @@
             </ul>
         </div>
         <div class="c-super-menu__item-description">
-            <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]" />
+            <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]"></div>
             <div class="l-item-description__name">
                 {{ selectedMenuItem.name }}
             </div>

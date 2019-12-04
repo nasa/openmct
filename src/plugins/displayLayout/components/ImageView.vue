@@ -30,7 +30,7 @@
     <div
         class="c-image-view"
         :style="style"
-    />
+    ></div>
 </layout-frame>
 </template>
 

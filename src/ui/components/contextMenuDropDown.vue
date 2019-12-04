@@ -2,7 +2,7 @@
 <div
     class="c-so-view__context-actions c-disclosure-button"
     @click="showContextMenu"
-/>
+></div>
 </template>
 
 <script>

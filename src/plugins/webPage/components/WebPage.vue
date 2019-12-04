@@ -1,6 +1,6 @@
 <template>
 <div class="l-iframe abs">
-    <iframe :src="currentDomainObject.url" />
+    <iframe :src="currentDomainObject.url"></iframe>
 </div>
 </template>
 

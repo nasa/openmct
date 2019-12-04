@@ -4,7 +4,7 @@
     <div
         class="c-message__icon"
         :class="['u-icon-bg-color-' + iconClass]"
-    />
+    ></div>
     <div class="c-message__text">
         <!-- Uses flex-column -->
         <div
@@ -28,7 +28,7 @@
         >
             {{ message }}
         </div>
-        <slot />
+        <slot></slot>
     </div>
 </div>
 </template>

@@ -10,7 +10,7 @@
     >
 
     <label :for="uid">
-        <div class="c-custom-checkbox__box" />
+        <div class="c-custom-checkbox__box"></div>
         <div class="c-custom-checkbox__label-text">
             {{ options.name }}
         </div>

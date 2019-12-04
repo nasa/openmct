@@ -7,17 +7,17 @@
         <div
             class="c-filter-tree-item__filter-indicator"
             :class="{'icon-filter': hasActiveFilters }"
-        />
+        ></div>
         <span
             class="c-disclosure-triangle is-enabled flex-elem"
             :class="{'c-disclosure-triangle--expanded': expanded}"
-        />
+        ></span>
         <div class="c-tree__item__label c-object-label">
             <div class="c-object-label">
                 <div
                     class="c-object-label__type-icon"
                     :class="objectCssClass"
-                />
+                ></div>
                 <div class="c-object-label__name flex-elem grows">
                     {{ filterObject.name }}
                 </div>

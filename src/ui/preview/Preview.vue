@@ -45,12 +45,12 @@
                     class="l-browse-bar__actions__edit c-button icon-notebook"
                     title="New Notebook entry"
                     @click="snapshot"
-                />
+                ></button>
             </div>
         </div>
     </div>
     <div class="l-preview-window__object-view">
-        <div ref="objectView" />
+        <div ref="objectView"></div>
     </div>
 </div>
 </template>

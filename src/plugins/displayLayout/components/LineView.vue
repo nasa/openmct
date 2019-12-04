@@ -39,7 +39,7 @@
     <div
         class="c-frame-edit__move"
         @mousedown="startDrag($event)"
-    />
+    ></div>
     <div
         v-if="showFrameEdit"
         class="c-frame-edit"
@@ -48,12 +48,12 @@
             class="c-frame-edit__handle"
             :class="startHandleClass"
             @mousedown="startDrag($event, 'start')"
-        />
+        ></div>
         <div
             class="c-frame-edit__handle"
             :class="endHandleClass"
             @mousedown="startDrag($event, 'end')"
-        />
+        ></div>
     </div>
 </div>
 </template>

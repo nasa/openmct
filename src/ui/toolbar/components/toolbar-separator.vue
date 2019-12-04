@@ -1,5 +1,5 @@
 <template>
-<div class="c-toolbar__separator" />
+<div class="c-toolbar__separator"></div>
 </template>
 
 <script>

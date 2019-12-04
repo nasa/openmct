@@ -29,7 +29,7 @@
                     <span
                         v-if="elements.length > 1 && isEditing"
                         class="c-elements-pool__grippy"
-                    />
+                    ></span>
                     <object-label
                         :domain-object="element"
                         :object-path="[element, parentObject]"
@@ -39,7 +39,7 @@
             <li
                 class="js-last-place"
                 @drop="moveToIndex(elements.length)"
-            />
+            ></li>
         </ul>
         <div v-if="elements.length === 0">
             No contained elements

@@ -14,7 +14,7 @@
     <a
         class="c-search__clear-input icon-x-in-circle"
         @click="clearInput"
-    />
+    ></a>
 </div>
 </template>
 

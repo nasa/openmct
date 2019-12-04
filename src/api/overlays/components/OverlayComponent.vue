@@ -3,17 +3,17 @@
     <div
         class="c-overlay__blocker"
         @click="destroy"
-    />
+    ></div>
     <div class="c-overlay__outer">
         <button
             v-if="dismissable"
             class="c-click-icon c-overlay__close-button icon-x-in-circle"
             @click="destroy"
-        />
+        ></button>
         <div
             ref="element"
             class="c-overlay__contents"
-        />
+        ></div>
         <div
             v-if="buttons"
             class="c-overlay__button-bar"
@@ -31,7 +31,7 @@
                 ref="element"
                 class="c-overlay__contents"
                 tabindex="0"
-            />
+            ></div>
             <div
                 v-if="buttons"
                 class="c-overlay__button-bar"

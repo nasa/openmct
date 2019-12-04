@@ -9,7 +9,7 @@
     <div
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
-    />
+    ></div>
     <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
 </a>
 </template>

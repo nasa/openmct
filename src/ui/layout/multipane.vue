@@ -6,7 +6,7 @@
         'l-multipane--horizontal': type === 'horizontal'
     }"
 >
-    <slot />
+    <slot></slot>
 </div>
 </template>
 

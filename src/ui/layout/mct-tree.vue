@@ -14,7 +14,7 @@
     <div
         v-if="isLoading"
         class="c-tree-and-search__loading loading"
-    />
+    ></div>
     <!-- end loading -->
 
     <div

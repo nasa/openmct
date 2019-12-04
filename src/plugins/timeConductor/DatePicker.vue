@@ -27,7 +27,7 @@
     <a
         class="c-icon-button icon-calendar"
         @click="toggle"
-    />
+    ></a>
     <div
         v-if="open"
         class="c-menu c-menu--mobile-modal c-datetime-picker"
@@ -36,20 +36,20 @@
             <button
                 class="c-click-icon icon-x-in-circle"
                 @click="toggle"
-            />
+            ></button>
         </div>
         <div class="c-datetime-picker__pager c-pager l-month-year-pager">
             <div
                 class="c-pager__prev c-icon-button icon-arrow-left"
                 @click.stop="changeMonth(-1)"
-            />
+            ></div>
             <div class="c-pager__month-year">
                 {{ model.month }} {{ model.year }}
             </div>
             <div
                 class="c-pager__next c-icon-button icon-arrow-right"
                 @click.stop="changeMonth(1)"
-            />
+            ></div>
         </div>
         <div class="c-datetime-picker__calendar c-calendar">
             <ul class="c-calendar__row--header l-cal-row">

@@ -17,7 +17,7 @@
         <button
             class="l-shell__head__collapse-button c-button"
             @click="toggleShellHead"
-        />
+        ></button>
         <notification-banner />
         <div class="l-shell__head-section l-shell__controls">
             <button
@@ -25,12 +25,12 @@
                 title="Open in a new browser tab"
                 target="_blank"
                 @click="openInNewTab"
-            />
+            ></button>
             <button
                 :class="['c-icon-button c-icon-button--major', fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand']"
                 :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
                 @click="fullScreenToggle"
-            />
+            ></button>
         </div>
         <app-logo />
     </div>

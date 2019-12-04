@@ -37,7 +37,7 @@
     <button
         class="c-message-banner__close-button c-click-icon icon-x-in-circle"
         @click.stop="dismiss()"
-    />
+    ></button>
 </div>
 </template>
 

@@ -12,7 +12,7 @@
             @drop="onDrop"
             @dragenter="dragenter"
             @dragleave="dragleave"
-        />
+        ></div>
         <div
             v-if="!tabsList.length > 0"
             class="c-tabs-view__empty-message"

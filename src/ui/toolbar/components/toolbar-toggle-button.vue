@@ -5,7 +5,7 @@
         :title="nextValue.title"
         :class="[nextValue.icon, {'c-icon-button--mixed': nonSpecific}]"
         @click="cycle"
-    />
+    ></div>
 </div>
 </template>
 

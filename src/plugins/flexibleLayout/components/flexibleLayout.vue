@@ -25,7 +25,7 @@
     <div
         id="js-fl-drag-ghost"
         class="c-fl__drag-ghost"
-    />
+    ></div>
 
     <div
         v-if="areAllContainersEmpty()"

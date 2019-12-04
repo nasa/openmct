@@ -7,7 +7,7 @@
     <div
         class="c-grid-item__type-icon"
         :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'"
-    />
+    ></div>
     <div class="c-grid-item__details">
         <!-- Name and metadata -->
         <div
@@ -25,12 +25,12 @@
         <div
             class="icon-people"
             title="Shared"
-        />
+        ></div>
         <button
             class="c-icon-button icon-info c-info-button"
             title="More Info"
-        />
-        <div class="icon-pointer-right c-pointer-icon" />
+        ></button>
+        <div class="icon-pointer-right c-pointer-icon"></div>
     </div>
 </a>
 </template>

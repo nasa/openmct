@@ -29,7 +29,7 @@
         @dragenter="dragenter"
         @dragleave="dragleave"
         @drop="dropHandler"
-    />
+    ></div>
 </div>
 </template>
 

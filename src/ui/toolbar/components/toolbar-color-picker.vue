@@ -11,7 +11,7 @@
             :style="{
                 background: options.value
             }"
-        />
+        ></div>
     </div>
     <div
         v-if="open"
@@ -22,7 +22,7 @@
             class="c-palette__item-none"
             @click="select({value: 'transparent'})"
         >
-            <div class="c-palette__item" />
+            <div class="c-palette__item"></div>
             None
         </div>
         <div class="c-palette__items">
@@ -32,7 +32,7 @@
                 class="c-palette__item"
                 :style="{ background: color.value }"
                 @click="select(color)"
-            />
+            ></div>
         </div>
     </div>
 </div>

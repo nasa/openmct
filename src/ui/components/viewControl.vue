@@ -6,7 +6,7 @@
         'is-enabled' : enabled
     }"
     @click="$emit('input', !value)"
-/>
+></span>
 </template>
 
 <script>

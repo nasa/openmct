@@ -7,14 +7,14 @@
         <div
             class="c-filter-tree-item__filter-indicator"
             :class="{'icon-filter': hasActiveGlobalFilters }"
-        />
+        ></div>
         <span
             class="c-disclosure-triangle is-enabled flex-elem"
             :class="{'c-disclosure-triangle--expanded': expanded}"
-        />
+        ></span>
         <div class="c-tree__item__label c-object-label">
             <div class="c-object-label">
-                <div class="c-object-label__type-icon icon-gear" />
+                <div class="c-object-label__type-icon icon-gear"></div>
                 <div class="c-object-label__name flex-elem grows">
                     Global Filtering
                 </div>
