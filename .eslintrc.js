@@ -77,7 +77,17 @@ module.exports = {
                 "ignores": []
             }
         ],
-        "vue/html-self-closing": "off",
+        "vue/html-self-closing": ["error",
+            {
+                "html": {
+                    "void": "never",
+                    "normal": "never",
+                    "component": "always"
+                },
+                "svg": "always",
+                "math": "always"
+            }
+        ],
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off"
     },
