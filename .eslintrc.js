@@ -76,7 +76,8 @@ module.exports = {
                 "alignAttributesVertically": true,
                 "ignores": []
             }
-        ]
+        ],
+        "vue/singleline-html-element-content-newline": "off"
     },
     "overrides": [
         {
