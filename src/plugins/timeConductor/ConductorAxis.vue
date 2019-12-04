@@ -243,8 +243,6 @@ export default {
             // brush extent y coordinate starts at -1 to prevent underlying layer cursor to show
             this.brush = d3Brush.brushX()
                 .extent([[0, -1], [this.width, this.height]])
-                .on("start", this.brushStart)
-                .on('brush', this.brushed)
                 .on("end", this.brushEnd);
         },
         createBrush() {
@@ -260,12 +258,6 @@ export default {
             this.svg.append("g")
                 .attr("class", "brush")
                 .call(this.brush);
-        },
-        brushStart () {
-
-        },
-        brushed () {
-
         },
         brushEnd () {
             const selection = d3Selection.event.selection;
