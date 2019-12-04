@@ -1,7 +1,7 @@
 <template>
-    <dialog-component>
-        <progress-component :model="model"></progress-component>
-    </dialog-component>
+<dialog-component>
+    <progress-component :model="model" />
+</dialog-component>
 </template>
 
 <style lang="scss">
@@ -14,9 +14,14 @@ import DialogComponent from './DialogComponent.vue';
 export default {
     components: {
         DialogComponent: DialogComponent,
-        ProgressComponent: ProgressComponent,
+        ProgressComponent: ProgressComponent
     },
     inject:['iconClass', 'title', 'hint', 'timestamp', 'message'],
-    props:['model']
+    props: {
+        model: {
+            type: Object,
+            required: true
+        }
+    }
 }
 </script>

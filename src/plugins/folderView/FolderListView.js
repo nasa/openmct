@@ -43,6 +43,7 @@ define([
                 return {
                     show: function (element) {
                         component =  new Vue({
+                            el: element,
                             components: {
                                 listViewComponent: ListViewComponent.default
                             },
@@ -51,7 +52,6 @@ define([
                                 domainObject,
                                 Moment
                             },
-                            el: element,
                             template: '<list-view-component></list-view-component>'
                         });
                     },

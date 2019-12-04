@@ -23,6 +23,7 @@
     "d3-time": "1.0.x",
     "d3-time-format": "2.1.x",
     "eslint": "5.2.0",
+    "eslint-plugin-vue": "^6.0.0",
     "eventemitter3": "^1.2.0",
     "exports-loader": "^0.7.0",
     "express": "^4.13.1",
@@ -74,8 +75,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "eslint platform example src openmct.js",
-    "lint:fix": "eslint platform example src openmct.js --fix",
+    "lint": "eslint platform example src/**/*.{js,vue} openmct.js",
+    "lint:fix": "eslint platform example src/**/*.{js,vue} openmct.js --fix",
     "build:prod": "NODE_ENV=production webpack",
     "build:dev": "webpack",
     "build:watch": "webpack --watch",

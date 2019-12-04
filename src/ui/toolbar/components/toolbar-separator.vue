@@ -1,11 +1,14 @@
 <template>
-    <div class="c-toolbar__separator"></div>
+<div class="c-toolbar__separator"></div>
 </template>
 
 <script>
 export default {
     props: {
-        options: Object
+        options: {
+            type: Object,
+            required: true
+        }
     }
 }
 </script>

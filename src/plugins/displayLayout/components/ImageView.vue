@@ -21,15 +21,18 @@
  *****************************************************************************/
 
 <template>
-    <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  @move="(gridDelta) => $emit('move', gridDelta)"
-                  @endMove="() => $emit('endMove')">
-        <div class="c-image-view"
-             :style="style">
-        </div>
-    </layout-frame>
- </template>
+<layout-frame
+    :item="item"
+    :grid-size="gridSize"
+    @move="(gridDelta) => $emit('move', gridDelta)"
+    @endMove="() => $emit('endMove')"
+>
+    <div
+        class="c-image-view"
+        :style="style"
+    ></div>
+</layout-frame>
+</template>
 
 <style lang="scss">
     @import '~styles/sass-base';
@@ -46,59 +49,70 @@
     }
 </style>
 
- <script>
-    import LayoutFrame from './LayoutFrame.vue'
+<script>
+import LayoutFrame from './LayoutFrame.vue'
 
-    export default {
-        makeDefinition(openmct, gridSize, element) {
+export default {
+    makeDefinition(openmct, gridSize, element) {
+        return {
+            stroke: 'transparent',
+            x: 1,
+            y: 1,
+            width: 10,
+            height: 5,
+            url: element.url
+        };
+    },
+    inject: ['openmct'],
+    components: {
+        LayoutFrame
+    },
+    props: {
+        item: {
+            type: Object,
+            required: true
+        },
+        gridSize: {
+            type: Array,
+            required: true,
+            validator: (arr) => arr && arr.length === 2
+                && arr.every(el => typeof el === 'number')
+        },
+        index: {
+            type: Number,
+            required: true
+        },
+        initSelect: Boolean
+    },
+    computed: {
+        style() {
             return {
-                stroke: 'transparent',
-                x: 1,
-                y: 1,
-                width: 10,
-                height: 5,
-                url: element.url
-            };
-        },
-        inject: ['openmct'],
-        props: {
-            item: Object,
-            gridSize: Array,
-            index: Number,
-            initSelect: Boolean
-        },
-        components: {
-            LayoutFrame
-        },
-        computed: {
-            style() {
-                return {
-                    backgroundImage: 'url(' + this.item.url + ')',
-                    border: '1px solid ' + this.item.stroke
-                }
-            }
-        },
-        watch: {
-            index(newIndex) {
-                if (!this.context) {
-                    return;
-                }
-
-                this.context.index = newIndex;
-            }
-        },
-        mounted() {
-            this.context = {
-                layoutItem: this.item,
-                index: this.index
-            };
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el, this.context, this.initSelect);
-        },
-        destroyed() {
-            if (this.removeSelectable) {
-                this.removeSelectable();
+                backgroundImage: 'url(' + this.item.url + ')',
+                border: '1px solid ' + this.item.stroke
             }
         }
+    },
+    watch: {
+        index(newIndex) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.index = newIndex;
+        }
+    },
+    mounted() {
+        this.context = {
+            layoutItem: this.item,
+            index: this.index
+        };
+        this.removeSelectable = this.openmct.selection.selectable(
+            this.$el, this.context, this.initSelect);
+    },
+    destroyed() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
     }
- </script>
+}
+</script>

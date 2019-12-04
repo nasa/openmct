@@ -1,29 +1,49 @@
 <template>
 <div class="c-elements-pool">
-    <Search class="c-elements-pool__search"
+    <Search
+        class="c-elements-pool__search"
         :value="currentSearch"
-        @input="applySearch" 
-        @clear="applySearch">
-    </Search>
-    <div class="c-elements-pool__elements"
-        :class="{'is-dragging': isDragging}">
-        <ul class="c-tree c-elements-pool__tree" id="inspector-elements-tree"
-            v-if="elements.length > 0">
-            <li :key="element.identifier.key" v-for="(element, index) in elements"
+        @input="applySearch"
+        @clear="applySearch"
+    />
+    <div
+        class="c-elements-pool__elements"
+        :class="{'is-dragging': isDragging}"
+    >
+        <ul
+            v-if="elements.length > 0"
+            id="inspector-elements-tree"
+            class="c-tree c-elements-pool__tree"
+        >
+            <li
+                v-for="(element, index) in elements"
+                :key="element.identifier.key"
                 @drop="moveTo(index)"
-                @dragover="allowDrop">
-                <div class="c-tree__item c-elements-pool__item"
-                     draggable="true"
-                     @dragstart="moveFrom(index)">
-                    <span class="c-elements-pool__grippy"
-                          v-if="elements.length > 1 && isEditing">
-                    </span>
-                    <object-label :domainObject="element" :objectPath="[element, parentObject]"></object-label>
+                @dragover="allowDrop"
+            >
+                <div
+                    class="c-tree__item c-elements-pool__item"
+                    draggable="true"
+                    @dragstart="moveFrom(index)"
+                >
+                    <span
+                        v-if="elements.length > 1 && isEditing"
+                        class="c-elements-pool__grippy"
+                    ></span>
+                    <object-label
+                        :domain-object="element"
+                        :object-path="[element, parentObject]"
+                    />
                 </div>
             </li>
-            <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
+            <li
+                class="js-last-place"
+                @drop="moveToIndex(elements.length)"
+            ></li>
         </ul>
-        <div v-if="elements.length === 0">No contained elements</div>
+        <div v-if="elements.length === 0">
+            No contained elements
+        </div>
     </div>
 </div>
 </template>
@@ -89,11 +109,22 @@ export default {
     },
     mounted() {
         let selection = this.openmct.selection.get();
-        if (selection && selection.length > 0){
+        if (selection && selection.length > 0) {
             this.showSelection(selection);
         }
         this.openmct.selection.on('change', this.showSelection);
         this.openmct.editor.on('isEditing', this.setEditState);
+    },
+    destroyed() {
+        this.openmct.editor.off('isEditing', this.setEditState);
+        this.openmct.selection.off('change', this.showSelection);
+
+        if (this.mutationUnobserver) {
+            this.mutationUnobserver();
+        }
+        if (this.compositionUnlistener) {
+            this.compositionUnlistener();
+        }
     },
     methods: {
         setEditState(isEditing) {
@@ -141,7 +172,7 @@ export default {
         },
         addElement(element) {
             let keyString = this.openmct.objects.makeKeyString(element.identifier);
-            this.elementsCache[keyString] = 
+            this.elementsCache[keyString] =
                 JSON.parse(JSON.stringify(element));
             this.applySearch(this.currentSearch);
         },
@@ -168,7 +199,7 @@ export default {
         moveTo(moveToIndex) {
             this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
-        moveFrom(index){
+        moveFrom(index) {
             this.isDragging = true;
             this.moveFromIndex = index;
             document.addEventListener('dragend', this.hideDragStyling);
@@ -176,17 +207,6 @@ export default {
         hideDragStyling() {
             this.isDragging = false;
             document.removeEventListener('dragend', this.hideDragStyling);
-        }
-    },
-    destroyed() {
-        this.openmct.editor.off('isEditing', this.setEditState);
-        this.openmct.selection.off('change', this.showSelection);
-
-        if (this.mutationUnobserver) {
-            this.mutationUnobserver();
-        }
-        if (this.compositionUnlistener) {
-            this.compositionUnlistener();
         }
     }
 }

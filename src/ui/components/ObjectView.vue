@@ -1,4 +1,5 @@
 <template>
+<div></div>
 </template>
 
 <script>
@@ -7,25 +8,28 @@ import _ from "lodash"
 export default {
     inject: ["openmct"],
     props: {
-        view: String,
-        object: Object,
+        object: {
+            type: Object,
+            default: undefined
+        },
         showEditView: Boolean,
-        objectPath: Array
+        objectPath: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
+    },
+    watch: {
+        object(newObject, oldObject) {
+            this.currentObject = newObject;
+            this.debounceUpdateView();
+        }
     },
     destroyed() {
         this.clear();
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
-        }
-    },
-    watch: {
-        view(newView, oldView) {
-            this.viewKey = newView;
-            this.debounceUpdateView();
-        },
-        object(newObject, oldObject) {
-            this.currentObject = newObject;
-            this.debounceUpdateView();
         }
     },
     created() {
@@ -114,7 +118,7 @@ export default {
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
-                this.removeSelectable = openmct.selection.selectable(
+                this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
 
@@ -190,7 +194,7 @@ export default {
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
-                    this.openmct.editor.edit();
+                this.openmct.editor.edit();
             }
         },
         hasComposableDomainObject(event) {

@@ -1,56 +1,66 @@
 <template>
-    <div class="c-properties__section c-filter-settings">
-        <li class="c-properties__row c-filter-settings__setting"
-            v-for="(filter, index) in filterField.filters"
-            :key="index">
-            <div class="c-properties__label label"
-                 :disabled="useGlobal">
-                {{ filterField.name }} =
-            </div>
-            <div class="c-properties__value value">
-                <!-- EDITING -->
-                <!-- String input, editing -->
-                <template v-if="!filter.possibleValues && isEditing">
-                    <input class="c-input--flex"
-                           type="text"
-                           :id="`${filter}filterControl`"
-                           :disabled="useGlobal"
-                           :value="persistedValue(filter)"
-                           @change="updateFilterValue($event, filter)">
-                </template>
+<div class="c-properties__section c-filter-settings">
+    <li
+        v-for="(filter, index) in filterField.filters"
+        :key="index"
+        class="c-properties__row c-filter-settings__setting"
+    >
+        <div
+            class="c-properties__label label"
+            :disabled="useGlobal"
+        >
+            {{ filterField.name }} =
+        </div>
+        <div class="c-properties__value value">
+            <!-- EDITING -->
+            <!-- String input, editing -->
+            <template v-if="!filter.possibleValues && isEditing">
+                <input
+                    :id="`${filter}filterControl`"
+                    class="c-input--flex"
+                    type="text"
+                    :disabled="useGlobal"
+                    :value="persistedValue(filter)"
+                    @change="updateFilterValue($event, filter)"
+                >
+            </template>
 
-                <!-- Checkbox list, editing -->
-                <template v-if="filter.possibleValues && isEditing">
-                    <div class="c-checkbox-list__row"
-                         v-for="option in filter.possibleValues"
-                         :key="option.value">
-                        <input class="c-checkbox-list__input"
-                               type="checkbox"
-                               :id="`${option.value}filterControl`"
-                               :disabled="useGlobal"
-                               @change="updateFilterValue($event, filter.comparator, option.value)"
-                               :checked="isChecked(filter.comparator, option.value)">
-                        <span class="c-checkbox-list__value">
-                            {{ option.label }}
-                        </span>
-                    </div>
-                </template>
-
-                <!-- BROWSING -->
-                <!-- String input, NOT editing -->
-                <template v-if="!filter.possibleValues && !isEditing">
-                    {{ persistedValue(filter) }}
-                </template>
-
-                <!-- Checkbox list, NOT editing -->
-                <template v-if="filter.possibleValues && !isEditing">
-                    <span v-if="persistedFilters[filter.comparator]">
-                        {{ getFilterLabels(filter) }}
+            <!-- Checkbox list, editing -->
+            <template v-if="filter.possibleValues && isEditing">
+                <div
+                    v-for="option in filter.possibleValues"
+                    :key="option.value"
+                    class="c-checkbox-list__row"
+                >
+                    <input
+                        :id="`${option.value}filterControl`"
+                        class="c-checkbox-list__input"
+                        type="checkbox"
+                        :disabled="useGlobal"
+                        :checked="isChecked(filter.comparator, option.value)"
+                        @change="updateFilterValue($event, filter.comparator, option.value)"
+                    >
+                    <span class="c-checkbox-list__value">
+                        {{ option.label }}
                     </span>
-                </template>
-            </div>
-        </li>
-    </div>
+                </div>
+            </template>
+
+            <!-- BROWSING -->
+            <!-- String input, NOT editing -->
+            <template v-if="!filter.possibleValues && !isEditing">
+                {{ persistedValue(filter) }}
+            </template>
+
+            <!-- Checkbox list, NOT editing -->
+            <template v-if="filter.possibleValues && !isEditing">
+                <span v-if="persistedFilters[filter.comparator]">
+                    {{ getFilterLabels(filter) }}
+                </span>
+            </template>
+        </div>
+    </li>
+</div>
 </template>
 
 <script>
@@ -59,7 +69,10 @@ export default {
         'openmct'
     ],
     props: {
-        filterField: Object,
+        filterField: {
+            type: Object,
+            required: true
+        },
         useGlobal: Boolean,
         persistedFilters: {
             type: Object,
@@ -72,6 +85,12 @@ export default {
         return {
             isEditing: this.openmct.editor.isEditing()
         }
+    },
+    mounted() {
+        this.openmct.editor.on('isEditing', this.toggleIsEditing);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     },
     methods: {
         toggleIsEditing(isEditing) {
@@ -107,12 +126,6 @@ export default {
                 return accum;
             }, []).join(', ');
         }
-    },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.toggleIsEditing);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     }
 }
 </script>
