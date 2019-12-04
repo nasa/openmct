@@ -38,12 +38,13 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'LadTableSet';
             },
-            view: function (domainObject, isEditing, objectPath) {
+            view: function (domainObject, objectPath) {
                 let component;
 
                 return {
                     show: function (element) {
                         component =  new Vue({
+                            el: element,
                             components: {
                                 LadTableSet: LadTableSet.default
                             },
@@ -52,7 +53,6 @@ define([
                                 domainObject,
                                 objectPath
                             },
-                            el: element,
                             template: '<lad-table-set></lad-table-set>'
                         });
                     },

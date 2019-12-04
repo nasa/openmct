@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1567791159617
+    "created": 1574106570211
   },
   "iconSets": [
     {
@@ -736,12 +736,20 @@
           "tempChar": ""
         },
         {
+          "order": 173,
+          "id": 149,
+          "name": "icon-history",
+          "prevSize": 24,
+          "code": 59953,
+          "tempChar": ""
+        },
+        {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
           "prevSize": 24,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -749,7 +757,7 @@
           "name": "icon-activity-mode",
           "prevSize": 24,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -757,7 +765,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 24,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -765,7 +773,7 @@
           "name": "icon-clock",
           "prevSize": 24,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -773,7 +781,7 @@
           "name": "icon-database",
           "prevSize": 24,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -781,7 +789,7 @@
           "name": "icon-database-query",
           "prevSize": 24,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -789,7 +797,7 @@
           "name": "icon-dataset",
           "prevSize": 24,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -797,7 +805,7 @@
           "name": "icon-datatable",
           "prevSize": 24,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -805,7 +813,7 @@
           "name": "icon-dictionary",
           "prevSize": 24,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -813,7 +821,7 @@
           "name": "icon-folder",
           "prevSize": 24,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -821,7 +829,7 @@
           "name": "icon-image",
           "prevSize": 24,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -829,7 +837,7 @@
           "name": "icon-layout",
           "prevSize": 24,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -837,7 +845,7 @@
           "name": "icon-object",
           "prevSize": 24,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -845,7 +853,7 @@
           "name": "icon-object-unknown",
           "prevSize": 24,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -853,7 +861,7 @@
           "name": "icon-packet",
           "prevSize": 24,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -861,7 +869,7 @@
           "name": "icon-page",
           "prevSize": 24,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -869,7 +877,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -877,7 +885,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -885,7 +893,7 @@
           "name": "icon-session",
           "prevSize": 24,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -893,7 +901,7 @@
           "name": "icon-tabular",
           "prevSize": 24,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -901,7 +909,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 24,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -909,7 +917,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 24,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -917,7 +925,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 24,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -925,7 +933,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 24,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -933,7 +941,7 @@
           "name": "icon-telemetry",
           "prevSize": 24,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
@@ -941,7 +949,7 @@
           "name": "icon-timeline",
           "prevSize": 24,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -949,7 +957,7 @@
           "name": "icon-timer",
           "prevSize": 24,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -957,7 +965,7 @@
           "name": "icon-topic",
           "prevSize": 24,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -965,7 +973,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 24,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -973,7 +981,7 @@
           "name": "icon-summary-widget",
           "prevSize": 24,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -981,7 +989,7 @@
           "name": "icon-notebook",
           "prevSize": 24,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -989,7 +997,7 @@
           "name": "icon-tabs-view",
           "prevSize": 24,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -997,7 +1005,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 24,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1005,7 +1013,7 @@
           "name": "icon-generator-sine",
           "prevSize": 24,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1013,7 +1021,7 @@
           "name": "icon-generator-event",
           "prevSize": 24,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1021,14 +1029,38 @@
           "name": "icon-gauge-v2",
           "prevSize": 24,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
+        },
+        {
+          "order": 170,
+          "id": 148,
+          "name": "icon-spectra",
+          "prevSize": 24,
+          "code": 60196,
+          "tempChar": ""
+        },
+        {
+          "order": 171,
+          "id": 147,
+          "name": "icon-telemetry-spectra",
+          "prevSize": 24,
+          "code": 60197,
+          "tempChar": ""
+        },
+        {
+          "order": 172,
+          "id": 146,
+          "name": "icon-pushbutton",
+          "prevSize": 24,
+          "code": 60198,
+          "tempChar": ""
         }
       ],
       "id": 0,
       "metadata": {
         "name": "Open MCT Symbols 16px",
         "importSize": {
-          "width": 384,
+          "width": 512,
           "height": 512
         },
         "designer": "Charles Hacskaylo"
@@ -2194,6 +2226,23 @@
           ]
         },
         {
+          "id": 149,
+          "paths": [
+            "M576 64c-247.4 0-448 200.6-448 448h-128l192 192 192-192h-128c0-85.4 33.2-165.8 93.8-226.2 60.4-60.6 140.8-93.8 226.2-93.8s165.8 33.2 226.2 93.8c60.6 60.4 93.8 140.8 93.8 226.2s-33.2 165.8-93.8 226.2c-60.4 60.6-140.8 93.8-226.2 93.8s-165.8-33.2-226.2-93.8l-90.6 90.6c81 81 193 131.2 316.8 131.2 247.4 0 448-200.6 448-448s-200.6-448-448-448z",
+            "M576 272c-26.6 0-48 21.4-48 48v211.8l142 142c9.4 9.4 21.6 14 34 14s24.6-4.6 34-14c18.8-18.8 18.8-49.2 0-67.8l-114-114v-172c0-26.6-21.4-48-48-48z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-history"
+          ]
+        },
+        {
           "id": 97,
           "paths": [
             "M576 64h-256l320 320h-290.256c-44.264-76.516-126.99-128-221.744-128h-128v512h128c94.754 0 177.48-51.484 221.744-128h290.256l-320 320h256l448-448-448-448z"
@@ -2666,6 +2715,61 @@
           "grid": 16,
           "tags": [
             "icon-gauge-v2"
+          ]
+        },
+        {
+          "id": 148,
+          "paths": [
+            "M768 704h-512l102.4-179.2-358.4 51.2v254c0 106.6 87.4 194 194 194h636c106.8 0 194-87.4 194-194v-62l-325.8-186.2z",
+            "M830 0h-636c-106.6 0-194 87.2-194 194v318l400-60.2 112-195.8 109.8 192h402.2v-254c-0.227-107.052-86.948-193.773-193.978-194l-0.022-0z",
+            "M1024 640v-64l-384-64 384 128z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-spectra"
+          ]
+        },
+        {
+          "id": 147,
+          "paths": [
+            "M512 256l109.8 192h398.2c-31.4-252.6-247-448-508-448-282.8 0-512 229.2-512 512l400-60.2z",
+            "M768 704h-512l102.4-179.2-354.4 50.6c31.2 252.8 246.8 448.6 508 448.6 201.6 0 376-116.6 459.6-286l-273.4-156.2z",
+            "M640 512l384 128v-64l-384-64z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-telemetry-spectra"
+          ]
+        },
+        {
+          "id": 146,
+          "paths": [
+            "M370.2 459.4c9.326 8.53 19.666 16.261 30.729 22.914l0.871 0.486c-11.077-19.209-17.664-42.221-17.8-66.76l-0-0.040c0-39.6 17.8-77.6 50.2-107.4 37-34 87.4-52.6 141.8-52.6 40.2 0 78.2 10.2 110.2 29.2-8.918-15.653-19.693-29.040-32.268-40.482l-0.132-0.118c-37-34-87.4-52.6-141.8-52.6s-104.8 18.6-141.8 52.6c-32.4 29.8-50.2 67.8-50.2 107.4s17.8 77.6 50.2 107.4z",
+            "M885.4 269.6c-40.6-154.6-192.4-269.6-373.4-269.6s-332.8 115-373.4 269.6c-86 80-138.6 187.8-138.6 306.4 0 247.4 229.2 448 512 448s512-200.6 512-448c0-118.6-52.6-226.4-138.6-306.4zM512 128c141.2 0 256 100.4 256 224s-114.8 224-256 224-256-100.4-256-224 114.8-224 256-224zM512 832c-175.4 0-318.4-127.8-320-285.4 68.8 94.8 186.4 157.4 320 157.4s251.2-62.6 320-157.4c-1.6 157.6-144.6 285.4-320 285.4z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-pushbutton"
           ]
         }
       ],

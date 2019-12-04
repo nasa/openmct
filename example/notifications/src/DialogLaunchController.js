@@ -137,12 +137,12 @@ define(
                         " attention to an event.",
                         severity: "info",
                         primaryOption: {
-                                label: "OK",
-                                callback: function () {
-                                    $log.debug("OK Pressed");
-                                    dialog.dismiss();
-                                }
+                            label: "OK",
+                            callback: function () {
+                                $log.debug("OK Pressed");
+                                dialog.dismiss();
                             }
+                        }
                     };
 
                 dialog = dialogService.showBlockingMessage(model);

@@ -46,7 +46,7 @@ define([
 
                 return selection.every(isTelemetryObject);
             },
-            view: function (domainObject, isEditing, objectPath) {
+            view: function (domainObject, objectPath) {
                 let component;
                 return {
                     show: function (element) {
@@ -55,11 +55,11 @@ define([
                                 openmct,
                                 objectPath
                             },
+                            el: element,
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default
                             },
-                            template: '<alphanumeric-format-view></alphanumeric-format-view>',
-                            el: element
+                            template: '<alphanumeric-format-view></alphanumeric-format-view>'
                         });
                     },
                     destroy: function () {

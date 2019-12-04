@@ -5,9 +5,16 @@ module.exports = {
         "jasmine": true,
         "amd": true
     },
-    "extends": "eslint:recommended",
-    "parser": "babel-eslint",
+    "globals": {
+        "_": "readonly"
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/recommended"
+    ],
+    "parser": "vue-eslint-parser",
     "parserOptions": {
+        "parser": "babel-eslint",
         "allowImportExportEverywhere": true,
         "ecmaVersion": 2015,
         "ecmaFeatures": {
@@ -58,7 +65,38 @@ module.exports = {
             }
         ],
         "dot-notation": "error",
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "vue/html-indent": [
+            "error",
+            4,
+            {
+                "attribute": 1,
+                "baseIndent": 0,
+                "closeBracket": 0,
+                "alignAttributesVertically": true,
+                "ignores": []
+            }
+        ],
+        "vue/html-self-closing": ["error",
+            {
+                "html": {
+                    "void": "never",
+                    "normal": "never",
+                    "component": "always"
+                },
+                "svg": "always",
+                "math": "always"
+            }
+        ],
+        "vue/max-attributes-per-line": ["error", {
+            "singleline": 1,
+            "multiline": {
+                "max": 1,
+                "allowFirstLine": true
+            }
+        }],
+        "vue/multiline-html-element-content-newline": "off",
+        "vue/singleline-html-element-content-newline": "off"
     },
     "overrides": [
         {

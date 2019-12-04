@@ -1,25 +1,57 @@
 <template>
-    <div class="c-overlay">
-        <div class="c-overlay__blocker"
-            @click="destroy">
-        </div>
-        <div class="c-overlay__outer">
-            <button class="c-click-icon c-overlay__close-button icon-x-in-circle"
-                v-if="dismissable"
-                @click="destroy">
+<div class="c-overlay">
+    <div
+        class="c-overlay__blocker"
+        @click="destroy"
+    ></div>
+    <div class="c-overlay__outer">
+        <button
+            v-if="dismissable"
+            class="c-click-icon c-overlay__close-button icon-x-in-circle"
+            @click="destroy"
+        ></button>
+        <div
+            ref="element"
+            class="c-overlay__contents"
+        ></div>
+        <div
+            v-if="buttons"
+            class="c-overlay__button-bar"
+        >
+            <button
+                v-for="(button, index) in buttons"
+                :key="index"
+                class="c-button"
+                :class="{'c-button--major': button.emphasis}"
+                @click="buttonClickHandler(button.callback)"
+            >
+                {{ button.label }}
             </button>
-            <div class="c-overlay__contents" ref="element"></div>
-            <div class="c-overlay__button-bar" v-if="buttons">
-                <button class="c-button"
-                        v-for="(button, index) in buttons"
-                        :key="index"
-                        :class="{'c-button--major': button.emphasis}"
-                        @click="buttonClickHandler(button.callback)">
-                    {{button.label}}
+            <div
+                ref="element"
+                class="c-overlay__contents"
+                tabindex="0"
+            ></div>
+            <div
+                v-if="buttons"
+                class="c-overlay__button-bar"
+            >
+                <button
+                    v-for="(button, index) in buttons"
+                    ref="buttons"
+                    :key="index"
+                    class="c-button"
+                    tabindex="0"
+                    :class="{'c-button--major': focusIndex===index}"
+                    @focus="focusIndex=index"
+                    @click="buttonClickHandler(button.callback)"
+                >
+                    {{ button.label }}
                 </button>
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <style lang="scss">
@@ -69,6 +101,7 @@
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+            outline: none;
             overflow: hidden;
         }
 
@@ -134,7 +167,7 @@
                 box-shadow: rgba(black, 0.5) 0 2px 25px;
             }
         }
-        
+
         .l-overlay-fullscreen {
             // Used by About > Licenses display
             .c-overlay__outer {
@@ -170,21 +203,50 @@
 </style>
 
 <script>
-    export default {
-        inject: ['dismiss', 'element', 'buttons', 'dismissable'],
-        mounted() {
-            this.$refs.element.appendChild(this.element);
-        },
-        methods: {
-            destroy: function () {
-                if (this.dismissable) {
-                    this.dismiss();
-                }
-            },
-            buttonClickHandler: function (method) {
-                method();
-                this.$emit('destroy');
+export default {
+    data: function () {
+        return {
+            focusIndex: -1
+        };
+    },
+    inject: ['dismiss', 'element', 'buttons', 'dismissable'],
+    mounted() {
+        const element = this.$refs.element;
+        element.appendChild(this.element);
+        const elementForFocus = this.getElementForFocus() || element;
+        this.$nextTick(() => {
+            elementForFocus.focus();
+        });
+    },
+    methods: {
+        destroy: function () {
+            if (this.dismissable) {
+                this.dismiss();
             }
+        },
+        buttonClickHandler: function (method) {
+            method();
+            this.$emit('destroy');
+        },
+        getElementForFocus: function () {
+            const defaultElement = this.$refs.element;
+            if (!this.$refs.buttons) {
+                return defaultElement;
+            }
+
+            const focusButton = this.$refs.buttons.filter((button, index) => {
+                if (this.buttons[index].emphasis) {
+                    this.focusIndex = index;
+                }
+                return this.buttons[index].emphasis;
+            });
+
+            if (!focusButton.length) {
+                return defaultElement;
+            }
+
+            return focusButton[0];
         }
     }
+}
 </script>

@@ -21,54 +21,87 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-frame"
-        :style="{
-            'flex-basis': `${frame.size}%`
-        }">
+<div
+    class="c-fl-frame"
+    :style="{
+        'flex-basis': `${frame.size}%`
+    }"
+>
+    <div
+        ref="frame"
+        class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
+        draggable="true"
+        @dragstart="initDrag"
+    >
+        <object-frame
+            v-if="domainObject"
+            ref="objectFrame"
+            :domain-object="domainObject"
+            :object-path="objectPath"
+            :has-frame="hasFrame"
+            :show-edit-view="false"
+        />
 
-        <div class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
-             draggable="true"
-             @dragstart="initDrag"
-             ref="frame">
-
-            <object-frame
-                v-if="domainObject"
-                :domain-object="domainObject"
-                :object-path="objectPath"
-                :has-frame="hasFrame"
-                :show-edit-view="false"
-                ref="objectFrame">
-            </object-frame>
-
-            <div class="c-fl-frame__size-indicator"
-                 v-if="isEditing"
-                 v-show="frame.size && frame.size < 100">
-                {{frame.size}}%
-            </div>
+        <div
+            v-if="isEditing"
+            v-show="frame.size && frame.size < 100"
+            class="c-fl-frame__size-indicator"
+        >
+            {{ frame.size }}%
         </div>
     </div>
+</div>
 </template>
 
 <script>
-import ResizeHandle from './resizeHandle.vue';
 import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
 
 export default {
     inject: ['openmct'],
-    props: ['frame', 'index', 'containerIndex', 'isEditing'],
+    components: {
+        ObjectFrame
+    },
+    props: {
+        frame: {
+            type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
+        containerIndex: {
+            type: Number,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             domainObject: undefined,
             objectPath: undefined
         }
     },
-    components: {
-        ResizeHandle,
-        ObjectFrame
-    },
     computed: {
         hasFrame() {
             return !this.frame.noFrame;
+        }
+    },
+    mounted() {
+        if (this.frame.domainObjectIdentifier) {
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+                this.setDomainObject(object);
+            });
+        }
+
+        this.dragGhost = document.getElementById('js-fl-drag-ghost');
+    },
+    beforeDestroy() {
+        if (this.unsubscribeSelection) {
+            this.unsubscribeSelection();
         }
     },
     methods: {
@@ -92,7 +125,7 @@ export default {
         initDrag(event) {
             let type = this.openmct.types.get(this.domainObject.type),
                 iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
- 
+
             if (this.dragGhost) {
                 let originalClassName = this.dragGhost.classList[0];
                 this.dragGhost.className = '';
@@ -104,20 +137,6 @@ export default {
 
             event.dataTransfer.setData('frameid', this.frame.id);
             event.dataTransfer.setData('containerIndex', this.containerIndex);
-        }
-    },
-    mounted() {
-        if (this.frame.domainObjectIdentifier) {
-            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
-                this.setDomainObject(object);
-            });
-        }
-
-        this.dragGhost = document.getElementById('js-fl-drag-ghost');
-    },
-    beforeDestroy() {
-        if (this.unsubscribeSelection) {
-            this.unsubscribeSelection();
         }
     }
 }

@@ -37,27 +37,27 @@ export default function DisplayLayoutPlugin(options) {
             canEdit: function (domainObject) {
                 return domainObject.type === 'layout';
             },
-            view: function (domainObject, isEditing, objectPath) {
+            view: function (domainObject, objectPath) {
                 let component;
                 return {
                     show(container) {
                         component = new Vue({
+                            el: container,
                             components: {
                                 Layout
                             },
-                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>',
                             provide: {
                                 openmct,
                                 objectUtils,
                                 options,
                                 objectPath
                             },
-                            el: container,
                             data() {
                                 return {
                                     domainObject: domainObject
                                 };
-                            }
+                            },
+                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>'
                         });
                     },
                     getSelectionContext() {

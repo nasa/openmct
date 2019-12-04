@@ -1,4 +1,5 @@
 <template>
+<div></div>
 </template>
 
 <script>
@@ -7,25 +8,28 @@ import _ from "lodash"
 export default {
     inject: ["openmct"],
     props: {
-        view: String,
-        object: Object,
+        object: {
+            type: Object,
+            default: undefined
+        },
         showEditView: Boolean,
-        objectPath: Array
+        objectPath: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
+    },
+    watch: {
+        object(newObject, oldObject) {
+            this.currentObject = newObject;
+            this.debounceUpdateView();
+        }
     },
     destroyed() {
         this.clear();
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
-        }
-    },
-    watch: {
-        view(newView, oldView) {
-            this.viewKey = newView;
-            this.debounceUpdateView();
-        },
-        object(newObject, oldObject) {
-            this.currentObject = newObject;
-            this.debounceUpdateView();
         }
     },
     created() {
@@ -77,7 +81,7 @@ export default {
             if (!this.currentObject) {
                 return;
             }
-            
+
             this.composition = this.openmct.composition.get(this.currentObject);
             if (this.composition) {
                 this.composition._synchronize();
@@ -98,13 +102,13 @@ export default {
                 if (this.openmct.editor.isEditing()) {
                     this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, false, objectPath);    
+                    this.currentView = provider.view(this.currentObject, objectPath);
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, this.openmct.editor.isEditing(), objectPath);
+                this.currentView = provider.view(this.currentObject, objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -114,7 +118,7 @@ export default {
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
-                this.removeSelectable = openmct.selection.selectable(
+                this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
 
@@ -186,11 +190,11 @@ export default {
         },
         editIfEditable(event) {
             let provider = this.getViewProvider();
-            if (provider && 
+            if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
-                    this.openmct.editor.edit();
+                this.openmct.editor.edit();
             }
         },
         hasComposableDomainObject(event) {
@@ -204,7 +208,7 @@ export default {
             if (domainObject) {
                 let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
                     currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
-                
+
                 if (clearKeyString === currentObjectKeyString) {
                     if (this.currentView.onClearData) {
                         this.currentView.onClearData();

@@ -19,37 +19,40 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
- <template>
-    <div class="l-preview-window">
-        <div class="l-browse-bar">
-            <div class="l-browse-bar__start">
-                <div class="l-browse-bar__object-name--w"
-                    :class="type.cssClass">
-                    <span class="l-browse-bar__object-name">
-                        {{ domainObject.name }}
-                    </span>
-                    <context-menu-drop-down :object-path="objectPath"></context-menu-drop-down>
-                </div>
-            </div>
-            <div class="l-browse-bar__end">
-                <div class="l-browse-bar__actions">
-                    <view-switcher
-                        :views="views"
-                        :currentView="currentView"
-                        @setView="setView">
-                    </view-switcher>
-                    <button v-if="notebookEnabled"
-                        class="l-browse-bar__actions__edit c-button icon-notebook" 
-                        title="New Notebook entry" 
-                        @click="snapshot">
-                    </button>
-                </div>
+<template>
+<div class="l-preview-window">
+    <div class="l-browse-bar">
+        <div class="l-browse-bar__start">
+            <div
+                class="l-browse-bar__object-name--w"
+                :class="type.cssClass"
+            >
+                <span class="l-browse-bar__object-name">
+                    {{ domainObject.name }}
+                </span>
+                <context-menu-drop-down :object-path="objectPath" />
             </div>
         </div>
-        <div class="l-preview-window__object-view">
-            <div ref="objectView"></div>
+        <div class="l-browse-bar__end">
+            <div class="l-browse-bar__actions">
+                <view-switcher
+                    :views="views"
+                    :current-view="currentView"
+                    @setView="setView"
+                />
+                <button
+                    v-if="notebookEnabled"
+                    class="l-browse-bar__actions__edit c-button icon-notebook"
+                    title="New Notebook entry"
+                    @click="snapshot"
+                ></button>
+            </div>
         </div>
     </div>
+    <div class="l-preview-window__object-view">
+        <div ref="objectView"></div>
+    </div>
+</div>
 </template>
 <style lang="scss">
     @import '~styles/sass-base';
@@ -83,78 +86,78 @@
     }
 </style>
 
- <script>
-    import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
-    import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
-    import NotebookSnapshot from '../utils/notebook-snapshot';
+<script>
+import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
+import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+import NotebookSnapshot from '../utils/notebook-snapshot';
 
-    export default {
-        components: {
-            ContextMenuDropDown,
-            ViewSwitcher
+export default {
+    components: {
+        ContextMenuDropDown,
+        ViewSwitcher
+    },
+    inject: [
+        'openmct',
+        'objectPath'
+    ],
+    data() {
+        let domainObject = this.objectPath[0];
+        let type = this.openmct.types.get(domainObject.type);
+
+        return {
+            domainObject: domainObject,
+            type: type,
+            notebookEnabled: false,
+            viewKey: undefined
+        };
+    },
+    computed: {
+        views() {
+            return this
+                .openmct
+                .objectViews
+                .get(this.domainObject);
         },
-        inject: [
-            'openmct',
-            'objectPath'
-        ],
-        computed: {
-            views() {
-                return this
-                    .openmct
-                    .objectViews
-                    .get(this.domainObject);
-            },
-            currentView() {
-                return this.views.filter(v => v.key === this.viewKey)[0] || {};
+        currentView() {
+            return this.views.filter(v => v.key === this.viewKey)[0] || {};
+        }
+    },
+    mounted() {
+        let view = this.openmct.objectViews.get(this.domainObject)[0];
+        this.setView(view);
+
+        if (this.openmct.types.get('notebook')) {
+            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+            this.notebookEnabled = true;
+        }
+    },
+    destroyed() {
+        this.view.destroy();
+    },
+    methods: {
+        snapshot() {
+            let element = document.getElementsByClassName("l-preview-window__object-view")[0];
+            this.notebookSnapshot.capture(this.domainObject, element);
+        },
+        clear() {
+            if (this.view) {
+                this.view.destroy();
+                this.$refs.objectView.innerHTML = '';
             }
+            delete this.view;
+            delete this.viewContainer;
         },
-        methods: {
-            snapshot() {
-                let element = document.getElementsByClassName("l-preview-window__object-view")[0];
-                this.notebookSnapshot.capture(this.domainObject, element);
-            },
-            clear() {
-                if (this.view) {
-                    this.view.destroy();
-                    this.$refs.objectView.innerHTML = '';
-                }
-                delete this.view;
-                delete this.viewContainer;
-            },
-            setView(view) {
-                this.clear();
-            
-                this.viewKey = view.key;
-                this.viewContainer = document.createElement('div');
-                this.viewContainer.classList.add('c-object-view','u-contents');
-                this.$refs.objectView.append(this.viewContainer);
+        setView(view) {
+            this.clear();
 
-                this.view = this.currentView.view(this.domainObject, false, this.objectPath);
-                this.view.show(this.viewContainer, false);
-            }
-        },
-        data() {
-            let domainObject = this.objectPath[0];
-            let type = this.openmct.types.get(domainObject.type);
+            this.viewKey = view.key;
+            this.viewContainer = document.createElement('div');
+            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.$refs.objectView.append(this.viewContainer);
 
-            return {
-                domainObject: domainObject,
-                type: type,
-                notebookEnabled: false,
-                viewKey: undefined
-            };
-        },
-        mounted() {
-            let view = this.openmct.objectViews.get(this.domainObject)[0];
-            this.setView(view);
-
-            if (this.openmct.types.get('notebook')) {
-                this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-                this.notebookEnabled = true;
-            }
-        },
-        destroyed() {
-            this.view.destroy();
+            this.view = this.currentView.view(this.domainObject, this.objectPath);
+            this.view.show(this.viewContainer, false);
         }
     }
- </script>
+}
+</script>

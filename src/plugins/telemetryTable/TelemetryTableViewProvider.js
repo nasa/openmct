@@ -48,26 +48,26 @@ define([
             canEdit(domainObject) {
                 return domainObject.type === 'table';
             },
-            view(domainObject, isEditing, objectPath) {
+            view(domainObject, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
                 return {
                     show: function (element, editMode) {
                         component = new Vue({
+                            el: element,
+                            components: {
+                                TableComponent: TableComponent.default
+                            },
                             data() {
                                 return {
                                     isEditing: editMode
                                 }
-                            },
-                            components: {
-                                TableComponent: TableComponent.default
                             },
                             provide: {
                                 openmct,
                                 table,
                                 objectPath
                             },
-                            el: element,
                             template: '<table-component :isEditing="isEditing" :enableMarking="true"></table-component>'
                         });
                     },

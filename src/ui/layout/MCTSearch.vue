@@ -1,7 +1,10 @@
 <template>
-    <div class="c-search c-search--major">
-        <input type="search" placeholder="Search"/>
-    </div>
+<div class="c-search c-search--major">
+    <input
+        type="search"
+        placeholder="Search"
+    >
+</div>
 </template>
 
 <style lang="scss">
@@ -20,6 +23,6 @@
 </style>
 
 <script>
-    export default {
-    }
+export default {
+}
 </script>

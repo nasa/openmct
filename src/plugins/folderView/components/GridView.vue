@@ -1,11 +1,12 @@
 <template>
-    <div class="l-grid-view">
-        <grid-item v-for="(item, index) in items"
-            :key="index"
-            :item="item"
-            :object-path="item.objectPath">
-        </grid-item>
-    </div>
+<div class="l-grid-view">
+    <grid-item
+        v-for="(item, index) in items"
+        :key="index"
+        :item="item"
+        :object-path="item.objectPath"
+    />
+</div>
 </template>
 
 <style lang="scss">

@@ -130,6 +130,7 @@
 .icon-export {  @include glyphBefore($glyph-icon-export); }
 .icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
 .icon-clear-data {  @include glyphBefore($glyph-icon-clear-data); }
+.icon-history {  @include glyphBefore($glyph-icon-history); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
@@ -166,6 +167,9 @@
 .icon-generator-telemetry {  @include glyphBefore($glyph-icon-generator-telemetry); }
 .icon-generator-events {  @include glyphBefore($glyph-icon-generator-events); }
 .icon-gauge {  @include glyphBefore($glyph-icon-gauge); }
+.icon-spectra {  @include glyphBefore($glyph-icon-spectra); }
+.icon-spectra-telemetry {  @include glyphBefore($glyph-icon-spectra-telemetry); }
+.icon-command {  @include glyphBefore($glyph-icon-command); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -220,3 +224,6 @@
 .bg-icon-generator-telemetry { @include glyphBg($bg-icon-generator-telemetry); }
 .bg-icon-generator-events { @include glyphBg($bg-icon-generator-events); }
 .bg-icon-gauge { @include glyphBg($bg-icon-gauge); }
+.bg-icon-spectra { @include glyphBg($bg-icon-spectra); }
+.bg-icon-spectra-telemetry { @include glyphBg($bg-icon-spectra-telemetry); }
+.bg-icon-command { @include glyphBg($bg-icon-command); }

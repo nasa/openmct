@@ -29,8 +29,7 @@ define([
     "./src/gestures/GestureRepresenter",
     "./src/services/DndService",
     "./src/TemplateLinker",
-    "./src/TemplatePrefetcher",
-    'legacyRegistry'
+    "./src/TemplatePrefetcher"
 ], function (
     MCTInclude,
     MCTRepresentation,
@@ -40,104 +39,106 @@ define([
     GestureRepresenter,
     DndService,
     TemplateLinker,
-    TemplatePrefetcher,
-    legacyRegistry
+    TemplatePrefetcher
 ) {
 
-    legacyRegistry.register("platform/representation", {
-        "extensions": {
-            "directives": [
-                {
-                    "key": "mctInclude",
-                    "implementation": MCTInclude,
-                    "depends": [
-                        "templates[]",
-                        "templateLinker"
-                    ]
-                },
-                {
-                    "key": "mctRepresentation",
-                    "implementation": MCTRepresentation,
-                    "depends": [
-                        "representations[]",
-                        "views[]",
-                        "representers[]",
-                        "$q",
-                        "templateLinker",
-                        "$log"
-                    ]
-                }
-            ],
-            "gestures": [
-                {
-                    "key": "drag",
-                    "implementation": DragGesture,
-                    "depends": [
-                        "$log",
-                        "dndService"
-                    ]
-                },
-                {
-                    "key": "drop",
-                    "implementation": DropGesture,
-                    "depends": [
-                        "dndService",
-                        "$q"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "provides": "gestureService",
-                    "type": "provider",
-                    "implementation": GestureProvider,
-                    "depends": [
-                        "gestures[]"
-                    ]
-                }
-            ],
-            "representers": [
-                {
-                    "implementation": GestureRepresenter,
-                    "depends": [
-                        "gestureService"
-                    ]
-                }
-            ],
-            "services": [
-                {
-                    "key": "dndService",
-                    "implementation": DndService,
-                    "depends": [
-                        "$log"
-                    ]
-                },
-                {
-                    "key": "templateLinker",
-                    "implementation": TemplateLinker,
-                    "depends": [
-                        "$templateRequest",
-                        "$sce",
-                        "$compile",
-                        "$log"
-                    ],
-                    "comment": "For internal use by mct-include and mct-representation."
-                }
-            ],
-            "runs": [
-                {
-                    "priority": "mandatory",
-                    "implementation": TemplatePrefetcher,
-                    "depends": [
-                        "templateLinker",
-                        "templates[]",
-                        "views[]",
-                        "representations[]",
-                        "controls[]",
-                        "containers[]"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/representation",
+        definition: {
+            "extensions": {
+                "directives": [
+                    {
+                        "key": "mctInclude",
+                        "implementation": MCTInclude,
+                        "depends": [
+                            "templates[]",
+                            "templateLinker"
+                        ]
+                    },
+                    {
+                        "key": "mctRepresentation",
+                        "implementation": MCTRepresentation,
+                        "depends": [
+                            "representations[]",
+                            "views[]",
+                            "representers[]",
+                            "$q",
+                            "templateLinker",
+                            "$log"
+                        ]
+                    }
+                ],
+                "gestures": [
+                    {
+                        "key": "drag",
+                        "implementation": DragGesture,
+                        "depends": [
+                            "$log",
+                            "dndService"
+                        ]
+                    },
+                    {
+                        "key": "drop",
+                        "implementation": DropGesture,
+                        "depends": [
+                            "dndService",
+                            "$q"
+                        ]
+                    }
+                ],
+                "components": [
+                    {
+                        "provides": "gestureService",
+                        "type": "provider",
+                        "implementation": GestureProvider,
+                        "depends": [
+                            "gestures[]"
+                        ]
+                    }
+                ],
+                "representers": [
+                    {
+                        "implementation": GestureRepresenter,
+                        "depends": [
+                            "gestureService"
+                        ]
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "dndService",
+                        "implementation": DndService,
+                        "depends": [
+                            "$log"
+                        ]
+                    },
+                    {
+                        "key": "templateLinker",
+                        "implementation": TemplateLinker,
+                        "depends": [
+                            "$templateRequest",
+                            "$sce",
+                            "$compile",
+                            "$log"
+                        ],
+                        "comment": "For internal use by mct-include and mct-representation."
+                    }
+                ],
+                "runs": [
+                    {
+                        "priority": "mandatory",
+                        "implementation": TemplatePrefetcher,
+                        "depends": [
+                            "templateLinker",
+                            "templates[]",
+                            "views[]",
+                            "representations[]",
+                            "controls[]",
+                            "containers[]"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

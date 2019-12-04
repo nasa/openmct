@@ -1,14 +1,18 @@
 <template>
-    <div class="c-labeled-input"
-        :title="options.title">
-        <label :for="uid">
-            <div class="c-labeled-input__label">{{ options.label }}</div>
-        </label>
-        <input :id="uid"
-               :type="options.type"
-               :value="options.value"
-               v-bind="options.attrs"/>
-    </div>
+<div
+    class="c-labeled-input"
+    :title="options.title"
+>
+    <label :for="uid">
+        <div class="c-labeled-input__label">{{ options.label }}</div>
+    </label>
+    <input
+        :id="uid"
+        :type="options.type"
+        :value="options.value"
+        v-bind="options.attrs"
+    >
+</div>
 </template>
 
 <script>
@@ -19,6 +23,7 @@ export default {
     props: {
         options: {
             type: Object,
+            required: true,
             validator(value) {
                 return ['number', 'text'].indexOf(value.type) !== -1;
             }

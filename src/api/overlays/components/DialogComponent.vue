@@ -1,27 +1,36 @@
 <template>
-    <div class="c-message">
-        <!--Uses flex-row -->
-        <div class="c-message__icon"
-             :class="['u-icon-bg-color-' + iconClass]"></div>
-        <div class="c-message__text">
-            <!-- Uses flex-column -->
-            <div class="c-message__title"
-                 v-if="title">
-                {{title}}
-            </div>
-
-            <div class="c-message__hint"
-                 v-if="hint">
-                {{hint}}
-                <span v-if="timestamp">[{{timestamp}}]</span>
-            </div>
-
-            <div class="c-message__action-text"
-                 v-if="message">
-                {{message}}
-            </div>
+<div class="c-message">
+    <!--Uses flex-row -->
+    <div
+        class="c-message__icon"
+        :class="['u-icon-bg-color-' + iconClass]"
+    ></div>
+    <div class="c-message__text">
+        <!-- Uses flex-column -->
+        <div
+            v-if="title"
+            class="c-message__title"
+        >
+            {{ title }}
         </div>
+
+        <div
+            v-if="hint"
+            class="c-message__hint"
+        >
+            {{ hint }}
+            <span v-if="timestamp">[{{ timestamp }}]</span>
+        </div>
+
+        <div
+            v-if="message"
+            class="c-message__action-text"
+        >
+            {{ message }}
+        </div>
+        <slot></slot>
     </div>
+</div>
 </template>
 
 <style lang="scss">
@@ -44,7 +53,7 @@
 
         &__icon {
             // Holds a background SVG graphic
-            $s: 50px;
+            $s: 80px;
             flex: 0 0 auto;
             min-width: $s;
             min-height: $s;
@@ -61,9 +70,13 @@
         }
 
         // __text elements
-        &__title,
         &__action-text {
-            font-size: 1.2em; // TEMP
+            font-size: 1.2em;
+        }
+
+        &__title {
+            font-size: 1.5em;
+            font-weight: bold;
         }
 
         &--simple {

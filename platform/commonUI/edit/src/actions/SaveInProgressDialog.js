@@ -6,7 +6,7 @@ define([], function () {
 
     SaveInProgressDialog.prototype.show = function () {
         this.dialog = this.dialogService.showBlockingMessage({
-            title: "Saving...",
+            title: "Saving",
             hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
             unknownProgress: true,
             severity: "info",

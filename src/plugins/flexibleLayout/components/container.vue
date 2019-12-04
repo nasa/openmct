@@ -21,62 +21,65 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-container"
-         :style="[{'flex-basis': sizeString}]"
-         :class="{'is-empty': !frames.length}">
-        <div class="c-fl-container__header"
-            v-show="isEditing"
-            draggable="true"
-            @dragstart="startContainerDrag">
-            <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
-        </div>
-
-        <drop-hint
-            class="c-fl-frame__drop-hint"
-            :index="-1"
-            :allow-drop="allowDrop"
-            @object-drop-to="moveOrCreateNewFrame">
-        </drop-hint>
-
-        <div class="c-fl-container__frames-holder">
-            <template
-                 v-for="(frame, i) in frames">
-
-                <frame-component
-                    class="c-fl-container__frame"
-                    :key="frame.id"
-                    :frame="frame"
-                    :index="i"
-                    :containerIndex="index"
-                    :isEditing="isEditing">
-                </frame-component>
-
-                <drop-hint
-                    class="c-fl-frame__drop-hint"
-                    :key="i"
-                    :index="i"
-                    :allowDrop="allowDrop"
-                    @object-drop-to="moveOrCreateNewFrame">
-                </drop-hint>
-
-                <resize-handle
-                    v-if="(i !== frames.length - 1)"
-                    :key="i"
-                    :index="i"
-                    :orientation="rowsLayout ? 'horizontal' : 'vertical'"
-                    @init-move="startFrameResizing"
-                    @move="frameResizing"
-                    @end-move="endFrameResizing"
-                    :isEditing="isEditing">
-                </resize-handle>
-            </template>
-        </div>
+<div
+    class="c-fl-container"
+    :style="[{'flex-basis': sizeString}]"
+    :class="{'is-empty': !frames.length}"
+>
+    <div
+        v-show="isEditing"
+        class="c-fl-container__header"
+        draggable="true"
+        @dragstart="startContainerDrag"
+    >
+        <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
     </div>
+
+    <drop-hint
+        class="c-fl-frame__drop-hint"
+        :index="-1"
+        :allow-drop="allowDrop"
+        @object-drop-to="moveOrCreateNewFrame"
+    />
+
+    <div class="c-fl-container__frames-holder">
+        <template
+            v-for="(frame, i) in frames"
+        >
+            <frame-component
+                :key="frame.id"
+                class="c-fl-container__frame"
+                :frame="frame"
+                :index="i"
+                :container-index="index"
+                :is-editing="isEditing"
+            />
+
+            <drop-hint
+                :key="i"
+                class="c-fl-frame__drop-hint"
+                :index="i"
+                :allow-drop="allowDrop"
+                @object-drop-to="moveOrCreateNewFrame"
+            />
+
+            <resize-handle
+                v-if="(i !== frames.length - 1)"
+                :key="i"
+                :index="i"
+                :orientation="rowsLayout ? 'horizontal' : 'vertical'"
+                :is-editing="isEditing"
+                @init-move="startFrameResizing"
+                @move="frameResizing"
+                @end-move="endFrameResizing"
+            />
+        </template>
+    </div>
+</div>
 </template>
 
 <script>
 import FrameComponent from './frame.vue';
-import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 
@@ -84,11 +87,25 @@ const MIN_FRAME_SIZE = 5;
 
 export default {
     inject:['openmct'],
-    props: ['container', 'index', 'rowsLayout', 'isEditing'],
     components: {
         FrameComponent,
         ResizeHandle,
         DropHint
+    },
+    props: {
+        container: {
+            type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
+        rowsLayout: Boolean,
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
     },
     computed: {
         frames() {
@@ -97,6 +114,19 @@ export default {
         sizeString() {
             return `${Math.round(this.container.size)}%`
         }
+    },
+    mounted() {
+        let context = {
+            item: this.$parent.domainObject,
+            addContainer: this.addContainer,
+            type: 'container',
+            containerId: this.container.id
+        }
+
+        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
+    },
+    beforeDestroy() {
+        this.unsubscribeSelection();
     },
     methods: {
         allowDrop(event, index) {
@@ -131,7 +161,7 @@ export default {
                     insertIndex
                 );
                 return;
-            };
+            }
             // move frame.
             let frameId = event.dataTransfer.getData('frameid');
             let containerIndex = Number(event.dataTransfer.getData('containerIndex'));
@@ -182,19 +212,6 @@ export default {
         startContainerDrag(event) {
             event.dataTransfer.setData('containerid', this.container.id);
         }
-    },
-    mounted() {
-        let context = {
-            item: this.$parent.domainObject,
-            addContainer: this.addContainer,
-            type: 'container',
-            containerId: this.container.id
-        }
-
-        this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
-    },
-    beforeDestroy() {
-        this.unsubscribeSelection();
     }
 }
 </script>

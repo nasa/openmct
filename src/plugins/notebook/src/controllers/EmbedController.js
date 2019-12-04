@@ -141,7 +141,6 @@ function (
 
         var self = this,
             snapshot = new Vue({
-                template: SnapshotTemplate,
                 data: function () {
                     return {
                         embed: self.embed
@@ -151,7 +150,8 @@ function (
                     formatTime: self.formatTime,
                     annotateSnapshot: annotateSnapshot(self.openmct),
                     findInArray: self.findInArray
-                }
+                },
+                template: SnapshotTemplate
             });
 
         var snapshotOverlay = this.openmct.overlays.overlay({

@@ -1,12 +1,15 @@
 <template>
-    <div></div>
+<div></div>
 </template>
 
 <script>
 export default {
     inject: ['openmct'],
     props: {
-        templateKey: String
+        templateKey: {
+            type: String,
+            default: undefined
+        }
     },
     mounted() {
         let openmct = this.openmct;
