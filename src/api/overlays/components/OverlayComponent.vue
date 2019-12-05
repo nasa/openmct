@@ -13,6 +13,7 @@
         <div
             ref="element"
             class="c-overlay__contents"
+            tabindex="0"
         ></div>
         <div
             v-if="buttons"
@@ -20,35 +21,16 @@
         >
             <button
                 v-for="(button, index) in buttons"
+                ref="buttons"
                 :key="index"
                 class="c-button"
-                :class="{'c-button--major': button.emphasis}"
+                tabindex="0"
+                :class="{'c-button--major': focusIndex===index}"
+                @focus="focusIndex=index"
                 @click="buttonClickHandler(button.callback)"
             >
                 {{ button.label }}
             </button>
-            <div
-                ref="element"
-                class="c-overlay__contents"
-                tabindex="0"
-            ></div>
-            <div
-                v-if="buttons"
-                class="c-overlay__button-bar"
-            >
-                <button
-                    v-for="(button, index) in buttons"
-                    ref="buttons"
-                    :key="index"
-                    class="c-button"
-                    tabindex="0"
-                    :class="{'c-button--major': focusIndex===index}"
-                    @focus="focusIndex=index"
-                    @click="buttonClickHandler(button.callback)"
-                >
-                    {{ button.label }}
-                </button>
-            </div>
         </div>
     </div>
 </div>
