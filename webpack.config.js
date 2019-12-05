@@ -20,6 +20,8 @@ const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        espresso: './src/styles/core-espresso.scss',
+        snow: './src/styles/core-snow.scss'
     },
     output: {
         filename: '[name].js',
@@ -75,12 +77,7 @@ const webpackConfig = {
                 use: [
                     devMode ? 'style-loader': MiniCssExtractPlugin.loader,
                     'css-loader',
-                    {
-                        loader: 'fast-sass-loader',
-                        options: {
-                            includePaths: bourbon.includePaths
-                        }
-                    }
+                    'fast-sass-loader'
                 ]
             },
             {
