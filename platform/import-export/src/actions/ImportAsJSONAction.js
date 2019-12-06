@@ -136,6 +136,10 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         return tree;
     };
 
+    ImportAsJSONAction.prototype.getKeyString = function (identifier) {
+        return this.openmct.objects.makeKeyString(identifier);
+    };
+
     /**
      * Rewrites all instances of a given id in the tree with a newly generated
      * replacement to prevent collision.

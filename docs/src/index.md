@@ -33,5 +33,5 @@ As we transition to a new API, the following documentation for the old API
  * The [Developer's Guide](guide/) goes into more detail about how to use the
  platform and the functionality that it provides.
 
- * The [Tutorials](tutorials/) give examples of extending the platform to add
+ * The [Tutorials](https://github.com/nasa/openmct-tutorial) give examples of extending the platform to add
  functionality, and integrate with data sources.
