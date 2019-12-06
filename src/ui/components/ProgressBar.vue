@@ -18,7 +18,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     /******************************************************** PROGRESS BAR */
     @keyframes progress {

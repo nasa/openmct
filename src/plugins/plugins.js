@@ -45,7 +45,9 @@ define([
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
     './clearData/plugin',
-    './webPage/plugin'
+    './webPage/plugin',
+    './themes/espresso',
+    './themes/snow'
 ], function (
     _,
     UTCTimeSystem,
@@ -71,7 +73,9 @@ define([
     ObjectMigration,
     GoToOriginalAction,
     ClearData,
-    WebPagePlugin
+    WebPagePlugin,
+    Espresso,
+    Snow
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -173,6 +177,8 @@ define([
     plugins.GoToOriginalAction = GoToOriginalAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
+    plugins.Espresso = Espresso.default;
+    plugins.Snow = Snow.default;
 
     return plugins;
 });

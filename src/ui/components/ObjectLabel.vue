@@ -15,7 +15,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
     .c-object-label {
         // <a> tag and draggable element that holds type icon and name.
         // Used mostly in trees and lists

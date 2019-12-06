@@ -34,7 +34,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     /**************************** BASE - MOBILE AND DESKTOP */
     .l-multipane {

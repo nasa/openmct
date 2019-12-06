@@ -19,7 +19,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     .c-custom-checkbox {
         $d: 14px;

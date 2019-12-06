@@ -20,6 +20,8 @@ const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        espressoTheme: './src/plugins/themes/espresso-theme.scss',
+        snowTheme: './src/plugins/themes/snow-theme.scss'
     },
     output: {
         filename: '[name].js',
@@ -39,7 +41,8 @@ const webpackConfig = {
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
-            "testTools": path.join(__dirname, "src/testTools.js")
+            "testTools": path.join(__dirname, "src/testTools.js"),
+            "themes": path.join(__dirname, "src/plugins/themes/")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
@@ -52,8 +55,9 @@ const webpackConfig = {
         }),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
-            path: 'assets/styles/',
-            filename: '[name].css'
+            filename: '[name].css',
+            chunkFilename: '[name].css',
+            ignoreOrder: false
         }),
         new CopyWebpackPlugin([
             {
@@ -73,12 +77,15 @@ const webpackConfig = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    devMode ? 'style-loader': MiniCssExtractPlugin.loader,
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
                         loader: 'fast-sass-loader',
                         options: {
-                            includePaths: bourbon.includePaths
+                            includePaths: bourbon.includePaths,
+                            data: `
+                                @import "~themes/snow-theme.scss";
+                            `
                         }
                     }
                 ]

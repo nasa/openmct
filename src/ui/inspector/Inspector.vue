@@ -20,7 +20,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     .c-inspector {
         > [class*="__"] {

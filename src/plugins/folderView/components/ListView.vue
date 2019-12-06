@@ -62,7 +62,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     /******************************* LIST VIEW */
     .c-list-view {

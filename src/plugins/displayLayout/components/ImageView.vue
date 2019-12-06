@@ -35,7 +35,7 @@
 </template>
 
 <style lang="scss">
-    @import '~styles/sass-base';
+     
 
     .c-image-view {
         background-size: cover;

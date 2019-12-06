@@ -37,7 +37,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     @mixin overlaySizing($marginTB: 5%, $marginLR: $marginTB, $width: auto, $height: auto) {
         position: absolute;

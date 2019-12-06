@@ -29,7 +29,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     /******************************* LIST ITEM */
     .c-list-item {

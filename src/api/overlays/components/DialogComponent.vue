@@ -34,7 +34,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     @mixin legacyMessage() {
         flex: 0 1 auto;

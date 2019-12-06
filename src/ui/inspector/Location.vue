@@ -38,7 +38,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     .c-location {
         display: flex;

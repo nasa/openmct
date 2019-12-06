@@ -10,7 +10,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     /******************************* GRID VIEW */
     .l-grid-view {

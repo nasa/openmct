@@ -60,7 +60,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     .c-conductor__mode-menu {
         max-height: 80vh;

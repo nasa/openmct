@@ -28,7 +28,7 @@
 </template>
 
 <style lang="scss">
-    @import "~styles/sass-base";
+     
 
     .c-conductor-axis {
         $h: 18px;

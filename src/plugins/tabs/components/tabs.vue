@@ -56,8 +56,6 @@
 </template>
 
 <style lang="scss">
-    @import '~styles/sass-base.scss';
-
     .c-tabs-view {
         $h: 20px;
         @include abs();
