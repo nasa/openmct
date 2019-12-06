@@ -103,7 +103,7 @@ define([
         var options = {
             size: this.$element[0].offsetWidth,
             domain: this.config.xAxis.get('key'),
-            shouldUseMinMax: this.shouldUseMinMax(series)
+            shouldNotUseMinMax: this.shouldNotUseMinMax(series)
         };
 
         series.load(options)
@@ -161,8 +161,8 @@ define([
         return config;
     };
 
-    PlotController.prototype.shouldUseMinMax = function (series) {
-        return series.model.interpolate !== 'none';
+    PlotController.prototype.shouldNotUseMinMax = function (series) {
+        return series.model.interpolate === 'none';
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
