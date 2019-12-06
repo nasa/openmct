@@ -30,17 +30,16 @@
         </tr>
     </thead>
     <tbody>
-        <lad-row 
+        <lad-row
             v-for="item in items"
             :key="item.key"
-            :domainObject="item.domainObject">
-        </lad-row>
+            :domain-object="item.domainObject"
+        />
     </tbody>
 </table>
 </template>
 
 <script>
-import lodash from 'lodash';
 import LadRow from './LADRow.vue';
 
 export default {
@@ -52,6 +51,18 @@ export default {
         return {
             items: []
         }
+    },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addItem);
+        this.composition.on('remove', this.removeItem);
+        this.composition.on('reorder', this.reorder);
+        this.composition.load();
+    },
+    destroyed() {
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.reorder);
     },
     methods: {
         addItem(domainObject) {
@@ -72,18 +83,6 @@ export default {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
             });
         }
-    },
-    mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addItem);
-        this.composition.on('remove', this.removeItem);
-        this.composition.on('reorder', this.reorder);
-        this.composition.load();
-    },
-    destroyed() {
-        this.composition.off('add', this.addItem);
-        this.composition.off('remove', this.removeItem);
-        this.composition.off('reorder', this.reorder);
     }
 }
 </script>

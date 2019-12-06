@@ -17,6 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
+<div></div>
 </template>
 
 <style lang="scss">
@@ -152,13 +153,13 @@
 </style>
 
 <script>
-    export default {
-        inject: ['openmct'],
+export default {
+    inject: ['openmct'],
 
-        mounted() {
-            this.openmct.indicators.indicatorObjects.forEach((indicator) => {
-                this.$el.appendChild(indicator.element);
-            });
-        }
+    mounted() {
+        this.openmct.indicators.indicatorObjects.forEach((indicator) => {
+            this.$el.appendChild(indicator.element);
+        });
     }
+}
 </script>

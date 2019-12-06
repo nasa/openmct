@@ -44,19 +44,19 @@ define([
                 return {
                     show: function (element, isEditing) {
                         component =  new Vue({
-                            data() {
-                                return {
-                                    isEditing: isEditing
-                                }
-                            },
-                            components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
-                            },
                             provide: {
                                 openmct,
                                 layoutObject: domainObject
                             },
                             el: element,
+                            components: {
+                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
+                            },
+                            data() {
+                                return {
+                                    isEditing: isEditing
+                                }
+                            },
                             template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
                         });
                     },

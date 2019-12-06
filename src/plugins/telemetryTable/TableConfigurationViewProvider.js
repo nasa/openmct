@@ -54,11 +54,11 @@ define([
                                 openmct,
                                 tableConfiguration
                             },
+                            el: element,
                             components: {
                                 TableConfiguration: TableConfigurationComponent.default
                             },
-                            template: '<table-configuration></table-configuration>',
-                            el: element
+                            template: '<table-configuration></table-configuration>'
                         });
                     },
                     destroy: function () {

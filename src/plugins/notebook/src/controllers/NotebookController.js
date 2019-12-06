@@ -84,7 +84,6 @@ function (
         };
 
         var NotebookVue = Vue.extend({
-            template: NotebookTemplate,
             provide: {openmct: self.openmct, domainObject: self.domainObject},
             components: {
                 'notebook-entry': entryComponent,
@@ -111,7 +110,8 @@ function (
                 newEntry: self.newEntry,
                 filterBySearch: self.filterBySearch,
                 sort: self.sort
-            }
+            },
+            template: NotebookTemplate
         });
 
         this.NotebookVue =  new NotebookVue();

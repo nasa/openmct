@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-conductor-axis"
-         ref="axisHolder"
-         @mousedown="dragStart($event)">
-    </div>
+<div
+    ref="axisHolder"
+    class="c-conductor-axis"
+    @mousedown="dragStart($event)"
+></div>
 </template>
 
 <style lang="scss">
@@ -126,106 +127,9 @@ const PIXELS_PER_TICK_WIDE = 200;
 export default {
     inject: ['openmct'],
     props: {
-        bounds: Object
-    },
-    methods: {
-        setScale() {
-            let timeSystem = this.openmct.time.timeSystem();
-            let bounds = this.bounds;
-
-            if (timeSystem.isUTCBased) {
-                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
-            } else {
-                this.xScale.domain([bounds.start, bounds.end]);
-            }
-
-            this.xAxis.scale(this.xScale);
-
-            this.xScale.range([PADDING, this.width - PADDING * 2]);
-            this.axisElement.call(this.xAxis);
-
-            if (this.width > 1800) {
-                this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
-            } else {
-                this.xAxis.ticks(this.width / PIXELS_PER_TICK);
-            }
-
-            this.msPerPixel = (bounds.end - bounds.start) / this.width;
-        },
-        setViewFromTimeSystem(timeSystem) {
-            let format = this.getActiveFormatter();
-            let bounds = this.openmct.time.bounds();
-
-            //The D3 scale used depends on the type of time system as d3
-            // supports UTC out of the box.
-            if (timeSystem.isUTCBased) {
-                this.xScale = d3Scale.scaleUtc();
-            } else {
-                this.xScale = d3Scale.scaleLinear();
-            }
-
-            this.xAxis.scale(this.xScale);
-            this.xAxis.tickFormat(utcMultiTimeFormat);
-            this.axisElement.call(this.xAxis);
-            this.setScale();
-        },
-        getActiveFormatter() {
-            let timeSystem = this.openmct.time.timeSystem();
-            let isFixed = this.openmct.time.clock() === undefined;
-
-            if (isFixed) {
-                return this.getFormatter(timeSystem.timeFormat);
-            } else {
-                return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-            }
-        },
-        getFormatter(key) {
-            return this.openmct.telemetry.getValueFormatter({
-                format: key
-            }).formatter;
-        },
-        dragStart($event){
-            let isFixed = this.openmct.time.clock() === undefined;
-            if (isFixed){
-                this.dragStartX = $event.clientX;
-
-                document.addEventListener('mousemove', this.drag);
-                document.addEventListener('mouseup', this.dragEnd, {
-                    once: true
-                });
-            }
-        },
-        drag($event) {
-            if (!this.dragging){
-                this.dragging = true;
-                requestAnimationFrame(()=>{
-                    let deltaX = $event.clientX - this.dragStartX;
-                    let percX = deltaX / this.width;
-                    let bounds = this.openmct.time.bounds();
-                    let deltaTime = bounds.end - bounds.start;
-                    let newStart = bounds.start - percX * deltaTime;
-                    this.$emit('panAxis',{
-                        start: newStart,
-                        end: newStart + deltaTime
-                    });
-                    this.dragging = false;
-                })
-            } else {
-                console.log('Rejected drag due to RAF cap');
-            }
-        },
-        dragEnd() {
-            document.removeEventListener('mousemove', this.drag);
-            this.openmct.time.bounds({
-                start: this.bounds.start,
-                end: this.bounds.end
-            });
-        },
-        resize() {
-            if (this.$refs.axisHolder.clientWidth !== this.width) {
-                this.width = this.$refs.axisHolder.clientWidth;
-                this.setScale();
-            }
+        bounds: {
+            type: Object,
+            required: true
         }
     },
     watch: {
@@ -259,6 +163,103 @@ export default {
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
     },
     destroyed() {
+    },
+    methods: {
+        setScale() {
+            let timeSystem = this.openmct.time.timeSystem();
+            let bounds = this.bounds;
+
+            if (timeSystem.isUTCBased) {
+                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
+            } else {
+                this.xScale.domain([bounds.start, bounds.end]);
+            }
+
+            this.xAxis.scale(this.xScale);
+
+            this.xScale.range([PADDING, this.width - PADDING * 2]);
+            this.axisElement.call(this.xAxis);
+
+            if (this.width > 1800) {
+                this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
+            } else {
+                this.xAxis.ticks(this.width / PIXELS_PER_TICK);
+            }
+
+            this.msPerPixel = (bounds.end - bounds.start) / this.width;
+        },
+        setViewFromTimeSystem(timeSystem) {
+            //The D3 scale used depends on the type of time system as d3
+            // supports UTC out of the box.
+            if (timeSystem.isUTCBased) {
+                this.xScale = d3Scale.scaleUtc();
+            } else {
+                this.xScale = d3Scale.scaleLinear();
+            }
+
+            this.xAxis.scale(this.xScale);
+            this.xAxis.tickFormat(utcMultiTimeFormat);
+            this.axisElement.call(this.xAxis);
+            this.setScale();
+        },
+        getActiveFormatter() {
+            let timeSystem = this.openmct.time.timeSystem();
+            let isFixed = this.openmct.time.clock() === undefined;
+
+            if (isFixed) {
+                return this.getFormatter(timeSystem.timeFormat);
+            } else {
+                return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+            }
+        },
+        getFormatter(key) {
+            return this.openmct.telemetry.getValueFormatter({
+                format: key
+            }).formatter;
+        },
+        dragStart($event) {
+            let isFixed = this.openmct.time.clock() === undefined;
+            if (isFixed) {
+                this.dragStartX = $event.clientX;
+
+                document.addEventListener('mousemove', this.drag);
+                document.addEventListener('mouseup', this.dragEnd, {
+                    once: true
+                });
+            }
+        },
+        drag($event) {
+            if (!this.dragging) {
+                this.dragging = true;
+                requestAnimationFrame(()=>{
+                    let deltaX = $event.clientX - this.dragStartX;
+                    let percX = deltaX / this.width;
+                    let bounds = this.openmct.time.bounds();
+                    let deltaTime = bounds.end - bounds.start;
+                    let newStart = bounds.start - percX * deltaTime;
+                    this.$emit('panAxis',{
+                        start: newStart,
+                        end: newStart + deltaTime
+                    });
+                    this.dragging = false;
+                })
+            } else {
+                console.log('Rejected drag due to RAF cap');
+            }
+        },
+        dragEnd() {
+            document.removeEventListener('mousemove', this.drag);
+            this.openmct.time.bounds({
+                start: this.bounds.start,
+                end: this.bounds.end
+            });
+        },
+        resize() {
+            if (this.$refs.axisHolder.clientWidth !== this.width) {
+                this.width = this.$refs.axisHolder.clientWidth;
+                this.setScale();
+            }
+        }
     }
 
 }

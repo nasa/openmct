@@ -1,21 +1,39 @@
 <template>
 <div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
-    <ul class="c-properties__section" v-if="!multiSelect">
-        <li class="c-properties__row" v-if="originalPath.length">
+    <div
+        class="c-properties__header"
+        title="The location of this linked object."
+    >
+        Original Location
+    </div>
+    <ul
+        v-if="!multiSelect"
+        class="c-properties__section"
+    >
+        <li
+            v-if="originalPath.length"
+            class="c-properties__row"
+        >
             <ul class="c-properties__value c-location">
-                <li v-for="pathObject in orderedOriginalPath"
+                <li
+                    v-for="pathObject in orderedOriginalPath"
+                    :key="pathObject.key"
                     class="c-location__item"
-                    :key="pathObject.key">
+                >
                     <object-label
-                        :domainObject="pathObject.domainObject"
-                        :objectPath="pathObject.objectPath">
-                    </object-label>
+                        :domain-object="pathObject.domainObject"
+                        :object-path="pathObject.objectPath"
+                    />
                 </li>
             </ul>
         </li>
     </ul>
-    <div class="c-properties__row--span-all" v-if="multiSelect">No location to display for multiple items</div>
+    <div
+        v-if="multiSelect"
+        class="c-properties__row--span-all"
+    >
+        No location to display for multiple items
+    </div>
 </div>
 </template>
 
@@ -78,6 +96,11 @@ export default {
             keyString: ''
         }
     },
+    computed: {
+        orderedOriginalPath() {
+            return this.originalPath.slice().reverse();
+        }
+    },
     mounted() {
         this.openmct.selection.on('change', this.updateSelection);
         this.updateSelection(this.openmct.selection.get());
@@ -111,7 +134,7 @@ export default {
             if (!selection.length || !selection[0].length) {
                 this.clearData();
                 return;
-            }  
+            }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
@@ -119,7 +142,7 @@ export default {
             } else {
                 this.multiSelect = false;
             }
-            
+
             this.domainObject = selection[0][0].context.item;
             let parentObject = selection[0][1];
 
@@ -138,11 +161,6 @@ export default {
                 this.openmct.objects.getOriginalPath(this.keyString)
                     .then(this.setOriginalPath);
             }
-        }
-    },
-    computed: {
-        orderedOriginalPath() {
-            return this.originalPath.reverse();
         }
     }
 }

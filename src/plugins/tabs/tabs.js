@@ -44,6 +44,7 @@ define([
                 return {
                     show: function (element) {
                         component =  new Vue({
+                            el: element,
                             components: {
                                 TabsComponent: TabsComponent.default
                             },
@@ -52,7 +53,6 @@ define([
                                 domainObject,
                                 composition: openmct.composition.get(domainObject)
                             },
-                            el: element,
                             template: '<tabs-component></tabs-component>'
                         });
                     },

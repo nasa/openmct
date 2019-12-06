@@ -20,7 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <td @click="selectCell($event.currentTarget, columnKey)" :title="formattedValue">{{formattedValue}}</td>
+<td
+    :title="formattedValue"
+    @click="selectCell($event.currentTarget, columnKey)"
+>
+    {{ formattedValue }}
+</td>
 </template>
 <script>
 export default {
@@ -32,11 +37,20 @@ export default {
         },
         columnKey: {
             type: String,
-            require: true
+            required: true
         },
         objectPath: {
             type: Array,
-            require: false
+            required: true
+        }
+    },
+    computed: {
+        formattedValue() {
+            return this.row.getFormattedValue(this.columnKey);
+        },
+        isSelectable() {
+            let column = this.row.columns[this.columnKey];
+            return column && column.selectable;
         }
     },
     methods: {
@@ -57,15 +71,6 @@ export default {
                 }], false);
                 event.stopPropagation();
             }
-        },
-    },
-    computed: {
-        formattedValue() {
-            return this.row.getFormattedValue(this.columnKey);
-        },
-        isSelectable() {
-            let column = this.row.columns[this.columnKey];
-            return column && column.selectable;
         }
     }
 };
