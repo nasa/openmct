@@ -351,7 +351,7 @@ define(
                  */
                 getResponse: function getResponse(arg) {
                     var id = arg && (typeof arg === 'string' ?
-                            arg : arg.getId());
+                        arg : arg.getId());
 
                     if (id) {
                         return (self.response[id] || {}).data;

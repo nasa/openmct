@@ -95,8 +95,8 @@ define(
                     return gestureMap[key];
                 }).filter(function (Gesture) {
                     return Gesture !== undefined && (Gesture.appliesTo ?
-                            Gesture.appliesTo(domainObject) :
-                            true);
+                        Gesture.appliesTo(domainObject) :
+                        true);
                 }).map(function (Gesture) {
                     return new Gesture(element, domainObject);
                 });

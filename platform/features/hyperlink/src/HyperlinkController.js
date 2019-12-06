@@ -55,4 +55,4 @@ define(
         return HyperlinkController;
     }
 
-  );
+);

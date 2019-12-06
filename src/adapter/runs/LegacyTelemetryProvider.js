@@ -137,8 +137,7 @@ define([
         function callbackWrapper(series) {
             callback(createDatum(domainObject, metadata, series, series.getPointCount() - 1));
         }
-
-        return capability.subscribe(callbackWrapper, request);
+        return capability.subscribe(callbackWrapper, request) || function () {};
     };
 
     LegacyTelemetryProvider.prototype.supportsLimits = function (domainObject) {
@@ -158,7 +157,7 @@ define([
 
         return {
             evaluate: function (datum, property) {
-                return limitEvaluator.evaluate(datum, property.key);
+                return limitEvaluator.evaluate(datum, property && property.key);
             }
         };
     };

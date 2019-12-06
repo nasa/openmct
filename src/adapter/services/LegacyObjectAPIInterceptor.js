@@ -57,12 +57,11 @@ define([
         }.bind(this);
 
         handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
+                keystring = utils.makeKeyString(newStyleObject.identifier);
 
-            //Don't trigger self
-            this.eventEmitter.off('mutation', handleMutation);
-            this.eventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
-            this.eventEmitter.on('mutation', handleMutation);
+            this.eventEmitter.emit(keystring + ":*", newStyleObject);
+            this.eventEmitter.emit('mutation', newStyleObject);
         }.bind(this);
 
         this.eventEmitter.on('mutation', handleMutation);
@@ -73,10 +72,10 @@ define([
         var key = object.key;
 
         return object.getCapability('persistence')
-                .persist()
-                .then(function () {
-                    return utils.toNewFormat(object, key);
-                });
+            .persist()
+            .then(function () {
+                return utils.toNewFormat(object, key);
+            });
     };
 
     ObjectServiceProvider.prototype.delete = function (object) {

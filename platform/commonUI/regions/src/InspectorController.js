@@ -76,7 +76,7 @@ define(
          * @returns a domain object
          */
         InspectorController.prototype.selectedItem = function () {
-            return this.$scope.selection[0].context.oldItem;
+            return this.$scope.selection[0] && this.$scope.selection[0].context.oldItem;
         };
 
         /**

@@ -17,7 +17,7 @@ function (
         '#a61c00','#cc0000','#e69138','#f1c232','#6aa84f','#45818e','#3c78d8','#3d85c6','#674ea7','#a64d79',
         '#85200c','#990000','#b45f06','#bf9000','#38761d','#134f5c','#1155cc','#0b5394','#351c75','#741b47',
         '#5b0f00','#660000','#783f04','#7f6000','#274e13','#0c343d','#1c4587','#073763','#20124d','#4c1130'
-      ];
+    ];
 
     /**
      * Instantiates a new Open MCT Color Palette input
@@ -36,11 +36,11 @@ function (
         var domElement = $(this.palette.getDOM()),
             self = this;
 
-        $('.s-menu-button', domElement).addClass('t-color-palette-menu-button');
+        $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('color-swatch');
-        $('.l-palette', domElement).addClass('l-color-palette');
+        $('.c-palette', domElement).addClass('c-palette--color');
 
-        $('.s-palette-item', domElement).each(function () {
+        $('.c-palette__item', domElement).each(function () {
             var elem = this;
             $(elem).css('background-color', elem.dataset.item);
         });

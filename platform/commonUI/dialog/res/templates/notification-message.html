@@ -1,0 +1,25 @@
+<div class="c-message"
+     ng-class="'message-severity-' + ngModel.severity">
+    <div class="w-message-contents">
+        <div class="c-message__top-bar">
+            <div class="c-message__title">{{ngModel.message}}</div>
+        </div>
+        <div class="message-body">
+            <mct-include key="'progress-bar'"
+                         ng-model="ngModel"
+                         ng-show="ngModel.progressPerc !== undefined"></mct-include>
+        </div>
+    </div>
+    <div class="c-overlay__button-bar">
+        <button ng-repeat="dialogOption in ngModel.options"
+                class="c-button"
+                ng-click="dialogOption.callback()">
+            {{dialogOption.label}}
+        </button>
+        <button class="c-button c-button--major"
+                ng-if="ngModel.primaryOption"
+                ng-click="ngModel.primaryOption.callback()">
+            {{ngModel.primaryOption.label}}
+        </button>
+    </div>
+</div>

@@ -52,7 +52,7 @@ define(
 
                 // Convert to an array if necessary
                 categories = Array.isArray(categories) ?
-                        categories : [categories];
+                    categories : [categories];
 
                 // Store action under all relevant categories
                 categories.forEach(function (category) {

@@ -20,32 +20,39 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="StackedPlotController as stackedPlot"
-      class="abs holder holder-plot has-control-bar t-plot-stacked"
-      ng-class="{
-          'loading': !!currentRequest.pending
-      }">
-
+      class="abs holder holder-plot has-control-bar t-plot-stacked">
     <div class="l-control-bar" ng-show="!stackedPlot.hideExportButtons">
-       <span class="l-btn-set">
-          <a class="s-button t-export labeled icon-download"
+       <span class="c-button-set c-button-set--strip-h">
+          <button class="c-button icon-download"
              ng-click="stackedPlot.exportPNG()"
              title="Export This View's Data as PNG">
-              PNG
-          </a>
-          <a class="s-button t-export labeled"
+              <span class="c-button__label">PNG</span>
+          </button>
+          <button class="c-button"
              ng-click="stackedPlot.exportJPG()"
              title="Export This View's Data as JPG">
-              JPG
-          </a>
-      </span>
+              <span class="c-button__label">JPG</span>
+          </button>
+        </span>
+        <button class="c-button icon-crosshair"
+                ng-class="{ 'is-active': stackedPlot.cursorGuide }"
+                ng-click="stackedPlot.toggleCursorGuide($event)"
+                title="Toggle cursor guides">
+        </button>
     </div>
     <div class="l-view-section">
-        <div class="gl-plot child-frame"
+        <div class="c-loading--overlay loading"
+             ng-show="!!currentRequest.pending"></div>
+        <div class="gl-plot child-frame u-inspectable"
             ng-repeat="telemetryObject in telemetryObjects"
             ng-class="{
                 's-status-timeconductor-unsynced': telemetryObject
                     .getCapability('status')
                     .get('timeconductor-unsynced')
+            }"
+            mct-selectable="{
+                item: telemetryObject.useCapability('adapter'),
+                oldItem: telemetryObject
             }">
             <mct-overlay-plot domain-object="telemetryObject"></mct-overlay-plot>
         </div>

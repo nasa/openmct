@@ -49,7 +49,6 @@ possible, and your feedback will help us get there! Feedback can be provided via
 ## Deploying Open MCT
 
 Open MCT is built using [`npm`](http://npmjs.com/)
-and [`gulp`](http://gulpjs.com/).
 
 To build Open MCT for deployment:
 
@@ -59,32 +58,13 @@ This will compile and minify JavaScript sources, as well as copy over assets.
 The contents of the `dist` folder will contain a runnable Open MCT
 instance (e.g. by starting an HTTP server in that directory), including:
 
-* A `main.js` file containing Open MCT source code.
-* Various assets in the `example` and `platform` directories.
-* An `index.html` that runs Open MCT in its default configuration.
-
-Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
-
-## Bundles
-
-A bundle is a group of software components (including source code, declared
-as AMD modules, as well as resources such as images and HTML templates)
-that is intended to be added or removed as a single unit. A plug-in for
-Open MCT will be expressed as a bundle; platform components are also
-expressed as bundles.
-
-A bundle is also just a directory which contains a file `bundle.json`,
-which declares its contents.
-
-The file `bundles.json` (note the plural), at the top level of the
-repository, is a JSON file containing an array of all bundles (expressed as
-directory names) to include in a running instance of Open MCT. Adding or
-removing paths from this list will add or remove bundles from the running
-application.
+* `openmct.js` - Open MCT source code.
+* `openmct.css` - Basic styles to load to prevent a FOUC.
+* `index.html`, an example to run Open MCT in the basic configuration.
 
 ## Tests
 
-Tests are written for [Jasmine 1.3](http://jasmine.github.io/1.3/introduction.html)
+Tests are written for [Jasmine 3](http://jasmine.github.io/)
 and run by [Karma](http://karma-runner.github.io). To run:
 
 `npm test`

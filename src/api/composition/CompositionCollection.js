@@ -25,7 +25,6 @@ define([
 ], function (
     _
 ) {
-
     /**
      * A CompositionCollection represents the list of domain objects contained
      * by another domain object. It provides methods for loading this
@@ -56,12 +55,12 @@ define([
         this.listeners = {
             add: [],
             remove: [],
-            load: []
+            load: [],
+            reorder: []
         };
         this.onProviderAdd = this.onProviderAdd.bind(this);
         this.onProviderRemove = this.onProviderRemove.bind(this);
     }
-
 
     /**
      * Listen for changes to this composition.  Supports 'add', 'remove', and
@@ -75,7 +74,9 @@ define([
         if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
-
+        if (!this.mutationListener) {
+            this._synchronize();
+        }
         if (this.provider.on && this.provider.off) {
             if (event === 'add') {
                 this.provider.on(
@@ -91,6 +92,13 @@ define([
                     this.onProviderRemove,
                     this
                 );
+            } if (event === 'reorder') {
+                this.provider.on(
+                    this.domainObject,
+                    'reorder',
+                    this.onProviderReorder,
+                    this
+                )
             }
         }
 
@@ -124,6 +132,8 @@ define([
 
         this.listeners[event].splice(index, 1);
         if (this.listeners[event].length === 0) {
+            this._destroy();
+
             // Remove provider listener if this is the last callback to
             // be removed.
             if (this.provider.off && this.provider.on) {
@@ -139,6 +149,13 @@ define([
                         this.domainObject,
                         'remove',
                         this.onProviderRemove,
+                        this
+                    );
+                } else if (event === 'reorder') {
+                    this.provider.off(
+                        this.domainObject,
+                        'reorder',
+                        this.onProviderReorder,
                         this
                     );
                 }
@@ -160,6 +177,9 @@ define([
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
         if (!skipMutate) {
+            if (!this.publicAPI.composition.checkPolicy(this.domainObject, child)) {
+                throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
+            }
             this.provider.add(this.domainObject, child.identifier);
         } else {
             this.emit('add', child);
@@ -177,14 +197,10 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                return Promise.all(children.map(function (c) {
-                    return this.publicAPI.objects.get(c);
-                }, this));
+                return Promise.all(children.map((c) => this.publicAPI.objects.get(c)));
             }.bind(this))
             .then(function (childObjects) {
-                childObjects.forEach(function (c) {
-                    this.add(c, true);
-                }, this);
+                childObjects.forEach(c => this.add(c, true));
                 return childObjects;
             }.bind(this))
             .then(function (children) {
@@ -214,6 +230,29 @@ define([
     };
 
     /**
+     * Reorder the domain objects in this composition.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {number} oldIndex
+     * @param {number} newIndex
+     * @memberof module:openmct.CompositionCollection#
+     * @name remove
+     */
+    CompositionCollection.prototype.reorder = function (oldIndex, newIndex, skipMutate) {
+        this.provider.reorder(this.domainObject, oldIndex, newIndex);
+    };
+
+    /**
+     * Handle reorder from provider.
+     * @private
+     */
+    CompositionCollection.prototype.onProviderReorder = function (reorderMap) {
+        this.emit('reorder', reorderMap);
+    };
+
+    /**
      * Handle adds from provider.
      * @private
      */
@@ -232,16 +271,29 @@ define([
         this.remove(child, true);
     };
 
+    CompositionCollection.prototype._synchronize = function () {
+        this.mutationListener = this.publicAPI.objects.observe(this.domainObject, '*', (newDomainObject) => {
+            this.domainObject = JSON.parse(JSON.stringify(newDomainObject));
+        });
+    };
+
+    CompositionCollection.prototype._destroy = function () {
+        if (this.mutationListener) {
+            this.mutationListener();
+            delete this.mutationListener;
+        }
+    };
+
     /**
      * Emit events.
      * @private
      */
-    CompositionCollection.prototype.emit = function (event, payload) {
+    CompositionCollection.prototype.emit = function (event, ...payload) {
         this.listeners[event].forEach(function (l) {
             if (l.context) {
-                l.callback.call(l.context, payload);
+                l.callback.apply(l.context, payload);
             } else {
-                l.callback(payload);
+                l.callback(...payload);
             }
         });
     };

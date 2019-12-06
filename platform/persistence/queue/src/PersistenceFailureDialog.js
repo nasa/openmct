@@ -66,7 +66,7 @@ define(
                     unrecoverable: otherErrors
                 },
                 options: revisionErrors.length > 0 ?
-                        OVERWRITE_CANCEL_OPTIONS : OK_OPTIONS
+                    OVERWRITE_CANCEL_OPTIONS : OK_OPTIONS
             };
         }
 

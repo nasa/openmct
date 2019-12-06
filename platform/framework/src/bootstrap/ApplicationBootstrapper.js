@@ -55,9 +55,12 @@ define(
             var angular = this.angular,
                 document = this.document,
                 $log = this.$log;
-            $log.info("Bootstrapping application " + (app || {}).name);
-            angular.element(document).ready(function () {
-                angular.bootstrap(document, [app.name], { strictDi: true });
+            return new Promise(function (resolve, reject) {
+                $log.info("Bootstrapping application " + (app || {}).name);
+                angular.element(document).ready(function () {
+                    angular.bootstrap(document, [app.name], { strictDi: true });
+                    resolve(angular);
+                });
             });
         };
 

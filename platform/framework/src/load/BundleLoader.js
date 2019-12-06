@@ -147,8 +147,8 @@ define(
             }
 
             return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                    (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                            Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
+                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
         };
 
         return BundleLoader;

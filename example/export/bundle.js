@@ -22,24 +22,26 @@
 /*global define*/
 
 define([
-    'legacyRegistry',
     './ExportTelemetryAsCSVAction'
-], function (legacyRegistry, ExportTelemetryAsCSVAction) {
+], function (ExportTelemetryAsCSVAction) {
     "use strict";
 
-    legacyRegistry.register("example/export", {
-        "name": "Example of using CSV Export",
-        "extensions": {
-            "actions": [
-                {
-                    "key": "example.export",
-                    "name": "Export Telemetry as CSV",
-                    "implementation": ExportTelemetryAsCSVAction,
-                    "category": "contextual",
-                    "cssClass": "icon-download",
-                    "depends": [ "exportService" ]
-                }
-            ]
+    return {
+        name:"example/export",
+        definition: {
+            "name": "Example of using CSV Export",
+            "extensions": {
+                "actions": [
+                    {
+                        "key": "example.export",
+                        "name": "Export Telemetry as CSV",
+                        "implementation": ExportTelemetryAsCSVAction,
+                        "category": "contextual",
+                        "cssClass": "icon-download",
+                        "depends": ["exportService"]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

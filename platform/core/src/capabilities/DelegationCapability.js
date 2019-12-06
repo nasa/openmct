@@ -91,10 +91,10 @@ define(
             }
 
             return this.doesDelegateCapability(key) ?
-                    promiseChildren().then(
-                        filterObjectsWithCapability(key)
-                    ) :
-                    this.$q.when([]);
+                promiseChildren().then(
+                    filterObjectsWithCapability(key)
+                ) :
+                this.$q.when([]);
         };
 
         /**

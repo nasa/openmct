@@ -98,6 +98,14 @@ define(['./Type'], function (Type) {
         return this.types[typeKey];
     };
 
+    TypeRegistry.prototype.importLegacyTypes = function (types) {
+        types.filter((t) => !this.get(t.key))
+            .forEach((type) => {
+                let def = Type.definitionFromLegacyDefinition(type);
+                this.addType(type.key, def);
+            });
+    }
+
     return TypeRegistry;
 });
 

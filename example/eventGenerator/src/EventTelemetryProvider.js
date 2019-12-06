@@ -34,11 +34,9 @@ define(
          * @constructor
          */
         function EventTelemetryProvider($q, $timeout) {
-            var
-	            subscriptions = [],
-	            genInterval = 1000,
-                generating = false,
-                id = Math.random() * 100000;
+            var subscriptions = [],
+                genInterval = 1000,
+                generating = false;
 
             //
             function matchesSource(request) {
@@ -47,7 +45,6 @@ define(
 
             // Used internally; this will be repacked by doPackage
             function generateData(request) {
-	            //console.log("generateData " + (Date.now() - startTime).toString());
                 return {
                     key: request.key,
                     telemetry: new EventTelemetry(request, genInterval)

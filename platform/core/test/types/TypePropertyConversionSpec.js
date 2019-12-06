@@ -48,10 +48,11 @@ define(
             });
 
             it("throws exceptions on unrecognized conversions", function () {
-                var caught = false, tmp;
+                var caught = false;
 
                 try {
-                    tmp = new TypePropertyConversion("some-unknown-conversion");
+                    // eslint-disable-next-line
+                    new TypePropertyConversion("some-unknown-conversion");
                 } catch (e) {
                     caught = true;
                 }

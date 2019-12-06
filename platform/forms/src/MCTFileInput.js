@@ -35,8 +35,8 @@ define(
 
                 function setText(fileName) {
                     scope.structure.text = fileName.length > 20 ?
-                    fileName.substr(0, 20) + "..." :
-                    fileName;
+                        fileName.substr(0, 20) + "..." :
+                        fileName;
                 }
 
                 function handleClick() {

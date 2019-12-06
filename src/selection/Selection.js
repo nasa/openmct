@@ -20,126 +20,238 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['EventEmitter'], function (EventEmitter) {
+define(
+    [
+        'EventEmitter',
+        'lodash'
+    ],
+    function (
+        EventEmitter,
+        _
+    ) {
 
-    /**
-     * Manages selection state for Open MCT
-     * @private
-     */
-    function Selection(openmct) {
-        EventEmitter.call(this);
+        /**
+         * Manages selection state for Open MCT
+         * @private
+         */
+        function Selection(openmct) {
+            EventEmitter.call(this);
 
-        this.openmct = openmct;
-        this.selected = [];
-    }
-
-    Selection.prototype = Object.create(EventEmitter.prototype);
-
-    /**
-     * Gets the selected object.
-     * @public
-     */
-    Selection.prototype.get = function () {
-        return this.selected;
-    };
-
-    /**
-     * Selects the selectable object and emits the 'change' event.
-     *
-     * @param {object} selectable an object with element and context properties
-     * @private
-     */
-    Selection.prototype.select = function (selectable) {
-        if (!Array.isArray(selectable)) {
-            selectable = [selectable];
+            this.openmct = openmct;
+            this.selected = [];
         }
 
-        if (this.selected[0] && this.selected[0].element) {
-            this.selected[0].element.classList.remove('s-selected');
-        }
+        Selection.prototype = Object.create(EventEmitter.prototype);
 
-        if (this.selected[1]) {
-            this.selected[1].element.classList.remove('s-selected-parent');
-        }
-
-        if (selectable[0] && selectable[0].element) {
-            selectable[0].element.classList.add('s-selected');
-        }
-
-        if (selectable[1]) {
-            selectable[1].element.classList.add('s-selected-parent');
-        }
-
-        this.selected = selectable;
-        this.emit('change', this.selected);
-    };
-
-    /**
-     * @private
-     */
-    Selection.prototype.capture = function (selectable) {
-        if (!this.capturing) {
-            this.capturing = [];
-        }
-
-        this.capturing.push(selectable);
-    };
-
-    /**
-     * @private
-     */
-    Selection.prototype.selectCapture = function (selectable) {
-        if (!this.capturing) {
-            return;
-        }
-
-        this.select(this.capturing.reverse());
-        delete this.capturing;
-    };
-
-    /**
-     * Attaches the click handlers to the element.
-     *
-     * @param element an html element
-     * @param context object which defines item or other arbitrary properties.
-     * e.g. {
-     *          item: domainObject,
-     *          elementProxy: element,
-     *          controller: fixedController
-     *       }
-     * @param select a flag to select the element if true
-     * @returns a function that removes the click handlers from the element
-     * @public
-     */
-    Selection.prototype.selectable = function (element, context, select) {
-        var selectable = {
-            context: context,
-            element: element
+        /**
+         * Gets the selected object.
+         * @public
+         */
+        Selection.prototype.get = function () {
+            return this.selected;
         };
-        var capture = this.capture.bind(this, selectable);
-        var selectCapture = this.selectCapture.bind(this, selectable);
-        element.addEventListener('click', capture, true);
-        element.addEventListener('click', selectCapture);
 
-        if (context.item) {
-            var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
-                context.item = newItem;
-            });
-        }
+        /**
+         * Selects the selectable object and emits the 'change' event.
+         *
+         * @param {object} selectable an object with element and context properties
+         * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
+         * @private
+         */
+        Selection.prototype.select = function (selectable, isMultiSelectEvent) {
+            if (!Array.isArray(selectable)) {
+                selectable = [selectable];
+            }
 
-        if (select) {
-            element.click();
-        }
+            let multiSelect = isMultiSelectEvent &&
+                this.parentSupportsMultiSelect(selectable) &&
+                this.isPeer(selectable) &&
+                !this.selectionContainsParent(selectable);
 
-        return function () {
-            element.removeEventListener('click', capture);
-            element.removeEventListener('click', selectCapture);
+            if (multiSelect) {
+                this.handleMultiSelect(selectable);
+            } else {
+                this.setSelectionStyles(selectable);
+                this.selected = [selectable];
+            }
 
-            if (unlisten) {
-                unlisten();
+            this.emit('change', this.selected);
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.handleMultiSelect = function (selectable) {
+            if (this.elementSelected(selectable)) {
+                this.remove(selectable);
+            } else {
+                this.addSelectionAttributes(selectable);
+                this.selected.push(selectable);
             }
         };
-    };
 
-    return Selection;
-});
+        /**
+         * @private
+         */
+        Selection.prototype.elementSelected = function (selectable) {
+            return this.selected.some(selectionPath => _.isEqual(selectionPath, selectable));
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.remove = function (selectable) {
+            this.selected = this.selected.filter(selectionPath => !_.isEqual(selectionPath, selectable));
+
+            if (this.selected.length === 0) {
+                this.removeSelectionAttributes(selectable);
+                selectable[1].element.click(); // Select the parent if there is no selection.
+            } else {
+                this.removeSelectionAttributes(selectable, true);
+            }
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.setSelectionStyles = function (selectable) {
+            this.selected.map(selectionPath => {
+                this.removeSelectionAttributes(selectionPath);
+            });
+            this.addSelectionAttributes(selectable);
+        };
+
+        Selection.prototype.removeSelectionAttributes = function (selectionPath, keepParentStyle) {
+            if (selectionPath[0] && selectionPath[0].element) {
+                selectionPath[0].element.removeAttribute('s-selected');
+            }
+
+            if (selectionPath[1] && selectionPath[1].element && !keepParentStyle) {
+                selectionPath[1].element.removeAttribute('s-selected-parent');
+            }
+        };
+
+        /*
+        * Adds selection attributes to the selected element and its parent.
+        * @private
+        */
+        Selection.prototype.addSelectionAttributes = function (selectable) {
+            if (selectable[0] && selectable[0].element) {
+                selectable[0].element.setAttribute('s-selected', "");
+            }
+
+            if (selectable[1] && selectable[1].element) {
+                selectable[1].element.setAttribute('s-selected-parent', "");
+            }
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.parentSupportsMultiSelect = function (selectable) {
+            return selectable[1] && selectable[1].context.supportsMultiSelect;
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.selectionContainsParent = function (selectable) {
+            return this.selected.some(selectionPath => _.isEqual(selectionPath[0], selectable[1]));
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.isPeer = function (selectable) {
+            return this.selected.some(selectionPath => _.isEqual(selectionPath[1], selectable[1]));
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.isSelectable = function (element) {
+            if (!element) {
+                return false;
+            }
+
+            return !!element.closest('[data-selectable]');
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.capture = function (selectable) {
+            let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
+
+            if (!this.capturing || capturingContainsSelectable) {
+                this.capturing = [];
+            }
+
+            this.capturing.push(selectable);
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.selectCapture = function (selectable, event) {
+            if (!this.capturing) {
+                return;
+            }
+
+            let reversedCapturing = this.capturing.reverse();
+            delete this.capturing;
+            this.select(reversedCapturing, event.shiftKey);
+        };
+
+        /**
+         * Attaches the click handlers to the element.
+         *
+         * @param element an html element
+         * @param context object which defines item or other arbitrary properties.
+         * e.g. {
+         *          item: domainObject,
+         *          elementProxy: element,
+         *          controller: fixedController
+         *       }
+         * @param select a flag to select the element if true
+         * @returns a function that removes the click handlers from the element
+         * @public
+         */
+        Selection.prototype.selectable = function (element, context, select) {
+            if (!this.isSelectable(element)) {
+                return () => {};
+            }
+
+            let selectable = {
+                context: context,
+                element: element
+            };
+
+            var capture = this.capture.bind(this, selectable);
+            var selectCapture = this.selectCapture.bind(this, selectable);
+
+            element.addEventListener('click', capture, true);
+            element.addEventListener('click', selectCapture);
+
+            if (context.item) {
+                var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
+                    context.item = newItem;
+                });
+            }
+
+            if (select) {
+                element.click();
+            }
+
+            return function () {
+                element.removeEventListener('click', capture, true);
+                element.removeEventListener('click', selectCapture);
+
+                if (unlisten) {
+                    unlisten();
+                }
+            };
+        };
+
+        return Selection;
+    });

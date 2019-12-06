@@ -45,15 +45,28 @@ define(
 
             // Link; install event handlers.
             function link(scope, element, attrs) {
-                var removeSelectable = openmct.selection.selectable(
-                    element[0],
-                    scope.$eval(attrs.mctSelectable),
-                    attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
-                );
-
+                var isDestroyed = false;
                 scope.$on("$destroy", function () {
-                    removeSelectable();
+                    isDestroyed = true;
                 });
+
+                openmct.$injector.get('$timeout')(function () {
+                    if (isDestroyed) {
+                        return;
+                    }
+
+                    var removeSelectable = openmct.selection.selectable(
+                        element[0],
+                        scope.$eval(attrs.mctSelectable),
+                        attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
+                    );
+
+                    scope.$on("$destroy", function () {
+                        removeSelectable();
+                    });
+                });
+
+
             }
 
             return {

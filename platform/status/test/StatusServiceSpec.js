@@ -78,7 +78,7 @@ define(
                     .toHaveBeenCalledWith([testStatus]);
                 statusService.setStatus(testId, testStatus, false);
                 expect(mockTopicInstance.notify)
-                    .toHaveBeenCalledWith([ ]);
+                    .toHaveBeenCalledWith([]);
 
                 expect(mockTopic)
                     .toHaveBeenCalledWith(jasmine.any(String));

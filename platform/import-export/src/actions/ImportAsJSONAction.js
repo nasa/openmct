@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define(['zepto'], function ($) {
+define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, objectUtils) {
 
     /**
      * The ImportAsJSONAction is available from context menus and allows a user
@@ -61,15 +60,39 @@ define(['zepto'], function ($) {
 
     ImportAsJSONAction.prototype.importObjectTree = function (objTree) {
         var parent = this.context.domainObject;
-        var tree = this.generateNewIdentifiers(objTree);
-        var rootId = tree.rootId;
-        var rootObj = this.instantiate(tree.openmct[rootId], rootId);
+        var namespace = parent.useCapability('adapter').identifier.namespace;
 
-        // Instantiate all objects in tree with their newly genereated ids,
-        // adding each to its rightful parent's composition
-        rootObj.getCapability("location").setPrimaryLocation(parent.getId());
-        this.deepInstantiate(rootObj, tree.openmct, []);
-        parent.getCapability("composition").add(rootObj);
+        var tree = this.generateNewIdentifiers(objTree, namespace);
+        var rootId = tree.rootId;
+
+        var rootModel = tree.openmct[rootId];
+        delete rootModel.persisted;
+
+        var rootObj = this.instantiate(rootModel, rootId);
+        var newStyleParent = parent.useCapability('adapter');
+        var newStyleRootObj = rootObj.useCapability('adapter');
+
+        if (this.openmct.composition.checkPolicy(newStyleParent, newStyleRootObj)) {
+            // Instantiate all objects in tree with their newly generated ids,
+            // adding each to its rightful parent's composition
+            rootObj.getCapability("location").setPrimaryLocation(parent.getId());
+            this.deepInstantiate(rootObj, tree.openmct, []);
+            parent.getCapability("composition").add(rootObj);
+        } else {
+            var dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "We're sorry, but you cannot import that object type into this object.",
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: function () {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        }
     };
 
     ImportAsJSONAction.prototype.deepInstantiate = function (parent, tree, seen) {
@@ -79,28 +102,36 @@ define(['zepto'], function ($) {
             var parentModel = parent.getModel();
             var newObj;
 
-            seen.push(this.getKeyString(parent.getId()));
-            parentModel.composition.forEach(function (childId, index) {
-                var childIdString = this.getKeyString(childId);
-                if (!tree[childIdString] || seen.includes(childIdString)) {
+            seen.push(parent.getId());
+
+            parentModel.composition.forEach(function (childId) {
+                let keystring = this.openmct.objects.makeKeyString(childId);
+
+                if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
+                let newModel = tree[keystring];
+                delete newModel.persisted;
 
-                newObj = this.instantiate(tree[childIdString], childIdString);
-                // New object has not been persisted yet so clear persisted
-                // timestamp from copied model.
-                delete newObj.getModel().persisted;
-                newObj.getCapability('persistence').persist();
+                newObj = this.instantiate(newModel, keystring);
+                newObj.getCapability("location")
+                    .setPrimaryLocation(tree[keystring].location);
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }
     };
 
-    ImportAsJSONAction.prototype.generateNewIdentifiers = function (tree) {
+    ImportAsJSONAction.prototype.generateNewIdentifiers = function (tree, namespace) {
         // For each domain object in the file, generate new ID, replace in tree
         Object.keys(tree.openmct).forEach(function (domainObjectId) {
-            var newId = this.identifierService.generate();
-            tree = this.rewriteId(domainObjectId, newId, tree);
+            let newId = {
+                namespace: namespace,
+                key: this.identifierService.generate()
+            };
+
+            let oldId = objectUtils.parseKeyString(domainObjectId);
+
+            tree = this.rewriteId(oldId, newId, tree);
         }, this);
         return tree;
     };
@@ -115,9 +146,21 @@ define(['zepto'], function ($) {
      *
      * @private
      */
-    ImportAsJSONAction.prototype.rewriteId = function (oldID, newID, tree) {
-        tree = JSON.stringify(tree).replace(new RegExp(oldID, 'g'), newID);
-        return JSON.parse(tree);
+    ImportAsJSONAction.prototype.rewriteId = function (oldId, newId, tree) {
+        let newIdKeyString = this.openmct.objects.makeKeyString(newId);
+        let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
+        tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+
+        return JSON.parse(tree, (key, value) => {
+            if (Object.prototype.hasOwnProperty.call(value, 'key') &&
+                Object.prototype.hasOwnProperty.call(value, 'namespace') &&
+                value.key === oldId.key &&
+                value.namespace === oldId.namespace) {
+                return newId
+            } else {
+                return value;
+            }
+        });
     };
 
     ImportAsJSONAction.prototype.getFormModel = function () {
@@ -155,20 +198,20 @@ define(['zepto'], function ($) {
 
     ImportAsJSONAction.prototype.displayError = function () {
         var dialog,
-        model = {
-            title: "Invalid File",
-            actionText:  "The selected file was either invalid JSON or was " +
+            model = {
+                title: "Invalid File",
+                actionText:  "The selected file was either invalid JSON or was " +
                 "not formatted properly for import into Open MCT.",
-            severity: "error",
-            options: [
-                {
-                    label: "Ok",
-                    callback: function () {
-                        dialog.dismiss();
+                severity: "error",
+                options: [
+                    {
+                        label: "Ok",
+                        callback: function () {
+                            dialog.dismiss();
+                        }
                     }
-                }
-            ]
-        };
+                ]
+            };
         dialog = this.dialogService.showBlockingMessage(model);
     };
 

@@ -42,7 +42,7 @@ define(
             return promise;
         }
 
-        describe("CopyService", function () {
+        xdescribe("CopyService", function () {
             var policyService;
 
             beforeEach(function () {
@@ -124,7 +124,6 @@ define(
 
                 var mockQ,
                     mockDeferred,
-                    createObjectPromise,
                     copyService,
                     object,
                     newParent,
@@ -138,7 +137,6 @@ define(
                     resolvedValue;
 
                 beforeEach(function () {
-                    createObjectPromise = synchronousPromise(undefined);
                     policyService.allow.and.returnValue(true);
 
                     persistObjectPromise = synchronousPromise(undefined);
@@ -275,8 +273,7 @@ define(
                 describe("on domainObject with composition", function () {
                     var childObject,
                         objectClone,
-                        childObjectClone,
-                        compositionPromise;
+                        childObjectClone;
 
                     beforeEach(function () {
                         var invocationCount = 0,
@@ -324,11 +321,6 @@ define(
                                 location: locationCapability
                             }
                         });
-
-                        compositionPromise = jasmine.createSpyObj(
-                            'compositionPromise',
-                            ['then']
-                        );
 
                         compositionCapability
                             .invoke

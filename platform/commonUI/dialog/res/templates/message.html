@@ -1,10 +1,10 @@
-<div class="l-message"
+<div class="c-message"
      ng-class="'message-severity-' + ngModel.severity">
     <div class="w-message-contents">
-        <div class="top-bar">
-            <div class="title">{{ngModel.title}}</div>
+        <div class="c-message__top-bar">
+            <div class="c-message__title">{{ngModel.title}}</div>
         </div>
-        <div class="hint" ng-hide="ngModel.hint === undefined">
+        <div class="c-message__hint" ng-hide="ngModel.hint === undefined">
             {{ngModel.hint}}
             <span ng-if="ngModel.timestamp !== undefined">[{{ngModel.timestamp}}]</span>
         </div>
@@ -16,17 +16,17 @@
                          ng-model="ngModel"
                          ng-show="ngModel.progress !== undefined || ngModel.unknownProgress"></mct-include>
         </div>
-        <div class="bottom-bar">
-            <a ng-repeat="dialogOption in ngModel.options"
-               class="s-button"
+        <div class="c-overlay__button-bar">
+            <button ng-repeat="dialogOption in ngModel.options"
+               class="c-button"
                ng-click="dialogOption.callback()">
                 {{dialogOption.label}}
-            </a>
-            <a class="s-button major"
+            </button>
+            <button class="c-button c-button--major"
                ng-if="ngModel.primaryOption"
                ng-click="ngModel.primaryOption.callback()">
                 {{ngModel.primaryOption.label}}
-            </a>
+            </button>
         </div>
     </div>
 </div>

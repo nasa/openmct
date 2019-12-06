@@ -103,17 +103,17 @@ define(
             var requestId = this.requestCount;
             this.openmct.telemetry
                 .request(this.domainObject, bounds)
-                    .then(function (values) {
-                        if (this.requestCount > requestId) {
-                            return Promise.resolve('Stale request');
-                        }
+                .then(function (values) {
+                    if (this.requestCount > requestId) {
+                        return Promise.resolve('Stale request');
+                    }
 
-                        values.forEach(function (datum) {
-                            this.updateHistory(datum);
-                        }, this);
+                    values.forEach(function (datum) {
+                        this.updateHistory(datum);
+                    }, this);
 
-                        this.updateValues(values[values.length - 1]);
-                    }.bind(this));
+                    this.updateValues(values[values.length - 1]);
+                }.bind(this));
         };
 
         ImageryController.prototype.stopListening = function () {

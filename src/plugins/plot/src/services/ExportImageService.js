@@ -30,7 +30,7 @@ define(
     ],
     function (
         html2canvas,
-        saveAs
+        { saveAs }
     ) {
 
         /**
@@ -91,16 +91,16 @@ define(
                 console.log('error capturing image', error);
                 dialog.dismiss();
                 var errorDialog = dialogService.showBlockingMessage({
-                        title: "Error capturing image",
-                        severity: "error",
-                        hint: "Image was not captured successfully!",
-                        options: [{
-                            label: "OK",
-                            callback: function () {
-                                errorDialog.dismiss();
-                            }
-                        }]
-                    });
+                    title: "Error capturing image",
+                    severity: "error",
+                    hint: "Image was not captured successfully!",
+                    options: [{
+                        label: "OK",
+                        callback: function () {
+                            errorDialog.dismiss();
+                        }
+                    }]
+                });
             });
         };
 
@@ -137,8 +137,8 @@ define(
          * @returns {promise}
          */
 
-        ExportImageService.prototype.exportPNGtoSRC = function (element) {
-            return this.renderElement(element, "png");
+        ExportImageService.prototype.exportPNGtoSRC = function (element, className) {
+            return this.renderElement(element, "png", className);
         };
 
         /**

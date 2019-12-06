@@ -56,7 +56,7 @@ define(
          */
         LocalStoragePersistenceProvider.prototype.getValue = function (key) {
             return this.localStorage[key] ?
-                    JSON.parse(this.localStorage[key]) : {};
+                JSON.parse(this.localStorage[key]) : {};
         };
 
         LocalStoragePersistenceProvider.prototype.listSpaces = function () {

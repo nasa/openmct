@@ -51,76 +51,26 @@ define(
                 return actionTexts[Math.floor(Math.random()*3)];
             }
 
-            function getExampleActions() {
-                var actions = [
-                    {
-                        label: "Try Again",
-                        callback: function () {
-                            $log.debug("Try Again pressed");
-                        }
-                    },
-                    {
-                        label: "Remove",
-                        callback: function () {
-                            $log.debug("Remove pressed");
-                        }
-                    },
-                    {
-                        label: "Cancel",
-                        callback: function () {
-                            $log.debug("Cancel pressed");
-                        }
-                    }
-                ];
-
-                // Randomly remove some actions off the top; leave at least one
-                actions.splice(0,Math.floor(Math.random() * actions.length));
-
-                return actions;
-            }
-
-            function getExampleSeverity() {
-                var severities = [
-                    "info",
-                    "alert",
-                    "error"
-                ];
-                return severities[Math.floor(Math.random() * severities.length)];
-            }
-
             /**
              * Launch a new notification with a severity level of 'Error'.
              */
-            $scope.newError = function(){
-
+            $scope.newError = function () {
                 notificationService.notify({
                     title: "Example error notification " + messageCounter++,
                     hint: "An error has occurred",
-                    severity: "error",
-                    primaryOption: {
-                        label: 'Retry',
-                        callback: function() {
-                            $log.info('Retry clicked');
-                        }
-                    },
-                    options: getExampleActions()});
+                    severity: "error"
+                });
             };
             /**
              * Launch a new notification with a severity of 'Alert'.
              */
-            $scope.newAlert = function(){
-
+            $scope.newAlert = function () {
                 notificationService.notify({
                     title: "Alert notification " + (messageCounter++),
                     hint: "This is an alert message",
                     severity: "alert",
-                    primaryOption: {
-                        label: 'Retry',
-                        callback: function() {
-                            $log.info('Retry clicked');
-                        }
-                    },
-                    options: getExampleActions()});
+                    autoDismiss: true
+                });
             };
 
 
@@ -128,39 +78,42 @@ define(
              * Launch a new notification with a progress bar that is updated
              * periodically, tracking an ongoing process.
              */
-            $scope.newProgress = function(){
-
+            $scope.newProgress = function () {
+                let progress = 0;
                 var notificationModel = {
                     title: "Progress notification example",
                     severity: "info",
-                    progress: 0,
-                    actionText: getExampleActionText(),
-                    unknownProgress: false
+                    progress: progress,
+                    actionText: getExampleActionText()
                 };
+                let notification;
 
                 /**
                  * Simulate an ongoing process and update the progress bar.
                  * @param notification
                  */
-                function incrementProgress(notificationModel) {
-                    notificationModel.progress = Math.min(100, Math.floor(notificationModel.progress + Math.random() * 30));
-                    notificationModel.progressText = ["Estimated time" +
+                function incrementProgress() {
+                    progress = Math.min(100, Math.floor(progress + Math.random() * 30))
+                    let progressText = ["Estimated time" +
                     " remaining:" +
-                    " about ", 60 - Math.floor((notificationModel.progress / 100) * 60), " seconds"].join(" ");
-                    if (notificationModel.progress < 100) {
-                        $timeout(function(){incrementProgress(notificationModel);}, 1000);
+                    " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
+                    notification.progress(progress, progressText);
+
+                    if (progress < 100) {
+                        $timeout(function () {
+                            incrementProgress(notificationModel);
+                        }, 1000);
                     }
                 }
 
-                notificationService.notify(notificationModel);
-                incrementProgress(notificationModel);
+                notification = notificationService.notify(notificationModel);
+                incrementProgress();
             };
 
             /**
              * Launch a new notification with severity level of INFO.
              */
-            $scope.newInfo = function(){
-
+            $scope.newInfo = function () {
                 notificationService.info({
                     title: "Example Info notification " + messageCounter++
                 });

@@ -84,10 +84,10 @@
 
     function onRequest(message) {
         var request = message.data;
-        if (request.end == undefined) {
+        if (request.end === undefined) {
             request.end = Date.now();
         }
-        if (request.start == undefined){
+        if (request.start === undefined) {
             request.start = request.end - FIFTEEN_MINUTES;
         }
 

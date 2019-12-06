@@ -22,56 +22,57 @@
 
 define([
     "./src/CouchPersistenceProvider",
-    "./src/CouchIndicator",
-    'legacyRegistry'
+    "./src/CouchIndicator"
 ], function (
     CouchPersistenceProvider,
-    CouchIndicator,
-    legacyRegistry
+    CouchIndicator
 ) {
 
-    legacyRegistry.register("platform/persistence/couch", {
-        "name": "Couch Persistence",
-        "description": "Adapter to read and write objects using a CouchDB instance.",
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "provider",
-                    "implementation": CouchPersistenceProvider,
-                    "depends": [
-                        "$http",
-                        "$q",
-                        "PERSISTENCE_SPACE",
-                        "COUCHDB_PATH"
-                    ]
-                }
-            ],
-            "constants": [
-                {
-                    "key": "PERSISTENCE_SPACE",
-                    "value": "mct"
-                },
-                {
-                    "key": "COUCHDB_PATH",
-                    "value": "/couch/openmct"
-                },
-                {
-                    "key": "COUCHDB_INDICATOR_INTERVAL",
-                    "value": 15000
-                }
-            ],
-            "indicators": [
-                {
-                    "implementation": CouchIndicator,
-                    "depends": [
-                        "$http",
-                        "$interval",
-                        "COUCHDB_PATH",
-                        "COUCHDB_INDICATOR_INTERVAL"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/persistence/couch",
+        definition: {
+            "name": "Couch Persistence",
+            "description": "Adapter to read and write objects using a CouchDB instance.",
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": CouchPersistenceProvider,
+                        "depends": [
+                            "$http",
+                            "$q",
+                            "PERSISTENCE_SPACE",
+                            "COUCHDB_PATH"
+                        ]
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "PERSISTENCE_SPACE",
+                        "value": "mct"
+                    },
+                    {
+                        "key": "COUCHDB_PATH",
+                        "value": "/couch/openmct"
+                    },
+                    {
+                        "key": "COUCHDB_INDICATOR_INTERVAL",
+                        "value": 15000
+                    }
+                ],
+                "indicators": [
+                    {
+                        "implementation": CouchIndicator,
+                        "depends": [
+                            "$http",
+                            "$interval",
+                            "COUCHDB_PATH",
+                            "COUCHDB_INDICATOR_INTERVAL"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

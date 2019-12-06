@@ -59,11 +59,15 @@ define([
         this.openmct = openmct;
         this.objectService = objectService;
         this.exportImageService = exportImageService;
+        this.cursorGuide = false;
 
         $scope.pending = 0;
 
+        this.clearData = this.clearData.bind(this);
+
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
+        this.listenTo($scope, 'clearData', this.clearData);
 
         this.config = this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
@@ -71,6 +75,15 @@ define([
         this.config.series.forEach(this.addSeries, this);
 
         this.followTimeConductor();
+
+        this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
+        this.keyString = this.openmct.objects.makeKeyString(this.newStyleDomainObject.identifier);
+
+        this.filterObserver = this.openmct.objects.observe(
+            this.newStyleDomainObject,
+            'configuration.filters',
+            this.updateFiltersAndResubscribe.bind(this)
+        );
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -89,7 +102,8 @@ define([
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
-            domain: this.config.xAxis.get('key')
+            domain: this.config.xAxis.get('key'),
+            shouldNotUseMinMax: this.shouldNotUseMinMax(series)
         };
 
         series.load(options)
@@ -120,6 +134,11 @@ define([
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this);
+
+        this.listenTo(series, 'change:interpolate', function () {
+            this.loadSeriesData(series);
+        }, this);
+
         this.loadSeriesData(series);
     };
 
@@ -139,8 +158,11 @@ define([
             });
             configStore.add(configId, config);
         }
-        configStore.track(configId);
         return config;
+    };
+
+    PlotController.prototype.shouldNotUseMinMax = function (series) {
+        return series.model.interpolate === 'none';
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
@@ -148,11 +170,15 @@ define([
     };
 
     PlotController.prototype.destroy = function () {
-        configStore.untrack(this.config.id);
+        configStore.deleteStore(this.config.id);
+
         this.stopListening();
         if (this.checkForSize) {
             clearInterval(this.checkForSize);
             delete this.checkForSize;
+        }
+        if (this.filterObserver) {
+            this.filterObserver();
         }
     };
 
@@ -160,10 +186,10 @@ define([
         this.config.series.map(function (plotSeries) {
             this.startLoading();
             plotSeries.load({
-                    size: this.$element[0].offsetWidth,
-                    start: range.min,
-                    end: range.max
-                })
+                size: this.$element[0].offsetWidth,
+                start: range.min,
+                end: range.max
+            })
                 .then(this.stopLoading.bind(this));
             if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);
@@ -207,6 +233,7 @@ define([
 
     PlotController.prototype.stopLoading = function () {
         this.$scope.pending -= 1;
+        this.$scope.$digest();
     };
 
     /**
@@ -244,26 +271,39 @@ define([
                           xRange.max === xDisplayRange.max);
     };
 
+    PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
+        this.config.series.forEach(function (series) {
+            series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+        });
+    };
+
+    PlotController.prototype.clearData = function () {
+        this.config.series.forEach(function (series) {
+            series.reset();
+        });
+    };
+
     /**
      * Export view as JPG.
      */
     PlotController.prototype.exportJPG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportJPG(this.$element[0], 'plot.jpg', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
     };
 
     /**
      * Export view as PNG.
      */
     PlotController.prototype.exportPNG = function () {
-        this.hideExportButtons = true;
-        this.exportImageService.exportPNG(this.$element[0], 'plot.png', 'export-plot')
-            .finally(function () {
-                this.hideExportButtons = false;
-            }.bind(this));
+        var plotElement = this.$element.children()[1];
+
+        this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
+    };
+
+    PlotController.prototype.toggleCursorGuide = function ($event) {
+        this.cursorGuide = !this.cursorGuide;
+        this.$scope.$broadcast('cursorguide', $event);
     };
 
     return PlotController;

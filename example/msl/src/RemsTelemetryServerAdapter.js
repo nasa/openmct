@@ -68,18 +68,18 @@ define(
          * given request ID.
          * @private
          */
-        RemsTelemetryServerAdapter.prototype.requestHistory = function(request) {
+        RemsTelemetryServerAdapter.prototype.requestHistory = function (request) {
             var self = this,
                 id = request.key;
 
             var dataTransforms = this.dataTransforms;
 
-            function processResponse(response){
+            function processResponse(response) {
                 var data = [];
                 /*
                  * History data is organised by Sol. Iterate over sols...
                  */
-                response.data.soles.forEach(function(solData){
+                response.data.soles.forEach(function (solData) {
                     /*
                      * Check that valid data exists
                      */
@@ -106,13 +106,13 @@ define(
 
             //Filter results to match request parameters
             function filterResults(results) {
-                return results.filter(function(result){
+                return results.filter(function (result) {
                     return result.date >= (request.start || Number.MIN_VALUE) &&
                         result.date <= (request.end || Number.MAX_VALUE);
                 });
             }
 
-            function packageAndResolve(results){
+            function packageAndResolve(results) {
                 return {id: id, values: results};
             }
 
@@ -132,7 +132,7 @@ define(
          * @param id The telemetry data point key to be queried.
          * @returns {Promise | Array<RemsTelemetryValue>} that resolves with an Array of {@link RemsTelemetryValue} objects for the request data key.
          */
-        RemsTelemetryServerAdapter.prototype.history = function(request) {
+        RemsTelemetryServerAdapter.prototype.history = function (request) {
             return this.requestHistory(request);
         };
 

@@ -1,6 +1,6 @@
 define([
-      './Palette',
-      'zepto'
+    './Palette',
+    'zepto'
 ], function (
     Palette,
     $
@@ -51,11 +51,11 @@ define([
         var domElement = $(this.palette.getDOM()),
             self = this;
 
-        $('.s-menu-button', domElement).addClass('t-icon-palette-menu-button');
+        $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('icon-swatch');
-        $('.l-palette', domElement).addClass('l-icon-palette');
+        $('.c-palette', domElement).addClass('c-palette--icon');
 
-        $('.s-palette-item', domElement).each(function () {
+        $('.c-palette-item', domElement).each(function () {
             var elem = this;
             $(elem).addClass(elem.dataset.item);
         });

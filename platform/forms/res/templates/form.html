@@ -19,13 +19,13 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<form name="mctForm" novalidate class="form l-flex-col">
+<form name="mctForm" novalidate class="form c-form" autocomplete="off">
     <span ng-repeat="section in structure.sections"
-          class="l-form-section l-flex-col flex-elem {{ section.cssClass }}">
-        <h2 class="section-header flex-elem" ng-if="section.name">
+          class="l-form-section c-form__section {{ section.cssClass }}">
+        <h2 class="c-form__header" ng-if="section.name">
             {{section.name}}
         </h2>
-        <ng-form class="form-row validates l-flex-row flex-elem {{ section.cssClass }}"
+        <ng-form class="form-row c-form__row validates {{ section.cssClass }}"
                  ng-class="{
                  first:$index < 1,
                  req: row.required,
@@ -37,11 +37,11 @@
                  }"
                  name="mctFormInner"
                  ng-repeat="row in section.rows">
-            <div class='label flex-elem' title="{{row.description}}">
+            <div class='c-form__row__label label flex-elem' title="{{row.description}}">
                 {{row.name}}
             </div>
-            <div class='controls flex-elem'>
-                <div class="wrapper" ng-if="row.control">
+            <div class='c-form__row__controls controls flex-elem'>
+                <div class="c-form__controls-wrapper wrapper" ng-if="row.control">
                     <mct-control key="row.control"
                                  ng-model="ngModel"
                                  ng-required="row.required"

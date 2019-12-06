@@ -49,8 +49,8 @@ define(
             // present context.
             function updateActions() {
                 $scope.saveActions = $scope.action ?
-                        $scope.action.getActions(SAVE_ACTION_CONTEXT) :
-                        [];
+                    $scope.action.getActions(SAVE_ACTION_CONTEXT) :
+                    [];
 
                 $scope.saveActionsAsMenuOptions = $scope.saveActions.map(actionToMenuOption);
 
@@ -59,8 +59,8 @@ define(
                 };
 
                 $scope.otherEditActions = $scope.action ?
-                        $scope.action.getActions(OTHERS_ACTION_CONTEXT) :
-                        [];
+                    $scope.action.getActions(OTHERS_ACTION_CONTEXT) :
+                    [];
 
                 // Required because Angular does not allow 'bind'
                 // in expressions.

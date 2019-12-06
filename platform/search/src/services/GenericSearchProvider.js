@@ -44,7 +44,7 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, openmct) {
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
@@ -57,6 +57,8 @@ define([
         this.pendingRequests = 0;
 
         this.pendingQueries = {};
+
+        this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
 
         this.worker = this.startWorker(workerService);
         this.indexOnMutation(topic);
@@ -101,8 +103,14 @@ define([
      * @returns worker the created search worker.
      */
     GenericSearchProvider.prototype.startWorker = function (workerService) {
-        var worker = workerService.run('genericSearchWorker'),
-            provider = this;
+        var provider = this,
+            worker;
+
+        if (this.USE_LEGACY_INDEXER) {
+            worker = workerService.run('genericSearchWorker');
+        } else {
+            worker = workerService.run('bareBonesSearchWorker');
+        }
 
         worker.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
@@ -158,7 +166,7 @@ define([
     GenericSearchProvider.prototype.keepIndexing = function () {
         while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
             this.idsToIndex.length
-            ) {
+        ) {
             this.beginIndexRequest();
         }
     };
@@ -242,18 +250,34 @@ define([
             return;
         }
 
-        var pendingQuery = this.pendingQueries[event.data.queryId],
+        var pendingQuery,
+            modelResults;
+
+        if (this.USE_LEGACY_INDEXER) {
+            pendingQuery = this.pendingQueries[event.data.queryId];
             modelResults = {
                 total: event.data.total
             };
 
-        modelResults.hits = event.data.results.map(function (hit) {
-            return {
-                id: hit.item.id,
-                model: hit.item.model,
-                score: hit.matchCount
+            modelResults.hits = event.data.results.map(function (hit) {
+                return {
+                    id: hit.item.id,
+                    model: hit.item.model,
+                    score: hit.matchCount
+                };
+            });
+        } else {
+            pendingQuery = this.pendingQueries[event.data.queryId];
+            modelResults = {
+                total: event.data.total
             };
-        });
+
+            modelResults.hits = event.data.results.map(function (hit) {
+                return {
+                    id: hit.id
+                };
+            });
+        }
 
         pendingQuery.resolve(modelResults);
         delete this.pendingQueries[event.data.queryId];

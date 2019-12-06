@@ -76,66 +76,66 @@ define(
             describe("when context is available", function () {
 
                 beforeEach(function () {
-                        mockContext.getRoot.and.returnValue(mockRootObject);
-                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
-                    });
+                    mockContext.getRoot.and.returnValue(mockRootObject);
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                });
 
                 it("adds a treeModel to scope", function () {
-                        expect(mockScope.treeModel).toBeDefined();
-                    });
+                    expect(mockScope.treeModel).toBeDefined();
+                });
 
                 it("watches for changes to treeModel", function () {
-                        // This is what the embedded tree representation
-                        // will be modifying.
-                        expect(mockScope.$watch).toHaveBeenCalledWith(
-                            "treeModel.selectedObject",
-                            jasmine.any(Function)
-                        );
-                    });
+                    // This is what the embedded tree representation
+                    // will be modifying.
+                    expect(mockScope.$watch).toHaveBeenCalledWith(
+                        "treeModel.selectedObject",
+                        jasmine.any(Function)
+                    );
+                });
 
                 it("changes its own model on embedded model updates", function () {
-                        // Need to pass on selection changes as updates to
-                        // the control's value
-                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
-                        mockTimeout.calls.mostRecent().args[0]();
-                        expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
-                        expect(mockScope.rootObject).toEqual(mockRootObject);
+                    // Need to pass on selection changes as updates to
+                    // the control's value
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
+                    expect(mockScope.rootObject).toEqual(mockRootObject);
 
-                        // Verify that the capability we expect to have been used
-                        // was used.
-                        expect(mockDomainObject.getCapability)
-                            .toHaveBeenCalledWith("context");
-                    });
+                    // Verify that the capability we expect to have been used
+                    // was used.
+                    expect(mockDomainObject.getCapability)
+                        .toHaveBeenCalledWith("context");
+                });
 
                 it("rejects changes which fail validation", function () {
-                        mockScope.structure = { validate: jasmine.createSpy('validate') };
-                        mockScope.structure.validate.and.returnValue(false);
+                    mockScope.structure = { validate: jasmine.createSpy('validate') };
+                    mockScope.structure.validate.and.returnValue(false);
 
-                        // Pass selection change
-                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
-                        mockTimeout.calls.mostRecent().args[0]();
+                    // Pass selection change
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
 
-                        expect(mockScope.structure.validate).toHaveBeenCalled();
-                        // Change should have been rejected
-                        expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
-                    });
+                    expect(mockScope.structure.validate).toHaveBeenCalled();
+                    // Change should have been rejected
+                    expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
+                });
 
                 it("treats a lack of a selection as invalid", function () {
-                        mockScope.ngModelController = jasmine.createSpyObj(
-                            'ngModelController',
-                            ['$setValidity']
-                        );
+                    mockScope.ngModelController = jasmine.createSpyObj(
+                        'ngModelController',
+                        ['$setValidity']
+                    );
 
-                        mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
-                        mockTimeout.calls.mostRecent().args[0]();
-                        expect(mockScope.ngModelController.$setValidity)
-                            .toHaveBeenCalledWith(jasmine.any(String), true);
+                    mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    expect(mockScope.ngModelController.$setValidity)
+                        .toHaveBeenCalledWith(jasmine.any(String), true);
 
-                        mockScope.$watch.calls.mostRecent().args[1](undefined);
-                        mockTimeout.calls.mostRecent().args[0]();
-                        expect(mockScope.ngModelController.$setValidity)
-                            .toHaveBeenCalledWith(jasmine.any(String), false);
-                    });
+                    mockScope.$watch.calls.mostRecent().args[1](undefined);
+                    mockTimeout.calls.mostRecent().args[0]();
+                    expect(mockScope.ngModelController.$setValidity)
+                        .toHaveBeenCalledWith(jasmine.any(String), false);
+                });
             });
             describe("when no context is available", function () {
                 var defaultRoot = "DEFAULT_ROOT";

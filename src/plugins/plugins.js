@@ -23,40 +23,60 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './localTimeSystem/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../platform/features/notebook/bundle',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './staticRootPlugin/plugin'
+    './telemetryTable/plugin',
+    './staticRootPlugin/plugin',
+    './notebook/plugin',
+    './displayLayout/plugin',
+    './folderView/plugin',
+    './flexibleLayout/plugin',
+    './tabs/plugin',
+    './LADTable/plugin',
+    './filters/plugin',
+    './objectMigration/plugin',
+    './goToOriginalAction/plugin',
+    './clearData/plugin',
+    './webPage/plugin'
 ], function (
     _,
     UTCTimeSystem,
+    LocalTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    Notebook,
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    StaticRootPlugin
+    TelemetryTablePlugin,
+    StaticRootPlugin,
+    Notebook,
+    DisplayLayoutPlugin,
+    FolderView,
+    FlexibleLayout,
+    Tabs,
+    LADTable,
+    Filters,
+    ObjectMigration,
+    GoToOriginalAction,
+    ClearData,
+    WebPagePlugin
 ) {
     var bundleMap = {
-        CouchDB: 'platform/persistence/couch',
-        Elasticsearch: 'platform/persistence/elastic',
-        Espresso: 'platform/commonUI/themes/espresso',
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        Notebook: 'platform/features/notebook',
-        Snow: 'platform/commonUI/themes/snow'
+        CouchDB: 'platform/persistence/couch'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -68,6 +88,7 @@ define([
     });
 
     plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.LocalTimeSystem = LocalTimeSystem;
 
     plugins.ImportExport = ImportExport;
 
@@ -84,7 +105,7 @@ define([
      */
     plugins.AutoflowView = AutoflowPlugin;
 
-    plugins.Conductor = TimeConductorPlugin;
+    plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
@@ -136,10 +157,22 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
     plugins.Plot = PlotPlugin;
+    plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
+    plugins.Notebook = Notebook;
+    plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FolderView = FolderView;
+    plugins.Tabs = Tabs;
+    plugins.FlexibleLayout = FlexibleLayout;
+    plugins.LADTable = LADTable;
+    plugins.Filters = Filters;
+    plugins.ObjectMigration = ObjectMigration.default;
+    plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.ClearData = ClearData;
+    plugins.WebPage = WebPagePlugin.default;
 
     return plugins;
 });
