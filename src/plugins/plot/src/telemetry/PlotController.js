@@ -102,8 +102,7 @@ define([
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
-            domain: this.config.xAxis.get('key'),
-            shouldNotUseMinMax: this.shouldNotUseMinMax(series)
+            domain: this.config.xAxis.get('key')
         };
 
         series.load(options)
@@ -159,10 +158,6 @@ define([
             configStore.add(configId, config);
         }
         return config;
-    };
-
-    PlotController.prototype.shouldNotUseMinMax = function (series) {
-        return series.model.interpolate === 'none';
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
