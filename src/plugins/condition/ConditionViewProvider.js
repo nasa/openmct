@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ConditionComponent from './components/Condition.vue';
-import Vue from './node_modules/vue';
+import Vue from 'vue';
 
 export default function Condition(openmct) {
     return {
