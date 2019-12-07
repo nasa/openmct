@@ -20,6 +20,8 @@ const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        espresso: './src/styles/core-espresso.scss',
+        snow: './src/styles/core-snow.scss'
     },
     output: {
         filename: '[name].js',
@@ -72,20 +74,13 @@ const webpackConfig = {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
                     {
-                        loader: 'style-loader',
+                        loader: devMode ? 'style-loader': MiniCssExtractPlugin.loader,
                         options: {
                             injectType: 'lazyStyleTag' // change to lazyStyleTag and use styles in themes plugin
                         }
                     },
-                    'css-loader',
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            prependData: `
-                                @import "styles/core.scss";
-                            `
-                        }
-                    }
+                    {loader: 'css-loader'},
+                    {loader: 'sass-loader'}
                 ]
             },
             {
