@@ -4,9 +4,6 @@
 </dialog-component>
 </template>
 
-<style lang="scss">
-</style>
-
 <script>
 import ProgressComponent from '../../../ui/components/ProgressBar.vue';
 import DialogComponent from './DialogComponent.vue';

@@ -56,40 +56,6 @@
 </layout-frame>
 </template>
 
-<style lang="scss">
-     
-
-    .c-telemetry-view {
-        display: flex;
-        align-items: stretch;
-
-        > * {
-            // Label and value holders
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: row;
-           // justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            padding: $interiorMargin;
-
-            > * {
-                // Text elements
-                @include ellipsize();
-            }
-        }
-
-        > * + * {
-            margin-left: $interiorMargin;
-        }
-
-        .c-frame & {
-            @include abs();
-            border: 1px solid transparent;
-        }
-    }
-</style>
-
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'

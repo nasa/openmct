@@ -55,67 +55,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    .c-tabs-view {
-        $h: 20px;
-        @include abs();
-        display: flex;
-        flex-flow: column nowrap;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__tabs-holder {
-            min-height: $h;
-        }
-
-        &__tab {
-            &:before {
-                margin-right: $interiorMarginSm;
-                opacity: 0.7;
-            }
-        }
-
-        &__object-holder {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-
-            &--hidden {
-                height: 1000px;
-                width: 1000px;
-                position: absolute;
-                left: -9999px;
-                top: -9999px;
-            }
-        }
-
-        &__object-name {
-            flex: 0 0 auto;
-            @include headerFont();
-            font-size: 1.2em !important;
-            margin: $interiorMargin 0 $interiorMarginLg 0;
-        }
-
-        &__object {
-            display: flex;
-            flex-flow: column nowrap;
-            flex: 1 1 auto;
-            height: 0; // Chrome 73 oveflow bug fix
-        }
-
-        &__empty-message {
-            background: rgba($colorBodyFg, 0.1);
-            color: rgba($colorBodyFg, 0.7);
-            font-style: italic;
-            text-align: center;
-            line-height: $h;
-            width: 100%;
-        }
-    }
-</style>
-
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import _ from 'lodash';

@@ -34,19 +34,6 @@
 </layout-frame>
 </template>
 
-<style lang="scss">
-     
-
-    .c-box-view {
-        display: flex;
-        align-items: stretch;
-
-        .c-frame & {
-            @include abs();
-        }
-    }
-</style>
-
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 

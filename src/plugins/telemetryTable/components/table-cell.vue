@@ -27,6 +27,7 @@
     {{ formattedValue }}
 </td>
 </template>
+
 <script>
 export default {
     inject: ['openmct'],

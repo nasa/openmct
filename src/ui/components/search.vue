@@ -18,37 +18,6 @@
 </div>
 </template>
 
-<style lang="scss">
-     
-
-    .c-search {
-        @include wrappedInput();
-
-        padding-top: 2px;
-        padding-bottom: 2px;
-
-        &:before {
-            // Mag glass icon
-            content: $glyph-icon-magnify;
-        }
-
-        &__clear-input {
-            display: none;
-        }
-
-        &.is-active {
-            .c-search__clear-input {
-                display: block;
-            }
-        }
-
-        input[type='text'],
-        input[type='search'] {
-            text-align: left;
-        }
-    }
-</style>
-
 <script>
 /* Emits input and clear events */
 export default {

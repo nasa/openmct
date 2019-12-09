@@ -7,21 +7,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/constants";
-
-    /******************************* SEARCH */
-    .c-search {
-        input[type=search] {
-            width: 100%;
-        }
-
-        &--major {
-            display: flex;
-        }
-    }
-</style>
-
 <script>
 export default {
 }

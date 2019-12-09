@@ -34,21 +34,6 @@
 </layout-frame>
 </template>
 
-<style lang="scss">
-     
-
-    .c-image-view {
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-
-        .c-frame & {
-            @include abs();
-            border: 1px solid transparent;
-        }
-    }
-</style>
-
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 

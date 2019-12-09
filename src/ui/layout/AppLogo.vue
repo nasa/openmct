@@ -26,14 +26,7 @@
     @click="launchAbout"
 ></div>
 </template>
-<style lang="scss">
-.l-shell__app-logo {
-    cursor: pointer;
-    width: 70px;
-    height: 20px;
-    background: url('assets/images/logo-openmct.svg') center no-repeat;
-}
-</style>
+
 <script>
 import AboutDialog from './AboutDialog.vue';
 import Vue from 'vue';

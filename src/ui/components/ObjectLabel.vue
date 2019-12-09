@@ -14,39 +14,6 @@
 </a>
 </template>
 
-<style lang="scss">
-     
-    .c-object-label {
-        // <a> tag and draggable element that holds type icon and name.
-        // Used mostly in trees and lists
-        border-radius: $controlCr;
-        display: flex;
-        align-items: center;
-        flex: 1 1 auto;
-        overflow: hidden;
-        padding: $interiorMarginSm 1px;
-        white-space: nowrap;
-
-        &__name {
-            @include ellipsize();
-            display: inline;
-            color: $colorItemTreeFg;
-            width: 100%;
-        }
-
-        &__type-icon {
-            // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
-            display: block;
-            flex: 0 0 auto;
-            font-size: 1.3em;
-            margin-right: $interiorMarginSm;
-            color: $colorItemTreeIcon;
-            width: $treeTypeIconW;
-        }
-    }
-</style>
-
-
 <script>
 
 import ObjectLink from '../mixins/object-link';

@@ -37,49 +37,6 @@
 </div>
 </template>
 
-<style lang="scss">
-     
-
-    .c-location {
-        display: flex;
-        flex-wrap: wrap;
-
-        &__item {
-            $m: $interiorMarginSm;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin: 0 $m $m 0;
-
-            &:not(:last-child) {
-                &:after {
-                    color: $colorInspectorPropName;
-                    content: $glyph-icon-arrow-right;
-                    font-family: symbolsfont;
-                    font-size: 0.7em;
-                    margin-left: $m;
-                    opacity: 0.8;
-                }
-            }
-
-            .c-object-label {
-                padding: 0;
-                transition: $transOut;
-
-                &__type-icon {
-                    width: auto;
-                    font-size: 1em;
-                }
-
-                &:hover {
-                    transition: $transIn;
-                    filter: $filterHov;
-                }
-            }
-        }
-    }
-</style>
-
 <script>
 import ObjectLabel from '../components/ObjectLabel.vue';
 

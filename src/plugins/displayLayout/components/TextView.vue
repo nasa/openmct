@@ -36,20 +36,6 @@
 </layout-frame>
 </template>
 
-<style lang="scss">
-     
-
-    .c-text-view {
-        display: flex;
-        align-items: stretch;
-
-        .c-frame & {
-            @include abs();
-            border: 1px solid transparent;
-        }
-    }
-</style>
-
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 
