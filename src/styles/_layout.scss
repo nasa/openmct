@@ -1,0 +1,86 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/************************** BROWSE BAR */
+.l-browse-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    [class*="__"] {
+        // Removes extraneous horizontal white space
+        display: inline-flex;
+    }
+
+    &__start {
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+        margin-right: $interiorMargin;
+        min-width: 0; // Forces interior to compress when pushed on
+    }
+
+    &__end {
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto;
+
+        [class*="__"] + [class*="__"] {
+            margin-left: $interiorMarginSm;
+        }
+    }
+
+    &__nav-to-parent-button,
+    &__disclosure-button {
+        flex: 0 0 auto;
+    }
+
+    &__nav-to-parent-button {
+        // This is an icon-button
+        $p: $interiorMargin;
+        margin-right: $interiorMargin;
+        padding-left: $p;
+        padding-right: $p;
+
+        .is-editing & {
+            display: none;
+        }
+    }
+
+    &__object-name--w {
+        align-items: center;
+        display: flex;
+        flex: 0 1 auto;
+        @include headerFont(1.4em);
+        min-width: 0;
+
+        &:before {
+            // Icon
+            opacity: 0.5;
+            margin-right: $interiorMargin;
+        }
+    }
+
+    &__object-name {
+        flex: 0 1 auto;
+    }
+}

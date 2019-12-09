@@ -1,26 +1,27 @@
-<div class="u-contents">
-
-    <div class="t-snapshot abs l-view-header">
-        <div class="abs object-browse-bar l-flex-row">
-            <div class="left flex-elem l-flex-row grows">
-                <div class="object-header flex-elem l-flex-row grows">
-                    <div class="type-icon flex-elem embed-icon holder" v-bind:class="embed.cssClass"></div>
-                    <div class="title-label flex-elem holder flex-can-shrink">{{embed.name}}</div>
-                </div>
+<div class="c-notebook-snapshot">
+    <!-- parent container sets up this for flex column layout -->
+    <div class="c-notebook-snapshot__header l-browse-bar">
+        <div class="l-browse-bar__start">
+            <div class="l-browse-bar__object-name--w">
+                <span class="l-browse-bar__object-name"
+                    v-bind:class="embed.cssClass"
+                >
+                    {{embed.name}}
+                </span>
             </div>
         </div>
-    </div>
 
-    <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
-        <div class="flex-elem holder flex-can-shrink s-snapshot-datetime">
-            SNAPSHOT {{formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss')}}
+        <div class="l-browse-bar__end">
+            <div class="l-browse-bar__snapshot-datetime">
+                SNAPSHOT {{formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss')}}
+            </div>
+            <a class="l-browse-bar__annotate-button c-button icon-pencil" title="Annotate" @click="annotateSnapshot">
+                <span class="title-label">Annotate</span>
+            </a>
         </div>
-        <a class="s-button icon-pencil" title="Annotate" @click="annotateSnapshot">
-            <span class="title-label">Annotate</span>
-        </a>
     </div>
 
-    <div class="abs object-holder t-image-holder s-image-holder">
+    <div class="c-notebook-snapshot__image t-image-holder s-image-holder">
         <div 
             class="image-main s-image-main"
             :style="{ backgroundImage: 'url(' + embed.snapshot.src + ')' }">
