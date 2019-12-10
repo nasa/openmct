@@ -326,6 +326,24 @@ define([
     };
 
     /**
+     * Get path to where assets are hosted.
+     * @memberof module:openmct.MCT#
+     * @method getAssetPath
+     */
+    MCT.prototype.getAssetPath = function () {
+        var constants = this.legacyBundle.extensions.constants;
+        var AssetPaths = constants.filter(function (constant) {
+            return constant.key === 'ASSETS_PATH';
+        });
+
+        if (!AssetPaths.length) {
+            return '/';
+        }
+
+        return AssetPaths[0].value;
+    };
+
+    /**
      * Start running Open MCT. This should be called only after any plugins
      * have been installed.
      * @fires module:openmct.MCT~start

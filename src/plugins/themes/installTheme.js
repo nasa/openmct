@@ -1,16 +1,18 @@
 const dataAttribute = 'theme';
 
-export const installTheme = (themeName) => {
+export const installTheme = (openmct, themeName) => {
     const currentTheme = document.querySelector(`link[data-${dataAttribute}]`);
-    console.log(currentTheme)
     if (currentTheme) {
         currentTheme.remove();
     }
 
     const newTheme = document.createElement('link');
     newTheme.setAttribute('rel', 'stylesheet');
-    newTheme.setAttribute('href', `${__OPENMCT_ROOT_RELATIVE__}${themeName}Theme.css`);
-    newTheme.dataset[dataAttribute] = '';
+
+    // eslint-disable-next-line no-undef
+    const href = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}${themeName}Theme.css`;
+    newTheme.setAttribute('href', href);
+    newTheme.dataset[dataAttribute] = themeName;
 
     document.head.appendChild(newTheme);
 }
