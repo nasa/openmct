@@ -2,6 +2,7 @@
 @import "~styles/constants";
 @import "~styles/constants-mobile.scss";
 
+@import "~styles/constants-maelstrom";
 
 @import "~styles/mixins";
 @import "~styles/animations";
@@ -14,4 +15,7 @@
 @import "~styles/table";
 @import "~styles/legacy";
 @import "~styles/legacy-plots";
+@import "~styles/plotly";
 @import "~styles/legacy-messages";
+
+@import "~styles/vue-styles.scss";

@@ -47,6 +47,7 @@ define([
     './clearData/plugin',
     './webPage/plugin',
     './themes/espresso',
+    './themes/maelstrom',
     './themes/snow'
 ], function (
     _,
@@ -75,6 +76,7 @@ define([
     ClearData,
     WebPagePlugin,
     Espresso,
+    Maelstrom,
     Snow
 ) {
     var bundleMap = {
@@ -178,6 +180,7 @@ define([
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;
+    plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
 
     return plugins;

@@ -1,5 +1,4 @@
 const path = require('path');
-const bourbon = require('node-bourbon');
 const packageDefinition = require('./package.json');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -21,7 +20,8 @@ const webpackConfig = {
     entry: {
         openmct: './openmct.js',
         espressoTheme: './src/plugins/themes/espresso-theme.scss',
-        snowTheme: './src/plugins/themes/snow-theme.scss'
+        snowTheme: './src/plugins/themes/snow-theme.scss',
+        maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
         filename: '[name].js',
@@ -41,8 +41,7 @@ const webpackConfig = {
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
-            "testTools": path.join(__dirname, "src/testTools.js"),
-            "themes": path.join(__dirname, "src/plugins/themes/")
+            "testTools": path.join(__dirname, "src/testTools.js")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
@@ -56,8 +55,7 @@ const webpackConfig = {
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css',
-            chunkFilename: '[name].css',
-            ignoreOrder: false
+            chunkFilename: '[name].css'
         }),
         new CopyWebpackPlugin([
             {
@@ -79,15 +77,7 @@ const webpackConfig = {
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
-                    {
-                        loader: 'fast-sass-loader',
-                        options: {
-                            includePaths: bourbon.includePaths,
-                            data: `
-                                @import "~themes/snow-theme.scss";
-                            `
-                        }
-                    }
+                    'fast-sass-loader'
                 ]
             },
             {
