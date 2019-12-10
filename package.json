@@ -75,7 +75,6 @@
     "zepto": "^1.2.0"
   },
   "scripts": {
-    "clean": "rm -rf dist/",
     "start": "node app.js",
     "lint": "eslint platform example src/**/*.{js,vue} openmct.js",
     "lint:fix": "eslint platform example src/**/*.{js,vue} openmct.js --fix",

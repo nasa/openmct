@@ -318,11 +318,8 @@ define([
      * @memberof module:openmct.MCT#
      * @method setAssetPath
      */
-    MCT.prototype.setAssetPath = function (path) {
-        this.legacyExtension('constants', {
-            key: "ASSETS_PATH",
-            value: path
-        });
+    MCT.prototype.setAssetPath = function (assetPath) {
+        this._assetPath = assetPath;
     };
 
     /**
@@ -331,16 +328,7 @@ define([
      * @method getAssetPath
      */
     MCT.prototype.getAssetPath = function () {
-        var constants = this.legacyBundle.extensions.constants;
-        var AssetPaths = constants.filter(function (constant) {
-            return constant.key === 'ASSETS_PATH';
-        });
-
-        if (!AssetPaths.length) {
-            return '/';
-        }
-
-        return AssetPaths[0].value;
+        return this._assetPath || '/';
     };
 
     /**
