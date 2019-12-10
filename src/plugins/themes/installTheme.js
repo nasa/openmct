@@ -1,13 +1,16 @@
+const dataAttribute = 'theme';
+
 export const installTheme = (themeName) => {
-    const links = document.getElementsByTagName("link");
-    for (let link of links) {
-        const isTheme = link.href.includes('Theme')
-                || link.href.includes('openmct.css');
-        if (isTheme && link.rel === 'stylesheet'
-                && link.type === 'text/css') {
-            const hasDist = link.getAttribute('href').includes('dist');
-            const filePath = hasDist ? 'dist/' : '';
-            link.href = `${filePath}${themeName}Theme.css`;
-        }
+    const currentTheme = document.querySelector(`link[data-${dataAttribute}]`);
+    console.log(currentTheme)
+    if (currentTheme) {
+        currentTheme.remove();
     }
+
+    const newTheme = document.createElement('link');
+    newTheme.setAttribute('rel', 'stylesheet');
+    newTheme.setAttribute('href', `${__OPENMCT_ROOT_RELATIVE__}${themeName}Theme.css`);
+    newTheme.dataset[dataAttribute] = '';
+
+    document.head.appendChild(newTheme);
 }
