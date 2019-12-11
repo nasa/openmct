@@ -1,0 +1,54 @@
+.c-frame-edit {
+    // In Layouts, this is the editing rect and handles
+    display: none; // Set to display: block in DisplayLayout.vue
+    pointer-events: none;
+    @include abs();
+    border: $editMarqueeBorder;
+
+    &__handle {
+        $d: 6px;
+        $o: floor($d * -0.5);
+        background: $editFrameColorHandleFg;
+        box-shadow: $editFrameColorHandleBg 0 0 0 2px;
+        pointer-events: all;
+        position: absolute;
+        width: $d; height: $d;
+        top: auto; right: auto; bottom: auto; left: auto;
+
+        &:before {
+            // Extended hit area
+            @include abs(-10px);
+            content: '';
+            display: block;
+            z-index: 0;
+        }
+
+        &:hover {
+            background: $editUIColor;
+        }
+
+        &--nwse {
+            cursor: nwse-resize;
+        }
+
+        &--nw {
+            cursor: nw-resize;
+            left: $o; top: $o;
+        }
+
+        &--ne {
+            cursor: ne-resize;
+            right: $o; top: $o;
+        }
+
+        &--se {
+            cursor: se-resize;
+            right: $o; bottom: $o;
+        }
+
+        &--sw {
+            cursor: sw-resize;
+            left: $o; bottom: $o;
+        }
+    }
+}

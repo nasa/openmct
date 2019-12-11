@@ -38,7 +38,6 @@ define([
     './ui/router/ApplicationRouter',
     './ui/router/Browse',
     '../platform/framework/src/Main',
-    './styles/core.scss',
     './styles/notebook.scss',
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
@@ -66,7 +65,6 @@ define([
     ApplicationRouter,
     Browse,
     Main,
-    coreStyles,
     NotebookStyles,
     Layout,
     DomainObjectImpl,
@@ -318,11 +316,26 @@ define([
      * @memberof module:openmct.MCT#
      * @method setAssetPath
      */
-    MCT.prototype.setAssetPath = function (path) {
-        this.legacyExtension('constants', {
-            key: "ASSETS_PATH",
-            value: path
-        });
+    MCT.prototype.setAssetPath = function (assetPath) {
+        this._assetPath = assetPath;
+    };
+
+    /**
+     * Get path to where assets are hosted.
+     * @memberof module:openmct.MCT#
+     * @method getAssetPath
+     */
+    MCT.prototype.getAssetPath = function () {
+        const assetPathLength = this._assetPath && this._assetPath.length;
+        if (!assetPathLength) {
+            return '/';
+        }
+
+        if (this._assetPath[assetPathLength - 1] !== '/') {
+            return this._assetPath + '/';
+        }
+
+        return this._assetPath;
     };
 
     /**

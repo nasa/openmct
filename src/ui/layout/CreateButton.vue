@@ -37,40 +37,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-create-button,
-    .c-create-menu {
-        font-size: 1.1em;
-    }
-
-    .c-create-button {
-        .is-editing & {
-            @include disabled();
-        }
-
-        .c-button__label {
-            text-transform: $createBtnTextTransform;
-        }
-    }
-
-    .c-create-menu {
-        max-height: 80vh;
-        max-width: 500px;
-        min-height: 250px;
-        z-index: 70;
-
-        [class*="__icon"] {
-            filter: $colorKeyFilter;
-        }
-
-        [class*="__item-description"] {
-            min-width: 200px;
-        }
-    }
-</style>
-
 <script>
 import CreateAction from '../../../platform/commonUI/edit/src/creation/CreateAction';
 import objectUtils from '../../api/objects/object-utils';

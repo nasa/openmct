@@ -1,0 +1,10 @@
+/******************************* SEARCH */
+.c-search {
+    input[type=search] {
+        width: 100%;
+    }
+
+    &--major {
+        display: flex;
+    }
+}
