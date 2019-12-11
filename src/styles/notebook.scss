@@ -25,7 +25,6 @@
 
 
 .c-notebook {
-    //@include test(orange);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -34,6 +33,24 @@
     right: 0px;
     bottom: 0px;
     left: 0px;
+
+    &-snapshot {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        &__header {
+            flex: 0 0 auto;
+        }
+
+        &__image {
+            flex: 1 1 auto;
+        }
+    }
 
     > [class*="__"] + [class*="__"] {
         margin-top: $interiorMargin;
