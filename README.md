@@ -28,6 +28,11 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+## Open MCT v1.0.0
+This represents a major overhaul of Open MCT with significant changes under the hood. We aim to maintain backward compatibility but if you do find compatibility issues, please let us know by filing an issue in this repository. If you are having major issues with v1.0.0 please check-out the v0.15.0 tag until we can resolve them for you.
+
+If you are migrating to v1.0.0 from an earlier version, please refer to [our migration guide](https://nasa.github.io/openmct/documentation/migration-guide).
+
 ## Documentation
 
 Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/).
