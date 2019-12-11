@@ -326,7 +326,16 @@ define([
      * @method getAssetPath
      */
     MCT.prototype.getAssetPath = function () {
-        return this._assetPath || '/';
+        const assetPathLength = this._assetPath && this._assetPath.length;
+        if (!assetPathLength) {
+            return '/';
+        }
+
+        if (this._assetPath[assetPathLength - 1] !== '/') {
+            return this._assetPath + '/';
+        }
+
+        return this._assetPath;
     };
 
     /**
