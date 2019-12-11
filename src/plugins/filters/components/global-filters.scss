@@ -1,0 +1,28 @@
+.c-filter-indication {
+    // Appears as a block element beneath tables
+    @include userSelectNone();
+    background: $colorFilterBg;
+    color: $colorFilterFg;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    margin-top: $interiorMarginSm;
+    padding: 2px;
+    text-transform: uppercase;
+
+    &:before {
+        font-family: symbolsfont-12px;
+        content: $glyph-icon-filter;
+        display: block;
+        font-size: 12px;
+        margin-right: $interiorMarginSm;
+    }
+}
+
+.c-filter-tree-item {
+    &__filter-indicator {
+        color: $colorFilter;
+        width: 1.2em; // Set width explicitly for layout reasons: will either have class icon-filter, or none.
+        flex: 0 0 auto;
+    }
+}

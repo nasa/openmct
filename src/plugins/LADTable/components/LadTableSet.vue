@@ -51,10 +51,6 @@
 </table>
 </template>
 
-<style lang="scss">
-
-</style>
-
 <script>
 import LadRow from './LADRow.vue';
 

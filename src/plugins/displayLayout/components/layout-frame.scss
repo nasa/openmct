@@ -1,0 +1,131 @@
+/******************* FRAME */
+.c-frame {
+    display: flex;
+    flex-direction: column;
+
+    // Whatever is placed into the slot, make it fill the entirety of the space, obeying padding
+    > *:first-child {
+        flex: 1 1 auto;
+    }
+}
+
+.c-frame-edit__move {
+    display: none;
+}
+
+.is-editing {
+    /******************* STYLES FOR C-FRAME WHILE EDITING */
+    .c-frame {
+        &:not([s-selected]) {
+            &:hover {
+                border: $editFrameBorderHov;
+            }
+        }
+
+        &[s-selected] {
+            // All frames selected while editing
+            border: $editFrameSelectedBorder;
+            box-shadow: $editFrameSelectedShdw;
+
+            .c-frame-edit__move {
+                cursor: move;
+            }
+        }
+    }
+
+    /******************* DEFAULT STYLES FOR -EDIT__MOVE */
+    // All object types
+    .c-frame-edit__move {
+        @include abs();
+        display: block;
+    }
+
+    // Has-complex-content objects
+    .c-so-view.has-complex-content {
+        transition: $transOut;
+        transition-delay: $moveBarOutDelay;
+
+        > .c-so-view__local-controls {
+            transition: transform 250ms ease-in-out;
+            transition-delay: $moveBarOutDelay;
+        }
+
+        + .c-frame-edit__move {
+            display: none;
+        }
+
+    }
+
+    .l-layout {
+        /******************* 0 - 1 ITEM SELECTED */
+        &:not(.is-multi-selected) {
+            > .l-layout__frame[s-selected] {
+                > .c-so-view.has-complex-content {
+                    > .c-so-view__local-controls {
+                        transition: transform $transOutTime ease-in-out;
+                        transition-delay: $moveBarOutDelay;
+                    }
+
+                    + .c-frame-edit__move {
+                        transition: $transOut;
+                        transition-delay: $moveBarOutDelay;
+                        @include userSelectNone();
+                        background: $editFrameMovebarColorBg;
+                        box-shadow: rgba(black, 0.2) 0 1px;
+                        bottom: auto;
+                        display: block;
+                        height: 0; // Height is set on hover below
+                        opacity: 0.8;
+                        max-height: 100%;
+                        overflow: hidden;
+                        text-align: center;
+
+                        &:before {
+                            // Grippy
+                            $h: 4px;
+                            $tbOffset: ($editFrameMovebarH - $h) / 2;
+                            $lrOffset: 25%;
+                            @include grippy($editFrameMovebarColorFg);
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            top: $tbOffset;
+                            right: $lrOffset;
+                            bottom: $tbOffset;
+                            left: $lrOffset;
+                        }
+                    }
+                }
+
+                &:hover {
+                    > .c-so-view.has-complex-content {
+                        transition: $transIn;
+                        transition-delay: 0s;
+                        padding-top: $editFrameMovebarH + $interiorMarginSm;
+
+                        > .c-so-view__local-controls {
+                            transform: translateY($editFrameMovebarH);
+                            transition: transform $transInTime ease-in-out;
+                            transition-delay: 0s;
+                        }
+
+                        + .c-frame-edit__move {
+                            transition: $transIn;
+                            transition-delay: 0s;
+                            height: $editFrameMovebarH;
+                        }
+                    }
+                }
+            }
+        }
+
+        /******************* > 1 ITEMS SELECTED */
+        &.is-multi-selected {
+            .l-layout__frame[s-selected] {
+                > .c-so-view.has-complex-content + .c-frame-edit__move {
+                    display: block;
+                }
+            }
+        }
+    }
+}

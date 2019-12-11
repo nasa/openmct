@@ -29,9 +29,12 @@
 @import "global";
 @import "status";
 @import "controls";
+@import "layout";
 @import "forms";
 @import "table";
 @import "legacy";
 @import "legacy-plots";
 @import "plotly";
 @import "legacy-messages";
+
+@import "vue-styles.scss";

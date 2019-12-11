@@ -31,10 +31,6 @@
 </tr>
 </template>
 
-<style lang="scss">
-
-</style>
-
 <script>
 
 const CONTEXT_MENU_ACTIONS = [

@@ -1,0 +1,81 @@
+@mixin legacyMessage() {
+    flex: 0 1 auto;
+    font-family: symbolsfont;
+    font-size: $messageIconD; // Singleton message in a dialog
+    margin-right: $interiorMarginLg;
+}
+
+.c-message {
+    display: flex;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginLg;
+    }
+
+    &__icon {
+        // Holds a background SVG graphic
+        $s: 80px;
+        flex: 0 0 auto;
+        min-width: $s;
+        min-height: $s;
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+    }
+
+    // __text elements
+    &__action-text {
+        font-size: 1.2em;
+    }
+
+    &__title {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    &--simple {
+        // Icon and text elements only
+        &:before {
+            font-size: 30px !important;
+        }
+
+        [class*='__text'] {
+            font-size: 1.25em;
+        }
+    }
+
+    /************************** LEGACY */
+    &.message-severity-info:before {
+        @include legacyMessage();
+        content: $glyph-icon-info;
+        color: $colorInfo;
+    }
+
+    &.message-severity-alert:before {
+        @include legacyMessage();
+        content: $glyph-icon-alert-rect;
+        color: $colorWarningLo;
+    }
+
+    &.message-severity-error:before {
+        @include legacyMessage();
+        content: $glyph-icon-alert-triangle;
+        color: $colorWarningHi;
+    }
+
+    // Messages in a list
+    .c-overlay__messages & {
+        padding: $interiorMarginLg;
+        &:before {
+            font-size: $messageListIconD;
+        }
+    }
+}
