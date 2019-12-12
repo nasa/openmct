@@ -102,9 +102,9 @@
                 <ConductorHistory
                     v-if="isFixed"
                     class="c-conductor__history-select"
-                    :bounds="rawBounds"
+                    :bounds="bounds"
                     :time-system="timeSystem"
-                    @selectTimespan="setViewFromBounds"
+                    @select-timespan="setViewFromBounds"
                 ></ConductorHistory>
             </div>
             <input type="submit" class="invisible">
@@ -341,6 +341,10 @@ export default {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
+            bounds: {
+                start: bounds.start,
+                end: bounds.end
+            },
             rawBounds: {
                 start: bounds.start,
                 end: bounds.end
@@ -504,10 +508,14 @@ export default {
             this.validateAllBounds();
             this.submitForm();
         },
+        setNewBounds(bounds) {
+            this.bounds.start = bounds.start;
+            this.bounds.end = bounds.end;
+        }
     },
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', this.setViewFromBounds);
+        this.openmct.time.on('bounds', this.setNewBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
