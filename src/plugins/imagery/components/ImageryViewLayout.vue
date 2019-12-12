@@ -1,61 +1,77 @@
 <template>
-    <multipane class="c-imagery-layout" type="vertical">
-        <pane :style="{'min-height': `300px`}">
-            <div class="main-image-wrapper c-imagery has-local-controls">
-                <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
-                    <span class="holder flex-elem grows c-imagery__lc__sliders">
-                        <input class="icon-brightness" type="range"
-                                min="0"
-                                max="500"
-                                v-model="filters.brightness" />
-                        <input class="icon-contrast" type="range"
-                                min="0"
-                                max="500"
-                                v-model="filters.contrast" />
-                    </span>
-                    <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
-                        <a class="s-icon-button icon-reset t-btn-reset" 
-                                @click="filters={brightness: 100, contrast: 100}"></a>
-                    </span>
-                </div>
+<multipane class="c-imagery-layout"
+           type="vertical"
+>
+    <pane :style="{'min-height': `300px`}">
+        <div class="main-image-wrapper c-imagery has-local-controls">
+            <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
+                <span class="holder flex-elem grows c-imagery__lc__sliders">
+                    <input v-model="filters.brightness"
+                           class="icon-brightness"
+                           type="range"
+                           min="0"
+                           max="500"
+                    >
+                    <input v-model="filters.contrast"
+                           class="icon-contrast"
+                           type="range"
+                           min="0"
+                           max="500"
+                    >
+                </span>
+                <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
+                    <a class="s-icon-button icon-reset t-btn-reset"
+                       @click="filters={brightness: 100, contrast: 100}"
+                    ></a>
+                </span>
+            </div>
 
-                <div class="main-image s-image-main"
-                        :class="{'paused unnsynced': paused(),'stale':false }"
-                        :style="{'background-image': `url(${getImageUrl()})`,
-                            'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}">
-                </div>
+            <div class="main-image s-image-main"
+                 :class="{'paused unnsynced': paused(),'stale':false }"
+                 :style="{'background-image': `url(${getImageUrl()})`,
+                          'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
+            >
+            </div>
 
-                <div class="l-image-controller flex-elem l-flex-row">
-                    <div class="l-datetime-w flex-elem grows">
-                        <a class="c-button show-thumbs sm hidden icon-thumbs-strip" />
-                        <span class="l-time">{{getTime()}}</span>
-                    </div>
-                    <div class="h-local-controls flex-elem">
-                        <a class="c-button icon-pause pause-play"
-                                @click="paused(!paused())"
-                                :class="{'is-paused': paused()}" />
-                    </div>
+            <div class="l-image-controller flex-elem l-flex-row">
+                <div class="l-datetime-w flex-elem grows">
+                    <a class="c-button show-thumbs sm hidden icon-thumbs-strip"></a>
+                    <span class="l-time">{{ getTime() }}</span>
+                </div>
+                <div class="h-local-controls flex-elem">
+                    <a class="c-button icon-pause pause-play"
+                       :class="{'is-paused': paused()}"
+                       @click="paused(!paused())"
+                    ></a>
                 </div>
             </div>
-        </pane>
+        </div>
+    </pane>
 
-        <pane class="c-inspector__elements" handle="before"
-                :style="{'min-height': `100px`}">
-            <div class="c-elements-pool">
-                <div class="thumbs-layout" ref="thumbsWrapper"
-                        @scroll="handleScroll">
-                    <div class="l-image-thumb-item"
-                            :class="{selected: image.selected}"
-                            v-for="(image, index) in imageHistory"
-                            :key="index"
-                            @click="setSelectedImage(image)">
-                        <img class="l-thumb" v-bind:src="getImageUrl(image)">
-                        <div class="l-time">{{getTime(image)}}</div>
-                    </div>
+    <pane class="c-inspector__elements"
+          handle="before"
+          :style="{'min-height': `100px`}"
+    >
+        <div class="c-elements-pool">
+            <div ref="thumbsWrapper"
+                 class="thumbs-layout"
+                 @scroll="handleScroll"
+            >
+                <div v-for="(imageData, index) in imageHistory"
+                     :key="index"
+                     class="l-image-thumb-item"
+                     :class="{selected: imageData.selected}"
+                     @click="setSelectedImage(imageData)"
+                >
+                    <img class="l-thumb"
+                         :src="getImageUrl(imageData)"
+                    >
+                    <div class="l-time">{{ getTime(imageData) }}</div>
                 </div>
             </div>
-        </pane>
-    </multipane>
+        </div>
+    </pane>
+</multipane>
 </template>
 
 <script>
@@ -67,7 +83,7 @@ export default {
     inject: ['openmct', 'domainObject'],
     components: {
         multipane,
-        pane,
+        pane
     },
     data() {
         return {
@@ -87,8 +103,22 @@ export default {
             imageUrl: '',
             isPaused: false,
             requestCount: 0,
-            timeFormat: '',
+            timeFormat: ''
         }
+    },
+    mounted() {
+        this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+        this.subscribe(this.domainObject);
+        this.getElSize();
+        window.addEventListener('resize', this.getElSize);
+    },
+    updated() {
+        this.scrollToBottom();
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.getElSize);
+        this.stopListening();
     },
     methods: {
         datumMatchesMostRecent(datum) {
@@ -222,7 +252,7 @@ export default {
         updateHistory(datum) {
             if (this.datumMatchesMostRecent(datum)) {
                 return false;
-            };
+            }
 
             const index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
@@ -238,21 +268,7 @@ export default {
 
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
-        },
-    },
-    mounted() {
-        this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-        this.subscribe(this.domainObject);
-        this.getElSize();
-        window.addEventListener('resize', this.getElSize);
-    },
-    updated() {
-        this.scrollToBottom();
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.getElSize);
-        this.stopListening();
+        }
     }
 }
 </script>
