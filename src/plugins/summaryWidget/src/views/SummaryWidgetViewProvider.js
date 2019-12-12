@@ -8,32 +8,33 @@ define([
     objectUtils
 ) {
 
-
+    const DEFAULT_VIEW_PRIORITY = 100;
     /**
      *
      */
     function SummaryWidgetViewProvider(openmct) {
         return {
             key: 'summary-widget-viewer',
-            name: 'Widget View',
+            name: 'Summary View',
+            cssClass: 'icon-summary-widget',
             canView: function (domainObject) {
                 return domainObject.type === 'summary-widget';
             },
-            view: function (domainObject) {
-                var statusService = openmct.$injector.get('statusService');
-                var objectId = objectUtils.makeKeyString(domainObject.identifier);
-                var statuses = statusService.listStatuses(objectId);
-                var isEditing = statuses.indexOf('editing') !== -1;
-
-                if (isEditing) {
-                    return new SummaryWidgetEditView(domainObject, openmct);
-                } else {
-                    return new SummaryWidgetView(domainObject, openmct);
-                }
+            canEdit: function (domainObject) {
+                return domainObject.type === 'summary-widget';
             },
-            editable: true,
+            view: function (domainObject) {
+                return new SummaryWidgetView(domainObject, openmct);
+            },
+            edit: function (domainObject) {
+                return new SummaryWidgetEditView(domainObject, openmct);
+            },
             priority: function (domainObject) {
-                return 1;
+                if (domainObject.type === 'summary-widget') {
+                    return Number.MAX_VALUE;
+                } else {
+                    return DEFAULT_VIEW_PRIORITY;
+                }
             }
         };
     }

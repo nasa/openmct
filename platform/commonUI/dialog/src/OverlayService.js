@@ -44,8 +44,9 @@ define(
          * @memberof platform/commonUI/dialog
          * @constructor
          */
-        function OverlayService($document, $compile, $rootScope) {
+        function OverlayService($document, $compile, $rootScope, $timeout) {
             this.$compile = $compile;
+            this.$timeout = $timeout;
 
             // Don't include $document and $rootScope directly;
             // avoids https://docs.angularjs.org/error/ng/cpws
@@ -93,9 +94,14 @@ define(
             scope.key = key;
             scope.typeClass = typeClass || 't-dialog';
 
-            // Create the overlay element and add it to the document's body
-            element = this.$compile(TEMPLATE)(scope);
-            this.findBody().prepend(element);
+            this.$timeout(() => {
+                // Create the overlay element and add it to the document's body
+                element = this.$compile(TEMPLATE)(scope);
+
+                // Append so that most recent dialog is last in DOM. This means the most recent dialog will be on top when
+                // multiple overlays with the same z-index are active.
+                this.findBody().append(element);
+            });
 
             return {
                 dismiss: dismiss

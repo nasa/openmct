@@ -1,0 +1,421 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/*********************************************** NOTEBOOK */
+.c-notebook {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+
+    &-snapshot {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        &__header {
+            flex: 0 0 auto;
+        }
+
+        &__image {
+            flex: 1 1 auto;
+        }
+    }
+
+    > [class*="__"] + [class*="__"] {
+        margin-top: $interiorMargin;
+    }
+
+    &__head,
+    &__controls,
+    &__drag-area,
+    &__entries {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    &__head,
+    &__drag-area,
+    &__controls {
+        flex: 0 0 auto;
+    }
+
+    &__head {
+        [class*="__"] + [class*="__"] {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    &__search {
+        flex: 1 1 auto;
+    }
+
+    &__drag-area {
+        // TODO: recast this element to use c-drop-hint element
+        background: rgba($colorKey, 0.1);
+        border: 1px dashed rgba($colorKey, 0.7);
+        border-radius: $controlCr;
+        color: rgba($colorBodyFg, 0.7);
+        padding: 10px;
+        cursor: pointer;
+
+        &:before {
+            margin-right: 7px !important;
+        }
+
+        [class*="__label"] {
+            font-style: italic;
+            @include ellipsize();
+        }
+
+        &:hover {
+            background: rgba($colorKey, 0.2);
+            color: $colorBodyFg;
+        }
+
+        &.drag-active,
+        &.is-active {
+            // Not currently working
+            border-color: $colorKey;
+        }
+
+        body.mobile & {
+            display: none;
+        }
+    }
+
+    &__entries {
+        flex-direction: column;
+        flex: 1 1 auto;
+        padding-right: $interiorMarginSm;
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+        [class*="__entry"] + [class*="__entry"] {
+            margin-top: $interiorMarginSm;
+        }
+
+    }
+}
+
+/****************************** ENTRIES */
+.c-ne {
+    // A Notebook entry
+    $p: $interiorMarginSm;
+    @include discreteItem();
+    display: flex;
+    padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
+
+    &__time,
+    &__text,
+    &__local-controls {
+        padding-top: $p;
+        padding-bottom: $p;
+    }
+
+    &__time,
+    &__embed__time {
+        opacity: 0.7;
+    }
+
+    &__time-and-content {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+    }
+
+    &__time {
+        flex: 0 1 auto;
+        min-width: 130px;
+        margin-right: $interiorMarginLg;
+
+        * {
+            white-space: nowrap;
+        }
+    }
+
+    &__content {
+        flex: 1 1 auto;
+
+       > [class*="__"] + [class*="__"] {
+            margin-top: $interiorMarginSm;
+       }
+    }
+
+    &__text {
+        min-height: 22px; // Needed in Firefox when field is blank
+        white-space: pre-wrap;
+
+        &.is-blank-notebook-entry {
+            &:not(:focus):before {
+                content: 'Blank entry';
+                font-style: italic;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    &__embeds {
+        flex-wrap: wrap;
+
+        > [class*="__embed"] {
+            margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        }
+    }
+}
+
+/****************************** EMBEDS */
+@mixin snapThumb() {
+    // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
+    $d: 50px;
+    border: 1px solid $colorInteriorBorder;
+    cursor: pointer;
+    width: $d;
+    height: $d;
+    border-radius: 5px;
+    overflow: hidden;
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.snap-thumb {
+    // LEGACY,
+    @include snapThumb();
+}
+
+.c-ne__embed {
+    @include discreteItemInnerElem();
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: $interiorMargin;
+
+    [class*="__"] + [class*="__"] {
+        margin-left: $interiorMargin;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+
+        a {
+            color: $colorKey;
+        }
+    }
+
+    &__name,
+    &__link {
+        // Holds __link and __context-available
+        display: flex;
+        align-items: center;
+    }
+
+    &__link {
+        &:before {
+            display: block;
+            font-size: 0.85em;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &__context-available {
+        font-size: 0.7em;
+        margin-left: $interiorMarginSm;
+    }
+
+    &__snap-thumb {
+        @include snapThumb();
+    }
+}
+/****************************** SNAPSHOTTING */
+// LEGACY: TODO: refactor these names
+.t-contents,
+.snap-annotation {
+    overflow: hidden;
+}
+
+.s-status-taking-snapshot,
+.overlay.snapshot {
+    // Handle overflow-y issues with tables and html2canvas
+    .l-sticky-headers .l-tabular-body { overflow: auto; }
+}
+
+/****************************** PAINTERRO OVERRIDES */
+.annotation-dialog .abs.editor {
+    border-radius: 0;
+}
+
+#snap-annotation {
+    $m: $interiorMargin;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: $m; right: 0; bottom: $m; left: 0; // LEGACY, deal with .editor border-radius clipping stuff
+}
+
+#snap-annotation-wrapper,
+#snap-annotation-bar {
+    position: relative;
+    top: auto; right: auto; bottom: auto; left: auto;
+}
+
+#snap-annotation-wrapper {
+    background: rgba($colorBodyFg, 0.1);
+    border: 1px solid $colorInteriorBorder;
+    order: 2;
+    flex: 10 0 auto;
+}
+
+#snap-annotation-bar {
+    // Holds tool buttons, color selectors, etc.
+    $h: 22px;
+    $fs: 0.8rem;
+
+    order: 1;
+    flex: 0 0 auto;
+    height: auto;
+    background-color: transparent !important;
+    margin-bottom: $interiorMargin;
+
+    > div > span {
+        display: flex;
+        align-items: center;
+        font-size: $fs;
+    }
+
+    > div,
+    > div > span,
+    .ptro-icon-btn,
+    .ptro-named-btn,
+    .ptro-color-btn,
+    .ptro-bordered-btn,
+    .ptro-tool-ctl-name,
+    .ptro-color-btn,
+    .tool-controls,
+    .ptro-input {
+        // Lot of resets for crappy CSS in Painterro
+        &:first-child {
+            margin-left: 0 !important;
+        }
+        display: inline-block;
+        font-family: inherit;
+        font-size: $fs !important;
+        height: $h !important;
+        margin: 0 0 0 5px;
+        position: relative;
+        width: auto !important;
+        line-height: $h !important;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        vertical-align: top;
+    }
+
+    .ptro-tool-ctl-name {
+        border-radius: 0;
+        background: none;
+        top: auto;
+        font-family: inherit;
+        padding: 0;
+    }
+
+    .ptro-color-btn {
+        width: $h !important;
+    }
+
+    .ptro-color-control,
+    .ptro-icon-btn,
+    .ptro-named-btn {
+        // Buttons in toolbar. Why the f* they're named like this is a mystery
+        background-color: $colorBtnBg;
+        color: $colorBtnFg;
+        padding: 0 $interiorMargin;
+
+        &:hover {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+
+        i {
+            display: contents;
+            font-size: $fs * 1.2;
+            line-height: inherit;
+        }
+    }
+
+    .ptro-color-active-control {
+        background: $colorBtnMajorBg  !important;
+        color: $colorBtnMajorFg !important;
+    }
+
+    .ptro-info,
+    .ptro-btn-color-checkers-bar,
+    *[title="Font name"],
+    *[title="Stroke color"],
+    *[title="Stroke width"],
+    *[data-id="fontName"],
+    *[data-id="fontStrokeSize"],
+    *[data-id="stroke"] {
+        display: none;
+    }
+}
+
+/****************************** MOBILE */
+body.mobile {
+    .c-notebook__drag-area { display: none; }
+    .c-notebook__entry {
+        [class*="local-controls"] {
+            display: none;
+        }
+    }
+
+    &.phone.portrait {
+        .c-notebook__head,
+        .c-notebook__entry {
+            flex-direction: column;
+
+            > [class*="__"] + [class*="__"] {
+                margin-left: 0;
+                margin-top: $interiorMargin;
+            }
+        }
+
+        .c-notebook__entry {
+            [class*="text"] {
+                min-height: 0;
+                padding: 0;
+                pointer-events: none;
+            }
+        }
+    }
+}

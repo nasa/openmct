@@ -23,56 +23,57 @@
 define([
     "./src/FormatProvider",
     "./src/UTCTimeFormat",
-    "./src/DurationFormat",
-    'legacyRegistry'
+    "./src/DurationFormat"
 ], function (
     FormatProvider,
     UTCTimeFormat,
-    DurationFormat,
-    legacyRegistry
+    DurationFormat
 ) {
 
-    legacyRegistry.register("platform/commonUI/formats", {
-        "name": "Format Registry",
-        "description": "Provides a registry for formats, which allow parsing and formatting of values.",
-        "extensions": {
-            "components": [
-                {
-                    "provides": "formatService",
-                    "type": "provider",
-                    "implementation": FormatProvider,
-                    "depends": [
-                        "formats[]"
-                    ]
-                }
-            ],
-            "formats": [
-                {
-                    "key": "utc",
-                    "implementation": UTCTimeFormat
-                },
-                {
-                    "key": "duration",
-                    "implementation": DurationFormat
-                }
-            ],
-            "constants": [
-                {
-                    "key": "DEFAULT_TIME_FORMAT",
-                    "value": "utc"
-                }
-            ],
-            "licenses": [
-                {
-                    "name": "d3",
-                    "version": "3.0.0",
-                    "description": "Incorporates modified code from d3 Time Scales",
-                    "author": "Mike Bostock",
-                    "copyright": "Copyright 2010-2016 Mike Bostock. " +
+    return {
+        name:"platform/commonUI/formats",
+        definition: {
+            "name": "Format Registry",
+            "description": "Provides a registry for formats, which allow parsing and formatting of values.",
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "formatService",
+                        "type": "provider",
+                        "implementation": FormatProvider,
+                        "depends": [
+                            "formats[]"
+                        ]
+                    }
+                ],
+                "formats": [
+                    {
+                        "key": "utc",
+                        "implementation": UTCTimeFormat
+                    },
+                    {
+                        "key": "duration",
+                        "implementation": DurationFormat
+                    }
+                ],
+                "constants": [
+                    {
+                        "key": "DEFAULT_TIME_FORMAT",
+                        "value": "utc"
+                    }
+                ],
+                "licenses": [
+                    {
+                        "name": "d3",
+                        "version": "3.0.0",
+                        "description": "Incorporates modified code from d3 Time Scales",
+                        "author": "Mike Bostock",
+                        "copyright": "Copyright 2010-2016 Mike Bostock. " +
                     "All rights reserved.",
-                    "link": "https://github.com/d3/d3/blob/master/LICENSE"
-                }
-            ]
+                        "link": "https://github.com/d3/d3/blob/master/LICENSE"
+                    }
+                ]
+            }
         }
-    });
+    };
 });

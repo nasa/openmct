@@ -1,22 +1,18 @@
-<div class="t-imagery" ng-controller="ImageryController as imagery">
+<div class="t-imagery c-imagery" ng-controller="ImageryController as imagery">
     <mct-split-pane class='abs' anchor="bottom" alias="imagery">
-    <div class="split-pane-component has-local-controls l-image-main-wrapper l-flex-col"
-        ng-mouseenter="showLocalControls = true;"
-        ng-mouseleave="showLocalControls = false;">
-        <div class="h-local-controls h-local-controls-overlay-content h-local-controls-trans s-local-controls local-controls-hidden l-flex-row">
-            <span class="holder flex-elem grows">
+    <div class="split-pane-component has-local-controls l-image-main-wrapper l-flex-col">
+        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
+            <span class="holder flex-elem grows c-imagery__lc__sliders">
                 <input class="icon-brightness" type="range"
                        min="0"
                        max="500"
-                       ng-model="filters.brightness">
-                </input>
+                       ng-model="filters.brightness" />
                 <input class="icon-contrast" type="range"
                        min="0"
                        max="500"
-                       ng-model="filters.contrast">
-                </input>
+                       ng-model="filters.contrast" />
             </span>
-            <span class="holder flex-elem t-reset-btn-holder">
+            <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
                 <a class="s-icon-button icon-reset t-btn-reset"
                    ng-click="filters = { brightness: 100, contrast: 100 }"></a>
             </span>
@@ -33,14 +29,14 @@
 
         <div class="l-image-main-controlbar flex-elem l-flex-row">
             <div class="l-datetime-w flex-elem grows">
-                <a class="s-button show-thumbs sm hidden icon-thumbs-strip"
+                <a class="c-button show-thumbs sm hidden icon-thumbs-strip"
                     ng-click="showThumbsBubble = (showThumbsBubble) ? false:true"></a>
                 <span class="l-time">{{imagery.getTime()}}</span>
             </div>
             <div class="h-local-controls flex-elem">
-                <a class="s-button pause-play"
+                <a class="c-button icon-pause pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
-                    ng-class="{ paused: imagery.paused() }"></a>
+                    ng-class="{ 'is-paused': imagery.paused() }"></a>
                 <a href=""
                     class="s-button l-mag s-mag vsm icon-reset"
                     ng-click="clipped = false"

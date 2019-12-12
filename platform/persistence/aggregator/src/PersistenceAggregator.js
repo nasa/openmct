@@ -78,8 +78,8 @@ define(
                 return this.providerMapPromise.then(function (map) {
                     var provider = map[space];
                     return provider ?
-                            provider[method].apply(provider, delegateArgs) :
-                            METHOD_DEFAULTS[method];
+                        provider[method].apply(provider, delegateArgs) :
+                        METHOD_DEFAULTS[method];
                 });
             };
         });

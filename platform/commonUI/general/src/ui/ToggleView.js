@@ -22,7 +22,7 @@
 
 define([
     'zepto',
-    'text!../../res/templates/tree/toggle.html'
+    '../../res/templates/tree/toggle.html'
 ], function ($, toggleTemplate) {
     function ToggleView(state) {
         this.expanded = !!state;
@@ -37,9 +37,9 @@ define([
         this.expanded = state;
 
         if (state) {
-            this.el.addClass('expanded');
+            this.el.addClass('c-disclosure-triangle--expanded');
         } else {
-            this.el.removeClass('expanded');
+            this.el.removeClass('c-disclosure-triangle--expanded');
         }
 
         this.callbacks.forEach(function (callback) {

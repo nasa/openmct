@@ -84,6 +84,7 @@ define([
             this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
             this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
             this.persistedConfig = options.persistedConfig;
+            this.filters = options.filters;
 
             Model.apply(this, arguments);
             this.onXKeyChange(this.get('xKey'));
@@ -139,13 +140,23 @@ define([
          * @returns {Promise}
          */
         fetch: function (options) {
-            options = _.extend({}, {size: 1000, strategy: 'minmax'}, options || {});
+            let strategy;
+
+            if (this.model.interpolate !== 'none') {
+                strategy = 'minMax';
+            }
+
+            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
                     .telemetry
                     .subscribe(
                         this.domainObject,
-                        this.add.bind(this)
+                        this.add.bind(this),
+                        {
+                            filters: this.filters
+                        }
                     );
             }
 
@@ -156,7 +167,7 @@ define([
                     var newPoints = _(this.data)
                         .concat(points)
                         .sortBy(this.getXVal)
-                        .uniq(true, this.getXVal)
+                        .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
@@ -360,6 +371,19 @@ define([
                 }
             }
 
+        },
+        /**
+         * Updates filters, clears the plot series, unsubscribes and resubscribes
+         * @public
+         */
+        updateFiltersAndRefresh: function (updatedFilters) {
+            this.filters = updatedFilters;
+            this.reset();
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                delete this.unsubscribe;
+            }
+            this.fetch();
         }
     });
 

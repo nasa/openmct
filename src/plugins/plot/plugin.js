@@ -37,11 +37,11 @@ define([
     "./src/inspector/HideElementPoolDirective",
     "./src/services/ExportImageService",
     './src/PlotViewPolicy',
-    "text!./res/templates/plot-options.html",
-    "text!./res/templates/plot-options-browse.html",
-    "text!./res/templates/plot-options-edit.html",
-    "text!./res/templates/stacked-plot.html",
-    "text!./res/templates/plot.html"
+    "./res/templates/plot-options.html",
+    "./res/templates/plot-options-browse.html",
+    "./res/templates/plot-options-edit.html",
+    "./res/templates/stacked-plot.html",
+    "./res/templates/plot.html"
 ], function (
     MCTChartDirective,
     MCTPlotDirective,
@@ -250,7 +250,8 @@ define([
                                 {"has": "telemetry"}
                             ],
                             "model": {
-                                "composition": []
+                                "composition": [],
+                                "configuration": {}
                             },
                             "properties": [],
                             "priority": 890

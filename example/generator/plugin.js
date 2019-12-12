@@ -33,25 +33,24 @@ define([
     GeneratorMetadataProvider
 ) {
 
-    return function(openmct){
+    return function (openmct) {
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",
             description: "For development use.  Generates test enumerated telemetry by cycling through a given set of states",
-            cssClass: "icon-telemetry",
+            cssClass: "icon-generator-telemetry",
             creatable: true,
             form: [
                 {
                     name: "State Duration (seconds)",
-                    control: "textfield",
+                    control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     key: "duration",
                     required: true,
                     property: [
                         "telemetry",
                         "duration"
-                    ],
-                    pattern: "^\\d*(\\.\\d*)?$"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -66,7 +65,7 @@ define([
         openmct.types.addType("generator", {
             name: "Sine Wave Generator",
             description: "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
-            cssClass: "icon-telemetry",
+            cssClass: "icon-generator-telemetry",
             creatable: true,
             form: [
                 {

@@ -43,9 +43,22 @@ define([
      * @memberof module:openmct
      */
 
-    function DefaultCompositionProvider(publicAPI) {
+    function DefaultCompositionProvider(publicAPI, compositionAPI) {
         this.publicAPI = publicAPI;
         this.listeningTo = {};
+        this.onMutation = this.onMutation.bind(this);
+
+        this.cannotContainItself = this.cannotContainItself.bind(this);
+
+        compositionAPI.addPolicy(this.cannotContainItself);
+    }
+
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
+        return !(parent.identifier.namespace === child.identifier.namespace &&
+            parent.identifier.key === child.identifier.key);
     }
 
     /**
@@ -100,6 +113,7 @@ define([
             objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
+                reorder: [],
                 composition: [].slice.apply(domainObject.composition)
             };
         }
@@ -134,7 +148,7 @@ define([
         });
 
         objectListeners[event].splice(index, 1);
-        if (!objectListeners.add.length && !objectListeners.remove.length) {
+        if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
             delete this.listeningTo[keyString];
         }
     };
@@ -152,8 +166,12 @@ define([
      * @method remove
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
-        // TODO: this needs to be synchronized via mutation.
-        throw new Error('Default Provider does not implement removal.');
+        let composition = domainObject.composition.filter(function (child) {
+            return !(childId.namespace === child.namespace &&
+                childId.key === child.key);
+        });
+
+        this.publicAPI.objects.mutate(domainObject, 'composition', composition);
     };
 
     /**
@@ -168,9 +186,66 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
-        throw new Error('Default Provider does not implement adding.');
-        // TODO: this needs to be synchronized via mutation
+    DefaultCompositionProvider.prototype.add = function (parent, childId) {
+        if (!this.includes(parent, childId)) {
+            parent.composition.push(childId);
+            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+        }
+    };
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.includes = function (parent, childId) {
+        return parent.composition.findIndex(composee =>
+            this.publicAPI.objects.areIdsEqual(composee, childId)) !== -1;
+    };
+
+    DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
+        let newComposition = domainObject.composition.slice();
+        let removeId = oldIndex > newIndex ? oldIndex + 1 : oldIndex;
+        let insertPosition = oldIndex < newIndex ? newIndex + 1 : newIndex;
+        //Insert object in new position
+        newComposition.splice(insertPosition, 0, domainObject.composition[oldIndex]);
+        newComposition.splice(removeId, 1);
+
+        let reorderPlan = [{
+            oldIndex,
+            newIndex
+        }];
+
+        if (oldIndex > newIndex) {
+            for (let i = newIndex; i < oldIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i + 1
+                });
+            }
+        } else {
+            for (let i = oldIndex + 1; i <= newIndex; i++) {
+                reorderPlan.push({
+                    oldIndex: i,
+                    newIndex: i - 1
+                });
+            }
+        }
+        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+
+        let id = objectUtils.makeKeyString(domainObject.identifier);
+        var listeners = this.listeningTo[id];
+
+        if (!listeners) {
+            return;
+        }
+
+        listeners.reorder.forEach(notify);
+
+        function notify(listener) {
+            if (listener.context) {
+                listener.callback.call(listener.context, reorderPlan);
+            } else {
+                listener.callback(reorderPlan);
+            }
+        }
     };
 
     /**
@@ -183,9 +258,10 @@ define([
         if (this.topicListener) {
             return;
         }
-        var topic = this.publicAPI.$injector.get('topic');
-        var mutation = topic('mutation');
-        this.topicListener = mutation.listen(this.onMutation.bind(this));
+        this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
+        this.topicListener = () => {
+            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation)
+        };
     };
 
     /**
@@ -195,7 +271,7 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
-        var id = oldDomainObject.getId();
+        var id = objectUtils.makeKeyString(oldDomainObject.identifier);
         var listeners = this.listeningTo[id];
 
         if (!listeners) {
@@ -203,7 +279,7 @@ define([
         }
 
         var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.getModel().composition;
+        var newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
 
         var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
         var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);

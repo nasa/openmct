@@ -27,7 +27,7 @@ define(
     ["../../src/creation/CreateWizard"],
     function (CreateWizard) {
 
-        describe("The create wizard", function () {
+        xdescribe("The create wizard", function () {
             var mockType,
                 mockParent,
                 mockProperties,
@@ -142,11 +142,11 @@ define(
 
             it("populates the model on the associated object", function () {
                 var formValue = {
-                    "A": "ValueA",
-                    "B": "ValueB",
-                    "C": "ValueC"
-                },
-                compareModel = wizard.createModel(formValue);
+                        "A": "ValueA",
+                        "B": "ValueB",
+                        "C": "ValueC"
+                    },
+                    compareModel = wizard.createModel(formValue);
                 //populateObjectFromInput adds a .location attribute that is not added by createModel.
                 compareModel.location = undefined;
                 wizard.populateObjectFromInput(formValue);

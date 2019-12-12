@@ -216,6 +216,32 @@ define([
     };
 
     /**
+     * Given any number of identifiers, will return true if they are all equal, otherwise false.
+     * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
+     */
+    ObjectAPI.prototype.areIdsEqual = function (...identifiers) {
+        return identifiers.map(utils.parseKeyString)
+            .every(identifier => {
+                return identifier === identifiers[0] ||
+                    (identifier.namespace === identifiers[0].namespace &&
+                        identifier.key === identifiers[0].key);
+            });
+    };
+
+    ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
+        return this.get(identifier).then((domainObject) => {
+            path.push(domainObject);
+            let location = domainObject.location;
+
+            if (location) {
+                return this.getOriginalPath(utils.parseKeyString(location), path);
+            } else {
+                return path;
+            }
+        });
+    };
+
+    /**
      * Uniquely identifies a domain object.
      *
      * @typedef Identifier

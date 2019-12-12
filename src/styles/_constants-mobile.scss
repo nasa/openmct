@@ -1,0 +1,147 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
+
+/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
+$mobileListIconSize: 30px;
+$mobileTitleDescH: 35px;
+$mobileOverlayMargin: 20px;
+$mobileMenuIconD: 34px;
+$phoneItemH: floor($gridItemMobile / 4);
+$tabletItemH: floor($gridItemMobile / 3);
+
+/************************** MOBILE TREE MENU DIMENSIONS */
+$mobileTreeItemH: 35px;
+$mobileTreeItemIndent: 15px;
+$mobileTreeRightArrowW: 30px;
+
+/************************** DEVICE WIDTHS */
+// IMPORTANT! Usage assumes that ranges are mutually exclusive and have no gaps
+$phoMaxW: 767px;
+$tabMinW: 768px;
+$tabMaxW: 1024px;
+$desktopMinW: 1025px;
+
+/************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+$screenPortrait: "(orientation: portrait)";
+$screenLandscape: "(orientation: landscape)";
+
+//$mobileDevice: "(max-device-width: #{$tabMaxW})";
+
+$phoneCheck: "(max-device-width: #{$phoMaxW})";
+$tabletCheck: "(min-device-width: #{$tabMinW}) and (max-device-width: #{$tabMaxW})";
+$desktopCheck: "(min-device-width: #{$desktopMinW}) and (-webkit-min-device-pixel-ratio: 1)";
+
+/************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+$phonePortrait: "only screen and #{$screenPortrait} and #{$phoneCheck}";
+$phoneLandscape: "only screen and #{$screenLandscape} and #{$phoneCheck}";
+
+$tabletPortrait: "only screen and #{$screenPortrait} and #{$tabletCheck}";
+$tabletLandscape: "only screen and #{$screenLandscape} and #{$tabletCheck}";
+
+$desktop: "only screen and #{$desktopCheck}";
+
+/************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
+$proporMenuOnly: 90%;
+$proporMenuWithView: 40%;
+
+// Phones in any orientation
+@mixin phone {
+    @media #{$phonePortrait},
+    #{$phoneLandscape} {
+        @content
+    }
+}
+
+//Phones in portrait orientation
+@mixin phonePortrait {
+    @media #{$phonePortrait} {
+        @content
+    }
+}
+
+// Phones in landscape orientation
+@mixin phoneLandscape {
+    @media #{$phoneLandscape} {
+        @content
+    }
+}
+
+// Tablets in any orientation
+@mixin tablet {
+    @media #{$tabletPortrait},
+    #{$tabletLandscape} {
+        @content
+    }
+}
+
+// Tablets in portrait orientation
+@mixin tabletPortrait {
+    @media #{$tabletPortrait} {
+        @content
+    }
+}
+
+// Tablets in landscape orientation
+@mixin tabletLandscape {
+    @media #{$tabletLandscape} {
+        @content
+    }
+}
+
+// Phones and tablets in any orientation
+@mixin phoneandtablet {
+    @media #{$phonePortrait},
+    #{$phoneLandscape},
+    #{$tabletPortrait},
+    #{$tabletLandscape} {
+        @content
+    }
+}
+
+// Desktop monitors in any orientation
+@mixin desktopandtablet {
+    // Keeping only for legacy - should not be used moving forward
+    // Use body.desktop, body.tablet instead.
+    @media #{$tabletPortrait},
+    #{$tabletLandscape},
+    #{$desktop} {
+        @content
+    }
+}
+
+// Desktop monitors in any orientation
+@mixin desktop {
+    // Keeping only for legacy - should not be used moving forward
+    // Use body.desktop instead.
+    @media #{$desktop} {
+        @content
+    }
+}
+
+// Transition used for the slide menu
+@mixin slMenuTransitions {
+    @include transition-duration(.35s);
+    transition-timing-function: ease;
+    backface-visibility: hidden;
+}

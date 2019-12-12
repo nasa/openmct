@@ -19,12 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="abs overlay l-dialog" ng-class="{'delayEntry100ms' : ngModel.delay}">
-    <div class="abs blocker"></div>
-    <div class="abs outer-holder">
-        <a ng-click="ngModel.cancel()"
+<div class="c-overlay l-overlay-small" ng-class="{'delayEntry100ms' : ngModel.delay}">
+    <div class="c-overlay__blocker"></div>
+    <div class="c-overlay__outer">
+        <button ng-click="ngModel.cancel()"
            ng-if="ngModel.cancel"
-           class="close icon-x-in-circle"></a>
-        <div class="abs inner-holder contents" ng-transclude></div>
+           class="c-click-icon c-overlay__close-button icon-x-in-circle"></button>
+        <div class="c-overlay__contents" ng-transclude></div>
     </div>
 </div>

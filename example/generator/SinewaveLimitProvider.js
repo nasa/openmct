@@ -27,29 +27,35 @@ define([
 
 ) {
 
-    var RED = 0.9,
-        YELLOW = 0.5,
+    var RED = {
+            sin: 0.9,
+            cos: 0.9
+        },
+        YELLOW = {
+            sin: 0.5,
+            cos: 0.5
+        },
         LIMITS = {
             rh: {
-                cssClass: "s-limit-upr s-limit-red",
+                cssClass: "is-limit--upr is-limit--red",
                 low: RED,
                 high: Number.POSITIVE_INFINITY,
                 name: "Red High"
             },
             rl: {
-                cssClass: "s-limit-lwr s-limit-red",
+                cssClass: "is-limit--lwr is-limit--red",
                 high: -RED,
                 low: Number.NEGATIVE_INFINITY,
                 name: "Red Low"
             },
             yh: {
-                cssClass: "s-limit-upr s-limit-yellow",
+                cssClass: "is-limit--upr is-limit--yellow",
                 low: YELLOW,
                 high: RED,
                 name: "Yellow High"
             },
             yl: {
-                cssClass: "s-limit-lwr s-limit-yellow",
+                cssClass: "is-limit--lwr is-limit--yellow",
                 low: -RED,
                 high: -YELLOW,
                 name: "Yellow Low"
@@ -67,17 +73,18 @@ define([
     SinewaveLimitProvider.prototype.getLimitEvaluator = function (domainObject) {
         return {
             evaluate: function (datum, valueMetadata) {
-                var range = valueMetadata ? valueMetadata.key : 'sin'
-                if (datum[range] > RED) {
+                var range = valueMetadata && valueMetadata.key;
+
+                if (datum[range] > RED[range]) {
                     return LIMITS.rh;
                 }
-                if (datum[range] < -RED) {
+                if (datum[range] < -RED[range]) {
                     return LIMITS.rl;
                 }
-                if (datum[range] > YELLOW) {
+                if (datum[range] > YELLOW[range]) {
                     return LIMITS.yh;
                 }
-                if (datum[range] < -YELLOW) {
+                if (datum[range] < -YELLOW[range]) {
                     return LIMITS.yl;
                 }
             }

@@ -1,6 +1,6 @@
 define([
     '../eventHelpers',
-    'text!../../res/input/selectTemplate.html',
+    '../../res/input/selectTemplate.html',
     'EventEmitter',
     'zepto'
 ], function (

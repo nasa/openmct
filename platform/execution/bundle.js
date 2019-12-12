@@ -21,25 +21,26 @@
  *****************************************************************************/
 
 define([
-    "./src/WorkerService",
-    'legacyRegistry'
+    "./src/WorkerService"
 ], function (
-    WorkerService,
-    legacyRegistry
+    WorkerService
 ) {
 
-    legacyRegistry.register("platform/execution", {
-        "extensions": {
-            "services": [
-                {
-                    "key": "workerService",
-                    "implementation": WorkerService,
-                    "depends": [
-                        "$window",
-                        "workers[]"
-                    ]
-                }
-            ]
+    return {
+        name:"platform/execution",
+        definition: {
+            "extensions": {
+                "services": [
+                    {
+                        "key": "workerService",
+                        "implementation": WorkerService,
+                        "depends": [
+                            "$window",
+                            "workers[]"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

@@ -1,9 +1,9 @@
 define([
     './StaticModelProvider',
-    'text!./static-provider-test.json'
+    './static-provider-test.json'
 ], function (
     StaticModelProvider,
-    testStaticDataText
+    testStaticData
 ) {
 
     describe('StaticModelProvider', function () {
@@ -11,7 +11,7 @@ define([
         var staticProvider;
 
         beforeEach(function () {
-            var staticData = JSON.parse(testStaticDataText);
+            var staticData = JSON.parse(JSON.stringify(testStaticData));
             staticProvider = new StaticModelProvider(staticData, {
                 namespace: 'my-import',
                 key: 'root'

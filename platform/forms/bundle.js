@@ -22,7 +22,6 @@
 
 define([
     "./src/MCTForm",
-    "./src/MCTToolbar",
     "./src/MCTControl",
     "./src/MCTFileInput",
     "./src/FileInputService",
@@ -31,24 +30,24 @@ define([
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
-    "text!./res/templates/controls/autocomplete.html",
-    "text!./res/templates/controls/checkbox.html",
-    "text!./res/templates/controls/datetime.html",
-    "text!./res/templates/controls/select.html",
-    "text!./res/templates/controls/textfield.html",
-    "text!./res/templates/controls/numberfield.html",
-    "text!./res/templates/controls/textarea.html",
-    "text!./res/templates/controls/button.html",
-    "text!./res/templates/controls/color.html",
-    "text!./res/templates/controls/composite.html",
-    "text!./res/templates/controls/menu-button.html",
-    "text!./res/templates/controls/dialog.html",
-    "text!./res/templates/controls/radio.html",
-    "text!./res/templates/controls/file-input.html",
-    'legacyRegistry'
+    "./src/controllers/SnapshotPreviewController",
+    "./res/templates/controls/autocomplete.html",
+    "./res/templates/controls/checkbox.html",
+    "./res/templates/controls/datetime.html",
+    "./res/templates/controls/select.html",
+    "./res/templates/controls/textfield.html",
+    "./res/templates/controls/numberfield.html",
+    "./res/templates/controls/textarea.html",
+    "./res/templates/controls/button.html",
+    "./res/templates/controls/color.html",
+    "./res/templates/controls/composite.html",
+    "./res/templates/controls/menu-button.html",
+    "./res/templates/controls/dialog.html",
+    "./res/templates/controls/radio.html",
+    "./res/templates/controls/file-input.html",
+    "./res/templates/controls/snap-view.html"
 ], function (
     MCTForm,
-    MCTToolbar,
     MCTControl,
     MCTFileInput,
     FileInputService,
@@ -57,6 +56,7 @@ define([
     CompositeController,
     ColorController,
     DialogButtonController,
+    SnapshotPreviewController,
     autocompleteTemplate,
     checkboxTemplate,
     datetimeTemplate,
@@ -71,137 +71,148 @@ define([
     dialogTemplate,
     radioTemplate,
     fileInputTemplate,
-    legacyRegistry
+    snapViewTemplate
 ) {
 
-    legacyRegistry.register("platform/forms", {
-        "name": "MCT Forms",
-        "description": "Form generator; includes directive and some controls.",
-        "extensions": {
-            "directives": [
-                {
-                    "key": "mctForm",
-                    "implementation": MCTForm
-                },
-                {
-                    "key": "mctToolbar",
-                    "implementation": MCTToolbar
-                },
-                {
-                    "key": "mctControl",
-                    "implementation": MCTControl,
-                    "depends": [
-                        "templateLinker",
-                        "controls[]"
-                    ]
-                },
-                {
-                    "key": "mctFileInput",
-                    "implementation": MCTFileInput,
-                    "depends": [
-                        "fileInputService"
-                    ]
-                }
-            ],
-            "controls": [
-                {
-                    "key": "autocomplete",
-                    "template": autocompleteTemplate
-                },
-                {
-                    "key": "checkbox",
-                    "template": checkboxTemplate
-                },
-                {
-                    "key": "radio",
-                    "template": radioTemplate
-                },
-                {
-                    "key": "datetime",
-                    "template": datetimeTemplate
-                },
-                {
-                    "key": "select",
-                    "template": selectTemplate
-                },
-                {
-                    "key": "textfield",
-                    "template": textfieldTemplate
-                },
-                {
-                    "key": "numberfield",
-                    "template": numberfieldTemplate
-                },
-                {
-                    "key": "textarea",
-                    "template": textareaTemplate
-                },
-                {
-                    "key": "button",
-                    "template": buttonTemplate
-                },
-                {
-                    "key": "color",
-                    "template": colorTemplate
-                },
-                {
-                    "key": "composite",
-                    "template": compositeTemplate
-                },
-                {
-                    "key": "menu-button",
-                    "template": menuButtonTemplate
-                },
-                {
-                    "key": "dialog-button",
-                    "template": dialogTemplate
-                },
-                {
-                    "key": "file-input",
-                    "template": fileInputTemplate
-                }
-            ],
-            "controllers": [
-                {
-                    "key": "AutocompleteController",
-                    "implementation": AutocompleteController,
-                    "depends": [
-                        "$scope",
-                        "$element"
-                    ]
-                },
-                {
-                    "key": "DateTimeController",
-                    "implementation": DateTimeController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "CompositeController",
-                    "implementation": CompositeController
-                },
-                {
-                    "key": "ColorController",
-                    "implementation": ColorController
-                },
-                {
-                    "key": "DialogButtonController",
-                    "implementation": DialogButtonController,
-                    "depends": [
-                        "$scope",
-                        "dialogService"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "provides": "fileInputService",
-                    "type": "provider",
-                    "implementation": FileInputService
-                }
+    return {
+        name:"platform/forms",
+        definition: {
+            "name": "MCT Forms",
+            "description": "Form generator; includes directive and some controls.",
+            "extensions": {
+                "directives": [
+                    {
+                        "key": "mctForm",
+                        "implementation": MCTForm
+                    },
+                    {
+                        "key": "mctControl",
+                        "implementation": MCTControl,
+                        "depends": [
+                            "templateLinker",
+                            "controls[]"
+                        ]
+                    },
+                    {
+                        "key": "mctFileInput",
+                        "implementation": MCTFileInput,
+                        "depends": [
+                            "fileInputService"
+                        ]
+                    }
+                ],
+                "controls": [
+                    {
+                        "key": "autocomplete",
+                        "template": autocompleteTemplate
+                    },
+                    {
+                        "key": "checkbox",
+                        "template": checkboxTemplate
+                    },
+                    {
+                        "key": "radio",
+                        "template": radioTemplate
+                    },
+                    {
+                        "key": "datetime",
+                        "template": datetimeTemplate
+                    },
+                    {
+                        "key": "select",
+                        "template": selectTemplate
+                    },
+                    {
+                        "key": "textfield",
+                        "template": textfieldTemplate
+                    },
+                    {
+                        "key": "numberfield",
+                        "template": numberfieldTemplate
+                    },
+                    {
+                        "key": "textarea",
+                        "template": textareaTemplate
+                    },
+                    {
+                        "key": "button",
+                        "template": buttonTemplate
+                    },
+                    {
+                        "key": "color",
+                        "template": colorTemplate
+                    },
+                    {
+                        "key": "composite",
+                        "template": compositeTemplate
+                    },
+                    {
+                        "key": "menu-button",
+                        "template": menuButtonTemplate
+                    },
+                    {
+                        "key": "dialog-button",
+                        "template": dialogTemplate
+                    },
+                    {
+                        "key": "file-input",
+                        "template": fileInputTemplate
+                    },
+                    {
+                        "key": "snap-view",
+                        "template": snapViewTemplate
+                    }
+                ],
+                "controllers": [
+                    {
+                        "key": "AutocompleteController",
+                        "implementation": AutocompleteController,
+                        "depends": [
+                            "$scope",
+                            "$element"
+                        ]
+                    },
+                    {
+                        "key": "DateTimeController",
+                        "implementation": DateTimeController,
+                        "depends": [
+                            "$scope"
+                        ]
+                    },
+                    {
+                        "key": "CompositeController",
+                        "implementation": CompositeController
+                    },
+                    {
+                        "key": "ColorController",
+                        "implementation": ColorController
+                    },
+                    {
+                        "key": "DialogButtonController",
+                        "implementation": DialogButtonController,
+                        "depends": [
+                            "$scope",
+                            "dialogService"
+                        ]
+                    },
+                    {
+                        "key": "SnapshotPreviewController",
+                        "implementation": SnapshotPreviewController,
+                        "depends": [
+                            "$scope",
+                            "openmct"
+                        ]
+                    }
+                ],
+                "components": [
+                    {
+                        "provides": "fileInputService",
+                        "type": "provider",
+                        "implementation": FileInputService
+                    }
 
-            ]
+                ]
+            }
         }
-    });
+    };
 });

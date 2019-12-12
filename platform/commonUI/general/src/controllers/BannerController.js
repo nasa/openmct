@@ -50,7 +50,7 @@ define(
             };
             $scope.dismiss = function (notification, $event) {
                 $event.stopPropagation();
-                notification.dismissOrMinimize();
+                notification.dismiss();
             };
             $scope.maximize = function (notification) {
                 if (notification.model.severity !== "info") {
@@ -60,7 +60,7 @@ define(
                     };
                     //If the notification is dismissed by the user, close
                     // the dialog.
-                    notification.onDismiss(function () {
+                    notification.on('dismiss', function () {
                         dialog.dismiss();
                     });
 

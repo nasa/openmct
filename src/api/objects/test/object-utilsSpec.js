@@ -68,8 +68,8 @@ define([
 
             it('translate ids', function () {
                 expect(objectUtils.toNewFormat({
-                        prop: 'someValue'
-                    }, 'objId'))
+                    prop: 'someValue'
+                }, 'objId'))
                     .toEqual({
                         prop: 'someValue',
                         identifier: {
@@ -81,12 +81,12 @@ define([
 
             it('translates composition', function () {
                 expect(objectUtils.toNewFormat({
-                        prop: 'someValue',
-                        composition: [
-                            'anotherObjectId',
-                            'scratch:anotherObjectId'
-                        ]
-                    }, 'objId'))
+                    prop: 'someValue',
+                    composition: [
+                        'anotherObjectId',
+                        'scratch:anotherObjectId'
+                    ]
+                }, 'objId'))
                     .toEqual({
                         prop: 'someValue',
                         composition: [
@@ -111,12 +111,12 @@ define([
 
             it('removes ids', function () {
                 expect(objectUtils.toOldFormat({
-                        prop: 'someValue',
-                        identifier: {
-                            namespace: '',
-                            key: 'objId'
-                        }
-                    }))
+                    prop: 'someValue',
+                    identifier: {
+                        namespace: '',
+                        key: 'objId'
+                    }
+                }))
                     .toEqual({
                         prop: 'someValue'
                     });
@@ -124,22 +124,22 @@ define([
 
             it('translates composition', function () {
                 expect(objectUtils.toOldFormat({
-                        prop: 'someValue',
-                        composition: [
-                            {
-                                namespace: '',
-                                key: 'anotherObjectId'
-                            },
-                            {
-                                namespace: 'scratch',
-                                key: 'anotherObjectId'
-                            }
-                        ],
-                        identifier: {
+                    prop: 'someValue',
+                    composition: [
+                        {
                             namespace: '',
-                            key: 'objId'
+                            key: 'anotherObjectId'
+                        },
+                        {
+                            namespace: 'scratch',
+                            key: 'anotherObjectId'
                         }
-                    }))
+                    ],
+                    identifier: {
+                        namespace: '',
+                        key: 'objId'
+                    }
+                }))
                     .toEqual({
                         prop: 'someValue',
                         composition: [

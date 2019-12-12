@@ -31,7 +31,7 @@ define(
                 mockHead,
                 mockElement,
                 testBundle,
-                loader;
+                loader; // eslint-disable-line
 
             beforeEach(function () {
                 testBundle = {

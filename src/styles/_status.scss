@@ -1,0 +1,174 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*************************************************** MIXINS */
+@mixin statusStyle($bg, $fg, $imp: false) {
+    $impStr: null;
+    @if $imp {
+        $impStr: !important;
+    }
+    background: $bg $impStr;
+    background-color: $bg $impStr;
+    color: $fg $impStr;
+}
+
+@mixin statusIcon($ic, $glyph: null, $imp: false) {
+    $impStr: null;
+    @if $imp {
+        $impStr: !important;
+    }
+    &:before {
+        color: $ic;
+        display: inline-block;
+        font-family: symbolsfont;
+        font-size: 0.8em;
+        margin-right: $interiorMargin;
+        @if $glyph != null {
+            content: $glyph $impStr;
+        }
+    }
+}
+
+@mixin statusStyleCombined($bg, $fg, $ic) {
+    @include statusStyle($bg, $fg, $imp: true);
+    @include statusIcon($ic);
+}
+
+@mixin elementStatusColors($c) {
+    // Sets bg and icon colors for elements
+    background: rgba($c, 0.5) !important;
+    &:before {
+        color: $c !important;
+    }
+}
+
+@mixin indicatorStatusColors($c) {
+    &:before, .c-indicator__count {
+        color: $c;
+    }
+}
+
+@mixin andUprLwr {
+    &.is-limit--upr:before { content: $glyph-icon-arrow-up !important; }
+    &.is-limit--lwr:before { content: $glyph-icon-arrow-down !important; }
+}
+
+/*************************************************** STYLES */
+*:not(tr) {
+    &.is-limit--yellow {
+        @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg, true);
+        @include statusIcon($colorLimitYellowIc, $glyph-icon-alert-rect);
+        @include andUprLwr();
+    }
+
+    &.is-limit--red {
+        @include statusStyle($colorLimitRedBg, $colorLimitRedFg, true);
+        @include statusIcon($colorLimitRedIc, $glyph-icon-alert-triangle);
+        @include andUprLwr();
+    }
+}
+
+tr {
+    &.is-limit--yellow {
+        @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg);
+        td:first-child {
+            @include statusIcon($colorLimitYellowIc, $glyph-icon-alert-rect);
+        }
+        td { color: $colorLimitYellowFg; }
+    }
+
+    &.is-limit--red {
+        @include statusStyle($colorLimitRedBg, $colorLimitRedFg);
+        td:first-child {
+            @include statusIcon($colorLimitRedIc, $glyph-icon-alert-triangle);
+        }
+        td { color: $colorLimitRedFg; }
+    }
+
+    &.is-limit--upr { td:first-child:before {  content: $glyph-icon-arrow-up !important; } }
+    &.is-limit--lwr { td:first-child:before {  content: $glyph-icon-arrow-down !important; } }
+}
+
+/*************************************************** STATUS */
+[class*='s-status'] {
+    &:before {
+        margin-right: $interiorMargin;
+    }
+}
+
+.s-status-warning-hi, .s-status-icon-warning-hi {  @include elementStatusColors($colorWarningHi); }
+.s-status-warning-lo, .s-status-icon-warning-lo {  @include elementStatusColors($colorWarningLo); }
+.s-status-diagnostic, .s-status-icon-diagnostic {  @include elementStatusColors($colorDiagnostic); }
+.s-status-info, .s-status-icon-info {  @include elementStatusColors($colorInfo); }
+.s-status-ok, .s-status-icon-ok {  @include elementStatusColors($colorOk); }
+
+.s-status-icon-warning-hi:before { content: $glyph-icon-alert-triangle; }
+.s-status-icon-warning-lo:before { content: $glyph-icon-alert-rect; }
+.s-status-icon-diagnostic:before { content: $glyph-icon-eye-open; }
+.s-status-icon-info:before { content: $glyph-icon-info; }
+.s-status-icon-ok:before { content: $glyph-icon-check; }
+
+/*************************************************** INDICATOR COLORING */
+.c-indicator {
+    &.s-status-info {
+        @include indicatorStatusColors($colorInfo);
+    }
+
+    &.s-status-disabled {
+        @include indicatorStatusColors($colorIndicatorDisabled);
+    }
+
+    &.s-status-available {
+        @include indicatorStatusColors($colorIndicatorAvailable);
+    }
+
+    &.s-status-on,
+    &.s-status-enabled {
+        @include indicatorStatusColors($colorIndicatorOn);
+    }
+
+    &.s-status-off {
+        @include indicatorStatusColors($colorIndicatorOff);
+    }
+
+    &.s-status-caution,
+    &.s-status-warning,
+    &.s-status-alert {
+        @include indicatorStatusColors($colorStatusAlert);
+    }
+
+    &.s-status-error {
+        @include indicatorStatusColors($colorStatusError);
+    }
+}
+
+.s-status {
+    &--partial {
+        // Partially completed things, such as a file downloading or process that's running
+        background-color: $colorStatusPartialBg;
+    }
+
+    &--complete {
+        // Completed things, such as a file downloaded or process that's finished
+        background-color: $colorStatusCompleteBg;
+    }
+}
+

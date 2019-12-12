@@ -24,7 +24,7 @@ define(
     ["../../src/capabilities/EditorCapability"],
     function (EditorCapability) {
 
-        describe("The editor capability", function () {
+        xdescribe("The editor capability", function () {
             var mockDomainObject,
                 capabilities,
                 mockParentObject,

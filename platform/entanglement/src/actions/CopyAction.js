@@ -126,17 +126,17 @@ define(
 
                 var errorDialog,
                     errorMessage = {
-                    title: "Error copying objects.",
-                    severity: "error",
-                    hint: errorDetails.message,
-                    minimized: true, // want the notification to be minimized initially (don't show banner)
-                    options: [{
-                        label: "OK",
-                        callback: function () {
-                            errorDialog.dismiss();
-                        }
-                    }]
-                };
+                        title: "Error copying objects.",
+                        severity: "error",
+                        hint: errorDetails.message,
+                        minimized: true, // want the notification to be minimized initially (don't show banner)
+                        options: [{
+                            label: "OK",
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }]
+                    };
 
                 self.dialog.dismiss();
                 if (self.notification) {

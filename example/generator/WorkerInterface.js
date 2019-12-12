@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    'text!./generatorWorker.js',
+    'raw-loader!./generatorWorker.js',
     'uuid'
 ], function (
     workerText,
@@ -89,7 +89,7 @@ define([
     WorkerInterface.prototype.subscribe = function (request, cb) {
         function callback(message) {
             cb(message.data);
-        };
+        }
 
         var messageId = this.dispatch('subscribe', request, callback);
 

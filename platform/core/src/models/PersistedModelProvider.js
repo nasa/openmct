@@ -67,7 +67,7 @@ define(
             // Load a single object model from any persistence spaces
             function loadModel(parsedId) {
                 return persistenceService
-                        .readObject(parsedId.space, parsedId.key);
+                    .readObject(parsedId.space, parsedId.key);
             }
 
             // Ensure that models read from persistence have some
@@ -75,7 +75,7 @@ define(
             function addPersistedTimestamp(model) {
                 if (model && (model.persisted === undefined)) {
                     model.persisted = model.modified !== undefined ?
-                            model.modified : now();
+                        model.modified : now();
                 }
 
                 return model;
@@ -112,8 +112,8 @@ define(
             parsedIds = ids.map(function (id) {
                 var parts = id.split(":");
                 return (parts.length > 1) ?
-                        { id: id, space: parts[0], key: parts.slice(1).join(":") } :
-                        { id: id, space: defaultSpace, key: id };
+                    { id: id, space: parts[0], key: parts.slice(1).join(":") } :
+                    { id: id, space: defaultSpace, key: id };
             });
 
             return persistenceService.listSpaces()

@@ -21,7 +21,23 @@ define([
             topicService.and.returnValue(mutationTopic);
             publicAPI = {};
             publicAPI.objects = jasmine.createSpyObj('ObjectAPI', [
-                'get'
+                'get',
+                'mutate',
+                'observe',
+                'areIdsEqual'
+            ]);
+
+            publicAPI.objects.areIdsEqual.and.callFake(function (id1, id2) {
+                return id1.namespace === id2.namespace && id1.key === id2.key;
+            });
+
+            publicAPI.composition = jasmine.createSpyObj('CompositionAPI', [
+                'checkPolicy'
+            ]);
+            publicAPI.composition.checkPolicy.and.returnValue(true);
+
+            publicAPI.objects.eventEmitter = jasmine.createSpyObj('eventemitter', [
+                'on'
             ]);
             publicAPI.objects.get.and.callFake(function (identifier) {
                 return Promise.resolve({identifier: identifier});
@@ -52,6 +68,14 @@ define([
                         {
                             namespace: 'test',
                             key: 'a'
+                        },
+                        {
+                            namespace: 'test',
+                            key: 'b'
+                        },
+                        {
+                            namespace: 'test',
+                            key: 'c'
                         }
                     ]
                 };
@@ -68,55 +92,55 @@ define([
                 composition.on('add', listener);
 
                 return composition.load().then(function () {
-                    expect(listener.calls.count()).toBe(1);
+                    expect(listener.calls.count()).toBe(3);
                     expect(listener).toHaveBeenCalledWith({
                         identifier: {namespace: 'test', key: 'a'}
                     });
                 });
             });
+            describe('supports reordering of composition', function () {
+                var listener;
+                beforeEach(function () {
+                    listener = jasmine.createSpy('reorderListener');
+                    composition.on('reorder', listener);
 
-            // TODO: Implement add/removal in new default provider.
-            xit('synchronizes changes between instances', function () {
-                var otherComposition = compositionAPI.get(domainObject);
-                var addListener = jasmine.createSpy('addListener');
-                var removeListener = jasmine.createSpy('removeListener');
-                var otherAddListener = jasmine.createSpy('otherAddListener');
-                var otherRemoveListener = jasmine.createSpy('otherRemoveListener');
+                    return composition.load();
+                });
+                it('', function () {
+                    composition.reorder(1, 0);
+                    let newComposition =
+                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
+
+                    expect(reorderPlan.oldIndex).toBe(1);
+                    expect(reorderPlan.newIndex).toBe(0);
+                    expect(newComposition[0].key).toEqual('b');
+                    expect(newComposition[1].key).toEqual('a');
+                    expect(newComposition[2].key).toEqual('c');
+                });
+                it('', function () {
+                    composition.reorder(0, 2);
+                    let newComposition =
+                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    let reorderPlan = listener.calls.mostRecent().args[0][0];
+
+                    expect(reorderPlan.oldIndex).toBe(0);
+                    expect(reorderPlan.newIndex).toBe(2);
+                    expect(newComposition[0].key).toEqual('b');
+                    expect(newComposition[1].key).toEqual('c');
+                    expect(newComposition[2].key).toEqual('a');
+                })
+            });
+            it('supports adding an object to composition', function () {
+                let addListener = jasmine.createSpy('addListener');
+                let mockChildObject = {
+                    identifier: {key: 'mock-key', namespace: ''}
+                };
                 composition.on('add', addListener);
-                composition.on('remove', removeListener);
-                otherComposition.on('add', otherAddListener);
-                otherComposition.on('remove', otherRemoveListener);
+                composition.add(mockChildObject);
 
-                return Promise.all([composition.load(), otherComposition.load()])
-                    .then(function () {
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-                        expect(removeListener).not.toHaveBeenCalled();
-                        expect(otherRemoveListener).not.toHaveBeenCalled();
-
-                        var object = addListener.calls.mostRecent().args[0];
-                        composition.remove(object);
-                        expect(removeListener).toHaveBeenCalled();
-                        expect(otherRemoveListener).toHaveBeenCalled();
-
-                        addListener.reset();
-                        otherAddListener.reset();
-                        composition.add(object);
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-
-                        removeListener.reset();
-                        otherRemoveListener.reset();
-                        otherComposition.remove(object);
-                        expect(removeListener).toHaveBeenCalled();
-                        expect(otherRemoveListener).toHaveBeenCalled();
-
-                        addListener.reset();
-                        otherAddListener.reset();
-                        otherComposition.add(object);
-                        expect(addListener).toHaveBeenCalled();
-                        expect(otherAddListener).toHaveBeenCalled();
-                    });
+                expect(domainObject.composition.length).toBe(4);
+                expect(domainObject.composition[3]).toEqual(mockChildObject.identifier);
             });
         });
 
@@ -139,7 +163,9 @@ define([
                                 key: 'thing'
                             }
                         ]);
-                    }
+                    },
+                    add: jasmine.createSpy('add'),
+                    remove: jasmine.createSpy('remove')
                 };
                 domainObject = {
                     identifier: {
@@ -167,6 +193,25 @@ define([
                     expect(loadedObject).toEqual({
                         identifier: {namespace: 'custom', key: 'thing'}
                     });
+                });
+            });
+            describe('Calling add or remove', function () {
+                let mockChildObject;
+
+                beforeEach(function () {
+                    mockChildObject = {
+                        identifier: {key: 'mock-key', namespace: ''}
+                    };
+                    composition.add(mockChildObject);
+                });
+
+                it('calls add on the provider', function () {
+                    expect(customProvider.add).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
+                });
+
+                it('calls remove on the provider', function () {
+                    composition.remove(mockChildObject);
+                    expect(customProvider.remove).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
                 });
             });
         });

@@ -52,7 +52,7 @@ define([
             'period',
             'offset',
             'dataRateInHz',
-            'phase',
+            'phase'
         ];
 
         request = request || {};

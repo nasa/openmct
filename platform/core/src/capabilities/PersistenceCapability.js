@@ -168,9 +168,9 @@ define(
             }
 
             return this.persistenceService.readObject(
-                    this.getSpace(),
-                    this.getKey()
-                ).then(updateModel);
+                this.getSpace(),
+                this.getKey()
+            ).then(updateModel);
         };
 
         /**

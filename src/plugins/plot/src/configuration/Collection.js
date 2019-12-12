@@ -115,11 +115,13 @@ define([
 
     Collection.prototype.remove = function (model) {
         var index = this.indexOf(model);
+
         if (index === -1) {
             throw new Error('model not found in collection.');
         }
-        this.models.splice(index, 1);
+
         this.emit('remove', model, index);
+        this.models.splice(index, 1);
     };
 
     Collection.prototype.destroy = function (model) {

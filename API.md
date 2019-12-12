@@ -108,15 +108,13 @@ script loaders are also supported.
 <html>
 <head>
     <title>Open MCT</title>
-    <script src="openmct.js"></script>
+    <script src="dist/openmct.js"></script>
 </head>
 <body>
     <script>
-        openmct.setAssetPath('openmct/dist');
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.install(openmct.plugins.Espresso());
         openmct.start();
     </script>
 </body>
@@ -127,9 +125,6 @@ The Open MCT library included above requires certain assets such as html
 templates, images, and css. If you installed Open MCT from GitHub as described 
 in the section on [Building from Source](#building-from-source) then these
 assets will have been downloaded along with the Open MCT javascript library. 
-You can specify the location of these assets by calling `openmct.setAssetPath()`. 
-Typically this will be the same location as the `openmct.js` library is 
-included from.
 
 There are some plugins bundled with the application that provide UI, 
 persistence, and other default configuration which are necessary to be able to 

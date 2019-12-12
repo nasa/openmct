@@ -22,28 +22,56 @@
 
 define([
     'EventEmitter',
-    'legacyRegistry',
     'uuid',
+    './BundleRegistry',
+    './installDefaultBundles',
     './api/api',
+    './api/overlays/OverlayAPI',
     './selection/Selection',
     './api/objects/object-utils',
     './plugins/plugins',
-    './ui/ViewRegistry',
-    './ui/InspectorViewRegistry',
-    './ui/ToolbarRegistry',
-    './adapter/indicators/legacy-indicators-plugin'
+    './adapter/indicators/legacy-indicators-plugin',
+    './plugins/buildInfo/plugin',
+    './ui/registries/ViewRegistry',
+    './ui/registries/InspectorViewRegistry',
+    './ui/registries/ToolbarRegistry',
+    './ui/router/ApplicationRouter',
+    './ui/router/Browse',
+    '../platform/framework/src/Main',
+    './ui/layout/Layout.vue',
+    '../platform/core/src/objects/DomainObjectImpl',
+    '../platform/core/src/capabilities/ContextualDomainObject',
+    './ui/preview/plugin',
+    './api/Branding',
+    './plugins/licenses/plugin',
+    './plugins/remove/plugin',
+    'vue'
 ], function (
     EventEmitter,
-    legacyRegistry,
     uuid,
+    BundleRegistry,
+    installDefaultBundles,
     api,
+    OverlayAPI,
     Selection,
     objectUtils,
     plugins,
+    LegacyIndicatorsPlugin,
+    buildInfoPlugin,
     ViewRegistry,
     InspectorViewRegistry,
     ToolbarRegistry,
-    LegacyIndicatorsPlugin
+    ApplicationRouter,
+    Browse,
+    Main,
+    Layout,
+    DomainObjectImpl,
+    ContextualDomainObject,
+    PreviewPlugin,
+    BrandingAPI,
+    LicensesPlugin,
+    RemoveActionPlugin,
+    Vue
 ) {
     /**
      * Open MCT is an extensible web application for building mission
@@ -63,6 +91,16 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
+        /* eslint-disable no-undef */
+        this.buildInfo = {
+            version: __OPENMCT_VERSION__,
+            buildDate: __OPENMCT_BUILD_DATE__,
+            revision: __OPENMCT_REVISION__,
+            branch: __OPENMCT_BUILD_BRANCH__
+        };
+        /* eslint-enable no-undef */
+
+
         this.legacyBundle = { extensions: {
             services: [
                 {
@@ -166,15 +204,6 @@ define([
         this.types = new api.TypeRegistry();
 
         /**
-         * Utilities for attaching common behaviors to views.
-         *
-         * @type {module:openmct.GestureAPI}
-         * @memberof module:openmct.MCT#
-         * @name gestures
-         */
-        this.gestures = new api.GestureAPI();
-
-        /**
          * An interface for interacting with domain objects and the domain
          * object hierarchy.
          *
@@ -203,8 +232,35 @@ define([
          */
         this.indicators = new api.IndicatorAPI(this);
 
-        this.Dialog = api.Dialog;
+        this.notifications = new api.NotificationAPI();
 
+        this.editor = new api.EditorAPI.default(this);
+
+        this.overlays = new OverlayAPI.default();
+
+        this.contextMenu = new api.ContextMenuRegistry();
+
+        this.router = new ApplicationRouter();
+
+        this.branding = BrandingAPI.default;
+
+        this.legacyRegistry = new BundleRegistry();
+        installDefaultBundles(this.legacyRegistry);
+
+        // Plugin's that are installed by default
+
+        this.install(this.plugins.Plot());
+        this.install(this.plugins.TelemetryTable());
+        this.install(PreviewPlugin.default());
+        this.install(LegacyIndicatorsPlugin());
+        this.install(LicensesPlugin.default());
+        this.install(RemoveActionPlugin.default());
+        this.install(this.plugins.FolderView());
+        this.install(this.plugins.Tabs());
+        this.install(this.plugins.FlexibleLayout());
+        this.install(this.plugins.GoToOriginalAction());
+        this.install(this.plugins.ImportExport());
+        this.install(this.plugins.WebPage());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -218,15 +274,66 @@ define([
     };
 
     /**
+     * Return a legacy object, for compatibility purposes only.  This method
+     * will be deprecated and removed in the future.
+     * @private
+     */
+    MCT.prototype.legacyObject = function (domainObject) {
+        let capabilityService = this.$injector.get('capabilityService');
+
+        function instantiate(model, keyString) {
+            var capabilities = capabilityService.getCapabilities(model, keyString);
+            model.id = keyString;
+            return new DomainObjectImpl(keyString, model, capabilities);
+        }
+
+        if (Array.isArray(domainObject)) {
+            // an array of domain objects. [object, ...ancestors] representing
+            // a single object with a given chain of ancestors.  We instantiate
+            // as a single contextual domain object.
+            return domainObject
+                .map((o) => {
+                    let keyString = objectUtils.makeKeyString(o.identifier);
+                    let oldModel = objectUtils.toOldFormat(o);
+                    return instantiate(oldModel, keyString);
+                })
+                .reverse()
+                .reduce((parent, child) => {
+                    return new ContextualDomainObject(child, parent);
+                });
+
+        } else {
+            let keyString = objectUtils.makeKeyString(domainObject.identifier);
+            let oldModel = objectUtils.toOldFormat(domainObject);
+            return instantiate(oldModel, keyString);
+        }
+    };
+
+    /**
      * Set path to where assets are hosted.  This should be the path to main.js.
      * @memberof module:openmct.MCT#
      * @method setAssetPath
      */
-    MCT.prototype.setAssetPath = function (path) {
-        this.legacyExtension('constants', {
-            key: "ASSETS_PATH",
-            value: path
-        });
+    MCT.prototype.setAssetPath = function (assetPath) {
+        this._assetPath = assetPath;
+    };
+
+    /**
+     * Get path to where assets are hosted.
+     * @memberof module:openmct.MCT#
+     * @method getAssetPath
+     */
+    MCT.prototype.getAssetPath = function () {
+        const assetPathLength = this._assetPath && this._assetPath.length;
+        if (!assetPathLength) {
+            return '/';
+        }
+
+        if (this._assetPath[assetPathLength - 1] !== '/') {
+            return this._assetPath + '/';
+        }
+
+        return this._assetPath;
     };
 
     /**
@@ -239,14 +346,17 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement) {
+        if (!this.plugins.DisplayLayout._installed) {
+            this.install(this.plugins.DisplayLayout({
+                showAsView: ['summary-widget']
+            }));
+        }
+
         if (!domElement) {
             domElement = document.body;
         }
 
-        var appDiv = document.createElement('div');
-        appDiv.setAttribute('ng-view', '');
-        appDiv.className = 'user-environ';
-        domElement.appendChild(appDiv);
+        this.element = domElement;
 
         this.legacyExtension('runs', {
             depends: ['navigationService'],
@@ -256,6 +366,7 @@ define([
             }.bind(this)
         });
 
+        // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
             var type = this.types.get(typeKey);
             var legacyDefinition = type.toLegacyDefinition();
@@ -263,22 +374,12 @@ define([
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
 
-        this.objectViews.getAllProviders().forEach(function (p) {
-            this.legacyExtension('views', {
-                key: p.key,
-                provider: p,
-                name: p.name,
-                cssClass: p.cssClass,
-                description: p.description,
-                editable: p.editable,
-                template: '<mct-view mct-provider-key="' + p.key + '"/>'
-            });
-        }, this);
+        this.legacyRegistry.register('adapter', this.legacyBundle);
+        this.legacyRegistry.enable('adapter');
 
-        legacyRegistry.register('adapter', this.legacyBundle);
-        legacyRegistry.enable('adapter');
-
-        this.install(LegacyIndicatorsPlugin());
+        this.router.route(/^\/$/, () => {
+            this.router.setPath('/browse/');
+        });
 
         /**
          * Fired by [MCT]{@link module:openmct.MCT} when the application
@@ -286,9 +387,31 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        this.emit('start');
-    };
+        const startPromise = new Main()
+        startPromise.run(this)
+            .then(function (angular) {
+                this.$angular = angular;
+                // OpenMCT Object provider doesn't operate properly unless
+                // something has depended upon objectService.  Cool, right?
+                this.$injector.get('objectService');
 
+                var appLayout = new Vue({
+                    components: {
+                        'Layout': Layout.default
+                    },
+                    provide: {
+                        openmct: this
+                    },
+                    template: '<Layout ref="layout"></Layout>'
+                });
+                domElement.appendChild(appLayout.$mount().$el);
+
+                this.layout = appLayout.$refs.layout;
+                Browse(this);
+                this.router.start();
+                this.emit('start');
+            }.bind(this));
+    };
 
     /**
      * Install a plugin in MCT.

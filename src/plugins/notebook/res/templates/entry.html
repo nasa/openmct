@@ -1,0 +1,34 @@
+<li class="c-notebook__entry c-ne has-local-controls"
+    @drop.prevent="dropOnEntry(entry.id, $event)">
+    <div class="c-ne__time-and-content">
+        <div class="c-ne__time">
+            <span>{{formatTime(entry.createdOn, 'YYYY-MM-DD')}}</span>
+            <span>{{formatTime(entry.createdOn, 'HH:mm:ss')}}</span>
+        </div>
+        <div class="c-ne__content">
+            <div class="c-ne__text c-input-inline"
+                 contenteditable="true"
+                 ref="contenteditable"
+                 @blur="textBlur($event, entry.id)"
+                 @focus="textFocus($event, entry.id)"
+                 v-html="entry.text">
+            </div>
+            <div class="c-ne__embeds">
+                <notebook-embed
+                    v-for="embed in entry.embeds"
+                    :key="embed.id"
+                    :embed="embed"
+                    :objectPath="embed.objectPath"
+                    :entry="entry">
+                </notebook-embed>
+            </div>
+        </div>
+    </div>
+
+    <div class="c-ne__local-controls--hidden">
+        <button class="c-icon-button c-icon-button--major icon-trash"
+           title="Delete this entry"
+           @click="deleteEntry">
+        </button>
+    </div>
+</li>

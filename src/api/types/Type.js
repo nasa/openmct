@@ -32,6 +32,9 @@ define(function () {
      */
     function Type(definition) {
         this.definition = definition;
+        if (definition.key) {
+            this.key = definition.key;
+        }
     }
 
     /**
@@ -68,6 +71,30 @@ define(function () {
         }
 
         return def;
+    };
+
+    /**
+     * Create a type definition from a legacy definition.
+     */
+    Type.definitionFromLegacyDefinition = function (legacyDefinition) {
+        let definition = {};
+        definition.name = legacyDefinition.name;
+        definition.cssClass = legacyDefinition.cssClass;
+        definition.description = legacyDefinition.description;
+        definition.form = legacyDefinition.properties;
+        if (legacyDefinition.model) {
+            definition.initialize = function (model) {
+                for (let [k, v] of Object.entries(legacyDefinition.model)) {
+                    model[k] = JSON.parse(JSON.stringify(v));
+                }
+            }
+        }
+
+        if (legacyDefinition.features && legacyDefinition.features.includes("creation")) {
+            definition.creatable = true;
+        }
+
+        return definition;
     };
 
     return Type;

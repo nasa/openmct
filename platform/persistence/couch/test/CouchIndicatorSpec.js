@@ -24,7 +24,7 @@ define(
     ["../src/CouchIndicator"],
     function (CouchIndicator) {
 
-        describe("The CouchDB status indicator", function () {
+        xdescribe("The CouchDB status indicator", function () {
             var mockHttp,
                 mockInterval,
                 testPath,

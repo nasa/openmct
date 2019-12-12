@@ -35,20 +35,33 @@ define(
          * @param dialogService
          * @constructor
          */
-        function NotificationIndicatorController($scope, notificationService, dialogService) {
-            $scope.notifications = notificationService.notifications;
-            $scope.highest = notificationService.highest;
+        function NotificationIndicatorController($scope, openmct, dialogService) {
+            $scope.notifications = openmct.notifications.notifications;
+            $scope.highest = openmct.notifications.highest;
 
             /**
              * Launch a dialog showing a list of current notifications.
              */
             $scope.showNotificationsList = function () {
+                let notificationsList = openmct.notifications.notifications.map(notification => {
+                    if (notification.model.severity === 'alert' || notification.model.severity === 'info') {
+                        notification.model.primaryOption = {
+                            label: 'Dismiss',
+                            callback: () => {
+                                let currentIndex = notificationsList.indexOf(notification);
+                                notification.dismiss();
+                                notificationsList.splice(currentIndex, 1);
+                            }
+                        }
+                    }
+                    return notification;
+                })
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",
                         //Launch the message list dialog with the models
                         // from the notifications
-                        messages: notificationService.notifications
+                        messages: notificationsList
                     }
                 });
 

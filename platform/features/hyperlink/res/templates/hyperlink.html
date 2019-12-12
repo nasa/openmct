@@ -19,10 +19,10 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<a class="l-hyperlink s-hyperlink" ng-controller="HyperlinkController as hyperlink" href="{{domainObject.getModel().url}}"
+<a class="c-hyperlink u-links" ng-controller="HyperlinkController as hyperlink" href="{{domainObject.getModel().url}}"
    ng-attr-target="{{hyperlink.openNewTab() ? '_blank' : undefined}}"
    ng-class="{
-       's-button': hyperlink.isButton()
-   }">
-    <span class="label">{{domainObject.getModel().displayText}}</span>
+   'c-hyperlink--button u-fills-container' : hyperlink.isButton(),
+   'c-hyperlink--link' : !hyperlink.isButton() }">
+    <span class="c-hyperlink__label">{{domainObject.getModel().displayText}}</span>
 </a>

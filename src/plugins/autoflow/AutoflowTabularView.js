@@ -23,8 +23,8 @@
 define([
     './AutoflowTabularController',
     './AutoflowTabularConstants',
-    '../../ui/VueView',
-    'text!./autoflow-tabular.html'
+    './VueView',
+    './autoflow-tabular.html'
 ], function (
     AutoflowTabularController,
     AutoflowTabularConstants,
@@ -59,7 +59,7 @@ define([
                 increaseColumnWidth: function () {
                     data.width += COLUMN_WIDTH_STEP;
                     data.width = data.width > MAX_COLUMN_WIDTH ?
-                            INITIAL_COLUMN_WIDTH : data.width;
+                        INITIAL_COLUMN_WIDTH : data.width;
                 },
                 reflow: function () {
                     var column = [];

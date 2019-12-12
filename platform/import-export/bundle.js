@@ -33,8 +33,8 @@ define([
         return function (openmct) {
             ExportAsJSONAction.appliesTo = function (context) {
                 return openmct.$injector.get('policyService')
-                  .allow("creation", context.domainObject.getCapability("type")
-                );
+                    .allow("creation", context.domainObject.getCapability("type")
+                    );
             };
 
             openmct.legacyRegistry.register("platform/import-export", {
@@ -63,15 +63,16 @@ define([
                             "category": "contextual",
                             "cssClass": "icon-import",
                             "depends": [
-                                 "exportService",
-                                 "identifierService",
-                                 "dialogService",
-                                 "openmct"
+                                "exportService",
+                                "identifierService",
+                                "dialogService",
+                                "openmct"
                             ]
                         }
                     ]
                 }
             });
+
             openmct.legacyRegistry.enable('platform/import-export');
         };
     };

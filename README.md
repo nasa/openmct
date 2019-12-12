@@ -28,9 +28,14 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+## Open MCT v1.0.0
+This represents a major overhaul of Open MCT with significant changes under the hood. We aim to maintain backward compatibility but if you do find compatibility issues, please let us know by filing an issue in this repository. If you are having major issues with v1.0.0 please check-out the v0.14.0 tag until we can resolve them for you.
+
+If you are migrating an application built with Open MCT as a dependency to v1.0.0 from an earlier version, please refer to [our migration guide](https://nasa.github.io/openmct/documentation/migration-guide).
+
 ## Documentation
 
-Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/). The documentation can also be built locally.
+Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/).
 
 ### Examples
 
@@ -38,53 +43,29 @@ The clearest examples for developing Open MCT plugins are in the
 [tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
-Additional examples are available in the `examples` hierarchy of this
-repository; however, be aware that these examples are
-[not fully-documented](https://github.com/nasa/openmct/issues/846), so
-the tutorials will likely serve as a better starting point.
-
 We want Open MCT to be as easy to use, install, run, and develop for as
 possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
-## Deploying Open MCT
+## Building Applications With Open MCT
 
-Open MCT is built using [`npm`](http://npmjs.com/)
-and [`gulp`](http://gulpjs.com/).
+Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
 
-To build Open MCT for deployment:
+See our documentation for a guide on [building Applications with Open MCT](https://github.com/nasa/openmct/blob/master/API.md#starting-an-open-mct-application).
 
-`npm run prepare`
+## Plugins
 
-This will compile and minify JavaScript sources, as well as copy over assets.
-The contents of the `dist` folder will contain a runnable Open MCT
-instance (e.g. by starting an HTTP server in that directory), including:
+Open MCT can be extended via plugins that make calls to the Open MCT API. A plugin is a group 
+of software components (including source code and resources such as images and HTML templates)
+that is intended to be added or removed as a single unit.
 
-* A `main.js` file containing Open MCT source code.
-* Various assets in the `example` and `platform` directories.
-* An `index.html` that runs Open MCT in its default configuration.
+As well as providing an extension mechanism, most of the core Open MCT codebase is also 
+written as plugins.
 
-Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
-
-## Bundles
-
-A bundle is a group of software components (including source code, declared
-as AMD modules, as well as resources such as images and HTML templates)
-that is intended to be added or removed as a single unit. A plug-in for
-Open MCT will be expressed as a bundle; platform components are also
-expressed as bundles.
-
-A bundle is also just a directory which contains a file `bundle.json`,
-which declares its contents.
-
-The file `bundles.json` (note the plural), at the top level of the
-repository, is a JSON file containing an array of all bundles (expressed as
-directory names) to include in a running instance of Open MCT. Adding or
-removing paths from this list will add or remove bundles from the running
-application.
+For information on writing plugins, please see [our API documentation](https://github.com/nasa/openmct/blob/master/API.md#plugins).
 
 ## Tests
 
-Tests are written for [Jasmine 1.3](http://jasmine.github.io/1.3/introduction.html)
+Tests are written for [Jasmine 3](https://jasmine.github.io/api/3.1/global)
 and run by [Karma](http://karma-runner.github.io). To run:
 
 `npm test`
@@ -100,7 +81,7 @@ naming convention is otherwise the same.)
 ### Test Reporting
 
 When `npm test` is run, test results will be written as HTML to
-`target/tests`. Code coverage information is written to `target/coverage`.
+`dist/reports/tests/`. Code coverage information is written to `dist/reports/coverage`.
 
 # Glossary
 
@@ -110,11 +91,8 @@ addressed (either by updating this glossary or changing code to reflect
 correct usage.) Other developer documentation, particularly in-line
 documentation, may presume an understanding of these terms.
 
-* _bundle_: A bundle is a removable, reusable grouping of software elements.
-  The application is composed of bundles. Plug-ins are bundles. For more
-  information, refer to framework documentation (under `platform/framework`.)
-* _capability_: An object which exposes dynamic behavior or non-persistent
-  state associated with a domain object.
+* _plugin_: A plugin is a removable, reusable grouping of software elements.
+  The application is composed of plugins.
 * _composition_: In the context of a domain object, this refers to the set of
   other domain objects that compose or are contained by that object. A domain
   object's composition is the set of domain objects that should appear
@@ -129,13 +107,8 @@ documentation, may presume an understanding of these terms.
 * _domain object_: A meaningful object to the user; a distinct thing in
   the work support by Open MCT. Anything that appears in the left-hand
   tree is a domain object.
-* _extension_: An extension is a unit of functionality exposed to the
-  platform in a declarative fashion by a bundle. For more
-  information, refer to framework documentation (under `platform/framework`.)
-* _id_: A string which uniquely identifies a domain object.
-* _key_: When used as an object property, this refers to the machine-readable
-  identifier for a specific thing in a set of things. (Most often used in the
-  context of extensions or other similar application-specific object sets.)
+* _identifier_: A tuple consisting of a namespace and a key, which together uniquely
+  identifies a domain object.
 * _model_: The persistent state associated with a domain object. A domain
   object's model is a JavaScript object which can be converted to JSON
   without losing information (that is, it contains no methods.)
@@ -147,7 +120,5 @@ documentation, may presume an understanding of these terms.
   a user clicks on a domain object in the tree, they are _navigating_ to
   it, and it is thereafter considered the _navigated_ object (until the
   user makes another such choice.)
-* _space_: A name used to identify a persistence store. Interactions with
-  persistence will generally involve a `space` parameter in some form, to
-  distinguish multiple persistence stores from one another (for cases
-  where there are multiple valid persistence locations available.)
+* _namespace_: A name used to identify a persistence store. A running open MCT 
+application could potentially use multiple persistence stores, with the 
