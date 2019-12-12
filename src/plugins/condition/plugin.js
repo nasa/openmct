@@ -20,26 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionViewProvider from './ConditionViewProvider.js';
+// import ConditionViewProvider from './ConditionViewProvider.js';
 
-export default function plugin() {
+export default function ConditionPlugin() {
+    const conditionType = {
+        name: 'Condition',
+        description: 'A conditional rule based on user-specified criteria.',
+        creatable: true,
+        cssClass: 'icon-summary-widget',
+        initialize: function (domainObject) {
+            domainObject.composition = [];
+            domainObject.telemetry = {};
+        }
+    };
+
     return function install(openmct) {
-        openmct.objectViews.addProvider(new ConditionViewProvider(openmct));
+        // openmct.objectViews.addProvider(new ConditionViewProvider(openmct));
 
-        openmct.types.addType('condition', {
-            name: "Condition",
-            creatable: true,
-            description: "A conditional rule based on user-specified criteria.",
-            cssClass: 'icon-page',
-            form: [
-                {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": true,
-                    "cssClass": "l-input-lg"
-                }
-            ]
-        });
+        openmct.types.addType(conditionType);
     };
 }
