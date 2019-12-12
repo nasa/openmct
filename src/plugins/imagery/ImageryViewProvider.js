@@ -5,7 +5,7 @@ export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';
 
     const hasImageTelemetry = function (domainObject) {
-        var metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadata = openmct.telemetry.getMetadata(domainObject);
         if (!metadata) {
             return false;
         }

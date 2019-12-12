@@ -165,6 +165,7 @@ export default {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
                 this.isPaused = state;
+
                 if (this.nextDatum) {
                     this.updateValues(this.nextDatum);
                     delete this.nextDatum;
