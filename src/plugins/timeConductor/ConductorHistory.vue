@@ -35,11 +35,11 @@
             </ul>
             <ul>
                 <li
-                    v-for="(tick, index) in historyForCurrentTimeSystem"
+                    v-for="(timespan, index) in historyForCurrentTimeSystem"
                     :key="index"
-                    @click="selectTick(tick)"
+                    @click="selectTimespan(timespan)"
                 >
-                    {{ formatTime(tick.start) }} - {{ formatTime(tick.end) }}
+                    {{ formatTime(timespan.start) }} - {{ formatTime(timespan.end) }}
                 </li>
             </ul>
         </div>    
@@ -73,7 +73,7 @@ export default {
     },
     data() {
         return {
-            history: {} // contains arrays of ticks {start, end}, array key is time system key
+            history: {} // contains arrays of timespans {start, end}, array key is time system key
         }
     },
     computed: {
@@ -96,32 +96,32 @@ export default {
         persistHistoryToLocalStorage() {
             localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
         },
-        addTick() {
+        addTimespan() {
             const key = this.timeSystem.key;
             let [...currentHistory] = this.history[key] || [];
-            const tick = {
+            const timespan = {
                 start: this.bounds.start,
                 end: this.bounds.end,
             };
 
             // when choosing an existing entry, remove it and add it back as latest entry
             currentHistory = currentHistory.filter((entry) => {
-                return !_.isEqual(tick, entry);
+                return !_.isEqual(timespan, entry);
             });
 
             if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
                 currentHistory.shift();
             }
 
-            currentHistory.push(tick);
+            currentHistory.push(timespan);
             this.history[key] = currentHistory;
         },
-        selectTick(tick) {
-            this.$emit('selectTick', tick);
+        selectTimespan(timespan) {
+            this.$emit('select-timespan', timespan);
         },
         selectHours(hours) {
             const now = Date.now();
-            this.selectTick({
+            this.selectTimespan({
                 start: now - hours * 60 * 60 * 1000,
                 end: now
             });
@@ -137,13 +137,13 @@ export default {
     watch: {
         bounds: {
             handler() {
-                this.addTick();
+                this.addTimespan();
             },
             deep: true
         },
         timeSystem: {
             handler() {
-                this.addTick();
+                this.addTimespan();
             },
             deep: true
         },

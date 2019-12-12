@@ -104,7 +104,7 @@
                     class="c-conductor__history-select"
                     :bounds="rawBounds"
                     :time-system="timeSystem"
-                    @selectTick="setViewFromBounds"
+                    @selectTimespan="setViewFromBounds"
                 ></ConductorHistory>
             </div>
             <input type="submit" class="invisible">
