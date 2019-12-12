@@ -58,43 +58,6 @@
     </multipane>
 </template>
 
-<style lang="scss">
-    @import '~styles/sass-base';
-
-    .c-imagery-layout {
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-
-        .main-image-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding-bottom: 5px;
-        }
-
-        .main-image {
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            height: 100%;
-
-            &.unnsynced{
-                @include sUnsynced();
-            }
-        }
-
-        .l-image-controller {
-            padding: 5px 0 0 0;
-        }
-
-        .thumbs-layout {
-            margin-top: 5px;
-            overflow: auto;
-        }
-    }
-</style>
-
 <script>
 import multipane from '@/ui/layout/multipane.vue';
 import pane from '@/ui/layout/pane.vue';
