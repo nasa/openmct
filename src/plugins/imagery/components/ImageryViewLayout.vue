@@ -88,9 +88,7 @@ export default {
     data() {
         return {
             autoScroll: true,
-            clipped: false,
             date: '',
-            elementHeight: this.getElSize(),
             filters : {
                 brightness: 100,
                 contrast: 100
@@ -108,30 +106,26 @@ export default {
     },
     mounted() {
         this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
         this.subscribe(this.domainObject);
-        this.getElSize();
-        window.addEventListener('resize', this.getElSize);
     },
     updated() {
         this.scrollToBottom();
     },
     beforeDestroy() {
-        window.removeEventListener('resize', this.getElSize);
         this.stopListening();
     },
     methods: {
         datumMatchesMostRecent(datum) {
-            if (this.imageHistory.length !== 0) {
-                const datumTime = this.timeFormat.format(datum);
-                const datumURL = this.imageFormat.format(datum);
-                const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
-                const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
-
-                return datumTime === lastHistoryTime && datumURL === lastHistoryURL;
+            if (this.imageHistory.length === 0) {
+                return false;
             }
 
-            return false;
+            const datumTime = this.timeFormat.format(datum);
+            const datumURL = this.imageFormat.format(datum);
+            const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
+            const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
+
+            return (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
         },
         getImageUrl(datum) {
             return datum ?
@@ -177,17 +171,14 @@ export default {
             const requestId = this.requestCount;
             this.openmct.telemetry
                 .request(this.domainObject, bounds)
-                .then(function (values = []) {
+                .then((values = []) => {
                     if (this.requestCount > requestId) {
                         return Promise.resolve('Stale request');
                     }
 
-                    values.forEach(function (datum) {
-                        this.updateHistory(datum);
-                    }, this);
-
+                    values.forEach(this.updateHistory);
                     this.updateValues(values[values.length - 1]);
-                }.bind(this));
+                });
         },
         scrollToBottom() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
@@ -208,14 +199,6 @@ export default {
             this.unselectAllImages();
             image.selected = true;
         },
-        getElSize() {
-            if (!this.$el) {
-                return;
-            }
-
-            this.elementHeight = this.$el.parentElement.offsetHeight;
-            return this.elementHeight;
-        },
         stopListening() {
             if (this.unsubscribe) {
                 this.unsubscribe();
@@ -226,38 +209,30 @@ export default {
             this.date = ''
             this.imageUrl = '';
             this.openmct.objects.get(this.keystring)
-                .then(function (object) {
-                    const metadata = this.openmct
-                        .telemetry
-                        .getMetadata(this.domainObject);
+                .then((object) => {
+                    const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
                     this.timeKey = this.openmct.time.timeSystem().key;
-                    this.timeFormat = this.openmct
-                        .telemetry
-                        .getValueFormatter(metadata.value(this.timeKey));
-                    this.imageFormat = this.openmct
-                        .telemetry
-                        .getValueFormatter(metadata.valuesForHints(['image'])[0]);
+                    this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
+                    this.imageFormat = this.openmct.telemetry.getValueFormatter(metadata.valuesForHints(['image'])[0]);
                     this.unsubscribe = this.openmct.telemetry
-                        .subscribe(this.domainObject, function (datum) {
+                        .subscribe(this.domainObject, (datum) => {
                             this.updateHistory(datum);
                             this.updateValues(datum);
-                        }.bind(this));
+                        });
 
                     this.requestHistory(this.openmct.time.bounds());
-                }.bind(this));
+                });
         },
         unselectAllImages() {
             this.imageHistory.forEach(image => image.selected = false);
         },
         updateHistory(datum) {
             if (this.datumMatchesMostRecent(datum)) {
-                return false;
+                return;
             }
 
             const index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
-
-            return true;
         },
         updateValues(datum) {
             if (this.isPaused) {
