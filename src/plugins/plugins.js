@@ -28,6 +28,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    './imagery/plugin',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -57,6 +58,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ImageryPlugin,
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -162,6 +164,7 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;
     plugins.TelemetryTable = TelemetryTablePlugin;
 

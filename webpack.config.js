@@ -31,6 +31,7 @@ const webpackConfig = {
     },
     resolve: {
         alias: {
+            "@": path.join(__dirname, "src"),
             "legacyRegistry": path.join(__dirname, "src/legacyRegistry"),
             "saveAs": "file-saver",
             "csv": "comma-separated-values",
