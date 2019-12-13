@@ -51,7 +51,8 @@ const webpackConfig = {
             __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
             __OPENMCT_REVISION__: `'${gitRevision}'`,
             __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
-            __OPENMCT_ROOT_RELATIVE__: `'${devMode ? 'dist/' : ''}'`
+            __OPENMCT_ROOT_RELATIVE__: `'${devMode ? 'dist/' : ''}'`,
+            __OPENMCT_USE_STYLE_LOADER__: `'${devMode}'`
         }),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
@@ -76,7 +77,12 @@ const webpackConfig = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: devMode ? 'style-loader': MiniCssExtractPlugin.loader,
+                        options: {
+                            injectType: 'lazyStyleTag'
+                        }
+                    },
                     'css-loader',
                     'fast-sass-loader'
                 ]
