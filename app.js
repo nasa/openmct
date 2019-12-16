@@ -15,8 +15,8 @@ const fs = require('fs');
 const request = require('request');
 
 // Defaults
-options.port = options.port || options.p || 8070;
-options.host = options.host || options.h || 'localhost';
+options.port = options.port || options.p || 8080;
+options.host = options.host || 'localhost';
 options.directory = options.directory || options.D || '.';
 
 // Show command line options

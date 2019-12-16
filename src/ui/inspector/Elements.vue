@@ -47,45 +47,7 @@
     </div>
 </div>
 </template>
-<style lang="scss">
-    @import "~styles/sass-base";
 
-    .c-elements-pool {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        flex: 1 1 auto !important;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__search {
-            flex: 0 0 auto;
-        }
-
-        &__elements {
-            flex: 1 1 auto;
-            overflow: auto;
-            &.is-dragging {
-                li { opacity: 0.2; }
-            }
-        }
-
-        &__grippy {
-            $d: 8px;
-            @include grippy($c: $colorItemTreeVC, $dir: 'y');
-            flex: 0 0 auto;
-            margin-right: $interiorMarginSm;
-            transform: translateY(-2px);
-            width: $d; height: $d;
-        }
-    }
-
-    .js-last-place {
-        height: 10px;
-    }
-</style>
 <script>
 import _ from 'lodash';
 import Search from '../components/search.vue';

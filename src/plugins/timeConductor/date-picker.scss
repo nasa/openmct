@@ -1,0 +1,96 @@
+/******************************************************** PICKER */
+.c-datetime-picker {
+    @include userSelectNone();
+    padding: $interiorMarginLg !important;
+    display: flex !important; // Override .c-menu display: block;
+    flex-direction: column;
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__close-button {
+        display: none; // Only show when body.phone, see below.
+    }
+
+    &__pager {
+        flex: 0 0 auto;
+    }
+
+    &__calendar {
+        border-top: 1px solid $colorInteriorBorder;
+        flex: 1 1 auto;
+    }
+}
+
+.c-pager {
+    display: grid;
+    grid-column-gap: $interiorMargin;
+    grid-template-rows: 1fr;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+
+    .c-icon-button {
+        font-size: 0.8em;
+    }
+
+    &__month-year {
+        text-align: center;
+    }
+}
+
+/******************************************************** CALENDAR */
+.c-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, min-content);
+    grid-template-rows: auto;
+    grid-gap: 1px;
+    height: 100%;
+
+    $mutedOpacity: 0.5;
+
+    ul {
+        display: contents;
+        &[class*='--header'] {
+            pointer-events: none;
+            li {
+                opacity: $mutedOpacity;
+            }
+        }
+    }
+
+    li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center !important;
+        padding: $interiorMargin;
+
+        &.is-in-month {
+            background: $colorMenuElementHilite;
+        }
+    }
+
+    &__day {
+        &--sub {
+            opacity: $mutedOpacity;
+            font-size: 0.8em;
+        }
+    }
+}
+
+/******************************************************** MOBILE */
+body.phone {
+    .c-datetime-picker {
+        &.c-menu {
+            @include modalFullScreen();
+        }
+
+        &__close-button {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+
+    .c-calendar {
+        grid-template-columns: repeat(7, auto);
+    }
+}

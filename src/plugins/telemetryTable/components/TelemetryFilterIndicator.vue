@@ -16,47 +16,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-    .c-filter-indication {
-        @include userSelectNone();
-        background: $colorFilterBg;
-        color: $colorFilterFg;
-        display: flex;
-        align-items: center;
-        font-size: 0.9em;
-        margin-top: $interiorMarginSm;
-        padding: 2px;
-        text-transform: uppercase;
-
-        &:before {
-            font-family: symbolsfont-12px;
-            content: $glyph-icon-filter;
-            display: block;
-            font-size: 12px;
-            margin-right: $interiorMarginSm;
-        }
-
-        &__mixed {
-            margin-right: $interiorMarginSm;
-        }
-
-        &--mixed {
-            .c-filter-indication__mixed {
-                font-style: italic;
-            }
-        }
-
-        &__label {
-            + .c-filter-indication__label {
-                &:before {
-                    content: ',';
-                }
-            }
-        }
-    }
-</style>
-
 <script>
 const FILTER_INDICATOR_LABEL = 'Filters:';
 const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';

@@ -30,7 +30,7 @@
             <div class="c-properties__label">
                 Created
             </div>
-            <div class="c-properties__value c-ne__text">
+            <div class="c-properties__value">
                 {{ formatTime(item.created) }}
             </div>
         </li>
@@ -41,7 +41,7 @@
             <div class="c-properties__label">
                 Modified
             </div>
-            <div class="c-properties__value c-ne__text">
+            <div class="c-properties__value">
                 {{ formatTime(item.modified) }}
             </div>
         </li>

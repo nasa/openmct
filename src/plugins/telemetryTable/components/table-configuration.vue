@@ -51,9 +51,6 @@
 </div>
 </template>
 
-<style>
-</style>
-
 <script>
 import TelemetryTableColumn from '../TelemetryTableColumn';
 

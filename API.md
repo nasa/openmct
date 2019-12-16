@@ -52,7 +52,6 @@
     - [The URL Status Indicator](#the-url-status-indicator)
     - [Creating a Simple Indicator](#creating-a-simple-indicator)
     - [Custom Indicators](#custom-indicators)
-  - [Included Plugins](#included-plugins)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -109,15 +108,13 @@ script loaders are also supported.
 <html>
 <head>
     <title>Open MCT</title>
-    <script src="openmct.js"></script>
+    <script src="dist/openmct.js"></script>
 </head>
 <body>
     <script>
-        openmct.setAssetPath('openmct/dist');
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.install(openmct.plugins.Espresso());
         openmct.start();
     </script>
 </body>
@@ -128,9 +125,6 @@ The Open MCT library included above requires certain assets such as html
 templates, images, and css. If you installed Open MCT from GitHub as described 
 in the section on [Building from Source](#building-from-source) then these
 assets will have been downloaded along with the Open MCT javascript library. 
-You can specify the location of these assets by calling `openmct.setAssetPath()`. 
-Typically this will be the same location as the `openmct.js` library is 
-included from.
 
 There are some plugins bundled with the application that provide UI, 
 persistence, and other default configuration which are necessary to be able to 
@@ -429,7 +423,7 @@ attribute      | type   | flags    | notes
 
 ###### Value Hints
 
-Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
 
 Known hints:
 
@@ -511,7 +505,7 @@ example:
 }
 ```
 
-This strategy says "I want the lastest data point in this time range".  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.
+This strategy says "I want the latest data point in this time range".  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.
 
 ##### `minmax` request strategy
 
@@ -606,7 +600,7 @@ evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
 ### Telemetry Consumer APIs **draft**
 
-The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the team via the contact-us link on our website.
+The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiment with them before they are finalized, please contact the team via the contact-us link on our website.
 
 
 ## Time API
@@ -994,7 +988,7 @@ A common use case for indicators is to convey the state of some external system 
 persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
 Open MCT provides a general purpose indicator to show whether the server is available and 
 returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
-[Included Plugins](#included-plugins) below for details on how to install and configure the 
+the [documentation](./src/plugins/URLIndicatorPlugin) for details on how to install and configure the 
 URL Status Indicator.
 
 ### Creating a Simple Indicator
@@ -1033,7 +1027,7 @@ different colors to indicate status.
 
 ### Custom Indicators
 
-A completely custom indicator can be added by simple providing a DOM element to place alongside other indicators.
+A completely custom indicator can be added by simply providing a DOM element to place alongside other indicators.
 
 ``` javascript
     var domNode = document.createElement('div');
@@ -1045,60 +1039,4 @@ A completely custom indicator can be added by simple providing a DOM element to 
     openmct.indicators.add({
         element: domNode
     });
-```
-
-## Included Plugins
-
-Open MCT is packaged along with a few general-purpose plugins:
-
-* `openmct.plugins.Conductor` provides a user interface for working with time
-within the application. If activated, configuration must be provided. This is 
-detailed in the section on [Time Conductor Configuration](#time-conductor-configuration).
-* `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
-  of user-created objects. This is a constructor that takes the URL for the
-  CouchDB database as a parameter, e.g.
-```javascript
-openmct.install(openmct.plugins.CouchDB('http://localhost:5984/openmct'))
-```
-* `openmct.plugins.Elasticsearch` is an adapter for using Elasticsearch for
-  persistence of user-created objects. This is a
-  constructor that takes the URL for the Elasticsearch instance as a
-  parameter. eg.
-```javascript
-openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
-```
-* `openmct.plugins.Espresso` and `openmct.plugins.Snow` are two different
-  themes (dark and light) available for Open MCT. Note that at least one
-  of these themes must be installed for Open MCT to appear correctly.
-* `openmct.plugins.URLIndicator` adds an indicator which shows the
-availability of a URL with the following options: 
-  - `url` : URL to indicate the status of
-  - `iconClass`: Icon to show in the status bar, defaults to `icon-database`, [list of all icons](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items)
-  - `interval`: Interval between checking the connection, defaults to `10000`
-  - `label` Name showing up as text in the status bar, defaults to url
-```javascript
-openmct.install(openmct.plugins.URLIndicator({
-  url: 'http://localhost:8080',
-    iconClass: 'check',
-    interval: 10000,
-    label: 'Localhost'
- })
-);
-```
-* `openmct.plugins.LocalStorage` provides persistence of user-created
-  objects in browser-local storage. This is particularly useful in
-  development environments.
-* `openmct.plugins.MyItems` adds a top-level folder named "My Items"
-  when the application is first started, providing a place for a
-  user to store created items.
-* `openmct.plugins.UTCTimeSystem` provides a default time system for Open MCT.
-
-Generally, you will want to either install these plugins, or install
-different plugins that provide persistence and an initial folder
-hierarchy.
-
-eg.
-```javascript
-openmct.install(openmct.plugins.LocalStorage());
-openmct.install(openmct.plugins.MyItems());
 ```
