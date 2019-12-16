@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// import ConditionViewProvider from './ConditionViewProvider.js';
+import ConditionViewProvider from './ConditionViewProvider';
 
 export default function ConditionPlugin() {
     const conditionType = {
@@ -35,8 +35,8 @@ export default function ConditionPlugin() {
     };
 
     return function install(openmct) {
-        // openmct.objectViews.addProvider(new ConditionViewProvider(openmct));
+        openmct.objectViews.addProvider(new ConditionViewProvider(openmct));
 
-        openmct.types.addType(conditionType);
+        openmct.types.addType('condition', conditionType);
     };
 }

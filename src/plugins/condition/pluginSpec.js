@@ -1,4 +1,4 @@
-import ConditionPlugin from './plugin.js';
+import ConditionPlugin from './plugin';
 import {
     createOpenMct
 } from 'testTools';
@@ -7,12 +7,14 @@ describe("The condition object plugin", function () {
     let openmct;
 
     beforeEach(function () {
-        //openmct = createOpenMct();
-
+        openmct = createOpenMct();
     });
 
     fit('shows the object exists', () => {
-        expect(true).toEqual(true);
+        const install = new ConditionPlugin();
+        install(openmct);
+        const conditionType = openmct.types.get('condition');
+        expect(conditionType.definition.name).toEqual('Condition');
     });
 });
 
