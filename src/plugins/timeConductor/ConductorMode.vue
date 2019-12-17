@@ -59,25 +59,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-conductor__mode-menu {
-        max-height: 80vh;
-        max-width: 500px;
-        min-height: 250px;
-        z-index: 70;
-
-        [class*="__icon"] {
-            filter: $colorKeyFilter;
-        }
-
-        [class*="__item-description"] {
-            min-width: 200px;
-        }
-    }
-</style>
-
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 

@@ -91,7 +91,7 @@ define(
                 .then(function () {
                     return object
                         .getCapability('action')
-                        .perform('remove');
+                        .perform('remove', true);
                 });
         };
 

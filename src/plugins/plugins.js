@@ -28,6 +28,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    './imagery/plugin',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -47,6 +48,9 @@ define([
     './clearData/plugin',
     './webPage/plugin',
     './condition/plugin'
+    './themes/espresso',
+    './themes/maelstrom',
+    './themes/snow'
 ], function (
     _,
     UTCTimeSystem,
@@ -55,6 +59,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ImageryPlugin,
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -74,6 +79,9 @@ define([
     ClearData,
     WebPagePlugin,
     ConditionPlugin
+    Espresso,
+    Maelstrom,
+    Snow
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -158,6 +166,7 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
@@ -176,6 +185,9 @@ define([
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Condition = ConditionPlugin.default;
+    plugins.Espresso = Espresso.default;
+    plugins.Maelstrom = Maelstrom.default;
+    plugins.Snow = Snow.default;
 
     return plugins;
 });

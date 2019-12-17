@@ -61,46 +61,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    /******************************* LIST VIEW */
-    .c-list-view {
-        overflow-x: auto !important;
-        overflow-y: auto;
-
-        tbody tr {
-            background: $colorListItemBg;
-            transition: $transOut;
-        }
-
-        body.desktop & {
-            tbody tr {
-                cursor: pointer;
-
-                &:hover {
-                    background: $colorListItemBgHov;
-                    transition: $transIn;
-                }
-            }
-        }
-
-        td {
-            $p: floor($interiorMargin * 1.5);
-            @include ellipsize();
-            line-height: 120%; // Needed for icon alignment
-            max-width: 0;
-            padding-top: $p;
-            padding-bottom: $p;
-            width: 25%;
-
-            &:not(.c-list-item__name) {
-                color: $colorItemFgDetails;
-            }
-        }
-    }
-</style>
-
 <script>
 import compositionLoader from './composition-loader';
 import ListItem from './ListItem.vue';
