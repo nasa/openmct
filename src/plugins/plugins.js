@@ -47,7 +47,7 @@ define([
     './goToOriginalAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
-    './condition/plugin'
+    './condition/plugin',
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow'
@@ -78,7 +78,7 @@ define([
     GoToOriginalAction,
     ClearData,
     WebPagePlugin,
-    ConditionPlugin
+    ConditionPlugin,
     Espresso,
     Maelstrom,
     Snow
