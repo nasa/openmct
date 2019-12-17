@@ -20,33 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionPlugin from './plugin';
+import ConditionCollectionPlugin from './plugin';
 import { createOpenMct } from 'testTools';
 
 fdescribe("The plugin", () => {
     let openmct;
-    let conditionType;
     let mockDomainObject;
 
     beforeEach(() => {
-        mockDomainObject = {};
-
         openmct = createOpenMct();
-        openmct.install(new ConditionPlugin());
-        conditionType = openmct.types.get('condition');
+        openmct.install(new ConditionCollectionPlugin());
+
+        mockDomainObject = {
+            identifier: {
+                key: 'testKey',
+                namespace: ''
+            },
+            type: 'conditionCollection'
+        };
     });
 
-    it('defines a condition object with the correct name', () => {
-        expect(conditionType.definition.name).toEqual('Condition');
+    it('defines a condition collection object type with the correct key', () => {
+        expect(openmct.types.get('conditionCollection').definition.key).toEqual('conditionCollection');
     });
 
-    it('defines a condition object that is creatable', () => {
-        expect(conditionType.definition.creatable).toBeTrue();
+    it('defines a condition collection object type that is creatable', () => {
+        expect(openmct.types.get('conditionCollection').definition.creatable).toBeTrue();
     });
 
-    describe("shows the condition object is initialized with", () => {
+    describe("shows the condition collection object is initialized with", () => {
         beforeEach(() => {
-            conditionType.definition.initialize(mockDomainObject);
+            openmct.types.get('conditionCollection').definition.initialize(mockDomainObject);
         });
 
         it('a composition array', () => {

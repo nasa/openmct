@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function ConditionPlugin() {
+export default function ConditionCollectionPlugin() {
     const conditionType = {
-        name: 'Condition',
-        description: 'A conditional rule based on user-specified criteria.',
+        name: 'Condition Collection',
+        key: 'conditionCollection',
+        description: 'A set of conditional rules based on user-specified criteria.',
         creatable: true,
         cssClass: 'icon-summary-widget',
         initialize: function (domainObject) {
@@ -33,6 +34,6 @@ export default function ConditionPlugin() {
     };
 
     return function install(openmct) {
-        openmct.types.addType('condition', conditionType);
+        openmct.types.addType('conditionCollection', conditionType);
     };
 }

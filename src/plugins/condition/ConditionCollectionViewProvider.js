@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionComponent from './components/Condition.vue';
+import ConditionCollectionComponent from './components/ConditionCollection.vue';
 import Vue from 'vue';
 
-export default function Condition(openmct) {
+export default function ConditionCollection(openmct) {
     return {
-        key: 'condition',
-        name: 'Condition',
+        key: 'conditionCollection',
+        name: 'Condition Collection',
         cssClass: 'icon-page',
         canView: function (domainObject) {
-            return domainObject.type === 'condition';
+            return domainObject.type === 'conditionCollection';
         },
         view: function (domainObject) {
             let component;
@@ -39,13 +39,13 @@ export default function Condition(openmct) {
                     component =  new Vue({
                         el: element,
                         components: {
-                            ConditionComponent: ConditionComponent
+                            ConditionCollectionComponent
                         },
                         provide: {
                             openmct,
                             domainObject
                         },
-                        template: '<condition-component></condition-component>'
+                        template: '<condition-collection-component></condition-collection-component>'
                     });
                 },
                 destroy: function (element) {

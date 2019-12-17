@@ -1,7 +1,5 @@
 <template>
-<div class="l-iframe abs">
-    <iframe :src="currentDomainObject.url"></iframe>
-</div>
+<div><!-- Condition Collection component contents will go here --></div>
 </template>
 
 <script>
