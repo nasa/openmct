@@ -27,19 +27,19 @@ export default function Condition(openmct) {
     return {
         key: 'condition',
         name: 'Condition',
-        cssClass: 'icon-page',
-        canView: function (domainObject) {
+        cssClass: 'icon-summary-widget',
+        canView: (domainObject => {
             return domainObject.type === 'condition';
-        },
-        view: function (domainObject) {
+        }),
+        view: (domainObject => {
             let component;
 
             return {
-                show: function (element) {
+                show: (element => {
                     component =  new Vue({
                         el: element,
                         components: {
-                            ConditionComponent: ConditionComponent
+                            ConditionComponent
                         },
                         provide: {
                             openmct,
@@ -47,15 +47,14 @@ export default function Condition(openmct) {
                         },
                         template: '<condition-component></condition-component>'
                     });
-                },
-                destroy: function (element) {
+                }),
+                destroy: (element => {
                     component.$destroy();
                     component = undefined;
-                }
+                })
             };
-        },
-        priority: function () {
-            return 1;
+        }),
+        priority: (() => { 1 });
         }
     };
 }
