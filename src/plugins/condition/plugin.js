@@ -23,6 +23,7 @@
 export default function ConditionSetPlugin() {
     const conditionSetType = {
         name: 'Condition Set',
+        key: 'conditionSet',
         description: 'A set of one or more conditional rules based on user-specified criteria.',
         creatable: true,
         cssClass: 'icon-summary-widget',

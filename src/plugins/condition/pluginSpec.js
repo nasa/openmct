@@ -20,33 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionPlugin from './plugin';
+import ConditionSetPlugin from './plugin';
 import { createOpenMct } from 'testTools';
 
 fdescribe("The plugin", () => {
     let openmct;
-    let conditionType;
+    let conditionSetType;
     let mockDomainObject;
 
     beforeEach(() => {
         mockDomainObject = {};
 
         openmct = createOpenMct();
-        openmct.install(new ConditionPlugin());
-        conditionType = openmct.types.get('condition');
+        openmct.install(new ConditionSetPlugin());
+        conditionSetType = openmct.types.get('conditionSet');
     });
 
-    it('defines a condition object with the correct name', () => {
-        expect(conditionType.definition.name).toEqual('Condition');
+    it('defines a conditionSet object with the correct key', () => {
+        expect(conditionSetType.definition.key).toEqual('conditionSet');
     });
 
-    it('defines a condition object that is creatable', () => {
-        expect(conditionType.definition.creatable).toBeTrue();
+    it('defines a conditionSet object that is creatable', () => {
+        expect(conditionSetType.definition.creatable).toBeTrue();
     });
 
-    describe("shows the condition object is initialized with", () => {
+    describe("shows the conditionSet object is initialized with", () => {
         beforeEach(() => {
-            conditionType.definition.initialize(mockDomainObject);
+            conditionSetType.definition.initialize(mockDomainObject);
         });
 
         it('a composition array', () => {
