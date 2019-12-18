@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function ConditionSetPlugin() {
+export default function plugin() {
     const conditionSetType = {
         name: 'Condition Set',
         key: 'conditionSet',
-        description: 'A set of one or more conditional rules based on user-specified criteria.',
+        description: 'A set of one or more conditions based on user-specified criteria.',
         creatable: true,
         cssClass: 'icon-summary-widget',
         initialize: function (domainObject) {
             domainObject.composition = [];
-            domainObject.telemetry = {};
+            // domainObject.telemetry = {};
         }
     };
 
