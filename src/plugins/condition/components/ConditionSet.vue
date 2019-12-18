@@ -1,5 +1,5 @@
 <template>
-<div><!-- Condition Collection component contents will go here --></div>
+<div><!-- Condition Set component contents will go here --></div>
 </template>
 
 <script>

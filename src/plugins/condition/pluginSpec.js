@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionCollectionPlugin from './plugin';
+import ConditionSetPlugin from './plugin';
 import { createOpenMct } from 'testTools';
 
 fdescribe("The plugin", () => {
@@ -29,28 +29,28 @@ fdescribe("The plugin", () => {
 
     beforeEach(() => {
         openmct = createOpenMct();
-        openmct.install(new ConditionCollectionPlugin());
+        openmct.install(new ConditionSetPlugin());
 
         mockDomainObject = {
             identifier: {
                 key: 'testKey',
                 namespace: ''
             },
-            type: 'conditionCollection'
+            type: 'conditionSet'
         };
     });
 
-    it('defines a condition collection object type with the correct key', () => {
-        expect(openmct.types.get('conditionCollection').definition.key).toEqual('conditionCollection');
+    it('defines a conditionSet object type with the correct key', () => {
+        expect(openmct.types.get('conditionSet').definition.key).toEqual('conditionSet');
     });
 
-    it('defines a condition collection object type that is creatable', () => {
-        expect(openmct.types.get('conditionCollection').definition.creatable).toBeTrue();
+    it('defines a conditionSet object type that is creatable', () => {
+        expect(openmct.types.get('conditionSet').definition.creatable).toBeTrue();
     });
 
-    describe("shows the condition collection object is initialized with", () => {
+    describe("shows the conditionSet object is initialized with", () => {
         beforeEach(() => {
-            openmct.types.get('conditionCollection').definition.initialize(mockDomainObject);
+            openmct.types.get('conditionSet').definition.initialize(mockDomainObject);
         });
 
         it('a composition array', () => {
