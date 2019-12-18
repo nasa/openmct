@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -57,9 +57,9 @@ fdescribe("The plugin", () => {
             expect(Array.isArray(mockDomainObject.composition)).toBeTrue();
         });
 
-        it('a telemetry object', () => {
-            expect(typeof mockDomainObject.telemetry === 'object').toBeTrue();
-        });
+        // it('a telemetry object', () => {
+        //     expect(typeof mockDomainObject.telemetry === 'object').toBeTrue();
+        // });
     });
 });
 

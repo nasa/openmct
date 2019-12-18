@@ -1,5 +1,5 @@
 <template>
-<div><!-- Condition Set component contents will go here --></div>
+<div><!--Stuff goes here--></div>
 </template>
 
 <script>
