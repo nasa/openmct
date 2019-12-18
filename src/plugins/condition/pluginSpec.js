@@ -23,7 +23,7 @@
 import ConditionSetPlugin from './plugin';
 import { createOpenMct } from 'testTools';
 
-fdescribe("The plugin", () => {
+describe("The plugin", () => {
     let openmct;
     let mockDomainObject;
 
