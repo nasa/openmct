@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2019, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,6 +47,7 @@ define([
     './goToOriginalAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
+    './conditionSet/plugin',
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow'
@@ -77,6 +78,7 @@ define([
     GoToOriginalAction,
     ClearData,
     WebPagePlugin,
+    ConditionSetPlugin,
     Espresso,
     Maelstrom,
     Snow
@@ -182,6 +184,7 @@ define([
     plugins.GoToOriginalAction = GoToOriginalAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
+    plugins.ConditionSet = ConditionSetPlugin.default;
     plugins.Espresso = Espresso.default;
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
