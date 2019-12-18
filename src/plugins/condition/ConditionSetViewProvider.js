@@ -27,7 +27,7 @@ export default function ConditionSet(openmct) {
     return {
         key: 'conditionSet',
         name: 'Condition Set',
-        cssClass: 'icon-summary-widget',
+        cssClass: 'icon-folder',
         canView: function (domainObject) {
             return domainObject.type === 'conditionSet';
         },

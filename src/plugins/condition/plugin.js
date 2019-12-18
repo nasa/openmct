@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 
 export default function ConditionSetPlugin() {
     const conditionSetType = {
@@ -26,7 +27,7 @@ export default function ConditionSetPlugin() {
         key: 'conditionSet',
         description: 'A set of one or more conditional rules based on user-specified criteria.',
         creatable: true,
-        cssClass: 'icon-summary-widget',
+        cssClass: 'icon-folder',
         initialize: function (domainObject) {
             domainObject.composition = [];
             domainObject.telemetry = {};
@@ -34,6 +35,8 @@ export default function ConditionSetPlugin() {
     };
 
     return function install(openmct) {
+        openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
+
         openmct.types.addType('conditionSet', conditionSetType);
     };
 }

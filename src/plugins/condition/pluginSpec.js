@@ -25,28 +25,32 @@ import { createOpenMct } from 'testTools';
 
 fdescribe("The plugin", () => {
     let openmct;
-    let conditionSetType;
     let mockDomainObject;
 
     beforeEach(() => {
-        mockDomainObject = {};
-
         openmct = createOpenMct();
         openmct.install(new ConditionSetPlugin());
-        conditionSetType = openmct.types.get('conditionSet');
+
+        mockDomainObject = {
+            identifier: {
+                key: 'testKey',
+                namespace: ''
+            },
+            type: 'conditionSet'
+        };
     });
 
-    it('defines a conditionSet object with the correct key', () => {
-        expect(conditionSetType.definition.key).toEqual('conditionSet');
+    it('defines a conditionSet object type with the correct key', () => {
+        expect(openmct.types.get('conditionSet').definition.key).toEqual('conditionSet');
     });
 
-    it('defines a conditionSet object that is creatable', () => {
-        expect(conditionSetType.definition.creatable).toBeTrue();
+    it('defines a conditionSet object type that is creatable', () => {
+        expect(openmct.types.get('conditionSet').definition.creatable).toBeTrue();
     });
 
     describe("shows the conditionSet object is initialized with", () => {
         beforeEach(() => {
-            conditionSetType.definition.initialize(mockDomainObject);
+            openmct.types.get('conditionSet').definition.initialize(mockDomainObject);
         });
 
         it('a composition array', () => {
