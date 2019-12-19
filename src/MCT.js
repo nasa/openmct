@@ -264,6 +264,7 @@ define([
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
+        this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionSet());
     }
 
