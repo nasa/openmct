@@ -15,11 +15,7 @@ const fs = require('fs');
 const request = require('request');
 
 // Defaults
-<<<<<<< HEAD
-options.port = options.port || options.p || 8070;
-=======
 options.port = options.port || options.p || 8080;
->>>>>>> 656d6d6c3f0701f9afceb01c358eb047bd351bb2
 options.host = options.host || 'localhost';
 options.directory = options.directory || options.D || '.';
 

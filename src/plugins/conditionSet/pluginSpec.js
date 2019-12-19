@@ -20,46 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionSetPlugin from './plugin';
 import { createOpenMct } from 'testTools';
+import ConditionSetPlugin from './plugin';
 
-describe("The plugin", () => {
+fdescribe('The plugin', () => {
     let openmct;
-    let mockDomainObject;
+    let conditionSetDefinition;
 
     beforeEach(() => {
         openmct = createOpenMct();
         openmct.install(new ConditionSetPlugin());
-
-        mockDomainObject = {
-            identifier: {
-                key: 'testKey',
-                namespace: ''
-            },
-            type: 'conditionSet'
-        };
+        conditionSetDefinition = openmct.types.get('conditionSet').definition;
     });
 
-    it('defines a conditionSet object type with the correct key', () => {
-        expect(openmct.types.get('conditionSet').definition.key).toEqual('conditionSet');
+    it('defines an object type with the correct key', () => {
+        expect(conditionSetDefinition.key).toEqual('conditionSet');
     });
 
-    it('defines a conditionSet object type that is creatable', () => {
-        expect(openmct.types.get('conditionSet').definition.creatable).toBeTrue();
+    it('defines an object type that is creatable', () => {
+        expect(conditionSetDefinition.creatable).toBeTrue();
     });
 
-    describe("shows the conditionSet object is initialized with", () => {
-        beforeEach(() => {
-            openmct.types.get('conditionSet').definition.initialize(mockDomainObject);
+    describe('The object', () => {
+        it('initializes with an empty composition list', () => {
+            let mockDomainObject = {
+                identifier: {
+                    key: 'testConditionSetKey',
+                    namespace: ''
+                },
+                type: 'conditionSet'
+            };
+
+            conditionSetDefinition.initialize(mockDomainObject);
+            expect(mockDomainObject.composition instanceof Array).toBeTrue();
+            expect(mockDomainObject.composition.length).toEqual(0);
         });
-
-        it('a composition array', () => {
-            expect(Array.isArray(mockDomainObject.composition)).toBeTrue();
-        });
-
-        // it('a telemetry object', () => {
-        //     expect(typeof mockDomainObject.telemetry === 'object').toBeTrue();
-        // });
     });
 });
-

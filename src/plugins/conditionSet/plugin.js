@@ -30,7 +30,6 @@ export default function plugin() {
         cssClass: 'icon-folder',
         initialize: function (domainObject) {
             domainObject.composition = [];
-            // domainObject.telemetry = {};
         }
     };
 
