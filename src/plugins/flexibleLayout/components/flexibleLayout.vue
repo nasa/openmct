@@ -232,18 +232,16 @@ export default {
             this.newFrameLocation = [containerIndex, insertFrameIndex];
         },
         addFrame(domainObject) {
-            if (this.newFrameLocation.length) {
-                let containerIndex = this.newFrameLocation[0],
-                    frameIndex = this.newFrameLocation[1],
-                    frame = new Frame(domainObject.identifier),
-                    container = this.containers[containerIndex];
+            let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
+            let container = this.containers[containerIndex];
+            let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
+            let frame = new Frame(domainObject.identifier);
 
-                container.frames.splice(frameIndex + 1, 0, frame);
-                sizeItems(container.frames, frame);
+            container.frames.splice(frameIndex + 1, 0, frame);
+            sizeItems(container.frames, frame);
 
-                this.newFrameLocation = [];
-                this.persist(containerIndex);
-            }
+            this.newFrameLocation = [];
+            this.persist(containerIndex);
         },
         deleteFrame(frameId) {
             let container = this.containers
