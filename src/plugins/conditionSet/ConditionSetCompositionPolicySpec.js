@@ -20,51 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionSetCompositionPolicy  from './conditionSetCompositionPolicy';
+import ConditionSetCompositionPolicy  from './ConditionSetCompositionPolicy';
 import { createOpenMct } from "testTools";
 
 describe('ConditionSetCompositionPolicy', () => {
     let policy;
-    let openmct;
     let parentDomainObject;
     let childDomainObject;
     let composition;
 
     beforeEach(function () {
-        openmct = createOpenMct();
-        policy = new ConditionSetCompositionPolicy(openmct);
+        policy = new ConditionSetCompositionPolicy();
         parentDomainObject = {};
         childDomainObject = {};
         composition = {};
     });
 
     it('returns true for object types that are not conditionSets', function () {
-        parentDomainObject = {
-            type: 'random'
-        };
-        childDomainObject = {
-            type: ''
-        };
+        parentDomainObject.type = 'random';
+        childDomainObject.type = '';
         expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
     });
 
     it('returns false for object types that are not conditions when parent is a conditionSet', function () {
-        parentDomainObject = {
-            type: 'conditionSet'
-        };
-        childDomainObject = {
-            type: ''
-        };
+        parentDomainObject.type = 'conditionSet';
+        childDomainObject.type = '';
         expect(policy.allow(parentDomainObject, childDomainObject)).toBe(false);
     });
 
     it('returns true for object types that are conditions when parent is a conditionSet', function () {
-        parentDomainObject = {
-            type: 'conditionSet'
-        };
-        childDomainObject = {
-            type: 'condition'
-        };
+        parentDomainObject.type = 'conditionSet';
+        childDomainObject.type = 'condition';
+        expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
+    });
+
+    it('returns true for object types that are conditions when parent is not a conditionSet', function () {
+        parentDomainObject.type = 'random';
+        childDomainObject.type = 'condition';
         expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
     });
 
