@@ -23,14 +23,28 @@
 import { createOpenMct } from 'testTools';
 import ConditionSetPlugin from './plugin';
 
-fdescribe('The plugin', () => {
+describe('The plugin', () => {
     let openmct;
     let conditionSetDefinition;
+    let element;
+    let child;
 
-    beforeEach(() => {
+    beforeEach((done) => {
+        const appHolder = document.createElement('div');
+        appHolder.style.width = '640px';
+        appHolder.style.height = '480px';
+
         openmct = createOpenMct();
+
+        element = document.createElement('div');
+        child = document.createElement('div');
+        element.appendChild(child);
+
         openmct.install(new ConditionSetPlugin());
         conditionSetDefinition = openmct.types.get('conditionSet').definition;
+
+        openmct.on('start', done);
+        openmct.start(appHolder);
     });
 
     it('defines an object type with the correct key', () => {
@@ -41,11 +55,22 @@ fdescribe('The plugin', () => {
         expect(conditionSetDefinition.creatable).toBeTrue();
     });
 
-    describe('The object', () => {
-        it('initializes with an empty composition list', () => {
+    fit('provides a view', () => {
+        const testViewObject = {
+            id:"test-object",
+            type: "conditionSet"
+        };
+
+        const applicableViews = openmct.objectViews.get(testViewObject);
+        let conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
+        expect(conditionSetView).toBeDefined();
+    });
+
+    describe('provides an object', () => {
+        it('which initializes with an empty composition list', () => {
             let mockDomainObject = {
                 identifier: {
-                    key: 'testConditionSetKey',
+                    key: 'test-key',
                     namespace: ''
                 },
                 type: 'conditionSet'
@@ -56,4 +81,5 @@ fdescribe('The plugin', () => {
             expect(mockDomainObject.composition.length).toEqual(0);
         });
     });
+
 });

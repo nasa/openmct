@@ -20,42 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionSetComponent from './components/ConditionSet.vue';
+import ConditionSet from './components/ConditionSet.vue';
 import Vue from 'vue';
 
-export default function ConditionSet(openmct) {
+export default function ConditionSetViewProvider(openmct) {
     return {
-        key: 'conditionSet',
-        name: 'Condition Set',
-        cssClass: 'icon-folder',
+        key: 'conditionSet.view',
         canView: function (domainObject) {
             return domainObject.type === 'conditionSet';
         },
-        view: function (domainObject) {
+        canEdit: function (domainObject) {
+            return domainObject.type === 'conditionSet';
+        },
+        view: function (domainObject, objectPath) {
             let component;
-
             return {
-                show: function (element) {
-                    component =  new Vue({
-                        el: element,
+                show(container) {
+                    component = new Vue({
+                        el: container,
                         components: {
-                            ConditionSetComponent
+                            ConditionSet
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            objectPath
                         },
-                        template: '<condition-set-component></condition-set-component>'
+                        data() {
+                            return {
+                                domainObject
+                            };
+                        },
+                        template: '<condition-set ref="conditionSet" :domain-object="domainObject"></condition-set>'
                     });
                 },
-                destroy: function (element) {
+                destroy() {
                     component.$destroy();
-                    component = undefined;
                 }
             };
         },
-        priority: function () {
-            return 1;
+        priority() {
+            return 100;
         }
     };
 }
