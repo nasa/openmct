@@ -55,7 +55,7 @@ describe('The plugin', () => {
         expect(conditionSetDefinition.creatable).toBeTrue();
     });
 
-    fit('provides a view', () => {
+    it('provides a view', () => {
         const testViewObject = {
             id:"test-object",
             type: "conditionSet"
