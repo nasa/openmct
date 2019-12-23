@@ -40,6 +40,6 @@ export default {
             internalDomainObject: this.domainObject
         };
     },
-    inject: ['openmct']
+    inject: ['openmct', 'objectPath', 'domainObject']
 }
 </script>

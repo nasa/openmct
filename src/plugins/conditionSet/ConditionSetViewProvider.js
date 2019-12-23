@@ -45,6 +45,7 @@ export default function ConditionSetViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
+                            domainObject,
                             objectPath
                         },
                         data() {
@@ -52,7 +53,7 @@ export default function ConditionSetViewProvider(openmct) {
                                 domainObject
                             };
                         },
-                        template: '<condition-set :domain-object="domainObject"></condition-set>'
+                        template: '<condition-set></condition-set>'
                     });
                 },
                 destroy() {
