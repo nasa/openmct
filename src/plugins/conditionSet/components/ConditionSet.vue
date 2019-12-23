@@ -36,9 +36,8 @@ export default {
         }
     },
     data() {
-        let domainObject = JSON.parse(JSON.stringify(this.domainObject));
         return {
-            internalDomainObject: domainObject
+            internalDomainObject: this.domainObject
         };
     },
     inject: ['openmct']

@@ -26,6 +26,8 @@ import Vue from 'vue';
 export default function ConditionSetViewProvider(openmct) {
     return {
         key: 'conditionSet.view',
+        name: 'Condition Set',
+        cssClass: 'icon-summary-widget',
         canView: function (domainObject) {
             return domainObject.type === 'conditionSet';
         },
@@ -50,11 +52,12 @@ export default function ConditionSetViewProvider(openmct) {
                                 domainObject
                             };
                         },
-                        template: '<condition-set ref="conditionSet" :domain-object="domainObject"></condition-set>'
+                        template: '<condition-set :domain-object="domainObject"></condition-set>'
                     });
                 },
                 destroy() {
                     component.$destroy();
+                    component = undefined;
                 }
             };
         },
