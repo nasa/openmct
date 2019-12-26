@@ -23,47 +23,51 @@
 import ConditionSet from './components/ConditionSet.vue';
 import Vue from 'vue';
 
-export default function ConditionSetViewProvider(openmct) {
-    return {
-        key: 'conditionSet.view',
-        name: 'Condition Set',
-        cssClass: 'icon-summary-widget',
-        canView: function (domainObject) {
-            return domainObject.type === 'conditionSet';
-        },
-        canEdit: function (domainObject) {
-            return domainObject.type === 'conditionSet';
-        },
-        view: function (domainObject, objectPath) {
-            let component;
-            return {
-                show(container) {
-                    component = new Vue({
-                        el: container,
-                        components: {
-                            ConditionSet
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            objectPath
-                        },
-                        data() {
-                            return {
-                                domainObject
-                            };
-                        },
-                        template: '<condition-set></condition-set>'
-                    });
-                },
-                destroy() {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
-        },
-        priority() {
-            return 100;
-        }
-    };
+export default class ConditionSetViewProvider {
+    constructor(openmct) {
+        this.openmct = openmct;
+        this.key = 'conditionSet.view';
+        this.cssClass = 'icon-summary-widget';
+    }
+
+    canView(domainObject) {
+        return domainObject.type === 'conditionSet';
+    }
+
+    canEdit(domainObject) {
+        return domainObject.type === 'conditionSet';
+    }
+
+    view(domainObject, objectPath) {
+        let component;
+        const openmct = this.openmct;
+        return {
+            show: (container, isEditing) => {
+                component = new Vue({
+                    el: container,
+                    components: {
+                        ConditionSet
+                    },
+                    provide: {
+                        openmct,
+                        domainObject,
+                        objectPath
+                    },
+                    data() {
+                        return {
+                            isEditing: isEditing
+                        }
+                    },
+                    template: '<condition-set :isEditing="isEditing"></condition-set>'
+                });
+            },
+            onEditModeChange: function (isEditing) {
+                component.isEditing = isEditing;
+            },
+            destroy: () => {
+                component.$destroy();
+                component = undefined;
+            }
+        };
+    }
 }

@@ -37,13 +37,13 @@
                     </div>
                 </div>
             </section>
-            <section class="test-data">
+            <section v-show="isEditing"
+                     class="test-data"
+            >
                 <div class="c-sw-edit__ui__header">
                     <span class="c-disclosure-triangle is-enabled t-view-control-test-data c-disclosure-triangle--expanded"></span>
                     <span class="c-sw-edit__ui__header-label">Test Data</span>
                 </div>
-            </section>
-            <section class="conditions">
                 <div class="c-sw-edit__ui holder l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-rules expanded-widget-test-data">
                     <div class="flex-accordion-holder t-widget-test-data-content w-widget-test-data-content">
                         <div class="l-enable">
@@ -60,6 +60,7 @@
                             </div>
                             <div class="holder add-rule-button-wrapper align-right">
                                 <button
+                                    v-show="isEditing"
                                     id="addRule"
                                     class="c-button c-button--major add-test-condition icon-plus"
                                 >
@@ -69,44 +70,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="c-sw-edit__ui__header">
-                    <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-rules"></span>
-                    <span class="c-sw-edit__ui__header-label">Conditions</span>
-                </div>
-                <div class="t-test-data-config">
-                    <div id="ruleArea"
-                         class="c-sw-editui__rules widget-rules"
-                    >
-                        <span>[data]</span>
-                    </div>
-                    <div class="holder add-rule-button-wrapper align-right">
-                        <button
-                            id="addRule"
-                            class="c-button c-button--major add-rule-button icon-plus"
-                        >
-                            <span class="c-button__label">Add Rule</span>
-                        </button>
-                    </div>
-                </div>
             </section>
+            <Conditions :is-editing="isEditing" />
         </div>
     </div>
 </div>
 </template>
 
 <script>
+import Conditions from './Conditions.vue';
+
 export default {
+    inject: ["openmct", "objectPath", "domainObject"],
+    components: {
+        Conditions
+    },
     props: {
-        domainObject: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            internalDomainObject: this.domainObject
-        };
-    },
-    inject: ["openmct", "objectPath", "domainObject"]
+        isEditing: Boolean
+    }
 };
 </script>
+
