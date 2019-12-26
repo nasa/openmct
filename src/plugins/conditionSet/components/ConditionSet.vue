@@ -1,30 +1,9 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
-
 <template>
 <div class="c-object-view u-contents">
     <div class="c-sw-edit w-summary-widget">
         <div class="c-sw-edit__ui holder">
-            <section class="current-output">
+            <section id="current-output" 
+                     class="current-output">
                 <div class="c-sw-edit__ui__header">
                     <span class="c-disclosure-triangle is-enabled t-view-control-test-data"></span>
                     <span class="c-sw-edit__ui__header-label">Current Output</span>
@@ -37,9 +16,9 @@
                     </div>
                 </div>
             </section>
-            <section v-show="isEditing"
-                     class="test-data"
-            >
+            <section id="test-data" 
+                     v-show="isEditing"
+                     class="test-data">
                 <div class="c-sw-edit__ui__header">
                     <span class="c-disclosure-triangle is-enabled t-view-control-test-data c-disclosure-triangle--expanded"></span>
                     <span class="c-sw-edit__ui__header-label">Test Data</span>
@@ -71,19 +50,19 @@
                     </div>
                 </div>
             </section>
-            <Conditions :is-editing="isEditing" />
+            <ConditionCollection :is-editing="isEditing" />
         </div>
     </div>
 </div>
 </template>
 
 <script>
-import Conditions from './Conditions.vue';
+import ConditionCollection from './ConditionCollection.vue';
 
 export default {
     inject: ["openmct", "objectPath", "domainObject"],
     components: {
-        Conditions
+        ConditionCollection
     },
     props: {
         isEditing: Boolean

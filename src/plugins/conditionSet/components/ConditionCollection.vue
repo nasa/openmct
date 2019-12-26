@@ -1,5 +1,5 @@
 <template>
-<section id="conditions">
+<section id="conditionCollection">
     <div class="c-sw-edit__ui__header">
         <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-conditons"></span>
         <span class="c-sw-edit__ui__header-label">Conditions</span>
