@@ -23,7 +23,7 @@
 import { createOpenMct } from 'testTools';
 import ConditionSetPlugin from './plugin';
 
-fdescribe('The plugin', () => {
+describe('The plugin', () => {
     let openmct;
     let conditionSetDefinition;
     let element;
