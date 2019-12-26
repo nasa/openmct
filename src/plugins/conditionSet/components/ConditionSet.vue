@@ -21,13 +21,80 @@
  *****************************************************************************/
 
 <template>
-<div class="l-condition-set">
-    <!-- content goes here -->
+<div class="c-object-view u-contents">
+    <div class="c-sw-edit w-summary-widget">
+        <div class="c-sw-edit__ui holder">
+            <section class="current-output">
+                <div class="c-sw-edit__ui__header">
+                    <span class="c-disclosure-triangle is-enabled t-view-control-test-data"></span>
+                    <span class="c-sw-edit__ui__header-label">Current Output</span>
+                </div>
+                <div class="t-test-data-config">
+                    <div id="ruleArea"
+                         class="c-sw-editui__rules widget-rules"
+                    >
+                        <span>DATA_PRESENT</span>
+                    </div>
+                </div>
+            </section>
+            <section class="test-data">
+                <div class="c-sw-edit__ui__header">
+                    <span class="c-disclosure-triangle is-enabled t-view-control-test-data c-disclosure-triangle--expanded"></span>
+                    <span class="c-sw-edit__ui__header-label">Test Data</span>
+                </div>
+            </section>
+            <section class="conditions">
+                <div class="c-sw-edit__ui holder l-flex-accordion flex-elem grows widget-edit-holder expanded-widget-rules expanded-widget-test-data">
+                    <div class="flex-accordion-holder t-widget-test-data-content w-widget-test-data-content">
+                        <div class="l-enable">
+                            <label class="checkbox custom">
+                                Apply Test Values
+                                <input type="checkbox"
+                                       class="t-test-data-checkbox"
+                                >
+                            </label>
+                        </div>
+                        <div class="t-test-data-config">
+                            <div class="c-sw-editui__rules widget-rules">
+                                <span>[data]</span>
+                            </div>
+                            <div class="holder add-rule-button-wrapper align-right">
+                                <button
+                                    id="addRule"
+                                    class="c-button c-button--major add-test-condition icon-plus"
+                                >
+                                    <span class="c-button__label">Add Test Value</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-sw-edit__ui__header">
+                    <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-rules"></span>
+                    <span class="c-sw-edit__ui__header-label">Conditions</span>
+                </div>
+                <div class="t-test-data-config">
+                    <div id="ruleArea"
+                         class="c-sw-editui__rules widget-rules"
+                    >
+                        <span>[data]</span>
+                    </div>
+                    <div class="holder add-rule-button-wrapper align-right">
+                        <button
+                            id="addRule"
+                            class="c-button c-button--major add-rule-button icon-plus"
+                        >
+                            <span class="c-button__label">Add Rule</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
 </div>
 </template>
 
 <script>
-
 export default {
     props: {
         domainObject: {
@@ -40,6 +107,6 @@ export default {
             internalDomainObject: this.domainObject
         };
     },
-    inject: ['openmct', 'objectPath', 'domainObject']
-}
+    inject: ["openmct", "objectPath", "domainObject"]
+};
 </script>
