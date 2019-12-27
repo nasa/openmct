@@ -40,7 +40,7 @@ export default {
     },
     data() {
         return {
-            conditionData: {}
+            expanded: true
         };
     },
     methods: {

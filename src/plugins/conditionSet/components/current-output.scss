@@ -1,0 +1,50 @@
+.c-cs__ui__header {
+    background-color: #D0D1D3;
+    padding: .3em .5em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #7C7D80;
+}
+
+.c-cs__ui_text {
+    padding: .5em .5em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #7C7D80;
+
+}
+
+.c-disclosure-triangle {
+    $d: 8px;
+    color: $colorDisclosureCtrl;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: $d;
+    position: relative;
+
+    &.is-enabled {
+        cursor: pointer;
+
+        &:hover {
+            color: $colorDisclosureCtrlHov;
+        }
+
+        &:before {
+            $s: .5;
+            content: $glyph-icon-arrow-up;
+            display: block;
+            font-family: symbolsfont;
+            font-size: 1rem * $s;
+        }
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(180deg);
+        }
+    }
+}

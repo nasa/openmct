@@ -50,7 +50,7 @@ export default class ConditionSetViewProvider {
                     },
                     provide: {
                         openmct,
-                        domainObject,
+                        // domainObject,
                         objectPath
                     },
                     data() {

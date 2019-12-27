@@ -2,11 +2,15 @@
 <section id="current-output"
          class="current-output"
 >
-    <div class="c-sw-edit__ui__header">
-        <span class="c-sw-edit__ui__header-label">Current Output</span>
+    <div class="c-cs__ui__header">
+        <span class="c-cs__ui__header-label">Current Output</span>
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="{'c-disclosure-triangle--expanded': expanded}"
+        ></span>
     </div>
-    <div class="t-test-data-config">
-        <span>{{ conditionData.currentOutput }}</span>
+    <div class="c-cs__ui_text">
+        <span>{{ currentOutput }}</span>
     </div>
 </section>
 </template>
@@ -15,13 +19,12 @@
 export default {
     inject: ['openmct'],
     props: {
+        currentOutput: String,
         isEditing: Boolean
     },
     data() {
         return {
-            conditionData: {
-                currentOutput: 'DATA_PRESENT'
-            }
+            expanded: true,
         };
     },
     methods: {
