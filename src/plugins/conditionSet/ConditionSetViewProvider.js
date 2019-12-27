@@ -61,7 +61,7 @@ export default class ConditionSetViewProvider {
                     template: '<condition-set :isEditing="isEditing"></condition-set>'
                 });
             },
-            onEditModeChange: function (isEditing) {
+            onEditModeChange: (isEditing) => {
                 component.isEditing = isEditing;
             },
             destroy: () => {

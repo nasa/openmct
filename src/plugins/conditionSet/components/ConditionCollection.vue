@@ -1,7 +1,10 @@
 <template>
 <section id="conditionCollection">
     <div class="c-sw-edit__ui__header">
-        <span class="c-disclosure-triangle c-disclosure-triangle--expanded is-enabled t-view-control-conditons"></span>
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="{'c-disclosure-triangle--expanded': expanded}"
+        ></span>
         <span class="c-sw-edit__ui__header-label">Conditions</span>
     </div>
     <div class="t-test-data-config">
