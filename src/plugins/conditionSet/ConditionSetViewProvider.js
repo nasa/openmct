@@ -50,12 +50,12 @@ export default class ConditionSetViewProvider {
                     },
                     provide: {
                         openmct,
-                        // domainObject,
+                        domainObject,
                         objectPath
                     },
                     data() {
                         return {
-                            isEditing: isEditing
+                            isEditing
                         }
                     },
                     template: '<condition-set :isEditing="isEditing"></condition-set>'

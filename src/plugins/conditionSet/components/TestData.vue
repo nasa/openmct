@@ -3,12 +3,12 @@
          id="test-data"
          class="test-data"
 >
-    <div class="c-sw-edit__ui__header">
+    <div class="c-cs__ui__header">
+        <span class="c-cs__ui__header-label">Test Data</span>
         <span
-            class="c-disclosure-triangle is-enabled flex-elem"
-            :class="{'c-disclosure-triangle--expanded': expanded}"
+            class="c-cs__disclosure-triangle is-enabled flex-elem"
+            :class="{'c-cs__disclosure-triangle--expanded': expanded}"
         ></span>
-        <span class="c-sw-edit__ui__header-label">Test Data</span>
     </div>
     <div class="l-enable">
         <label class="checkbox custom">

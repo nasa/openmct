@@ -5,8 +5,8 @@
     <div class="c-cs__ui__header">
         <span class="c-cs__ui__header-label">Current Output</span>
         <span
-            class="c-disclosure-triangle is-enabled flex-elem"
-            :class="{'c-disclosure-triangle--expanded': expanded}"
+            class="c-cs__disclosure-triangle is-enabled flex-elem"
+            :class="{'c-cs__disclosure-triangle--expanded': expanded}"
         ></span>
     </div>
     <div class="c-cs__ui_text">

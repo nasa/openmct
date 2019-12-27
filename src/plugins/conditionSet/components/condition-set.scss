@@ -5,6 +5,13 @@
     font-size: 0.8em;
     font-weight: bold;
     color: #7C7D80;
+    display: flex;
+    justify-content: stretch;
+}
+
+.c-cs__ui__header-label {
+    display: inline-block;
+    width: 100%;
 }
 
 .c-cs__ui_text {
@@ -13,10 +20,9 @@
     font-size: 0.8em;
     font-weight: bold;
     color: #7C7D80;
-
 }
 
-.c-disclosure-triangle {
+.c-cs__disclosure-triangle {
     $d: 8px;
     color: $colorDisclosureCtrl;
     display: flex;
@@ -35,7 +41,7 @@
 
         &:before {
             $s: .5;
-            content: $glyph-icon-arrow-up;
+            content: $glyph-icon-arrow-down;
             display: block;
             font-family: symbolsfont;
             font-size: 1rem * $s;
