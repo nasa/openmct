@@ -1,15 +1,16 @@
 <template>
-<section id="current-output"
-         class="current-output"
->
+<section id="current-output">
     <div class="c-cs__ui__header">
         <span class="c-cs__ui__header-label">Current Output</span>
         <span
             class="c-cs__disclosure-triangle is-enabled flex-elem"
-            :class="{'c-cs__disclosure-triangle--expanded': expanded}"
+            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
+            @click="expanded = !expanded"
         ></span>
     </div>
-    <div class="c-cs__ui_text">
+    <div v-if="expanded"
+         class="c-cs__ui_content"
+    >
         <span>{{ currentOutput }}</span>
     </div>
 </section>
@@ -19,15 +20,20 @@
 export default {
     inject: ['openmct'],
     props: {
-        currentOutput: String,
+        currentOutput: {
+            type: String,
+            default: ''
+        },
+
         isEditing: Boolean
     },
     data() {
         return {
-            expanded: true,
+            expanded: true
         };
     },
     methods: {
+
     }
 }
 </script>
