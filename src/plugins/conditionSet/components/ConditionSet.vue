@@ -1,6 +1,6 @@
 <template>
 <div class="c-object-view u-contents">
-    <div class="c-sw-edit w-summary-widget">
+    <div class="c-cs-edit w-condition-set">
         <div class="c-sw-edit__ui holder">
             <CurrentOutput :current-output="mockCurrentOutput" />
             <TestData :is-editing="isEditing" />

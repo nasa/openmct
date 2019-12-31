@@ -1,17 +1,20 @@
+.c-cs-edit {
+    padding: 0;
+}
+
 section {
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 .c-cs__ui__header {
     background-color: #D0D1D3;
-    padding: .3em .5em;
+    padding: 0.4em 0.6em;
     text-transform: uppercase;
     font-size: 0.8em;
     font-weight: bold;
     color: #7C7D80;
     display: flex;
     justify-content: stretch;
-    margin-bottom: 5px;
 }
 
 .c-cs__ui__header-label {
@@ -20,11 +23,45 @@ section {
 }
 
 .c-cs__ui_content {
-    text-transform: uppercase;
     font-size: 0.8em;
+    margin: 0.3em 0.3em 0 0.3em;
+}
+
+.c-cs__ui_content label,
+.c-cs__ui_content div {
+    padding: 0.4em 0;
+}
+
+.c-cs__ui_content .help {
+    font-style: italic;
+}
+
+.current-output {
+    text-transform: uppercase;
     font-weight: bold;
-    color: #7C7D80;
-    padding-left: 0.5em;
+    margin: 0.4em 0.6em;
+}
+
+.checkbox.custom {
+    display: flex;
+    align-items: center;
+    margin-left: 0.6em;
+}
+.checkbox.custom span {
+    display: inline-block;
+    margin-left: 0.6em;
+}
+
+.c-button[class*="--major"],
+.c-button[class*='is-active'],
+.c-button--menu[class*="--major"],
+.c-button--menu[class*='is-active'] {
+    border: #0B427C;
+    background-color: #4779A4;
+    padding: 0.3em 0.6em;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #D5D5D5;
 }
 
 .c-cs__disclosure-triangle {

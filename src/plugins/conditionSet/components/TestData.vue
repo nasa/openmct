@@ -6,7 +6,7 @@
     <div class="c-cs__ui__header">
         <span class="c-cs__ui__header-label">Test Data</span>
         <span
-            class="c-cs__disclosure-triangle is-enabled flex-elem"
+            class="is-enabled flex-elem"
             :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
             @click="expanded = !expanded"
         ></span>
@@ -15,21 +15,27 @@
          class="c-cs__ui_content"
     >
         <label class="checkbox custom">
-            Apply Test Values
             <input type="checkbox"
                    class="t-test-data-checkbox"
             >
+            <span>Apply Test Data</span>
         </label>
         <div class="t-test-data-config">
-            <div class="c-sw-editui__rules widget-rules">
-                <span>[data]</span>
+            <div class="c-cs-editui__conditions widget-condition">
+                <label>
+                    <span>Set</span>
+                    <select>
+                        <option>- Select Input -</option>
+                    </select>
+                </label>
             </div>
-            <div class="holder add-condition-button-wrapper align-right">
-                <button id="addRule"
-                        class="c-button c-button--major add-condition-button icon-plus"
-                >
-                    <span class="c-button__label">Add Test Value</span>
-                </button>
+            <div class="c-cs-editui__conditions widget-condition">
+                <label>
+                    <span>Set</span>
+                    <select>
+                        <option>- Select Input -</option>
+                    </select>
+                </label>
             </div>
         </div>
     </div>
