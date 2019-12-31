@@ -4,7 +4,11 @@
      :class="['widget-condition', { 'widget-condition--current': isCurrent }]"
 >
     <div class="title-bar">
-        <span class="is-enabled c-c__menu-hamburger"></span>
+        <span
+            class="c-c__menu-hamburger"
+            :class="{ 'is-enabled': !isDefault }"
+            @click="expanded = !expanded"
+        ></span>
         <span
             class="is-enabled flex-elem"
             :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
@@ -31,7 +35,9 @@
         <span class="is-enabled c-c__duplicate"></span>
         <span class="is-enabled c-c__trash"></span>
     </div>
-    <div class="condition-config">
+    <div v-if="expanded"
+         class="condition-config-edit"
+    >
         [form stuff]
     </div>
 </div>

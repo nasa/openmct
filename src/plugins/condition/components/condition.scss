@@ -15,41 +15,56 @@
     display: flex;
     align-items: center;
     justify-content: stretch;
+    padding: 0.4em 0;
 }
 
 .title-bar span {
-    margin-right: 3px;
+    margin-right: 0.6em;
+}
+
+.title-bar span.c-c__duplicate,
+.title-bar span.c-c__trash{
+    margin-right: 0;
+    margin-left: 0.3em;
 }
 
 .widget-condition > div {
-    margin: 0 0.6em;
+    margin: 0 0.4em;
 }
 
-.widget-condition .condition-name {
+.condition-name {
     font-weight: bold;
 }
 
-.widget-condition .condition-output {
+.condition-output {
     color: #7C7D80;
 }
 
-.widget-condition .condition-summary {
+.condition-summary {
     flex-grow: 1;
 }
 
+.condition-config {
+    padding: 0.6em 0;
+}
 
-.c-c__disclosure-triangle {
+.condition-config-edit {
+    border-top: solid 1px #ccc;
+    padding: 0.6em 0;
+}
+
+.c-c__disclosure-triangle,
+.c-c__menu-hamburger,
+.c-c__duplicate,
+.c-c__trash {
     $d: 8px;
     color: $colorDisclosureCtrl;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
     width: $d;
-    position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
@@ -57,84 +72,39 @@
 
         &:before {
             $s: .5;
-            content: $glyph-icon-arrow-down;
             display: block;
             font-family: symbolsfont;
             font-size: 1rem * $s;
         }
     }
+}
+
+.c-c__disclosure-triangle {
+    &:before {
+        content: $glyph-icon-arrow-down;
+    }
 
     &--expanded {
         &:before {
-            transform: rotate(0deg);
+            transform: rotate(180deg);
         }
     }
 }
 
 .c-c__menu-hamburger {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
-    width: $d;
-
-    &.is-enabled {
-        cursor: pointer;
-
-        &:hover {
-            color: $colorDisclosureCtrlHov;
-        }
-
-        &:before {
-            $s: .5;
-            content: $glyph-icon-menu-hamburger;
-            display: block;
-            font-family: symbolsfont;
-            font-size: 1rem * $s;
-        }
+    &:before {
+        content: $glyph-icon-menu-hamburger;
     }
 }
 
 .c-c__duplicate {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
-    width: $d;
-
-    &.is-enabled {
-        cursor: pointer;
-
-        &:hover {
-            color: $colorDisclosureCtrlHov;
-        }
-
-        &:before {
-            $s: .5;
-            content: $glyph-icon-duplicate;
-            display: block;
-            font-family: symbolsfont;
-            font-size: 1rem * $s;
-        }
+    &:before {
+        content: $glyph-icon-duplicate;
     }
 }
 
 .c-c__trash {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
-    width: $d;
-
-    &.is-enabled {
-        cursor: pointer;
-
-        &:hover {
-            color: $colorDisclosureCtrlHov;
-        }
-
-        &:before {
-            $s: .5;
-            content: $glyph-icon-trash;
-            display: block;
-            font-family: symbolsfont;
-            font-size: 1rem * $s;
-        }
+    &:before {
+        content: $glyph-icon-trash;
     }
 }
-
-// $glyph-icon-grippy

@@ -22,20 +22,28 @@
         </label>
         <div class="t-test-data-config">
             <div class="c-cs-editui__conditions widget-condition">
-                <label>
-                    <span>Set</span>
-                    <select>
-                        <option>- Select Input -</option>
-                    </select>
-                </label>
+                <form>
+                    <label>
+                        <span>Set</span>
+                        <select>
+                            <option>- Select Input -</option>
+                        </select>
+                    </label>
+                    <span class="is-enabled  flex-elem c-cs__duplicate"></span>
+                    <span class="is-enabled  flex-elem c-cs__trash"></span>
+                </form>
             </div>
             <div class="c-cs-editui__conditions widget-condition">
-                <label>
-                    <span>Set</span>
-                    <select>
-                        <option>- Select Input -</option>
-                    </select>
-                </label>
+                <form>
+                    <label>
+                        <span>Set</span>
+                        <select>
+                            <option>- Select Input -</option>
+                        </select>
+                    </label>
+                    <span class="is-enabled c-cs__duplicate"></span>
+                    <span class="is-enabled c-cs__trash"></span>
+                </form>
             </div>
         </div>
     </div>

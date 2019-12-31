@@ -22,9 +22,9 @@
             <button
                 v-show="isEditing"
                 id="addCondition"
-                class="c-button c-button--major add-condition-button"
+                class="c-cs-button c-cs-button--major add-condition-button"
             >
-                <span class="c-button__label">Add Condition</span>
+                <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
         <div v-if="isEditing">

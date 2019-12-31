@@ -23,17 +23,12 @@ section {
 }
 
 .c-cs__ui_content {
-    font-size: 0.8em;
-    margin: 0.3em 0.3em 0 0.3em;
-}
-
-.c-cs__ui_content label,
-.c-cs__ui_content div {
-    padding: 0.4em 0;
+    padding: 0.4em;
 }
 
 .c-cs__ui_content .help {
     font-style: italic;
+    padding: 0.4em 0;
 }
 
 .current-output {
@@ -52,30 +47,47 @@ section {
     margin-left: 0.6em;
 }
 
-.c-button[class*="--major"],
-.c-button[class*='is-active'],
-.c-button--menu[class*="--major"],
-.c-button--menu[class*='is-active'] {
-    border: #0B427C;
-    background-color: #4779A4;
-    padding: 0.3em 0.6em;
-    font-weight: bold;
-    font-size: 1.1em;
-    color: #D5D5D5;
+.t-test-data-config {
+    margin-top: 5px;
 }
 
-.c-cs__disclosure-triangle {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
+.widget-condition form {
+    padding: 0.5em;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
+    justify-content: stretch;
+}
+
+.widget-condition form label {
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+.c-cs-button[class*="--major"],
+.c-cs-button[class*='is-active'],
+.c-cs-button--menu[class*="--major"],
+.c-cs-button--menu[class*='is-active'] {
+    border: solid 1.5px #0B427C;
+    background-color: #4778A3;
+    padding: 0.2em 0.6em;
+    margin: 0.4em;
+    font-weight: bold;
+    color: #eee;
+    border-radius: 6px;
+}
+
+.c-cs__disclosure-triangle,
+.c-cs__menu-hamburger,
+.c-cs__duplicate,
+.c-cs__trash {
+    $d: 8px;
+    color: $colorDisclosureCtrl;
     width: $d;
-    position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
@@ -83,11 +95,16 @@ section {
 
         &:before {
             $s: .5;
-            content: $glyph-icon-arrow-down;
             display: block;
             font-family: symbolsfont;
             font-size: 1rem * $s;
         }
+    }
+}
+
+.c-cs__disclosure-triangle {
+    &:before {
+        content: $glyph-icon-arrow-down;
     }
 
     &--expanded {
@@ -96,3 +113,17 @@ section {
         }
     }
 }
+
+.c-cs__duplicate {
+    margin-right: 0.3em;
+    &:before {
+        content: $glyph-icon-duplicate;
+    }
+}
+
+.c-cs__trash {
+    &:before {
+        content: $glyph-icon-trash;
+    }
+}
+
