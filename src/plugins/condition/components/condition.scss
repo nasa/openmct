@@ -36,8 +36,8 @@
     font-weight: bold;
 }
 
-.condition-output {
-    color: #7C7D80;
+.condition-summary .condition-description {
+    color: #999;
 }
 
 .condition-summary {
@@ -45,13 +45,55 @@
 }
 
 .condition-config {
-    padding: 0.6em 0;
+    padding: 0.3em 0;
+}
+
+.widget-condition form label {
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+.l-widget-rule {
+    padding: 0;
+}
+
+.widget-rule-content.expanded {
+    margin: 0 3px;
+}
+
+.widget-rule-content.expanded ul {
+    border-top: solid 1px #ccc;
+    padding: 5px;
+}
+
+.l-compact-form ul li {
+    padding: 1px 0;
+}
+
+.l-compact-form ul li .controls {
+    line-height: 20px;
+    min-height: 20px;
+}
+
+.l-compact-form ul li > label {
+    display: block;
+    width: 90px;
+    text-align: right;
+    line-height: 20px;
+}
+
+.l-compact-form ul li .controls input[type="text"],
+.l-compact-form ul li .controls input[type="search"],
+.l-compact-form ul li .controls input[type="number"],
+.l-compact-form ul li .controls button,
+.l-compact-form ul li .controls select {
+    min-height: 20px;
 }
 
 .condition-config-edit {
-    border-top: solid 1px #ccc;
-    padding: 0.6em 0;
+    padding: 3px 0;
 }
+
 
 .c-c__disclosure-triangle,
 .c-c__menu-hamburger,
@@ -81,12 +123,12 @@
 
 .c-c__disclosure-triangle {
     &:before {
-        content: $glyph-icon-arrow-down;
+        content: $glyph-icon-arrow-right;
     }
 
     &--expanded {
         &:before {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
     }
 }

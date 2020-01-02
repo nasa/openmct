@@ -15,6 +15,7 @@ section {
     color: #7C7D80;
     display: flex;
     justify-content: stretch;
+    align-items: center;
 }
 
 .c-cs__ui__header-label {
@@ -35,6 +36,14 @@ section {
     text-transform: uppercase;
     font-weight: bold;
     margin: 0.4em 0.6em;
+}
+
+.condition-output {
+    color: #999;
+}
+
+.condition-description {
+    color: #333;
 }
 
 .checkbox.custom {
@@ -61,6 +70,10 @@ section {
 .widget-condition form label {
     flex-grow: 1;
     margin-left: 0;
+}
+
+.widget-condition form input {
+    min-height: 24px;
 }
 
 .c-cs-button[class*="--major"],
@@ -104,12 +117,12 @@ section {
 
 .c-cs__disclosure-triangle {
     &:before {
-        content: $glyph-icon-arrow-down;
+        content: $glyph-icon-arrow-right;
     }
 
     &--expanded {
         &:before {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
     }
 }
