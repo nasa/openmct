@@ -19,8 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 
 export default function ConditionPlugin() {
+    const conditionSetType = {
+        name: 'Condition Set',
+        key: 'conditionSet',
+        description: 'A set of one or more conditions based on user-specified criteria.',
+        creatable: true,
+        cssClass: 'icon-folder',
+        initialize: function (domainObject) {
+            domainObject.composition = [];
+        }
+    };
+
     return function install(openmct) {
         openmct.types.addType('condition', {
             name: 'Condition',
@@ -31,5 +43,10 @@ export default function ConditionPlugin() {
                 domainObject.composition = [];
             }
         });
+
+        openmct.types.addType('conditionSet', conditionSetType);
+
+        openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
+
     }
 }
