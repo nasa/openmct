@@ -32,8 +32,12 @@
             >[condition description]
             </span>
         </div>
-        <span class="is-enabled c-c__duplicate"></span>
-        <span class="is-enabled c-c__trash"></span>
+        <span v-if="!isDefault"
+              class="is-enabled c-c__duplicate"
+        ></span>
+        <span v-if="!isDefault"
+              class="is-enabled c-c__trash"
+        ></span>
     </div>
     <div v-if="expanded"
          class="condition-config-edit widget-rule-content c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded"
