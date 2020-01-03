@@ -22,16 +22,6 @@
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 
 export default function ConditionPlugin() {
-    const conditionSetType = {
-        name: 'Condition Set',
-        key: 'conditionSet',
-        description: 'A set of one or more conditions based on user-specified criteria.',
-        creatable: true,
-        cssClass: 'icon-folder',
-        initialize: function (domainObject) {
-            domainObject.composition = [];
-        }
-    };
 
     return function install(openmct) {
         openmct.types.addType('condition', {
@@ -44,7 +34,16 @@ export default function ConditionPlugin() {
             }
         });
 
-        openmct.types.addType('conditionSet', conditionSetType);
+        openmct.types.addType('conditionSet', {
+            name: 'Condition Set',
+            key: 'conditionSet',
+            description: 'A set of one or more conditions based on user-specified criteria.',
+            creatable: true,
+            cssClass: 'icon-folder',
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+            }
+        });
 
         openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
 

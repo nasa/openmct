@@ -25,13 +25,8 @@ import ConditionPlugin from "./plugin";
 
 let openmct;
 let conditionDefinition;
+let conditionSetDefinition;
 let mockDomainObject;
-
-let mockConditionObject = {
-    name: 'Condition',
-    key: 'condition',
-    creatable: false
-};
 
 describe('the plugin', function () {
 
@@ -39,17 +34,30 @@ describe('the plugin', function () {
         openmct = createOpenMct();
         openmct.install(new ConditionPlugin());
         conditionDefinition = openmct.types.get('condition').definition;
+        conditionSetDefinition = openmct.types.get('conditionSet').definition;
     });
 
-    it('defines an object type with the correct key', () => {
+    let mockConditionObject = {
+        name: 'Condition',
+        key: 'condition',
+        creatable: false
+    };
+
+    it('defines a condition object type with the correct key', () => {
         expect(conditionDefinition.key).toEqual(mockConditionObject.key);
     });
 
-    it('is not creatable', () => {
-        expect(conditionDefinition.creatable).toEqual(mockConditionObject.creatable);
+    let mockConditionSetObject = {
+        name: 'Condition Set',
+        key: 'conditionSet',
+        creatable: true
+    };
+
+    it('defines a conditionSet object type with the correct key', () => {
+        expect(conditionSetDefinition.key).toEqual(mockConditionSetObject.key);
     });
 
-    describe('the object', () => {
+    describe('the condition object', () => {
         beforeEach(() => {
             mockDomainObject = {
                 identifier: {
@@ -62,9 +70,62 @@ describe('the plugin', function () {
             conditionDefinition.initialize(mockDomainObject);
         });
 
+        it('is not creatable', () => {
+            expect(conditionDefinition.creatable).toEqual(mockConditionObject.creatable);
+        });
+
         it('initializes with an empty composition list', () => {
             expect(mockDomainObject.composition instanceof Array).toBeTrue();
             expect(mockDomainObject.composition.length).toEqual(0);
         });
+    });
+
+    describe('the conditionSet object', () => {
+        let element;
+        let child;
+
+        beforeEach((done) => {
+            const appHolder = document.createElement('div');
+            appHolder.style.width = '640px';
+            appHolder.style.height = '480px';
+
+            element = document.createElement('div');
+            child = document.createElement('div');
+            element.appendChild(child);
+
+            mockDomainObject = {
+                identifier: {
+                    key: 'testConditionSetKey',
+                    namespace: ''
+                },
+                type: 'conditionSet'
+            };
+
+            conditionSetDefinition.initialize(mockDomainObject);
+
+            openmct.on('start', done);
+            openmct.start(appHolder);
+        });
+
+        it('is not creatable', () => {
+            expect(conditionSetDefinition.creatable).toEqual(mockConditionSetObject.creatable);
+        });
+
+        it('initializes with an empty composition list', () => {
+            expect(mockDomainObject.composition instanceof Array).toBeTrue();
+            expect(mockDomainObject.composition.length).toEqual(0);
+        });
+
+        it('provides a view', () => {
+            const testViewObject = {
+                id:"test-object",
+                type: "conditionSet"
+            };
+
+            const applicableViews = openmct.objectViews.get(testViewObject);
+            let conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
+            expect(conditionSetView).toBeDefined();
+        });
+
     });
 });
