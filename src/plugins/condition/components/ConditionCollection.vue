@@ -23,19 +23,20 @@
                 v-show="isEditing"
                 id="addCondition"
                 class="c-cs-button c-cs-button--major add-condition-button"
+                @click="addCondition"
             >
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div v-if="isEditing">
-            <ConditionEdit />
-            <ConditionEdit :is-current="true" />
-            <ConditionEdit :is-default="true" />
-        </div>
-        <div v-else>
-            <Condition />
-            <Condition :is-current="true" />
-            <Condition :is-default="true" />
+        <div v-for="condition in conditions" :key="condition.key">
+            <div v-if="isEditing">
+                <ConditionEdit :domain-object="condition.domainObject" 
+                               :isDefault="condition.isDefault" />
+            </div>
+            <div v-else>
+                <Condition :domain-object="condition.domainObject" 
+                           :isDefault="condition.isDefault" />
+            </div>
         </div>
     </div>
 </section>
@@ -46,7 +47,7 @@ import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject'],
     components: {
         Condition,
         ConditionEdit
@@ -56,10 +57,51 @@ export default {
     },
     data() {
         return {
-            expanded: true
+            expanded: true,
+            conditions: [
+                {
+                    identifier: {
+                        key: 'testConditionKey',
+                        namespace: ''
+                    },
+                    type: 'condition',
+                    isDefault: true
+                }
+            ]
         };
     },
+    destroyed() {
+        this.composition.off('add', this.addCondition);
+        this.composition.off('remove', this.removeCondition);
+        this.composition.off('reorder', this.reorder);
+    },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addCondition);
+        this.composition.on('remove', this.removeCondition);
+        this.composition.on('reorder', this.reorder);
+        this.composition.load();
+    },
     methods: {
+        addCondition() {
+            let condition = {};
+            condition.domainObject = this.domainObject;
+            condition.key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+ 
+            this.conditions.unshift(condition);
+        },
+        removeCondition(identifier) {
+            console.log(`remove condition`);
+            let index = _.findIndex(this.conditions, (condition) => this.openmct.objects.makeKeyString(identifier) === item.key);
+
+            this.conditions.splice(index, 1);
+        },
+        reorder(reorderPlan) {
+            let oldConditions = this.conditions.slice();
+            reorderPlan.forEach((reorderEvent) => {
+                this.$set(this.conditions, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
+            });
+        }
     }
 }
 </script>

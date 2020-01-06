@@ -37,6 +37,7 @@
         ></span>
         <span v-if="!isDefault"
               class="is-enabled c-c__trash"
+              @click="removeCondition"
         ></span>
     </div>
     <div v-if="expanded"
@@ -84,11 +85,15 @@ export default {
     },
     data() {
         return {
-            conditionData: {},
+            conditions: {},
             expanded: true
         };
     },
     methods: {
+        removeCondition() {
+            console.log(this);
+            // this.conditions.splice(index, 1);
+        }
     }
 }
 </script>
