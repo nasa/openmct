@@ -1,0 +1,152 @@
+
+
+.widget-condition {
+    background-color: #eee;
+    margin: 0 0 0.6em;
+    border-radius: 3px;
+
+    &--current {
+        background-color: #DEECFA;
+    }
+
+}
+
+.title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    padding: 0.4em 0;
+}
+
+.title-bar span {
+    margin-right: 0.6em;
+}
+
+.title-bar span.c-c__duplicate,
+.title-bar span.c-c__trash{
+    margin-right: 0;
+    margin-left: 0.3em;
+}
+
+.widget-condition > div {
+    margin: 0 0.4em;
+}
+
+.condition-name {
+    font-weight: bold;
+}
+
+.condition-summary .condition-description {
+    color: #999;
+}
+
+.condition-summary {
+    flex-grow: 1;
+}
+
+.condition-config {
+    padding: 0.3em 0;
+}
+
+.widget-condition form label {
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+.l-widget-rule {
+    padding: 0;
+}
+
+.widget-rule-content.expanded {
+    margin: 0 3px;
+}
+
+.widget-rule-content.expanded ul {
+    border-top: solid 1px #ccc;
+    padding: 5px;
+}
+
+.l-compact-form ul li {
+    padding: 1px 0;
+}
+
+.l-compact-form ul li .controls {
+    line-height: 20px;
+    min-height: 20px;
+}
+
+.l-compact-form ul li > label {
+    display: block;
+    width: 90px;
+    text-align: right;
+    line-height: 20px;
+}
+
+.l-compact-form ul li .controls input[type="text"],
+.l-compact-form ul li .controls input[type="search"],
+.l-compact-form ul li .controls input[type="number"],
+.l-compact-form ul li .controls button,
+.l-compact-form ul li .controls select {
+    min-height: 20px;
+}
+
+.condition-config-edit {
+    padding: 3px 0;
+}
+
+
+.c-c__disclosure-triangle,
+.c-c__menu-hamburger,
+.c-c__duplicate,
+.c-c__trash {
+    $d: 8px;
+    color: $colorDisclosureCtrl;
+    width: $d;
+    visibility: hidden;
+
+    &.is-enabled {
+        cursor: pointer;
+        visibility: visible;
+
+        &:hover {
+            color: $colorDisclosureCtrlHov;
+        }
+
+        &:before {
+            $s: .5;
+            display: block;
+            font-family: symbolsfont;
+            font-size: 1rem * $s;
+        }
+    }
+}
+
+.c-c__disclosure-triangle {
+    &:before {
+        content: $glyph-icon-arrow-right;
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.c-c__menu-hamburger {
+    &:before {
+        content: $glyph-icon-menu-hamburger;
+    }
+}
+
+.c-c__duplicate {
+    &:before {
+        content: $glyph-icon-duplicate;
+    }
+}
+
+.c-c__trash {
+    &:before {
+        content: $glyph-icon-trash;
+    }
+}

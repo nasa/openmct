@@ -265,7 +265,6 @@ define([
         this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
-        this.install(this.plugins.ConditionSet());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

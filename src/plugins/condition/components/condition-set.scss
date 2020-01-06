@@ -1,0 +1,142 @@
+.c-cs-edit {
+    padding: 0;
+}
+
+section {
+    padding-bottom: 5px;
+}
+
+.c-cs__ui__header {
+    background-color: #D0D1D3;
+    padding: 0.4em 0.6em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #7C7D80;
+    display: flex;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.c-cs__ui__header-label {
+    display: inline-block;
+    width: 100%;
+}
+
+.c-cs__ui_content {
+    padding: 0.4em;
+}
+
+.c-cs__ui_content .help {
+    font-style: italic;
+    padding: 0.4em 0;
+}
+
+.current-output {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 0.4em 0.6em;
+}
+
+.condition-output {
+    color: #999;
+}
+
+.condition-description {
+    color: #333;
+}
+
+.checkbox.custom {
+    display: flex;
+    align-items: center;
+    margin-left: 0.6em;
+}
+.checkbox.custom span {
+    display: inline-block;
+    margin-left: 0.6em;
+}
+
+.t-test-data-config {
+    margin-top: 5px;
+}
+
+.widget-condition form {
+    padding: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+}
+
+.widget-condition form label {
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+.widget-condition form input {
+    min-height: 24px;
+}
+
+.c-cs-button[class*="--major"],
+.c-cs-button[class*='is-active'],
+.c-cs-button--menu[class*="--major"],
+.c-cs-button--menu[class*='is-active'] {
+    border: solid 1.5px #0B427C;
+    background-color: #4778A3;
+    padding: 0.2em 0.6em;
+    margin: 0.4em;
+    font-weight: bold;
+    color: #eee;
+    border-radius: 6px;
+}
+
+.c-cs__disclosure-triangle,
+.c-cs__menu-hamburger,
+.c-cs__duplicate,
+.c-cs__trash {
+    $d: 8px;
+    color: $colorDisclosureCtrl;
+    width: $d;
+    visibility: hidden;
+
+    &.is-enabled {
+        cursor: pointer;
+        visibility: visible;
+
+        &:hover {
+            color: $colorDisclosureCtrlHov;
+        }
+
+        &:before {
+            $s: .5;
+            display: block;
+            font-family: symbolsfont;
+            font-size: 1rem * $s;
+        }
+    }
+}
+
+.c-cs__disclosure-triangle {
+    &:before {
+        content: $glyph-icon-arrow-right;
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.c-cs__duplicate {
+    margin-right: 0.3em;
+    &:before {
+        content: $glyph-icon-duplicate;
+    }
+}
+
+.c-cs__trash {
+    &:before {
+        content: $glyph-icon-trash;
+    }
+}
+

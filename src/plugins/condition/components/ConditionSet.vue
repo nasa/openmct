@@ -1,8 +1,8 @@
 <template>
 <div class="c-object-view u-contents">
-    <div class="c-sw-edit w-summary-widget">
+    <div class="c-cs-edit w-condition-set">
         <div class="c-sw-edit__ui holder">
-            <CurrentOutput />
+            <CurrentOutput :current-output="mockCurrentOutput" />
             <TestData :is-editing="isEditing" />
             <ConditionCollection :is-editing="isEditing" />
         </div>
@@ -24,6 +24,11 @@ export default {
     },
     props: {
         isEditing: Boolean
+    },
+    data() {
+        return {
+            mockCurrentOutput: 'Data_Present'
+        }
     }
 };
 </script>
