@@ -28,14 +28,18 @@
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div v-for="condition in conditions" :key="condition.key">
+        <div v-for="condition in conditions"
+             :key="condition.key"
+        >
             <div v-if="isEditing">
-                <ConditionEdit :domain-object="condition.domainObject" 
-                               :isDefault="condition.isDefault" />
+                <ConditionEdit :domain-object="condition.domainObject"
+                               :is-default="condition.isDefault"
+                />
             </div>
             <div v-else>
-                <Condition :domain-object="condition.domainObject" 
-                           :isDefault="condition.isDefault" />
+                <Condition :domain-object="condition.domainObject"
+                           :is-default="condition.isDefault"
+                />
             </div>
         </div>
     </div>
@@ -87,14 +91,14 @@ export default {
             let condition = {};
             condition.domainObject = this.domainObject;
             condition.key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
- 
+
             this.conditions.unshift(condition);
         },
         removeCondition(identifier) {
             console.log(`remove condition`);
-            let index = _.findIndex(this.conditions, (condition) => this.openmct.objects.makeKeyString(identifier) === item.key);
+            // let index = _.findIndex(this.conditions, (condition) => this.openmct.objects.makeKeyString(identifier) === item.key);
 
-            this.conditions.splice(index, 1);
+            // this.conditions.splice(index, 1);
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditions.slice();
