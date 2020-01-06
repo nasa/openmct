@@ -39,7 +39,7 @@ export default function ConditionPlugin() {
             key: 'conditionSet',
             description: 'A set of one or more conditions based on user-specified criteria.',
             creatable: true,
-            cssClass: 'icon-folder',
+            cssClass: 'icon-summary-widget',
             initialize: function (domainObject) {
                 domainObject.composition = [];
             }
