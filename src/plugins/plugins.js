@@ -47,11 +47,10 @@ define([
     './goToOriginalAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
-    './conditionSet/plugin',
+    './condition/plugin',
     './themes/espresso',
     './themes/maelstrom',
-    './themes/snow',
-    './condition/plugin'
+    './themes/snow'
 ], function (
     _,
     UTCTimeSystem,
@@ -79,11 +78,10 @@ define([
     GoToOriginalAction,
     ClearData,
     WebPagePlugin,
-    ConditionSetPlugin,
+    ConditionPlugin,
     Espresso,
     Maelstrom,
-    Snow,
-    ConditionPlugin
+    Snow
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -186,7 +184,6 @@ define([
     plugins.GoToOriginalAction = GoToOriginalAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
-    plugins.ConditionSet = ConditionSetPlugin.default;
     plugins.Espresso = Espresso.default;
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
