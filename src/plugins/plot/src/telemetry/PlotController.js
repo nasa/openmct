@@ -268,9 +268,7 @@ define([
 
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {
         this.config.series.forEach(function (series) {
-            if (!_.isEqual(series.filters, updatedFilters[series.keyString])) {
-                series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
-            }
+            series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
         });
     };
 
