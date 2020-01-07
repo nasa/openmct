@@ -109,9 +109,9 @@ export default {
 
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
             let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            newDO.useCapability('location').setPrimaryLocation(this.parentKeyString);
             let conditionDO = newDO.useCapability('adapter');
 
-            this.conditions.unshift(conditionDO);
             this.composition.add(conditionDO);
         },
         removeCondition(identifier) {
