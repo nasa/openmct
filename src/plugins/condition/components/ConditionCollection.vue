@@ -49,6 +49,7 @@
 <script>
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
+import uuid from 'uuid';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -71,7 +72,8 @@ export default {
                     type: 'condition',
                     isDefault: true
                 }
-            ]
+            ],
+            parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier)
         };
     },
     destroyed() {
@@ -88,29 +90,29 @@ export default {
         this.composition.load();
     },
     methods: {
-        added(dobj) {
-            console.log(dobj.composition);
+        added(conditionDO) {
+            this.conditions.unshift(conditionDO);
         },
         addCondition() {
+            let conditionObjId = uuid();
             let conditionObj = {
                 "composition": [],
-                "modified": 1578373933245,
-                "persisted": 1578373933245,
-                "name": "Condition1",
+                "name": "Condition"+this.conditions.length,
                 "type": "condition",
-                "id": "12345"+this.conditions.length,
-                "location": "mine",
+                "id": conditionObjId,
+                "location": this.parentKeyString,
                 "identifier": {
                     "namespace": "",
-                    "key": "12345"+this.conditions.length
+                    "key": conditionObjId
                 }
             };
 
-            let newDO = this.instantiate(conditionObj, conditionObj.identifier.key);
-            let newStyleRootObj = newDO.useCapability('adapter');
+            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            let conditionDO = newDO.useCapability('adapter');
 
-            this.conditions.unshift(newStyleRootObj);
-            this.composition.add(newStyleRootObj);
+            this.conditions.unshift(conditionDO);
+            this.composition.add(conditionDO);
         },
         removeCondition(identifier) {
             console.log(`remove condition`);
