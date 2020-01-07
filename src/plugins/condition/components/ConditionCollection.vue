@@ -75,24 +75,42 @@ export default {
         };
     },
     destroyed() {
-        this.composition.off('add', this.addCondition);
-        this.composition.off('remove', this.removeCondition);
-        this.composition.off('reorder', this.reorder);
+        this.composition.off('add', this.added);
+        // this.composition.off('remove', this.removeCondition);
+        // this.composition.off('reorder', this.reorder);
     },
     mounted() {
+        this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addCondition);
-        this.composition.on('remove', this.removeCondition);
-        this.composition.on('reorder', this.reorder);
+        this.composition.on('add', this.added);
+        // this.composition.on('remove', this.removeCondition);
+        // this.composition.on('reorder', this.reorder);
         this.composition.load();
     },
     methods: {
+        added(dobj) {
+            console.log(dobj.composition);
+        },
         addCondition() {
-            let condition = {};
-            condition.domainObject = this.domainObject;
-            condition.key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            let conditionObj = {
+                "composition": [],
+                "modified": 1578373933245,
+                "persisted": 1578373933245,
+                "name": "Condition1",
+                "type": "condition",
+                "id": "12345"+this.conditions.length,
+                "location": "mine",
+                "identifier": {
+                    "namespace": "",
+                    "key": "12345"+this.conditions.length
+                }
+            };
 
-            this.conditions.unshift(condition);
+            let newDO = this.instantiate(conditionObj, conditionObj.identifier.key);
+            let newStyleRootObj = newDO.useCapability('adapter');
+
+            this.conditions.unshift(newStyleRootObj);
+            this.composition.add(newStyleRootObj);
         },
         removeCondition(identifier) {
             console.log(`remove condition`);
