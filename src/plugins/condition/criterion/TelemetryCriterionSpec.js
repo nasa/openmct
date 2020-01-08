@@ -23,7 +23,7 @@
 import TelemetryCriterion from "./TelemetryCriterion";
 import { createOpenMct } from "../../../testTools";
 
-let openmct,
+let openmct = createOpenMct(),
     mockListener,
     testTelemetryObject,
     telemetryCriterion;
@@ -31,7 +31,6 @@ let openmct,
 describe("The telemetry criterion", function () {
 
     beforeEach (() => {
-        openmct = createOpenMct();
         mockListener = jasmine.createSpy('listener');
         testTelemetryObject = {
             identifier:{ namespace: "", key: "test-object"},
