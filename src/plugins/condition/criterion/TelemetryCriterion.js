@@ -52,7 +52,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     emitResult(data, error) {
-        this.emit('criterion::Update', {
+        this.emit('criterionUpdated', {
             identifier: this.telemetryObjectIdAsString,
             data: data,
             error: error

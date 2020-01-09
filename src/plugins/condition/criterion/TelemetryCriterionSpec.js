@@ -58,7 +58,7 @@ describe("The telemetry criterion", function () {
             openmct
         );
 
-        telemetryCriterion.on('criterion::Update', mockListener);
+        telemetryCriterion.on('criterionUpdated', mockListener);
 
     });
 
