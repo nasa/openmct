@@ -20,7 +20,7 @@
             </span>
             <span v-else
                   class="condition-name"
-            >[condition name]
+            >{{ name }}
             </span>
             <span v-if="isDefault"
                   class="condition-description"
@@ -28,7 +28,7 @@
             </span>
             <span v-else
                   class="condition-description"
-            >[condition description]
+            >{{ description }}
             </span>
         </div>
         <span v-if="!isDefault"
@@ -52,7 +52,8 @@
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
-                                    <input class="t-rule-name-input"
+                                    <input v-model="name"
+                                           class="t-rule-name-input"
                                            type="text"
                                     >
                                 </span>
@@ -80,12 +81,18 @@ export default {
     props: {
         isEditing: Boolean,
         isCurrent: Boolean,
-        isDefault: Boolean
+        isDefault: Boolean,
+        condition: {
+            type: Object,
+            required: true
+        }
     },
     data() {
-        // console.log(`domainObject: ${domainObject}`);
+        console.log(`this.condition.name: ${this.condition.name}`);
         return {
-            expanded: true
+            expanded: true,
+            name: this.condition.name,
+            description: this.condition.description
         };
     },
     mounted() {

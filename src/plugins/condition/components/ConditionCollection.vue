@@ -35,6 +35,7 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :is-default="condition.isDefault"
+                                   :condition="condition"
                                    @persist="persist"
                     />
                 </div>
@@ -85,7 +86,7 @@ export default {
             let conditionObjId = uuid();
             let conditionObj = {
                 "composition": [],
-                "name": "condition" + this.conditionCollection.length,
+                "name": "Unnamed Condition",
                 "type": "condition",
                 "id": conditionObjId,
                 "location": this.parentKeyString,
