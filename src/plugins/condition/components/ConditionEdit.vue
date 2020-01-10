@@ -1,6 +1,5 @@
 <template>
-<div id="conditionArea"
-     class="c-cs-editui__conditions"
+<div class="conditionArea c-cs-editui__conditions"
      :class="['widget-condition', { 'widget-condition--current': isCurrent }]"
 >
     <div class="title-bar">
@@ -77,21 +76,33 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject'],
     props: {
         isEditing: Boolean,
         isCurrent: Boolean,
         isDefault: Boolean
     },
     data() {
+        // console.log(`domainObject: ${domainObject}`);
         return {
-            conditions: {},
             expanded: true
         };
     },
+    mounted() {
+        // console.log(`currentObjectPath: ${this.currentObjectPath.name}`);
+        //  console.log(this.domainObject);
+    },
     methods: {
-        removeCondition() {
-            console.log(this);
+        removeCondition(ev) {
+            let conditionDiv = ev.target.closest('.conditionArea');
+            let conditionCollectionDiv = conditionDiv.closest('.condition-collection');
+            let index = Array.from(conditionDiv.parentNode.children).indexOf(conditionDiv)
+
+            //Array.from(element.parentNode.children).indexOf(element)
+            //console.log(`conditionDiv.nodeName: ${conditionDiv.nodeName}`);
+            console.log(`index: ${index}`);
+            console.log(`conditionCollectionDiv.children.length: ${conditionCollectionDiv.childNodes.length}`);
+            console.log(this.domainObject.configuration.conditionCollection.length);
             // this.conditions.splice(index, 1);
         }
     }

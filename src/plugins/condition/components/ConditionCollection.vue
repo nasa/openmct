@@ -28,18 +28,18 @@
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div v-for="condition in conditions"
-             :key="condition.key"
-        >
-            <div v-if="isEditing">
-                <ConditionEdit :domain-object="condition.domainObject"
-                               :is-default="condition.isDefault"
-                />
-            </div>
-            <div v-else>
-                <Condition :domain-object="condition.domainObject"
-                           :is-default="condition.isDefault"
-                />
+        <div class="condition-collection">
+            <div v-for="condition in conditionCollection"
+                 :key="condition.key"
+            >
+                <div v-if="isEditing">
+                    <ConditionEdit :is-default="condition.isDefault"
+                                   @persist="persist"
+                    />
+                </div>
+                <div v-else>
+                    <Condition :is-default="condition.isDefault" />
+                </div>
             </div>
         </div>
     </div>
@@ -63,41 +63,28 @@ export default {
     data() {
         return {
             expanded: true,
-            conditions: [
-                {
-                    identifier: {
-                        key: 'testConditionKey',
-                        namespace: ''
-                    },
-                    type: 'condition',
-                    isDefault: true
-                }
-            ],
-            parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier)
+            parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
+            conditionCollection: [{
+                isDefault: true
+            }]
         };
     },
     destroyed() {
-        this.composition.off('add', this.added);
-        // this.composition.off('remove', this.removeCondition);
-        // this.composition.off('reorder', this.reorder);
+
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.added);
-        // this.composition.on('remove', this.removeCondition);
-        // this.composition.on('reorder', this.reorder);
-        this.composition.load();
+        this.conditionCollection = this.domainObject.configuration.conditionCollection;
     },
     methods: {
         added(conditionDO) {
-            this.conditions.unshift(conditionDO);
+            this.conditionCollection.unshift(conditionDO);
         },
         addCondition() {
             let conditionObjId = uuid();
             let conditionObj = {
                 "composition": [],
-                "name": "Condition"+this.conditions.length,
+                "name": "condition" + this.conditionCollection.length,
                 "type": "condition",
                 "id": conditionObjId,
                 "location": this.parentKeyString,
@@ -112,19 +99,27 @@ export default {
             newDO.useCapability('location').setPrimaryLocation(this.parentKeyString);
             let conditionDO = newDO.useCapability('adapter');
 
-            this.composition.add(conditionDO);
+            this.conditionCollection.unshift(conditionDO);
+
+            this.persist();
         },
         removeCondition(identifier) {
-            console.log(`remove condition`);
-            // let index = _.findIndex(this.conditions, (condition) => this.openmct.objects.makeKeyString(identifier) === item.key);
+            let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);
 
-            // this.conditions.splice(index, 1);
+            this.conditionCollection.splice(index, 1);
         },
         reorder(reorderPlan) {
-            let oldConditions = this.conditions.slice();
+            let oldConditions = this.conditionCollection.slice();
             reorderPlan.forEach((reorderEvent) => {
-                this.$set(this.conditions, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
+                this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
+        },
+        persist(index) {
+            if (index) {
+                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.conditionCollection[index]);
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
+            }
         }
     }
 }

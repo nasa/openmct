@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
+// import Condition from './Condition.js';
 
 export default function ConditionPlugin() {
 
@@ -41,6 +42,9 @@ export default function ConditionPlugin() {
             creatable: true,
             cssClass: 'icon-summary-widget',  // TODO: replace with class for new icon
             initialize: function (domainObject) {
+                domainObject.configuration = {
+                    conditionCollection: []
+                };
                 domainObject.composition = [];
             }
         });
