@@ -31,6 +31,7 @@
         <div class="condition-collection">
             <div v-for="condition in conditionCollection"
                  :key="condition.key"
+                 class="conditionArea"
             >
                 <div v-if="isEditing">
                     <ConditionEdit :is-default="condition.isDefault"
@@ -74,7 +75,7 @@ export default {
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.conditionCollection = this.domainObject.configuration.conditionCollection;
+        this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
     },
     methods: {
         added(conditionDO) {

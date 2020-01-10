@@ -1,5 +1,5 @@
 <template>
-<div class="conditionArea c-cs-editui__conditions"
+<div class="c-cs-editui__conditions"
      :class="['widget-condition', { 'widget-condition--current': isCurrent }]"
 >
     <div class="title-bar">
@@ -94,16 +94,19 @@ export default {
     },
     methods: {
         removeCondition(ev) {
-            let conditionDiv = ev.target.closest('.conditionArea');
-            let conditionCollectionDiv = conditionDiv.closest('.condition-collection');
-            let index = Array.from(conditionDiv.parentNode.children).indexOf(conditionDiv)
+            const conditionDiv = ev.target.closest('.conditionArea');
+            const conditionCollectionDiv = conditionDiv.closest('.condition-collection');
+            const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
 
-            //Array.from(element.parentNode.children).indexOf(element)
-            //console.log(`conditionDiv.nodeName: ${conditionDiv.nodeName}`);
-            console.log(`index: ${index}`);
-            console.log(`conditionCollectionDiv.children.length: ${conditionCollectionDiv.childNodes.length}`);
-            console.log(this.domainObject.configuration.conditionCollection.length);
-            // this.conditions.splice(index, 1);
+            this.domainObject.configuration.conditionCollection.splice(index, 1);
+            this.persist()
+        },
+        persist(index) {
+            if (index) {
+                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.domainObject.configuration.conditionCollection[index]);
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.domainObject.configuration.conditionCollection);
+            }
         }
     }
 }
