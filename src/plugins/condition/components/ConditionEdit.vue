@@ -91,7 +91,7 @@ export default {
         console.log(`this.condition.name: ${this.condition.name}`);
         return {
             expanded: true,
-            name: this.condition.name,
+            name: this.condition.name || 'Default',
             description: this.condition.description
         };
     },
