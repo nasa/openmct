@@ -73,7 +73,9 @@ export default class TelemetryCriterion extends EventEmitter {
      */
     unsubscribe() {
         //unsubscribe from telemetry source
-        this.subscription();
+        if (typeof this.subscription === 'function') {
+            this.subscription();
+        }
         delete this.subscription;
         this.emit('criterion::Remove', this.telemetryObjectIdAsString);
         delete this.telemetryObjectIdAsString;
