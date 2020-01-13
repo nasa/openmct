@@ -50,7 +50,7 @@ describe("The telemetry criterion", function () {
                 }]
             }
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString', ]);
+        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.get.and.returnValue(testTelemetryObject);
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe"]);
