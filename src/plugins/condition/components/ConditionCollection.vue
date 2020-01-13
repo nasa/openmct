@@ -103,6 +103,8 @@ export default {
 
             this.conditionCollection.unshift(conditionDO);
 
+            console.log(conditionDO.name)
+
             this.persist();
         },
         removeCondition(identifier) {

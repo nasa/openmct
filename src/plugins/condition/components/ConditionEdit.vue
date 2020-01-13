@@ -14,22 +14,8 @@
             @click="expanded = !expanded"
         ></span>
         <div class="condition-summary">
-            <span v-if="isDefault"
-                  class="condition-name"
-            >Default
-            </span>
-            <span v-else
-                  class="condition-name"
-            >{{ name }}
-            </span>
-            <span v-if="isDefault"
-                  class="condition-description"
-            >When all else fails
-            </span>
-            <span v-else
-                  class="condition-description"
-            >{{ description }}
-            </span>
+            <span class="condition-name">{{ name }}</span>
+            <span class="condition-description">{{ description }}</span>
         </div>
         <span v-if="!isDefault"
               class="is-enabled c-c__duplicate"
@@ -91,7 +77,7 @@ export default {
         console.log(`this.condition.name: ${this.condition.name}`);
         return {
             expanded: true,
-            name: this.condition.name || 'Default',
+            name: this.condition.name,
             description: this.condition.description
         };
     },
