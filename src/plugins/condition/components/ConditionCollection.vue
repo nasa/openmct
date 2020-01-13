@@ -34,13 +34,12 @@
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :is-default="condition.isDefault"
-                                   :condition="condition"
+                    <ConditionEdit :condition="condition"
                                    @persist="persist"
                     />
                 </div>
                 <div v-else>
-                    <Condition :is-default="condition.isDefault" />
+                    <Condition :condition="condition" />
                 </div>
             </div>
         </div>
@@ -66,9 +65,7 @@ export default {
         return {
             expanded: true,
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
-            conditionCollection: [{
-                isDefault: true
-            }]
+            conditionCollection: []
         };
     },
     destroyed() {
@@ -77,6 +74,9 @@ export default {
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
+        this.addDefaultCondition();
+        console.log(this.conditionCollection);
+        
     },
     methods: {
         added(conditionDO) {
@@ -85,15 +85,17 @@ export default {
         addCondition() {
             let conditionObjId = uuid();
             let conditionObj = {
-                "composition": [],
-                "name": "Unnamed Condition",
-                "type": "condition",
-                "id": conditionObjId,
-                "location": this.parentKeyString,
-                "identifier": {
-                    "namespace": "",
-                    "key": conditionObjId
-                }
+                isDefault: false,
+                composition: [],
+                name: "Unnamed Condition",
+                type: "condition",
+                id: conditionObjId,
+                location: this.parentKeyString,
+                identifier: {
+                    namespace: "",
+                    key: conditionObjId
+                },
+                output: 'test'
             };
 
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
@@ -103,11 +105,30 @@ export default {
 
             this.conditionCollection.unshift(conditionDO);
 
-            this.$set(this.domainObject.configuration.conditionCollection, 0, conditionDO);
+            this.$set(this.conditionCollection, 0, conditionDO);
 
-            console.log(conditionDO.name)
-
+            console.log(this.conditionCollection);
+            
             this.persist();
+        },
+        addDefaultCondition() {
+            this.conditionCollection = [];
+
+            let conditionObjId = uuid();
+            this.conditionCollection.push({
+                description: 'when all fails',
+                isDefault: true,
+                composition: [],
+                name: "Default",
+                type: "condition",
+                id: conditionObjId,
+                location: this.parentKeyString,
+                identifier: {
+                    namespace: "",
+                    key: conditionObjId
+                },
+                output: 'Default test'
+            });
         },
         removeCondition(identifier) {
             let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);

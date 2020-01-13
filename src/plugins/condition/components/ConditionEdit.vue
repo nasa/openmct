@@ -1,26 +1,26 @@
 <template>
 <div class="c-cs-editui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': isCurrent }]"
+     :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
 >
     <div class="title-bar">
         <span
             class="c-c__menu-hamburger"
-            :class="{ 'is-enabled': !isDefault }"
-            @click="expanded = !expanded"
+            :class="{ 'is-enabled': !condition.isDefault }"
+            @click="expanded = !condition.expanded"
         ></span>
         <span
             class="is-enabled flex-elem"
             :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
-            @click="expanded = !expanded"
+            @click="expanded = !condition.expanded"
         ></span>
         <div class="condition-summary">
-            <span class="condition-name">{{ name }}</span>
-            <span class="condition-description">{{ description }}</span>
+            <span class="condition-name">{{ condition.name }}</span>
+            <span class="condition-description">{{ condition.description }}</span>
         </div>
-        <span v-if="!isDefault"
+        <span v-if="!condition.isDefault"
               class="is-enabled c-c__duplicate"
         ></span>
-        <span v-if="!isDefault"
+        <span v-if="!condition.isDefault"
               class="is-enabled c-c__trash"
               @click="removeCondition"
         ></span>
@@ -38,7 +38,7 @@
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
-                                    <input v-model="name"
+                                    <input v-model="condition.name"
                                            class="t-rule-name-input"
                                            type="text"
                                     >
@@ -65,16 +65,10 @@
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        isEditing: Boolean,
-        isCurrent: Boolean,
-        isDefault: Boolean,
-        condition: {
-            type: Object,
-            required: true
-        }
+        condition: Object
     },
     data() {
-        console.log(`this.condition.name: ${this.condition.name}`);
+        
         return {
             expanded: true,
             name: this.condition.name,
@@ -82,6 +76,7 @@ export default {
         };
     },
     mounted() {
+        console.log(`this.condition.name: ${this.condition.name}`);
         // console.log(`currentObjectPath: ${this.currentObjectPath.name}`);
         //  console.log(this.domainObject);
     },
