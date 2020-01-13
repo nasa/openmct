@@ -57,8 +57,9 @@ describe("The condition", function () {
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.get.and.returnValue(testTelemetryObject);
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject']);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe']);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
+        openmct.telemetry.subscribe.and.returnValue(function () {});
 
         testConditionDefinition = {
             trigger: TRIGGER.ANY,
@@ -107,5 +108,11 @@ describe("The condition", function () {
 
     it("initializes with the trigger from the condition definition", function () {
         expect(conditionObj.trigger).toEqual(testConditionDefinition.trigger);
+    });
+
+    it("destroys all criteria for a condition", function () {
+        const result = conditionObj.destroyCriteria();
+        expect(result).toBeTrue();
+        expect(conditionObj.criteria.length).toEqual(0);
     });
 });
