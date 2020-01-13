@@ -103,6 +103,8 @@ export default {
 
             this.conditionCollection.unshift(conditionDO);
 
+            this.$set(this.domainObject.configuration.conditionCollection, 0, conditionDO);
+
             console.log(conditionDO.name)
 
             this.persist();
