@@ -175,7 +175,6 @@ export default class Condition extends EventEmitter {
     //TODO: implement as part of the evaluator class task.
     evaluate() {
         if (this.trigger === TRIGGER.ANY) {
-            criteria.evaluate();
             this.result = false;
         } else if (this.trigger === TRIGGER.ALL) {
             this.result = false;
