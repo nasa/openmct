@@ -24,15 +24,15 @@ import * as EventEmitter from 'eventemitter3';
 
 export default class TelemetryCriterion extends EventEmitter {
 
-    constructor(telemetryDomainObject, openmct) {
+    constructor(telemetryDomainObjectKey, openmct) {
         super();
 
-        this.telemetryObject = telemetryDomainObject;
         this.openmct = openmct;
+        this.telemetryObject = this.openmct.objects.get(this.openmct.objects.makeKeyString(telemetryDomainObjectKey));
         this.telemetryAPI = this.openmct.telemetry;
         this.subscription = null;
-        this.telemetryObjectIdAsString = null;
         this.telemetryMetadata = null;
+        this.telemetryObjectIdAsString = null;
         if (this.telemetryAPI.isTelemetryObject(this.telemetryObject)) {
             this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
         }
@@ -73,7 +73,9 @@ export default class TelemetryCriterion extends EventEmitter {
      */
     unsubscribe() {
         //unsubscribe from telemetry source
-        this.subscription();
+        if (typeof this.subscription === 'function') {
+            this.subscription();
+        }
         delete this.subscription;
         this.emit('criterion::Remove', this.telemetryObjectIdAsString);
         delete this.telemetryObjectIdAsString;
