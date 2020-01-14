@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
+import ConditionSetCompositionPolicy from "@/plugins/condition/ConditionSetCompositionPolicy";
 
 export default function ConditionPlugin() {
 
@@ -44,6 +45,8 @@ export default function ConditionPlugin() {
                 domainObject.composition = [];
             }
         });
+
+        openmct.composition.addPolicy(new ConditionSetCompositionPolicy(openmct).allow);
 
         openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
 
