@@ -24,18 +24,17 @@ import * as EventEmitter from 'eventemitter3';
 
 export default class TelemetryCriterion extends EventEmitter {
 
-    constructor(telemetryDomainObjectKey, openmct) {
+    constructor(telemetryDomainObject, openmct) {
         super();
 
         this.openmct = openmct;
-        this.telemetryObject = this.openmct.objects.get(this.openmct.objects.makeKeyString(telemetryDomainObjectKey));
+        console.log(telemetryDomainObject);
         this.telemetryAPI = this.openmct.telemetry;
+        this.objectAPI = this.openmct.objects;
         this.subscription = null;
         this.telemetryMetadata = null;
-        this.telemetryObjectIdAsString = null;
-        if (this.telemetryAPI.isTelemetryObject(this.telemetryObject)) {
-            this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-        }
+        this.telemetryObject = telemetryDomainObject;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
     }
 
     handleSubscription(datum) {

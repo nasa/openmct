@@ -50,17 +50,17 @@ describe("The telemetry criterion", function () {
                 }]
             }
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
-        openmct.objects.get.and.returnValue(testTelemetryObject);
+        openmct.objects = jasmine.createSpyObj('objects', ['makeKeyString']);
+        // openmct.objects.get.and.returnValue(testTelemetryObject);
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe"]);
-        openmct.telemetry.isTelemetryObject.and.returnValue(true);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ["subscribe"]);
+        // openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
 
         mockListener = jasmine.createSpy('listener');
 
         telemetryCriterion = new TelemetryCriterion(
-            testTelemetryObject.identifier,
+            testTelemetryObject,
             openmct
         );
 

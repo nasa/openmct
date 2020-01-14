@@ -51,6 +51,7 @@
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
+import ConditionClass from '../Condition';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -73,60 +74,79 @@ export default {
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
+        this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         this.addDefaultCondition();
-        console.log(this.conditionCollection);
-        
     },
     methods: {
         added(conditionDO) {
             this.conditionCollection.unshift(conditionDO);
         },
         addCondition() {
-            let conditionObjId = uuid();
+            // let conditionObjId = uuid();
+            // let conditionObj = {
+            //     isDefault: false,
+            //     composition: [],
+            //     name: "Unnamed Condition",
+            //     type: "condition",
+            //     id: conditionObjId,
+            //     location: this.parentKeyString,
+            //     identifier: {
+            //         namespace: "",
+            //         key: conditionObjId
+            //     },
+            //     output: 'test'
+            // };
             let conditionObj = {
-                isDefault: false,
-                composition: [],
-                name: "Unnamed Condition",
-                type: "condition",
-                id: conditionObjId,
-                location: this.parentKeyString,
-                identifier: {
-                    namespace: "",
-                    key: conditionObjId
-                },
-                output: 'test'
+                isDefault: true,
+                name: 'Unnamed Condition',
+                trigger: 'any',
+                criteria: [{
+                    operation: '',
+                    input: '',
+                    metaDataKey: 'sin',
+                    key: '2662a903-2c3c-4e46-b2fa-2b9e35a79c8c'
+                }],
+                output: 'Default test'
             };
 
-            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
-            newDO.useCapability('location').setPrimaryLocation(this.parentKeyString);
-            let conditionDO = newDO.useCapability('adapter');
+            // let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            // let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            // newDO.useCapability('location').setPrimaryLocation(this.parentKeyString);
+            // let conditionDO = newDO.useCapability('adapter');
+            let conditionDO = new ConditionClass(conditionObj, this.openmct);
 
             this.conditionCollection.unshift(conditionDO);
 
             this.$set(this.conditionCollection, 0, conditionDO);
 
-            console.log(this.conditionCollection);
-            
+            console.log(conditionDO, this.conditionCollection);
+
             this.persist();
         },
         addDefaultCondition() {
             this.conditionCollection = [];
 
-            let conditionObjId = uuid();
+            // let conditionObjId = uuid();
+            // this.conditionCollection.push({
+            //     description: 'when all fails',
+            //     isDefault: true,
+            //     composition: [],
+            //     name: "Default",
+            //     type: "condition",
+            //     id: conditionObjId,
+            //     location: this.parentKeyString,
+            //     identifier: {
+            //         namespace: "",
+            //         key: conditionObjId
+            //     },
+            //     output: 'Default test'
+            // });
             this.conditionCollection.push({
-                description: 'when all fails',
                 isDefault: true,
-                composition: [],
-                name: "Default",
-                type: "condition",
-                id: conditionObjId,
-                location: this.parentKeyString,
-                identifier: {
-                    namespace: "",
-                    key: conditionObjId
-                },
+                name: 'Default',
+                description: 'when all fails - condition',
+                trigger: '',
+                criteria: [],
                 output: 'Default test'
             });
         },

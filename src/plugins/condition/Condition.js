@@ -38,12 +38,14 @@ import { TRIGGER } from "@/plugins/condition/utils/constants";
 *   ]
 * }
 */
-export default class Condition extends EventEmitter {
+export default class ConditionClass extends EventEmitter {
 
     constructor(conditionDefinition, openmct) {
         super();
 
         this.openmct = openmct;
+        this.telemetryAPI = this.openmct.telemetry;
+        this.objectAPI = this.openmct.objects;
         this.id = uuid();
         if (conditionDefinition.criteria) {
             this.createCriteria(conditionDefinition.criteria);
@@ -87,14 +89,21 @@ export default class Condition extends EventEmitter {
      */
     addCriterion(criterionDefinition) {
         let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
-        let criterion = new TelemetryCriterion(criterionDefinitionWithId, this.openmct);
-        criterion.on('criterionUpdated', this.handleCriterionUpdated);
-        if (!this.criteria) {
-            this.criteria = [];
-        }
-        this.criteria.push(criterion);
-        this.handleConditionUpdated();
-        return criterionDefinitionWithId.id;
+        console.log(criterionDefinitionWithId);
+        this.objectAPI.get(this.objectAPI.makeKeyString(criterionDefinitionWithId.key)).then((obj) => {
+            if (this.telemetryAPI.isTelemetryObject(obj)) {
+                let criterion = new TelemetryCriterion(obj, this.openmct);
+                criterion.on('criterionUpdated', this.handleCriterionUpdated);
+                if (!this.criteria) {
+                    this.criteria = [];
+                }
+                this.criteria.push(criterion);
+                this.handleConditionUpdated();
+                return criterionDefinitionWithId.id;
+            } else {
+                return null;
+            }
+        });
     }
 
     findCriterion(id) {
