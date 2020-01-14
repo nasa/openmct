@@ -68,14 +68,20 @@ export default {
         };
     },
     destroyed() {
-
+        this.composition.off('add', this.addTelemetry);
     },
     mounted() {
-        this.instantiate = this.openmct.$injector.get('instantiate');
+        this.telemetryObjs = [];
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addTelemetry);
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {this.addCondition(true)}
     },
     methods: {
+        addTelemetry(domainObjectAdded) {
+            this.telemetryObjs.push(domainObjectAdded);
+            console.log(this.telemetryObjs);
+        },
         addCondition(isDefault) {
             if (isDefault !== true) {isDefault = false}
             let conditionObj = {
@@ -86,7 +92,7 @@ export default {
                     operation: '',
                     input: '',
                     metaDataKey: 'sin',
-                    key: '2662a903-2c3c-4e46-b2fa-2b9e35a79c8c'
+                    key: isDefault ? '' : this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : ''
                 }],
                 output: 'Default test'
             };
