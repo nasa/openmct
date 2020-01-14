@@ -39,7 +39,9 @@
                     />
                 </div>
                 <div v-else>
-                    <Condition :condition="condition" />
+                    <Condition :condition="condition"
+                               @persist="persist"
+                    />
                 </div>
             </div>
         </div>
@@ -74,9 +76,7 @@ export default {
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
-        this.addDefaultCondition();
-        console.log(this.conditionCollection);
-        
+        if (!this.conditionCollection.length) {this.addDefaultCondition()}
     },
     methods: {
         added(conditionDO) {
@@ -105,10 +105,6 @@ export default {
 
             this.conditionCollection.unshift(conditionDO);
 
-            this.$set(this.conditionCollection, 0, conditionDO);
-
-            console.log(this.conditionCollection);
-            
             this.persist();
         },
         addDefaultCondition() {
@@ -116,7 +112,7 @@ export default {
 
             let conditionObjId = uuid();
             this.conditionCollection.push({
-                description: 'when all fails',
+                description: 'When all else fails',
                 isDefault: true,
                 composition: [],
                 name: "Default",

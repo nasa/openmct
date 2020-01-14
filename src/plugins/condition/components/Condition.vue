@@ -5,15 +5,15 @@
 >
     <div class="title-bar">
         <span class="condition-name">
-            {{condition.name}}
+            {{ condition.name }}
         </span>
         <span class="condition-output">
-            Output: {{condition.output}}
+            Output: {{ condition.output }}
         </span>
     </div>
     <div class="condition-config">
         <span class="condition-description">
-            {{ condition.description}}
+            {{ condition.description }}
         </span>
     </div>
 </div>
@@ -23,7 +23,10 @@
 export default {
     inject: ['openmct'],
     props: {
-        condition: Object
+        condition: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {
