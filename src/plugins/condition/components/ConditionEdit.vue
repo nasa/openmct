@@ -65,10 +65,12 @@
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        condition: Object
+        condition: {
+            type: Object,
+            required: true
+        }
     },
     data() {
-        
         return {
             expanded: true,
             name: this.condition.name,
@@ -76,9 +78,10 @@ export default {
         };
     },
     mounted() {
-        console.log(`this.condition.name: ${this.condition.name}`);
-        // console.log(`currentObjectPath: ${this.currentObjectPath.name}`);
-        //  console.log(this.domainObject);
+    },
+    updated() {
+        console.log('updated');
+        this.persist()
     },
     methods: {
         removeCondition(ev) {
@@ -87,7 +90,6 @@ export default {
             const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
 
             this.domainObject.configuration.conditionCollection.splice(index, 1);
-            this.persist()
         },
         persist(index) {
             if (index) {
