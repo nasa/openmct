@@ -47,6 +47,7 @@ export default class ConditionClass extends EventEmitter {
         this.name = conditionDefinition.name;
         this.description = conditionDefinition.description;
         this.isDefault = conditionDefinition.isDefault;
+        this.isCurrent = conditionDefinition.isCurrent;
         if (conditionDefinition.criteria) {
             this.createCriteria(conditionDefinition.criteria, openmct);
         } else {
@@ -54,6 +55,7 @@ export default class ConditionClass extends EventEmitter {
         }
         this.trigger = conditionDefinition.trigger;
         this.result = null;
+        this.output = conditionDefinition.output
     }
 
     updateTrigger(conditionDefinition) {

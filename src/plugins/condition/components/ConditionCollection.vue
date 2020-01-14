@@ -48,7 +48,7 @@
 <script>
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
-import uuid from 'uuid';
+// import uuid from 'uuid';
 import ConditionClass from '../Condition';
 
 export default {
@@ -80,6 +80,7 @@ export default {
             if (isDefault !== true) {isDefault = false}
             let conditionObj = {
                 isDefault: isDefault,
+                isCurrent: true,
                 name: isDefault ? 'Default' : 'Unnamed Condition',
                 trigger: 'any',
                 criteria: isDefault ? [] : [{
@@ -88,7 +89,8 @@ export default {
                     metaDataKey: 'sin',
                     key: '2662a903-2c3c-4e46-b2fa-2b9e35a79c8c'
                 }],
-                output: 'Default test'
+                output: 'false',
+                summary: 'summary description'
             };
 
             let conditionDO = new ConditionClass(conditionObj, this.openmct);

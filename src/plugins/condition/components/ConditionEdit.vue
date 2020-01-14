@@ -71,16 +71,18 @@ export default {
         }
     },
     data() {
+        let conditionCollection = this.domainObject.configuration.conditionCollection;
         return {
             expanded: true,
             name: this.condition.name,
-            description: this.condition.description
+            description: this.condition.description,
+            conditionCollection
         };
     },
     mounted() {
     },
     updated() {
-        console.log('updated');
+        this.updateCurrentCondition();
         this.persist()
     },
     methods: {
@@ -96,6 +98,16 @@ export default {
                 this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.domainObject.configuration.conditionCollection[index]);
             } else {
                 this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.domainObject.configuration.conditionCollection);
+            }
+        },
+        updateCurrentCondition() {
+            // TODO: replace based on telemetry
+            if (this.conditionCollection.length > 1) {
+                this.conditionCollection.forEach((condition, index) => {
+                    index === 0 ? condition.isCurrent = true : condition.isCurrent = false
+                });
+            } else {
+                this.conditionCollection[0].isCurrent = true;
             }
         }
     }
