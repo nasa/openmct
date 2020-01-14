@@ -72,20 +72,17 @@ export default {
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
+        this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {this.addCondition(true)}
     },
     methods: {
-        added(conditionDO) {
-            this.conditionCollection.unshift(conditionDO);
-        },
         addCondition(isDefault) {
             if (isDefault !== true) {isDefault = false}
             let conditionObj = {
-                isDefault: true,
+                isDefault: isDefault,
                 name: isDefault ? 'Default' : 'Unnamed Condition',
                 trigger: 'any',
-                criteria: [{
+                criteria: isDefault ? [] : [{
                     operation: '',
                     input: '',
                     metaDataKey: 'sin',
@@ -94,13 +91,10 @@ export default {
                 output: 'Default test'
             };
 
-            // let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            // let newDO = this.instantiate(conditionObj, conditionDOKeyString);
-            // newDO.useCapability('location').setPrimaryLocation(this.parentKeyString);
-            // let conditionDO = newDO.useCapability('adapter');
             let conditionDO = new ConditionClass(conditionObj, this.openmct);
-
+            console.log(JSON.stringify(conditionDO));
             this.conditionCollection.unshift(conditionDO);
+            console.log(JSON.stringify(this.conditionCollection));
         },
         removeCondition(identifier) {
             let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);

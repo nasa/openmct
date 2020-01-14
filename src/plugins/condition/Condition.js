@@ -43,12 +43,12 @@ export default class ConditionClass extends EventEmitter {
     constructor(conditionDefinition, openmct) {
         super();
 
-        this.openmct = openmct;
-        this.telemetryAPI = this.openmct.telemetry;
-        this.objectAPI = this.openmct.objects;
         this.id = uuid();
+        this.name = conditionDefinition.name;
+        this.description = conditionDefinition.description;
+        this.isDefault = conditionDefinition.isDefault;
         if (conditionDefinition.criteria) {
-            this.createCriteria(conditionDefinition.criteria);
+            this.createCriteria(conditionDefinition.criteria, openmct);
         } else {
             this.criteria = [];
         }
@@ -73,9 +73,9 @@ export default class ConditionClass extends EventEmitter {
         };
     }
 
-    createCriteria(criterionDefinitions) {
+    createCriteria(criterionDefinitions, openmct) {
         criterionDefinitions.forEach((criterionDefinition) => {
-            this.addCriterion(criterionDefinition);
+            this.addCriterion(criterionDefinition, openmct);
         });
     }
 
@@ -87,12 +87,11 @@ export default class ConditionClass extends EventEmitter {
     /**
      *  adds criterion to the condition.
      */
-    addCriterion(criterionDefinition) {
+    addCriterion(criterionDefinition, openmct) {
         let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
-        console.log(criterionDefinitionWithId);
-        this.objectAPI.get(this.objectAPI.makeKeyString(criterionDefinitionWithId.key)).then((obj) => {
-            if (this.telemetryAPI.isTelemetryObject(obj)) {
-                let criterion = new TelemetryCriterion(obj, this.openmct);
+        openmct.objects.get(openmct.objects.makeKeyString(criterionDefinitionWithId.key)).then((obj) => {
+            if (openmct.telemetry.isTelemetryObject(obj)) {
+                let criterion = new TelemetryCriterion(obj, openmct);
                 criterion.on('criterionUpdated', this.handleCriterionUpdated);
                 if (!this.criteria) {
                     this.criteria = [];
@@ -121,11 +120,11 @@ export default class ConditionClass extends EventEmitter {
         return criterion;
     }
 
-    updateCriterion(id, criterionDefinition) {
+    updateCriterion(id, criterionDefinition, openmct) {
         let found = this.findCriterion(id);
         if (found) {
             const newCriterionDefinition = this.generateCriterion(criterionDefinition);
-            let newCriterion = new TelemetryCriterion(newCriterionDefinition, this.openmct);
+            let newCriterion = new TelemetryCriterion(newCriterionDefinition, openmct);
             let criterion = found.item;
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (result) => {
@@ -190,11 +189,13 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    emitResult(data, error) {
+    emitResult() {
         this.emit('conditionUpdated', {
             identifier: this.id,
-            data: data,
-            error: error
+            data: {
+                trigger: this.trigger,
+                criteria: this.criteria
+            }
         });
     }
 }
