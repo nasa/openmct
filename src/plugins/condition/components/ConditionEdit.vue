@@ -79,6 +79,10 @@ export default {
     },
     mounted() {
     },
+    updated() {
+        console.log('updated');
+        this.persist()
+    },
     methods: {
         removeCondition(ev) {
             const conditionDiv = ev.target.closest('.conditionArea');
@@ -86,7 +90,6 @@ export default {
             const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
 
             this.domainObject.configuration.conditionCollection.splice(index, 1);
-            this.persist()
         },
         persist(index) {
             if (index) {

@@ -34,14 +34,10 @@
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :condition="condition"
-                                   @persist="persist"
-                    />
+                    <ConditionEdit :condition="condition" />
                 </div>
                 <div v-else>
-                    <Condition :condition="condition"
-                               @persist="persist"
-                    />
+                    <Condition :condition="condition" />
                 </div>
             </div>
         </div>
@@ -76,18 +72,19 @@ export default {
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.conditionCollection = this.domainObject.configuration.conditionCollection || this.conditionCollection;
-        if (!this.conditionCollection.length) {this.addDefaultCondition()}
+        if (!this.conditionCollection.length) {this.addCondition(true)}
     },
     methods: {
         added(conditionDO) {
             this.conditionCollection.unshift(conditionDO);
         },
-        addCondition() {
+        addCondition(isDefault) {
+            if (isDefault !== true) {isDefault = false}
             let conditionObjId = uuid();
             let conditionObj = {
-                isDefault: false,
+                isDefault: isDefault,
                 composition: [],
-                name: "Unnamed Condition",
+                name: isDefault ? 'Default': 'Unnamed Condition',
                 type: "condition",
                 id: conditionObjId,
                 location: this.parentKeyString,
@@ -104,27 +101,6 @@ export default {
             let conditionDO = newDO.useCapability('adapter');
 
             this.conditionCollection.unshift(conditionDO);
-
-            this.persist();
-        },
-        addDefaultCondition() {
-            this.conditionCollection = [];
-
-            let conditionObjId = uuid();
-            this.conditionCollection.push({
-                description: 'When all else fails',
-                isDefault: true,
-                composition: [],
-                name: "Default",
-                type: "condition",
-                id: conditionObjId,
-                location: this.parentKeyString,
-                identifier: {
-                    namespace: "",
-                    key: conditionObjId
-                },
-                output: 'Default test'
-            });
         },
         removeCondition(identifier) {
             let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);
@@ -136,13 +112,6 @@ export default {
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
-        },
-        persist(index) {
-            if (index) {
-                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.conditionCollection[index]);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
-            }
         }
     }
 }
