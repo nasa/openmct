@@ -21,43 +21,67 @@
  *****************************************************************************/
 
 import ConditionSetCompositionPolicy  from './ConditionSetCompositionPolicy';
-import { createOpenMct } from "testTools";
 
-describe('ConditionSetCompositionPolicy', () => {
+fdescribe('ConditionSetCompositionPolicy', () => {
+
     let policy;
+    let testTelemetryObject;
+    let openmct = {};
     let parentDomainObject;
-    let childDomainObject;
     let composition;
 
-    beforeEach(function () {
-        policy = new ConditionSetCompositionPolicy();
+    beforeAll(function () {
+        testTelemetryObject = {
+            identifier:{ namespace: "", key: "test-object"},
+            type: "test-object",
+            name: "Test Object",
+            telemetry: {
+                values: [{
+                    key: "some-key",
+                    name: "Some attribute",
+                    hints: {
+                        domain: 1
+                    }
+                }, {
+                    key: "some-other-key",
+                    name: "Another attribute",
+                    hints: {
+                        range: 1
+                    }
+                }]
+            }
+        };
+        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
+        openmct.objects.get.and.returnValue(testTelemetryObject);
+        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject']);
+        policy = new ConditionSetCompositionPolicy(openmct);
         parentDomainObject = {};
-        childDomainObject = {};
         composition = {};
     });
 
     it('returns true for object types that are not conditionSets', function () {
         parentDomainObject.type = 'random';
-        childDomainObject.type = '';
-        expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
+        openmct.telemetry.isTelemetryObject.and.returnValue(false);
+        expect(policy.allow(parentDomainObject, {})).toBe(true);
     });
 
-    it('returns false for object types that are not conditions when parent is a conditionSet', function () {
+    it('returns false for object types that are not telemetry objects when parent is a conditionSet', function () {
         parentDomainObject.type = 'conditionSet';
-        childDomainObject.type = '';
-        expect(policy.allow(parentDomainObject, childDomainObject)).toBe(false);
+        openmct.telemetry.isTelemetryObject.and.returnValue(false);
+        expect(policy.allow(parentDomainObject, {})).toBe(false);
     });
 
-    it('returns true for object types that are conditions when parent is a conditionSet', function () {
+    it('returns true for object types that are telemetry objects when parent is a conditionSet', function () {
         parentDomainObject.type = 'conditionSet';
-        childDomainObject.type = 'condition';
-        expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
+        openmct.telemetry.isTelemetryObject.and.returnValue(true);
+        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(true);
     });
 
-    it('returns true for object types that are conditions when parent is not a conditionSet', function () {
+    it('returns true for object types that are telemetry objects when parent is not a conditionSet', function () {
         parentDomainObject.type = 'random';
-        childDomainObject.type = 'condition';
-        expect(policy.allow(parentDomainObject, childDomainObject)).toBe(true);
+        openmct.telemetry.isTelemetryObject.and.returnValue(true);
+        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(true);
     });
 
 });
