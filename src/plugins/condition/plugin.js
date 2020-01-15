@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
-import ConditionSetCompositionPolicy from "../../plugins/condition/ConditionSetCompositionPolicy";
+import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 
 export default function ConditionPlugin() {
 
