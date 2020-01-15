@@ -24,13 +24,21 @@ import * as EventEmitter from 'eventemitter3';
 
 export default class TelemetryCriterion extends EventEmitter {
 
-    constructor(telemetryDomainObject, openmct) {
+    constructor(telemetryDomainObjectDefinition, openmct) {
         super();
 
+        this.id = telemetryDomainObjectDefinition.id;
         this.subscription = null;
         this.telemetryMetadata = null;
-        this.telemetryObject = telemetryDomainObject;
-        this.telemetryObjectIdAsString = openmct.objects.makeKeyString(this.telemetryObject.identifier);
+        this.telemetryObjectIdAsString = null;
+        openmct.objects.get(openmct.objects.makeKeyString(telemetryDomainObjectDefinition.key)).then((obj) => {
+            if (openmct.telemetry.isTelemetryObject(obj)) {
+                this.telemetryObject = obj;
+                this.telemetryObjectIdAsString = openmct.objects.makeKeyString(this.telemetryObject.identifier);
+                this.telemetryMetadata = openmct.telemetry.getMetadata(this.telemetryObject.identifier);
+                this.emit('criterionUpdated', this);
+            }
+        });
     }
 
     handleSubscription(datum) {
@@ -48,7 +56,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
     emitResult(data, error) {
         this.emit('criterionUpdated', {
-            identifier: this.telemetryObjectIdAsString,
+            identifier: this.id,
             data: data,
             error: error
         });

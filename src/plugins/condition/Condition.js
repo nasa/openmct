@@ -43,12 +43,10 @@ export default class ConditionClass extends EventEmitter {
     constructor(conditionDefinition, openmct) {
         super();
 
-        this.id = uuid();
-        this.name = conditionDefinition.name;
-        this.description = conditionDefinition.description;
-        this.isDefault = conditionDefinition.isDefault;
+        this.openmct = openmct;
+        this.id = this.openmct.objects.makeKeyString(conditionDefinition.identifier);
         if (conditionDefinition.criteria) {
-            this.createCriteria(conditionDefinition.criteria, openmct);
+            this.createCriteria(conditionDefinition.criteria);
         } else {
             this.criteria = [];
         }
@@ -73,9 +71,9 @@ export default class ConditionClass extends EventEmitter {
         };
     }
 
-    createCriteria(criterionDefinitions, openmct) {
+    createCriteria(criterionDefinitions) {
         criterionDefinitions.forEach((criterionDefinition) => {
-            this.addCriterion(criterionDefinition, openmct);
+            this.addCriterion(criterionDefinition);
         });
     }
 
@@ -87,22 +85,18 @@ export default class ConditionClass extends EventEmitter {
     /**
      *  adds criterion to the condition.
      */
-    addCriterion(criterionDefinition, openmct) {
+    addCriterion(criterionDefinition) {
         let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
-        openmct.objects.get(openmct.objects.makeKeyString(criterionDefinitionWithId.key)).then((obj) => {
-            if (openmct.telemetry.isTelemetryObject(obj)) {
-                let criterion = new TelemetryCriterion(obj, openmct);
-                criterion.on('criterionUpdated', this.handleCriterionUpdated);
-                if (!this.criteria) {
-                    this.criteria = [];
-                }
-                this.criteria.push(criterion);
-                this.handleConditionUpdated();
-                return criterionDefinitionWithId.id;
-            } else {
-                return null;
-            }
+        let criterion = new TelemetryCriterion(criterionDefinitionWithId, this.openmct);
+        criterion.on('criterionUpdated', (data) => {
+            this.handleCriterionUpdated(data);
         });
+        if (!this.criteria) {
+            this.criteria = [];
+        }
+        this.criteria.push(criterion);
+        this.handleConditionUpdated();
+        return criterionDefinitionWithId.id;
     }
 
     findCriterion(id) {
@@ -120,11 +114,11 @@ export default class ConditionClass extends EventEmitter {
         return criterion;
     }
 
-    updateCriterion(id, criterionDefinition, openmct) {
+    updateCriterion(id, criterionDefinition) {
         let found = this.findCriterion(id);
         if (found) {
             const newCriterionDefinition = this.generateCriterion(criterionDefinition);
-            let newCriterion = new TelemetryCriterion(newCriterionDefinition, openmct);
+            let newCriterion = new TelemetryCriterion(newCriterionDefinition, this.openmct);
             let criterion = found.item;
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (result) => {
@@ -155,14 +149,19 @@ export default class ConditionClass extends EventEmitter {
         return false;
     }
 
-    handleCriterionUpdated(id, result) {
+    handleCriterionUpdated(criterion) {
         // reevaluate the condition's output
         // TODO: should we save the result of a criterion here or in the criterion object itself?
-        this.evaluate();
-        this.handleConditionUpdated();
+        let found = this.findCriterion(criterion.id);
+        if (found) {
+            this.criteria[found.index] = criterion;
+            this.handleConditionUpdated();
+        }
+        // this.handleConditionUpdated();
     }
 
     handleConditionUpdated() {
+        console.log(this);
         // trigger an updated event so that consumers can react accordingly
         this.emitResult();
     }
@@ -191,11 +190,9 @@ export default class ConditionClass extends EventEmitter {
 
     emitResult() {
         this.emit('conditionUpdated', {
-            identifier: this.id,
-            data: {
-                trigger: this.trigger,
-                criteria: this.criteria
-            }
+            id: this.id,
+            trigger: this.trigger,
+            criteria: this.criteria
         });
     }
 }

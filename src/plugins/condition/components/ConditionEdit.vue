@@ -36,12 +36,20 @@
                     <div>
                         <ul>
                             <li>
-                                <label>Condition Name</label>
+                                <label>Condition Names</label>
                                 <span class="controls">
                                     <input v-model="condition.name"
                                            class="t-rule-name-input"
                                            type="text"
                                     >
+                                </span>
+                            </li>
+                            <li v-if="telemetryObject">
+                                <label>when</label>
+                                <span class="controls">
+                                    <select class="">
+                                        <option :value="telemetryObject.key">@{{ telemetryObject.name }}</option>
+                                    </select>
                                 </span>
                             </li>
                             <li>
@@ -74,14 +82,17 @@ export default {
         return {
             expanded: true,
             name: this.condition.name,
-            description: this.condition.description
+            description: this.condition.description,
+            telemetryObject: this.telemetryObject
         };
     },
     mounted() {
+        this.updateTelemetry();
     },
     updated() {
         console.log('updated');
-        this.persist()
+        this.persist();
+        // this.updateTelemetry();
     },
     methods: {
         removeCondition(ev) {
@@ -90,6 +101,16 @@ export default {
             const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
 
             this.domainObject.configuration.conditionCollection.splice(index, 1);
+        },
+        updateTelemetry() {
+            this.telemetryObject = this.hasTelemetry() ? this.openmct.objects.get(this.condition.criteria[0].key) : null;
+            if (this.telemetryObject) {
+                this.telemetryMetadata = this.openmct.telemetry.getMetadata().values();
+            }
+            console.log('ConditionEdit', this.telemetryObject);
+        },
+        hasTelemetry() {
+            return this.condition.criteria.length && this.condition.criteria[0].key;
         },
         persist(index) {
             if (index) {
