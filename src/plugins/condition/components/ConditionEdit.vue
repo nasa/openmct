@@ -47,8 +47,9 @@
                             <li>
                                 <label>Output</label>
                                 <span class="controls">
-                                    <select class="">
+                                    <select v-model="condition.output">
                                         <option value="false">false</option>
+                                        <option value="true">true</option>
                                     </select>
                                 </span>
                             </li>
@@ -82,6 +83,7 @@ export default {
     mounted() {
     },
     updated() {
+        console.log('updated conditionEdit');
         this.updateCurrentCondition();
         this.persist()
     },

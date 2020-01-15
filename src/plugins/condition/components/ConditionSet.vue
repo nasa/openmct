@@ -2,7 +2,7 @@
 <div class="c-object-view u-contents">
     <div class="c-cs-edit w-condition-set">
         <div class="c-sw-edit__ui holder">
-            <CurrentOutput :current-output="currentOutput" />
+            <CurrentOutput :condition-collection="domainObject.conditionCollection" />
             <TestData :is-editing="isEditing" />
             <ConditionCollection :is-editing="isEditing"
                                  :condition-collection="domainObject.conditionCollection"
@@ -29,33 +29,9 @@ export default {
     },
     data() {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
-        let currentConditionIndex = 0;
 
         return {
-            currentOutput: conditionCollection[currentConditionIndex].output,
-            conditionCollection,
-            currentConditionIndex
-        }
-    },
-    mounted() {
-        this.currentConditionIndex = this.getCurrentConditionIndex();
-    },
-    methods: {
-        persist(index) {
-            if (index) {
-                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.conditionCollection[index]);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
-            }
-        },
-        getCurrentConditionIndex() {
-            let currentConditionIndex;
-            this.conditionCollection.forEach((condition, index) => {
-                if (condition.isCurrent) {
-                    currentConditionIndex = index;
-                }
-            });
-            return currentConditionIndex;
+            conditionCollection
         }
     }
 };
