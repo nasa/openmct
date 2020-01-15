@@ -30,7 +30,7 @@
         </div>
         <div class="condition-collection">
             <div v-for="condition in conditionCollection"
-                 :key="condition.id"
+                 :key="condition.identifier.key"
                  class="conditionArea"
             >
                 <div v-if="isEditing">
@@ -94,6 +94,7 @@ export default {
         getConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
+                isCurrent: true,
                 identifier: {
                     namespace: "",
                     key: uuid()
@@ -106,8 +107,8 @@ export default {
                     metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
                     key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
                 }],
-                output: 'Default test',
-                type: 'condition'
+                output: 'false',
+                summary: 'summary description'
             };
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
             let newDO = this.instantiate(conditionObj, conditionDOKeyString);

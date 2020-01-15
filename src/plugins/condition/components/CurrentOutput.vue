@@ -12,7 +12,7 @@
          class="c-cs__ui_content"
     >
         <div>
-            <span class="current-output">{{ currentOutput }}</span>
+            <span class="current-output">{{ conditionCollection[currentConditionIndex].output }}</span>
         </div>
     </div>
 </section>
@@ -20,21 +20,33 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject'],
     props: {
-        currentOutput: {
-            type: String,
-            default: ''
-        },
         isEditing: Boolean
     },
     data() {
+        let conditionCollection = this.domainObject.configuration.conditionCollection;
+        let currentConditionIndex = 0;
+
         return {
-            expanded: true
-        };
+            expanded: true,
+            conditionCollection,
+            currentConditionIndex
+        }
+    },
+    mounted() {
+        this.currentConditionIndex = this.getCurrentConditionIndex();
     },
     methods: {
-
+        getCurrentConditionIndex() {
+            let currentConditionIndex;
+            this.conditionCollection.forEach((condition, index) => {
+                if (condition.isCurrent) {
+                    currentConditionIndex = index;
+                }
+            });
+            return currentConditionIndex;
+        }
     }
 }
 </script>

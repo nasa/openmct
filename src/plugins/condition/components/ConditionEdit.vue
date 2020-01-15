@@ -36,7 +36,7 @@
                     <div>
                         <ul>
                             <li>
-                                <label>Condition Names</label>
+                                <label>Condition Name</label>
                                 <span class="controls">
                                     <input v-model="condition.name"
                                            class="t-rule-name-input"
@@ -44,19 +44,41 @@
                                     >
                                 </span>
                             </li>
-                            <li v-if="telemetryObject">
+                            <li v-if="telemetryObject && telemetryMetadata">
                                 <label>when</label>
                                 <span class="controls">
                                     <select class="">
-                                        <option :value="telemetryObject.key">@{{ telemetryObject.name }}</option>
+                                        <option :value="telemetryObject.key">{{ telemetryObject.name }}</option>
+                                    </select>
+                                </span>
+                                <span class="controls">
+                                    <select v-model="selectedMetaDataKey">
+                                        <option v-for="option in telemetryMetadata"
+                                                :key="option.key"
+                                                :value="option.key"
+                                        >
+                                            {{ option.name }}
+                                        </option>
+                                    </select>
+                                </span>
+
+                                <span class="controls">
+                                    <select v-model="selectedOperationKey">
+                                        <option v-for="option in operations"
+                                                :key="option.name"
+                                                :value="option.name"
+                                        >
+                                            {{ option.text }}
+                                        </option>
                                     </select>
                                 </span>
                             </li>
                             <li>
                                 <label>Output</label>
                                 <span class="controls">
-                                    <select class="">
+                                    <select v-model="condition.output">
                                         <option value="false">false</option>
+                                        <option value="true">true</option>
                                     </select>
                                 </span>
                             </li>
@@ -70,6 +92,7 @@
 </template>
 
 <script>
+import { OPERATIONS } from '../utils/operations';
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -79,20 +102,26 @@ export default {
         }
     },
     data() {
+        let conditionCollection = this.domainObject.configuration.conditionCollection;
         return {
             expanded: true,
             name: this.condition.name,
             description: this.condition.description,
-            telemetryObject: this.telemetryObject
+            conditionCollection,
+            telemetryObject: this.telemetryObject,
+            telemetryMetadata: this.telemetryMetadata,
+            operations: OPERATIONS,
+            selectedMetaDataKey: null,
+            selectedOperationKey: null
         };
     },
     mounted() {
         this.updateTelemetry();
     },
     updated() {
-        console.log('updated');
-        this.persist();
-        // this.updateTelemetry();
+        console.log('updated conditionEdit');
+        this.updateCurrentCondition();
+        this.persist()
     },
     methods: {
         removeCondition(ev) {
@@ -103,11 +132,16 @@ export default {
             this.domainObject.configuration.conditionCollection.splice(index, 1);
         },
         updateTelemetry() {
-            this.telemetryObject = this.hasTelemetry() ? this.openmct.objects.get(this.condition.criteria[0].key) : null;
-            if (this.telemetryObject) {
-                this.telemetryMetadata = this.openmct.telemetry.getMetadata().values();
+            if (this.hasTelemetry()) {
+                this.openmct.objects.get(this.condition.criteria[0].key).then((obj) => {
+                    this.telemetryObject = obj;
+                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
+                    this.selectedMetaDataKey = this.telemetryMetadata[0].key;
+                    console.log('ConditionEdit', this.telemetryObject, this.telemetryMetadata);
+                });
+            } else {
+                this.telemetryObject = null;
             }
-            console.log('ConditionEdit', this.telemetryObject);
         },
         hasTelemetry() {
             return this.condition.criteria.length && this.condition.criteria[0].key;
@@ -117,6 +151,16 @@ export default {
                 this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.domainObject.configuration.conditionCollection[index]);
             } else {
                 this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.domainObject.configuration.conditionCollection);
+            }
+        },
+        updateCurrentCondition() {
+            // TODO: replace based on telemetry
+            if (this.conditionCollection.length > 1) {
+                this.conditionCollection.forEach((condition, index) => {
+                    index === 0 ? condition.isCurrent = true : condition.isCurrent = false
+                });
+            } else {
+                this.conditionCollection[0].isCurrent = true;
             }
         }
     }

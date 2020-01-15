@@ -2,7 +2,7 @@
 <div class="c-object-view u-contents">
     <div class="c-cs-edit w-condition-set">
         <div class="c-sw-edit__ui holder">
-            <CurrentOutput :current-output="mockCurrentOutput" />
+            <CurrentOutput :condition-collection="domainObject.conditionCollection" />
             <TestData :is-editing="isEditing" />
             <ConditionCollection :is-editing="isEditing"
                                  :condition-collection="domainObject.conditionCollection"
@@ -28,21 +28,10 @@ export default {
         isEditing: Boolean
     },
     data() {
+        let conditionCollection = this.domainObject.configuration.conditionCollection;
+
         return {
-            mockCurrentOutput: 'Data_Present'
-        }
-    },
-    methods: {
-        persist(index) {
-            if (index) {
-                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.conditionCollection[index]);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
-            }
-        },
-        mounted() {
-        },
-        addCondition() {
+            conditionCollection
         }
     }
 };
