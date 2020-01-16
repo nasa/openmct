@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,10 @@ import { TRIGGER } from "@/plugins/condition/utils/constants";
 
 /*
 * conditionDefinition = {
+*   identifier: {
+*       key: '',
+*       namespace: ''
+*   },
 *   trigger: 'any'/'all',
 *   criteria: [
 *       {
@@ -38,13 +42,19 @@ import { TRIGGER } from "@/plugins/condition/utils/constants";
 *   ]
 * }
 */
-export default class Condition extends EventEmitter {
+export default class ConditionClass extends EventEmitter {
 
+    /**
+     * Manages criteria and emits the result of - true or false - based on criteria evaluated.
+     * @constructor
+     * @param conditionDefinition: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param openmct
+     */
     constructor(conditionDefinition, openmct) {
         super();
 
         this.openmct = openmct;
-        this.id = uuid();
+        this.id = this.openmct.objects.makeKeyString(conditionDefinition.identifier);
         if (conditionDefinition.criteria) {
             this.createCriteria(conditionDefinition.criteria);
         } else {
@@ -147,16 +157,21 @@ export default class Condition extends EventEmitter {
         return false;
     }
 
-    handleCriterionUpdated(id, result) {
-        // reevaluate the condition's output
-        // TODO: should we save the result of a criterion here or in the criterion object itself?
-        this.evaluate();
+    handleCriterionUpdated(criterion) {
+        let found = this.findCriterion(criterion.id);
+        if (found) {
+            this.criteria[found.index] = criterion;
+            this.emitEvent('conditionUpdated', {
+                trigger: this.trigger,
+                criteria: this.criteria
+            });
+        }
         this.handleConditionUpdated();
     }
 
     handleConditionUpdated() {
         // trigger an updated event so that consumers can react accordingly
-        this.emitResult();
+        this.emitEvent('conditionResultUpdated');
     }
 
     getCriteria() {
@@ -181,11 +196,10 @@ export default class Condition extends EventEmitter {
         }
     }
 
-    emitResult(data, error) {
-        this.emit('conditionUpdated', {
-            identifier: this.id,
-            data: data,
-            error: error
+    emitEvent(eventName, data) {
+        this.emit(eventName, {
+            id: this.id,
+            data: data
         });
     }
 }
