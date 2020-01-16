@@ -57,27 +57,29 @@
     padding: 0;
 }
 
+.l-compact-form ul li {
+    padding: 0;
+}
+
 .widget-rule-content.expanded {
     margin: 0 3px;
 }
 
 .widget-rule-content.expanded ul {
     border-top: solid 1px #ccc;
-    padding: 5px;
-}
-
-.l-compact-form ul li {
-    padding: 1px 0;
+    padding: 2px;
 }
 
 .l-compact-form ul li .controls {
-    line-height: 20px;
-    min-height: 20px;
+    display: inline-flex;
+    flex-grow: inherit;
+    padding: 2px 0;
 }
 
 .l-compact-form ul li > label {
     display: block;
     width: 90px;
+    min-width: 90px;
     text-align: right;
     line-height: 20px;
 }
