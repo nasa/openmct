@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,8 @@ import TelemetryCriterion from "./TelemetryCriterion";
 
 let openmct = {},
     mockListener,
+    mockListener2,
+    testCriterionDefinition,
     testTelemetryObject,
     telemetryCriterion;
 
@@ -50,26 +52,41 @@ describe("The telemetry criterion", function () {
                 }]
             }
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['makeKeyString']);
-        // openmct.objects.get.and.returnValue(testTelemetryObject);
+        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
+        openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
+            resolve(testTelemetryObject);
+        }));
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ["subscribe"]);
-        // openmct.telemetry.isTelemetryObject.and.returnValue(true);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata"]);
+        openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
+        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
+
+        testCriterionDefinition = {
+            id: 'test-criterion-id',
+            key: openmct.objects.makeKeyString(testTelemetryObject.identifier)
+        };
 
         mockListener = jasmine.createSpy('listener');
+        mockListener2 = jasmine.createSpy('updatedListener', (data) => {
+            console.log(data);
+        });
 
         telemetryCriterion = new TelemetryCriterion(
-            testTelemetryObject,
+            testCriterionDefinition,
             openmct
         );
 
-        telemetryCriterion.on('criterionUpdated', mockListener);
+        telemetryCriterion.on('criterionResultUpdated', mockListener);
+        telemetryCriterion.on('criterionUpdated', mockListener2);
 
     });
 
     it("initializes with a telemetry objectId as string", function () {
+        telemetryCriterion.initialize(testTelemetryObject);
         expect(telemetryCriterion.telemetryObjectIdAsString).toEqual(testTelemetryObject.identifier.key);
+        expect(telemetryCriterion.telemetryMetadata.length).toEqual(2);
+        expect(mockListener2).toHaveBeenCalled();
     });
 
     it("subscribes to telemetry providers", function () {
@@ -89,13 +106,13 @@ describe("The telemetry criterion", function () {
     });
 
     it("emits update event on new data from telemetry providers", function () {
-        spyOn(telemetryCriterion, 'emitResult').and.callThrough();
+        spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
         telemetryCriterion.handleSubscription({
             key: 'some-key',
             source: 'testSource',
             testSource: 'Hello'
         });
-        expect(telemetryCriterion.emitResult).toHaveBeenCalled();
+        expect(telemetryCriterion.emitEvent).toHaveBeenCalled();
         expect(mockListener).toHaveBeenCalled();
     });
 

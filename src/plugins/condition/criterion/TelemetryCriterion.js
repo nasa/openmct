@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,49 +24,60 @@ import * as EventEmitter from 'eventemitter3';
 
 export default class TelemetryCriterion extends EventEmitter {
 
+    /**
+     * Subscribes/Unsubscribes to telemetry and emits the result
+     * of operations performed on the telemetry data returned and a given input value.
+     * @param {
+     *      id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier}
+     *      }
+     * @constructor
+     */
     constructor(telemetryDomainObjectDefinition, openmct) {
         super();
 
+        this.openmct = openmct;
+        this.objectAPI = this.openmct.objects;
+        this.telemetryAPI = this.openmct.telemetry;
         this.id = telemetryDomainObjectDefinition.id;
         this.subscription = null;
         this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
-        openmct.objects.get(openmct.objects.makeKeyString(telemetryDomainObjectDefinition.key)).then((obj) => {
-            if (openmct.telemetry.isTelemetryObject(obj)) {
-                this.telemetryObject = obj;
-                this.telemetryObjectIdAsString = openmct.objects.makeKeyString(this.telemetryObject.identifier);
-                this.telemetryMetadata = openmct.telemetry.getMetadata(this.telemetryObject.identifier);
-                this.emit('criterionUpdated', this);
-            }
-        });
+        this.objectAPI.get(this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.key)).then(this.initialize);
+    }
+
+    initialize(obj) {
+        this.telemetryObject = obj;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
+        this.telemetryMetadata = this.telemetryAPI.getMetadata(this.telemetryObject.identifier);
+        this.emitEvent('criterionUpdated', this);
     }
 
     handleSubscription(datum) {
-        //data is telemetry values, error
-        //how do I get data here?
-        this.emitResult(this.normalizeData(datum));
+        let data = this.normalizeData(datum);
+        this.emitEvent('criterionResultUpdated', {
+            result: data,
+            error: null
+        })
     }
 
-    //TODO: Revisit this logic
     normalizeData(datum) {
         return {
             [datum.key]: datum[datum.source]
         }
     }
 
-    emitResult(data, error) {
-        this.emit('criterionUpdated', {
-            identifier: this.id,
-            data: data,
-            error: error
+    emitEvent(eventName, data) {
+        this.emit(eventName, {
+            id: this.id,
+            data: data
         });
     }
 
     /**
      *  Subscribes to the telemetry object and returns an unsubscribe function
      */
-    subscribe(openmct) {
-        this.subscription = openmct.telemetry.subscribe(this.telemetryObject, (datum) => {
+    subscribe() {
+        this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
             this.handleSubscription(datum);
         });
     }
@@ -80,7 +91,7 @@ export default class TelemetryCriterion extends EventEmitter {
             this.subscription();
         }
         delete this.subscription;
-        this.emit('criterion::Remove', this.telemetryObjectIdAsString);
+        this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
         delete this.telemetryMetadata;
