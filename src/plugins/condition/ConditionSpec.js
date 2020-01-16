@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,11 +55,13 @@ describe("The condition", function () {
             }
         };
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
-        openmct.objects.get.and.returnValue(testTelemetryObject);
-        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe']);
+        openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
+            resolve(testTelemetryObject);
+        }));        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe', 'getMetadata']);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
+        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
 
         testConditionDefinition = {
             trigger: TRIGGER.ANY,

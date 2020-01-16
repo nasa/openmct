@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,10 @@ import { TRIGGER } from "@/plugins/condition/utils/constants";
 
 /*
 * conditionDefinition = {
+*   identifier: {
+*       key: '',
+*       namespace: ''
+*   },
 *   trigger: 'any'/'all',
 *   criteria: [
 *       {
@@ -40,6 +44,12 @@ import { TRIGGER } from "@/plugins/condition/utils/constants";
 */
 export default class ConditionClass extends EventEmitter {
 
+    /**
+     * Manages criteria and emits the result of - true or false - based on criteria evaluated.
+     * @constructor
+     * @param conditionDefinition: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param openmct
+     */
     constructor(conditionDefinition, openmct) {
         super();
 
@@ -88,9 +98,7 @@ export default class ConditionClass extends EventEmitter {
     addCriterion(criterionDefinition) {
         let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
         let criterion = new TelemetryCriterion(criterionDefinitionWithId, this.openmct);
-        criterion.on('criterionUpdated', (data) => {
-            this.handleCriterionUpdated(data);
-        });
+        criterion.on('criterionUpdated', this.handleCriterionUpdated);
         if (!this.criteria) {
             this.criteria = [];
         }
@@ -150,20 +158,20 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleCriterionUpdated(criterion) {
-        // reevaluate the condition's output
-        // TODO: should we save the result of a criterion here or in the criterion object itself?
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion;
-            this.handleConditionUpdated();
+            this.emitEvent('conditionUpdated', {
+                trigger: this.trigger,
+                criteria: this.criteria
+            });
         }
-        // this.handleConditionUpdated();
+        this.handleConditionUpdated();
     }
 
     handleConditionUpdated() {
-        console.log(this);
         // trigger an updated event so that consumers can react accordingly
-        this.emitResult();
+        this.emitEvent('conditionResultUpdated');
     }
 
     getCriteria() {
@@ -188,11 +196,10 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    emitResult() {
-        this.emit('conditionUpdated', {
+    emitEvent(eventName, data) {
+        this.emit(eventName, {
             id: this.id,
-            trigger: this.trigger,
-            criteria: this.criteria
+            data: data
         });
     }
 }
