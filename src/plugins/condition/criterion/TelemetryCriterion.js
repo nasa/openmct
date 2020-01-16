@@ -27,10 +27,9 @@ export default class TelemetryCriterion extends EventEmitter {
     /**
      * Subscribes/Unsubscribes to telemetry and emits the result
      * of operations performed on the telemetry data returned and a given input value.
-     * @param {
-     *      id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier}
-     *      }
      * @constructor
+     * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param openmct
      */
     constructor(telemetryDomainObjectDefinition, openmct) {
         super();
@@ -42,7 +41,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.subscription = null;
         this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
-        this.objectAPI.get(this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.key)).then(this.initialize);
+        this.objectAPI.get(this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.key)).then((obj) => this.initialize(obj));
     }
 
     initialize(obj) {
