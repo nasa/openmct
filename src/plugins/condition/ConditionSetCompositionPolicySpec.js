@@ -22,7 +22,7 @@
 
 import ConditionSetCompositionPolicy  from './ConditionSetCompositionPolicy';
 
-fdescribe('ConditionSetCompositionPolicy', () => {
+describe('ConditionSetCompositionPolicy', () => {
 
     let policy;
     let testTelemetryObject;
