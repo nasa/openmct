@@ -98,7 +98,7 @@ export default class ConditionClass extends EventEmitter {
     addCriterion(criterionDefinition) {
         let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
         let criterion = new TelemetryCriterion(criterionDefinitionWithId, this.openmct);
-        criterion.on('criterionUpdated', (obj) => this.this.handleCriterionUpdated(obj));
+        criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         if (!this.criteria) {
             this.criteria = [];
         }
