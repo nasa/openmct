@@ -34,7 +34,7 @@
             <div class="c-sw-rule">
                 <div class="c-sw-rule__ui l-compact-form l-widget-rule has-local-controls">
                     <div>
-                        <ul>
+                        <ul class="t-widget-rule-config">
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
@@ -53,39 +53,59 @@
                                     </select>
                                 </span>
                             </li>
-                            <li v-if="telemetryObject && telemetryMetadata">
-                                <label>when</label>
-                                <span class="controls">
-                                    <select class="">
-                                        <option value="">- Select Telemetry -</option>
-                                        <option :value="telemetryObject.key">{{ telemetryObject.name }}</option>
-                                    </select>
-                                </span>
-                                <span class="controls">
-                                    <select v-model="selectedMetaDataKey">
-                                        <option value="">- Select Field -</option>
-                                        <option v-for="option in telemetryMetadata"
-                                                :key="option.key"
-                                                :value="option.key"
-                                        >
-                                            {{ option.name }}
-                                        </option>
-                                    </select>
-                                </span>
-
-                                <span class="controls">
-                                    <select v-model="selectedOperationKey">
-                                        <option value="">- Select Comparison -</option>
-                                        <option v-for="option in operations"
-                                                :key="option.name"
-                                                :value="option.name"
-                                        >
-                                            {{ option.text }}
-                                        </option>
-                                    </select>
-                                </span>
-                            </li>
                         </ul>
+                        <div v-if="!condition.isDefault"
+                             class="widget-rule-content expanded"
+                        >
+                            <ul class="t-widget-rule-config">
+                                <li class="has-local-controls t-condition">
+                                    <label>Match when</label>
+                                    <span class="controls">
+                                        <select>
+                                            <option value="all">All criteria are met</option>
+                                            <option value="any">Any criteria are met</option>
+                                        </select>
+                                    </span>
+                                </li>
+                            </ul>
+                            <ul class="t-widget-rule-config">
+                                <li v-if="telemetryObject && telemetryMetadata"
+                                    class="has-local-controls t-condition"
+                                >
+                                    <label>when</label>
+                                    <span class="t-configuration">
+                                        <span class="controls">
+                                            <select class="">
+                                                <option value="">- Select Telemetry -</option>
+                                                <option :value="telemetryObject.key">{{ telemetryObject.name }}</option>
+                                            </select>
+                                        </span>
+                                        <span class="controls">
+                                            <select v-model="selectedMetaDataKey">
+                                                <option value="">- Select Field -</option>
+                                                <option v-for="option in telemetryMetadata"
+                                                        :key="option.key"
+                                                        :value="option.key"
+                                                >
+                                                    {{ option.name }}
+                                                </option>
+                                            </select>
+                                        </span>
+                                        <span class="controls">
+                                            <select v-model="selectedOperationKey">
+                                                <option value="">- Select Comparison -</option>
+                                                <option v-for="option in operations"
+                                                        :key="option.name"
+                                                        :value="option.name"
+                                                >
+                                                    {{ option.text }}
+                                                </option>
+                                            </select>
+                                        </span>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
