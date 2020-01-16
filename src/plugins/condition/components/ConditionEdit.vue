@@ -47,14 +47,17 @@
                             <li>
                                 <label>Output</label>
                                 <span class="controls">
-                                    <select @change="getOutputBinary">
+                                    <select ref="outputSelect"
+                                            @change="getOutputBinary">
                                         <option value="false">False</option>
                                         <option value="true">True</option>
                                         <option value="string">String</option>
                                     </select>
-                                    <input v-if="stringOutput"
+                                    <input v-if="stringOutputField"
+                                           ref="outputString"
                                            class="t-rule-name-input"
                                            type="text"
+                                           :value="condition.output"
                                            @keyup="getOutputString"
                                     >
                                 </span>
@@ -98,7 +101,7 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select v-model="selectedOperationKey">
+                                            <select @change="getOperationKey">
                                                 <option value="">- Select Comparison -</option>
                                                 <option v-for="option in operations"
                                                         :key="option.name"
@@ -107,6 +110,11 @@
                                                     {{ option.text }}
                                                 </option>
                                             </select>
+                                            <input v-if="comparisonValueField"
+                                                   class="t-rule-name-input"
+                                                   type="text"
+                                                   @keyup="getOperationValue"
+                                            >
                                         </span>
                                     </span>
                                 </li>
@@ -142,16 +150,20 @@ export default {
             operations: OPERATIONS,
             selectedMetaDataKey: null,
             selectedOperationKey: null,
-            stringOutput: false
+            stringOutputField: false,
+            comparisonValueField: false
         };
     },
     mounted() {
+        if (this.condition.output !== 'false' && this.condition.output !== 'true') {
+            this.$refs.outputSelect.value = 'string';
+            this.stringOutputField = true;
+        }
         this.updateTelemetry();
     },
     updated() {
-        console.log('updated conditionEdit');
         this.updateCurrentCondition();
-        this.persist()
+        this.persist();
     },
     methods: {
         removeCondition(ev) {
@@ -196,13 +208,25 @@ export default {
         getOutputBinary(ev) {
             if (ev.target.value !== 'string') {
                 this.condition.output = ev.target.value;
-                this.stringOutput = false;
+                this.stringOutputField = false;
             } else {
-                this.stringOutput = true;
+                this.stringOutputField = true;
             }
         },
         getOutputString(ev) {
             this.condition.output = ev.target.value;
+        },
+        getOperationKey(ev) {
+            console.log(ev.target.value)
+            if (ev.target.value !== 'isUndefined' && ev.target.value !== 'isDefined') {
+                this.comparisonValueField = true;
+            } else {
+                this.comparisonValueField = false;
+            }
+            this.selectedOperationKey = ev.target.value;
+        },
+        getOperationValue(ev) {
+            this.selectedOperationKey = ev.target.value;
         }
     }
 }
