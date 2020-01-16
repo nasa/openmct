@@ -82,6 +82,10 @@
     line-height: 20px;
 }
 
+.l-compact-form ul li .controls {
+    flex-grow: inherit;
+}
+
 .l-compact-form ul li .controls input[type="text"],
 .l-compact-form ul li .controls input[type="search"],
 .l-compact-form ul li .controls input[type="number"],

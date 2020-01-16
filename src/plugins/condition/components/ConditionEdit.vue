@@ -44,15 +44,26 @@
                                     >
                                 </span>
                             </li>
+                            <li>
+                                <label>Output</label>
+                                <span class="controls">
+                                    <select v-model="condition.output">
+                                        <option value="false">false</option>
+                                        <option value="true">true</option>
+                                    </select>
+                                </span>
+                            </li>
                             <li v-if="telemetryObject && telemetryMetadata">
                                 <label>when</label>
                                 <span class="controls">
                                     <select class="">
+                                        <option value="">- Select Telemetry -</option>
                                         <option :value="telemetryObject.key">{{ telemetryObject.name }}</option>
                                     </select>
                                 </span>
                                 <span class="controls">
                                     <select v-model="selectedMetaDataKey">
+                                        <option value="">- Select Field -</option>
                                         <option v-for="option in telemetryMetadata"
                                                 :key="option.key"
                                                 :value="option.key"
@@ -64,21 +75,13 @@
 
                                 <span class="controls">
                                     <select v-model="selectedOperationKey">
+                                        <option value="">- Select Comparison -</option>
                                         <option v-for="option in operations"
                                                 :key="option.name"
                                                 :value="option.name"
                                         >
                                             {{ option.text }}
                                         </option>
-                                    </select>
-                                </span>
-                            </li>
-                            <li>
-                                <label>Output</label>
-                                <span class="controls">
-                                    <select v-model="condition.output">
-                                        <option value="false">false</option>
-                                        <option value="true">true</option>
                                     </select>
                                 </span>
                             </li>
