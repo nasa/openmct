@@ -47,10 +47,16 @@
                             <li>
                                 <label>Output</label>
                                 <span class="controls">
-                                    <select v-model="condition.output">
-                                        <option value="false">false</option>
-                                        <option value="true">true</option>
+                                    <select @change="getOutputBinary">
+                                        <option value="false">False</option>
+                                        <option value="true">True</option>
+                                        <option value="string">String</option>
                                     </select>
+                                    <input v-if="stringOutput"
+                                           class="t-rule-name-input"
+                                           type="text"
+                                           @keyup="getOutputString"
+                                    >
                                 </span>
                             </li>
                         </ul>
@@ -62,8 +68,8 @@
                                     <label>Match when</label>
                                     <span class="controls">
                                         <select>
-                                            <option value="all">All criteria are met</option>
-                                            <option value="any">Any criteria are met</option>
+                                            <option value="all">all criteria are met</option>
+                                            <option value="any">any criteria are met</option>
                                         </select>
                                     </span>
                                 </li>
@@ -135,7 +141,8 @@ export default {
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
             selectedMetaDataKey: null,
-            selectedOperationKey: null
+            selectedOperationKey: null,
+            stringOutput: false
         };
     },
     mounted() {
@@ -185,6 +192,17 @@ export default {
             } else {
                 this.conditionCollection[0].isCurrent = true;
             }
+        },
+        getOutputBinary(ev) {
+            if (ev.target.value !== 'string') {
+                this.condition.output = ev.target.value;
+                this.stringOutput = false;
+            } else {
+                this.stringOutput = true;
+            }
+        },
+        getOutputString(ev) {
+            this.condition.output = ev.target.value;
         }
     }
 }
