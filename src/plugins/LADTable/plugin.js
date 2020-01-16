@@ -51,6 +51,12 @@ define([
                     domainObject.composition = [];
                 }
             });
+            openmct.composition.addPolicy((parent, child) => {
+                if (parent.type === 'LadTableSet') {
+                    return !(openmct.composition.get(child) === undefined);
+                }
+                return true;
+            });
         };
     };
 });
