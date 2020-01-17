@@ -1,5 +1,6 @@
 <template>
 <div class="c-cs-editui__conditions"
+     v-if="condition"
      :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
 >
     <div class="title-bar">
@@ -143,8 +144,6 @@ export default {
         return {
             condition: this.condition,
             expanded: true,
-            name: this.condition.name,
-            description: this.condition.description,
             conditionCollection,
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
@@ -156,7 +155,6 @@ export default {
         };
     },
     mounted() {
-        this.condition = {};
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             console.log('ConditionEdit obj', obj);
             this.condition = obj;

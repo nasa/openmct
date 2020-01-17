@@ -1,11 +1,13 @@
 <template>
 <div class="c-object-view u-contents">
     <div class="c-cs-edit w-condition-set">
-        <div class="c-sw-edit__ui holder">
+        <div v-if="currentCondition"
+             class="c-sw-edit__ui holder"
+        >
             <CurrentOutput :condition-collection="domainObject.conditionCollection" />
             <TestData :is-editing="isEditing" />
             <ConditionCollection :is-editing="isEditing"
-                                 :condition-collection="domainObject.conditionCollection"
+                                 :conditionn="currentCondition"
             />
         </div>
     </div>
@@ -28,10 +30,18 @@ export default {
         isEditing: Boolean
     },
     data() {
-        let conditionCollection = this.domainObject.configuration.conditionCollection;
-
         return {
-            conditionCollection
+            conditionCollection: this.conditionCollection,
+            currentCondition: this.currentCondition
+        }
+    },
+    mounted() {
+        let conditionCollection = this.domainObject.configuration.conditionCollection;
+        this.currentConditionIdentifier = conditionCollection.length ? this.domainObject.configuration.conditionCollection[0] : null;
+        if (this.currentConditionIdentifier) {
+            this.openmct.objects.get(this.currentConditionIdentifier).then((obj) => {
+                this.currentCondition = obj;
+            });
         }
     }
 };

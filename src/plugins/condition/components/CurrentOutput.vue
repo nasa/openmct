@@ -1,6 +1,8 @@
 <template>
 <section id="current-output">
-    <div class="c-cs__ui__header">
+    <div v-if="currentCondition"
+         class="c-cs__ui__header"
+    >
         <span class="c-cs__ui__header-label">Current Output</span>
         <span
             class="is-enabled flex-elem"
@@ -8,11 +10,11 @@
             @click="expanded = !expanded"
         ></span>
     </div>
-    <div v-if="expanded"
+    <div v-if="expanded && currentCondition"
          class="c-cs__ui_content"
     >
         <div>
-            <span class="current-output">{{ conditionCollection[currentConditionIndex].output }}</span>
+            <span class="current-output">{{ currentCondition.output }}</span>
         </div>
     </div>
 </section>
@@ -22,31 +24,22 @@
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        isEditing: Boolean
+        isEditing: Boolean,
+        currentCondition: {
+            default: () => {return null;},
+            type: Object
+        }
     },
     data() {
-        let conditionCollection = this.domainObject.configuration.conditionCollection;
-        let currentConditionIndex = 0;
-
         return {
-            expanded: true,
-            conditionCollection,
-            currentConditionIndex
+            expanded: true
         }
     },
     mounted() {
-        this.currentConditionIndex = this.getCurrentConditionIndex();
+
     },
     methods: {
-        getCurrentConditionIndex() {
-            let currentConditionIndex;
-            this.conditionCollection.forEach((condition, index) => {
-                if (condition.isCurrent) {
-                    currentConditionIndex = index;
-                }
-            });
-            return currentConditionIndex;
-        }
+
     }
 }
 </script>

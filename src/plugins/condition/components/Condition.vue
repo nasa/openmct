@@ -1,5 +1,6 @@
 <template>
 <div id="conditionArea"
+     v-if="condition"
      class="c-cs-ui__conditions"
      :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
 >
