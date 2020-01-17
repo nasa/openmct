@@ -140,11 +140,10 @@ export default {
         }
     },
     data() {
-        let conditionCollection = this.domainObject.configuration.conditionCollection;
         return {
             condition: this.condition,
             expanded: true,
-            conditionCollection,
+            conditionCollection: this.conditionCollection,
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
@@ -155,6 +154,7 @@ export default {
         };
     },
     mounted() {
+        this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             console.log('ConditionEdit obj', obj);
             this.condition = obj;
@@ -200,14 +200,20 @@ export default {
             }
         },
         updateCurrentCondition() {
-            // TODO: replace based on telemetry
-            if (this.conditionCollection.length > 1) {
-                this.conditionCollection.forEach((condition, index) => {
-                    index === 0 ? condition.isCurrent = true : condition.isCurrent = false
-                });
-            } else {
-                this.conditionCollection[0].isCurrent = true;
-            }
+            //mutate / persist the condition domainObject
+            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(this.condition, 'created', new Date());
+            //
+            // // TODO: replace based on telemetry
+            // if (this.conditionCollection.length > 1) {
+            //     this.conditionCollection.forEach((condition, index) => {
+            //         index === 0 ? condition.isCurrent = true : condition.isCurrent = false
+            //     });
+            // } else {
+            //     this.conditionCollection[0].isCurrent = true;
+            // }
+            // console.log(this.condition);
+            // console.log(this.conditionCollection);
         },
         getOutputBinary(ev) {
             if (ev.target.value !== 'string') {

@@ -1,6 +1,6 @@
 <template>
 <section id="current-output">
-    <div v-if="currentCondition"
+    <div v-if="condition"
          class="c-cs__ui__header"
     >
         <span class="c-cs__ui__header-label">Current Output</span>
@@ -10,11 +10,11 @@
             @click="expanded = !expanded"
         ></span>
     </div>
-    <div v-if="expanded && currentCondition"
+    <div v-if="expanded && condition"
          class="c-cs__ui_content"
     >
         <div>
-            <span class="current-output">{{ currentCondition.output }}</span>
+            <span class="current-output">{{ condition.output }}</span>
         </div>
     </div>
 </section>
@@ -25,7 +25,7 @@ export default {
     inject: ['openmct', 'domainObject'],
     props: {
         isEditing: Boolean,
-        currentCondition: {
+        condition: {
             default: () => {return null;},
             type: Object
         }
