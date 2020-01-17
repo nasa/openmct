@@ -29,15 +29,15 @@
             </button>
         </div>
         <div class="condition-collection">
-            <div v-for="condition in conditionCollection"
-                 :key="condition.identifier.key"
+            <div v-for="conditionIdentifier in conditionCollection"
+                 :key="conditionIdentifier.key"
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :condition="condition" />
+                    <ConditionEdit :conditionIdentifier="conditionIdentifier" />
                 </div>
                 <div v-else>
-                    <Condition :condition="condition" />
+                    <Condition :conditionIdentifier="conditionIdentifier" />
                 </div>
             </div>
         </div>
@@ -86,7 +86,10 @@ export default {
         },
         addCondition(event, isDefault) {
             let conditionDO = this.getConditionDomainObject(!!isDefault);
-            this.conditionCollection.unshift(conditionDO);
+            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDO, 'created', new Date());
+
+            this.conditionCollection.unshift(conditionDO.identifier);
 
             let condition = new ConditionClass(conditionDO, this.openmct);
             this.conditions.push(condition);
@@ -96,7 +99,7 @@ export default {
                 isDefault: isDefault,
                 isCurrent: true,
                 identifier: {
-                    namespace: "",
+                    namespace: this.domainObject.identifier.namespace,
                     key: uuid()
                 },
                 name: isDefault ? 'Default' : 'Unnamed Condition',
@@ -112,6 +115,7 @@ export default {
             };
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
             let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+
             return newDO.useCapability('adapter');
         },
         updateCondition(updatedCondition) {

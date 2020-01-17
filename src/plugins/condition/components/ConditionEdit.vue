@@ -133,7 +133,7 @@ import { OPERATIONS } from '../utils/operations';
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        condition: {
+        conditionIdentifier: {
             type: Object,
             required: true
         }
@@ -141,6 +141,7 @@ export default {
     data() {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
         return {
+            condition: this.condition,
             expanded: true,
             name: this.condition.name,
             description: this.condition.description,
@@ -155,11 +156,16 @@ export default {
         };
     },
     mounted() {
-        if (this.condition.output !== 'false' && this.condition.output !== 'true') {
-            this.$refs.outputSelect.value = 'string';
-            this.stringOutputField = true;
-        }
-        this.updateTelemetry();
+        this.condition = {};
+        this.openmct.objects.get(this.conditionIdentifier).then((obj => {
+            console.log('ConditionEdit obj', obj);
+            this.condition = obj;
+            if (this.condition.output !== 'false' && this.condition.output !== 'true') {
+                this.$refs.outputSelect.value = 'string';
+                this.stringOutputField = true;
+            }
+            this.updateTelemetry();
+        }));
     },
     updated() {
         this.updateCurrentCondition();

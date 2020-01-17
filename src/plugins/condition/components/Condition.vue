@@ -23,15 +23,23 @@
 export default {
     inject: ['openmct'],
     props: {
-        condition: {
+        conditionIdentifier: {
             type: Object,
             required: true
         }
     },
     data() {
         return {
-            conditionData: {}
+            conditionData: {},
+            condition: this.condition
         };
+    },
+    mounted() {
+        this.condition = {};
+        this.openmct.objects.get(this.conditionIdentifier).then((obj => {
+            console.log('ConditionEdit obj', obj);
+            this.condition = obj;
+        }));
     },
     methods: {
     }
