@@ -28,13 +28,17 @@
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div class="condition-collection">
+        <div class="condition-collection"
+        >
             <div v-for="conditionIdentifier in conditionCollection"
                  :key="conditionIdentifier.key"
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :conditionIdentifier="conditionIdentifier" />
+                    <ConditionEdit :conditionIdentifier="conditionIdentifier"
+                                   @update-current-condition="updateCurrentCondition"
+                                   :is-current="currentConditionIdentifier"
+                    />
                 </div>
                 <div v-else>
                     <Condition :conditionIdentifier="conditionIdentifier" />
@@ -65,7 +69,8 @@ export default {
             expanded: true,
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
-            conditions: []
+            conditions: [],
+            currentConditionIdentifier: this.currentConditionIdentifier || {}
         };
     },
     destroyed() {
@@ -78,7 +83,10 @@ export default {
         this.composition.on('add', this.addTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
-        if (!this.conditionCollection.length) {this.addCondition(null, true)}
+        if (!this.conditionCollection.length) {
+            this.addCondition(null, true);
+        }
+        
     },
     methods: {
         addTelemetry(telemetryDomainObject) {
@@ -89,10 +97,28 @@ export default {
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
 
+            this.currentConditionIdentifier = conditionDO.identifier;
             this.conditionCollection.unshift(conditionDO.identifier);
 
             let condition = new ConditionClass(conditionDO, this.openmct);
             this.conditions.push(condition);
+        },
+        updateCurrentCondition(identifier) {
+            console.log('updateCurrentCondition from ConditionCollection', identifier);
+            this.currentConditionIdentifier = identifier;
+              // this.openmct.objects.get(identifier).then((obj) => {
+            //     if (this.conditionCollection.length > 1) {
+            //         console.log(this.conditionCollection.length)
+            //         this.conditionCollection.forEach((condition, index) => {
+            //             index === 0 ? condition.isCurrent = true : condition.isCurrent = false
+            //             console.log('conditionEdit', condition)
+            //         });
+            //     } else {
+            //         this.conditionCollection[0].isCurrent = true;
+            //     }
+ //         });
+            // this.conditionCollection = collection;
+            // this.$set(this.conditionCollection, , post)
         },
         getConditionDomainObject(isDefault) {
             let conditionObj = {

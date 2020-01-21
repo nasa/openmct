@@ -1,7 +1,7 @@
 <template>
 <div class="c-cs-editui__conditions"
      v-if="condition"
-     :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
+     :class="['widget-condition', { 'widget-condition--current': isCurrent && (isCurrent.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
         <span
@@ -131,10 +131,16 @@
 
 <script>
 import { OPERATIONS } from '../utils/operations';
+// import { EventBus } from '../utils/eventbus.js';
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
         conditionIdentifier: {
+            type: Object,
+            required: true
+        },
+        isCurrent: {
             type: Object,
             required: true
         }
@@ -143,7 +149,6 @@ export default {
         return {
             condition: this.condition,
             expanded: true,
-            conditionCollection: this.conditionCollection,
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
@@ -154,9 +159,8 @@ export default {
         };
     },
     mounted() {
-        this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
-            console.log('ConditionEdit obj', obj);
+            // console.log('ConditionEdit obj', obj);
             this.condition = obj;
             if (this.condition.output !== 'false' && this.condition.output !== 'true') {
                 this.$refs.outputSelect.value = 'string';
@@ -164,18 +168,23 @@ export default {
             }
             this.updateTelemetry();
         }));
+        this.updateCurrentCondition();
     },
     updated() {
-        this.updateCurrentCondition();
+        console.log('updated');
+        if (this.isCurrent && this.isCurrent.key === this.condition.key) {
+            this.updateCurrentCondition();
+        }
         this.persist();
     },
     methods: {
         removeCondition(ev) {
-            const conditionDiv = ev.target.closest('.conditionArea');
-            const conditionCollectionDiv = conditionDiv.closest('.condition-collection');
-            const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
+            // const conditionDiv = ev.target.closest('.conditionArea');
+            // const conditionCollectionDiv = conditionDiv.closest('.condition-collection');
+            // const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
 
-            this.domainObject.configuration.conditionCollection.splice(index, 1);
+            // this.domainObject.configuration.conditionCollection.splice(index, 1);
+            // this.updateCurrentCondition();
         },
         updateTelemetry() {
             if (this.hasTelemetry()) {
@@ -183,7 +192,7 @@ export default {
                     this.telemetryObject = obj;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
                     this.selectedMetaDataKey = this.telemetryMetadata[0].key;
-                    console.log('ConditionEdit', this.telemetryObject, this.telemetryMetadata);
+                    // console.log('ConditionEdit', this.telemetryObject, this.telemetryMetadata);
                 });
             } else {
                 this.telemetryObject = null;
@@ -192,27 +201,32 @@ export default {
         hasTelemetry() {
             return this.condition.criteria.length && this.condition.criteria[0].key;
         },
-        persist(index) {
-            if (index) {
-                this.openmct.objects.mutate(this.domainObject, `configuration.conditionCollection[${index}]`, this.domainObject.configuration.conditionCollection[index]);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.domainObject.configuration.conditionCollection);
-            }
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'isCurrent', this.condition.isCurrent);
         },
         updateCurrentCondition() {
+            // console.log('updateCurrentCondition called')
             //mutate / persist the condition domainObject
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(this.condition, 'created', new Date());
+            // console.log('before mutate output',this.condition.output)
+            // this.openmct.objects.mutate(this.condition, "output", this.condition.output);
+            // console.log('after mutate output',this.condition.output)
             //
             // // TODO: replace based on telemetry
             // if (this.conditionCollection.length > 1) {
+            //     console.log(this.conditionCollection.length)
             //     this.conditionCollection.forEach((condition, index) => {
             //         index === 0 ? condition.isCurrent = true : condition.isCurrent = false
+            //         console.log('conditionEdit', condition)
             //     });
             // } else {
             //     this.conditionCollection[0].isCurrent = true;
             // }
-            // console.log(this.condition);
+            //console.log('this.conditionCollection', this.conditionCollection);
+            // console.log('this.conditionIdentifier', this.conditionIdentifier);
+            this.$emit('update-current-condition', this.conditionIdentifier);
+            // this.openmct.objects.mutate(this.condition, "isCurrent", this.condition.isCurrent);
+            // console.log('this.conditionCollection', this.conditionCollection);
             // console.log(this.conditionCollection);
         },
         getOutputBinary(ev) {
@@ -220,14 +234,15 @@ export default {
                 this.condition.output = ev.target.value;
                 this.stringOutputField = false;
             } else {
-                this.stringOutputField = true;
+                this.stringOutputField = true
             }
+            this.updateCurrentCondition();
         },
         getOutputString(ev) {
             this.condition.output = ev.target.value;
         },
         getOperationKey(ev) {
-            console.log(ev.target.value)
+            // console.log(ev.target.value)
             if (ev.target.value !== 'isUndefined' && ev.target.value !== 'isDefined') {
                 this.comparisonValueField = true;
             } else {
