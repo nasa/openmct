@@ -14,7 +14,7 @@
          class="c-cs__ui_content"
     >
         <div>
-            <span class="current-output">{{ condition.output }}</span>
+            <span class="current-output">{{ condition.definition.output }}</span>
         </div>
     </div>
 </section>

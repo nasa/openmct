@@ -272,6 +272,9 @@ export default {
             this.condition.definition.criteria[0].input = [ev.target.value];
             this.persist();
             //find the criterion being updated and set the input property
+        },
+        updateCurrentCondition() {
+            this.$emit('update-current-condition', this.conditionIdentifier);
         }
     }
 }
