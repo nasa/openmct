@@ -49,7 +49,7 @@
                                 <label>Output</label>
                                 <span class="controls">
                                     <select ref="outputSelect"
-                                            @change="getOutputBinary"
+                                            @change="getOutputBoolean"
                                     >
                                         <option value="false">False</option>
                                         <option value="true">True</option>
@@ -165,6 +165,7 @@ export default {
                 this.$refs.outputSelect.value = 'string';
                 this.stringOutputField = true;
             }
+            console.log('this.isCurrent.key', this.isCurrent.key)
             this.updateTelemetry();
         }));
         this.updateCurrentCondition();
@@ -195,11 +196,14 @@ export default {
         },
         persist() {
             this.openmct.objects.mutate(this.domainObject, 'isCurrent', this.condition.isCurrent);
+            this.openmct.objects.mutate(this.condition, 'name', this.condition.name);
+            this.openmct.objects.mutate(this.condition, 'output', this.condition.output);
+
         },
         updateCurrentCondition() {
             this.$emit('update-current-condition', this.conditionIdentifier);
         },
-        getOutputBinary(ev) {
+        getOutputBoolean(ev) {
             if (ev.target.value !== 'string') {
                 this.condition.output = ev.target.value;
                 this.stringOutputField = false;

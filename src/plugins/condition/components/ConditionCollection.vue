@@ -151,7 +151,6 @@ export default {
             });
         },
         persist() {
-            console.log('this.domainObject', this.domainObject);
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
         }
     }

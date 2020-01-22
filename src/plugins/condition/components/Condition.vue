@@ -22,7 +22,7 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject'],
     props: {
         conditionIdentifier: {
             type: Object,
@@ -35,17 +35,14 @@ export default {
     },
     data() {
         return {
-            conditionData: {},
             condition: this.condition
         };
     },
     mounted() {
-        this.condition = {};
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
+            console.log('this.isCurrent.key', this.isCurrent.key)
         }));
-    },
-    methods: {
     }
 }
 </script>
