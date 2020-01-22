@@ -34,10 +34,12 @@
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :conditionIdentifier="conditionIdentifier" />
+                    <ConditionEdit :condition-identifier="conditionIdentifier"
+                                   @condition-result-updated="handleConditionResult"
+                    />
                 </div>
                 <div v-else>
-                    <Condition :conditionIdentifier="conditionIdentifier" />
+                    <Condition :condition-identifier="conditionIdentifier" />
                 </div>
             </div>
         </div>
@@ -49,7 +51,6 @@
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
-import ConditionClass from '../Condition';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -81,6 +82,9 @@ export default {
         if (!this.conditionCollection.length) {this.addCondition(null, true)}
     },
     methods: {
+        handleConditionResult(args) {
+            console.log('ConditionCollection: ', args.result);
+        },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
@@ -90,27 +94,25 @@ export default {
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
 
             this.conditionCollection.unshift(conditionDO.identifier);
-
-            let condition = new ConditionClass(conditionDO, this.openmct);
-            this.conditions.push(condition);
         },
         getConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
-                isCurrent: true,
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
                     key: uuid()
                 },
-                name: isDefault ? 'Default' : 'Unnamed Condition',
-                trigger: 'any',
-                criteria: isDefault ? [] : [{
-                    operation: '',
-                    input: '',
-                    metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                    key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
-                }],
-                output: 'false',
+                definition: {
+                    name: isDefault ? 'Default' : 'Unnamed Condition',
+                    output: 'false',
+                    trigger: 'any',
+                    criteria: isDefault ? [] : [{
+                        operation: '',
+                        input: '',
+                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
+                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                    }]
+                },
                 summary: 'summary description'
             };
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
@@ -119,6 +121,7 @@ export default {
             return newDO.useCapability('adapter');
         },
         updateCondition(updatedCondition) {
+            //TODO: this should only happen for reordering
             let index = _.findIndex(this.conditions, (condition) => condition.id === updatedCondition.id);
             this.conditions[index] = updatedCondition;
         },

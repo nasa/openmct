@@ -119,7 +119,7 @@ describe("The telemetry criterion", function () {
     it("un-subscribes from telemetry providers", function () {
         telemetryCriterion.subscribe();
         expect(telemetryCriterion.subscription).toBeDefined();
-        telemetryCriterion.unsubscribe();
+        telemetryCriterion.destroy();
         expect(telemetryCriterion.subscription).toBeUndefined();
         expect(telemetryCriterion.telemetryObjectIdAsString).toBeUndefined();
         expect(telemetryCriterion.telemetryObject).toBeUndefined();

@@ -90,6 +90,10 @@ export default class TelemetryCriterion extends EventEmitter {
             this.subscription();
         }
         delete this.subscription;
+    }
+
+    destroy() {
+        this.unsubscribe();
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;

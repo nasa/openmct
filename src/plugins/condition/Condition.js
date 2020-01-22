@@ -55,13 +55,24 @@ export default class ConditionClass extends EventEmitter {
 
         this.openmct = openmct;
         this.id = this.openmct.objects.makeKeyString(conditionDefinition.identifier);
-        if (conditionDefinition.criteria) {
-            this.createCriteria(conditionDefinition.criteria);
-        } else {
-            this.criteria = [];
+        this.criteria = [];
+        if (conditionDefinition.definition.criteria) {
+            this.createCriteria(conditionDefinition.definition.criteria);
         }
-        this.trigger = conditionDefinition.trigger;
+        this.trigger = conditionDefinition.definition.trigger;
         this.result = null;
+        this.openmct.objects.get(this.id).then(obj => this.observeForChanges(obj));
+    }
+
+    observeForChanges(conditionDO) {
+        this.stopObservingForChanges = this.openmct.objects.observe(conditionDO, '*', this.update.bind(this));
+    }
+
+    update(newDomainObject) {
+        console.log('ConditionClass: ', newDomainObject.definition);
+        this.updateTrigger(newDomainObject.definition.trigger);
+        this.updateCriteria(newDomainObject.definition.criteria);
+        this.handleConditionUpdated();
     }
 
     updateTrigger(conditionDefinition) {
@@ -103,6 +114,7 @@ export default class ConditionClass extends EventEmitter {
             this.criteria = [];
         }
         this.criteria.push(criterion);
+        //Do we need this here?
         this.handleConditionUpdated();
         return criterionDefinitionWithId.id;
     }
@@ -147,7 +159,7 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(id);
         if (found) {
             let criterion = found.item;
-            criterion.unsubscribe();
+            criterion.destroy();
             criterion.off('criterionUpdated', (result) => {
                 this.handleCriterionUpdated(id, result);
             });
@@ -160,7 +172,8 @@ export default class ConditionClass extends EventEmitter {
     handleCriterionUpdated(criterion) {
         let found = this.findCriterion(criterion.id);
         if (found) {
-            this.criteria[found.index] = criterion;
+            this.criteria[found.index] = criterion.data;
+            //Most likely don't need this.
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
                 criteria: this.criteria
@@ -171,7 +184,8 @@ export default class ConditionClass extends EventEmitter {
 
     handleConditionUpdated() {
         // trigger an updated event so that consumers can react accordingly
-        this.emitEvent('conditionResultUpdated');
+        this.evaluate();
+        this.emitEvent('conditionResultUpdated', {result: this.result});
     }
 
     getCriteria() {
@@ -190,7 +204,7 @@ export default class ConditionClass extends EventEmitter {
     //TODO: implement as part of the evaluator class task.
     evaluate() {
         if (this.trigger === TRIGGER.ANY) {
-            this.result = false;
+            this.result = true;
         } else if (this.trigger === TRIGGER.ALL) {
             this.result = false;
         }
@@ -201,5 +215,12 @@ export default class ConditionClass extends EventEmitter {
             id: this.id,
             data: data
         });
+    }
+
+    destroy() {
+        if (typeof this.stopObservingForChanges === 'function') {
+            this.stopObservingForChanges();
+        }
+        this.destroyCriteria();
     }
 }
