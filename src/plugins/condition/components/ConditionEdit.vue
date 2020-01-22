@@ -176,14 +176,8 @@ export default {
         this.persist();
     },
     methods: {
-        removeCondition(ev) {
+        removeCondition() {
             this.$emit('remove-condition', this.conditionIdentifier);
-            // const conditionDiv = ev.target.closest('.conditionArea');
-            // const conditionCollectionDiv = conditionDiv.closest('.condition-collection');
-            // const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
-
-            // this.domainObject.configuration.conditionCollection.splice(index, 1);
-            // this.updateCurrentCondition();
         },
         updateTelemetry() {
             if (this.hasTelemetry()) {

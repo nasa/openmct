@@ -137,16 +137,22 @@ export default {
             this.conditions[index] = updatedCondition;
         },
         removeCondition(identifier) {
+            console.log('this.conditions', this.conditions);
             let index = _.findIndex(this.conditionCollection, (condition) => {
                 identifier.key === condition.key
             });
             this.conditionCollection.splice(index + 1, 1);
+            this.persist();
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
+        },
+        persist() {
+            console.log('this.domainObject', this.domainObject);
+            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
         }
     }
 }
