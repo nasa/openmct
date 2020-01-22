@@ -1,7 +1,7 @@
 <template>
 <div v-if="condition"
      class="c-cs-editui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
+     :class="['widget-condition', { 'widget-condition--current': isCurrent && (isCurrent.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
         <span
@@ -16,7 +16,7 @@
         ></span>
         <div class="condition-summary">
             <span class="condition-name">{{ condition.definition.name }}</span>
-            <span class="condition-description">{{ condition.definition.description }}</span>
+            <span class="condition-description">{{ condition.definition.name }}</span>
         </div>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__duplicate"
@@ -139,10 +139,15 @@
 <script>
 import { OPERATIONS } from '../utils/operations';
 import ConditionClass from "@/plugins/condition/Condition";
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
         conditionIdentifier: {
+            type: Object,
+            required: true
+        },
+        isCurrent: {
             type: Object,
             required: true
         }
@@ -151,7 +156,6 @@ export default {
         return {
             condition: this.condition,
             expanded: true,
-            conditionCollection: this.conditionCollection,
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
@@ -175,6 +179,7 @@ export default {
                     text: 'String'
                 }
             ]
+
         };
     },
     destroyed() {
@@ -194,6 +199,9 @@ export default {
         }));
     },
     updated() {
+        if (this.isCurrent && this.isCurrent.key === this.condition.key) {
+            this.updateCurrentCondition();
+        }
         this.persist();
     },
     methods: {
@@ -205,11 +213,7 @@ export default {
             })
         },
         removeCondition(ev) { //move this to conditionCollection
-            // const conditionDiv = ev.target.closest('.conditionArea');
-            // const conditionCollectionDiv = conditionDiv.closest('.condition-collection');
-            // const index = Array.from(conditionCollectionDiv.children).indexOf(conditionDiv);
-            //
-            // this.domainObject.configuration.conditionCollection.splice(index, 1);
+            this.$emit('remove-condition', this.conditionIdentifier);
         },
         setOutput() {
             if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {

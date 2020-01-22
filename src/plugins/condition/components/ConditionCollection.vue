@@ -35,11 +35,16 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :condition-identifier="conditionIdentifier"
+                                   :is-current="currentConditionIdentifier"
+                                   @update-current-condition="updateCurrentCondition"
+                                   @remove-condition="removeCondition"
                                    @condition-result-updated="handleConditionResult"
                     />
                 </div>
                 <div v-else>
-                    <Condition :condition-identifier="conditionIdentifier" />
+                    <Condition :condition-identifier="conditionIdentifier"
+                               :is-current="currentConditionIdentifier"
+                    />
                 </div>
             </div>
         </div>
@@ -66,7 +71,8 @@ export default {
             expanded: true,
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
-            conditions: []
+            conditions: [],
+            currentConditionIdentifier: this.currentConditionIdentifier || {}
         };
     },
     destroyed() {
@@ -79,11 +85,7 @@ export default {
         this.composition.on('add', this.addTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
-        if (!this.conditionCollection.length) {
-            this.addCondition(null, true)
-        } else {
-            console.log(this.conditionCollection.length, this.conditionCollection);
-        }
+        if (!this.conditionCollection.length) {this.addCondition(null, true)}
     },
     methods: {
         handleConditionResult(args) {
@@ -96,9 +98,11 @@ export default {
             let conditionDO = this.getConditionDomainObject(!!isDefault);
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
-
             this.conditionCollection.unshift(conditionDO.identifier);
             this.persist();
+        },
+        updateCurrentCondition(identifier) {
+            this.currentConditionIdentifier = identifier;
         },
         getConditionDomainObject(isDefault) {
             let conditionObj = {
@@ -131,8 +135,12 @@ export default {
             this.conditions[index] = updatedCondition;
         },
         removeCondition(identifier) {
-            let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);
-            this.conditionCollection.splice(index, 1);
+            console.log('this.conditions', this.conditions);
+            let index = _.findIndex(this.conditionCollection, (condition) => {
+                identifier.key === condition.key
+            });
+            this.conditionCollection.splice(index + 1, 1);
+            this.persist();
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();
