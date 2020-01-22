@@ -107,7 +107,9 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select @change="getOperationKey">
+                                            <select v-model="selectedOperationKey"
+                                                    @change="operationKeyChange"
+                                            >
                                                 <option value="">- Select Comparison -</option>
                                                 <option v-for="option in operations"
                                                         :key="option.name"
@@ -176,6 +178,7 @@ export default {
         };
     },
     destroyed() {
+        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
             this.conditionClass.destroy();
         }
@@ -183,10 +186,10 @@ export default {
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
-            this.conditionClass = new ConditionClass(this.condition, this.openmct);
-            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this))
             this.setOutput();
             this.updateTelemetry();
+            this.conditionClass = new ConditionClass(this.condition, this.openmct);
+            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         }));
     },
     updated() {
@@ -235,7 +238,7 @@ export default {
         hasTelemetry() {
             return this.condition.definition.criteria.length && this.condition.definition.criteria[0].key;
         },
-        persist(index) { //this should only persist the condition domain object
+        persist() {
             this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         checkInputValue() {
@@ -243,19 +246,19 @@ export default {
                 this.condition.definition.output = '';
             }
         },
-        getOperationKey(ev) {
+        operationKeyChange(ev) {
             if (ev.target.value !== 'isUndefined' && ev.target.value !== 'isDefined') {
                 this.comparisonValueField = true;
             } else {
                 this.comparisonValueField = false;
             }
-            this.selectedOperationKey = ev.target.value;
-            this.condition.definition.operator = this.selectedOperationKey;
+            this.condition.definition.criteria[0].operation = this.selectedOperationKey;
             this.persist();
-            //find the criterion being updated and set the operator property
+            //find the criterion being updated and set the operation property
         },
         getOperationValue(ev) {
-            this.selectedOperationKey = ev.target.value;
+            this.condition.definition.criteria[0].input = [ev.target.value];
+            this.persist();
             //find the criterion being updated and set the input property
         }
     }
