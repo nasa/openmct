@@ -16,7 +16,9 @@
                     v-for="(item, index) in sortedItems"
                     :key="index"
                     :class="item.class"
-                    :title="item.title"
+                    :aria-label="item.name"
+                    role="button"
+                    tabindex="0"
                     @mouseover="showItemDescription(item)"
                     @click="create(item)"
                 >
