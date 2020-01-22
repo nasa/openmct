@@ -15,8 +15,8 @@
             @click="expanded = !condition.expanded"
         ></span>
         <div class="condition-summary">
-            <span class="condition-name">{{ condition.name }}</span>
-            <span class="condition-description">{{ condition.description }}</span>
+            <span class="condition-name">{{ condition.definition.name }}</span>
+            <span class="condition-description">{{ condition.definition.name }}</span>
         </div>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__duplicate"
@@ -39,7 +39,7 @@
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
-                                    <input v-model="condition.name"
+                                    <input v-model="condition.definition.name"
                                            class="t-rule-name-input"
                                            type="text"
                                     >
@@ -48,19 +48,21 @@
                             <li>
                                 <label>Output</label>
                                 <span class="controls">
-                                    <select ref="outputSelect"
-                                            @change="getOutputBoolean"
+                                    <select v-model="selectedOutputKey"
+                                            @change="checkInputValue"
                                     >
-                                        <option value="false">False</option>
-                                        <option value="true">True</option>
-                                        <option value="string">String</option>
+                                        <option value="">- Select Output -</option>
+                                        <option v-for="option in outputOptions"
+                                                :key="option.key"
+                                                :value="option.key"
+                                        >
+                                            {{ option.text }}
+                                        </option>
                                     </select>
-                                    <input v-if="stringOutputField"
-                                           ref="outputString"
+                                    <input v-if="selectedOutputKey === outputOptions[2].key"
+                                           v-model="condition.definition.output"
                                            class="t-rule-name-input"
                                            type="text"
-                                           :value="condition.output"
-                                           @keyup="getOutputString"
                                     >
                                 </span>
                             </li>
@@ -132,6 +134,7 @@
 
 <script>
 import { OPERATIONS } from '../utils/operations';
+import ConditionClass from "@/plugins/condition/Condition";
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -153,22 +156,41 @@ export default {
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
             selectedMetaDataKey: null,
+            selectedTelemetryKey: null,
             selectedOperationKey: null,
             stringOutputField: false,
-            comparisonValueField: false
+            selectedOutputKey: null,
+            comparisonValueField: false,
+            outputOptions: [
+                {
+                    key: 'false',
+                    text: 'False'
+                },
+                {
+                    key: 'true',
+                    text: 'True'
+                },
+                {
+                    key: 'string',
+                    text: 'String'
+                }
+            ]
+
         };
+    },
+    destroyed() {
+        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+            this.conditionClass.destroy();
+        }
     },
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
-            if (this.condition.output !== 'false' && this.condition.output !== 'true') {
-                this.$refs.outputSelect.value = 'string';
-                this.stringOutputField = true;
-            }
-            console.log('this.isCurrent.key', this.isCurrent.key)
+            this.conditionClass = new ConditionClass(this.condition, this.openmct);
+            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this))
+            this.setOutput();
             this.updateTelemetry();
         }));
-        this.updateCurrentCondition();
     },
     updated() {
         if (this.isCurrent && this.isCurrent.key === this.condition.key) {
@@ -177,12 +199,32 @@ export default {
         this.persist();
     },
     methods: {
+        handleConditionResult(args) {
+            console.log('ConditionEdit::Result', args);
+            this.$emit('condition-result-updated', {
+                id: this.conditionIdentifier,
+                result: args.data.result
+            })
+        },
         removeCondition() {
             this.$emit('remove-condition', this.conditionIdentifier);
         },
+        setOutput() {
+            if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
+                // this.$refs.outputSelect.value = 'string';
+                this.selectedOutputKey = this.outputOptions[2].key;
+                // this.stringOutputField = true;
+            } else {
+                if (this.condition.definition.output === 'true') {
+                    this.selectedOutputKey = this.outputOptions[1].key;
+                } else {
+                    this.selectedOutputKey = this.outputOptions[0].key;
+                }
+            }
+        },
         updateTelemetry() {
             if (this.hasTelemetry()) {
-                this.openmct.objects.get(this.condition.criteria[0].key).then((obj) => {
+                this.openmct.objects.get(this.condition.definition.criteria[0].key).then((obj) => {
                     this.telemetryObject = obj;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
                     this.selectedMetaDataKey = this.telemetryMetadata[0].key;
@@ -192,13 +234,10 @@ export default {
             }
         },
         hasTelemetry() {
-            return this.condition.criteria.length && this.condition.criteria[0].key;
+            return this.condition.definition.criteria.length && this.condition.definition.criteria[0].key;
         },
         persist() {
-            this.openmct.objects.mutate(this.domainObject, 'isCurrent', this.condition.isCurrent);
-            this.openmct.objects.mutate(this.condition, 'name', this.condition.name);
-            this.openmct.objects.mutate(this.condition, 'output', this.condition.output);
-
+            this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         updateCurrentCondition() {
             this.$emit('update-current-condition', this.conditionIdentifier);
@@ -210,10 +249,14 @@ export default {
             } else {
                 this.stringOutputField = true
             }
-            this.updateCurrentCondition();
         },
         getOutputString(ev) {
             this.condition.output = ev.target.value;
+        },
+        checkInputValue() {
+            if (this.selectedOutputKey === this.outputOptions[2].key) {
+                this.condition.definition.output = '';
+            }
         },
         getOperationKey(ev) {
             if (ev.target.value !== 'isUndefined' && ev.target.value !== 'isDefined') {
@@ -222,6 +265,8 @@ export default {
                 this.comparisonValueField = false;
             }
             this.selectedOperationKey = ev.target.value;
+            this.condition.definition.operator = this.selectedOperationKey;
+            this.persist();
         },
         getOperationValue(ev) {
             this.selectedOperationKey = ev.target.value;

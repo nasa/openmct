@@ -55,7 +55,6 @@
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
-import ConditionClass from '../Condition';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -85,12 +84,12 @@ export default {
         this.composition.on('add', this.addTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
-        if (!this.conditionCollection.length) {
-            this.addCondition(null, true);
-        }
-
+        if (!this.conditionCollection.length) {this.addCondition(null, true)}
     },
     methods: {
+        handleConditionResult(args) {
+            console.log('ConditionCollection: ', args.result);
+        },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
@@ -98,12 +97,7 @@ export default {
             let conditionDO = this.getConditionDomainObject(!!isDefault);
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
-
-            this.currentConditionIdentifier = conditionDO.identifier;
             this.conditionCollection.unshift(conditionDO.identifier);
-
-            let condition = new ConditionClass(conditionDO, this.openmct);
-            this.conditions.push(condition);
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
@@ -111,20 +105,21 @@ export default {
         getConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
-                isCurrent: true,
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
                     key: uuid()
                 },
-                name: isDefault ? 'Default' : 'Unnamed Condition',
-                trigger: 'any',
-                criteria: isDefault ? [] : [{
-                    operation: '',
-                    input: '',
-                    metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                    key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
-                }],
-                output: 'false',
+                definition: {
+                    name: isDefault ? 'Default' : 'Unnamed Condition',
+                    output: 'false',
+                    trigger: 'any',
+                    criteria: isDefault ? [] : [{
+                        operation: '',
+                        input: '',
+                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
+                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                    }]
+                },
                 summary: 'summary description'
             };
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);

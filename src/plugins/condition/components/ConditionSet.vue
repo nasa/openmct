@@ -30,7 +30,6 @@ export default {
     },
     data() {
         return {
-            conditionCollection: this.conditionCollection,
             currentCondition: this.currentCondition
         }
     },

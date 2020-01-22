@@ -6,15 +6,15 @@
 >
     <div class="title-bar">
         <span class="condition-name">
-            {{ condition.name }}
+            {{ condition.definition.name }}
         </span>
         <span class="condition-output">
-            Output: {{ condition.output }}
+            Output: {{ condition.definition.output }}
         </span>
     </div>
     <div class="condition-config">
         <span class="condition-description">
-            {{ condition.description }}
+            {{ condition.definition.description }}
         </span>
     </div>
 </div>
@@ -41,7 +41,7 @@ export default {
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
-            console.log('this.isCurrent.key', this.isCurrent.key)
+            console.log('this.isCurrent', this.isCurrent)
         }));
     }
 }
