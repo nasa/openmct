@@ -37,6 +37,7 @@
                     <ConditionEdit :condition-identifier="conditionIdentifier"
                                    :is-current="currentConditionIdentifier"
                                    @update-current-condition="updateCurrentCondition"
+                                   @remove-condition="removeCondition"
                     />
                 </div>
                 <div v-else>
@@ -136,8 +137,10 @@ export default {
             this.conditions[index] = updatedCondition;
         },
         removeCondition(identifier) {
-            let index = _.findIndex(this.conditionCollection, (condition) => this.openmct.objects.makeKeyString(identifier) === condition.identifier.key);
-            this.conditionCollection.splice(index, 1);
+            let index = _.findIndex(this.conditionCollection, (condition) => {
+                identifier.key === condition.key
+            });
+            this.conditionCollection.splice(index + 1, 1);
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();
