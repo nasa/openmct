@@ -36,7 +36,6 @@ export default {
         }
     },
     mounted() {
-        console.log('this.condition', this.condition);
     },
     methods: {
 

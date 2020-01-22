@@ -28,20 +28,21 @@
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div class="condition-collection"
-        >
+        <div class="condition-collection">
             <div v-for="conditionIdentifier in conditionCollection"
                  :key="conditionIdentifier.key"
                  class="conditionArea"
             >
                 <div v-if="isEditing">
-                    <ConditionEdit :conditionIdentifier="conditionIdentifier"
-                                   @update-current-condition="updateCurrentCondition"
+                    <ConditionEdit :condition-identifier="conditionIdentifier"
                                    :is-current="currentConditionIdentifier"
+                                   @update-current-condition="updateCurrentCondition"
                     />
                 </div>
                 <div v-else>
-                    <Condition :conditionIdentifier="conditionIdentifier" />
+                    <Condition :condition-identifier="conditionIdentifier"
+                               :is-current="currentConditionIdentifier"
+                    />
                 </div>
             </div>
         </div>
@@ -86,7 +87,7 @@ export default {
         if (!this.conditionCollection.length) {
             this.addCondition(null, true);
         }
-        
+
     },
     methods: {
         addTelemetry(telemetryDomainObject) {
@@ -104,21 +105,7 @@ export default {
             this.conditions.push(condition);
         },
         updateCurrentCondition(identifier) {
-            console.log('updateCurrentCondition from ConditionCollection', identifier);
             this.currentConditionIdentifier = identifier;
-              // this.openmct.objects.get(identifier).then((obj) => {
-            //     if (this.conditionCollection.length > 1) {
-            //         console.log(this.conditionCollection.length)
-            //         this.conditionCollection.forEach((condition, index) => {
-            //             index === 0 ? condition.isCurrent = true : condition.isCurrent = false
-            //             console.log('conditionEdit', condition)
-            //         });
-            //     } else {
-            //         this.conditionCollection[0].isCurrent = true;
-            //     }
- //         });
-            // this.conditionCollection = collection;
-            // this.$set(this.conditionCollection, , post)
         },
         getConditionDomainObject(isDefault) {
             let conditionObj = {

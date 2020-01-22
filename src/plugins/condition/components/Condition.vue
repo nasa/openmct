@@ -1,8 +1,8 @@
 <template>
-<div id="conditionArea"
-     v-if="condition"
+<div v-if="condition"
+     id="conditionArea"
      class="c-cs-ui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': condition.isCurrent }]"
+     :class="['widget-condition', { 'widget-condition--current': isCurrent && (isCurrent.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
         <span class="condition-name">
@@ -27,6 +27,10 @@ export default {
         conditionIdentifier: {
             type: Object,
             required: true
+        },
+        isCurrent: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -38,7 +42,6 @@ export default {
     mounted() {
         this.condition = {};
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
-            console.log('ConditionEdit obj', obj);
             this.condition = obj;
         }));
     },
