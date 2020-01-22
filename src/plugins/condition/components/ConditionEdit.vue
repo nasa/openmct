@@ -187,6 +187,7 @@ export default {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
             this.setOutput();
+            this.setOperation();
             this.updateTelemetry();
             this.conditionClass = new ConditionClass(this.condition, this.openmct);
             this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
@@ -212,14 +213,21 @@ export default {
         },
         setOutput() {
             if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
-                // this.$refs.outputSelect.value = 'string';
                 this.selectedOutputKey = this.outputOptions[2].key;
-                // this.stringOutputField = true;
             } else {
                 if (this.condition.definition.output === 'true') {
                     this.selectedOutputKey = this.outputOptions[1].key;
                 } else {
                     this.selectedOutputKey = this.outputOptions[0].key;
+                }
+            }
+        },
+        setOperation() {
+            if (this.condition.definition.criteria.length && this.condition.definition.criteria[0].operation) {
+                for (let i=0, ii=this.operations.length; i < ii; i++) {
+                    if (this.condition.definition.criteria[0].operation === this.operations[i].name) {
+                        this.selectedOperationKey = this.operations[i].name;
+                    }
                 }
             }
         },

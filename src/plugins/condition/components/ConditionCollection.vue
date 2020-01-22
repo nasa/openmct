@@ -79,7 +79,11 @@ export default {
         this.composition.on('add', this.addTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
-        if (!this.conditionCollection.length) {this.addCondition(null, true)}
+        if (!this.conditionCollection.length) {
+            this.addCondition(null, true)
+        } else {
+            console.log(this.conditionCollection.length, this.conditionCollection);
+        }
     },
     methods: {
         handleConditionResult(args) {
@@ -94,6 +98,7 @@ export default {
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
 
             this.conditionCollection.unshift(conditionDO.identifier);
+            this.persist();
         },
         getConditionDomainObject(isDefault) {
             let conditionObj = {
@@ -134,6 +139,9 @@ export default {
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
         }
     }
 }
