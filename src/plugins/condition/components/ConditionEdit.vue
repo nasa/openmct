@@ -1,7 +1,8 @@
 <template>
 <div v-if="condition"
-     class="c-cs-editui__conditions"
+     class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+     draggable="true"
 >
     <div class="title-bar">
         <span
@@ -150,8 +151,8 @@ export default {
         currentConditionIdentifier: {
             type: Object,
             required: true
-        }
-    },
+        },
+     },
     data() {
         return {
             condition: this.condition,

@@ -28,23 +28,31 @@
                 <span class="c-cs-button__label">Add Condition</span>
             </button>
         </div>
-        <div class="condition-collection">
-            <div v-for="conditionIdentifier in conditionCollection"
-                 :key="conditionIdentifier.key"
-                 class="conditionArea"
-            >
-                <div v-if="isEditing">
-                    <ConditionEdit :condition-identifier="conditionIdentifier"
+        <div class="c-c condition-collection">
+            <div id="js-c-drag-ghost"
+                 class="c-c__drag-ghost"
+            ></div>
+            <div class="c-c__container-holder">
+                <div v-for="conditionIdentifier in conditionCollection"
+                     :key="conditionIdentifier.key"
+                >
+                    <div class="c-c__drop-hint">
+                        <div class="c-drop-hint c-drop-hint"></div>
+                    </div>
+
+                    <div v-if="isEditing">
+                        <ConditionEdit :condition-identifier="conditionIdentifier"
+                                       :current-condition-identifier="currentConditionIdentifier"
+                                       @update-current-condition="updateCurrentCondition"
+                                       @remove-condition="removeCondition"
+                                       @condition-result-updated="handleConditionResult"
+                        />
+                    </div>
+                    <div v-else>
+                        <Condition :condition-identifier="conditionIdentifier"
                                    :current-condition-identifier="currentConditionIdentifier"
-                                   @update-current-condition="updateCurrentCondition"
-                                   @remove-condition="removeCondition"
-                                   @condition-result-updated="handleConditionResult"
-                    />
-                </div>
-                <div v-else>
-                    <Condition :condition-identifier="conditionIdentifier"
-                               :current-condition-identifier="currentConditionIdentifier"
-                    />
+                        />
+                    </div>
                 </div>
             </div>
         </div>
