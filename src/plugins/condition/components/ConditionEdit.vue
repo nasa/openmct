@@ -82,17 +82,21 @@
                                 </li>
                             </ul>
                             <ul class="t-widget-rule-config">
-                                <li v-if="telemetryObject && telemetryMetadata"
+                                <li v-if="telemetry.length"
                                     class="has-local-controls t-condition"
                                 >
                                     <label>when</label>
                                     <span class="t-configuration">
                                         <span class="controls">
                                             <select v-model="selectedTelemetryKey"
-                                                    class=""
                                             >
                                                 <option value="">- Select Telemetry -</option>
-                                                <option :value="telemetryObject.identifier">{{ telemetryObject.name }}</option>
+                                                <option v-for="telemetryOption in telemetry"
+                                                        :key="telemetryOption.identifier.key"
+                                                        :value="telemetryOption.identifier"
+                                                >
+                                                    {{ telemetryOption.name }}
+                                                </option>
                                             </select>
                                         </span>
                                         <span class="controls">
@@ -121,6 +125,7 @@
                                             <input v-if="comparisonValueField"
                                                    class="t-rule-name-input"
                                                    type="text"
+                                                   v-model="operationValue"
                                                    @keyup="getOperationValue"
                                             >
                                         </span>
@@ -150,6 +155,11 @@ export default {
         isCurrent: {
             type: Object,
             required: true
+        },
+        telemetry: {
+            type: Array,
+            required: true,
+            default: () => []
         }
     },
     data() {
@@ -165,6 +175,7 @@ export default {
             selectedOutputKey: null,
             stringOutputField: false,
             comparisonValueField: false,
+            operationValue: this.operationValue,
             outputOptions: [
                 {
                     key: 'false',
@@ -230,6 +241,10 @@ export default {
                 for (let i=0, ii=this.operations.length; i < ii; i++) {
                     if (this.condition.definition.criteria[0].operation === this.operations[i].name) {
                         this.selectedOperationKey = this.operations[i].name;
+                        this.comparisonValueField = this.operations[i].inputCount > 0;
+                        if (this.comparisonValueField) {
+                            this.operationValue = this.condition.definition.criteria[0].input;
+                        }
                     }
                 }
             }
@@ -239,17 +254,40 @@ export default {
                 this.openmct.objects.get(this.condition.definition.criteria[0].key).then((obj) => {
                     this.telemetryObject = obj;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
-                    this.selectedMetaDataKey = this.telemetryMetadata[0].key;
-                    this.selectedTelemetryKey = this.telemetryObject.identifier;
+                    this.selectedMetaDataKey = this.getTelemetryMetadataKey();
+                    this.selectedTelemetryKey = this.getTelemetryKey();
                 });
             } else {
                 this.telemetryObject = null;
             }
         },
+        getTelemetryMetadataKey() {
+            let index = 0;
+            if (this.condition.definition.criteria[0].metaDataKey) {
+                index = _.findIndex(this.telemetryMetadata, (metadata) => {
+                    return metadata.key === this.condition.definition.criteria[0].metaDataKey;
+                });
+            }
+            return this.telemetryMetadata.length ? this.telemetryMetadata[index].key : null;
+        },
+        getTelemetryKey() {
+            let index = 0;
+            if (this.condition.definition.criteria[0].key) {
+                index = _.findIndex(this.telemetry, (obj) => {
+                    let key = this.openmct.objects.makeKeyString(obj.identifier);
+                    return key === this.condition.definition.criteria[0].key;
+                });
+            }
+            return this.telemetry.length ? this.telemetry[index].identifier : null;
+        },
         hasTelemetry() {
             return this.condition.definition.criteria.length && this.condition.definition.criteria[0].key;
         },
         persist() {
+            if (this.condition.definition.criteria.length) {
+                this.condition.definition.criteria[0].metaDataKey = this.selectedMetaDataKey;
+                this.condition.definition.criteria[0].input = this.operationValue || '';
+            }
             this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         checkInputValue() {

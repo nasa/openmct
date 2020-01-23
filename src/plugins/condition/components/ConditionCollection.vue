@@ -35,6 +35,7 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :condition-identifier="conditionIdentifier"
+                                   :telemetry="telemetryObjs"
                                    :is-current="currentConditionIdentifier"
                                    @update-current-condition="updateCurrentCondition"
                                    @remove-condition="removeCondition"
@@ -72,7 +73,8 @@ export default {
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditions: [],
-            currentConditionIdentifier: this.currentConditionIdentifier || {}
+            currentConditionIdentifier: this.currentConditionIdentifier || {},
+            telemetryObjs: this.telemetryObjs
         };
     },
     destroyed() {
@@ -136,8 +138,8 @@ export default {
                     criteria: isDefault ? [] : [{
                         operation: '',
                         input: '',
-                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                        metaDataKey: '',
+                        key: ''
                     }]
                 },
                 summary: 'summary description'
