@@ -1,7 +1,7 @@
 <template>
 <div v-if="condition"
      class="c-cs-editui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': isCurrent && (isCurrent.key === conditionIdentifier.key) }]"
+     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
         <span
@@ -152,7 +152,7 @@ export default {
             type: Object,
             required: true
         },
-        isCurrent: {
+        currentConditionIdentifier: {
             type: Object,
             required: true
         },
@@ -170,8 +170,8 @@ export default {
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
             selectedMetaDataKey: null,
-            selectedTelemetryKey: null,
-            selectedOperationKey: null,
+            selectedTelemetryKey: '',
+            selectedOperationKey: '',
             selectedOutputKey: null,
             stringOutputField: false,
             comparisonValueField: false,

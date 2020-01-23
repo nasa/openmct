@@ -2,7 +2,7 @@
 <div v-if="condition"
      id="conditionArea"
      class="c-cs-ui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': isCurrent && (isCurrent.key === conditionIdentifier.key) }]"
+     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
         <span class="condition-name">
@@ -28,7 +28,7 @@ export default {
             type: Object,
             required: true
         },
-        isCurrent: {
+        currentConditionIdentifier: {
             type: Object,
             required: true
         }
