@@ -35,7 +35,7 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :condition-identifier="conditionIdentifier"
-                                   :is-current="currentConditionIdentifier"
+                                   :current-condition-identifier="currentConditionIdentifier"
                                    @update-current-condition="updateCurrentCondition"
                                    @remove-condition="removeCondition"
                                    @condition-result-updated="handleConditionResult"
@@ -43,7 +43,7 @@
                 </div>
                 <div v-else>
                     <Condition :condition-identifier="conditionIdentifier"
-                               :is-current="currentConditionIdentifier"
+                               :current-condition-identifier="currentConditionIdentifier"
                     />
                 </div>
             </div>
@@ -80,16 +80,35 @@ export default {
     },
     mounted() {
         this.telemetryObjs = [];
+        this.conditionResults = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
-        if (!this.conditionCollection.length) {this.addCondition(null, true)}
+        if (!this.conditionCollection.length) {
+            this.addCondition(null, true);
+        } else {
+            this.updateCurrentCondition(this.conditionCollection[0]);
+        }
     },
     methods: {
         handleConditionResult(args) {
-            console.log('ConditionCollection: ', args.result);
+            let idAsString = this.openmct.objects.makeKeyString(args.id);
+            this.conditionResults[idAsString] = args.result;
+            this.updateCurrentConditionId();
+        },
+        updateCurrentConditionId() {
+            let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
+            for (let i=0, ii = this.conditionCollection.length-1; i< ii; i++) {
+                let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
+                if (this.conditionResults[conditionIdAsString]) {
+                    //first condition to be true wins
+                    currentConditionIdentifier = this.conditionCollection[i];
+                    break;
+                }
+            }
+            this.$emit('current-condition-updated', currentConditionIdentifier);
         },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
@@ -135,12 +154,14 @@ export default {
             this.conditions[index] = updatedCondition;
         },
         removeCondition(identifier) {
-            console.log('this.conditions', this.conditions);
             let index = _.findIndex(this.conditionCollection, (condition) => {
-                identifier.key === condition.key
+                let conditionId = this.openmct.objects.makeKeyString(condition);
+                let id = this.openmct.objects.makeKeyString(identifier);
+                return conditionId === id;
             });
-            this.conditionCollection.splice(index + 1, 1);
+            this.conditionCollection.splice(index, 1);
             this.persist();
+            this.updateCurrentConditionId();
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();

@@ -5,7 +5,7 @@
             <CurrentOutput :condition="currentCondition" />
             <TestData :is-editing="isEditing" />
             <ConditionCollection :is-editing="isEditing"
-                                 @update-current-condition="updateCurrentcondition"
+                                 @current-condition-updated="updateCurrentCondition"
             />
         </div>
     </div>
@@ -16,7 +16,6 @@
 import CurrentOutput from './CurrentOutput.vue';
 import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
-
 
 export default {
     inject: ["openmct", "domainObject"],
@@ -35,20 +34,19 @@ export default {
     },
     mounted() {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
-        this.currentConditionIdentifier = conditionCollection.length ? this.domainObject.configuration.conditionCollection[0] : null;
-        if (this.currentConditionIdentifier) {
-            this.openmct.objects.get(this.currentConditionIdentifier).then((obj) => {
-                this.currentCondition = obj;
-            });
-        }
-
+        this.currentConditionIdentifier = conditionCollection.length ? this.updateCurrentCondition(conditionCollection[0]) : null;
     },
     methods: {
-        updateCurrentcondition(identifier) {
-            this.currentConditionIdentifier = identifier;
-            this.openmct.objects.get(this.currentConditionIdentifier).then((obj) => {
-                this.currentCondition = obj;
-            });
+        setCurrentCondition() {
+            if (this.currentConditionIdentifier) {
+                this.openmct.objects.get(this.currentConditionIdentifier).then((obj) => {
+                    this.currentCondition = obj;
+                });
+            }
+        },
+        updateCurrentCondition(conditionIdentifier) {
+            this.currentConditionIdentifier = conditionIdentifier;
+            this.setCurrentCondition();
         }
     }
 };
