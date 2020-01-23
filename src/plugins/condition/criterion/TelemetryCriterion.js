@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import * as EventEmitter from 'eventemitter3';
+import {OPERATIONS} from '../utils/operations';
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -38,6 +39,9 @@ export default class TelemetryCriterion extends EventEmitter {
         this.objectAPI = this.openmct.objects;
         this.telemetryAPI = this.openmct.telemetry;
         this.id = telemetryDomainObjectDefinition.id;
+        this.operation = telemetryDomainObjectDefinition.operation;
+        this.input = telemetryDomainObjectDefinition.input;
+        this.metaDataKey = telemetryDomainObjectDefinition.metaDataKey;
         this.subscription = null;
         this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
@@ -51,18 +55,33 @@ export default class TelemetryCriterion extends EventEmitter {
         this.emitEvent('criterionUpdated', this);
     }
 
-    handleSubscription(datum) {
-        let data = this.normalizeData(datum);
+    handleSubscription(data) {
+        let result = this.computeResult(data);
         this.emitEvent('criterionResultUpdated', {
-            result: data,
+            result: result,
             error: null
         })
     }
 
-    normalizeData(datum) {
-        return {
-            [datum.key]: datum[datum.source]
+    findOperation(operation) {
+        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+            if (operation === OPERATIONS[i].name) {
+                return OPERATIONS[i].operation;
+            }
         }
+        return null;
+    }
+
+    computeResult(data) {
+        let comparator = this.findOperation(this.operation);
+        let params = [];
+        let result = false;
+        params.push(data[this.metaDataKey]);
+        params.push(this.input);
+        if (typeof comparator === 'function') {
+            result = comparator(params);
+        }
+        return result;
     }
 
     emitEvent(eventName, data) {
@@ -76,6 +95,7 @@ export default class TelemetryCriterion extends EventEmitter {
      *  Subscribes to the telemetry object and returns an unsubscribe function
      */
     subscribe() {
+        this.unsubscribe();
         this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
             this.handleSubscription(datum);
         });

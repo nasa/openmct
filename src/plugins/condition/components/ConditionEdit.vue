@@ -206,7 +206,6 @@ export default {
     },
     methods: {
         handleConditionResult(args) {
-            console.log('ConditionEdit::Result', args);
             this.$emit('condition-result-updated', {
                 id: this.conditionIdentifier,
                 result: args.data.result

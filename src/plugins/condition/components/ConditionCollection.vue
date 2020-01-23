@@ -92,7 +92,6 @@ export default {
     },
     methods: {
         handleConditionResult(args) {
-            console.log('ConditionCollection: ', args.result);
             let idAsString = this.openmct.objects.makeKeyString(args.id);
             this.conditionResults[idAsString] = args.result;
             this.updateCurrentConditionId();
