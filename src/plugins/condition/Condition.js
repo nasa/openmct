@@ -69,7 +69,6 @@ export default class ConditionClass extends EventEmitter {
     }
 
     update(newDomainObject) {
-        console.log('ConditionClass: ', newDomainObject.definition);
         this.updateTrigger(newDomainObject.definition.trigger);
         this.updateCriteria(newDomainObject.definition.criteria);
         this.handleConditionUpdated();
