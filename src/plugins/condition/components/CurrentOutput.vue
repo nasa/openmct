@@ -37,6 +37,9 @@ export default {
     },
     mounted() {
     },
+    updated() {
+
+    },
     methods: {
 
     }

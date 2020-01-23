@@ -256,6 +256,8 @@ export default {
         checkInputValue() {
             if (this.selectedOutputKey === this.outputOptions[2].key) {
                 this.condition.definition.output = '';
+            } else {
+                this.condition.definition.output = this.selectedOutputKey;
             }
         },
         operationKeyChange(ev) {
