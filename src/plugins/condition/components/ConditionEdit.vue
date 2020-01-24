@@ -1,9 +1,11 @@
 <template>
 <div v-if="condition"
+     :data-condition-index="conditionIndex"
      class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
-     draggable="true"
-     @dragstart="initDrag"
+     :draggable="!condition.isDefault"
+     @dragstart="dragStart"
+     @dragover.stop
 >
     <div class="title-bar">
         <span
@@ -153,6 +155,10 @@ export default {
             type: Object,
             required: true
         },
+        conditionIndex: {
+            type: Number,
+            required: true
+        }
     },
     data() {
         return {
@@ -209,24 +215,8 @@ export default {
         this.persist();
     },
     methods: {
-        initDrag() {
-            // let type = this.openmct.types.get(this.domainObject.type),
-            //     iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
-
-            // if (this.dragGhost) {
-            //     let originalClassName = this.dragGhost.classList[0];
-            //     this.dragGhost.className = '';
-            //     this.dragGhost.classList.add(originalClassName, iconClass);
-
-            //     this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
-            //     event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
-            // }
-
-            console.log('conditionId', this.condition.id);
-            console.log('containerIndex', this.containerIndex);
-
-            event.dataTransfer.setData('conditionId', this.condition.id);
-            event.dataTransfer.setData('containerIndex', this.containerIndex);
+        dragStart: e => {
+            e.dataTransfer.setData('conditionIndex', e.target.getAttribute('data-condition-index'));
         },
         handleConditionResult(args) {
             // console.log('ConditionEdit::Result', args);

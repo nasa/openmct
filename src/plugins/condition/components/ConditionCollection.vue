@@ -29,16 +29,19 @@
             </button>
         </div>
         <div class="c-c condition-collection">
-            <div id="js-c-drag-ghost"
-                 class="c-c__drag-ghost"
-            ></div>
             <div class="c-c__container-holder">
                 <div v-for="(conditionIdentifier, index) in conditionCollection"
                      :key="conditionIdentifier.key"
                 >
                     <div v-if="isEditing">
+                        <div :id="'drop' + index"
+                             class="c-c__drag-ghost"
+                             @drop.prevent="dropCondition"
+                             @dragover.prevent
+                        ></div>
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
+                                       :condition-index="index"
                                        @update-current-condition="updateCurrentCondition"
                                        @remove-condition="removeCondition"
                                        @condition-result-updated="handleConditionResult"
@@ -98,6 +101,27 @@ export default {
         }
     },
     methods: {
+        dropCondition(e) {
+            const newCondIndex = Number(e.dataTransfer.getData('conditionIndex'));
+            const oldCondIndex = Number(e.target.id.slice(4));
+
+            let reorderPlan = [];
+
+            this.conditionCollection.forEach((condition, index) => {
+                const reorderObj = {};
+                reorderObj.oldIndex = index;
+                if (index === oldCondIndex) {
+                    reorderObj.newIndex = newCondIndex;
+                } else if (index === newCondIndex) {
+                    reorderObj.newIndex = oldCondIndex;
+                } else {
+                    reorderObj.newIndex = index;
+                }
+                reorderPlan.push(reorderObj);
+            });
+
+            this.reorder(reorderPlan);
+        },
         handleConditionResult(args) {
             let idAsString = this.openmct.objects.makeKeyString(args.id);
             this.conditionResults[idAsString] = args.result;
@@ -173,6 +197,7 @@ export default {
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
+            this.persist();
         },
         persist() {
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);

@@ -1,12 +1,16 @@
 .widget-condition {
     background-color: #eee;
-    margin: 0 0 0.6em;
+    margin: 0 0 5px;
     border-radius: 3px;
 
     &--current {
         background-color: #DEECFA;
     }
 
+}
+
+.c-c-editui__conditions.widget-condition {
+    margin: 0;
 }
 
 .title-bar {
@@ -149,4 +153,9 @@
     &:before {
         content: $glyph-icon-trash;
     }
+}
+
+.c-c__drag-ghost {
+    width: 100%;
+    min-height: 10px;
 }
