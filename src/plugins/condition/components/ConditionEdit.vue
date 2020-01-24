@@ -3,6 +3,7 @@
      class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
      draggable="true"
+     @dragstart="initDrag"
 >
     <div class="title-bar">
         <span
@@ -28,20 +29,20 @@
         ></span>
     </div>
     <div v-if="expanded"
-         class="condition-config-edit widget-rule-content c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded"
+         class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
     >
-        <div id="ruleArea"
-             class="c-sw-editui__rules widget-rules"
+        <div id="conditionArea"
+             class="c-c-editui__condition widget-conditions"
         >
-            <div class="c-sw-rule">
-                <div class="c-sw-rule__ui l-compact-form l-widget-rule has-local-controls">
+            <div class="c-c-condition">
+                <div class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls">
                     <div>
-                        <ul class="t-widget-rule-config">
+                        <ul class="t-widget-condition-config">
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
                                     <input v-model="condition.definition.name"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
@@ -62,16 +63,16 @@
                                     </select>
                                     <input v-if="selectedOutputKey === outputOptions[2].key"
                                            v-model="condition.definition.output"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
                             </li>
                         </ul>
                         <div v-if="!condition.isDefault"
-                             class="widget-rule-content expanded"
+                             class="widget-condition-content expanded"
                         >
-                            <ul class="t-widget-rule-config">
+                            <ul class="t-widget-condition-config">
                                 <li class="has-local-controls t-condition">
                                     <label>Match when</label>
                                     <span class="controls">
@@ -82,7 +83,7 @@
                                     </span>
                                 </li>
                             </ul>
-                            <ul class="t-widget-rule-config">
+                            <ul class="t-widget-condition-config">
                                 <li v-if="telemetryObject && telemetryMetadata"
                                     class="has-local-controls t-condition"
                                 >
@@ -120,7 +121,7 @@
                                                 </option>
                                             </select>
                                             <input v-if="comparisonValueField"
-                                                   class="t-rule-name-input"
+                                                   class="t-condition-name-input"
                                                    type="text"
                                                    @keyup="getOperationValue"
                                             >
@@ -152,7 +153,7 @@ export default {
             type: Object,
             required: true
         },
-     },
+    },
     data() {
         return {
             condition: this.condition,
@@ -198,6 +199,8 @@ export default {
             this.conditionClass = new ConditionClass(this.condition, this.openmct);
             this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         }));
+
+        this.dragGhost = document.getElementById('js-c-drag-ghost');
     },
     updated() {
         if (this.isCurrent && this.isCurrent.key === this.condition.key) {
@@ -206,6 +209,25 @@ export default {
         this.persist();
     },
     methods: {
+        initDrag() {
+            // let type = this.openmct.types.get(this.domainObject.type),
+            //     iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+
+            // if (this.dragGhost) {
+            //     let originalClassName = this.dragGhost.classList[0];
+            //     this.dragGhost.className = '';
+            //     this.dragGhost.classList.add(originalClassName, iconClass);
+
+            //     this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
+            //     event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
+            // }
+
+            console.log('conditionId', this.condition.id);
+            console.log('containerIndex', this.containerIndex);
+
+            event.dataTransfer.setData('conditionId', this.condition.id);
+            event.dataTransfer.setData('containerIndex', this.containerIndex);
+        },
         handleConditionResult(args) {
             // console.log('ConditionEdit::Result', args);
             this.$emit('condition-result-updated', {

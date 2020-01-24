@@ -33,13 +33,9 @@
                  class="c-c__drag-ghost"
             ></div>
             <div class="c-c__container-holder">
-                <div v-for="conditionIdentifier in conditionCollection"
+                <div v-for="(conditionIdentifier, index) in conditionCollection"
                      :key="conditionIdentifier.key"
                 >
-                    <div class="c-c__drop-hint">
-                        <div class="c-drop-hint c-drop-hint"></div>
-                    </div>
-
                     <div v-if="isEditing">
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
@@ -64,6 +60,7 @@
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
+
 
 export default {
     inject: ['openmct', 'domainObject'],

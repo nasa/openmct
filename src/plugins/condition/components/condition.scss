@@ -1,5 +1,3 @@
-
-
 .widget-condition {
     background-color: #eee;
     margin: 0 0 0.6em;
@@ -53,7 +51,7 @@
     margin-left: 0;
 }
 
-.l-widget-rule {
+.l-widget-condition {
     padding: 0;
 }
 
@@ -61,11 +59,11 @@
     padding: 0;
 }
 
-.widget-rule-content.expanded {
+.widget-condition-content.expanded {
     margin: 0 3px;
 }
 
-.widget-rule-content.expanded ul {
+.widget-condition-content.expanded ul {
     border-top: solid 1px #ccc;
     padding: 2px;
 }
