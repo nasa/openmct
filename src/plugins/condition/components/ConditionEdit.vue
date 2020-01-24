@@ -89,6 +89,7 @@
                                     <span class="t-configuration">
                                         <span class="controls">
                                             <select v-model="selectedTelemetryKey"
+                                                    @change="telemetryChange"
                                             >
                                                 <option value="">- Select Telemetry -</option>
                                                 <option v-for="telemetryOption in telemetry"
@@ -169,10 +170,10 @@ export default {
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
-            selectedMetaDataKey: null,
+            selectedMetaDataKey: '',
             selectedTelemetryKey: '',
             selectedOperationKey: '',
-            selectedOutputKey: null,
+            selectedOutputKey: '',
             stringOutputField: false,
             comparisonValueField: false,
             operationValue: this.operationValue,
@@ -210,9 +211,6 @@ export default {
         }));
     },
     updated() {
-        if (this.isCurrent && this.isCurrent.key === this.condition.key) {
-            this.updateCurrentCondition();
-        }
         this.persist();
     },
     methods: {
@@ -222,7 +220,7 @@ export default {
                 result: args.data.result
             })
         },
-        removeCondition(ev) { //move this to conditionCollection
+        removeCondition(ev) {
             this.$emit('remove-condition', this.conditionIdentifier);
         },
         setOutput() {
@@ -262,32 +260,37 @@ export default {
             }
         },
         getTelemetryMetadataKey() {
-            let index = 0;
+            let index = -1;
             if (this.condition.definition.criteria[0].metaDataKey) {
                 index = _.findIndex(this.telemetryMetadata, (metadata) => {
                     return metadata.key === this.condition.definition.criteria[0].metaDataKey;
                 });
             }
-            return this.telemetryMetadata.length ? this.telemetryMetadata[index].key : null;
+            return this.telemetryMetadata.length && index > -1 ? this.telemetryMetadata[index].key : '';
         },
         getTelemetryKey() {
-            let index = 0;
+            let index = -1;
             if (this.condition.definition.criteria[0].key) {
                 index = _.findIndex(this.telemetry, (obj) => {
                     let key = this.openmct.objects.makeKeyString(obj.identifier);
-                    return key === this.condition.definition.criteria[0].key;
+                    let conditionKey = this.openmct.objects.makeKeyString(this.condition.definition.criteria[0].key);
+                    return key === conditionKey;
                 });
             }
-            return this.telemetry.length ? this.telemetry[index].identifier : null;
+            return this.telemetry.length && index > -1 ? this.telemetry[index].identifier : '';
         },
         hasTelemetry() {
             return this.condition.definition.criteria.length && this.condition.definition.criteria[0].key;
         },
-        persist() {
+        updateConditionCriteria() {
             if (this.condition.definition.criteria.length) {
+                this.condition.definition.criteria[0].key = this.selectedTelemetryKey;
                 this.condition.definition.criteria[0].metaDataKey = this.selectedMetaDataKey;
+                this.condition.definition.criteria[0].operation = this.selectedOperationKey;
                 this.condition.definition.criteria[0].input = this.operationValue || '';
             }
+        },
+        persist() {
             this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         checkInputValue() {
@@ -298,18 +301,22 @@ export default {
             }
         },
         operationKeyChange(ev) {
-            if (ev.target.value !== 'isUndefined' && ev.target.value !== 'isDefined') {
+            if (this.selectedOperationKey !== 'isUndefined' && this.selectedOperationKey !== 'isDefined') {
                 this.comparisonValueField = true;
             } else {
                 this.comparisonValueField = false;
             }
-            this.condition.definition.criteria[0].operation = this.selectedOperationKey;
-            this.persist();
+            this.updateConditionCriteria();
             //find the criterion being updated and set the operation property
         },
+        telemetryChange() {
+            this.selectedMetaDataKey = '';
+            this.updateConditionCriteria();
+            this.updateTelemetry();
+        },
         getOperationValue(ev) {
-            this.condition.definition.criteria[0].input = [ev.target.value];
-            this.persist();
+            // this.condition.definition.criteria[0].input = [ev.target.value];
+            this.updateConditionCriteria();
             //find the criterion being updated and set the input property
         },
         updateCurrentCondition() {

@@ -78,6 +78,7 @@ export default class TelemetryCriterion extends EventEmitter {
         let result = false;
         params.push(data[this.metaDataKey]);
         params.push(this.input);
+        console.log(params);
         if (typeof comparator === 'function') {
             result = comparator(params);
         }
