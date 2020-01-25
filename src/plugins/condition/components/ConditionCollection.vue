@@ -29,16 +29,21 @@
             </button>
         </div>
         <div class="c-c condition-collection">
-            <div class="c-c__container-holder">
-                <div v-for="(conditionIdentifier, index) in conditionCollection"
-                     :key="conditionIdentifier.key"
+            <ul class="c-c__container-holder">
+                <li v-for="(conditionIdentifier, index) in conditionCollection"
+                    :key="conditionIdentifier.key"
                 >
                     <div v-if="isEditing">
-                        <div :id="'drop' + index"
+                        <div v-if="index !== conditionCollection.length - 1"
+                             :id="'drop' + index"
                              class="c-c__drag-ghost"
                              @drop.prevent="dropCondition"
                              @dragover.prevent
                         ></div>
+                        <div v-else
+                             class="c-c__drag-ghost"
+                        >
+                        </div>
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
@@ -52,8 +57,8 @@
                                    :current-condition-identifier="currentConditionIdentifier"
                         />
                     </div>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </div>
 </section>
@@ -102,24 +107,21 @@ export default {
     },
     methods: {
         dropCondition(e) {
-            const newCondIndex = Number(e.dataTransfer.getData('conditionIndex'));
-            const oldCondIndex = Number(e.target.id.slice(4));
+            const moveIndex = Number(e.dataTransfer.getData('conditionIndex'));
+            const targetIndex = Number(e.target.id.slice(4));
 
-            let reorderPlan = [];
+            function moveArrIndex(arr, from, to) {
+                arr.splice(to, 0, arr.splice(from,  1)[0]);
+                return arr;
+            }
 
-            this.conditionCollection.forEach((condition, index) => {
-                const reorderObj = {};
-                reorderObj.oldIndex = index;
-                if (index === oldCondIndex) {
-                    reorderObj.newIndex = newCondIndex;
-                } else if (index === newCondIndex) {
-                    reorderObj.newIndex = oldCondIndex;
-                } else {
-                    reorderObj.newIndex = index;
-                }
-                reorderPlan.push(reorderObj);
-            });
+            const oldIndexArr = Object.keys(this.conditionCollection);
+            const newIndexArr = moveArrIndex(Object.keys(this.conditionCollection), moveIndex, targetIndex);
 
+            const reorderPlan = [];
+            for (let i = 0; i < oldIndexArr.length; i++) {
+                reorderPlan.push({oldIndex: i, newIndex: newIndexArr[i]});
+            }
             this.reorder(reorderPlan);
         },
         handleConditionResult(args) {
