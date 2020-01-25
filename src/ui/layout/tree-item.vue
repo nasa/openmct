@@ -2,7 +2,7 @@
 <li class="c-tree__item-h">
     <div
         class="c-tree__item"
-        :class="{ 'is-alias': isAlias, 'is-navigated-object': isNavigated }"
+        :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
     >
         <view-control
             v-model="expanded"
@@ -40,6 +40,12 @@
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
+const LOCAL_STORAGE__TREE_STATE_ID = 'mct-tree--';
+
+function makeLocalStorageStateKey(id) {
+    return `${LOCAL_STORAGE__TREE_STATE_ID}${id}`;
+}
+
 export default {
     name: 'TreeItem',
     inject: ['openmct'],
@@ -54,12 +60,12 @@ export default {
         }
     },
     data() {
-        this.navigateToPath = this.buildPathString(this.node.navigateToParent)
+        this.navigateToPath = this.buildPathString(this.node.navigateToParent);
         return {
             hasChildren: false,
             isLoading: false,
             loaded: false,
-            isNavigated: this.navigateToPath === this.openmct.router.currentLocation.path,
+            navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
             children: [],
             expanded: false
         }
@@ -75,7 +81,7 @@ export default {
         }
     },
     watch: {
-        expanded(isExpanded) {
+        expanded() {
             if (!this.hasChildren) {
                 return;
             }
@@ -86,7 +92,14 @@ export default {
                 this.composition.load().then(this.finishLoading);
                 this.isLoading = true;
             }
+            this.setLocalStorageState();
+        },
+        navigated() {
+            this.setLocalStorageState();
         }
+    },
+    beforeMount() {
+        this.initLocalStorageState();
     },
     mounted() {
         // TODO: should update on mutation.
@@ -107,6 +120,7 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
+        this.getLocalStorageState();
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
@@ -129,6 +143,7 @@ export default {
             let removeId = this.openmct.objects.makeKeyString(identifier);
             this.children = this.children
                 .filter(c => c.id !== removeId);
+            this.removeLocalStorageState(makeLocalStorageStateKey(removeId));
         },
         finishLoading() {
             this.isLoading = false;
@@ -139,10 +154,45 @@ export default {
         },
         highlightIfNavigated(newPath, oldPath) {
             if (newPath === this.navigateToPath) {
-                this.isNavigated = true;
+                this.navigated = true;
             } else if (oldPath === this.navigateToPath) {
-                this.isNavigated = false;
+                this.navigated = false;
             }
+        },
+        initLocalStorageState() {
+            this.key = makeLocalStorageStateKey(this.openmct.objects.makeKeyString(this.node.object.identifier))
+            this.state = {
+                expanded: [],
+                navigated: ''
+            };
+        },
+        getLocalStorageState() {
+            const state = localStorage.getItem(this.key);
+
+            if (state) {
+                this.state = JSON.parse(state);
+                console.log(this.state.navigated)
+                console.log(this.navigateToPath)
+                this.expanded = this.state.expanded.includes(this.navigateToPath);
+                this.navigated = this.state.navigated === this.navigateToPath;
+            } else {
+                this.setLocalStorageState();
+            }
+        },
+        setLocalStorageState() {
+            this.state.expanded = this.expanded
+                ? [...new Set([this.navigateToPath, ...this.state.expanded])]
+                : this.state.expanded.filter(path => path !== this.navigateToPath);
+            this.state.navigated = this.navigated ? this.navigateToPath : '';
+
+            if ((this.state.expanded && this.state.expanded.length) || this.state.navigated) {
+                localStorage.setItem(this.key, JSON.stringify(this.state));
+            } else {
+                this.removeLocalStorageState(this.key);
+            }
+        },
+        removeLocalStorageState(key) {
+            localStorage.removeItem(key);
         }
     }
 }
