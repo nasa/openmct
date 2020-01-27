@@ -40,6 +40,12 @@ export default {
             condition: this.condition
         };
     },
+    destroyed() {
+        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+            this.conditionClass.destroy();
+        }
+    },
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
