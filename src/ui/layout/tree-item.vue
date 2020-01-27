@@ -165,6 +165,7 @@ export default {
             const navigated = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED);
             this.navigated = navigated && JSON.parse(navigated) === this.navigateToPath;
         },
+        // on path change, store the path string of the new navigated/highlighted path to localstorage
         setLocalStorageNavigated(path) {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED, JSON.stringify(path));
         },
@@ -176,6 +177,7 @@ export default {
                 this.expanded = expandedPaths.includes(this.navigateToPath);
             }
         },
+        // expanded nodes/paths are stored in local storage as an array
         setLocalStorageExpanded() {
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
