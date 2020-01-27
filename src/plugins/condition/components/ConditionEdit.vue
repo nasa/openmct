@@ -127,7 +127,6 @@
                                                    class="t-rule-name-input"
                                                    type="text"
                                                    v-model="operationValue"
-                                                   @keyup="getOperationValue"
                                             >
                                         </span>
                                     </span>
@@ -241,7 +240,7 @@ export default {
                         this.selectedOperationKey = this.operations[i].name;
                         this.comparisonValueField = this.operations[i].inputCount > 0;
                         if (this.comparisonValueField) {
-                            this.operationValue = this.condition.definition.criteria[0].input;
+                            this.operationValue = this.condition.definition.criteria[0].input[0];
                         }
                     }
                 }
@@ -287,9 +286,11 @@ export default {
                 this.condition.definition.criteria[0].key = this.selectedTelemetryKey;
                 this.condition.definition.criteria[0].metaDataKey = this.selectedMetaDataKey;
                 this.condition.definition.criteria[0].operation = this.selectedOperationKey;
+                this.condition.definition.criteria[0].input = [this.operationValue];
             }
         },
         persist() {
+            this.updateConditionCriteria();
             this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         checkInputValue() {
@@ -305,18 +306,11 @@ export default {
             } else {
                 this.comparisonValueField = false;
             }
-            this.updateConditionCriteria();
             //find the criterion being updated and set the operation property
         },
         telemetryChange() {
             this.selectedMetaDataKey = '';
-            this.updateConditionCriteria();
             this.updateTelemetry();
-        },
-        getOperationValue(ev) {
-            this.condition.definition.criteria[0].input = [ev.target.value];
-            this.updateConditionCriteria();
-            //find the criterion being updated and set the input property
         },
         updateCurrentCondition() {
             this.$emit('update-current-condition', this.conditionIdentifier);
