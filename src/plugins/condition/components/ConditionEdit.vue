@@ -11,12 +11,11 @@
         <span
             class="c-c__menu-hamburger"
             :class="{ 'is-enabled': !condition.isDefault }"
-            @click="expanded = !condition.expanded"
         ></span>
         <span
             class="is-enabled flex-elem"
             :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
-            @click="expanded = !condition.expanded"
+            @click="expanded = !expanded"
         ></span>
         <div class="condition-summary">
             <span class="condition-name">{{ condition.definition.name }}</span>
@@ -215,8 +214,8 @@ export default {
         this.persist();
     },
     methods: {
-        dragStart: e => {
-            e.dataTransfer.setData('conditionIndex', e.target.getAttribute('data-condition-index'));
+        dragStart(e) {
+            this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         handleConditionResult(args) {
             // console.log('ConditionEdit::Result', args);

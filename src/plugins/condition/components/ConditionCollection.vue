@@ -34,22 +34,19 @@
                     :key="conditionIdentifier.key"
                 >
                     <div v-if="isEditing">
-                        <div v-if="index !== conditionCollection.length - 1"
-                             :id="'drop' + index"
-                             class="c-c__drag-ghost"
+                        <div class="c-c__drag-ghost"
                              @drop.prevent="dropCondition"
+                             @dragenter="dragEnter"
+                             @dragleave="dragLeave"
                              @dragover.prevent
                         ></div>
-                        <div v-else
-                             class="c-c__drag-ghost"
-                        >
-                        </div>
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
                                        @update-current-condition="updateCurrentCondition"
                                        @remove-condition="removeCondition"
                                        @condition-result-updated="handleConditionResult"
+                                       @set-move-index="setMoveIndex"
                         />
                     </div>
                     <div v-else>
@@ -85,7 +82,8 @@ export default {
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditions: [],
-            currentConditionIdentifier: this.currentConditionIdentifier || {}
+            currentConditionIdentifier: this.currentConditionIdentifier || {},
+            moveIndex: null
         };
     },
     destroyed() {
@@ -106,23 +104,49 @@ export default {
         }
     },
     methods: {
+        setMoveIndex(index) {
+            this.moveIndex = index;
+        },
         dropCondition(e) {
-            const moveIndex = Number(e.dataTransfer.getData('conditionIndex'));
-            const targetIndex = Number(e.target.id.slice(4));
-
-            function moveArrIndex(arr, from, to) {
-                arr.splice(to, 0, arr.splice(from,  1)[0]);
+            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
+            if (targetIndex > this.moveIndex) { targetIndex-- }
+            const oldIndexArr = Object.keys(this.conditionCollection);
+            const move = function (arr, old_index, new_index) {
+                while (old_index < 0) {
+                    old_index += arr.length;
+                }
+                while (new_index < 0) {
+                    new_index += arr.length;
+                }
+                if (new_index >= arr.length) {
+                    var k = new_index - arr.length;
+                    while ((k--) + 1) {
+                        arr.push(undefined);
+                    }
+                }
+                arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
                 return arr;
             }
-
-            const oldIndexArr = Object.keys(this.conditionCollection);
-            const newIndexArr = moveArrIndex(Object.keys(this.conditionCollection), moveIndex, targetIndex);
-
+            const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
             const reorderPlan = [];
+
             for (let i = 0; i < oldIndexArr.length; i++) {
-                reorderPlan.push({oldIndex: i, newIndex: newIndexArr[i]});
+                reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
             }
+
             this.reorder(reorderPlan);
+
+            e.target.classList.remove("dragging");
+        },
+        dragEnter(e) {
+            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
+
+            if (targetIndex > this.moveIndex) { targetIndex-- }
+            if (this.moveIndex === targetIndex) { return }
+            e.target.classList.add("dragging");
+        },
+        dragLeave(e) {
+            e.target.classList.remove("dragging");
         },
         handleConditionResult(args) {
             let idAsString = this.openmct.objects.makeKeyString(args.id);

@@ -157,5 +157,12 @@
 
 .c-c__drag-ghost {
     width: 100%;
-    min-height: 10px;
+    min-height: 5px;
+    &.dragging {
+        min-height: 20px;
+        border: solid 1px blue;
+        background-color: lightblue;
+        border-radius: 2px;
+    }
+
 }
