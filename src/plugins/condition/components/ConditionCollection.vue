@@ -44,6 +44,7 @@
                 </div>
                 <div v-else>
                     <Condition :condition-identifier="conditionIdentifier"
+                               @condition-result-updated="handleConditionResult"
                                :current-condition-identifier="currentConditionIdentifier"
                     />
                 </div>
