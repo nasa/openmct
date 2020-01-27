@@ -113,7 +113,6 @@ export default {
         this.openmct.router.on('change:path', this.highlightIfNavigated);
 
         this.getLocalStorageExpanded();
-        this.getLocalStorageNavigated();
     },
     beforeDestroy() {
         /****
@@ -159,15 +158,6 @@ export default {
             } else if (oldPath === this.navigateToPath) {
                 this.navigated = false;
             }
-            this.setLocalStorageNavigated(newPath);
-        },
-        getLocalStorageNavigated() {
-            const navigated = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED);
-            this.navigated = navigated && JSON.parse(navigated) === this.navigateToPath;
-        },
-        // on path change, store the path string of the new navigated/highlighted path to localstorage
-        setLocalStorageNavigated(path) {
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED, JSON.stringify(path));
         },
         getLocalStorageExpanded() {
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
