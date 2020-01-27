@@ -287,7 +287,6 @@ export default {
                 this.condition.definition.criteria[0].key = this.selectedTelemetryKey;
                 this.condition.definition.criteria[0].metaDataKey = this.selectedMetaDataKey;
                 this.condition.definition.criteria[0].operation = this.selectedOperationKey;
-                this.condition.definition.criteria[0].input = this.operationValue || '';
             }
         },
         persist() {
@@ -315,7 +314,7 @@ export default {
             this.updateTelemetry();
         },
         getOperationValue(ev) {
-            // this.condition.definition.criteria[0].input = [ev.target.value];
+            this.condition.definition.criteria[0].input = [ev.target.value];
             this.updateConditionCriteria();
             //find the criterion being updated and set the input property
         },
