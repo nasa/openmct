@@ -40,11 +40,8 @@
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
-const LOCAL_STORAGE__TREE_STATE_ID = 'mct-tree--';
-
-function makeLocalStorageStateKey(id) {
-    return `${LOCAL_STORAGE__TREE_STATE_ID}${id}`;
-}
+const LOCAL_STORAGE_KEY__TREE_NAVIGATED = 'mct-tree-navigated';
+const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 
 export default {
     name: 'TreeItem',
@@ -92,14 +89,8 @@ export default {
                 this.composition.load().then(this.finishLoading);
                 this.isLoading = true;
             }
-            this.setLocalStorageState();
-        },
-        navigated() {
-            this.setLocalStorageState();
+            this.setLocalStorageExpanded(this.navigateToPath);
         }
-    },
-    beforeMount() {
-        this.initLocalStorageState();
     },
     mounted() {
         // TODO: should update on mutation.
@@ -120,7 +111,18 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
-        this.getLocalStorageState();
+
+        this.getLocalStorageExpanded();
+        this.getLocalStorageNavigated();
+    },
+    beforeDestroy() {
+        /****
+            * calling this.setLocalStorageExpanded explicitly here because for whatever reason,
+            * the watcher on this.expanded is not triggering this.setLocalStorageExpanded(),
+            * even though Vue documentation states, "At this stage the instance is still fully functional."
+        *****/
+        this.expanded = false;
+        this.setLocalStorageExpanded();
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
@@ -143,7 +145,6 @@ export default {
             let removeId = this.openmct.objects.makeKeyString(identifier);
             this.children = this.children
                 .filter(c => c.id !== removeId);
-            this.removeLocalStorageState(makeLocalStorageStateKey(removeId));
         },
         finishLoading() {
             this.isLoading = false;
@@ -158,41 +159,43 @@ export default {
             } else if (oldPath === this.navigateToPath) {
                 this.navigated = false;
             }
+            this.setLocalStorageNavigated(newPath);
         },
-        initLocalStorageState() {
-            this.key = makeLocalStorageStateKey(this.openmct.objects.makeKeyString(this.node.object.identifier))
-            this.state = {
-                expanded: [],
-                navigated: ''
-            };
+        getLocalStorageNavigated() {
+            const navigated = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED);
+            this.navigated = navigated && JSON.parse(navigated) === this.navigateToPath;
         },
-        getLocalStorageState() {
-            const state = localStorage.getItem(this.key);
+        setLocalStorageNavigated(path) {
+            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_NAVIGATED, JSON.stringify(path));
+        },
+        getLocalStorageExpanded() {
+            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
 
-            if (state) {
-                this.state = JSON.parse(state);
-                console.log(this.state.navigated)
-                console.log(this.navigateToPath)
-                this.expanded = this.state.expanded.includes(this.navigateToPath);
-                this.navigated = this.state.navigated === this.navigateToPath;
-            } else {
-                this.setLocalStorageState();
+            if (expandedPaths) {
+                expandedPaths = JSON.parse(expandedPaths);
+                this.expanded = expandedPaths.includes(this.navigateToPath);
             }
         },
-        setLocalStorageState() {
-            this.state.expanded = this.expanded
-                ? [...new Set([this.navigateToPath, ...this.state.expanded])]
-                : this.state.expanded.filter(path => path !== this.navigateToPath);
-            this.state.navigated = this.navigated ? this.navigateToPath : '';
+        setLocalStorageExpanded() {
+            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
+            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
 
-            if ((this.state.expanded && this.state.expanded.length) || this.state.navigated) {
-                localStorage.setItem(this.key, JSON.stringify(this.state));
+            if (this.expanded) {
+                if (!expandedPaths.includes(this.navigateToPath)) {
+                    expandedPaths.push(this.navigateToPath);
+                }
             } else {
-                this.removeLocalStorageState(this.key);
+                // remove this node path and all children paths from stored expanded paths
+                expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
             }
+
+            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         },
-        removeLocalStorageState(key) {
-            localStorage.removeItem(key);
+        removeLocalStorageExpanded() {
+            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
+            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
+            expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
+            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         }
     }
 }
