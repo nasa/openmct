@@ -40,7 +40,6 @@
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
-const LOCAL_STORAGE_KEY__TREE_NAVIGATED = 'mct-tree-navigated';
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 
 export default {
