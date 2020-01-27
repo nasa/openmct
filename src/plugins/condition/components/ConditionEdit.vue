@@ -194,25 +194,49 @@ export default {
         };
     },
     destroyed() {
-        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-            this.conditionClass.destroy();
-        }
+        this.destroy();
     },
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
+            this.initialize();
+        }));
+    },
+    updated() {
+        //validate telemetry exists, update criteria as needed
+        this.validate();
+        this.persist();
+    },
+    methods: {
+        initialize() {
             this.setOutput();
             this.setOperation();
             this.updateTelemetry();
             this.conditionClass = new ConditionClass(this.condition, this.openmct);
             this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-        }));
-    },
-    updated() {
-        this.persist();
-    },
-    methods: {
+        },
+        destroy() {
+            this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+                this.conditionClass.destroy();
+                delete this.conditionClass;
+            }
+        },
+        reset() {
+            this.selectedMetaDataKey = '';
+            this.selectedTelemetryKey = '';
+            this.selectedOperationKey = '';
+            this.operationValue = '';
+        },
+        validate() {
+            if (this.hasTelemetry() && !this.getTelemetryKey()) {
+                this.reset();
+            } else {
+                if (!this.conditionClass) {
+                    this.initialize();
+                }
+            }
+        },
         handleConditionResult(args) {
             this.$emit('condition-result-updated', {
                 id: this.conditionIdentifier,
@@ -310,6 +334,7 @@ export default {
         },
         telemetryChange() {
             this.selectedMetaDataKey = '';
+            this.updateConditionCriteria();
             this.updateTelemetry();
         },
         updateCurrentCondition() {
