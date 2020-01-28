@@ -35,7 +35,7 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :condition-identifier="conditionIdentifier"
-                                   :is-current="currentConditionIdentifier"
+                                   :current-condition-identifier="currentConditionIdentifier"
                                    @update-current-condition="updateCurrentCondition"
                                    @remove-condition="removeCondition"
                                    @condition-result-updated="handleConditionResult"
@@ -43,7 +43,7 @@
                 </div>
                 <div v-else>
                     <Condition :condition-identifier="conditionIdentifier"
-                               :is-current="currentConditionIdentifier"
+                               :current-condition-identifier="currentConditionIdentifier"
                     />
                 </div>
             </div>
@@ -88,6 +88,8 @@ export default {
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {
             this.addCondition(null, true);
+        } else {
+            this.updateCurrentCondition(this.conditionCollection[0]);
         }
     },
     methods: {
@@ -98,7 +100,6 @@ export default {
         },
         updateCurrentConditionId() {
             let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
-
             for (let i=0, ii = this.conditionCollection.length-1; i< ii; i++) {
                 let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
                 if (this.conditionResults[conditionIdAsString]) {
