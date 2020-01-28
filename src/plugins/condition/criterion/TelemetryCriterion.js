@@ -38,6 +38,9 @@ export default class TelemetryCriterion extends EventEmitter {
         this.objectAPI = this.openmct.objects;
         this.telemetryAPI = this.openmct.telemetry;
         this.id = telemetryDomainObjectDefinition.id;
+        this.operation = telemetryDomainObjectDefinition.operation;
+        this.input = telemetryDomainObjectDefinition.input;
+        this.metaDataKey = telemetryDomainObjectDefinition.metaDataKey;
         this.subscription = null;
         this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
@@ -51,18 +54,16 @@ export default class TelemetryCriterion extends EventEmitter {
         this.emitEvent('criterionUpdated', this);
     }
 
-    handleSubscription(datum) {
-        let data = this.normalizeData(datum);
+    handleSubscription(data) {
+        let result = this.computeResult(data);
         this.emitEvent('criterionResultUpdated', {
-            result: data,
+            result: result,
             error: null
         })
     }
 
-    normalizeData(datum) {
-        return {
-            [datum.key]: datum[datum.source]
-        }
+    computeResult(data) {
+        return false;
     }
 
     emitEvent(eventName, data) {
@@ -76,6 +77,7 @@ export default class TelemetryCriterion extends EventEmitter {
      *  Subscribes to the telemetry object and returns an unsubscribe function
      */
     subscribe() {
+        this.unsubscribe();
         this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
             this.handleSubscription(datum);
         });
@@ -90,6 +92,10 @@ export default class TelemetryCriterion extends EventEmitter {
             this.subscription();
         }
         delete this.subscription;
+    }
+
+    destroy() {
+        this.unsubscribe();
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
