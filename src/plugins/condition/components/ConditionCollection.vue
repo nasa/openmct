@@ -45,6 +45,7 @@
                                        :condition-index="index"
                                        @update-current-condition="updateCurrentCondition"
                                        @remove-condition="removeCondition"
+                                       @clone-condition="cloneCondition"
                                        @condition-result-updated="handleConditionResult"
                                        @set-move-index="setMoveIndex"
                         />
@@ -168,17 +169,36 @@ export default {
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
-        addCondition(event, isDefault) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault);
+        /*
+            Adds a condition to list via programatic creation of default for initial list, manual
+            creation via Add Condition button, or duplication via button in title bar of condition.
+            Params:
+            event: always null,
+            idDefault (boolean): true if conditionList is empty
+            isClone (boolean): true if duplicating a condition
+            name (string): name of condition being duplicated
+            index (number): index of condition being duplicated
+        */
+        addCondition(event, isDefault, isClone, name, index) {
+            let conditionDO = this.getConditionDomainObject(!!isDefault, isClone, name, index);
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
-            this.conditionCollection.unshift(conditionDO.identifier);
+            if (!isClone) {
+                this.conditionCollection.unshift(conditionDO.identifier);
+            } else {
+                this.conditionCollection.splice(index + 1, 0, conditionDO.identifier);
+            }
             this.persist();
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
         },
-        getConditionDomainObject(isDefault) {
+        getConditionDomainObject(isDefault, isClone, name) {
+            if (isClone) {
+                name = 'Copy of ' + name;
+            } else {
+                name = isDefault ? 'Default' : 'Unnamed Condition';
+            }
             let conditionObj = {
                 isDefault: isDefault,
                 identifier: {
@@ -186,7 +206,7 @@ export default {
                     key: uuid()
                 },
                 definition: {
-                    name: isDefault ? 'Default' : 'Unnamed Condition',
+                    name: name,
                     output: 'false',
                     trigger: 'any',
                     criteria: isDefault ? [] : [{
@@ -203,11 +223,6 @@ export default {
 
             return newDO.useCapability('adapter');
         },
-        updateCondition(updatedCondition) {
-            //TODO: this should only happen for reordering
-            let index = _.findIndex(this.conditions, (condition) => condition.id === updatedCondition.id);
-            this.conditions[index] = updatedCondition;
-        },
         removeCondition(identifier) {
             let index = _.findIndex(this.conditionCollection, (condition) => {
                 let conditionId = this.openmct.objects.makeKeyString(condition);
@@ -219,11 +234,16 @@ export default {
             this.updateCurrentConditionId();
         },
         reorder(reorderPlan) {
-            let oldConditions = this.conditionCollection.slice();
+            let oldConditions = Array.from(this.conditionCollection);
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
             });
             this.persist();
+        },
+        cloneCondition(condition) {
+            this.openmct.objects.get(condition.identifier).then((obj) => {
+                this.addCondition(null, false, true, obj.definition.name, condition.index);
+            });
         },
         persist() {
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);

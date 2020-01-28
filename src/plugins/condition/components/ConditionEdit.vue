@@ -23,6 +23,7 @@
         </div>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__duplicate"
+              @click="cloneCondition"
         ></span>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__trash"
@@ -218,14 +219,19 @@ export default {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         handleConditionResult(args) {
-            // console.log('ConditionEdit::Result', args);
             this.$emit('condition-result-updated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
         },
-        removeCondition(ev) { //move this to conditionCollection
+        removeCondition(ev) {
             this.$emit('remove-condition', this.conditionIdentifier);
+        },
+        cloneCondition(ev) {
+            this.$emit('clone-condition', {
+                identifier: this.conditionIdentifier,
+                index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
+            });
         },
         setOutput() {
             if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
@@ -252,7 +258,6 @@ export default {
                 this.openmct.objects.get(this.condition.definition.criteria[0].key).then((obj) => {
                     this.telemetryObject = obj;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
-                    // this.selectedMetaDataKey = this.telemetryMetadata[0].key;
                     this.selectedMetaDataKey = '';
                     this.selectedTelemetryKey = this.telemetryObject.identifier;
                 });
