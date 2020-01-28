@@ -176,11 +176,11 @@ export default {
             event: always null,
             idDefault (boolean): true if conditionList is empty
             isClone (boolean): true if duplicating a condition
-            name (string): name of condition being duplicated
+            definition (string): definition property of condition being duplicated with new name
             index (number): index of condition being duplicated
         */
-        addCondition(event, isDefault, isClone, name, index) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault, isClone, name, index);
+        addCondition(event, isDefault, isClone, definition, index) {
+            let conditionDO = this.getConditionDomainObject(!!isDefault, isClone, definition);
             //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
             this.openmct.objects.mutate(conditionDO, 'created', new Date());
             if (!isClone) {
@@ -193,11 +193,17 @@ export default {
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
         },
-        getConditionDomainObject(isDefault, isClone, name) {
-            if (isClone) {
-                name = 'Copy of ' + name;
-            } else {
-                name = isDefault ? 'Default' : 'Unnamed Condition';
+        getConditionDomainObject(isDefault, isClone, definition) {
+            const definitionTemplate = {
+                name: isDefault ? 'Default' : 'Unnamed Condition',
+                output: 'false',
+                trigger: 'any',
+                criteria: isDefault ? [] : [{
+                    operation: '',
+                    input: '',
+                    metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
+                    key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                }]
             }
             let conditionObj = {
                 isDefault: isDefault,
@@ -205,17 +211,7 @@ export default {
                     namespace: this.domainObject.identifier.namespace,
                     key: uuid()
                 },
-                definition: {
-                    name: name,
-                    output: 'false',
-                    trigger: 'any',
-                    criteria: isDefault ? [] : [{
-                        operation: '',
-                        input: '',
-                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
-                    }]
-                },
+                definition: isClone ? definition: definitionTemplate,
                 summary: 'summary description'
             };
             let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
@@ -242,7 +238,8 @@ export default {
         },
         cloneCondition(condition) {
             this.openmct.objects.get(condition.identifier).then((obj) => {
-                this.addCondition(null, false, true, obj.definition.name, condition.index);
+                obj.definition.name = 'Copy of ' + obj.definition.name;
+                this.addCondition(null, false, true, obj.definition, condition.index);
             });
         },
         persist() {
