@@ -174,7 +174,7 @@ export default {
             creation via Add Condition button, or duplication via button in title bar of condition.
             Params:
             event: always null,
-            idDefault (boolean): true if conditionList is empty
+            isDefault (boolean): true if conditionList is empty
             isClone (boolean): true if duplicating a condition
             definition (string): definition property of condition being duplicated with new name
             index (number): index of condition being duplicated
