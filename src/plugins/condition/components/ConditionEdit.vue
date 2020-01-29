@@ -1,18 +1,21 @@
 <template>
 <div v-if="condition"
-     class="c-cs-editui__conditions"
+     class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+     :data-condition-index="conditionIndex"
+     :draggable="!condition.isDefault"
+     @dragstart="dragStart"
+     @dragover.stop
 >
     <div class="title-bar">
         <span
             class="c-c__menu-hamburger"
             :class="{ 'is-enabled': !condition.isDefault }"
-            @click="expanded = !condition.expanded"
         ></span>
         <span
             class="is-enabled flex-elem"
             :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
-            @click="expanded = !condition.expanded"
+            @click="expanded = !expanded"
         ></span>
         <div class="condition-summary">
             <span class="condition-name">{{ condition.definition.name }}</span>
@@ -20,6 +23,7 @@
         </div>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__duplicate"
+              @click="cloneCondition"
         ></span>
         <span v-if="!condition.isDefault"
               class="is-enabled c-c__trash"
@@ -27,20 +31,20 @@
         ></span>
     </div>
     <div v-if="expanded"
-         class="condition-config-edit widget-rule-content c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded"
+         class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
     >
-        <div id="ruleArea"
-             class="c-sw-editui__rules widget-rules"
+        <div id="conditionArea"
+             class="c-c-editui__condition widget-conditions"
         >
-            <div class="c-sw-rule">
-                <div class="c-sw-rule__ui l-compact-form l-widget-rule has-local-controls">
+            <div class="c-c-condition">
+                <div class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls">
                     <div>
-                        <ul class="t-widget-rule-config">
+                        <ul class="t-widget-condition-config">
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
                                     <input v-model="condition.definition.name"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
@@ -61,16 +65,16 @@
                                     </select>
                                     <input v-if="selectedOutputKey === outputOptions[2].key"
                                            v-model="condition.definition.output"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
                             </li>
                         </ul>
                         <div v-if="!condition.isDefault"
-                             class="widget-rule-content expanded"
+                             class="widget-condition-content expanded"
                         >
-                            <ul class="t-widget-rule-config">
+                            <ul class="t-widget-condition-config">
                                 <li class="has-local-controls t-condition">
                                     <label>Match when</label>
                                     <span class="controls">
@@ -81,11 +85,13 @@
                                     </span>
                                 </li>
                             </ul>
-                            <ul class="t-widget-rule-config">
-                                <li v-if="telemetry.length"
+                            <ul v-if="telemetry.length"
+                                class="t-widget-condition-config">
+                                <li v-for="(criteria, index) in condition.definition.criteria"
+                                    :key="criteria.key.key"
                                     class="has-local-controls t-condition"
                                 >
-                                    <label>when</label>
+                                    <label>{{ index === 0 ? 'when' : 'and when' }}</label>
                                     <span class="t-configuration">
                                         <span class="controls">
                                             <select v-model="selectedTelemetryKey"
@@ -124,14 +130,23 @@
                                                 </option>
                                             </select>
                                             <input v-if="comparisonValueField"
-                                                   class="t-rule-name-input"
-                                                   type="text"
                                                    v-model="operationValue"
+                                                   class="t-condition-name-input"
+                                                   type="text"
                                             >
                                         </span>
                                     </span>
                                 </li>
                             </ul>
+                            <div class="holder c-c-button-wrapper align-left">
+                                <span class="c-c-label-spacer"></span>
+                                <button
+                                    class="c-c-button c-c-button--minor add-criteria-button"
+                                    @click="addCriteria"
+                                >
+                                    <span class="c-c-button__label">Add Criteria</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +159,7 @@
 <script>
 import { OPERATIONS } from '../utils/operations';
 import ConditionClass from "@/plugins/condition/Condition";
+import uuid from 'uuid';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -154,6 +170,10 @@ export default {
         },
         currentConditionIdentifier: {
             type: Object,
+            required: true
+        },
+        conditionIndex: {
+            type: Number,
             required: true
         },
         telemetry: {
@@ -201,6 +221,8 @@ export default {
             this.condition = obj;
             this.initialize();
         }));
+
+        this.dragGhost = document.getElementById('js-c-drag-ghost');
     },
     updated() {
         //validate telemetry exists, update criteria as needed
@@ -208,6 +230,22 @@ export default {
         this.persist();
     },
     methods: {
+        addCriteria() {
+            const criteriaObject = {
+                operation: '',
+                input: '',
+                metaDataKey: '',
+                key: {
+                    namespace: '',
+                    key: uuid()
+                }
+            }
+            this.condition.definition.criteria.push(criteriaObject);
+            console.log('this.condition.definition.criteria', this.condition.definition.criteria);
+        },
+        dragStart(e) {
+            this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
+        },
         initialize() {
             this.setOutput();
             this.setOperation();
@@ -245,6 +283,12 @@ export default {
         },
         removeCondition(ev) {
             this.$emit('remove-condition', this.conditionIdentifier);
+        },
+        cloneCondition(ev) {
+            this.$emit('clone-condition', {
+                identifier: this.conditionIdentifier,
+                index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
+            });
         },
         setOutput() {
             if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
@@ -343,3 +387,4 @@ export default {
     }
 }
 </script>
+

@@ -1,8 +1,6 @@
-
-
 .widget-condition {
     background-color: #eee;
-    margin: 0 0 0.6em;
+    margin: 0 0 5px;
     border-radius: 3px;
 
     &--current {
@@ -10,6 +8,35 @@
     }
 
 }
+
+.c-c-editui__conditions.widget-condition {
+    margin: 0;
+}
+
+.c-c-button-wrapper {
+    border-top: solid 1px #ccc;
+    padding: 2px;
+}
+
+.c-c-label-spacer {
+    display: inline-block;
+    width: 90px;
+}
+
+.c-c-button[class*="--minor"],
+.c-c-button[class*='is-active'],
+.c-c-button--menu[class*="--minor"],
+.c-c-button--menu[class*='is-active'] {
+    border: solid 1px #666;
+    background-color: #eee;
+    padding: 0.1em 0.4em;
+    margin: 0.4em;
+    font-weight: normal;
+    color: #666;
+    border-radius: 6px;
+}
+
+
 
 .title-bar {
     display: flex;
@@ -53,7 +80,7 @@
     margin-left: 0;
 }
 
-.l-widget-rule {
+.l-widget-condition {
     padding: 0;
 }
 
@@ -61,11 +88,11 @@
     padding: 0;
 }
 
-.widget-rule-content.expanded {
+.widget-condition-content.expanded {
     margin: 0 3px;
 }
 
-.widget-rule-content.expanded ul {
+.widget-condition-content.expanded ul {
     border-top: solid 1px #ccc;
     padding: 2px;
 }
@@ -151,4 +178,16 @@
     &:before {
         content: $glyph-icon-trash;
     }
+}
+
+.c-c__drag-ghost {
+    width: 100%;
+    min-height: 5px;
+    &.dragging {
+        min-height: 20px;
+        border: solid 1px blue;
+        background-color: lightblue;
+        border-radius: 2px;
+    }
+
 }

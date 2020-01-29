@@ -29,7 +29,6 @@ section {
 
 .c-cs-ui__label {
     color: #333;
-    vertical-align: middle;
 }
 
 .c-cs__ui_content .help {
@@ -85,7 +84,7 @@ section {
 .c-cs-button[class*='is-active'],
 .c-cs-button--menu[class*="--major"],
 .c-cs-button--menu[class*='is-active'] {
-    border: solid 1.5px #0B427C;
+    border: solid 1px #0B427C;
     background-color: #4778A3;
     padding: 0.2em 0.6em;
     margin: 0.4em;
@@ -144,4 +143,5 @@ section {
         content: $glyph-icon-trash;
     }
 }
+
 
