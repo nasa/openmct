@@ -1,16 +1,15 @@
 <template>
 <div v-if="condition"
-     :data-condition-index="conditionIndex"
      class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
-     :draggable="!condition.isDefault"
-     @dragstart="dragStart"
-     @dragover.stop
 >
     <div class="title-bar">
-        <span
-            class="c-c__menu-hamburger"
-            :class="{ 'is-enabled': !condition.isDefault }"
+        <span class="c-c__menu-hamburger"
+              :class="{ 'is-enabled': !condition.isDefault }"
+              :data-condition-index="conditionIndex"
+              :draggable="!condition.isDefault"
+              @dragstart="dragStart"
+              @dragover.stop
         ></span>
         <span
             class="is-enabled flex-elem"
@@ -204,8 +203,6 @@ export default {
             this.conditionClass = new ConditionClass(this.condition, this.openmct);
             this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         }));
-
-        this.dragGhost = document.getElementById('js-c-drag-ghost');
     },
     updated() {
         if (this.isCurrent && this.isCurrent.key === this.condition.key) {
@@ -215,6 +212,8 @@ export default {
     },
     methods: {
         dragStart(e) {
+            e.dataTransfer.effectAllowed = "copyMove";
+            e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         handleConditionResult(args) {

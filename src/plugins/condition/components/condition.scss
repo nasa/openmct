@@ -137,7 +137,14 @@
     }
 }
 
+
 .c-c__menu-hamburger {
+    &:active {
+        cursor: grabbing;
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
+    }
+
     &:before {
         content: $glyph-icon-menu-hamburger;
     }
