@@ -24,7 +24,7 @@ import * as EventEmitter from 'eventemitter3';
 import uuid from 'uuid';
 import TelemetryCriterion from "@/plugins/condition/criterion/TelemetryCriterion";
 import { TRIGGER } from "@/plugins/condition/utils/constants";
-import {computeConditionForAll, computeConditionForAny} from "@/plugins/condition/utils/evaluator";
+import {computeCondition} from "@/plugins/condition/utils/evaluator";
 
 /*
 * conditionDefinition = {
@@ -228,11 +228,7 @@ export default class ConditionClass extends EventEmitter {
 
     //TODO: implement as part of the evaluator class task.
     evaluate() {
-        if (this.trigger === TRIGGER.ANY) {
-            this.result = computeConditionForAny(this.criteriaResults);
-        } else if (this.trigger === TRIGGER.ALL) {
-            this.result = computeConditionForAll(this.criteriaResults);
-        }
+        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }
 
     emitEvent(eventName, data) {

@@ -1,28 +1,13 @@
-/**
- * Returns true only if at least one of the results is true
- **/
-export const computeConditionForAny = (resultMap) => {
+export const computeCondition = (resultMap, allMustBeTrue) => {
     let result = false;
     for (let key in resultMap) {
         if (resultMap.hasOwnProperty(key)) {
             result = resultMap[key];
-            if (result) {
+            if (allMustBeTrue && !result) {
+                //If we want all conditions to be true, then even one negative result should break.
                 break;
-            }
-        }
-    }
-    return result;
-};
-
-/**
- * Returns true only if all the results are true
- **/
-export const computeConditionForAll = (resultMap) => {
-    let result = false;
-    for (let key in resultMap) {
-        if (resultMap.hasOwnProperty(key)) {
-            result = resultMap[key];
-            if (!result) {
+            } else if (!allMustBeTrue && result) {
+                //If we want at least one condition to be true, then even one positive result should break.
                 break;
             }
         }
