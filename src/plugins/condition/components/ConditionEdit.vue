@@ -89,7 +89,7 @@
                                     <span class="t-configuration">
                                         <span class="controls">
                                             <select v-model="selectedTelemetryKey"
-                                                    @change="telemetryChange"
+                                                    @change="updateTelemetryMetaData"
                                             >
                                                 <option value="">- Select Telemetry -</option>
                                                 <option v-for="telemetryOption in telemetry"
@@ -113,7 +113,7 @@
                                         </span>
                                         <span class="controls">
                                             <select v-model="selectedOperationKey"
-                                                    @change="operationKeyChange"
+                                                    @change="setInputValueVisibility"
                                             >
                                                 <option value="">- Select Comparison -</option>
                                                 <option v-for="option in operations"
@@ -324,7 +324,7 @@ export default {
                 this.condition.definition.output = this.selectedOutputKey;
             }
         },
-        operationKeyChange(ev) {
+        setInputValueVisibility(ev) {
             if (this.selectedOperationKey !== 'isUndefined' && this.selectedOperationKey !== 'isDefined') {
                 this.comparisonValueField = true;
             } else {
@@ -332,7 +332,7 @@ export default {
             }
             //find the criterion being updated and set the operation property
         },
-        telemetryChange() {
+        updateTelemetryMetaData() {
             this.selectedMetaDataKey = '';
             this.updateConditionCriteria();
             this.updateTelemetry();
