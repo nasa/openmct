@@ -1,4 +1,5 @@
 <template>
+<!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
 <div v-if="condition"
      id="conditionArea"
      class="c-cs-ui__conditions"

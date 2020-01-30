@@ -1,13 +1,11 @@
 <template>
-<div class="c-object-view u-contents">
-    <div class="c-cs-edit w-condition-set">
-        <div class="c-sw-edit__ui holder">
-            <CurrentOutput :condition="currentCondition" />
-            <TestData :is-editing="isEditing" />
-            <ConditionCollection :is-editing="isEditing"
-                                 @current-condition-updated="updateCurrentCondition"
-            />
-        </div>
+<div class="c-cs-edit w-condition-set">
+    <div class="c-sw-edit__ui holder">
+        <CurrentOutput :condition="currentCondition" />
+        <TestData :is-editing="isEditing" />
+        <ConditionCollection :is-editing="isEditing"
+                             @current-condition-updated="updateCurrentCondition"
+        />
     </div>
 </div>
 </template>
