@@ -208,7 +208,6 @@ export default {
     },
     methods: {
         handleConditionResult(args) {
-            // console.log('ConditionEdit::Result', args);
             this.$emit('condition-result-updated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
@@ -242,7 +241,6 @@ export default {
                 this.openmct.objects.get(this.condition.definition.criteria[0].key).then((obj) => {
                     this.telemetryObject = obj;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
-                    // this.selectedMetaDataKey = this.telemetryMetadata[0].key;
                     this.selectedMetaDataKey = '';
                     this.selectedTelemetryKey = this.telemetryObject.identifier;
                 });
