@@ -238,19 +238,20 @@ export default {
             }
         },
         handleConditionResult(args) {
-            this.$emit('condition-result-updated', {
+            this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
         },
         removeCondition(ev) {
-            this.$emit('remove-condition', this.conditionIdentifier);
+            this.$emit('removeCondition', this.conditionIdentifier);
         },
         setOutput() {
-            if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
+            let conditionOutput = this.condition.definition.output;
+            if (conditionOutput !== 'false' && conditionOutput !== 'true') {
                 this.selectedOutputKey = this.outputOptions[2].key;
             } else {
-                if (this.condition.definition.output === 'true') {
+                if (conditionOutput === 'true') {
                     this.selectedOutputKey = this.outputOptions[1].key;
                 } else {
                     this.selectedOutputKey = this.outputOptions[0].key;
@@ -307,10 +308,11 @@ export default {
         },
         updateConditionCriteria() {
             if (this.condition.definition.criteria.length) {
-                this.condition.definition.criteria[0].key = this.selectedTelemetryKey;
-                this.condition.definition.criteria[0].metaDataKey = this.selectedMetaDataKey;
-                this.condition.definition.criteria[0].operation = this.selectedOperationKey;
-                this.condition.definition.criteria[0].input = [this.operationValue];
+                let criterion = this.condition.definition.criteria[0];
+                criterion.key = this.selectedTelemetryKey;
+                criterion.metaDataKey = this.selectedMetaDataKey;
+                criterion.operation = this.selectedOperationKey;
+                criterion.input = [this.operationValue];
             }
         },
         persist() {
@@ -338,7 +340,7 @@ export default {
             this.updateTelemetry();
         },
         updateCurrentCondition() {
-            this.$emit('update-current-condition', this.conditionIdentifier);
+            this.$emit('updateCurrentCondition', this.conditionIdentifier);
         }
     }
 }

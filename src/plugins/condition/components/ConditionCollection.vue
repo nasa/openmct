@@ -37,15 +37,15 @@
                     <ConditionEdit :condition-identifier="conditionIdentifier"
                                    :telemetry="telemetryObjs"
                                    :current-condition-identifier="currentConditionIdentifier"
-                                   @update-current-condition="updateCurrentCondition"
-                                   @remove-condition="removeCondition"
-                                   @condition-result-updated="handleConditionResult"
+                                   @updateCurrentCondition="updateCurrentCondition"
+                                   @removeCondition="removeCondition"
+                                   @conditionResultUpdated="handleConditionResult"
                     />
                 </div>
                 <div v-else>
                     <Condition :condition-identifier="conditionIdentifier"
-                               @condition-result-updated="handleConditionResult"
                                :current-condition-identifier="currentConditionIdentifier"
+                               @conditionResultUpdated="handleConditionResult"
                     />
                 </div>
             </div>
@@ -112,7 +112,7 @@ export default {
                     break;
                 }
             }
-            this.$emit('current-condition-updated', currentConditionIdentifier);
+            this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
@@ -128,10 +128,10 @@ export default {
             }
         },
         addCondition(event, isDefault) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault);
-            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(conditionDO, 'created', new Date());
-            this.conditionCollection.unshift(conditionDO.identifier);
+            let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
+            //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', new Date());
+            this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
         updateCurrentCondition(identifier) {
@@ -157,10 +157,10 @@ export default {
                 },
                 summary: 'summary description'
             };
-            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
 
-            return newDO.useCapability('adapter');
+            return newDomainObject.useCapability('adapter');
         },
         updateCondition(updatedCondition) {
             //TODO: this should only happen for reordering

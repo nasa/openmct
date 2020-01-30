@@ -55,7 +55,7 @@ export default {
     },
     methods: {
         handleConditionResult(args) {
-            this.$emit('condition-result-updated', {
+            this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
