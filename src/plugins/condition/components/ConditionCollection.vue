@@ -75,10 +75,18 @@
                     <div v-else>
                         <Condition :condition-identifier="conditionIdentifier"
                                    :current-condition-identifier="currentConditionIdentifier"
-                        />
-                    </div>
-                </li>
-            </ul>
+                                   @update-current-condition="updateCurrentCondition"
+                                   @remove-condition="removeCondition"
+                                   @condition-result-updated="handleConditionResult"
+                    />
+                </div>
+                <div v-else>
+                    <Condition :condition-identifier="conditionIdentifier"
+                               :current-condition-identifier="currentConditionIdentifier"
+                               @condition-result-updated="handleConditionResult"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -189,16 +197,16 @@ export default {
                     break;
                 }
             }
-            this.$emit('current-condition-updated', currentConditionIdentifier);
+            this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
         addCondition(event, isDefault) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault);
-            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(conditionDO, 'created', new Date());
-            this.conditionCollection.unshift(conditionDO.identifier);
+            let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
+            //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', new Date());
+            this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
         updateCurrentCondition(identifier) {
@@ -224,10 +232,10 @@ export default {
                 },
                 summary: 'summary description'
             };
-            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
 
-            return newDO.useCapability('adapter');
+            return newDomainObject.useCapability('adapter');
         },
         updateCondition(updatedCondition) {
             //TODO: this should only happen for reordering

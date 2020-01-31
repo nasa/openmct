@@ -118,7 +118,7 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select v-model="selectedOperationKey[currentCriteria.key]"
+                                            <select v-model="selectOperationName"
                                                     @change="setInputValueVisibility"
                                             >
                                                 <option value="">- Select Comparison -</option>
@@ -190,10 +190,9 @@ export default {
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
-            trigger: 'all',
-            selectedMetaDataKey: {},
-            selectedTelemetryKey: {},
-            selectedOperationKey: {},
+            selectedMetaDataKey: '',
+            selectedTelemetryKey: '',
+            selectOperationName: '',
             selectedOutputKey: '',
             stringOutputField: false,
             comparisonValueField: false,
@@ -282,13 +281,13 @@ export default {
             }
         },
         handleConditionResult(args) {
-            this.$emit('condition-result-updated', {
+            this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
         },
         removeCondition(ev) {
-            this.$emit('remove-condition', this.conditionIdentifier);
+            this.$emit('removeCondition', this.conditionIdentifier);
         },
         cloneCondition(ev) {
             this.$emit('clone-condition', {
@@ -297,10 +296,11 @@ export default {
             });
         },
         setOutput() {
-            if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
+            let conditionOutput = this.condition.definition.output;
+            if (conditionOutput !== 'false' && conditionOutput !== 'true') {
                 this.selectedOutputKey = this.outputOptions[2].key;
             } else {
-                if (this.condition.definition.output === 'true') {
+                if (conditionOutput === 'true') {
                     this.selectedOutputKey = this.outputOptions[1].key;
                 } else {
                     this.selectedOutputKey = this.outputOptions[0].key;
@@ -363,11 +363,12 @@ export default {
             return this.currentCriteria && this.currentCriteria.key;
         },
         updateConditionCriteria() {
-            if (this.currentCriteria) {
-                this.currentCriteria.selectedTelemetryKey = this.selectedTelemetryKey[this.currentCriteria[0].key];
-                this.currentCriteria.metaDataKey = this.selectedMetaDataKey[this.currentCriteria[0].key];
-                this.currentCriteria.operation = this.selectedOperationKey[this.currentCriteria[0].key];
-                this.currentCriteria.input = this.operationValue[this.currentCriteria[0].key];
+            if (this.condition.definition.criteria.length) {
+                let criterion = this.condition.definition.criteria[0];
+                criterion.key = this.selectedTelemetryKey;
+                criterion.metaDataKey = this.selectedMetaDataKey;
+                criterion.operation = this.selectOperationName;
+                criterion.input = [this.operationValue];
             }
         },
         persist() {
@@ -382,10 +383,11 @@ export default {
             }
         },
         setInputValueVisibility(ev) {
-            if (this.selectedOperationKey[this.currentCriteria.key] !== 'isUndefined' && this.selectedOperationKey[this.currentCriteria.key] !== 'isDefined') {
-                this.comparisonValueField = true;
-            } else {
-                this.comparisonValueField = false;
+            for (let i=0, ii=this.operations.length; i < ii; i++) {
+                if (this.selectOperationName === this.operations[i].name) {
+                    this.comparisonValueField = this.operations[i].inputCount > 0;
+                    break;
+                }
             }
             //find the criterion being updated and set the operation property
         },
@@ -395,7 +397,7 @@ export default {
             this.updateTelemetry();
         },
         updateCurrentCondition() {
-            this.$emit('update-current-condition', this.conditionIdentifier);
+            this.$emit('updateCurrentCondition', this.conditionIdentifier);
         }
     }
 }
