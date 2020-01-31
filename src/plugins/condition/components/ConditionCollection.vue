@@ -65,6 +65,7 @@
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
+                                       :telemetry="telemetryObjs"
                                        @updateCurrentCondition="updateCurrentCondition"
                                        @removeCondition="removeCondition"
                                        @conditionResultUpdated="handleConditionResult"
@@ -106,7 +107,8 @@ export default {
             conditions: [],
             currentConditionIdentifier: this.currentConditionIdentifier || {},
             moveIndex: Number,
-            isDragging: false
+            isDragging: false,
+            telemetryObjs: this.telemetryObjs
         };
     },
     destroyed() {

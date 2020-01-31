@@ -105,7 +105,7 @@
                                 </li>
                             </ul>
                             <ul class="t-widget-condition-config">
-                                <li v-if="telemetryObject && telemetryMetadata"
+                                <li v-if="telemetry.length"
                                     class="has-local-controls t-condition"
                                 >
                                     <label>when</label>
@@ -177,6 +177,11 @@ export default {
         conditionIndex: {
             type: Number,
             required: true
+        },
+        telemetry: {
+            type: Array,
+            required: true,
+            default: () => []
         }
     },
     data() {
@@ -236,6 +241,35 @@ export default {
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
+        },
+        initialize() {
+            this.setOutput();
+            this.setOperation();
+            this.updateTelemetry();
+            this.conditionClass = new ConditionClass(this.condition, this.openmct);
+            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        },
+        destroy() {
+            this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+                this.conditionClass.destroy();
+                delete this.conditionClass;
+            }
+        },
+        reset() {
+            this.selectedMetaDataKey = '';
+            this.selectedTelemetryKey = '';
+            this.selectOperationName = '';
+            this.operationValue = '';
+        },
+        validate() {
+            if (this.hasTelemetry() && !this.getTelemetryKey()) {
+                this.reset();
+            } else {
+                if (!this.conditionClass) {
+                    this.initialize();
+                }
+            }
         },
         handleConditionResult(args) {
             this.$emit('conditionResultUpdated', {
