@@ -185,6 +185,7 @@ export default {
     data() {
         return {
             condition: this.condition,
+            currentCriteria: this.currentCriteria,
             expanded: true,
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
@@ -245,10 +246,9 @@ export default {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         initialize() {
-            if (!this.condition.definition.criteria.length) {
-                this.setCurrentCriterion(0);
-            }
-            console.log('this.currentCriteria', this.currentCriteria);
+            //if (!this.condition.definition.criteria.length) {
+                this.setCurrentCriterion();
+            //}
             this.setOutput();
             this.setOperation();
             this.updateTelemetry();
@@ -256,7 +256,8 @@ export default {
             this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         },
         setCurrentCriterion(index) {
-            this.currentCriteria = this.condition.definition.criteria[index];
+            this.currentCriteria = this.condition.definition.criteria;
+            console.log('setCurrentCriterion() this.currentCriteria', this.currentCriteria[0].key);
         },
         destroy() {
             this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
@@ -320,12 +321,14 @@ export default {
             }
         },
         updateTelemetry() {
+            // console.log('this.hasTelemetry()', this.hasTelemetry())
             if (this.hasTelemetry()) {
                 this.openmct.objects.get(this.currentCriteria.key).then((obj) => {
                     this.telemetryObject = obj;
                     this.telemetryMetadata[this.currentCriteria.key.key] = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
                     this.selectedMetaDataKey[this.currentCriteria.key.key] = this.getTelemetryMetadataKey();
                     this.selectedTelemetryKey[this.currentCriteria.key.key] = this.getTelemetryKey();
+                    // console.log('selectedTelemetryKey', this.selectedTelemetryKey);
                 });
             } else {
                 this.telemetryObject = null;
@@ -355,14 +358,16 @@ export default {
             return this.telemetry.length && index > -1 ? this.telemetry[index].identifier : '';
         },
         hasTelemetry() {
+            // console.log('hasTelemetry() this.currentCriteria', this.currentCriteria)
+            // return this.currentCriteria && this.currentCriteria.key;
             return this.currentCriteria && this.currentCriteria.key;
         },
         updateConditionCriteria() {
             if (this.currentCriteria) {
-                this.currentCriteria.key = this.selectedTelemetryKey[this.currentCriteria.key];
-                this.currentCriteria.metaDataKey = this.selectedMetaDataKey[this.currentCriteria.key];
-                this.currentCriteria.operation = this.selectedOperationKey[this.currentCriteria.key];
-                this.currentCriteria.input = this.operationValue[this.currentCriteria.key];
+                this.currentCriteria.selectedTelemetryKey = this.selectedTelemetryKey[this.currentCriteria[0].key];
+                this.currentCriteria.metaDataKey = this.selectedMetaDataKey[this.currentCriteria[0].key];
+                this.currentCriteria.operation = this.selectedOperationKey[this.currentCriteria[0].key];
+                this.currentCriteria.input = this.operationValue[this.currentCriteria[0].key];
             }
         },
         persist() {
