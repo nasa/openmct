@@ -112,7 +112,7 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select v-model="selectedOperationKey"
+                                            <select v-model="selectOperationName"
                                                     @change="setInputValueVisibility"
                                             >
                                                 <option value="">- Select Comparison -</option>
@@ -171,7 +171,7 @@ export default {
             operations: OPERATIONS,
             selectedMetaDataKey: '',
             selectedTelemetryKey: '',
-            selectedOperationKey: '',
+            selectOperationName: '',
             selectedOutputKey: '',
             stringOutputField: false,
             comparisonValueField: false,
@@ -225,7 +225,7 @@ export default {
         reset() {
             this.selectedMetaDataKey = '';
             this.selectedTelemetryKey = '';
-            this.selectedOperationKey = '';
+            this.selectOperationName = '';
             this.operationValue = '';
         },
         validate() {
@@ -262,7 +262,7 @@ export default {
             if (this.condition.definition.criteria.length && this.condition.definition.criteria[0].operation) {
                 for (let i=0, ii=this.operations.length; i < ii; i++) {
                     if (this.condition.definition.criteria[0].operation === this.operations[i].name) {
-                        this.selectedOperationKey = this.operations[i].name;
+                        this.selectOperationName = this.operations[i].name;
                         this.comparisonValueField = this.operations[i].inputCount > 0;
                         if (this.comparisonValueField) {
                             this.operationValue = this.condition.definition.criteria[0].input[0];
@@ -311,7 +311,7 @@ export default {
                 let criterion = this.condition.definition.criteria[0];
                 criterion.key = this.selectedTelemetryKey;
                 criterion.metaDataKey = this.selectedMetaDataKey;
-                criterion.operation = this.selectedOperationKey;
+                criterion.operation = this.selectOperationName;
                 criterion.input = [this.operationValue];
             }
         },
@@ -328,7 +328,7 @@ export default {
         },
         setInputValueVisibility(ev) {
             for (let i=0, ii=this.operations.length; i < ii; i++) {
-                if (this.selectedOperationKey === this.operations[i].name) {
+                if (this.selectOperationName === this.operations[i].name) {
                     this.comparisonValueField = this.operations[i].inputCount > 0;
                     break;
                 }
