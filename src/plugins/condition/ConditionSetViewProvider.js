@@ -58,7 +58,7 @@ export default class ConditionSetViewProvider {
                             isEditing
                         }
                     },
-                    template: '<condition-set ref="conditionSet" :isEditing="isEditing"></condition-set>'
+                    template: '<condition-set :isEditing="isEditing"></condition-set>'
                 });
             },
             onEditModeChange: (isEditing) => {
