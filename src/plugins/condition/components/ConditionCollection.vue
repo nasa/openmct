@@ -105,7 +105,8 @@ export default {
             conditionCollection: [],
             conditions: [],
             currentConditionIdentifier: this.currentConditionIdentifier || {},
-            moveIndex: null
+            moveIndex: Number,
+            isDragging: false
         };
     },
     destroyed() {
@@ -128,6 +129,7 @@ export default {
     methods: {
         setMoveIndex(index) {
             this.moveIndex = index;
+            this.isDragging = true;
         },
         dropCondition(e) {
             let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
@@ -159,10 +161,12 @@ export default {
             this.reorder(reorderPlan);
 
             e.target.classList.remove("dragging");
+            this.isDragging = false;
         },
         dragEnter(e) {
+            if (!this.isDragging) { return }
             let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.moveIndex === targetIndex) { return }
             e.target.classList.add("dragging");
         },
