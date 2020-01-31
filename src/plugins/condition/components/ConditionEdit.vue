@@ -1,19 +1,42 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
 <div v-if="condition"
-     class="c-cs-editui__conditions"
+     class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
-        <span
-            class="c-c__menu-hamburger"
-            :class="{ 'is-enabled': !condition.isDefault }"
-            @click="expanded = !condition.expanded"
+        <span class="c-c__menu-hamburger"
+              :class="{ 'is-enabled': !condition.isDefault }"
+              :draggable="!condition.isDefault"
+              @dragstart="dragStart"
+              @dragover.stop
         ></span>
         <span
             class="is-enabled flex-elem"
             :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
-            @click="expanded = !condition.expanded"
+            @click="expanded = !expanded"
         ></span>
         <div class="condition-summary">
             <span class="condition-name">{{ condition.definition.name }}</span>
@@ -29,20 +52,20 @@
         ></span>
     </div>
     <div v-if="expanded"
-         class="condition-config-edit widget-rule-content c-sw-editui__rules-wrapper holder widget-rules-wrapper flex-elem expanded"
+         class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
     >
-        <div id="ruleArea"
-             class="c-sw-editui__rules widget-rules"
+        <div id="conditionArea"
+             class="c-c-editui__condition widget-conditions"
         >
-            <div class="c-sw-rule">
-                <div class="c-sw-rule__ui l-compact-form l-widget-rule has-local-controls">
+            <div class="c-c-condition">
+                <div class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls">
                     <div>
-                        <ul class="t-widget-rule-config">
+                        <ul class="t-widget-condition-config">
                             <li>
                                 <label>Condition Name</label>
                                 <span class="controls">
                                     <input v-model="condition.definition.name"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
@@ -63,16 +86,16 @@
                                     </select>
                                     <input v-if="selectedOutputKey === outputOptions[2].key"
                                            v-model="condition.definition.output"
-                                           class="t-rule-name-input"
+                                           class="t-condition-name-input"
                                            type="text"
                                     >
                                 </span>
                             </li>
                         </ul>
                         <div v-if="!condition.isDefault"
-                             class="widget-rule-content expanded"
+                             class="widget-condition-content expanded"
                         >
-                            <ul class="t-widget-rule-config">
+                            <ul class="t-widget-condition-config">
                                 <li class="has-local-controls t-condition">
                                     <label>Match when</label>
                                     <span class="controls">
@@ -83,7 +106,11 @@
                                     </span>
                                 </li>
                             </ul>
+<<<<<<< HEAD
+                            <ul class="t-widget-condition-config">
+=======
                             <ul class="t-widget-rule-config">
+>>>>>>> 25bdaa695b842aed8a9c5b8b381f2f5063d5e591
                                 <li v-if="telemetry.length"
                                     class="has-local-controls t-condition"
                                 >
@@ -126,7 +153,7 @@
                                                 </option>
                                             </select>
                                             <input v-if="comparisonValueField"
-                                                   class="t-rule-name-input"
+                                                   class="t-condition-name-input"
                                                    type="text"
                                                    v-model="operationValue"
                                             >
@@ -156,6 +183,10 @@ export default {
         },
         currentConditionIdentifier: {
             type: Object,
+            required: true
+        },
+        conditionIndex: {
+            type: Number,
             required: true
         },
         telemetry: {
@@ -210,6 +241,11 @@ export default {
         this.persist();
     },
     methods: {
+        dragStart(e) {
+            e.dataTransfer.effectAllowed = "copyMove";
+            e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
+            this.$emit('setMoveIndex', this.conditionIndex);
+        },
         initialize() {
             this.setOutput();
             this.setOperation();
