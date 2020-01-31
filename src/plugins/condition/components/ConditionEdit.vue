@@ -327,10 +327,11 @@ export default {
             }
         },
         setInputValueVisibility(ev) {
-            if (this.selectedOperationKey !== 'isUndefined' && this.selectedOperationKey !== 'isDefined') {
-                this.comparisonValueField = true;
-            } else {
-                this.comparisonValueField = false;
+            for (let i=0, ii=this.operations.length; i < ii; i++) {
+                if (this.selectedOperationKey === this.operations[i].name) {
+                    this.comparisonValueField = this.operations[i].inputCount > 0;
+                    break;
+                }
             }
             //find the criterion being updated and set the operation property
         },
