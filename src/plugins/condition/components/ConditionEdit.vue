@@ -1,4 +1,5 @@
 <template>
+<!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
 <div v-if="condition"
      class="c-cs-editui__conditions"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
@@ -16,6 +17,7 @@
         ></span>
         <div class="condition-summary">
             <span class="condition-name">{{ condition.definition.name }}</span>
+            <!-- TODO: description should be derived from criteria -->
             <span class="condition-description">{{ condition.definition.name }}</span>
         </div>
         <span v-if="!condition.isDefault"
