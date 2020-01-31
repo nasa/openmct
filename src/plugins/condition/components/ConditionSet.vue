@@ -4,7 +4,7 @@
         <CurrentOutput :condition="currentCondition" />
         <TestData :is-editing="isEditing" />
         <ConditionCollection :is-editing="isEditing"
-                             @current-condition-updated="updateCurrentCondition"
+                             @currentConditionUpdated="updateCurrentCondition"
         />
     </div>
 </div>

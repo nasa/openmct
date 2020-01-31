@@ -35,15 +35,17 @@
             >
                 <div v-if="isEditing">
                     <ConditionEdit :condition-identifier="conditionIdentifier"
+                                   :telemetry="telemetryObjs"
                                    :current-condition-identifier="currentConditionIdentifier"
-                                   @update-current-condition="updateCurrentCondition"
-                                   @remove-condition="removeCondition"
-                                   @condition-result-updated="handleConditionResult"
+                                   @updateCurrentCondition="updateCurrentCondition"
+                                   @removeCondition="removeCondition"
+                                   @conditionResultUpdated="handleConditionResult"
                     />
                 </div>
                 <div v-else>
                     <Condition :condition-identifier="conditionIdentifier"
                                :current-condition-identifier="currentConditionIdentifier"
+                               @conditionResultUpdated="handleConditionResult"
                     />
                 </div>
             </div>
@@ -72,7 +74,8 @@ export default {
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditions: [],
-            currentConditionIdentifier: this.currentConditionIdentifier || {}
+            currentConditionIdentifier: this.currentConditionIdentifier || {},
+            telemetryObjs: this.telemetryObjs
         };
     },
     destroyed() {
@@ -84,6 +87,7 @@ export default {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
+        this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {
@@ -108,16 +112,26 @@ export default {
                     break;
                 }
             }
-            this.$emit('current-condition-updated', currentConditionIdentifier);
+            this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
+        removeTelemetry(telemetryDomainObjectIdentifier) {
+            let index = _.findIndex(this.telemetryObjs, (obj) => {
+                let objId = this.openmct.objects.makeKeyString(obj.identifier);
+                let id = this.openmct.objects.makeKeyString(telemetryDomainObjectIdentifier);
+                return objId === id;
+            });
+            if (index > -1) {
+                this.telemetryObjs.splice(index, 1);
+            }
+        },
         addCondition(event, isDefault) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault);
-            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(conditionDO, 'created', new Date());
-            this.conditionCollection.unshift(conditionDO.identifier);
+            let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
+            //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', new Date());
+            this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
         updateCurrentCondition(identifier) {
@@ -137,16 +151,16 @@ export default {
                     criteria: isDefault ? [] : [{
                         operation: '',
                         input: '',
-                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                        metaDataKey: '',
+                        key: ''
                     }]
                 },
                 summary: 'summary description'
             };
-            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
 
-            return newDO.useCapability('adapter');
+            return newDomainObject.useCapability('adapter');
         },
         updateCondition(updatedCondition) {
             //TODO: this should only happen for reordering

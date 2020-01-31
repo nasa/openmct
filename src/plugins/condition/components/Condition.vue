@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import ConditionClass from "@/plugins/condition/Condition";
+
 export default {
     inject: ['openmct'],
     props: {
@@ -39,10 +41,26 @@ export default {
             condition: this.condition
         };
     },
+    destroyed() {
+        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+            this.conditionClass.destroy();
+        }
+    },
     mounted() {
         this.openmct.objects.get(this.conditionIdentifier).then((obj => {
             this.condition = obj;
+            this.conditionClass = new ConditionClass(this.condition, this.openmct);
+            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         }));
+    },
+    methods: {
+        handleConditionResult(args) {
+            this.$emit('conditionResultUpdated', {
+                id: this.conditionIdentifier,
+                result: args.data.result
+            })
+        }
     }
 }
 </script>

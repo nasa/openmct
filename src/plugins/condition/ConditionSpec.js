@@ -103,7 +103,6 @@ describe("The condition", function () {
     it("initializes with criteria from the condition definition", function () {
         expect(conditionObj.criteria.length).toEqual(1);
         let criterion = conditionObj.criteria[0];
-        console.log(criterion);
         expect(criterion instanceof TelemetryCriterion).toBeTrue();
         expect(criterion.operator).toEqual(testConditionDefinition.definition.criteria[0].operator);
         expect(criterion.input).toEqual(testConditionDefinition.definition.criteria[0].input);
