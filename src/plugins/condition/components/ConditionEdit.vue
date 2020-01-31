@@ -235,16 +235,16 @@ export default {
         dragStart(e) {
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
-            this.$emit('set-move-index', this.conditionIndex);
+            this.$emit('setMoveIndex', this.conditionIndex);
         },
         handleConditionResult(args) {
-            this.$emit('condition-result-updated', {
+            this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
         },
         removeCondition(ev) { //move this to conditionCollection
-            this.$emit('remove-condition', this.conditionIdentifier);
+            this.$emit('removeCondition', this.conditionIdentifier);
         },
         setOutput() {
             if (this.condition.definition.output !== 'false' && this.condition.definition.output !== 'true') {
@@ -307,7 +307,7 @@ export default {
             //find the criterion being updated and set the input property
         },
         updateCurrentCondition() {
-            this.$emit('update-current-condition', this.conditionIdentifier);
+            this.$emit('updateCurrentCondition', this.conditionIdentifier);
         }
     }
 }
