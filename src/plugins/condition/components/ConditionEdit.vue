@@ -187,6 +187,7 @@ export default {
             condition: this.condition,
             currentCriteria: this.currentCriteria,
             expanded: true,
+            trigger: 'any',
             telemetryObject: this.telemetryObject,
             telemetryMetadata: this.telemetryMetadata,
             operations: OPERATIONS,
@@ -196,7 +197,7 @@ export default {
             selectedOutputKey: '',
             stringOutputField: false,
             comparisonValueField: false,
-            operationValue: {},
+            operationValue: this.operationValue,
             outputOptions: [
                 {
                     key: 'false',
@@ -245,18 +246,17 @@ export default {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         initialize() {
-            //if (!this.condition.definition.criteria.length) {
-                this.setCurrentCriterion();
-            //}
-            this.setOutput();
-            this.setOperation();
-            this.updateTelemetry();
-            this.conditionClass = new ConditionClass(this.condition, this.openmct);
-            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+            if (this.condition.definition.criteria.length) {
+                this.setCurrentCriterion(0);
+                this.setOutput();
+                this.setOperation();
+                this.updateTelemetry();
+                this.conditionClass = new ConditionClass(this.condition, this.openmct);
+                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+            }
         },
         setCurrentCriterion(index) {
-            this.currentCriteria = this.condition.definition.criteria;
-            console.log('setCurrentCriterion() this.currentCriteria', this.currentCriteria[0].key);
+            this.currentCriteria = this.condition.definition.criteria[index];
         },
         destroy() {
             this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
@@ -321,17 +321,14 @@ export default {
             }
         },
         updateTelemetry() {
-            // console.log('this.hasTelemetry()', this.hasTelemetry())
             if (this.hasTelemetry()) {
                 this.openmct.objects.get(this.currentCriteria.key).then((obj) => {
+                    console.log('this.openmct.telemetry.getMetadata(this.telemetryObject).values()', this.openmct.telemetry.getMetadata(this.telemetryObject).values());
                     this.telemetryObject = obj;
-                    this.telemetryMetadata[this.currentCriteria.key.key] = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
-                    this.selectedMetaDataKey[this.currentCriteria.key.key] = this.getTelemetryMetadataKey();
-                    this.selectedTelemetryKey[this.currentCriteria.key.key] = this.getTelemetryKey();
-                    // console.log('selectedTelemetryKey', this.selectedTelemetryKey);
+                    this.telemetryMetadata[this.currentCriteria.key] = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
+                    this.selectedMetaDataKey[this.currentCriteria.key] = this.getTelemetryMetadataKey();
+                    this.selectedTelemetryKey[this.currentCriteria.key] = this.getTelemetryKey();
                 });
-            } else {
-                this.telemetryObject = null;
             }
         },
         getTelemetryMetadataKey() {
@@ -358,8 +355,6 @@ export default {
             return this.telemetry.length && index > -1 ? this.telemetry[index].identifier : '';
         },
         hasTelemetry() {
-            // console.log('hasTelemetry() this.currentCriteria', this.currentCriteria)
-            // return this.currentCriteria && this.currentCriteria.key;
             return this.currentCriteria && this.currentCriteria.key;
         },
         updateConditionCriteria() {

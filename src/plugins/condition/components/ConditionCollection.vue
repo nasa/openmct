@@ -67,26 +67,21 @@
                                        :condition-index="index"
                                        :telemetry="telemetryObjs"
                                        @update-current-condition="updateCurrentCondition"
-                                       @remove-condition="removeCondition"
-                                       @condition-result-updated="handleConditionResult"
-                                       @set-move-index="setMoveIndex"
+                                       @removeCondition="removeCondition"
+                                       @conditionResultUpdated="handleConditionResult"
+                                       @setMoveIndex="setMoveIndex"
                         />
                     </div>
                     <div v-else>
                         <Condition :condition-identifier="conditionIdentifier"
                                    :current-condition-identifier="currentConditionIdentifier"
-                                   @update-current-condition="updateCurrentCondition"
-                                   @remove-condition="removeCondition"
-                                   @condition-result-updated="handleConditionResult"
-                    />
-                </div>
-                <div v-else>
-                    <Condition :condition-identifier="conditionIdentifier"
-                               :current-condition-identifier="currentConditionIdentifier"
-                               @condition-result-updated="handleConditionResult"
-                    />
-                </div>
-            </div>
+                                   @updateCurrentCondition="updateCurrentCondition"
+                                   @removeCondition="removeCondition"
+                                   @conditionResultUpdated="handleConditionResult"
+                        />
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </section>
@@ -110,6 +105,7 @@ export default {
     data() {
         return {
             expanded: true,
+            telemetryObjs: this.telemetryObjs,
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditions: [],
@@ -127,6 +123,7 @@ export default {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
+        this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {
@@ -202,6 +199,16 @@ export default {
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
         },
+        removeTelemetry(telemetryDomainObjectIdentifier) {
+            let index = _.findIndex(this.telemetryObjs, (obj) => {
+                let objId = this.openmct.objects.makeKeyString(obj.identifier);
+                let id = this.openmct.objects.makeKeyString(telemetryDomainObjectIdentifier);
+                return objId === id;
+            });
+            if (index > -1) {
+                this.telemetryObjs.splice(index, 1);
+            }
+        },
         addCondition(event, isDefault) {
             let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
             //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
@@ -226,8 +233,8 @@ export default {
                     criteria: isDefault ? [] : [{
                         operation: '',
                         input: '',
-                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                        metaDataKey: '',
+                        key: ''
                     }]
                 },
                 summary: 'summary description'
