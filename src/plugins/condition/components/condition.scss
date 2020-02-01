@@ -1,16 +1,14 @@
+
+
 .widget-condition {
     background-color: #eee;
-    margin: 0 0 0.33em;
+    margin: 0 0 0.6em;
     border-radius: 3px;
 
     &--current {
         background-color: #DEECFA;
     }
 
-}
-
-.c-c-editui__conditions.widget-condition {
-    margin: 0;
 }
 
 .title-bar {
@@ -55,7 +53,7 @@
     margin-left: 0;
 }
 
-.l-widget-condition {
+.l-widget-rule {
     padding: 0;
 }
 
@@ -63,11 +61,11 @@
     padding: 0;
 }
 
-.widget-condition-content.expanded {
+.widget-rule-content.expanded {
     margin: 0 3px;
 }
 
-.widget-condition-content.expanded ul {
+.widget-rule-content.expanded ul {
     border-top: solid 1px #ccc;
     padding: 2px;
 }
@@ -137,14 +135,7 @@
     }
 }
 
-
 .c-c__menu-hamburger {
-    &:active {
-        cursor: grabbing;
-        cursor: -moz-grabbing;
-        cursor: -webkit-grabbing;
-    }
-
     &:before {
         content: $glyph-icon-menu-hamburger;
     }
@@ -160,16 +151,4 @@
     &:before {
         content: $glyph-icon-trash;
     }
-}
-
-.c-c__drag-ghost {
-    width: 100%;
-    min-height: 0.33em;
-    &.dragging {
-        min-height: 2em;
-        border: solid 1px blue;
-        background-color: lightblue;
-        border-radius: 2px;
-    }
-
 }
