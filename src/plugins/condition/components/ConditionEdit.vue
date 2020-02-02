@@ -247,6 +247,7 @@ export default {
         },
         initialize() {
             if (this.condition.definition.criteria.length) {
+                console.log('initialize found criteria')
                 this.setCurrentCriterion(0);
                 this.setOutput();
                 this.setOperation();
@@ -290,7 +291,7 @@ export default {
             this.$emit('removeCondition', this.conditionIdentifier);
         },
         cloneCondition(ev) {
-            this.$emit('clone-condition', {
+            this.$emit('cloneCondition', {
                 identifier: this.conditionIdentifier,
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
@@ -321,9 +322,11 @@ export default {
             }
         },
         updateTelemetry() {
+            console.log('this.currentCriteria', this.currentCriteria);
             if (this.hasTelemetry()) {
+                console.log('this.currentCriteria.key', this.currentCriteria.key);
                 this.openmct.objects.get(this.currentCriteria.key).then((obj) => {
-                    console.log('this.openmct.telemetry.getMetadata(this.telemetryObject).values()', this.openmct.telemetry.getMetadata(this.telemetryObject).values());
+                    console.log('this.telemetryObject', this.telemetryObject);
                     this.telemetryObject = obj;
                     this.telemetryMetadata[this.currentCriteria.key] = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
                     this.selectedMetaDataKey[this.currentCriteria.key] = this.getTelemetryMetadataKey();
@@ -355,6 +358,10 @@ export default {
             return this.telemetry.length && index > -1 ? this.telemetry[index].identifier : '';
         },
         hasTelemetry() {
+            if (this.currentCriteria && this.currentCriteria.key) {
+                console.log('hasTelemetry() returns true');
+            }
+            // console.log('this.currentCriteria', this.currentCriteria);
             return this.currentCriteria && this.currentCriteria.key;
         },
         updateConditionCriteria() {

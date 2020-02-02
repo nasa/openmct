@@ -233,8 +233,8 @@ export default {
                     criteria: isDefault ? [] : [{
                         operation: '',
                         input: '',
-                        metaDataKey: '',
-                        key: ''
+                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
+                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null,
                     }]
                 },
                 summary: 'summary description'
