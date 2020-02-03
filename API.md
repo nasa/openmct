@@ -237,7 +237,7 @@ attributes
     of this object. This is used for specifying an icon to appear next to each 
     object of this type.
 
-The [Open MCT Tutorials](https://github.com/openmct/openmct-tutorial) provide a 
+The [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial) provide a 
 step-by-step examples of writing code for Open MCT that includes a [section on 
 defining a new object type](https://github.com/nasa/openmct-tutorial#step-3---providing-objects).
 
