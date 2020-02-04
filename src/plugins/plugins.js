@@ -50,7 +50,8 @@ define([
     './condition/plugin',
     './themes/espresso',
     './themes/maelstrom',
-    './themes/snow'
+    './themes/snow',
+    './conditionalStyles/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -81,7 +82,8 @@ define([
     ConditionPlugin,
     Espresso,
     Maelstrom,
-    Snow
+    Snow,
+    ConditionalStyles
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -188,6 +190,7 @@ define([
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
+    plugins.ConditionalStyles = ConditionalStyles.default;
 
     return plugins;
 });

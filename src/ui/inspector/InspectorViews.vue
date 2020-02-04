@@ -33,9 +33,11 @@ export default {
 
             this.selectedViews = this.openmct.inspectorViews.get(selection);
             this.selectedViews.forEach(selectedView => {
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer)
-                selectedView.show(viewContainer);
+                if (typeof selectedView.tabbed === 'function' && !selectedView.tabbed()) {
+                    let viewContainer = document.createElement('div');
+                    this.$el.append(viewContainer)
+                    selectedView.show(viewContainer);
+                }
             });
         }
     }
