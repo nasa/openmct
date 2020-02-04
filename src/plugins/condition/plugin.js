@@ -42,6 +42,9 @@ export default function ConditionPlugin() {
             creatable: true,
             cssClass: 'icon-summary-widget',  // TODO: replace with class for new icon
             initialize: function (domainObject) {
+                domainObject.configuration = {
+                    conditionCollection: []
+                };
                 domainObject.composition = [];
             }
         });

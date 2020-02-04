@@ -1,53 +1,66 @@
 <template>
-<div id="conditionArea"
+<!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
+<div v-if="condition"
+     id="conditionArea"
      class="c-cs-ui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': isCurrent }]"
+     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">
-        <span v-if="isDefault"
-              class="condition-name"
-        >Default
+        <span class="condition-name">
+            {{ condition.definition.name }}
         </span>
-        <span v-else
-              class="condition-name"
-        >[condition name]
-        </span>
-        <span v-if="isDefault"
-              class="condition-output"
-        >Output: false
-        </span>
-        <span v-else
-              class="condition-output"
-        >Output: [condition output]
+        <span class="condition-output">
+            Output: {{ condition.definition.output }}
         </span>
     </div>
     <div class="condition-config">
-        <span v-if="isDefault"
-              class="condition-description"
-        >When all else fails
-        </span>
-        <span v-else
-              class="condition-description"
-        >[condition description]
+        <span class="condition-description">
+            {{ condition.definition.description }}
         </span>
     </div>
 </div>
 </template>
 
 <script>
+import ConditionClass from "@/plugins/condition/Condition";
+
 export default {
     inject: ['openmct'],
     props: {
-        isEditing: Boolean,
-        isCurrent: Boolean,
-        isDefault: Boolean
+        conditionIdentifier: {
+            type: Object,
+            required: true
+        },
+        currentConditionIdentifier: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {
-            conditionData: {}
+            condition: this.condition
         };
     },
+    destroyed() {
+        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+            this.conditionClass.destroy();
+        }
+    },
+    mounted() {
+        this.openmct.objects.get(this.conditionIdentifier).then((obj => {
+            this.condition = obj;
+            this.conditionClass = new ConditionClass(this.condition, this.openmct);
+            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        }));
+    },
     methods: {
+        handleConditionResult(args) {
+            this.$emit('conditionResultUpdated', {
+                id: this.conditionIdentifier,
+                result: args.data.result
+            })
+        }
     }
 }
 </script>

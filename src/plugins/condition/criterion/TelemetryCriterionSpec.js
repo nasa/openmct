@@ -94,17 +94,6 @@ describe("The telemetry criterion", function () {
         expect(telemetryCriterion.subscription).toBeDefined();
     });
 
-    it("normalizes telemetry data", function () {
-        let result = telemetryCriterion.normalizeData({
-            key: 'some-key',
-            source: 'testSource',
-            testSource: 'Hello'
-        });
-        expect(result).toEqual({
-            'some-key': 'Hello'
-        })
-    });
-
     it("emits update event on new data from telemetry providers", function () {
         spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
         telemetryCriterion.handleSubscription({
@@ -119,7 +108,7 @@ describe("The telemetry criterion", function () {
     it("un-subscribes from telemetry providers", function () {
         telemetryCriterion.subscribe();
         expect(telemetryCriterion.subscription).toBeDefined();
-        telemetryCriterion.unsubscribe();
+        telemetryCriterion.destroy();
         expect(telemetryCriterion.subscription).toBeUndefined();
         expect(telemetryCriterion.telemetryObjectIdAsString).toBeUndefined();
         expect(telemetryCriterion.telemetryObject).toBeUndefined();
