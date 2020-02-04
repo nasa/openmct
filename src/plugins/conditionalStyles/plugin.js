@@ -26,4 +26,4 @@ export default function ConditionalStylesPlugin(supportedObjectTypesArray) {
     return function install(openmct) {
         openmct.inspectorViews.addProvider(new ConditionalStylesInspectorViewProvider(openmct, supportedObjectTypesArray));
     };
-};
+}
