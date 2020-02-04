@@ -67,8 +67,8 @@
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
                                        @updateCurrentCondition="updateCurrentCondition"
-                                       @removeCondition="removeCondition"
                                        @clone-condition="cloneCondition"
+                                       @removeCondition="removeCondition"
                                        @conditionResultUpdated="handleConditionResult"
                                        @setMoveIndex="setMoveIndex"
                         />
@@ -225,7 +225,8 @@ export default {
                 this.conditionCollection.unshift(conditionDomainObject.identifier);
             } else {
                 this.conditionCollection.splice(index + 1, 0, conditionDomainObject.identifier);
-            }            this.persist();
+            }
+            this.persist();
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
