@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <section id="conditionCollection"
          class="c-cs__ui_section"
@@ -41,18 +63,20 @@
                              @dragover.prevent
                         ></div>
                         <ConditionEdit :condition-identifier="conditionIdentifier"
+                                       :telemetry="telemetryObjs"
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
-                                       @update-current-condition="updateCurrentCondition"
-                                       @remove-condition="removeCondition"
+                                       @updateCurrentCondition="updateCurrentCondition"
+                                       @removeCondition="removeCondition"
                                        @clone-condition="cloneCondition"
-                                       @condition-result-updated="handleConditionResult"
-                                       @set-move-index="setMoveIndex"
+                                       @conditionResultUpdated="handleConditionResult"
+                                       @setMoveIndex="setMoveIndex"
                         />
                     </div>
                     <div v-else>
                         <Condition :condition-identifier="conditionIdentifier"
                                    :current-condition-identifier="currentConditionIdentifier"
+                                   @conditionResultUpdated="handleConditionResult"
                         />
                     </div>
                 </li>
@@ -66,7 +90,6 @@
 import Condition from '../../condition/components/Condition.vue';
 import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
-
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -84,7 +107,9 @@ export default {
             conditionCollection: [],
             conditions: [],
             currentConditionIdentifier: this.currentConditionIdentifier || {},
-            moveIndex: null
+            telemetryObjs: this.telemetryObjs,
+            moveIndex: Number,
+            isDragging: false
         };
     },
     destroyed() {
@@ -96,6 +121,7 @@ export default {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
+        this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {
@@ -107,10 +133,11 @@ export default {
     methods: {
         setMoveIndex(index) {
             this.moveIndex = index;
+            this.isDragging = true;
         },
         dropCondition(e) {
             let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             const oldIndexArr = Object.keys(this.conditionCollection);
             const move = function (arr, old_index, new_index) {
                 while (old_index < 0) {
@@ -138,11 +165,12 @@ export default {
             this.reorder(reorderPlan);
 
             e.target.classList.remove("dragging");
+            this.isDragging = false;
         },
         dragEnter(e) {
+            if (!this.isDragging) { return }
             let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-
-            if (targetIndex > this.moveIndex) { targetIndex-- }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.moveIndex === targetIndex) { return }
             e.target.classList.add("dragging");
         },
@@ -164,10 +192,20 @@ export default {
                     break;
                 }
             }
-            this.$emit('current-condition-updated', currentConditionIdentifier);
+            this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetry(telemetryDomainObject) {
             this.telemetryObjs.push(telemetryDomainObject);
+        },
+        removeTelemetry(telemetryDomainObjectIdentifier) {
+            let index = _.findIndex(this.telemetryObjs, (obj) => {
+                let objId = this.openmct.objects.makeKeyString(obj.identifier);
+                let id = this.openmct.objects.makeKeyString(telemetryDomainObjectIdentifier);
+                return objId === id;
+            });
+            if (index > -1) {
+                this.telemetryObjs.splice(index, 1);
+            }
         },
         /*
             Adds a condition to list via programatic creation of default for initial list, manual
@@ -180,15 +218,14 @@ export default {
             index (number): index of condition being duplicated
         */
         addCondition(event, isDefault, isClone, definition, index) {
-            let conditionDO = this.getConditionDomainObject(!!isDefault, isClone, definition);
-            //persist the condition DO so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(conditionDO, 'created', new Date());
+            let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
+            //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', new Date());
             if (!isClone) {
-                this.conditionCollection.unshift(conditionDO.identifier);
+                this.conditionCollection.unshift(conditionDomainObject.identifier);
             } else {
-                this.conditionCollection.splice(index + 1, 0, conditionDO.identifier);
-            }
-            this.persist();
+                this.conditionCollection.splice(index + 1, 0, conditionDomainObject.identifier);
+            }            this.persist();
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
@@ -204,7 +241,7 @@ export default {
                     metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
                     key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
                 }]
-            }
+            };
             let conditionObj = {
                 isDefault: isDefault,
                 identifier: {
@@ -214,10 +251,10 @@ export default {
                 definition: isClone ? definition: definitionTemplate,
                 summary: 'summary description'
             };
-            let conditionDOKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-            let newDO = this.instantiate(conditionObj, conditionDOKeyString);
+            let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
+            let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
 
-            return newDO.useCapability('adapter');
+            return newDomainObject.useCapability('adapter');
         },
         removeCondition(identifier) {
             let index = _.findIndex(this.conditionCollection, (condition) => {
