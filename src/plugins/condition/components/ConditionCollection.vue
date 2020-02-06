@@ -55,31 +55,23 @@
                 <li v-for="(conditionIdentifier, index) in conditionCollection"
                     :key="conditionIdentifier.key"
                 >
-                    <div v-if="isEditing">
-                        <div class="c-c__drag-ghost"
-                             @drop.prevent="dropCondition"
-                             @dragenter="dragEnter"
-                             @dragleave="dragLeave"
-                             @dragover.prevent
-                        ></div>
-                        <ConditionEdit :condition-identifier="conditionIdentifier"
-                                       :current-condition-identifier="currentConditionIdentifier"
-                                       :condition-index="index"
-                                       :telemetry="telemetryObjs"
-                                       @update-current-condition="updateCurrentCondition"
-                                       @removeCondition="removeCondition"
-                                       @conditionResultUpdated="handleConditionResult"
-                                       @setMoveIndex="setMoveIndex"
-                        />
-                    </div>
-                    <div v-else>
-                        <Condition :condition-identifier="conditionIdentifier"
-                                   :current-condition-identifier="currentConditionIdentifier"
-                                   @updateCurrentCondition="updateCurrentCondition"
-                                   @removeCondition="removeCondition"
-                                   @conditionResultUpdated="handleConditionResult"
-                        />
-                    </div>
+                    <div v-if="isEditing"
+                         class="c-c__drag-ghost"
+                         @drop.prevent="dropCondition"
+                         @dragenter="dragEnter"
+                         @dragleave="dragLeave"
+                         @dragover.prevent
+                    ></div>
+                    <Condition :condition-identifier="conditionIdentifier"
+                               :current-condition-identifier="currentConditionIdentifier"
+                               :condition-index="index"
+                               :telemetry="telemetryObjs"
+                               :is-editing="isEditing"
+                               @update-current-condition="updateCurrentCondition"
+                               @removeCondition="removeCondition"
+                               @conditionResultUpdated="handleConditionResult"
+                               @setMoveIndex="setMoveIndex"
+                    />
                 </li>
             </ul>
         </div>
@@ -89,15 +81,13 @@
 
 <script>
 import Condition from '../../condition/components/Condition.vue';
-import ConditionEdit from '../../condition/components/ConditionEdit.vue';
 import uuid from 'uuid';
 
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        Condition,
-        ConditionEdit
+        Condition
     },
     props: {
         isEditing: Boolean
@@ -116,13 +106,13 @@ export default {
         };
     },
     destroyed() {
-        this.composition.off('add', this.addTelemetry);
+        this.composition.off('add', this.addTelemetryObject);
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addTelemetry);
-        this.composition.on('remove', this.removeTelemetry);
+        this.composition.on('add', this.addTelemetryObject);
+        this.composition.on('remove', this.removeTelemetryObject);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         if (!this.conditionCollection.length) {
@@ -181,14 +171,13 @@ export default {
         handleConditionResult(args) {
             let idAsString = this.openmct.objects.makeKeyString(args.id);
             this.conditionResults[idAsString] = args.result;
-            this.updateCurrentConditionId();
+            this.updateCurrentConditionIdentifier();
         },
-        updateCurrentConditionId() {
+        updateCurrentConditionIdentifier() {
             let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
-            // for (let i=0, ii = this.conditionCollection.length-1; i< ii; i++) {
-            for (let i = 0; i < this.conditionCollection.length-1; i++) {
-                let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
-                if (this.conditionResults[conditionIdAsString]) {
+            for (let i = 0; i < this.conditionCollection.length - 1; i++) {
+                let conditionIdentifierAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
+                if (this.conditionResults[conditionIdentifierAsString]) {
                     // TODO: first condition to be true wins
                     currentConditionIdentifier = this.conditionCollection[i];
                     break;
@@ -196,13 +185,13 @@ export default {
             }
             this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
-        addTelemetry(telemetryDomainObject) {
-            this.telemetryObjs.push(telemetryDomainObject);
+        addTelemetryObject(domainObject) { // JM: don't see how object param ever gets passed to this
+            this.telemetryObjs.push(domainObject);
         },
-        removeTelemetry(telemetryDomainObjectIdentifier) {
+        removeTelemetryObject(identifier) {  // JM: don't see how identifier param ever gets passed to this
             let index = _.findIndex(this.telemetryObjs, (obj) => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
-                let id = this.openmct.objects.makeKeyString(telemetryDomainObjectIdentifier);
+                let id = this.openmct.objects.makeKeyString(identifier);
                 return objId === id;
             });
             if (index > -1) {
@@ -210,23 +199,23 @@ export default {
             }
         },
         addCondition(event, isDefault) {
-            let conditionDomainObject = this.getConditionDomainObject(!!isDefault);
+            let conditionDomainObject = this.createConditionDomainObject(!!isDefault);
             //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-            this.openmct.objects.mutate(conditionDomainObject, 'created', new Date());
             this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
         },
-        getConditionDomainObject(isDefault) {
+        createConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
+                name: isDefault ? 'Default' : 'Unnamed Condition',
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
                     key: uuid()
                 },
-                definition: {
+                configuration: {
                     name: isDefault ? 'Default' : 'Unnamed Condition',
                     output: 'false',
                     trigger: 'any',
@@ -240,7 +229,8 @@ export default {
                         }
                     }]
                 },
-                summary: 'summary description'
+                summary: 'summary description',
+                created: new Date()
             };
             let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
             let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
@@ -259,7 +249,7 @@ export default {
             });
             this.conditionCollection.splice(index, 1);
             this.persist();
-            this.updateCurrentConditionId();
+            this.updateCurrentConditionIdentifier();
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();
