@@ -44,7 +44,7 @@
                                 <label>Condition Name</label>
                                 <span class="controls">
                                     <input v-model="condition.definition.name"
-                                           class="t-condition-name-input"
+                                           class="t-condition-input__name"
                                            type="text"
                                     >
                                 </span>
@@ -57,15 +57,15 @@
                                     >
                                         <option value="">- Select Output -</option>
                                         <option v-for="option in outputOptions"
-                                                :key="option.key"
-                                                :value="option.key"
+                                                :key="option"
+                                                :value="option"
                                         >
-                                            {{ option.text }}
+                                            {{ option }}
                                         </option>
                                     </select>
-                                    <input v-if="selectedOutputKey === outputOptions[2].key"
+                                    <input v-if="selectedOutputKey === outputOptions[2]"
                                            v-model="condition.definition.output"
-                                           class="t-condition-name-input"
+                                           class="t-condition-input__output"
                                            type="text"
                                     >
                                 </span>
@@ -88,17 +88,17 @@
                             <ul v-if="telemetry.length"
                                 class="t-widget-condition-config">
                                 <li v-for="(criteria, index) in condition.definition.criteria"
-                                    :key="criteria.key.key"
+                                    :key="criteria.identifier.key"
                                     class="has-local-controls t-condition"
                                 >
                                     <label>{{ index === 0 ? 'when' : 'and when' }}</label>
                                     <span class="t-configuration">
                                         <span class="controls">
-                                            <select v-model="selectedTelemetryKey[currentCriteria.key]"
-                                                    @change="updateTelemetryMetaData"
+                                            <select v-model="selectedTelemetryKey"
+                                                    @change="updateTelemetryOptions"
                                             >
                                                 <option value="">- Select Telemetry -</option>
-                                                <option v-for="telemetryOption in telemetry"
+                                                <option v-for="telemetryOption in telemetryObj"
                                                         :key="telemetryOption.identifier.key"
                                                         :value="telemetryOption.identifier"
                                                 >
@@ -107,9 +107,9 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select v-model="selectedMetaDataKey[currentCriteria.key]">
+                                            <select @change="updateFieldOptions">
                                                 <option value="">- Select Field -</option>
-                                                <option v-for="option in telemetryMetadata"
+                                                <option v-for="option in telemetryMetadata[currentCriteria.identifier]"
                                                         :key="option.key"
                                                         :value="option.key"
                                                 >
@@ -118,9 +118,7 @@
                                             </select>
                                         </span>
                                         <span class="controls">
-                                            <select v-model="selectOperationName"
-                                                    @change="setInputValueVisibility"
-                                            >
+                                            <select @change="updateComparisonOptions">
                                                 <option value="">- Select Comparison -</option>
                                                 <option v-for="option in operations"
                                                         :key="option.name"
@@ -129,9 +127,7 @@
                                                     {{ option.text }}
                                                 </option>
                                             </select>
-                                            <input v-if="comparisonValueField"
-                                                   v-model="operationValue[currentCriteria.key]"
-                                                   class="t-condition-name-input"
+                                            <input class="t-condition-name-input"
                                                    type="text"
                                             >
                                         </span>
@@ -188,31 +184,30 @@ export default {
             currentCriteria: this.currentCriteria,
             expanded: true,
             trigger: 'any',
-            telemetryObject: this.telemetryObject,
-            telemetryMetadata: this.telemetryMetadata,
+            telemetryObj: this.telemetry,
+            telemetryMetadata: {},
             operations: OPERATIONS,
-            selectedMetaDataKey: '',
-            selectedTelemetryKey: '',
-            selectOperationName: '',
+            selectedMetadataKey: {},
+            selectedTelemetryKey: {},
+            selectedOperationName: {},
+            operationValue: {},
             selectedOutputKey: '',
-            stringOutputField: false,
-            comparisonValueField: false,
-            operationValue: this.operationValue,
-            outputOptions: [
-                {
-                    key: 'false',
-                    text: 'False'
-                },
-                {
-                    key: 'true',
-                    text: 'True'
-                },
-                {
-                    key: 'string',
-                    text: 'String'
-                }
-            ]
-
+            stringOutputField: {},
+            comparisonInputValue: {},
+            outputOptions: ['false', 'true', 'string']
+            //     {
+            //         key: 'false',
+            //         text: 'False'
+            //     },
+            //     {
+            //         key: 'true',
+            //         text: 'True'
+            //     },
+            //     {
+            //         key: 'string',
+            //         text: 'String'
+            //     }
+            // ]
         };
     },
     destroyed() {
@@ -234,12 +229,14 @@ export default {
             const criteriaObject = {
                 operation: '',
                 input: '',
-                metaDataKey: '',
+                metadataKey: '',
                 key: {
                     namespace: '',
                     key: uuid()
                 }
             }
+            this.selectedOperationName[this.currentCriteria.identifier] = undefined;
+            // this.comparisonValueField[this.currentCriteria.identifier] = false;
             this.condition.definition.criteria.push(criteriaObject);
         },
         dragStart(e) {
@@ -247,11 +244,10 @@ export default {
         },
         initialize() {
             if (this.condition.definition.criteria.length) {
-                console.log('initialize found criteria')
                 this.setCurrentCriterion(0);
                 this.setOutput();
+                this.updateTelemetryKeys();
                 this.setOperation();
-                this.updateTelemetry();
                 this.conditionClass = new ConditionClass(this.condition, this.openmct);
                 this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
             }
@@ -260,14 +256,14 @@ export default {
             this.currentCriteria = this.condition.definition.criteria[index];
         },
         destroy() {
-            this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-                this.conditionClass.destroy();
-                delete this.conditionClass;
-            }
+            // this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+            // if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+            //     this.conditionClass.destroy();
+            //     delete this.conditionClass;
+            // }
         },
         reset() {
-            this.selectedMetaDataKey = {};
+            this.selectedMetadataKey = {};
             this.selectedTelemetryKey = {};
             this.selectedOperationKey = {};
             this.operationValue = {};
@@ -297,84 +293,88 @@ export default {
             });
         },
         setOutput() {
+            console.log('this.condition.definition.output', this.condition.definition.output === '');
             let conditionOutput = this.condition.definition.output;
-            if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                this.selectedOutputKey = this.outputOptions[2].key;
-            } else {
-                if (conditionOutput === 'true') {
-                    this.selectedOutputKey = this.outputOptions[1].key;
+
+            if (!conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputKey = this.outputOptions[2].key;
                 } else {
-                    this.selectedOutputKey = this.outputOptions[0].key;
+                    if (conditionOutput === 'true') {
+                        this.selectedOutputKey = this.outputOptions[1].key;
+                    } else {
+                        this.selectedOutputKey = this.outputOptions[0].key;
+                    }
                 }
+                this.persist(); // maybe not needed
             }
         },
         setOperation() {
-            if (this.currentCriteria && this.currentCriteria.operation) {
-                for (let i=0, ii=this.operations.length; i < ii; i++) {
-                    if (this.currentCriteria.operation === this.operations[i].name) {
-                        this.selectedOperationKey[this.currentCriteria.key] = this.operations[i].name;
-                        this.comparisonValueField[this.currentCriteria.key] = this.operations[i].inputCount > 0;
-                        if (this.comparisonValueField[this.currentCriteria.key]) {
-                            this.operationValue[this.currentCriteria.key] = this.currentCriteria.input[0];
+            if (this.selectedOperationName[this.currentCriteria.identifier] !== undefined) {
+                if (this.operationValue[this.currentCriteria.identifier] !== undefined) {
+                    for (let i=0, ii=this.operations.length; i < ii; i++) {
+                        if (this.currentCriteria.operation === this.operations[i].name) {
+                            this.selectedOperationName[this.currentCriteria.identifier] = this.operations[i].name;
+
+                            this.comparisonInputValue[this.currentCriteria.identifier] = this.operations[i].inputCount > 0;
+                            if (this.comparisonInputValue[this.currentCriteria.identifier]) {
+                                this.operationValue[this.currentCriteria.identifier] = this.currentCriteria.input[0];
+                            }
                         }
                     }
                 }
             }
         },
-        updateTelemetry() {
-            console.log('this.currentCriteria', this.currentCriteria);
+        updateTelemetryKeys() {
+            console.log('updateTelemetryKeys')
             if (this.hasTelemetry()) {
-                console.log('this.currentCriteria.key', this.currentCriteria.key);
-                this.openmct.objects.get(this.currentCriteria.key).then((obj) => {
-                    console.log('this.telemetryObject', this.telemetryObject);
-                    this.telemetryObject = obj;
-                    this.telemetryMetadata[this.currentCriteria.key] = this.openmct.telemetry.getMetadata(this.telemetryObject).values();
-                    this.selectedMetaDataKey[this.currentCriteria.key] = this.getTelemetryMetadataKey();
-                    this.selectedTelemetryKey[this.currentCriteria.key] = this.getTelemetryKey();
+                this.openmct.objects.get(this.currentCriteria.identifier).then((obj) => {
+                    this.telemetryMetadata[this.currentCriteria.identifier] = this.openmct.telemetry.getMetadata(obj).values();
+                    this.selectedMetadataKey[this.currentCriteria.identifier] = this.getTelemetryMetadataKey();
+                    this.selectedTelemetryKey[this.currentCriteria.identifier] = this.getTelemetryKey();
+                    console.log('this.telemetryMetadata[this.currentCriteria.identifier]', this.telemetryMetadata[this.currentCriteria.identifier])
+                    console.log('this.selectedMetadataKey[this.currentCriteria.identifier]', this.selectedMetadataKey[this.currentCriteria.identifier])
+                    console.log('this.selectedTelemetryKey[this.currentCriteria.identifier]', this.selectedTelemetryKey[this.currentCriteria.identifier])
                 });
             }
         },
         getTelemetryMetadataKey() {
+            // console.log('this.telemetryMetadata[this.currentCriteria.identifier]', this.telemetryMetadata[this.currentCriteria.identifier]);
             let index = -1;
-            if (this.currentCriteria.metaDataKey) {
-                index = _.findIndex(this.telemetryMetadata, (metadata) => {
-                    return metadata.key === this.currentCriteria.metaDataKey;
+            if (this.currentCriteria.identifier) {
+                index = _.findIndex(this.telemetryMetadata[this.currentCriteria.identifier], (metadata) => {
+                    return metadata.key === this.currentCriteria.metadataKey;
                 });
             }
-            return this.telemetryMetadata.length && index > -1 ? this.telemetryMetadata[index].key : '';
+            return this.telemetryMetadata[this.currentCriteria.identifier].length && index > -1 ? this.telemetryMetadata[this.currentCriteria.identifier][index].key : '- Select Telemetry -';
         },
         getTelemetryKey() {
             let index = -1;
-            if (this.currentCriteria) {
-                if (this.currentCriteria.key) {
-                    index = _.findIndex(this.telemetry, (obj) => {
-
-                        let key = this.openmct.objects.makeKeyString(obj.identifier);
-                        let conditionKey = this.openmct.objects.makeKeyString(this.currentCriteria.key);
-                        return key === conditionKey;
-                    });
-                }
+            if (this.currentCriteria && this.currentCriteria.identifier) {
+                let conditionKey = this.openmct.objects.makeKeyString(this.currentCriteria.identifier);
+                index = _.findIndex(this.telemetry, (obj) => {
+                    let key = this.openmct.objects.makeKeyString(obj.identifier)
+                    return key === conditionKey
+                });
             }
-            return this.telemetry.length && index > -1 ? this.telemetry[index].identifier : '';
+            console.log('index', index, 'this.telemetry[index]', this.telemetry[index]);
+            return this.telemetry.length && index > -1 ? this.telemetry[index] : '';
         },
         hasTelemetry() {
-            if (this.currentCriteria && this.currentCriteria.key) {
-                console.log('hasTelemetry() returns true');
-            }
-            // console.log('this.currentCriteria', this.currentCriteria);
-            return this.currentCriteria && this.currentCriteria.key;
+            // console.log('this.domainObject.composition', this.domainObject.composition);
+            return this.currentCriteria && this.currentCriteria.identifier;
         },
         updateConditionCriteria() {
             if (this.condition.definition.criteria.length) {
                 let criterion = this.condition.definition.criteria[0];
-                criterion.key = this.selectedTelemetryKey;
-                criterion.metaDataKey = this.selectedMetaDataKey;
-                criterion.operation = this.selectOperationName;
-                criterion.input = [this.operationValue];
+                criterion.key = this.selectedTelemetryKey[this.currentCriteria.identifier];
+                criterion.metadataKey = this.selectedMetadataKey[this.currentCriteria.identifier];
+                criterion.operation = this.selectedOperationName[this.currentCriteria.identifier];
+                criterion.input = this.operationValue;
             }
         },
         persist() {
-            this.updateConditionCriteria();
+            // this.updateConditionCriteria();
             this.openmct.objects.mutate(this.condition, 'definition', this.condition.definition);
         },
         checkInputValue() {
@@ -393,15 +393,45 @@ export default {
             }
             //find the criterion being updated and set the operation property
         },
-        updateTelemetryMetaData() {
-            this.selectedMetaDataKey = {};
-            this.updateConditionCriteria();
-            this.updateTelemetry();
+        updateOutputOption(ev) {
+            if (this.selectedOutputKey === this.outputOptions[2].key) {
+                this.condition.definition.output = '';
+            } else {
+                this.condition.definition.output = this.selectedOutputKey;
+            }
         },
+        // I'm thinking the update select options handlers should call different functions
+        updateTelemetryOptions() {
+            this.updateConditionCriteria();
+            this.updateTelemetryKeys();
+        },
+        updateFieldOptions() {
+            this.updateConditionCriteria();
+            this.updateTelemetryKeys();
+        },
+        updateComparisonOptions(ev) {
+            if (ev.target.value !== undefined) {
+                this.operationValue[this.currentCriteria.identifier] = ev.target.value;
+                // for (let i = 0, ii = this.operations.length; i < ii; i++) {
+                //     // console.log('this.selectedOperationName[this.currentCriteria.identifier]', this.selectedOperationName[this.currentCriteria.identifier])
+                //     // console.log('this.operations[i].name', this.operations[i].name)
+                //     if (this.selectedOperationName[this.currentCriteria.identifier] === this.operations[i].name) {
+                //         // console.log('this.operations[i].inputCount', this.operations[i].inputCount);
+                //         //this.comparisonValueField[this.currentCriteria.identifier] = this.operations[i].inputCount > 0;
+                //         console.log('this.comparisonValueField[this.currentCriteria.identifier]', this.comparisonValueField[this.currentCriteria.identifier]);
+                //         break;
+                //     }
+                // }
+            } else {
+                this.operationValue[this.currentCriteria.identifier] = undefined;
+            }
+        },
+
         updateCurrentCondition() {
             this.$emit('updateCurrentCondition', this.conditionIdentifier);
         }
     }
 }
 </script>
+
 

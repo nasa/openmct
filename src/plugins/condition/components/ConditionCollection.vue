@@ -105,9 +105,10 @@ export default {
     data() {
         return {
             expanded: true,
-            telemetryObjs: this.telemetryObjs,
+            telemetryObjs: [],
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
+            conditionResults: {},
             conditions: [],
             currentConditionIdentifier: this.currentConditionIdentifier || {},
             moveIndex: Number,
@@ -118,14 +119,12 @@ export default {
         this.composition.off('add', this.addTelemetry);
     },
     mounted() {
-        this.telemetryObjs = [];
-        this.conditionResults = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
-        this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
+        this.conditionCollection = this.domainObject.configuration.conditionCollection;
         if (!this.conditionCollection.length) {
             this.addCondition(null, true);
         } else {
@@ -186,10 +185,11 @@ export default {
         },
         updateCurrentConditionId() {
             let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
-            for (let i=0, ii = this.conditionCollection.length-1; i< ii; i++) {
+            // for (let i=0, ii = this.conditionCollection.length-1; i< ii; i++) {
+            for (let i = 0; i < this.conditionCollection.length-1; i++) {
                 let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
                 if (this.conditionResults[conditionIdAsString]) {
-                    //first condition to be true wins
+                    // TODO: first condition to be true wins
                     currentConditionIdentifier = this.conditionCollection[i];
                     break;
                 }
@@ -233,8 +233,11 @@ export default {
                     criteria: isDefault ? [] : [{
                         operation: '',
                         input: '',
-                        metaDataKey: this.openmct.telemetry.getMetadata(this.telemetryObjs[0]).values()[0].key,
-                        key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null,
+                        metaDataKey: '',
+                        identifier: {
+                            namespace: '',
+                            key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                        }
                     }]
                 },
                 summary: 'summary description'
@@ -245,7 +248,6 @@ export default {
             return newDomainObject.useCapability('adapter');
         },
         updateCondition(updatedCondition) {
-            //TODO: this should only happen for reordering
             let index = _.findIndex(this.conditions, (condition) => condition.id === updatedCondition.id);
             this.conditions[index] = updatedCondition;
         },

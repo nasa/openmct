@@ -43,7 +43,9 @@ export default function ConditionPlugin() {
             cssClass: 'icon-summary-widget',  // TODO: replace with class for new icon
             initialize: function (domainObject) {
                 domainObject.configuration = {
-                    conditionCollection: []
+                    conditionCollection: [
+                        
+                    ]
                 };
                 domainObject.composition = [];
             }
