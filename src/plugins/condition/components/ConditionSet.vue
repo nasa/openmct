@@ -34,7 +34,7 @@ export default {
     },
     mounted() {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
-//        this.currentConditionIdentifier = conditionCollection.length ? this.updateCurrentCondition(conditionCollection[0]) : null;
+        this.currentConditionIdentifier = conditionCollection.length ? this.updateCurrentCondition(conditionCollection[0]) : null;
     },
     methods: {
         setCurrentCondition() {

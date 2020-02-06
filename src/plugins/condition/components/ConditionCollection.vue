@@ -258,6 +258,39 @@ export default {
             });
             this.persist();
         },
+        updateTelemetryObjects(identifier) {
+            if (this.hasTelemetry(identifier)) {
+                this.openmct.objects.get(identifier).then((obj) => {
+                    this.telemetryMetadata[identifier] = this.openmct.telemetry.getMetadata(obj).values();
+                    this.selectedFieldObject[identifier] = this.getTelemetryMetadataKey(identifier);
+                    this.selectedTelemetryObject[identifier] = this.getTelemetryObject(identifier);
+                    // console.log('this.telemetryMetadata[identifier]', this.telemetryMetadata[identifier])
+                    // console.log('this.selectedMetadataKey[identifier]', this.selectedMetadataKey[identifier])
+                    console.log('this.selectedTelemetryObject[identifier]', this.selectedTelemetryObject[identifier])
+                });
+            }
+        },
+        getTelemetryMetadataKey(identifier) {
+            let index = -1;
+            if (identifier) {
+                index = _.findIndex(this.telemetryMetadata[identifier], (metadata) => {
+                    return metadata.key === this.currentCriteria.metadataKey;
+                });
+            }
+            return this.telemetryMetadata[identifier].length && index > -1 ? this.telemetryMetadata[identifier][index].key : '- Select Telemetry -';
+        },
+        getTelemetryObject(identifier) {
+            let index = -1;
+            if (this.currentCriteria && identifier) {
+                let conditionKey = this.openmct.objects.makeKeyString(identifier);
+                index = _.findIndex(this.telemetry, (obj) => {
+                    let key = this.openmct.objects.makeKeyString(obj.identifier)
+                    return key === conditionKey
+                });
+            }
+            return this.telemetry.length && index > -1 ? this.telemetry[index] : '';
+        },
+
         persist() {
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.conditionCollection);
         }
