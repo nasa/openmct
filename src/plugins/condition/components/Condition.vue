@@ -89,61 +89,14 @@
                                 <ul v-if="telemetry.length"
                                     class="t-widget-condition-config"
                                 >
-                                    <Criteria v-for="(criteria, index) in domainObject.configuration.criteria"
-                                              :key="criteria.identifier.key" 
+                                    <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
+                                              :key="index"
                                               :telemetry="telemetry"
-                                              :criteria="criteria"
+                                              :criterion="criterion"
+                                              :condition="domainObject"
                                               :index="index"
                                     />
                                 </ul>
-                                <!-- <ul v-if="telemetry.length"
-                                    class="t-widget-condition-config"
-                                >
-                                    <li v-for="(criteria, index) in domainObject.configuration.criteria"
-                                        :key="criteria.identifier.key"
-                                        class="has-local-controls t-condition"
-                                    >
-                                        <label>{{ index === 0 ? 'when' : 'and when' }}</label>
-                                        <span class="t-configuration">
-                                            <span class="controls">
-                                                <select v-model="selectedTelemetryObject">
-                                                    <option value="">- Select Telemetry -</option>
-                                                    <option v-for="telemetryOption in telemetryObj"
-                                                            :key="telemetryOption.identifier.key"
-                                                            :value="telemetryOption.identifier"
-                                                    >
-                                                        {{ telemetryOption.name }}
-                                                    </option>
-                                                </select>
-                                            </span>
-                                            <span class="controls">
-                                                <select v-model="selectedFieldObject">
-                                                    <option value="">- Select Field -</option>
-                                                    <option v-for="option in telemetryMetadata[currentCriteria.identifier]"
-                                                            :key="option.key"
-                                                            :value="option.key"
-                                                    >
-                                                        {{ option.name }}
-                                                    </option>
-                                                </select>
-                                            </span>
-                                            <span class="controls">
-                                                <select v-model="selectedOperationObject">
-                                                    <option value="">- Select Comparison -</option>
-                                                    <option v-for="option in operations"
-                                                            :key="option.name"
-                                                            :value="option.name"
-                                                    >
-                                                        {{ option.text }}
-                                                    </option>
-                                                </select>
-                                                <input class="t-condition-name-input"
-                                                       type="text"
-                                                >
-                                            </span>
-                                        </span>
-                                    </li>
-                                </ul> -->
                                 <div class="holder c-c-button-wrapper align-left">
                                     <span class="c-c-label-spacer"></span>
                                     <button
@@ -187,13 +140,13 @@
 <script>
 // import { OPERATIONS } from '../utils/operations';
 import ConditionClass from "@/plugins/condition/Condition";
-import Criteria from '../../condition/components/Criteria.vue';
+import Criterion from '../../condition/components/Criterion.vue';
 import uuid from 'uuid';
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        Criteria
+        Criterion
     },
     props: {
         conditionIdentifier: {
@@ -243,6 +196,13 @@ export default {
         this.persist();
     },
     methods: {
+        initialize() {
+            if (!this.domainObject.isDefault) {
+                this.setOutput();
+                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
+                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+            }
+        },
         addCriteria() {
             const criteriaObject = {
                 operation: '',
@@ -259,13 +219,6 @@ export default {
         },
         dragStart(e) {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
-        },
-        initialize() {
-            if (!this.domainObject.isDefault) {
-                this.setOutput();
-                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
-                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-            }
         },
         destroy() {
             // this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
@@ -310,58 +263,38 @@ export default {
                 }
             }
         },
-        // setOperationObject(criteriaId) {
-        //     if (this.selectedFieldObject[criteriaId] !== undefined) {
-        //         if (this.operationValue[criteriaId] !== undefined) {
-        //             for (let i=0, ii=this.operations.length; i < ii; i++) {
-        //                 if (this.currentCriteria.operation === this.operations[i].name) {
-        //                     this.selectedFieldObject[criteriaId] = this.operations[i].name;
-
-        //                     this.comparisonInputValue[criteriaId] = this.operations[i].inputCount > 0;
-        //                     if (this.comparisonInputValue[criteriaId]) {
-        //                         this.operationValue[criteriaId] = this.currentCriteria.input[0];
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // },
-        // updateTelemetryObjects(criteriaId) {
-        //     if (this.hasTelemetry(criteriaId)) {
-        //         this.openmct.objects.get(criteriaId).then((obj) => {
-        //             this.telemetryMetadata[criteriaId] = this.openmct.telemetry.getMetadata(obj).values();
-        //             this.selectedFieldObject[criteriaId] = this.getTelemetryMetadataKey(criteriaId);
-        //             this.selectedTelemetryObject[criteriaId] = this.getTelemetryObject(criteriaId);
-        //             // console.log('this.telemetryMetadata[criteriaId]', this.telemetryMetadata[criteriaId])
-        //             // console.log('this.selectedMetadataKey[criteriaId]', this.selectedMetadataKey[criteriaId])
-        //             console.log('this.selectedTelemetryObject[criteriaId]', this.selectedTelemetryObject[criteriaId])
-        //         });
-        //     }
-        // },
-        // getTelemetryMetadataKey(criteriaId) {
-        //     let index = -1;
-        //     if (criteriaId) {
-        //         index = _.findIndex(this.telemetryMetadata[criteriaId], (metadata) => {
-        //             return metadata.key === this.currentCriteria.metadataKey;
-        //         });
-        //     }
-        //     return this.telemetryMetadata[criteriaId].length && index > -1 ? this.telemetryMetadata[criteriaId][index].key : '- Select Telemetry -';
-        // },
-        // getTelemetryObject(criteriaId) {
-        //     let index = -1;
-        //     if (this.currentCriteria && criteriaId) {
-        //         let conditionKey = this.openmct.objects.makeKeyString(criteriaId);
-        //         index = _.findIndex(this.telemetry, (obj) => {
-        //             let key = this.openmct.objects.makeKeyString(obj.identifier)
-        //             return key === conditionKey
-        //         });
-        //     }
-        //     return this.telemetry.length && index > -1 ? this.telemetry[index] : '';
-        // },
-        // hasTelemetry(criteriaId) {
-        //     // TODO: check parent domainObject.composition.hasTelemetry
-        //     return this.currentCriteria && criteriaId;
-        // },
+        updateTelemetryObjects(criteriaId) {
+            if (this.hasTelemetry(criteriaId)) {
+                this.openmct.objects.get(criteriaId).then((obj) => {
+                    this.telemetryMetadata[criteriaId] = this.openmct.telemetry.getMetadata(obj).values();
+                    this.selectedFieldObject[criteriaId] = this.getTelemetryMetadataKey(criteriaId);
+                    this.selectedTelemetryObject[criteriaId] = this.getTelemetryObject(criteriaId);
+                    // console.log('this.telemetryMetadata[criteriaId]', this.telemetryMetadata[criteriaId])
+                    // console.log('this.selectedMetadataKey[criteriaId]', this.selectedMetadataKey[criteriaId])
+                    console.log('this.selectedTelemetryObject[criteriaId]', this.selectedTelemetryObject[criteriaId])
+                });
+            }
+        },
+        getTelemetryMetadataKey(criteriaId) {
+            let index = -1;
+            if (criteriaId) {
+                index = _.findIndex(this.telemetryMetadata[criteriaId], (metadata) => {
+                    return metadata.key === this.currentCriteria.metadataKey;
+                });
+            }
+            return this.telemetryMetadata[criteriaId].length && index > -1 ? this.telemetryMetadata[criteriaId][index].key : '- Select Telemetry -';
+        },
+        getTelemetryObject(criteriaId) {
+            let index = -1;
+            if (this.currentCriteria && criteriaId) {
+                let conditionKey = this.openmct.objects.makeKeyString(criteriaId);
+                index = _.findIndex(this.telemetry, (obj) => {
+                    let key = this.openmct.objects.makeKeyString(obj.identifier)
+                    return key === conditionKey
+                });
+            }
+            return this.telemetry.length && index > -1 ? this.telemetry[index] : '';
+        },
         // updateConditionCriteria(criteriaId) {
         //     if (this.domainObject.configuration.criteria.length) {
         //         let criterion = this.domainObject.configuration.criteria[0];
@@ -427,6 +360,10 @@ export default {
 
         updateCurrentCondition() {
             this.$emit('updateCurrentCondition', this.conditionIdentifier);
+        },
+        hasTelemetry(identifier) {
+            // TODO: check parent domainObject.composition.hasTelemetry
+            return this.currentCriteria && identifier;
         }
     }
 }
