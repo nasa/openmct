@@ -95,12 +95,12 @@ export default {
     data() {
         return {
             expanded: true,
-            telemetryObjs: [],
             parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditionResults: {},
             conditions: [],
             currentConditionIdentifier: this.currentConditionIdentifier || {},
+            telemetryObjs: [],
             moveIndex: Number,
             isDragging: false
         };
@@ -192,6 +192,16 @@ export default {
             let index = _.findIndex(this.telemetryObjs, (obj) => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
                 let id = this.openmct.objects.makeKeyString(identifier);
+                return objId === id;
+            });
+            if (index > -1) {
+                this.telemetryObjs.splice(index, 1);
+            }
+        },
+        removeTelemetry(telemetryDomainObjectIdentifier) {
+            let index = _.findIndex(this.telemetryObjs, (obj) => {
+                let objId = this.openmct.objects.makeKeyString(obj.identifier);
+                let id = this.openmct.objects.makeKeyString(telemetryDomainObjectIdentifier);
                 return objId === id;
             });
             if (index > -1) {
