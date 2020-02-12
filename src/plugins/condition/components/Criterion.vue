@@ -3,7 +3,9 @@
     <label>{{ index === 0 ? 'when' : 'and when' }}</label>
     <span class="t-configuration">
         <span class="controls">
-            <select v-model="selectedTelemetryObject">
+            <select v-model="selectedTelemetryObject"
+                    @change="updateFieldOptions"
+            >
                 <option value="">- Select Telemetry -</option>
                 <option v-for="telemetryOption in telemetry"
                         :key="telemetryOption.identifier.key"
@@ -14,18 +16,22 @@
             </select>
         </span>
         <span class="controls">
-            <select v-model="selectedFieldObject">
+            <select v-model="selectedFieldOption"
+                    @change="persist"
+            >
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
                         :key="option.key"
-                        :value="option.key"
+                        :value="option"
                 >
                     {{ option.name }}
                 </option>
             </select>
         </span>
         <span class="controls">
-            <select v-model="selectedOperationObject">
+            <select v-model="selectedOperationOption"
+                    @change="updateOperationInput"
+            >
                 <option value="">- Select Comparison -</option>
                 <option v-for="option in operations"
                         :key="option.name"
@@ -34,8 +40,11 @@
                     {{ option.text }}
                 </option>
             </select>
-            <input class="t-condition-name-input"
+            <input v-if="isInputOperation"
+                   v-model="comparisonInputValue"
+                   class="t-condition-name-input"
                    type="text"
+                   @change="persist"
             >
         </span>
     </span>
@@ -71,82 +80,53 @@ export default {
         return {
             telemetryMetadata: {},
             operations: OPERATIONS,
-            selectedTelemetryObject: {},
-            selectedFieldObject: {},
-            selectedOperationObject: {},
-            operationValue: {},
-            comparisonInputValue: {}
+            selectedTelemetryObject: '',
+            selectedFieldOption: {},
+            selectedOperationOption: '',
+            operationValue: '',
+            comparisonInputValue: '',
+            isInputOperation: false
         }
     },
     mounted() {
-        console.log('criterion', this.criterion);
-        console.log('condition', this.condition);
         this.initialize();
-
-    },
-    updated() {
-        // this.validate();
     },
     methods: {
         initialize() {
-            // 1. need to get values to appear in select menus and determine what should be selected
-            this.setTelemetrySelects()
-
-            // 2. for operation menu, show input unless isDefined, isUndefined are selected
-            // this.setOperationInput()
+            this.selectedTelemetryObject = this.criterion.telemetry;
+            this.selectedFieldOption = this.criterion.metadata;
+            this.selectedOperationOption = this.criterion.operation;
+            this.comparisonInputValue = this.criterion.input;
+            this.updateOperationInput();
+            this.updateFieldOptions();
 
         },
-        setTelemetrySelects() {
-            console.log('this.domainObject', this.domainObject);
-
-            if (this.criterion.telemetryName) {
-                this.selectedTelemetryObject.name = this.criterion.telemetryName;
+        updateFieldOptions() {
+            if (this.selectedTelemetryObject) {
+                this.openmct.objects.get(this.selectedTelemetryObject).then((telemetryObject) => {
+                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                });
+            }
+            this.persist();
+        },
+        updateOperationInput() {
+            if (this.selectedOperationOption &&
+                (this.selectedOperationOption !== 'isUndefined' &&
+                 this.selectedOperationOption !== 'isDefined')) {
+                this.isInputOperation = true;
             } else {
-                this.telemetryObj[0].name = '- Select Telemetry -';
-                this.selectedTelemetryObject.name = '- Select Telemetry -';
+                this.isInputOperation = false;
+                this.comparisonInputValue = '';
             }
-
-            this.openmct.objects.get(this.domainObject.identifier).then((condition) => {
-                // this.telemetryMetadata = this.openmct.telemetry.getMetadata(condition).values();
-                console.log('condition', condition);
-            });
-
-            // this.selectedFieldObject = this.getTelemetryMetadataKey();
-            // this.selectedTelemetryObject = this.getTelemetryObject();
-            // console.log('this.telemetryMetadata', this.telemetryMetadata)
-            // console.log('this.selectedMetadataKey', this.selectedMetadataKey)
-            // console.log('this.selectedTelemetryObject', this.selectedTelemetryObject)
+            this.persist();
         },
-        setOperationInput() {
-            if (this.selectedFieldObject !== undefined) {
-                if (this.operationValue !== undefined) {
-                    for (let i=0, ii=this.operations.length; i < ii; i++) {
-                        if (this.currentCriteria.operation === this.operations[i].name) {
-                            this.selectedFieldObject = this.operations[i].name;
-
-                            this.comparisonInputValue = this.operations[i].inputCount > 0;
-                            if (this.comparisonInputValue) {
-                                this.operationValue = this.currentCriteria.input[0];
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        hasTelemetry(identifier) {
-            // TODO: check parent domainObject.composition.hasTelemetry
-            return this.currentCriteria && identifier;
+        persist() {
+            this.criterion.telemetry = this.selectedTelemetryObject;
+            this.criterion.metadata = this.selectedFieldOption;
+            this.criterion.operation = this.selectedOperationOption;
+            this.criterion.input = this.comparisonInputValue;
+            this.$emit('persist', this.criterion);
         }
-
-        // validate(criteriaId) {
-        //     if (this.hasTelemetry(criteriaId) && !this.getTelemetryKey(criteriaId)) {
-        //         this.reset();
-        //     } else {
-        //         if (!this.conditionClass) {
-        //             this.initialize();
-        //         }
-        //     }
-        // }
     }
 };
 </script>

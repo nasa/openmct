@@ -35,9 +35,10 @@ import {computeCondition} from "@/plugins/condition/utils/evaluator";
 *   trigger: 'any'/'all',
 *   criteria: [
 *       {
+*           telemetry: '',
 *           operation: '',
 *           input: '',
-*           metaDataKey: '',
+*           metadata: '',
 *           key: 'someTelemetryObjectKey'
 *       }
 *   ]
@@ -183,7 +184,7 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             this.criteria[found.index] = criterion.data;
             //Most likely don't need this.
-            this.subscribe();
+            // this.subscribe();
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
                 criteria: this.criteria

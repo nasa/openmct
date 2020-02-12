@@ -90,11 +90,12 @@
                                     class="t-widget-condition-config"
                                 >
                                     <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
-                                              :key="index"
-                                              :telemetry="telemetry"
-                                              :criterion="criterion"
-                                              :condition="domainObject"
-                                              :index="index"
+                                               :key="index"
+                                               :telemetry="telemetry"
+                                               :criterion="criterion"
+                                               :condition="domainObject"
+                                               :index="index"
+                                               @persist="persist"
                                     />
                                 </ul>
                                 <div class="holder c-c-button-wrapper align-left">
@@ -138,7 +139,6 @@
 </template>
 
 <script>
-// import { OPERATIONS } from '../utils/operations';
 import ConditionClass from "@/plugins/condition/Condition";
 import Criterion from '../../condition/components/Criterion.vue';
 import uuid from 'uuid';
@@ -205,16 +205,15 @@ export default {
         },
         addCriteria() {
             const criteriaObject = {
+                telemetry: '',
                 operation: '',
                 input: '',
-                metadataKey: '',
+                metadata: '',
                 key: {
                     namespace: '',
                     key: uuid()
                 }
             }
-            this.selectedOperationName[this.currentCriteria.identifier] = undefined;
-            // this.comparisonValueField[id] = false;
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
@@ -222,10 +221,10 @@ export default {
         },
         destroy() {
             // this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-            // if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-            //     this.conditionClass.destroy();
-            //     delete this.conditionClass;
-            // }
+            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
+                this.conditionClass.destroy();
+                delete this.conditionClass;
+            }
         },
         reset() {
             this.selectedMetadataKey = {};
@@ -263,49 +262,7 @@ export default {
                 }
             }
         },
-        updateTelemetryObjects(criteriaId) {
-            if (this.hasTelemetry(criteriaId)) {
-                this.openmct.objects.get(criteriaId).then((obj) => {
-                    this.telemetryMetadata[criteriaId] = this.openmct.telemetry.getMetadata(obj).values();
-                    this.selectedFieldObject[criteriaId] = this.getTelemetryMetadataKey(criteriaId);
-                    this.selectedTelemetryObject[criteriaId] = this.getTelemetryObject(criteriaId);
-                    // console.log('this.telemetryMetadata[criteriaId]', this.telemetryMetadata[criteriaId])
-                    // console.log('this.selectedMetadataKey[criteriaId]', this.selectedMetadataKey[criteriaId])
-                    console.log('this.selectedTelemetryObject[criteriaId]', this.selectedTelemetryObject[criteriaId])
-                });
-            }
-        },
-        getTelemetryMetadataKey(criteriaId) {
-            let index = -1;
-            if (criteriaId) {
-                index = _.findIndex(this.telemetryMetadata[criteriaId], (metadata) => {
-                    return metadata.key === this.currentCriteria.metadataKey;
-                });
-            }
-            return this.telemetryMetadata[criteriaId].length && index > -1 ? this.telemetryMetadata[criteriaId][index].key : '- Select Telemetry -';
-        },
-        getTelemetryObject(criteriaId) {
-            let index = -1;
-            if (this.currentCriteria && criteriaId) {
-                let conditionKey = this.openmct.objects.makeKeyString(criteriaId);
-                index = _.findIndex(this.telemetry, (obj) => {
-                    let key = this.openmct.objects.makeKeyString(obj.identifier)
-                    return key === conditionKey
-                });
-            }
-            return this.telemetry.length && index > -1 ? this.telemetry[index] : '';
-        },
-        // updateConditionCriteria(criteriaId) {
-        //     if (this.domainObject.configuration.criteria.length) {
-        //         let criterion = this.domainObject.configuration.criteria[0];
-        //         criterion.key = this.selectedTelemetryKey[criteriaId];
-        //         criterion.metadataKey = this.selectedMetadataKey[criteriaId];
-        //         criterion.operation = this.selectedOperationName[criteriaId];
-        //         criterion.input = this.operationValue;
-        //     }
-        // },
         persist() {
-            // this.updateConditionCriteria();
             this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         },
         checkInputValue() {
@@ -315,15 +272,6 @@ export default {
                 this.domainObject.configuration.output = this.selectedOutputKey;
             }
         },
-        setInputValueVisibility(ev) {
-            for (let i=0, ii=this.operations.length; i < ii; i++) {
-                if (this.selectOperationName === this.operations[i].name) {
-                    this.comparisonValueField = this.operations[i].inputCount > 0;
-                    break;
-                }
-            }
-            //find the criterion being updated and set the operation property
-        },
         updateOutputOption(ev) {
             if (this.selectedOutputKey === this.outputOptions[2].key) {
                 this.domainObject.configuration.output = '';
@@ -331,33 +279,6 @@ export default {
                 this.domainObject.configuration.output = this.selectedOutputKey;
             }
         },
-        // // I'm thinking the update select options handlers should call different functions
-        // updateTelemetryOptions() {
-        //     this.updateConditionCriteria();
-        //     this.updateTelemetryKeys();
-        // },
-        // updateFieldOptions() {
-        //     this.updateConditionCriteria();
-        //     this.updateTelemetryKeys();
-        // },
-        // updateComparisonOptions(ev, criteriaId) {
-        //     if (ev.target.value !== undefined) {
-        //         this.operationValue[criteriaId] = ev.target.value;
-        //         // for (let i = 0, ii = this.operations.length; i < ii; i++) {
-        //         //     // console.log('this.selectedOperationName[criteriaId]', this.selectedOperationName[criteriaId])
-        //         //     // console.log('this.operations[i].name', this.operations[i].name)
-        //         //     if (this.selectedOperationName[criteriaId] === this.operations[i].name) {
-        //         //         // console.log('this.operations[i].inputCount', this.operations[i].inputCount);
-        //         //         //this.comparisonValueField[criteriaId] = this.operations[i].inputCount > 0;
-        //         //         console.log('this.comparisonValueField[criteriaId]', this.comparisonValueField[criteriaId]);
-        //         //         break;
-        //         //     }
-        //         // }
-        //     } else {
-        //         this.operationValue[criteriaId] = undefined;
-        //     }
-        // },
-
         updateCurrentCondition() {
             this.$emit('updateCurrentCondition', this.conditionIdentifier);
         },
