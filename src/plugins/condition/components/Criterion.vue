@@ -1,6 +1,6 @@
 <template>
 <li class="has-local-controls t-condition">
-    <label>{{ index === 0 ? 'when' : 'and when' }}</label>
+    <label>{{ setRowLabel }}</label>
     <span class="t-configuration">
         <span class="controls">
             <select v-model="selectedTelemetryObject"
@@ -74,6 +74,10 @@ export default {
         condition: {
             type: Object,
             required: true
+        },
+        trigger: {
+            type: String,
+            required: true
         }
     },
     data() {
@@ -85,11 +89,22 @@ export default {
             selectedOperationOption: '',
             operationValue: '',
             comparisonInputValue: '',
-            isInputOperation: false
+            isInputOperation: false,
+            rowLabel: ''
+        }
+    },
+    computed: {
+        setRowLabel: function () {
+            let operator = this.trigger === 'all' ? 'and ': 'or ';
+
+            return (this.index !== 0 ? operator : '') + 'when';
         }
     },
     mounted() {
         this.initialize();
+    },
+    updated() {
+        this.persist();
     },
     methods: {
         initialize() {
@@ -107,7 +122,6 @@ export default {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
                 });
             }
-            this.persist();
         },
         updateOperationInput() {
             if (this.selectedOperationOption &&
@@ -118,7 +132,6 @@ export default {
                 this.isInputOperation = false;
                 this.comparisonInputValue = '';
             }
-            this.persist();
         },
         persist() {
             this.criterion.telemetry = this.selectedTelemetryObject;

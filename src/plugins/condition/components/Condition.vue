@@ -95,6 +95,7 @@
                                                :criterion="criterion"
                                                :condition="domainObject"
                                                :index="index"
+                                               :trigger="trigger"
                                                @persist="persist"
                                     />
                                 </ul>
@@ -176,7 +177,7 @@ export default {
             domainObject: this.domainObject,
             currentCriteria: this.currentCriteria,
             expanded: true,
-            trigger: 'any',
+            trigger: 'all',
             selectedOutputKey: '',
             stringOutputField: false,
             outputOptions: ['false', 'true', 'string']
