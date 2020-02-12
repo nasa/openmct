@@ -58,15 +58,15 @@
                                         >
                                             <option value="">- Select Output -</option>
                                             <option v-for="option in outputOptions"
-                                                    :key="option"
-                                                    :value="option"
+                                                    :key="option.key"
+                                                    :value="option.key"
                                             >
-                                                {{ option }}
+                                                {{ option.text }}
                                             </option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2]"
+                                        <input v-if="selectedOutputKey === outputOptions[2].key"
                                                v-model="domainObject.configuration.output"
-                                               class="t-condition-input__output"
+                                               class="t-condition-name-input"
                                                type="text"
                                         >
                                     </span>
@@ -178,8 +178,21 @@ export default {
             expanded: true,
             trigger: 'any',
             selectedOutputKey: '',
-            stringOutputField: {},
-            outputOptions: ['false', 'true', 'string']
+            stringOutputField: false,
+            outputOptions: [
+                {
+                    key: 'false',
+                    text: 'False'
+                },
+                {
+                    key: 'true',
+                    text: 'True'
+                },
+                {
+                    key: 'string',
+                    text: 'String'
+                }
+            ]
         };
     },
     destroyed() {
@@ -197,8 +210,8 @@ export default {
     },
     methods: {
         initialize() {
+            this.setOutput();
             if (!this.domainObject.isDefault) {
-                this.setOutput();
                 this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
                 this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
             }
@@ -249,16 +262,13 @@ export default {
         },
         setOutput() {
             let conditionOutput = this.domainObject.configuration.output;
-
-            if (!conditionOutput) {
-                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                    this.selectedOutputKey = this.outputOptions[2].key;
+            if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                this.selectedOutputKey = this.outputOptions[2].key;
+            } else {
+                if (conditionOutput === 'true') {
+                    this.selectedOutputKey = this.outputOptions[1].key;
                 } else {
-                    if (conditionOutput === 'true') {
-                        this.selectedOutputKey = this.outputOptions[1].key;
-                    } else {
-                        this.selectedOutputKey = this.outputOptions[0].key;
-                    }
+                    this.selectedOutputKey = this.outputOptions[0].key;
                 }
             }
         },
@@ -266,17 +276,17 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         },
         checkInputValue() {
-            if (this.selectedOutputKey === this.outputOptions[2].key) {
+            if (this.selectedOutputOption === this.outputOptions[2].key) {
                 this.domainObject.configuration.output = '';
             } else {
-                this.domainObject.configuration.output = this.selectedOutputKey;
+                this.domainObject.configuration.output = this.selectedOutputOption;
             }
         },
         updateOutputOption(ev) {
-            if (this.selectedOutputKey === this.outputOptions[2].key) {
+            if (this.selectedOutputOption === this.outputOptions[2].key) {
                 this.domainObject.configuration.output = '';
             } else {
-                this.domainObject.configuration.output = this.selectedOutputKey;
+                this.domainObject.configuration.output = this.selectedOutputOption;
             }
         },
         updateCurrentCondition() {
