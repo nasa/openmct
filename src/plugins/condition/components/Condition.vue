@@ -58,13 +58,13 @@
                                         >
                                             <option value="">- Select Output -</option>
                                             <option v-for="option in outputOptions"
-                                                    :key="option.key"
-                                                    :value="option.key"
+                                                    :key="option"
+                                                    :value="option"
                                             >
-                                                {{ option.text }}
+                                                {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                                             </option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2].key"
+                                        <input v-if="selectedOutputKey === outputOptions[2]"
                                                v-model="domainObject.configuration.output"
                                                class="t-condition-name-input"
                                                type="text"
@@ -179,20 +179,7 @@ export default {
             trigger: 'any',
             selectedOutputKey: '',
             stringOutputField: false,
-            outputOptions: [
-                {
-                    key: 'false',
-                    text: 'False'
-                },
-                {
-                    key: 'true',
-                    text: 'True'
-                },
-                {
-                    key: 'string',
-                    text: 'String'
-                }
-            ]
+            outputOptions: ['false', 'true', 'string']
         };
     },
     destroyed() {
@@ -262,13 +249,11 @@ export default {
         },
         setOutput() {
             let conditionOutput = this.domainObject.configuration.output;
-            if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                this.selectedOutputKey = this.outputOptions[2].key;
-            } else {
-                if (conditionOutput === 'true') {
-                    this.selectedOutputKey = this.outputOptions[1].key;
+            if (conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputKey = 'string';
                 } else {
-                    this.selectedOutputKey = this.outputOptions[0].key;
+                    this.selectedOutputKey = conditionOutput;
                 }
             }
         },
@@ -276,14 +261,14 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         },
         checkInputValue() {
-            if (this.selectedOutputOption === this.outputOptions[2].key) {
+            if (this.selectedOutputOption === 'string') {
                 this.domainObject.configuration.output = '';
             } else {
                 this.domainObject.configuration.output = this.selectedOutputOption;
             }
         },
         updateOutputOption(ev) {
-            if (this.selectedOutputOption === this.outputOptions[2].key) {
+            if (this.selectedOutputOption === 'string') {
                 this.domainObject.configuration.output = '';
             } else {
                 this.domainObject.configuration.output = this.selectedOutputOption;
