@@ -24,6 +24,6 @@ import ConditionalStylesInspectorViewProvider from './ConditionalStylesInspector
 
 export default function ConditionalStylesPlugin(supportedObjectTypesArray) {
     return function install(openmct) {
-        openmct.inspectorViews.addProvider(new ConditionalStylesInspectorViewProvider(openmct, supportedObjectTypesArray));
+        openmct.propertiesInspector.addViewProvider(new ConditionalStylesInspectorViewProvider(openmct, supportedObjectTypesArray));
     };
 }

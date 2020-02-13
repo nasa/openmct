@@ -61,7 +61,7 @@ define([], function () {
      * @method addProvider
      * @memberof module:openmct.InspectorViewRegistry#
      */
-    InspectorViewRegistry.prototype.addProvider = function (provider) {
+    InspectorViewRegistry.prototype.addViewProvider = function (provider) {
         var key = provider.key;
 
         if (key === undefined) {

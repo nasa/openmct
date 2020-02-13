@@ -41,7 +41,7 @@ define(
              */
             function setSelection(selection) {
                 if (selection[0]) {
-                    var view = openmct.inspectorViews.get(selection);
+                    var view = openmct.propertiesInspector.get(selection);
                     var container = $document[0].querySelectorAll('.inspector-provider-view')[0];
                     container.innerHTML = "";
 

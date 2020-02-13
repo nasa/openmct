@@ -80,7 +80,7 @@ export default function DisplayLayoutPlugin(options) {
         });
         openmct.types.addType('layout', DisplayLayoutType());
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
-        openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
+        openmct.propertiesInspector.addViewProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'layout' && child.type === 'folder') {
                 return false;

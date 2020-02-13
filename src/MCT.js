@@ -162,9 +162,9 @@ define([
          *
          * @type {module:openmct.InspectorViewRegistry}
          * @memberof module:openmct.MCT#
-         * @name inspectorViews
+         * @name propertiesInspector
          */
-        this.inspectorViews = new InspectorViewRegistry();
+        this.propertiesInspector = new InspectorViewRegistry();
 
         /**
          * Registry for views which should appear in Edit Properties

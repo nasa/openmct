@@ -119,7 +119,7 @@ export default {
         },
         refreshTabs(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let selectedViews = this.openmct.inspectorViews.get(selection);
+                let selectedViews = this.openmct.propertiesInspector.get(selection);
                 this.tabbedViews = selectedViews.filter(selectedView => {
                     return typeof selectedView.tabbed === 'function' && selectedView.tabbed();
                 });

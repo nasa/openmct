@@ -23,7 +23,7 @@ define([
             .filter((t) => t.hasOwnProperty('inspector'));
 
         inspectorTypes.forEach(function (typeDefinition) {
-            openmct.inspectorViews.addProvider(new TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject));
+            openmct.propertiesInspector.addViewProvider(new TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject));
         });
     }
 
