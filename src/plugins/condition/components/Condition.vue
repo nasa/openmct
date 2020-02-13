@@ -183,6 +183,11 @@ export default {
             outputOptions: ['false', 'true', 'string']
         };
     },
+    computed: {
+        initCap: function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1)
+        }
+    },
     destroyed() {
         this.destroy();
     },
@@ -227,12 +232,6 @@ export default {
                 delete this.conditionClass;
             }
         },
-        reset() {
-            this.selectedMetadataKey = {};
-            this.selectedTelemetryKey = {};
-            this.selectedOperationKey = {};
-            this.operationValue = {};
-        },
         handleConditionResult(args) {
             this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
@@ -256,6 +255,8 @@ export default {
                 } else {
                     this.selectedOutputKey = conditionOutput;
                 }
+            } else {
+                this.selectedOutputKey = '';
             }
         },
         persist() {

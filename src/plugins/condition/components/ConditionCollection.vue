@@ -227,7 +227,7 @@ export default {
                 },
                 configuration: {
                     name: isDefault ? 'Default' : 'Unnamed Condition',
-                    output: 'false',
+                    output: '',
                     trigger: 'any',
                     criteria: isDefault ? [] : [{
                         telemetry: '',
