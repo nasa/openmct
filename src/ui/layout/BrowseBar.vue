@@ -91,8 +91,9 @@
 </template>
 
 <script>
-import NotebookSnapshot from '../utils/notebook-snapshot';
+import Snapshot from '@/plugins/notebook/snapshot';
 import ViewSwitcher from './ViewSwitcher.vue';
+
 const PLACEHOLDER_OBJECT = {};
 
 export default {
@@ -165,7 +166,7 @@ export default {
     mounted: function () {
 
         if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+            this.notebookSnapshot = new Snapshot(this.openmct);
             this.notebookEnabled = true;
         }
 

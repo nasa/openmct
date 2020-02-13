@@ -119,6 +119,7 @@ function (
     };
 
     NotebookController.prototype.newEntry = function (event) {
+        console.log('newEntry');
         this.NotebookVue.search('');
 
         var date = Date.now(),
@@ -183,6 +184,7 @@ function (
     };
 
     NotebookController.prototype.filterBySearch = function (entryArray, filterString) {
+        console.log('filterBySearch');
         if (filterString) {
             var lowerCaseFilterString = filterString.toLowerCase();
 

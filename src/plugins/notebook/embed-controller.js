@@ -1,40 +1,13 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
+import $ from 'zepto';
+import Moment from 'moment';
+import Painterro from 'painterro';
+import Vue from 'vue';
 
-define([
-    'moment',
-    'zepto',
-    '../../res/templates/snapshotTemplate.html',
-    'vue',
-    'painterro'
-],
-function (
-    Moment,
-    $,
-    SnapshotTemplate,
-    Vue,
-    Painterro
-) {
-    function EmbedController(openmct, domainObject) {
+import SnapshotTemplate from './components/snapshot-template.html';
+
+export default class EmbedController {
+    constructor(openmct, domainObject) {
+        console.log('EmbedController');
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.popupService = openmct.$injector.get('popupService');
@@ -45,8 +18,9 @@ function (
         this.toggleActionMenu = this.toggleActionMenu.bind(this);
     }
 
-    EmbedController.prototype.openSnapshot = function (domainObject, entry, embed) {
 
+    openSnapshot(domainObject, entry, embed) {
+        console.log('openSnapshot', entry, embed);
         function annotateSnapshot(openmct) {
             return function () {
 
@@ -117,7 +91,7 @@ function (
                                     reader = new window.FileReader();
 
                                 reader.readAsDataURL(url);
-                                reader.onloadend = function () {
+                                reader.onloadend = () => {
                                     var snapshot = reader.result,
                                         snapshotObject = {
                                             src: snapshot,
@@ -128,7 +102,7 @@ function (
                                         dirString = 'entries[' + entryPos + '].embeds[' + embedPos + '].snapshot';
 
                                     openmct.objects.mutate(domainObject, dirString, snapshotObject);
-                                };
+                                }
                             }
                         } else {
                             console.log('You cancelled the annotation!!!');
@@ -144,7 +118,7 @@ function (
                 data: function () {
                     return {
                         embed: self.embed
-                    };
+                    }
                 },
                 methods: {
                     formatTime: self.formatTime,
@@ -169,13 +143,13 @@ function (
                 }
             ]
         });
-    };
+    }
 
-    EmbedController.prototype.formatTime = function (unixTime, timeFormat) {
+    formatTime(unixTime, timeFormat) {
         return Moment(unixTime).format(timeFormat);
-    };
+    }
 
-    EmbedController.prototype.findInArray = function (array, id) {
+    findInArray(array, id) {
         var foundId = -1;
 
         array.forEach(function (element, index) {
@@ -186,9 +160,10 @@ function (
         });
 
         return foundId;
-    };
+    }
 
-    EmbedController.prototype.populateActionMenu = function (openmct, actions) {
+    populateActionMenu(openmct, actions) {
+        console.log('populateActionMenu', actions);
         return function () {
             var self = this;
 
@@ -203,10 +178,10 @@ function (
                     });
                 });
             });
-        };
-    };
+        }
+    }
 
-    EmbedController.prototype.removeEmbedAction = function () {
+    removeEmbedAction() {
         var self = this;
 
         return {
@@ -238,10 +213,10 @@ function (
                     }]
                 });
             }
-        };
-    };
+        }
+    }
 
-    EmbedController.prototype.toggleActionMenu = function (event) {
+    toggleActionMenu(event) {
         event.preventDefault();
 
         var body = $(document.body),
@@ -278,16 +253,16 @@ function (
         });
 
         body.on(initiatingEvent, menuClickHandler);
-    };
+    }
 
-    EmbedController.prototype.exposedData = function () {
+    exposedData() {
         return {
             actions: [this.removeEmbedAction()],
             showActionMenu: false
-        };
-    };
+        }
+    }
 
-    EmbedController.prototype.exposedMethods = function () {
+    exposedMethods() {
         var self = this;
 
         return {
@@ -295,8 +270,6 @@ function (
             formatTime: self.formatTime,
             toggleActionMenu: self.toggleActionMenu,
             findInArray: self.findInArray
-        };
-    };
-
-    return EmbedController;
-});
+        }
+    }
+}

@@ -57,8 +57,8 @@
 
 <script>
 import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
+import Snapshot from '@/plugins/notebook/snapshot';
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
-import NotebookSnapshot from '../utils/notebook-snapshot';
 
 export default {
     components: {
@@ -96,7 +96,7 @@ export default {
         this.setView(view);
 
         if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
+            this.notebookSnapshot = new Snapshot(this.openmct);
             this.notebookEnabled = true;
         }
     },
