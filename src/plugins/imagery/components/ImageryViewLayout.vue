@@ -1,9 +1,9 @@
 <template>
-<multipane class="c-imagery-layout"
+<multipane class="c-imagery"
            type="vertical"
 >
     <pane :style="{'min-height': `300px`}">
-        <div class="main-image-wrapper c-imagery has-local-controls">
+        <div class="c-imagery__main-image-wrapper has-local-controls">
             <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                 <span class="holder flex-elem grows c-imagery__lc__sliders">
                     <input v-model="filters.brightness"
@@ -26,17 +26,17 @@
                 </span>
             </div>
 
-            <div class="main-image s-image-main"
+            <div class="main-image s-image-main c-imagery__main-image"
                  :class="{'paused unnsynced': paused(),'stale':false }"
                  :style="{'background-image': `url(${getImageUrl()})`,
                           'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
             >
             </div>
 
-            <div class="l-image-controller flex-elem l-flex-row">
+            <div class="l-image-controller c-imagery__control-bar flex-elem l-flex-row">
                 <div class="l-datetime-w flex-elem grows">
                     <a class="c-button show-thumbs sm hidden icon-thumbs-strip"></a>
-                    <span class="l-time">{{ getTime() }}</span>
+                    <span class="l-time c-imagery__timestamp">{{ getTime() }}</span>
                 </div>
                 <div class="h-local-controls flex-elem">
                     <a class="c-button icon-pause pause-play"
@@ -48,26 +48,24 @@
         </div>
     </pane>
 
-    <pane class="c-inspector__elements"
+    <pane class="c-thumbs"
           handle="before"
           :style="{'min-height': `100px`}"
     >
-        <div class="c-elements-pool">
-            <div ref="thumbsWrapper"
-                 class="thumbs-layout"
-                 @scroll="handleScroll"
+        <div ref="thumbsWrapper"
+             class="c-thumbs__wrapper"
+             @scroll="handleScroll"
+        >
+            <div v-for="(imageData, index) in imageHistory"
+                 :key="index"
+                 class="l-image-thumb-item c-thumb"
+                 :class="{selected: imageData.selected}"
+                 @click="setSelectedImage(imageData)"
             >
-                <div v-for="(imageData, index) in imageHistory"
-                     :key="index"
-                     class="l-image-thumb-item"
-                     :class="{selected: imageData.selected}"
-                     @click="setSelectedImage(imageData)"
+                <img class="l-thumb c-thumb__image"
+                     :src="getImageUrl(imageData)"
                 >
-                    <img class="l-thumb"
-                         :src="getImageUrl(imageData)"
-                    >
-                    <div class="l-time">{{ getTime(imageData) }}</div>
-                </div>
+                <div class="l-time c-thumb__timestamp">{{ getTime(imageData) }}</div>
             </div>
         </div>
     </pane>

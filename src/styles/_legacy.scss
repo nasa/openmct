@@ -53,44 +53,45 @@
 }
 
 /******************************************************************* IMAGERY */
-.l-image-main-wrapper,
-.l-image-thumbs-wrapper,
-.image-main {
-    @include abs(0);
-    overflow: hidden;
-}
+//.l-image-main-wrapper,
+//.l-image-thumbs-wrapper,
+//.image-main {
+//    @include abs(0);
+//    overflow: hidden;
+//}
 
 /*************************************** MAIN LAYOUT */
-.l-image-main-wrapper {
-    // Imagery thumbs
-    bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+//.l-image-main-wrapper {
+//    // Imagery thumbs
+//    bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+//
+//    min-width: 150px;
+//    .l-image-main {
+//        margin-bottom: $interiorMargin;
+//    }
+//    .l-image-main-controlbar {
+//        &.l-flex-row { align-items: center; }
+//    }
+//}
 
-    min-width: 150px;
-    .l-image-main {
-        margin-bottom: $interiorMargin;
-    }
-    .l-image-main-controlbar {
-        &.l-flex-row { align-items: center; }
-    }
-}
-
-.l-image-thumbs-wrapper {
-    top: auto;
-    min-height: $imageThumbsWrapperH;
-    max-height: 60%;
-    box-sizing: border-box;
-}
+//.l-image-thumbs-wrapper,
+//.c-thumbs__wrapper {
+//        @include test();
+//    top: auto;
+//    min-height: $imageThumbsWrapperH;
+//    max-height: 60%;
+//}
 
 .l-date,
-.l-time,
-.l-timezone {
+.l-time {
     display: inline-block;
 }
 
 /*************************************** MAIN IMAGE */
 
 .image-main,
-.l-image-thumb-item .l-thumb {
+.l-image-thumb-item .l-thumb,
+.c-thumb__image {
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -111,7 +112,7 @@
         z-index: 2;
     }
     .l-date,
-    .l-time {
+    &__timestamp {
         color: pullForward($colorBodyFg, 20%); // TODO: do this as a theme constant
     }
     .l-mag {
@@ -138,14 +139,16 @@
 }
 
 /*************************************** THUMBS */
-.l-image-thumbs-wrapper {
+.l-image-thumbs-wrapper,
+.c-thumbs__wrapper {
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: $interiorMargin;
     white-space: nowrap;
 }
 
-.l-image-thumb-item {
+.l-image-thumb-item,
+.c-thumb {
     transition: background-color 0.25s;
     box-sizing: border-box;
     cursor: pointer;
@@ -158,13 +161,13 @@
     text-align: left;
     width: $imageThumbsD + $imageThumbPad*2;
     white-space: normal;
-    .l-thumb,
+    &__image,
     .l-date,
-    .l-time {
+    &__timestamp {
         display: inline-block;
     }
     .l-date,
-    .l-time {
+    &__timestamp {
         padding: 2px 3px;
     }
 
@@ -176,13 +179,13 @@
         }
     }
     &.selected {
-        background: $colorKeySelectedBg;
+        background: $colorPausedBg;
         .l-date,
         .l-time {
-            color: #fff;
+            color: $colorPausedFg;
         }
     }
-    .l-thumb {
+    &__image {
         background-color: rgba(#fff, 0.1);
         height: $imageThumbsD;
         width: $imageThumbsD;

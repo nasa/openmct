@@ -1,16 +1,17 @@
-.c-imagery-layout {
+.c-imagery {
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow: hidden;
 
-    .main-image-wrapper {
+    &__main-image-wrapper {
         display: flex;
         flex-direction: column;
+        flex: 1 1 auto;
         height: 100%;
         padding-bottom: 5px;
     }
 
-    .main-image {
+    &__main-image {
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
@@ -21,12 +22,30 @@
         }
     }
 
-    .l-image-controller {
+    &__control-bar {
         padding: 5px 0 0 0;
     }
 
     .thumbs-layout {
         margin-top: 5px;
         overflow: auto;
+    }
+}
+
+.c-thumbs {
+
+    &__wrapper {
+        @include test(green);
+    }
+}
+
+.c-thumb {
+
+    &__image {
+
+    }
+
+    &__timestamp {
+
     }
 }
