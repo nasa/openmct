@@ -176,11 +176,16 @@ export default {
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
         setSelectedImage(image) {
-            this.imageUrl = this.getImageUrl(image);
-            this.time = this.getTime(image);
-            this.paused(true);
-            this.unselectAllImages();
-            image.selected = true;
+            if (!this.isPaused) {
+                this.imageUrl = this.getImageUrl(image);
+                this.time = this.getTime(image);
+                this.paused(true);
+                this.unselectAllImages();
+                image.selected = true;
+            } else {
+                this.paused(false);
+                this.unselectAllImages();
+            }
         },
         stopListening() {
             if (this.unsubscribe) {

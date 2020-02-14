@@ -42,6 +42,11 @@
         height: 135px;
         overflow-x: auto;
         overflow-y: hidden;
+        .c-thumb:last-child {
+            // Hilite the lastest thumb
+            background: $colorBodyFg;
+            color: $colorBodyBg;
+        }
     }
 }
 
