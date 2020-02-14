@@ -255,8 +255,6 @@ export default {
                 } else {
                     this.selectedOutputKey = conditionOutput;
                 }
-            } else {
-                this.selectedOutputKey = '';
             }
         },
         persist() {
@@ -277,7 +275,8 @@ export default {
             }
         },
         updateCurrentCondition() {
-            this.$emit('updateCurrentCondition', this.conditionIdentifier);
+            console.log('condition this.currentConditionIdentifier', this.currentConditionIdentifier);
+            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry

@@ -73,7 +73,7 @@ export default class ConditionClass extends EventEmitter {
 
     update(newDomainObject) {
         this.updateTrigger(newDomainObject.configuration.trigger);
-        this.updateCriteria(newDomainObject.configuration.criteria);
+        // this.updateCriteria(newDomainObject.configuration.criteria);
     }
 
     updateTrigger(trigger) {
@@ -86,16 +86,17 @@ export default class ConditionClass extends EventEmitter {
     generateCriterion(criterionConfiguration) {
         return {
             id: uuid(),
+            telemetry: criterionConfiguration.telemetry || '',
             operation: criterionConfiguration.operation || '',
             input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
-            metaDataKey: criterionConfiguration.metaDataKey || '',
+            metadata: criterionConfiguration.metadata || '',
             key: criterionConfiguration.key || ''
         };
     }
 
     createCriteria(criterionConfigurations) {
-        criterionConfigurations.forEach((criterionConfigurations) => {
-            this.addCriterion(criterionConfigurations);
+        criterionConfigurations.forEach((criterionConfiguration) => {
+            this.addCriterion(criterionConfiguration);
         });
     }
 
@@ -109,6 +110,7 @@ export default class ConditionClass extends EventEmitter {
      */
     addCriterion(criterionConfiguration) {
         let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
+        console.log('condition class criterionConfigurationWithId', criterionConfigurationWithId );
         let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
@@ -139,6 +141,7 @@ export default class ConditionClass extends EventEmitter {
     updateCriterion(id, criterionConfiguration) {
         let found = this.findCriterion(id);
         if (found) {
+            console.log('updateCriterion found')
             const newcriterionConfiguration = this.generateCriterion(criterionConfiguration);
             let newCriterion = new TelemetryCriterion(newcriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
@@ -184,7 +187,8 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             this.criteria[found.index] = criterion.data;
             //Most likely don't need this.
-            // this.subscribe();
+            console.log('conditiion subscribe')
+            this.subscribe();
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
                 criteria: this.criteria

@@ -67,7 +67,7 @@
                                :condition-index="index"
                                :telemetry="telemetryObjs"
                                :is-editing="isEditing"
-                               @update-current-condition="updateCurrentCondition"
+                               @updateCurrentCondition="updateCurrentCondition"
                                @removeCondition="removeCondition"
                                @conditionResultUpdated="handleConditionResult"
                                @setMoveIndex="setMoveIndex"
@@ -114,7 +114,7 @@ export default {
         this.composition.on('add', this.addTelemetryObject);
         this.composition.on('remove', this.removeTelemetryObject);
         this.composition.load();
-        this.conditionCollection = this.domainObject.configuration.conditionCollection;
+        this.conditionCollection = this.domainObject.configuration ? this.domainObject.configuration.conditionCollection : [];
         if (!this.conditionCollection.length) {
             this.addCondition(null, true);
         } else {
@@ -171,18 +171,19 @@ export default {
         handleConditionResult(args) {
             let idAsString = this.openmct.objects.makeKeyString(args.id);
             this.conditionResults[idAsString] = args.result;
-            this.updateCurrentConditionIdentifier();
+            this.updateCurrentConditionId();
         },
-        updateCurrentConditionIdentifier() {
+        updateCurrentConditionId() {
             let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
             for (let i = 0; i < this.conditionCollection.length - 1; i++) {
-                let conditionIdentifierAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
-                if (this.conditionResults[conditionIdentifierAsString]) {
-                    // TODO: first condition to be true wins
+                let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
+                if (this.conditionResults[conditionIdAsString]) {
+                    //first condition to be true wins
                     currentConditionIdentifier = this.conditionCollection[i];
                     break;
                 }
             }
+            // console.log('conditioncollection before emit currentConditionIdentifier', currentConditionIdentifier)
             this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetryObject(domainObject) {
@@ -216,6 +217,7 @@ export default {
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
+            // console.log('conditionCollection this.conditionIdentifier', this.currentConditionIdentifier);
         },
         createConditionDomainObject(isDefault) {
             let conditionObj = {
@@ -227,7 +229,7 @@ export default {
                 },
                 configuration: {
                     name: isDefault ? 'Default' : 'Unnamed Condition',
-                    output: '',
+                    output: 'false',
                     trigger: 'any',
                     criteria: isDefault ? [] : [{
                         telemetry: '',
