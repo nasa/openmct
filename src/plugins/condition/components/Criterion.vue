@@ -4,7 +4,7 @@
     <span class="t-configuration">
         <span class="controls">
             <select v-model="selectedTelemetryObject"
-                    @change="updateFieldOptions"
+                    @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
                 <option v-for="telemetryOption in telemetry"
@@ -16,8 +16,8 @@
             </select>
         </span>
         <span class="controls">
-            <select v-model="selectedFieldOption"
-                    @change="persist"
+            <select v-model="selectedMetadataOption"
+                    @change="updateMetadataSelection"
             >
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
@@ -30,7 +30,7 @@
         </span>
         <span class="controls">
             <select v-model="selectedOperationOption"
-                    @change="updateOperationInput"
+                    @change="updateOperationOption"
             >
                 <option value="">- Select Comparison -</option>
                 <option v-for="option in operations"
@@ -44,7 +44,7 @@
                    v-model="comparisonInputValue"
                    class="t-condition-name-input"
                    type="text"
-                   @change="persist"
+                   @blur="setInput"
             >
         </span>
     </span>
@@ -80,11 +80,10 @@ export default {
         return {
             telemetryMetadata: {},
             operations: OPERATIONS,
-            selectedTelemetryObject: '',
-            selectedFieldOption: {},
-            selectedOperationOption: '',
-            operationValue: '',
-            comparisonInputValue: '',
+            selectedTelemetryObject: this.criterion.telemetry || '',
+            selectedMetadataOption: this.criterion.metadata || {},
+            selectedOperationOption: this.criterion.operation || '',
+            comparisonInputValue: this.criterion.input || '',
             isInputOperation: false,
             rowLabel: ''
         }
@@ -99,26 +98,28 @@ export default {
     mounted() {
         this.initialize();
     },
-    updated() {
-    },
     methods: {
         initialize() {
-            this.selectedTelemetryObject = this.criterion.telemetry;
-            this.selectedFieldOption = this.criterion.metadata;
-            this.selectedOperationOption = this.criterion.operation;
-            this.comparisonInputValue = this.criterion.input;
-            this.updateOperationInput();
-            this.updateFieldOptions();
+            this.updateMetadataOptions();
+            this.updateOperationInputVisibility();
         },
-        updateFieldOptions() {
+        updateMetadataOptions() {
             if (this.selectedTelemetryObject) {
                 this.openmct.objects.get(this.selectedTelemetryObject).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
                 });
+                this.criterion.telemetry = this.selectedTelemetryObject;
+            } else {
+                this.selectedMetadataOption = '';
             }
             this.persist();
         },
-        updateOperationInput() {
+        updateOperationOption() {
+            this.criterion.operation = this.selectedOperationOption;
+            this.updateOperationInputVisibility();
+            this.persist();
+        },
+        updateOperationInputVisibility() {
             for (let i=0; i < this.operations.length; i++) {
                 if (this.selectedOperationOption === this.operations[i].name) {
                     if (this.operations[i].inputCount > 0) {
@@ -129,14 +130,18 @@ export default {
                     }
                 }
             }
+            this.criterion.operation = this.selectedOperationOption;
+        },
+        updateMetadataSelection() {
+            this.comparisonInputValue = '';
+            this.criterion.metadata = this.selectedMetadataOption;
             this.persist();
-
+        },
+        setInput() {
+            this.criterion.input = this.comparisonInputValue;
+            this.persist();
         },
         persist() {
-            this.criterion.telemetry = this.selectedTelemetryObject;
-            this.criterion.metadata = this.selectedFieldOption;
-            this.criterion.operation = this.selectedOperationOption;
-            this.criterion.input = this.comparisonInputValue;
             this.$emit('persist', this.criterion);
         }
     }
