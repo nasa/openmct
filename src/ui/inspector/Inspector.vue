@@ -1,9 +1,9 @@
 <template>
-<div class="c_inspector">
-    <div v-if="hasTabs"
-         class="c-inspector__tabs"
+<div class="c-inspector">
+    <div class="c-inspector__tabs"
     >
-        <div class="c-inspector__tabs__holder">
+        <div v-if="showStyles"
+             class="c-inspector__tabs__holder">
             <div v-for="tabbedView in tabbedViews"
                  :key="tabbedView.key"
                  class="c-inspector__tabs__header"
@@ -11,25 +11,18 @@
             >
                 <span class="c-inspector__tabs__label c-tab"
                       :class="{'is-current': isCurrent(tabbedView)}"
-                >{{ tabbedView.getName() }}</span>
+                >{{ tabbedView.name }}</span>
             </div>
         </div>
-        <div v-if="currentTabbedView.key !== '__properties'"
-             class="c-inspector__tabs__contents"
-        >
-            <tabbed-inspector-view :view="currentTabbedView" />
-        </div>
-        <div v-else
-             class="c-inspector__tabs__contents"
-        >
-            <multipane
-                class="c-inspector"
-                type="vertical"
+        <div class="c-inspector__tabs__contents">
+            <multipane v-if="currentTabbedView.key === '__properties'"
+                       class="c-inspector"
+                       type="vertical"
             >
                 <pane class="c-inspector__properties">
                     <properties />
                     <location />
-                    <inspector-views />
+                    <inspector-views :registry="getPropertiesRegistry()"/>
                 </pane>
                 <pane
                     v-if="isEditing && hasComposition"
@@ -40,26 +33,13 @@
                     <elements />
                 </pane>
             </multipane>
+            <pane v-else
+                  class="c-inspector__styles"
+            >
+                <inspector-views :registry="getStyleRegistry()" />
+            </pane>
         </div>
     </div>
-    <multipane v-else
-               class="c-inspector"
-               type="vertical"
-    >
-        <pane class="c-inspector__properties">
-            <properties />
-            <location />
-            <inspector-views />
-        </pane>
-        <pane
-            v-if="isEditing && hasComposition"
-            class="c-inspector__elements"
-            handle="before"
-            label="Elements"
-        >
-            <elements />
-        </pane>
-    </multipane>
 </div>
 </template>
 
@@ -70,7 +50,6 @@ import Elements from './Elements.vue';
 import Location from './Location.vue';
 import Properties from './Properties.vue';
 import InspectorViews from './InspectorViews.vue';
-import TabbedInspectorView from './TabbedInspectorView.vue';
 import _ from "lodash";
 
 export default {
@@ -81,8 +60,7 @@ export default {
         Elements,
         Properties,
         Location,
-        InspectorViews,
-        TabbedInspectorView
+        InspectorViews
     },
     props: {
         'isEditing': Boolean
@@ -90,13 +68,15 @@ export default {
     data() {
         return {
             hasComposition: false,
-            hasTabs: false,
-            tabbedViews: [],
-            currentTabbedView: {},
-            PROPERTY_VIEW: {
+            showStyles: false,
+            tabbedViews: [{
                 key: '__properties',
-                getName: () => { return 'Properties';}
-            }
+                name: 'Properties'
+            },{
+                key: '__styles',
+                name: 'Styles'
+            }],
+            currentTabbedView: {}
         }
     },
     mounted() {
@@ -119,15 +99,9 @@ export default {
         },
         refreshTabs(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let selectedViews = this.openmct.propertiesInspector.get(selection);
-                this.tabbedViews = selectedViews.filter(selectedView => {
-                    return typeof selectedView.tabbed === 'function' && selectedView.tabbed();
-                });
-                this.hasTabs = this.tabbedViews.length;
-                if (this.hasTabs) {
-                    this.tabbedViews.unshift(this.PROPERTY_VIEW);
-                    this.updateCurrentTab(this.tabbedViews[0]);
-                }
+                let selectedViews = this.openmct.stylesInspector.get(selection);
+                this.showStyles = selectedViews.length;
+                this.updateCurrentTab(this.tabbedViews[0]);
             }
         },
         updateCurrentTab(view) {
@@ -135,6 +109,12 @@ export default {
         },
         isCurrent(view) {
             return _.isEqual(this.currentTabbedView, view)
+        },
+        getStyleRegistry() {
+            return this.openmct.stylesInspector;
+        },
+        getPropertiesRegistry() {
+            return this.openmct.propertiesInspector;
         }
     }
 }

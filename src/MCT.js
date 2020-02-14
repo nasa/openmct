@@ -167,6 +167,16 @@ define([
         this.propertiesInspector = new InspectorViewRegistry();
 
         /**
+         * Registry for views which should appear in the Inspector area in the styles tab.
+         * These views will be chosen based on the selection state.
+         *
+         * @type {module:openmct.InspectorViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name stylesInspector
+         */
+        this.stylesInspector = new InspectorViewRegistry();
+
+        /**
          * Registry for views which should appear in Edit Properties
          * dialogs, and similar user interface elements used for
          * modifying domain objects external to its regular views.

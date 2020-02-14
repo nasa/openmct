@@ -23,14 +23,10 @@ import ConditionalStylesView from './components/ConditionalStylesView.vue'
 import Vue from 'vue';
 
 export default class ConditionalStylesInspectorViewProvider {
-    /*
-    * @param supportedObjectTypesArray is a list of types that can show conditional styles in the inspector view
-    */
-    constructor(openmct, supportedObjectTypesArray) {
+    constructor(openmct) {
         this.openmct = openmct;
         this.key = 'conditional-styles-inspector';
         this.name = 'Style';
-        this.supportedObjectTypesArray = supportedObjectTypesArray;
     }
 
     canView(selection) {
@@ -39,7 +35,7 @@ export default class ConditionalStylesInspectorViewProvider {
         }
         let object = selection[0][0].context.item;
 
-        return object && this.supportedObjectTypesArray.some(type => object.type === type);
+        return object && object.hasOwnProperty('styles');
     }
 
     view(selection) {

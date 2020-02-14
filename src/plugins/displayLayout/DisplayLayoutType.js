@@ -33,6 +33,7 @@ define(function () {
                     items: [],
                     layoutGrid: [10, 10]
                 };
+                domainObject.styles = {};
             },
             form: [
                 {

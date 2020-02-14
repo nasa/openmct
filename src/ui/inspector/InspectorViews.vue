@@ -8,6 +8,11 @@
 <script>
 export default {
     inject: ['openmct'],
+    props: {
+        registry: {
+            type: Object
+        }
+    },
     data() {
         return {
             selection: []
@@ -30,14 +35,11 @@ export default {
                 });
                 this.$el.innerHTML = '';
             }
-
-            this.selectedViews = this.openmct.propertiesInspector.get(selection);
+            this.selectedViews = this.registry ? this.registry.get(selection) : this.openmct.propertiesInspector.get(selection);
             this.selectedViews.forEach(selectedView => {
-                if (typeof selectedView.tabbed === 'function' && !selectedView.tabbed()) {
-                    let viewContainer = document.createElement('div');
-                    this.$el.append(viewContainer)
-                    selectedView.show(viewContainer);
-                }
+                let viewContainer = document.createElement('div');
+                this.$el.append(viewContainer);
+                selectedView.show(viewContainer);
             });
         }
     }
