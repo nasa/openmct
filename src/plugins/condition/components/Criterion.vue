@@ -71,10 +71,6 @@ export default {
             type: Number,
             required: true
         },
-        condition: {
-            type: Object,
-            required: true
-        },
         trigger: {
             type: String,
             required: true
@@ -104,7 +100,6 @@ export default {
         this.initialize();
     },
     updated() {
-        this.persist();
     },
     methods: {
         initialize() {
@@ -114,7 +109,6 @@ export default {
             this.comparisonInputValue = this.criterion.input;
             this.updateOperationInput();
             this.updateFieldOptions();
-
         },
         updateFieldOptions() {
             if (this.selectedTelemetryObject) {
@@ -122,16 +116,21 @@ export default {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
                 });
             }
+            this.persist();
         },
         updateOperationInput() {
-            if (this.selectedOperationOption &&
-                (this.selectedOperationOption !== 'isUndefined' &&
-                 this.selectedOperationOption !== 'isDefined')) {
-                this.isInputOperation = true;
-            } else {
-                this.isInputOperation = false;
-                this.comparisonInputValue = '';
+            for (let i=0; i < this.operations.length; i++) {
+                if (this.selectedOperationOption === this.operations[i].name) {
+                    if (this.operations[i].inputCount > 0) {
+                        this.isInputOperation = true;
+                    } else {
+                        this.isInputOperation = false;
+                        this.comparisonInputValue = '';
+                    }
+                }
             }
+            this.persist();
+
         },
         persist() {
             this.criterion.telemetry = this.selectedTelemetryObject;

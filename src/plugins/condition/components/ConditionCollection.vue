@@ -107,6 +107,7 @@ export default {
     },
     destroyed() {
         this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('remove', this.removeTelemetryObject);
     },
     mounted() {
         this.instantiate = this.openmct.$injector.get('instantiate');
@@ -238,7 +239,7 @@ export default {
                         metadata: '',
                         identifier: {
                             namespace: '',
-                            key: this.telemetryObjs.length ? this.openmct.objects.makeKeyString(this.telemetryObjs[0].identifier) : null
+                            key: ''
                         }
                     }]
                 },
@@ -262,7 +263,7 @@ export default {
             });
             this.conditionCollection.splice(index, 1);
             this.persist();
-            this.updateCurrentConditionIdentifier();
+            this.updateCurrentConditionId();
         },
         reorder(reorderPlan) {
             let oldConditions = this.conditionCollection.slice();

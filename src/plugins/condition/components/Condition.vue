@@ -93,7 +93,6 @@
                                                :key="index"
                                                :telemetry="telemetry"
                                                :criterion="criterion"
-                                               :condition="domainObject"
                                                :index="index"
                                                :trigger="trigger"
                                                @persist="persist"
