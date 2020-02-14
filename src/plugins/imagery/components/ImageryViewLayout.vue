@@ -33,11 +33,8 @@
             >
             </div>
 
-            <div class="l-image-controller c-imagery__control-bar flex-elem l-flex-row">
-                <div class="l-datetime-w flex-elem grows">
-                    <a class="c-button show-thumbs sm hidden icon-thumbs-strip"></a>
-                    <span class="l-time c-imagery__timestamp">{{ getTime() }}</span>
-                </div>
+            <div class="c-imagery__control-bar">
+                <div class="c-imagery__datetime">{{ getTime() }}</div>
                 <div class="h-local-controls flex-elem">
                     <a class="c-button icon-pause pause-play"
                        :class="{'is-paused': paused()}"

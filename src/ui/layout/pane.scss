@@ -281,6 +281,9 @@
             /************************** Vertical Splitter Before */
             // Pane collapses downward. Used by Elements pool in Inspector
             &[class*="-before"] {
+                $m: $interiorMarginLg;
+                margin-top: $m;
+                padding-top: $m;
                 > .l-pane__handle {
                     top: 0;
                     transform: translateY(floor($splitterHandleD / -1));
