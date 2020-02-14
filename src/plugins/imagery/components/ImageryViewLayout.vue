@@ -92,7 +92,7 @@ export default {
         this.subscribe(this.domainObject);
     },
     updated() {
-        this.scrollToBottom();
+        this.scrollToRight();
     },
     beforeDestroy() {
         this.stopListening();
@@ -163,17 +163,17 @@ export default {
                     this.updateValues(values[values.length - 1]);
                 });
         },
-        scrollToBottom() {
+        scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 return;
             }
 
-            const scrollHeight = this.$refs.thumbsWrapper.scrollHeight || 0;
-            if (!scrollHeight) {
+            const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
+            if (!scrollWidth) {
                 return;
             }
 
-            setTimeout(() => this.$refs.thumbsWrapper.scrollTop = scrollHeight, 0);
+            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
         setSelectedImage(image) {
             this.imageUrl = this.getImageUrl(image);
