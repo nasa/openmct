@@ -2,13 +2,16 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100%;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
 
     &__main-image-wrapper {
         display: flex;
         flex-direction: column;
         flex: 1 1 auto;
-        height: 100%;
-        //padding-bottom: 5px;
     }
 
     &__main-image {
@@ -28,33 +31,121 @@
         align-items: center;
     }
 
-    &__datetime {
-        // Datetime element in __control-bar
+    &__timestamp {
         flex: 1 1 auto;
     }
-}
 
-.c-thumbs {
-    height: 20%;
-    &__wrapper {
+    &__thumbs-wrapper {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: row;
+        height: 135px;
+        overflow-x: auto;
+        overflow-y: hidden;
     }
 }
 
+/*************************************** THUMBS */
 .c-thumb {
-    &__image {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    width: $imageThumbsD;
 
+    &:hover {
+        background: $colorThumbHoverBg;
+    }
+
+    &.selected {
+        background: $colorPausedBg;
+        color: $colorPausedFg;
+    }
+
+    &__image {
+        background-color: rgba($colorBodyFg, 0.2);
+        width: 100%;
     }
 
     &__timestamp {
-
+        flex: 0 0 auto;
+        padding: 2px 3px;
     }
 }
 
 .l-layout,
 .c-fl {
-    .c-thumbs {
+    .c-imagery__thumbs-wrapper {
         //  When Imagery is in a layout, hide the thumbs area
-        // TODO: kill padding on the relevant pane in this context
         display: none;
+    }
+}
+
+.s-image-main {
+    background-color: $colorPlotBg;
+    border: 1px solid transparent;
+}
+
+/*************************************** IMAGERY LOCAL CONTROLS*/
+.c-imagery {
+    .h-local-controls--overlay-content {
+        position: absolute;
+        right: $interiorMargin; top: $interiorMargin;
+        z-index: 2;
+        background: $colorLocalControlOvrBg;
+        border-radius: $basicCr;
+        max-width: 200px;
+        min-width: 100px;
+        width: 35%;
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
+
+        input[type="range"] {
+            display: block;
+            width: 100%;
+            &:not(:first-child) {
+                margin-top: $interiorMarginLg;
+            }
+
+            &:before {
+                margin-right: $interiorMarginSm;
+            }
+        }
+    }
+
+    &__lc {
+        &__reset-btn {
+            $bc: $scrollbarTrackColorBg;
+            &:before,
+            &:after {
+                border-right: 1px solid $bc;
+                content:'';
+                display: block;
+                width: 5px;
+                height: 4px;
+            }
+
+            &:before {
+                border-top: 1px solid $bc;
+                margin-bottom: 2px;
+            }
+
+            &:after {
+                border-bottom: 1px solid $bc;
+                margin-top: 2px;
+            }
+        }
+    }
+}
+
+/*************************************** BUTTONS */
+.c-button.pause-play {
+    // Pause icon set by default in markup
+    &.is-paused {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg;
+
+        &:before {
+            content: $glyph-icon-play;
+        }
     }
 }

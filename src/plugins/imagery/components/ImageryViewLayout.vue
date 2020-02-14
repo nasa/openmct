@@ -1,8 +1,5 @@
 <template>
-<multipane class="c-imagery"
-           type="vertical"
->
-    <pane :style="{'min-height': `300px`}">
+    <div class="c-imagery">
         <div class="c-imagery__main-image-wrapper has-local-controls">
             <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
                 <span class="holder flex-elem grows c-imagery__lc__sliders">
@@ -25,16 +22,14 @@
                     ></a>
                 </span>
             </div>
-
             <div class="main-image s-image-main c-imagery__main-image"
                  :class="{'paused unnsynced': paused(),'stale':false }"
                  :style="{'background-image': `url(${getImageUrl()})`,
                           'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
             >
             </div>
-
             <div class="c-imagery__control-bar">
-                <div class="c-imagery__datetime">{{ getTime() }}</div>
+                <div class="c-imagery__timestamp">{{ getTime() }}</div>
                 <div class="h-local-controls flex-elem">
                     <a class="c-button icon-pause pause-play"
                        :class="{'is-paused': paused()}"
@@ -43,30 +38,23 @@
                 </div>
             </div>
         </div>
-    </pane>
-
-    <pane class="c-thumbs"
-          handle="before"
-          :style="{'min-height': `100px`}"
-    >
         <div ref="thumbsWrapper"
-             class="c-thumbs__wrapper"
+             class="c-imagery__thumbs-wrapper"
              @scroll="handleScroll"
         >
             <div v-for="(imageData, index) in imageHistory"
                  :key="index"
-                 class="l-image-thumb-item c-thumb"
+                 class="c-imagery__thumb c-thumb"
                  :class="{selected: imageData.selected}"
                  @click="setSelectedImage(imageData)"
             >
-                <img class="l-thumb c-thumb__image"
+                <img class="c-thumb__image"
                      :src="getImageUrl(imageData)"
                 >
-                <div class="l-time c-thumb__timestamp">{{ getTime(imageData) }}</div>
+                <div class="c-thumb__timestamp">{{ getTime(imageData) }}</div>
             </div>
         </div>
-    </pane>
-</multipane>
+    </div>
 </template>
 
 <script>
