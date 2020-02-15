@@ -33,6 +33,8 @@ module.exports = {
         "no-sequences": "error",
         "no-irregular-whitespace": "error",
         "no-new": "error",
+        "no-prototype-builtins": "off",
+        "no-redeclare": ["error", { "builtinGlobals": false }],
         "no-shadow": "error",
         "no-undef": "error",
         "no-unused-vars": [
