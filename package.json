@@ -76,8 +76,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "eslint platform example src/**/*.{js,vue} openmct.js",
-    "lint:fix": "eslint platform example src/**/*.{js,vue} openmct.js --fix",
+    "lint": "eslint platform example src/**/*.{js,vue} openmct.js app.js",
+    "lint:fix": "eslint platform example src/**/*.{js,vue} openmct.js app.js --fix",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
     "build:watch": "webpack --watch",

@@ -43,7 +43,11 @@ app.use('/proxyUrl', function proxyRequest(req, res, next) {
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
+webpackConfig.plugins.push(function () {
+    this.plugin('watch-run', function (watching, callback) {
+        console.log('Begin compile at ' + new Date());callback();
+    });
+});
 
 webpackConfig.entry.openmct = [
     'webpack-hot-middleware/client?reload=true',
@@ -73,6 +77,6 @@ app.get('/', function (req, res) {
 });
 
 // Finally, open the HTTP server and log the instance to the console
-app.listen(options.port, options.host, function() {
+app.listen(options.port, options.host, function () {
     console.log('Open MCT application running at %s:%s', options.host, options.port)
 });
