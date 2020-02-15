@@ -82,12 +82,6 @@ export default function NotebookPlugin() {
                 return domainObject.type === 'notebook';
             },
             view: function (domainObject) {
-                // var controller = new NotebookController (openmct, domainObject);
-                // return {
-                //     show: controller.show,
-                //     destroy: controller.destroy
-                // };
-
                 let component;
                 return {
                     show(container) {

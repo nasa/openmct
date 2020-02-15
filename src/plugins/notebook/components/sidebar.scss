@@ -1,0 +1,32 @@
+.c-sidebar {
+    .c-sidebar__header, .c-sidebar__contents {
+        display: flex;
+
+        div, span {
+            flex-basis: 50%;
+        }
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .divider {
+            flex-basis: 5px;
+        }
+
+        button {
+            flex-basis: 10px;
+            margin-right: 10px;
+        }
+
+        .section, .page {
+            border-radius: 4px;
+            padding: 2px 5px 2px 12px;
+
+            &.selected {
+                background-color: #7d7d7d;
+            }
+        }
+    }
+}
