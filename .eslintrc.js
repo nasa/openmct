@@ -27,7 +27,7 @@ module.exports = {
         "eqeqeq": "error",
         "guard-for-in": "error",
         "no-extend-native": "error",
-        "no-inner-declarations": "off",
+        "no-inner-declarations": "error",
         "no-use-before-define": ["error", "nofunc"],
         "no-caller": "error",
         "no-sequences": "error",
@@ -97,8 +97,8 @@ module.exports = {
                 "allowFirstLine": true
             }
         }],
-        "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off"
+        "vue/multiline-html-element-content-newline": "error",
+        "vue/singleline-html-element-content-newline": "error"
     },
     "overrides": [
         {

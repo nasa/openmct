@@ -66,7 +66,9 @@
                     <img class="l-thumb"
                          :src="getImageUrl(imageData)"
                     >
-                    <div class="l-time">{{ getTime(imageData) }}</div>
+                    <div class="l-time">
+                        {{ getTime(imageData) }}
+                    </div>
                 </div>
             </div>
         </div>

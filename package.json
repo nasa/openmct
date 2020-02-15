@@ -35,6 +35,7 @@
     "glob": ">= 3.0.0",
     "html-loader": "^0.5.5",
     "html2canvas": "^1.0.0-alpha.12",
+    "husky": "^4.2.3",
     "imports-loader": "^0.8.0",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^3.1.0",
@@ -47,6 +48,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.0",
+    "lint-staged": "^10.0.7",
     "location-bar": "^3.0.1",
     "lodash": "^3.10.1",
     "markdown-toc": "^0.11.7",
@@ -96,5 +98,13 @@
   },
   "author": "",
   "license": "Apache-2.0",
-  "private": true
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,vue}": "eslint --cache --fix"
+  }
 }
