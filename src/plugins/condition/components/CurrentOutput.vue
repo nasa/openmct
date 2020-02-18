@@ -25,7 +25,7 @@
          class="l-cs__current-output"
 >
     <div class="l-cs__section-header">
-        Current Output
+        <div class="l-cs__section-title">Current Output</div>
     </div>
     <div class="l-cs__current-output-value">
         {{ condition.definition.output }}

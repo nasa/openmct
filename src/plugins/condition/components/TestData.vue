@@ -26,22 +26,13 @@
          class="l-cs__test-data"
 >
     <div class="l-cs__section-header">
-        Test Data
+        <div class="l-cs__section-title">Test Data</div>
         <span
-                class="is-enabled flex-elem"
-                :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
+                class="is-enabled c-disclosure-triangle"
+                :class="{ 'c-disclosure-triangle--expanded': expanded }"
                 @click="expanded = !expanded"
         ></span>
     </div>
-
-<!--    <div class="c-cs__ui__header">-->
-<!--        <span class="c-cs__ui__header-label">Test Data</span>-->
-<!--        <span-->
-<!--            class="is-enabled flex-elem"-->
-<!--            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle&#45;&#45;expanded': expanded }]"-->
-<!--            @click="expanded = !expanded"-->
-<!--        ></span>-->
-<!--    </div>-->
     <div v-if="expanded"
          class="c-cs__ui_content"
     >
