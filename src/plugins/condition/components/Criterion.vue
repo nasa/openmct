@@ -16,9 +16,7 @@
             </select>
         </span>
         <span class="controls">
-            <select v-model="criterion.metadata"
-                    @change="updateMetadataSelection"
-            >
+            <select v-model="criterion.metadata">
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
                         :key="option.key"
@@ -108,9 +106,6 @@ export default {
                     if (!this.isInputOperation) {this.criterion.input = ''}
                 }
             }
-        },
-        updateMetadataSelection() {
-            this.comparisonInputValue = '';
         },
         persist() {
             this.$emit('persist', this.criterion);

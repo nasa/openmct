@@ -99,7 +99,7 @@ export default class TelemetryCriterion extends EventEmitter {
      */
     subscribe() {
         this.unsubscribe();
-        console.log('criteria subscribe this.telemetryObject', this.telemetryObject);
+        console.log('criteria class subscribe this.telemetryObject', this.telemetryObject);
         this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
             this.handleSubscription(datum);
         });

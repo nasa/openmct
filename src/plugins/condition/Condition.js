@@ -110,7 +110,7 @@ export default class ConditionClass extends EventEmitter {
      */
     addCriterion(criterionConfiguration) {
         let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
-        console.log('condition class criterionConfigurationWithId', criterionConfigurationWithId );
+        console.log('condition class addCriterion criterionConfigurationWithId', criterionConfigurationWithId );
         let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
@@ -141,7 +141,6 @@ export default class ConditionClass extends EventEmitter {
     updateCriterion(id, criterionConfiguration) {
         let found = this.findCriterion(id);
         if (found) {
-            console.log('updateCriterion found')
             const newcriterionConfiguration = this.generateCriterion(criterionConfiguration);
             let newCriterion = new TelemetryCriterion(newcriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
