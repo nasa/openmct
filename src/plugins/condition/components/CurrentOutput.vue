@@ -21,23 +21,14 @@
  *****************************************************************************/
 
 <template>
-<section id="current-output">
-    <div v-if="condition"
-         class="c-cs__ui__header"
-    >
-        <span class="c-cs__ui__header-label">Current Output</span>
-        <span
-            class="is-enabled flex-elem"
-            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
-            @click="expanded = !expanded"
-        ></span>
+<section id="current-output"
+         class="l-cs__current-output"
+>
+    <div class="l-cs__section-header">
+        Current Output
     </div>
-    <div v-if="expanded && condition"
-         class="c-cs__ui_content"
-    >
-        <div>
-            <span class="current-output">{{ condition.definition.output }}</span>
-        </div>
+    <div class="l-cs__current-output-value">
+        {{ condition.definition.output }}
     </div>
 </section>
 </template>

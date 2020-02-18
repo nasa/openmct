@@ -1,3 +1,32 @@
+.l-cs {
+    display: flex;
+    flex-direction: column;
+
+    section {
+        flex: 0 0 auto;
+    }
+
+    &__section-header {
+        border-top: 1px solid $colorInteriorBorder;
+        display: flex;
+        align-items: center;
+        margin: $interiorMargin 0;
+        padding: $interiorMargin 0;
+        text-transform: uppercase;
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
 .c-cs-edit {
     padding: 0;
 }
