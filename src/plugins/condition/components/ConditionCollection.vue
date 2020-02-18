@@ -43,11 +43,11 @@
                         <ConditionEdit :condition-identifier="conditionIdentifier"
                                        :current-condition-identifier="currentConditionIdentifier"
                                        :condition-index="index"
-                                       @update-current-condition="updateCurrentCondition"
-                                       @remove-condition="removeCondition"
-                                       @clone-condition="cloneCondition"
-                                       @condition-result-updated="handleConditionResult"
-                                       @set-move-index="setMoveIndex"
+                                       @updateCurrentCondition="updateCurrentCondition"
+                                       @removeCondition="removeCondition"
+                                       @cloneCondition="cloneCondition"
+                                       @conditionResultUpdated="handleConditionResult"
+                                       @setMoveIndex="setMoveIndex"
                         />
                     </div>
                     <div v-else>

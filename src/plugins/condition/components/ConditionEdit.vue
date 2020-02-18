@@ -216,19 +216,19 @@ export default {
     },
     methods: {
         dragStart(e) {
-            this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
+            this.$emit('setMoveIndex', Number(e.target.getAttribute('data-condition-index')));
         },
         handleConditionResult(args) {
-            this.$emit('condition-result-updated', {
+            this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
         },
         removeCondition(ev) {
-            this.$emit('remove-condition', this.conditionIdentifier);
+            this.$emit('removeCondition', this.conditionIdentifier);
         },
         cloneCondition(ev) {
-            this.$emit('clone-condition', {
+            this.$emit('cloneCondition', {
                 identifier: this.conditionIdentifier,
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
@@ -294,7 +294,7 @@ export default {
             //find the criterion being updated and set the input property
         },
         updateCurrentCondition() {
-            this.$emit('update-current-condition', this.conditionIdentifier);
+            this.$emit('updateCurrentCondition', this.conditionIdentifier);
         }
     }
 }
