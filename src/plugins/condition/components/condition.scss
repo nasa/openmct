@@ -1,6 +1,6 @@
 .widget-condition {
     background-color: #eee;
-    margin: 0 0 5px;
+    margin: 0 0 0.33em;
     border-radius: 3px;
 
     &--current {
@@ -137,7 +137,14 @@
     }
 }
 
+
 .c-c__menu-hamburger {
+    &:active {
+        cursor: grabbing;
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
+    }
+
     &:before {
         content: $glyph-icon-menu-hamburger;
     }
@@ -157,9 +164,9 @@
 
 .c-c__drag-ghost {
     width: 100%;
-    min-height: 5px;
+    min-height: 0.33em;
     &.dragging {
-        min-height: 20px;
+        min-height: 2em;
         border: solid 1px blue;
         background-color: lightblue;
         border-radius: 2px;
