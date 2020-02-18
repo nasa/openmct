@@ -213,6 +213,7 @@ export default {
         addCondition(event, isDefault) {
             let conditionDomainObject = this.createConditionDomainObject(!!isDefault);
             //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', conditionDomainObject.created);
             this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
@@ -223,6 +224,7 @@ export default {
         createConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
+                type: 'condition',
                 name: isDefault ? 'Default' : 'Unnamed Condition',
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
