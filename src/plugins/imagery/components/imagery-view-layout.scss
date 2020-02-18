@@ -42,6 +42,11 @@
         height: 135px;
         overflow-x: auto;
         overflow-y: hidden;
+
+        &.is-paused {
+            background: rgba($colorPausedBg, 0.4);
+        }
+
         .c-thumb:last-child {
             // Hilite the lastest thumb
             background: $colorBodyFg;
@@ -62,8 +67,8 @@
     }
 
     &.selected {
-        background: $colorPausedBg;
-        color: $colorPausedFg;
+        background: $colorPausedBg !important;
+        color: $colorPausedFg !important;
     }
 
     &__image {

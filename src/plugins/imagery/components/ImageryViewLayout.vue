@@ -40,6 +40,7 @@
         </div>
         <div ref="thumbsWrapper"
              class="c-imagery__thumbs-wrapper"
+             :class="{'is-paused': paused()}"
              @scroll="handleScroll"
         >
             <div v-for="(imageData, index) in imageHistory"
@@ -135,6 +136,10 @@ export default {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
                 this.isPaused = state;
+                if (state === true) {
+                    // If we are pausing, select the latest image in imageHistory
+                    this.setSelectedImage(this.imageHistory[this.imageHistory.length - 1]);
+                }
 
                 if (this.nextDatum) {
                     this.updateValues(this.nextDatum);
@@ -176,15 +181,17 @@ export default {
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
         setSelectedImage(image) {
-            if (!this.isPaused) {
+            // If we are paused and the current image IS selected, unpause
+            // Otherwise, set current image and pause
+            if (this.isPaused && image.selected) {
+                this.paused(false);
+                this.unselectAllImages();
+            } else {
                 this.imageUrl = this.getImageUrl(image);
                 this.time = this.getTime(image);
                 this.paused(true);
                 this.unselectAllImages();
                 image.selected = true;
-            } else {
-                this.paused(false);
-                this.unselectAllImages();
             }
         },
         stopListening() {
