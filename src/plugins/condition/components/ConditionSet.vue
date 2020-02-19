@@ -55,7 +55,6 @@ export default {
     mounted() {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
         this.currentConditionIdentifier = conditionCollection.length ? this.updateCurrentCondition(conditionCollection[0]) : null;
-        // console.log('conditionCollection[0]', conditionCollection[0]);
     },
     methods: {
         setCurrentCondition() {
@@ -66,8 +65,6 @@ export default {
             }
         },
         updateCurrentCondition(conditionIdentifier) {
-            // console.log('conditionIdentifier', conditionIdentifier);
-
             this.currentConditionIdentifier = conditionIdentifier;
             this.setCurrentCondition();
         }

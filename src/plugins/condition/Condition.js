@@ -38,8 +38,7 @@ import {computeCondition} from "@/plugins/condition/utils/evaluator";
 *           telemetry: '',
 *           operation: '',
 *           input: '',
-*           metadata: '',
-*           key: 'someTelemetryObjectKey'
+*           metadata: ''
 *       }
 *   ]
 * }
@@ -73,7 +72,7 @@ export default class ConditionClass extends EventEmitter {
 
     update(newDomainObject) {
         this.updateTrigger(newDomainObject.configuration.trigger);
-        // this.updateCriteria(newDomainObject.configuration.criteria);
+        this.updateCriteria(newDomainObject.configuration.criteria);
     }
 
     updateTrigger(trigger) {
@@ -89,8 +88,7 @@ export default class ConditionClass extends EventEmitter {
             telemetry: criterionConfiguration.telemetry || '',
             operation: criterionConfiguration.operation || '',
             input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
-            metadata: criterionConfiguration.metadata || '',
-            key: criterionConfiguration.key || ''
+            metadata: criterionConfiguration.metadata || ''
         };
     }
 
@@ -110,7 +108,6 @@ export default class ConditionClass extends EventEmitter {
      */
     addCriterion(criterionConfiguration) {
         let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
-        console.log('condition class addCriterion criterionConfigurationWithId', criterionConfigurationWithId );
         let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
@@ -118,8 +115,6 @@ export default class ConditionClass extends EventEmitter {
             this.criteria = [];
         }
         this.criteria.push(criterion);
-        //Do we need this here?
-        this.handleConditionUpdated();
         return criterionConfigurationWithId.id;
     }
 
@@ -141,8 +136,8 @@ export default class ConditionClass extends EventEmitter {
     updateCriterion(id, criterionConfiguration) {
         let found = this.findCriterion(id);
         if (found) {
-            const newcriterionConfiguration = this.generateCriterion(criterionConfiguration);
-            let newCriterion = new TelemetryCriterion(newcriterionConfiguration, this.openmct);
+            const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
+            let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             newCriterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
 
@@ -154,7 +149,6 @@ export default class ConditionClass extends EventEmitter {
             if (this.criteriaResults[criterion.id] !== undefined) {
                 delete this.criteriaResults[criterion.id];
             }
-            this.handleConditionUpdated();
         }
     }
 
@@ -185,8 +179,6 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            //Most likely don't need this.
-            console.log('conditiion subscribe')
             this.subscribe();
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
@@ -207,7 +199,9 @@ export default class ConditionClass extends EventEmitter {
 
     subscribe() {
         this.criteria.forEach((criterion) => {
-            criterion.subscribe();
+            if (criterion.isValid()) {
+                criterion.subscribe();
+            }
         })
     }
 
@@ -230,7 +224,6 @@ export default class ConditionClass extends EventEmitter {
         return success;
     }
 
-    //TODO: implement as part of the evaluator class task.
     evaluate() {
         this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }

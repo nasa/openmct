@@ -184,7 +184,6 @@ export default {
                     break;
                 }
             }
-            // console.log('conditioncollection before emit currentConditionIdentifier', currentConditionIdentifier)
             this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetryObject(domainObject) {
@@ -213,16 +212,17 @@ export default {
         addCondition(event, isDefault) {
             let conditionDomainObject = this.createConditionDomainObject(!!isDefault);
             //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
+            this.openmct.objects.mutate(conditionDomainObject, 'created', conditionDomainObject.created);
             this.conditionCollection.unshift(conditionDomainObject.identifier);
             this.persist();
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
-            // console.log('conditionCollection this.conditionIdentifier', this.currentConditionIdentifier);
         },
         createConditionDomainObject(isDefault) {
             let conditionObj = {
                 isDefault: isDefault,
+                type: 'condition',
                 name: isDefault ? 'Default' : 'Unnamed Condition',
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
@@ -236,11 +236,7 @@ export default {
                         telemetry: '',
                         operation: '',
                         input: '',
-                        metadata: '',
-                        identifier: {
-                            namespace: '',
-                            key: ''
-                        }
+                        metadata: ''
                     }]
                 },
                 summary: 'summary description',

@@ -68,6 +68,7 @@
                                                v-model="domainObject.configuration.output"
                                                class="t-condition-name-input"
                                                type="text"
+                                               @blur="persist"
                                         >
                                     </span>
                                 </li>
@@ -141,10 +142,9 @@
 <script>
 import ConditionClass from "@/plugins/condition/Condition";
 import Criterion from '../../condition/components/Criterion.vue';
-import uuid from 'uuid';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     components: {
         Criterion
     },
@@ -196,10 +196,6 @@ export default {
             this.initialize();
         }));
     },
-    updated() {
-        //validate telemetry exists, update criteria as needed
-        this.persist();
-    },
     methods: {
         initialize() {
             this.setOutput();
@@ -213,21 +209,19 @@ export default {
                 telemetry: '',
                 operation: '',
                 input: '',
-                metadata: '',
-                key: {
-                    namespace: '',
-                    key: uuid()
-                }
-            }
+                metadata: ''
+            };
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         destroy() {
-            // this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-                this.conditionClass.destroy();
+            if (this.conditionClass) {
+                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+                if (typeof this.conditionClass.destroy === 'function') {
+                    this.conditionClass.destroy();
+                }
                 delete this.conditionClass;
             }
         },
@@ -260,21 +254,13 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         },
         checkInputValue() {
-            if (this.selectedOutputOption === 'string') {
+            if (this.selectedOutputKey === 'string') {
                 this.domainObject.configuration.output = '';
             } else {
-                this.domainObject.configuration.output = this.selectedOutputOption;
-            }
-        },
-        updateOutputOption(ev) {
-            if (this.selectedOutputOption === 'string') {
-                this.domainObject.configuration.output = '';
-            } else {
-                this.domainObject.configuration.output = this.selectedOutputOption;
+                this.domainObject.configuration.output = this.selectedOutputKey;
             }
         },
         updateCurrentCondition() {
-            console.log('condition this.currentConditionIdentifier', this.currentConditionIdentifier);
             this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         hasTelemetry(identifier) {

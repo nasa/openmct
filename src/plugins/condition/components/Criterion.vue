@@ -20,7 +20,7 @@
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
                         :key="option.key"
-                        :value="option"
+                        :value="option.key"
                 >
                     {{ option.name }}
                 </option>
@@ -42,6 +42,7 @@
                    v-model="criterion.input"
                    class="t-condition-name-input"
                    type="text"
+                   @blur="persist"
             >
         </span>
     </span>
@@ -98,6 +99,7 @@ export default {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
                 });
             }
+            this.persist();
         },
         updateOperationInputVisibility() {
             for (let i=0; i < this.operations.length; i++) {
@@ -106,6 +108,10 @@ export default {
                     if (!this.isInputOperation) {this.criterion.input = ''}
                 }
             }
+            this.persist();
+        },
+        updateMetadataSelection() {
+            this.updateOperationInputVisibility();
         },
         persist() {
             this.$emit('persist', this.criterion);
