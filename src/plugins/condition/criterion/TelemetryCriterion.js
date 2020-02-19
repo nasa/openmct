@@ -46,7 +46,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.subscription = null;
         this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
-        this.objectAPI.get(this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.key)).then((obj) => this.initialize(obj));
+        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
     }
 
     initialize(obj) {

@@ -73,7 +73,7 @@ export default class ConditionClass extends EventEmitter {
 
     update(newDomainObject) {
         this.updateTrigger(newDomainObject.configuration.trigger);
-        // this.updateCriteria(newDomainObject.configuration.criteria);
+        this.updateCriteria(newDomainObject.configuration.criteria);
     }
 
     updateTrigger(trigger) {
@@ -84,13 +84,14 @@ export default class ConditionClass extends EventEmitter {
     }
 
     generateCriterion(criterionConfiguration) {
+        console.log('Identifier', criterionConfiguration);
         return {
             id: uuid(),
             telemetry: criterionConfiguration.telemetry || '',
             operation: criterionConfiguration.operation || '',
             input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
             metadata: criterionConfiguration.metadata || '',
-            key: criterionConfiguration.key || ''
+            identifier: criterionConfiguration.identifier || ''
         };
     }
 
@@ -187,7 +188,6 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             this.criteria[found.index] = criterion.data;
             //Most likely don't need this.
-            console.log('conditiion subscribe')
             this.subscribe();
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,

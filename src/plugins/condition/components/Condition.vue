@@ -144,7 +144,7 @@ import Criterion from '../../condition/components/Criterion.vue';
 import uuid from 'uuid';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     components: {
         Criterion
     },
@@ -198,7 +198,7 @@ export default {
     },
     updated() {
         //validate telemetry exists, update criteria as needed
-        this.persist();
+        // this.persist();
     },
     methods: {
         initialize() {
@@ -218,16 +218,18 @@ export default {
                     namespace: '',
                     key: uuid()
                 }
-            }
+            };
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
             this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
         },
         destroy() {
-            // this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-            if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-                this.conditionClass.destroy();
+            if (this.conditionClass) {
+                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+                if (typeof this.conditionClass.destroy === 'function') {
+                    this.conditionClass.destroy();
+                }
                 delete this.conditionClass;
             }
         },

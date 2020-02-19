@@ -44,6 +44,7 @@
                    v-model="criterion.input"
                    class="t-condition-name-input"
                    type="text"
+                   @blur="persist"
             >
         </span>
     </span>
@@ -100,6 +101,7 @@ export default {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
                 });
             }
+            this.persist();
         },
         updateOperationInputVisibility() {
             for (let i=0; i < this.operations.length; i++) {
@@ -108,9 +110,10 @@ export default {
                     if (!this.isInputOperation) {this.criterion.input = ''}
                 }
             }
+            this.persist();
         },
         updateMetadataSelection() {
-            this.comparisonInputValue = '';
+            this.updateOperationInputVisibility();
         },
         persist() {
             this.$emit('persist', this.criterion);
