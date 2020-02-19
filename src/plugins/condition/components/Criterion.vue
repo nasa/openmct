@@ -22,7 +22,7 @@
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
                         :key="option.key"
-                        :value="option"
+                        :value="option.key"
                 >
                     {{ option.name }}
                 </option>

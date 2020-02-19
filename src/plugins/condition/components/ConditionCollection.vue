@@ -184,7 +184,6 @@ export default {
                     break;
                 }
             }
-            // console.log('conditioncollection before emit currentConditionIdentifier', currentConditionIdentifier)
             this.$emit('currentConditionUpdated', currentConditionIdentifier);
         },
         addTelemetryObject(domainObject) {
@@ -219,7 +218,6 @@ export default {
         },
         updateCurrentCondition(identifier) {
             this.currentConditionIdentifier = identifier;
-            // console.log('conditionCollection this.conditionIdentifier', this.currentConditionIdentifier);
         },
         createConditionDomainObject(isDefault) {
             let conditionObj = {
@@ -238,11 +236,7 @@ export default {
                         telemetry: '',
                         operation: '',
                         input: '',
-                        metadata: '',
-                        identifier: {
-                            namespace: '',
-                            key: ''
-                        }
+                        metadata: ''
                     }]
                 },
                 summary: 'summary description',
