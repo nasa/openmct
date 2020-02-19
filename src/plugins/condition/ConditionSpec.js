@@ -64,14 +64,14 @@ describe("The condition", function () {
         openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
 
         testConditionDefinition = {
-            definition: {
+            configuration: {
                 trigger: TRIGGER.ANY,
                 criteria: [
                     {
                         operation: 'equalTo',
                         input: false,
-                        metaDataKey: 'value',
-                        key: testTelemetryObject.identifier
+                        metadata: 'value',
+                        telemetry: testTelemetryObject.identifier
                     }
                 ]
             }
@@ -87,13 +87,13 @@ describe("The condition", function () {
     });
 
     it("generates criteria with an id", function () {
-        const testCriterion = testConditionDefinition.definition.criteria[0];
+        const testCriterion = testConditionDefinition.configuration.criteria[0];
         let criterion = conditionObj.generateCriterion(testCriterion);
         expect(criterion.id).toBeDefined();
         expect(criterion.operation).toEqual(testCriterion.operation);
         expect(criterion.input).toEqual(testCriterion.input);
-        expect(criterion.metaDataKey).toEqual(testCriterion.metaDataKey);
-        expect(criterion.key).toEqual(testCriterion.key);
+        expect(criterion.metadata).toEqual(testCriterion.metadata);
+        expect(criterion.telemetry).toEqual(testCriterion.telemetry);
     });
 
     it("initializes with an id", function () {
@@ -104,13 +104,13 @@ describe("The condition", function () {
         expect(conditionObj.criteria.length).toEqual(1);
         let criterion = conditionObj.criteria[0];
         expect(criterion instanceof TelemetryCriterion).toBeTrue();
-        expect(criterion.operator).toEqual(testConditionDefinition.definition.criteria[0].operator);
-        expect(criterion.input).toEqual(testConditionDefinition.definition.criteria[0].input);
-        expect(criterion.metaDataKey).toEqual(testConditionDefinition.definition.criteria[0].metaDataKey);
+        expect(criterion.operator).toEqual(testConditionDefinition.configuration.criteria[0].operator);
+        expect(criterion.input).toEqual(testConditionDefinition.configuration.criteria[0].input);
+        expect(criterion.metadata).toEqual(testConditionDefinition.configuration.criteria[0].metadata);
     });
 
     it("initializes with the trigger from the condition definition", function () {
-        expect(conditionObj.trigger).toEqual(testConditionDefinition.definition.trigger);
+        expect(conditionObj.trigger).toEqual(testConditionDefinition.configuration.trigger);
     });
 
     it("destroys all criteria for a condition", function () {

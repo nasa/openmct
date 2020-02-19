@@ -64,7 +64,7 @@ describe("The telemetry criterion", function () {
 
         testCriterionDefinition = {
             id: 'test-criterion-id',
-            key: openmct.objects.makeKeyString(testTelemetryObject.identifier)
+            telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier)
         };
 
         mockListener = jasmine.createSpy('listener');
@@ -85,7 +85,6 @@ describe("The telemetry criterion", function () {
     it("initializes with a telemetry objectId as string", function () {
         telemetryCriterion.initialize(testTelemetryObject);
         expect(telemetryCriterion.telemetryObjectIdAsString).toEqual(testTelemetryObject.identifier.key);
-        expect(telemetryCriterion.telemetryMetadata.length).toEqual(2);
         expect(mockListener2).toHaveBeenCalled();
     });
 
@@ -112,7 +111,6 @@ describe("The telemetry criterion", function () {
         expect(telemetryCriterion.subscription).toBeUndefined();
         expect(telemetryCriterion.telemetryObjectIdAsString).toBeUndefined();
         expect(telemetryCriterion.telemetryObject).toBeUndefined();
-        expect(telemetryCriterion.telemetryMetadata).toBeUndefined();
     });
 
 });
