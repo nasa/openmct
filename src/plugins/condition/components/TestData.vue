@@ -23,18 +23,18 @@
 <template>
 <section v-show="isEditing"
          id="test-data"
-         class="l-cs__test-data"
+         class="c-cs__test-data"
 >
-    <div class="l-cs__section-header">
-        <div class="l-cs__section-title">Test Data</div>
-        <span
-                class="is-enabled c-disclosure-triangle"
-                :class="{ 'c-disclosure-triangle--expanded': expanded }"
+    <div class="c-cs__header c-section__header">
+        <div class="c-cs__header c-section__label">Test Data</div>
+        <button
+                class="c-click-icon--section-collapse"
+                :class="{ 'is-collapsed': !expanded }"
                 @click="expanded = !expanded"
-        ></span>
+        ></button>
     </div>
     <div v-if="expanded"
-         class="c-cs__ui_content"
+         class="c-cs__content"
     >
         <label class="checkbox custom">
             <input type="checkbox"

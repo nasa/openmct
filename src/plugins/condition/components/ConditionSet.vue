@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="l-condition-set">
+<div class="c-cs">
     <CurrentOutput :condition="currentCondition" />
     <TestData :is-editing="isEditing" />
     <ConditionCollection :is-editing="isEditing"

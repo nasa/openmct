@@ -62,6 +62,11 @@ button {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
         }
+
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-size: 1.1em;
+        }
     }
 
     &.is-active {
@@ -78,6 +83,20 @@ button {
 /********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+
+    &--section-collapse {
+        color: inherit;
+        display: block;
+        transition: transform $transOutTime;
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+        }
+
+        &.is-collapsed {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .c-click-link {
@@ -186,6 +205,28 @@ button {
         &:before {
             transform: rotate(90deg);
         }
+    }
+}
+
+/******************************************************** SECTION */
+section {
+    flex: 0 0 auto;
+    + section {
+        margin-top: $interiorMargin;
+    }
+
+    .c-section__header {
+        @include propertiesHeader();
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+    [class*='__label'] {
+        flex: 1 1 auto;
+        text-transform: uppercase;
     }
 }
 

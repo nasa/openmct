@@ -2,7 +2,6 @@
 <!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
 <div v-if="condition"
      id="conditionArea"
-     class="c-cs-ui__conditions"
      :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
 >
     <div class="title-bar">

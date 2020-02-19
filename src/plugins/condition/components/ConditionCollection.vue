@@ -22,65 +22,68 @@
 
 <template>
 <section id="conditionCollection"
-         class="c-cs__ui_section"
+         class="c-cs__conditions-collection"
 >
-    <div class="c-cs__ui__header">
-        <span class="c-cs__ui__header-label">Conditions</span>
-        <span
-            class="is-enabled flex-elem"
-            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
+    <div class="c-cs__header c-section__header">
+        <div class="c-cs__header c-section__label">Conditions</div>
+        <button
+            class="c-click-icon--section-collapse"
+            :class="{ 'is-collapsed': !expanded }"
             @click="expanded = !expanded"
-        ></span>
+        ></button>
     </div>
     <div v-if="expanded"
-         class="c-cs__ui_content"
-    >
+         class="c-cs__content c-cs__conditions-wrapper">
         <div v-show="isEditing"
-             class="help"
+             class="hint"
         >
             <span>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
         </div>
-        <div class="holder add-condition-button-wrapper align-left">
-            <button
+
+        <button
                 v-show="isEditing"
                 id="addCondition"
-                class="c-cs-button c-cs-button--major add-condition-button"
+                class="c-button c-button--major icon-plus labeled"
                 @click="addCondition"
+        >
+            <span class="c-button__label">Add Condition</span>
+        </button>
+
+        <div class="c-cs__conditions">
+            <div v-for="(conditionIdentifier, index) in conditionCollection"
+                 :key="conditionIdentifier.key"
+                 class="c-condition"
             >
-                <span class="c-cs-button__label">Add Condition</span>
-            </button>
-        </div>
-        <div class="c-c condition-collection">
-            <ul class="c-c__container-holder">
-                <li v-for="(conditionIdentifier, index) in conditionCollection"
-                    :key="conditionIdentifier.key"
-                >
-                    <div v-if="isEditing">
-                        <div class="c-c__drag-ghost"
-                             @drop.prevent="dropCondition"
-                             @dragenter="dragEnter"
-                             @dragleave="dragLeave"
-                             @dragover.prevent
-                        ></div>
-                        <ConditionEdit :condition-identifier="conditionIdentifier"
-                                       :telemetry="telemetryObjs"
-                                       :current-condition-identifier="currentConditionIdentifier"
-                                       :condition-index="index"
-                                       @updateCurrentCondition="updateCurrentCondition"
-                                       @removeCondition="removeCondition"
-                                       @conditionResultUpdated="handleConditionResult"
-                                       @setMoveIndex="setMoveIndex"
-                        />
-                    </div>
-                    <div v-else>
-                        <Condition :condition-identifier="conditionIdentifier"
+                <div v-if="isEditing">
+                    <div class="c-c__drag-ghost"
+                         @drop.prevent="dropCondition"
+                         @dragenter="dragEnter"
+                         @dragleave="dragLeave"
+                         @dragover.prevent
+                    ></div>
+                    <ConditionEdit :condition-identifier="conditionIdentifier"
+                                   :telemetry="telemetryObjs"
                                    :current-condition-identifier="currentConditionIdentifier"
+                                   :condition-index="index"
+                                   class="c-condition__edit"
+                                   @updateCurrentCondition="updateCurrentCondition"
+                                   @removeCondition="removeCondition"
                                    @conditionResultUpdated="handleConditionResult"
-                        />
-                    </div>
-                </li>
-            </ul>
+                                   @setMoveIndex="setMoveIndex"
+                    />
+                </div>
+                <div v-else>
+                    <Condition :condition-identifier="conditionIdentifier"
+                               :current-condition-identifier="currentConditionIdentifier"
+                               class="c-condition__view"
+                               @conditionResultUpdated="handleConditionResult"
+                    />
+                </div>
+            </div>
         </div>
+
+
+
     </div>
 </section>
 </template>
