@@ -18,12 +18,9 @@ export default function NotebookPlugin() {
             creatable: true,
             cssClass: 'icon-notebook',
             initialize: domainObject => {
-                domainObject.dafaultPath = [];
-                domainObject.sections = [];
-                domainObject.pages = [];
                 domainObject.entries = [];
-                domainObject.entryTypes = [];
                 domainObject.configuration = {
+                    sections: [],
                     sectionTitle: 'Section',
                     pageTitle: 'Page',
                     defaultSort: 'oldest'

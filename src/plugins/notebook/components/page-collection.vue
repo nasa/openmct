@@ -1,6 +1,6 @@
 <template>
 <div>
-    <button @click="addPage">+ Add {{ domainObject.configuration.pageTitle }}</button>
+    <button @click="addPage">+ Add {{ pageTitle }}</button>
     <ul>
         <li v-for="page in pages"
             :key="page.id"
@@ -24,15 +24,17 @@ export default {
         Page
     },
     props: {
-        domainObject: {
-            type: Object,
-            required: true
-        },
         pages: {
             type: Array,
             required: true,
             default() {
                 return [];
+            }
+        },
+        pageTitle: {
+            type: String,
+            default() {
+                return '';
             }
         }
     },
@@ -69,7 +71,7 @@ export default {
             },0);
         },
         addPage() {
-            const pageTitle = this.domainObject.configuration.pageTitle;
+            const pageTitle = this.pageTitle;
             const page = {
                 entries : [],
                 id : uuid(),

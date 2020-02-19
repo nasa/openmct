@@ -1,6 +1,6 @@
 <template>
 <div>
-    <button @click="addSection">+ Add {{ domainObject.configuration.sectionTitle }}</button>
+    <button @click="addSection">+ Add {{ sectionTitle }}</button>
     <ul>
         <li v-for="section in sections"
             :key="section.id"
@@ -24,15 +24,17 @@ export default {
         sectionComponent
     },
     props: {
-        domainObject: {
-            type: Object,
-            required: true
-        },
         sections: {
             type: Array,
             required: true,
             default() {
                 return [];
+            }
+        },
+        sectionTitle: {
+            type: String,
+            default() {
+                return '';
             }
         }
     },
@@ -41,9 +43,6 @@ export default {
         }
     },
     watch: {
-        domainObject(newDomainObject) {
-            this.sections = newDomainObject.sections;
-        },
         sections(sections) {
             this.removeAllListeners();
             this.addListeners();
@@ -73,7 +72,7 @@ export default {
             }
         },
         addSection() {
-            const sectionTitle = this.domainObject.configuration.sectionTitle;
+            const sectionTitle = this.sectionTitle;
             const id = uuid();
             const section = {
                 id,

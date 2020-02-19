@@ -1,9 +1,9 @@
 <template>
 <div class="c-sidebar">
     <div class="c-sidebar__header">
-        <span class="title">{{ domainObject.configuration.sectionTitle }}</span>
+        <span class="title">{{ sectionTitle }}</span>
         <span class="title">
-            {{ domainObject.configuration.pageTitle }}
+            {{ pageTitle }}
             <button class="l-pane__collapse-button c-button"
                     @click="toggleCollapse"
             ></button>
@@ -11,11 +11,11 @@
     </div>
     <div class="c-sidebar__contents">
         <SectionCollection :sections="sections"
-                           :domain-object="domainObject"
+                           :section-title="sectionTitle"
         />
         <div class="divider"></div>
         <PageCollection :pages="pages"
-                        :domain-object="domainObject"
+                        :page-title="pageTitle"
         />
     </div>
 </div>
@@ -32,32 +32,39 @@ export default {
         PageCollection
     },
     props: {
-        domainObject: {
-            type: Object,
-            required: true
-        },
         pages: {
             type: Array,
             required: true,
             default() {
                 return [];
             }
+        },
+        pageTitle: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
+        sections: {
+            type: Array,
+            required: true,
+            default() {
+                return [];
+            }
+        },
+        sectionTitle: {
+            type: String,
+            default() {
+                return '';
+            }
         }
     },
     data() {
         return {
-            collapsed: false,
-            entrySearch:'',
-            search:'',
-            sections: this.domainObject.sections,
-            showTime:0,
-            sortEntries: this.domainObject.configuration.defaultSort
+            collapsed: false
         }
     },
     watch: {
-        domainObject(newDomainObject) {
-            this.sections = newDomainObject.sections;
-        },
         pages(newpages) {
         }
     },

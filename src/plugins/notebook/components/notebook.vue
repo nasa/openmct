@@ -34,8 +34,10 @@
     <Multipane type="horizontal">
         <Pane>
             <Sidebar ref="sidebar"
-                     :domain-object="internalDomainObject"
+                     :page-title="domainObject.configuration.pageTitle"
                      :pages="pages"
+                     :section-title="domainObject.configuration.sectionTitle"
+                     :sections="sections"
             />
         </Pane>
         <Pane handle="before">
@@ -55,10 +57,10 @@
             </div>
             <div class="c-notebook__entries">
                 <ul>
-                    <notebook-entry v-for="entry in filteredAndSortedEntries"
-                                    :key="entry.key"
-                                    :entry="entry"
-                    />
+                    <div v-for="entry in filteredAndSortedEntries"
+                         :key="entry.key"
+                         :entry="entry"
+                    ></div>
                 </ul>
             </div>
         </Pane>
@@ -96,11 +98,15 @@ export default {
         }
     },
     computed: {
-        sections() {
-            return this.internalDomainObject.sections || [];
+        filteredAndSortedEntries() {
+            console.log('filteredAndSortedEntries', this.internalDomainObject.entries);
+            return [];
         },
         pages() {
             return this.getPages() || [];
+        },
+        sections() {
+            return this.internalDomainObject.configuration.sections || [];
         }
     },
     mounted() {
@@ -122,9 +128,6 @@ export default {
         updateDefaultNotebook(selectedSection, selectedPage) {
             // TODO: make this notebook, selected section and page as default.
             console.log(this, selectedSection, selectedPage);
-        },
-        filteredAndSortedEntries() {
-            console.log('filteredAndSortedEntries');
         },
         getPages() {
             const selectedSession = this.getSelectedSession();
@@ -157,9 +160,7 @@ export default {
             const selectedPage = this.getSelectedPage();
             this.search = '';
 
-            const selectedObject = event.dataTransfer && event.dataTransfer.getData('openmct/domain-object-path')
             this.updateDefaultNotebook(selectedSection, selectedPage);
-            console.log(selectedObject, this.internalDomainObject.entries);
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
@@ -179,10 +180,10 @@ export default {
                 return section;
             });
 
-            this.mutateObject('sections', sections);
+            this.updateSection({ sections });
         },
         updateSection({ sections, id = null }) {
-            this.mutateObject('sections', sections);
+            this.mutateObject('configuration.sections', sections);
         },
         updateSelectedPage() {
             const sections = this.getSelectedSession();
