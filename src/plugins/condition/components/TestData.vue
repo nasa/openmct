@@ -36,10 +36,13 @@
     <div v-if="expanded"
          class="c-cs__ui_content"
     >
-        <label class="checkbox custom">
-            <input type="checkbox"
-                   class="t-test-data-checkbox"
+        <label class="c-toggle-switch">
+            <input
+                type="checkbox"
+                :checked="isApplied"
+                @change="applyTestData"
             >
+            <span class="c-toggle-switch__slider"></span>
             <span>Apply Test Data</span>
         </label>
         <div class="t-test-data-config">
@@ -80,11 +83,14 @@ export default {
     },
     data() {
         return {
-            expanded: true
+            expanded: true,
+            isApplied: true
         };
     },
     methods: {
-
+        applyTestData(ev) {
+            this.$emit('change', ev.target.checked);
+        }
     }
 }
 </script>

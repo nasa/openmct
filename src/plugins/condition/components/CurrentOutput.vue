@@ -36,7 +36,7 @@
          class="c-cs__ui_content"
     >
         <div>
-            <span class="current-output">{{ condition.definition.output }}</span>
+            <span class="current-output">{{ condition.configuration.output }}</span>
         </div>
     </div>
 </section>

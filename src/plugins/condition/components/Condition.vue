@@ -1,31 +1,153 @@
 <template>
-<!-- TODO: current condition class should be set using openmct.objects.makeKeyString(<identifier>) -->
-<div v-if="condition"
-     id="conditionArea"
-     class="c-cs-ui__conditions"
-     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
->
-    <div class="title-bar">
-        <span class="condition-name">
-            {{ condition.definition.name }}
-        </span>
-        <span class="condition-output">
-            Output: {{ condition.definition.output }}
-        </span>
+<div v-if="isEditing">
+    <div v-if="domainObject"
+         class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
+         :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+         :data-condition-index="conditionIndex"
+         :draggable="!domainObject.isDefault"
+         @dragstart="dragStart"
+         @dragover.stop
+    >
+        <div class="title-bar">
+            <span
+                class="c-c__menu-hamburger"
+                :class="{ 'is-enabled': !domainObject.isDefault }"
+            ></span>
+            <span
+                class="is-enabled flex-elem"
+                :class="['c-c__disclosure-triangle', { 'c-c__disclosure-triangle--expanded': expanded }]"
+                @click="expanded = !expanded"
+            ></span>
+            <div class="condition-summary">
+                <span class="condition-name">{{ domainObject.configuration.name }}</span>
+                <span class="condition-description">{{ domainObject.configuration.name }}</span>
+            </div>
+            <span v-if="!domainObject.isDefault"
+                  class="is-enabled c-c__duplicate"
+                  @click="cloneCondition"
+            ></span>
+            <span v-if="!domainObject.isDefault"
+                  class="is-enabled c-c__trash"
+                  @click="removeCondition"
+            ></span>
+        </div>
+        <div v-if="expanded"
+             class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
+        >
+            <div id="conditionArea"
+                 class="c-c-editui__condition widget-conditions"
+            >
+                <div class="c-c-condition">
+                    <div class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls">
+                        <div>
+                            <ul class="t-widget-condition-config">
+                                <li>
+                                    <label>Condition Name</label>
+                                    <span class="controls">
+                                        <input v-model="domainObject.configuration.name"
+                                               class="t-condition-input__name"
+                                               type="text"
+                                        >
+                                    </span>
+                                </li>
+                                <li>
+                                    <label>Output</label>
+                                    <span class="controls">
+                                        <select v-model="selectedOutputKey"
+                                                @change="checkInputValue"
+                                        >
+                                            <option value="">- Select Output -</option>
+                                            <option v-for="option in outputOptions"
+                                                    :key="option"
+                                                    :value="option"
+                                            >
+                                                {{ option.charAt(0).toUpperCase() + option.slice(1) }}
+                                            </option>
+                                        </select>
+                                        <input v-if="selectedOutputKey === outputOptions[2]"
+                                               v-model="domainObject.configuration.output"
+                                               class="t-condition-name-input"
+                                               type="text"
+                                               @blur="persist"
+                                        >
+                                    </span>
+                                </li>
+                            </ul>
+                            <div v-if="!domainObject.isDefault"
+                                 class="widget-condition-content expanded"
+                            >
+                                <ul class="t-widget-condition-config">
+                                    <li class="has-local-controls t-condition">
+                                        <label>Match when</label>
+                                        <span class="controls">
+                                            <select v-model="trigger">
+                                                <option value="all">all criteria are met</option>
+                                                <option value="any">any criteria are met</option>
+                                            </select>
+                                        </span>
+                                    </li>
+                                </ul>
+                                <ul v-if="telemetry.length"
+                                    class="t-widget-condition-config"
+                                >
+                                    <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
+                                               :key="index"
+                                               :telemetry="telemetry"
+                                               :criterion="criterion"
+                                               :index="index"
+                                               :trigger="trigger"
+                                               @persist="persist"
+                                    />
+                                </ul>
+                                <div class="holder c-c-button-wrapper align-left">
+                                    <span class="c-c-label-spacer"></span>
+                                    <button
+                                        class="c-c-button c-c-button--minor add-criteria-button"
+                                        @click="addCriteria"
+                                    >
+                                        <span class="c-c-button__label">Add Criteria</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="condition-config">
-        <span class="condition-description">
-            {{ condition.definition.description }}
-        </span>
+</div>
+<div v-else>
+    <div v-if="domainObject"
+         id="conditionArea"
+         class="c-cs-ui__conditions"
+         :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+    >
+        <div class="title-bar">
+            <span class="condition-name">
+                {{ domainObject.configuration.name }}
+            </span>
+            <span class="condition-output">
+                Output: {{ domainObject.configuration.output }}
+            </span>
+        </div>
+        <div class="condition-config">
+            <span class="condition-description">
+                {{ domainObject.configuration.description }}
+            </span>
+        </div>
     </div>
 </div>
 </template>
 
 <script>
 import ConditionClass from "@/plugins/condition/Condition";
+import Criterion from '../../condition/components/Criterion.vue';
 
 export default {
     inject: ['openmct'],
+    components: {
+        Criterion
+    },
     props: {
         conditionIdentifier: {
             type: Object,
@@ -34,33 +156,119 @@ export default {
         currentConditionIdentifier: {
             type: Object,
             required: true
+        },
+        conditionIndex: {
+            type: Number,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
+        },
+        telemetry: {
+            type: Array,
+            required: true,
+            default: () => []
         }
     },
     data() {
         return {
-            condition: this.condition
+            domainObject: this.domainObject,
+            currentCriteria: this.currentCriteria,
+            expanded: true,
+            trigger: 'all',
+            selectedOutputKey: '',
+            stringOutputField: false,
+            outputOptions: ['false', 'true', 'string']
         };
     },
-    destroyed() {
-        this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-        if (this.conditionClass && typeof this.conditionClass.destroy === 'function') {
-            this.conditionClass.destroy();
+    computed: {
+        initCap: function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1)
         }
     },
+    destroyed() {
+        this.destroy();
+    },
     mounted() {
-        this.openmct.objects.get(this.conditionIdentifier).then((obj => {
-            this.condition = obj;
-            this.conditionClass = new ConditionClass(this.condition, this.openmct);
-            this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        this.openmct.objects.get(this.conditionIdentifier).then((domainObject => {
+            this.domainObject = domainObject;
+            this.initialize();
         }));
     },
     methods: {
+        initialize() {
+            this.setOutput();
+            if (!this.domainObject.isDefault) {
+                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
+                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+            }
+        },
+        addCriteria() {
+            const criteriaObject = {
+                telemetry: '',
+                operation: '',
+                input: '',
+                metadata: ''
+            };
+            this.domainObject.configuration.criteria.push(criteriaObject);
+        },
+        dragStart(e) {
+            this.$emit('setMoveIndex', Number(e.target.getAttribute('data-condition-index')));
+        },
+        destroy() {
+            if (this.conditionClass) {
+                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+                if (typeof this.conditionClass.destroy === 'function') {
+                    this.conditionClass.destroy();
+                }
+                delete this.conditionClass;
+            }
+        },
         handleConditionResult(args) {
             this.$emit('conditionResultUpdated', {
                 id: this.conditionIdentifier,
                 result: args.data.result
             })
+        },
+        removeCondition(ev) {
+            this.$emit('removeCondition', this.conditionIdentifier);
+        },
+        cloneCondition(ev) {
+            this.$emit('cloneCondition', {
+                identifier: this.conditionIdentifier,
+                index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
+            });
+        },
+        setOutput() {
+            let conditionOutput = this.domainObject.configuration.output;
+            if (conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputKey = 'string';
+                } else {
+                    this.selectedOutputKey = conditionOutput;
+                }
+            }
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        },
+        checkInputValue() {
+            if (this.selectedOutputKey === 'string') {
+                this.domainObject.configuration.output = '';
+            } else {
+                this.domainObject.configuration.output = this.selectedOutputKey;
+            }
+        },
+        updateCurrentCondition() {
+            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
+        },
+        hasTelemetry(identifier) {
+            // TODO: check parent domainObject.composition.hasTelemetry
+            return this.currentCriteria && identifier;
         }
     }
 }
 </script>
+
+

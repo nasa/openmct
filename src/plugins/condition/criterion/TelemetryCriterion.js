@@ -29,7 +29,7 @@ export default class TelemetryCriterion extends EventEmitter {
      * Subscribes/Unsubscribes to telemetry and emits the result
      * of operations performed on the telemetry data returned and a given input value.
      * @constructor
-     * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metadata: string, key: {domainObject.identifier} }
      * @param openmct
      */
     constructor(telemetryDomainObjectDefinition, openmct) {
@@ -39,19 +39,18 @@ export default class TelemetryCriterion extends EventEmitter {
         this.objectAPI = this.openmct.objects;
         this.telemetryAPI = this.openmct.telemetry;
         this.id = telemetryDomainObjectDefinition.id;
+        this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
-        this.metaDataKey = telemetryDomainObjectDefinition.metaDataKey;
+        this.metadata = telemetryDomainObjectDefinition.metadata;
         this.subscription = null;
-        this.telemetryMetadata = null;
         this.telemetryObjectIdAsString = null;
-        this.objectAPI.get(this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.key)).then((obj) => this.initialize(obj));
+        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
     }
 
     initialize(obj) {
         this.telemetryObject = obj;
         this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
-        this.telemetryMetadata = this.telemetryAPI.getMetadata(this.telemetryObject.identifier);
         this.emitEvent('criterionUpdated', this);
     }
 
@@ -76,9 +75,11 @@ export default class TelemetryCriterion extends EventEmitter {
         let comparator = this.findOperation(this.operation);
         let params = [];
         let result = false;
-        params.push(data[this.metaDataKey]);
+        params.push(data[this.metadata]);
         if (this.input instanceof Array && this.input.length) {
             params.push(this.input[0]);
+        } else if (this.input) {
+            params.push(this.input);
         }
         if (typeof comparator === 'function') {
             result = comparator(params);
@@ -91,6 +92,10 @@ export default class TelemetryCriterion extends EventEmitter {
             id: this.id,
             data: data
         });
+    }
+
+    isValid() {
+        return this.telemetryObject && this.metadata && this.operation;
     }
 
     /**
@@ -119,6 +124,5 @@ export default class TelemetryCriterion extends EventEmitter {
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
-        delete this.telemetryMetadata;
     }
 }
