@@ -83,7 +83,6 @@
 import Condition from '../../condition/components/Condition.vue';
 import uuid from 'uuid';
 
-
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
