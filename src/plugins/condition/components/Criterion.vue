@@ -15,7 +15,9 @@
                 </option>
             </select>
         </span>
-        <span class="controls">
+        <span v-if="criterion.telemetry"
+              class="controls"
+        >
             <select v-model="criterion.metadata">
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadata"
@@ -26,7 +28,9 @@
                 </option>
             </select>
         </span>
-        <span class="controls">
+        <span v-if="criterion.telemetry && criterion.metadata"
+              class="controls"
+        >
             <select v-model="criterion.operation"
                     @change="updateOperationInputVisibility"
             >
@@ -91,6 +95,7 @@ export default {
     mounted() {
         this.updateMetadataOptions();
         this.updateOperationInputVisibility();
+        console.log('this.criterion.telemetry', this.criterion.telemetry);
     },
     methods: {
         updateMetadataOptions() {
