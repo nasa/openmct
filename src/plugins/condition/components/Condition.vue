@@ -103,7 +103,7 @@
                                         />
                                         <div class="temp">
                                             <span class="is-enabled c-c__duplicate"
-                                                  @click="cloneCriterion"
+                                                  @click="cloneCriterion(index)"
                                             ></span>
                                             <span v-if="!(domainObject.configuration.criteria.length === 1)"
                                                   class="is-enabled c-c__trash"
@@ -258,8 +258,10 @@ export default {
             this.domainObject.configuration.criteria.splice(index, 1);
             this.persist()
         },
-        cloneCriterion(ev) {
-            // console.log('cloneCriterion')
+        cloneCriterion(index) {
+            const clonedCriterion = {...this.domainObject.configuration.criteria[index]};
+            this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
+            this.persist()
         },
 
         setOutput() {
