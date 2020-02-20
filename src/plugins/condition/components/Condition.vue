@@ -117,6 +117,7 @@
                                                :criterion="criterion"
                                                :index="index"
                                                :trigger="trigger"
+                                               :is-default="domainObject.configuration.criteria.length === 1"
                                                @persist="persist"
                                     />
                                 </ul>
