@@ -1,7 +1,23 @@
+.c-condition__wrapper {
+
+}
+.c-condition {
+    // widget-condition
+    $p: $interiorMarginSm;
+    @include discreteItem();
+    display: flex;
+    padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
+}
+
+
+
+
+
+
 .widget-condition {
-    background-color: #eee;
-    margin: 0 0 0.33em;
-    border-radius: 3px;
+    //background-color: #eee;
+    //margin: 0 0 0.33em;
+    //border-radius: 3px;
 
     &--current {
         background-color: #DEECFA;
@@ -164,10 +180,18 @@
 
 .c-c__drag-ghost {
     width: 100%;
-    min-height: 0.33em;
+    min-height: $interiorMarginSm;
+
+    //&:before {
+    //    @include test();
+    //    content: '';
+    //    display: block;
+    //    z-index: 2;
+    //}
+
     &.dragging {
-        min-height: 2em;
-        border: solid 1px blue;
+        min-height: 5em;
+        //border: solid 1px blue;
         background-color: lightblue;
         border-radius: 2px;
     }
