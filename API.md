@@ -427,8 +427,8 @@ Each telemetry value description has an object defining hints.  Keys in this thi
 
 Known hints:
 
-* `domain`: Indicates that the value represents the "input" of a datum. Values with a `domain` hint will be used for the x-axis of a plot, and tables will render columns for these values first.
-* `range`: Indicates that the value is the "output" of a datum.  Values with a `range` hint will be used as the y-axis on a plot, and tables will render columns for these values after the `domain` values.
+* `domain`: Values with a `domain` hint will be used for the x-axis of a plot, and tables will render columns for these values first.
+* `range`: Values with a `range` hint will be used as the y-axis on a plot, and tables will render columns for these values after the `domain` values.
 * `image`: Indicates that the value may be interpreted as the URL to an image file, in which case appropriate views will be made available.
 
 ##### The Time Conductor and Telemetry 
