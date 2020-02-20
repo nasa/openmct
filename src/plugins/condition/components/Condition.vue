@@ -214,7 +214,7 @@ export default {
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
-            this.$emit('set-move-index', Number(e.target.getAttribute('data-condition-index')));
+            this.$emit('setMoveIndex', Number(e.target.getAttribute('data-condition-index')));
         },
         destroy() {
             if (this.conditionClass) {
