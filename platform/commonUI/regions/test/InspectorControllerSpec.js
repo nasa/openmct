@@ -65,10 +65,10 @@ define(
                 ]);
                 mockSelection.get.and.returnValue(selectable);
 
-                mockInspectorViews = jasmine.createSpyObj('propertiesInspector', ['get']);
+                mockInspectorViews = jasmine.createSpyObj('inspectorViews', ['get']);
                 mockOpenMCT = {
                     selection: mockSelection,
-                    propertiesInspector: mockInspectorViews
+                    inspectorViews: mockInspectorViews
                 };
 
                 container = jasmine.createSpy('container', ['innerHTML']);

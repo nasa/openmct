@@ -162,19 +162,9 @@ define([
          *
          * @type {module:openmct.InspectorViewRegistry}
          * @memberof module:openmct.MCT#
-         * @name propertiesInspector
+         * @name inspectorViews
          */
-        this.propertiesInspector = new InspectorViewRegistry();
-
-        /**
-         * Registry for views which should appear in the Inspector area in the styles tab.
-         * These views will be chosen based on the selection state.
-         *
-         * @type {module:openmct.InspectorViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name stylesInspector
-         */
-        this.stylesInspector = new InspectorViewRegistry();
+        this.inspectorViews = new InspectorViewRegistry();
 
         /**
          * Registry for views which should appear in Edit Properties

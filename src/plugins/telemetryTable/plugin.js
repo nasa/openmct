@@ -32,7 +32,7 @@ define([
     return function plugin() {
         return function install(openmct) {
             openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
-            openmct.propertiesInspector.addViewProvider(new TableConfigurationViewProvider(openmct));
+            openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
             openmct.types.addType('table', TelemetryTableType);
             openmct.composition.addPolicy((parent, child) => {
                 if (parent.type === 'table') {

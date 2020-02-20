@@ -22,7 +22,7 @@
                 <pane class="c-inspector__properties">
                     <properties />
                     <location />
-                    <inspector-views :registry="getPropertiesRegistry()"/>
+                    <inspector-views/>
                 </pane>
                 <pane
                     v-if="isEditing && hasComposition"
@@ -36,7 +36,7 @@
             <pane v-else
                   class="c-inspector__styles"
             >
-                <inspector-views :registry="getStyleRegistry()" />
+                <styles-inspector-view/>
             </pane>
         </div>
     </div>
@@ -51,10 +51,13 @@ import Location from './Location.vue';
 import Properties from './Properties.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
+import StylesInspectorView from "./StylesInspectorView.vue";
 
 export default {
     inject: ['openmct'],
     components: {
+        StylesInspectorView,
+        // StylesInspectorView,
         multipane,
         pane,
         Elements,
@@ -80,6 +83,7 @@ export default {
         }
     },
     mounted() {
+        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet'];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {
@@ -88,7 +92,9 @@ export default {
     methods: {
         updateInspectorViews(selection) {
             this.refreshComposition(selection);
-            this.refreshTabs(selection);
+            if (this.openmct.types.get('conditionSet')) {
+                this.refreshTabs(selection);
+            }
         },
         refreshComposition(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
@@ -99,8 +105,13 @@ export default {
         },
         refreshTabs(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let selectedViews = this.openmct.stylesInspector.get(selection);
-                this.showStyles = selectedViews.length;
+                //layout items are not domain objects but should allow conditional styles
+                this.showStyles = selection[0][0].context.layoutItem;
+                let object = selection[0][0].context.item;
+                if (object) {
+                    let type = this.openmct.types.get(object.type);
+                    this.showStyles = (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
+                }
                 this.updateCurrentTab(this.tabbedViews[0]);
             }
         },
@@ -109,12 +120,6 @@ export default {
         },
         isCurrent(view) {
             return _.isEqual(this.currentTabbedView, view)
-        },
-        getStyleRegistry() {
-            return this.openmct.stylesInspector;
-        },
-        getPropertiesRegistry() {
-            return this.openmct.propertiesInspector;
         }
     }
 }

@@ -8,11 +8,6 @@
 <script>
 export default {
     inject: ['openmct'],
-    props: {
-        registry: {
-            type: Object
-        }
-    },
     data() {
         return {
             selection: []
@@ -35,7 +30,7 @@ export default {
                 });
                 this.$el.innerHTML = '';
             }
-            this.selectedViews = this.registry ? this.registry.get(selection) : this.openmct.propertiesInspector.get(selection);
+            this.selectedViews = this.openmct.inspectorViews.get(selection);
             this.selectedViews.forEach(selectedView => {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
