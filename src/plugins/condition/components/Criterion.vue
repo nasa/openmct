@@ -1,5 +1,5 @@
 <template>
-<li class="has-local-controls t-condition">
+<div>
     <label>{{ setRowLabel }}</label>
     <span class="t-configuration">
         <span class="controls">
@@ -46,17 +46,7 @@
             >
         </span>
     </span>
-    <div class="temp">
-        <span class="is-enabled c-c__duplicate"
-              @click="cloneCriterion"
-        ></span>
-        <span v-if="!isDefault"
-              class="is-enabled c-c__trash"
-              @click="removeCriterion"
-        ></span>
-    </div>
-</li>
-
+</div>
 </template>
 
 <script>
@@ -104,7 +94,6 @@ export default {
     mounted() {
         this.updateMetadataOptions();
         this.updateOperationInputVisibility();
-        console.log('this.isDefault', this.isDefault);
     },
     methods: {
         updateMetadataOptions() {
@@ -127,18 +116,6 @@ export default {
         updateMetadataSelection() {
             this.updateOperationInputVisibility();
         },
-        removeCriterion(ev) {
-            console.log('removeCriterion', this.index);
-            // this.$emit('removeCondition', this.conditionIdentifier);
-        },
-        cloneCriterion(ev) {
-            console.log('cloneCriterion')
-            // this.$emit('cloneCondition', {
-            //     identifier: this.conditionIdentifier,
-            //     index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
-            // });
-        },
-
         persist() {
             this.$emit('persist', this.criterion);
         }
