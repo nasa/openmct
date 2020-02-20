@@ -94,7 +94,6 @@ export default {
     mounted() {
         this.updateMetadataOptions();
         this.updateOperationInputVisibility();
-        console.log('this.isDefault', this.isDefault);
     },
     methods: {
         updateMetadataOptions() {
@@ -117,18 +116,6 @@ export default {
         updateMetadataSelection() {
             this.updateOperationInputVisibility();
         },
-        removeCriterion(ev) {
-            console.log('removeCriterion', this.index);
-            // this.$emit('removeCondition', this.conditionIdentifier);
-        },
-        cloneCriterion(ev) {
-            console.log('cloneCriterion')
-            // this.$emit('cloneCondition', {
-            //     identifier: this.conditionIdentifier,
-            //     index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
-            // });
-        },
-
         persist() {
             this.$emit('persist', this.criterion);
         }
