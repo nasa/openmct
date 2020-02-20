@@ -73,7 +73,6 @@ export default {
         addPage() {
             const pageTitle = this.pageTitle;
             const page = {
-                entries : [],
                 id : uuid(),
                 isDefault : false,
                 isSelected: true,

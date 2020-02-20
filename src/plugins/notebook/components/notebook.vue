@@ -55,12 +55,16 @@
             >
                 <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
             </div>
-            <div class="c-notebook__entries">
+            <div v-if="selectedSession && selectedPage"
+                 class="c-notebook__entries"
+            >
                 <ul>
-                    <div v-for="entry in filteredAndSortedEntries"
-                         :key="entry.key"
-                         :entry="entry"
-                    ></div>
+                    <NotebookEntry v-for="entry in filteredAndSortedEntries"
+                                   :key="entry.key"
+                                   :entry="entry"
+                                   :selected-page="getSelectedPage()"
+                                   :selected-session="getSelectedSession()"
+                    />
                 </ul>
             </div>
         </Pane>
@@ -70,10 +74,13 @@
 
 <script>
 import EmptyNotebook from './empty-notebook.vue';
+import NotebookEntry from './notebook-entry.vue';
 import Multipane from '@/ui/layout/multipane.vue';
 import Pane from '@/ui/layout/pane.vue';
 import Search from '@/ui/components/search.vue';
 import Sidebar from './sidebar.vue';
+import { setDefaultNotebook } from '../utils/notebook-storage';
+import { getNotebookEntries } from '../utils/notebook-entries';
 
 import { EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants';
 
@@ -82,6 +89,7 @@ export default {
     components: {
         EmptyNotebook,
         Multipane,
+        NotebookEntry,
         Pane,
         Search,
         Sidebar
@@ -99,14 +107,28 @@ export default {
     },
     computed: {
         filteredAndSortedEntries() {
-            console.log('filteredAndSortedEntries', this.internalDomainObject.entries);
-            return [];
+            return getNotebookEntries(this.internalDomainObject, this.selectedSession, this.selectedPage) || [];
         },
         pages() {
             return this.getPages() || [];
         },
         sections() {
             return this.internalDomainObject.configuration.sections || [];
+        },
+        selectedPage() {
+            const pages = this.getPages();
+            if (!pages) {
+                return null;
+            }
+
+            return pages.find(page => page.isSelected);
+        },
+        selectedSession() {
+            if (!this.sections.length) {
+                return null;
+            }
+
+            return this.sections.find(section => section.isSelected);
         }
     },
     mounted() {
@@ -127,6 +149,7 @@ export default {
     methods: {
         updateDefaultNotebook(selectedSection, selectedPage) {
             // TODO: make this notebook, selected section and page as default.
+            setDefaultNotebook(this, selectedSection, selectedPage);
             console.log(this, selectedSection, selectedPage);
         },
         getPages() {

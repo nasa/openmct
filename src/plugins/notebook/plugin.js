@@ -18,8 +18,8 @@ export default function NotebookPlugin() {
             creatable: true,
             cssClass: 'icon-notebook',
             initialize: domainObject => {
-                domainObject.entries = [];
                 domainObject.configuration = {
+                    entries: {},
                     sections: [],
                     sectionTitle: 'Section',
                     pageTitle: 'Page',

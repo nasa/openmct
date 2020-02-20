@@ -1,5 +1,5 @@
 <template>
-<div :class="['page', {'selected': page.isSelected}]">
+<div :class="['page c-notebook__entry c-ne has-local-controls', {'selected': page.isSelected}]">
     <span contenteditable="true"
           :data-id="page.id"
           @click="selectPage"
@@ -7,10 +7,14 @@
     >
         {{ page.name.length ? page.name : `Unnamed ${page.pageTitle}` }}
     </span>
-    <button class="c-icon-button icon-trash"
-            :data-id="page.id"
-            @click="deletePage"
-    ></button>
+    <div class="c-ne__local-controls--hidden">
+        <button class="c-icon-button c-icon-button--major icon-trash"
+                :data-id="page.id"
+                title="Delete Page"
+                @click="deletePage"
+        >
+        </button>
+    </div>
 </div>
 </template>
 
