@@ -20,7 +20,7 @@
         >
             <select v-model="criterion.metadata">
                 <option value="">- Select Field -</option>
-                <option v-for="option in telemetryMetadata"
+                <option v-for="option in telemetryMetadataOptions"
                         :key="option.key"
                         :value="option.key"
                 >
@@ -81,6 +81,7 @@ export default {
     data() {
         return {
             telemetryMetadata: {},
+            telemetryMetadataOptions: {},
             operations: OPERATIONS,
             isInputOperation: false,
             rowLabel: ''
@@ -95,13 +96,16 @@ export default {
     mounted() {
         this.updateMetadataOptions();
         this.updateOperationInputVisibility();
-        console.log('this.criterion.telemetry', this.criterion.telemetry);
+        console.log('this.criterion.metadata', this.criterion.metadata);
     },
     methods: {
         updateMetadataOptions() {
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
-                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    this.telemetryMetadataOptions = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                    // console.log('this.openmct.telemetry.getFormatMap(telemetryObject)', this.openmct.telemetry.getFormatMap(this.openmct.telemetry.getMetadata(telemetryObject)));
+                    console.log('this.telemetryMetadata', this.openmct.telemetry.getMetadata(telemetryObject));
                 });
             }
             this.persist();
