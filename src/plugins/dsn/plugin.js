@@ -1,6 +1,6 @@
 
 define([
-    'text!./res/dsn-dictionary.json',
+    './res/dsn-dictionary.json',
     './DsnUtils',
     './DsnParser',
     './res/http'
@@ -336,7 +336,7 @@ define([
                 }
             });
 
-            dictionary = JSON.parse(baseDictionary);
+            dictionary = baseDictionary;
 
             getDsnConfiguration();
 
