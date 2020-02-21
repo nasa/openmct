@@ -149,10 +149,10 @@ define(
             // Second, filter by matching capabilities.
             return this.views.filter(function (view) {
                 return viewMatchesType(view, type) && capabilitiesMatch(
-                        domainObject,
-                        view.needs || [],
-                        view.delegation || false
-                    );
+                    domainObject,
+                    view.needs || [],
+                    view.delegation || false
+                );
             });
         };
 

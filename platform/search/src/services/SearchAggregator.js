@@ -106,9 +106,9 @@ define([
             .all(resultPromises)
             .then(function (providerResults) {
                 var modelResults = {
-                        hits: [],
-                        total: 0
-                    };
+                    hits: [],
+                    total: 0
+                };
 
                 providerResults.forEach(function (providerResult) {
                     modelResults.hits =

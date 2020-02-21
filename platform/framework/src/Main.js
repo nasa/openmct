@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window,requirejs*/
+/*global window*/
 
 /**
  * Implements the framework layer, which handles the loading of bundles
@@ -29,15 +29,11 @@
  */
 define(
     [
-        'require',
-        'es6-promise',
         './FrameworkLayer',
         'angular',
         'angular-route'
     ],
     function (
-        require,
-        es6promise,
         FrameworkLayer,
         angular
     ) {
@@ -45,7 +41,7 @@ define(
         function Main() {
         }
 
-        Main.prototype.run = function (legacyRegistry) {
+        Main.prototype.run = function (openmct) {
             // Get a reference to Angular's injector, so we can get $http and $log
             // services, which are useful to the framework layer.
             var injector = angular.injector(['ng']);
@@ -56,14 +52,8 @@ define(
                 return match ? match[1] : "";
             }
 
-            // Polyfill Promise, in case browser does not natively provide Promise
-            window.Promise = window.Promise || es6promise.Promise;
-
-            // Reconfigure base url, since bundle paths will all be relative
-            // to the root now.
-            requirejs.config({"baseUrl": ""});
-            injector.instantiate(['$http', '$log', FrameworkLayer])
-                .initializeApplication(angular, legacyRegistry, logLevel());
+            return injector.instantiate(['$http', '$log', FrameworkLayer])
+                .initializeApplication(angular, openmct, logLevel());
         };
 
         return Main;

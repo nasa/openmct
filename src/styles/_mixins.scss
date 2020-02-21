@@ -1,0 +1,601 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/************************** GLYPHS */
+@mixin glyphBefore($unicode, $family: 'symbolsfont') {
+    &:before {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphAfter($unicode, $family: 'symbolsfont') {
+    &:after {
+        content: $unicode;
+        font-family: $family;
+    }
+}
+
+@mixin glyphBg($glyphUrl) {
+    background-image: $glyphUrl;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+[class*="icon-"] {
+    &:before, &:after
+    {
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/************************** EFFECTS */
+@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @keyframes pulse {
+        0%   { opacity: $opacity0; }
+        100% { opacity: $opacity100; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: alternate;
+    animation-iteration-count: $iteration;
+    animation-timing-function: ease-in-out;
+}
+
+/************************** VISUALS */
+@mixin ancillaryIcon($d, $c) {
+    // Used for small icons used in combination with larger icons,
+    // like the link and alert icons in tree items.
+    color: $c;
+    font-size: $d;
+    line-height: $d;
+    height: $d;
+    width: $d;
+}
+
+@mixin appearanceNone() {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+@mixin isAlias() {
+    &:after {
+        color:$colorIconAlias;
+        content: $glyph-icon-link;
+        display: block;
+        font-family: symbolsfont;
+        position: absolute;
+        text-shadow: rgba(black, 0.5) 0 1px 4px;
+        top: auto; left: 0; bottom: 10%; right: auto;
+        transform-origin: left bottom;
+        transform: scale(0.5);
+    }
+}
+
+@mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
+    background-image: linear-gradient(-45deg,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    ) repeat;
+    background-size: $d $d;
+}
+
+@mixin bgStripes($c: yellow, $a: 0.1, $bgsize: 5px, $angle: 90deg) {
+    background: linear-gradient($angle,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    ) repeat;
+    background-size: $bgsize $bgsize;
+}
+
+@mixin bgStripes2Color($c1, $c2, $bgSize, $angle: -45deg) {
+    background: linear-gradient(-45deg,
+            $c1 0%, $c1 25%,
+            $c2 25%, $c2 50%,
+            $c1 50%, $c1 75%,
+            $c2 75%, $c2 100%
+    ) repeat;
+    background-size: $bgSize;
+}
+
+@mixin disabled() {
+    opacity: $controlDisabledOpacity;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+@mixin grippy($c: rgba(black, 0.5), $dir: 'x') {
+    $deg: 90deg;
+    $bgSize: 2px 100%;
+
+    @if $dir != 'x' {
+        // Grippy texture runs 'vertically'
+        $deg: 0deg;
+        $bgSize: 100% 2px;
+    }
+
+    background: linear-gradient($deg,
+            $c 1px, transparent 1px,
+            transparent 100%
+    ) repeat;
+    background-size: $bgSize;
+}
+
+@mixin noColor() {
+    // A "no fill/stroke" selection option. Used in palettes.
+    $c: red;
+    $s: 48%;
+    $e: 52%;
+    background-image: linear-gradient(-45deg,
+        transparent $s - 5%,
+        $c $s,
+        $c $e,
+        transparent $e + 5%
+    );
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+@mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
+    $deg: 90deg;
+    @if ($repeatDir != 'x') {
+        $deg: 0deg;
+        $repeatDir: repeat-y;
+    } @else {
+        $repeatDir: repeat-x;
+    }
+
+    background-image: linear-gradient($deg,
+            $c 1px, transparent 1px,
+            transparent 100%
+    );
+    background-repeat: $repeatDir;
+}
+
+@mixin sliderTrack($bg: $scrollbarTrackColorBg) {
+    border-radius: 2px;
+    box-sizing: border-box;
+    background-color: $bg;
+}
+
+@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
+    width: 0;
+    height: 0;
+    $slopedB: $size/$ratio solid transparent;
+    $straightB: $size solid $color;
+    @if $dir == "up" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-bottom: $straightB;
+    } @else if $dir == "right" {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-left: $straightB;
+    } @else if $dir == "down" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-top: $straightB;
+    } @else {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-right: $straightB;
+    }
+}
+
+@mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
+    background-image: linear-gradient(-90deg,
+        rgba($c, $a) 0%, rgba($c, $a) 50%,
+        transparent 50%, transparent 100%
+    );
+    background-repeat: repeat;
+    background-size: $d $d;
+}
+
+/************************** LAYOUT */
+@mixin abs($m: 0) {
+    position: absolute;
+    top: $m; right: $m; bottom: $m; left: $m;
+}
+
+@mixin propertiesHeader() {
+    border-radius: $smallCr;
+    background-color: $colorInspectorSectionHeaderBg;
+    color: $colorInspectorSectionHeaderFg;
+    font-weight: normal;
+    padding: $interiorMarginSm $interiorMargin;
+    text-transform: uppercase;
+}
+
+@mixin modalFullScreen() {
+    // Optional modifier that makes a c-menu more mobile-friendly
+    position: fixed;
+    border-radius: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
+}
+
+/************************** TEXT */
+@mixin ellipsize() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin reverseEllipsis() {
+    @include ellipsize();
+    direction: rtl;
+    unicode-bidi:bidi-override;
+}
+
+/************************** CONTROLS, BUTTONS, INPUTS */
+@mixin hover {
+    body.desktop & {
+        &:hover {
+            @content
+        }
+    }
+}
+
+@mixin htmlInputReset() {
+    @include appearanceNone();
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    text-align: inherit;
+
+    &:focus {
+        outline: 0;
+    }
+}
+
+@mixin input-base() {
+    @include htmlInputReset();
+    border-radius: $controlCr;
+
+    &.error {
+        background: $colorFormFieldErrorBg;
+        color: $colorFormFieldErrorFg;
+    }
+}
+
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0 2px) {
+    @include input-base();
+    background: $bg;
+    color: $fg;
+    box-shadow: inset $shdw;
+}
+
+@mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
+    @include input-base();
+    background: $bg;
+    box-shadow: $shdwInput;
+    color: $fg;
+
+    &:focus {
+        box-shadow: $shdwInputFoc;
+    }
+
+    @include hover() {
+        &:not(:focus) {
+            box-shadow: $shdwInputHov;
+        }
+    }
+}
+
+@mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
+    // Is this being used? Remove if not.
+    background: $bg;
+    color: $fg;
+    border-radius: $radius;
+    box-shadow: $shdw;
+}
+
+@mixin buttonBehavior() {
+    // Assign transition timings
+    transition: $transOut;
+
+    @include hover() {
+        transition: $transIn;
+    }
+}
+
+@mixin cControl() {
+    $fs: 1em;
+    @include userSelectNone();
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: $fs; // Remove effect on top and bottom padding
+    overflow: hidden;
+
+    &:before,
+    &:after {
+        font-family: symbolsfont;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    &:before {
+        font-size: 0.9em;
+    }
+
+    &:after {
+        font-size: 0.8em;
+    }
+
+    [class*="__label"] {
+        @include ellipsize();
+        display: block;
+        font-size: $fs;
+    }
+
+    &[class*='icon'] > [class*="__label"] {
+        // When button holds both an icon and a label, provide margin between them.
+        margin-left: $interiorMarginSm;
+    }
+}
+
+@mixin cButton() {
+    @include cControl();
+    @include themedButton();
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    cursor: pointer;
+    padding: $interiorMargin floor($interiorMargin * 1.25);
+
+    &:after,
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
+    @include hover() {
+        background: $colorBtnBgHov;
+        color: $colorBtnFgHov;
+    }
+
+    &[class*="--major"],
+    &[class*='is-active']{
+        background: $colorBtnMajorBg;
+        color: $colorBtnMajorFg;
+
+        @include hover() {
+            background: $colorBtnMajorBgHov;
+            color: $colorBtnMajorFgHov;
+        }
+    }
+
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg;
+        color: $colorBtnCautionFg;
+
+        &:hover {
+            background: $colorBtnCautionBgHov;
+        }
+    }
+}
+
+
+@mixin cClickIcon() {
+    @include cControl();
+    cursor: pointer;
+    padding: 4px; // Bigger hit area
+    opacity: 0.6;
+    transition: $transOut;
+    transform-origin: center;
+
+    @include hover() {
+        transform: scale(1.1);
+        transition: $transIn;
+        opacity: 1;
+    }
+}
+
+@mixin cClickIconButtonLayout() {
+    $pLR: 4px;
+    $pTB: 4px;
+    padding: $pTB $pLR;
+
+    &:before,
+    *:before {
+        // *:before handles any nested containers that may contain glyph elements
+        // Needed for c-togglebutton.
+        font-size: 1.25em;
+    }
+}
+
+@mixin cClickIconButton() {
+    // A clickable element that just includes the icon
+    // Background is displayed on hover
+    // Padding is included to facilitate a bigger hit area
+    // Make the icon bigger relative to its container
+    @include cControl();
+    @include cClickIconButtonLayout();
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: $transOut;
+    border-radius: $controlCr;
+
+    @include hover() {
+        transition: $transIn;
+        background: $colorClickIconButtonBgHov;
+        color: $colorClickIconButtonFgHov;
+    }
+
+    &[class*="--major"] {
+        color: $colorKey;
+    }
+}
+
+@mixin cCtrlWrapper {
+    // Provides a wrapper around  buttons and other controls
+    // Contains control and provides positioning context for contained menu/palette.
+    // Wraps --menu elements, contains button and menu
+    overflow: visible;
+
+    .c-menu {
+        // Default position of contained menu
+        top: 100%; left: 0;
+    }
+
+    &[class*='--menus-up'] {
+        .c-menu {
+            top: auto; bottom: 100%;
+        }
+    }
+
+    &[class*='--menus-left'] {
+        .c-menu {
+            left: auto; right: 0;
+        }
+    }
+}
+
+@mixin hasMenu() {
+    &:after {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+        margin-left: floor($interiorMarginSm * 0.8);
+        opacity: 0.5;
+    }
+}
+
+@mixin cSelect($bg, $fg, $arwClr, $shdw) {
+    $svgArwClr: str-slice(inspect($arwClr), 2, str-length(inspect($arwClr))); // Remove initial # in color value
+    background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;
+    color: $fg;
+    box-shadow: $shdw;
+}
+
+@mixin wrappedInput() {
+    // An input that is wrapped. Optionally includes a __label or icon element.
+    // Based on .c-search.
+    @include nice-input();
+    display: flex;
+    align-items: center;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    &:before,
+    [class*='__label'] {
+        opacity: 0.5;
+    }
+
+    &:before {
+        // Adds an icon. Content defined in class.
+        direction: rtl; // Aligns glyph to right-hand side of container, for transition
+        display: block;
+        font-family: symbolsfont;
+        flex: 0 0 auto;
+        overflow: hidden;
+        padding: 2px 0; // Prevents clipping
+        transition: width 250ms ease;
+        width: 1em;
+    }
+
+    &:hover {
+        box-shadow: inset rgba(black, 0.8) 0 0px 2px;
+        &:before {
+            opacity: 0.9;
+        }
+    }
+
+    &--major {
+        padding: 4px;
+    }
+
+    &__input,
+    input[type='text'],
+    input[type='search'],
+    input[type='number'] {
+        background: none  !important;
+        box-shadow: none !important; // !important needed to override default for [input]
+        flex: 1 1 auto;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        min-width: 10px; // Must be set to allow input to collapse below browser min
+    }
+
+    &.is-active {
+        &:before {
+            padding: 2px 0px;
+            width: 0px;
+        }
+    }
+}
+
+/************************** MATH */
+@function percentToDecimal($p) {
+    @return $p / 100%;
+}
+
+@function decimalToPercent($d) {
+    @return percentage($d);
+}
+
+/************************** UTILITIES */
+@mixin browserPrefix($prop, $val) {
+    #{$prop}: $val;
+    -ms-#{$prop}: $val;
+    -moz-#{$prop}: $val;
+    -webkit-#{$prop}: $val;
+}
+
+@mixin userSelectNone() {
+    @include browserPrefix(user-select, none);
+}
+
+@mixin cursorGrab() {
+    cursor: grab;
+    cursor: -webkit-grab;
+    &:active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
+}
+
+@function svgColorFromHex($hexColor) {
+    // Remove initial # in color value
+    @return str-slice(inspect($hexColor), 2, str-length(inspect($hexColor)));
+}
+
+@mixin test($c: deeppink, $a: 0.3) {
+    background: rgba($c, $a) !important;
+    background-color: rgba($c, $a) !important;
+}
+
+
+@mixin sUnsynced() {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
+}

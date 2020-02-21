@@ -20,14 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="ToggleController as toggle">
-    <span ng-controller="TreeNodeController as treeNode">
-        <span
-            class="tree-item menus-to-left"
-            ng-class="{selected: treeNode.isSelected()}"
-            >
-            <span
-                class='ui-symbol view-control flex-elem'
-                ng-class="{ 'has-children': model.composition !== undefined, expanded: toggle.isActive() }"
+    <div class="u-contents" ng-controller="TreeNodeController as treeNode">
+        <div class="c-tree__item menus-to-left"
+            ng-class="{selected: treeNode.isSelected()}">
+            <span class='c-disclosure-triangle c-tree__item__view-control'
+                ng-class="{ 'is-enabled': model.composition !== undefined, 'c-disclosure-triangle--expanded': toggle.isActive() }"
                 ng-click="toggle.toggle(); treeNode.trackExpansion()"
                 >
             </span>
@@ -39,19 +36,15 @@
                 ng-click="treeNode.select()"
                 >
             </mct-representation>
-        </span>
-        <span
-            class="tree-item-subtree"
+        </div>
+        <div class="u-contents"
             ng-show="toggle.isActive()"
-            ng-if="model.composition !== undefined"
-            >
-
+            ng-if="model.composition !== undefined">
             <mct-representation key="'subtree'"
                                 ng-model="ngModel"
                                 parameters="parameters"
                                 mct-object="treeNode.hasBeenExpanded() && domainObject">
             </mct-representation>
-
-        </span>
-    </span>
+        </div>
+    </div>
 </span>

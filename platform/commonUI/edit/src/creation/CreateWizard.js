@@ -34,13 +34,13 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateWizard(domainObject, parent, policyService) {
+        function CreateWizard(domainObject, parent, openmct) {
             this.type = domainObject.getCapability('type');
             this.model = domainObject.getModel();
             this.domainObject = domainObject;
             this.properties = this.type.getProperties();
             this.parent = parent;
-            this.policyService = policyService;
+            this.openmct = openmct;
         }
 
         /**
@@ -56,22 +56,17 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                domainObject = this.domainObject,
-                policyService = this.policyService;
+                domainObject = this.domainObject;
 
             function validateLocation(parent) {
-                return parent && policyService.allow(
-                    "composition",
-                    parent,
-                    domainObject
-                );
+                return parent && this.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
             }
 
             sections.push({
                 name: "Properties",
                 rows: this.properties.map(function (property, index) {
                     // Property definition is same as form row definition
-                    var row = Object.create(property.getDefinition());
+                    var row = JSON.parse(JSON.stringify(property.getDefinition()));
 
                     // Use index as the key into the formValue;
                     // this correlates to the indexing provided by
@@ -93,7 +88,7 @@ define(
                     rows: [{
                         name: "Save In",
                         control: "locator",
-                        validate: validateLocation,
+                        validate: validateLocation.bind(this),
                         key: "createParent"
                     }]
                 });

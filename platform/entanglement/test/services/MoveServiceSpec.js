@@ -34,7 +34,7 @@ define(
         ControlledPromise
     ) {
 
-        describe("MoveService", function () {
+        xdescribe("MoveService", function () {
 
             var moveService,
                 policyService,
@@ -178,7 +178,6 @@ define(
                             type: { type: 'object' }
                         }
                     });
-
                     moveResult = moveService.perform(object, newParent);
                 });
 
@@ -187,6 +186,10 @@ define(
                         object,
                         newParent
                     );
+                });
+
+                it("returns a promise", function () {
+                    expect(moveResult.then).toEqual(jasmine.any(Function));
                 });
 
                 it("waits for result of link", function () {

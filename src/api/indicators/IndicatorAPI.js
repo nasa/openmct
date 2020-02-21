@@ -28,7 +28,7 @@ define([
 ) {
     function IndicatorAPI(openmct) {
         this.openmct = openmct;
-        this.indicatorElements = [];
+        this.indicatorObjects = [];
     }
 
     IndicatorAPI.prototype.simpleIndicator = function () {
@@ -55,12 +55,7 @@ define([
      *
      */
     IndicatorAPI.prototype.add = function (indicator) {
-        // So that we can consistently position indicator elements,
-        // guarantee that they are wrapped in an element we control
-        var wrapperNode = document.createElement('div');
-        wrapperNode.className = 'h-indicator';
-        wrapperNode.appendChild(indicator.element);
-        this.indicatorElements.push(wrapperNode);
+        this.indicatorObjects.push(indicator);
     };
 
     return IndicatorAPI;

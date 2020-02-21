@@ -20,107 +20,124 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
-    <div class="gl-plot-legend flex-elem l-flex-row"
+    <div class="c-plot-legend gl-plot-legend"
          ng-class="{ 'hover-on-plot': !!highlights.length }"
          ng-show="legend.get('position') !== 'hidden'">
-        <span class="view-control flex-elem"
-            ng-class="{ expanded: legend.get('expanded') }"
+        <div class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
+            ng-class="{ 'c-disclosure-triangle--expanded': legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
-        </span>
-
-        <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend">
-            <div class="plot-legend-item"
-                  ng-repeat="series in series track by $index">
-                <div class="plot-series-swatch-and-name">
-                    <span class="plot-series-color-swatch"
-                          ng-style="{ 'background-color': series.get('color').asHexString() }">
-                    </span>
-                    <span class="plot-series-name">{{ series.get('name') }}</span>
-                </div>
-                <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
-                     ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
-                     ng-show="!!highlights.length && legend.get('valueToShowWhenCollapsed') !== 'none'">
-                    {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
-                        series.formatY(series.closest) :
-                        legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
-                             series.closest && series.formatX(series.closest) :
-                             series.formatY(series.get('stats')[legend.get('valueToShowWhenCollapsed') + 'Point']);
-                    }}
-                </div>
-            </div>
         </div>
 
-        <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend flex-elem grows">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th ng-if="legend.get('showTimestampWhenExpanded')">
-                            Timestamp
-                        </th>
-                        <th ng-if="legend.get('showValueWhenExpanded')">
-                            Value
-                        </th>
-                        <th ng-if="legend.get('showMinimumWhenExpanded')"
-                            class="mobile-hide">
-                            Min
-                        </th>
-                        <th ng-if="legend.get('showMaximumWhenExpanded')"
-                            class="mobile-hide">
-                            Max
-                        </th>
-                    </tr>
-                </thead>
-                <tr ng-repeat="series in series" class="plot-legend-item">
-                    <td class="plot-series-swatch-and-name">
+        <div class="c-plot-legend__wrapper">
+
+            <!-- COLLAPSED PLOT LEGEND -->
+            <div class="plot-wrapper-collapsed-legend"
+                 ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
+                <div class="plot-legend-item"
+                      ng-repeat="series in series track by $index">
+                    <div class="plot-series-swatch-and-name">
                         <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
-                    </td>
+                    </div>
+                    <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
+                         ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
+                         ng-show="!!highlights.length && legend.get('valueToShowWhenCollapsed') !== 'none'">
+                        {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
+                            series.formatY(series.closest) :
+                            legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
+                                 series.closest && series.formatX(series.closest) :
+                                 series.formatY(series.get('stats')[legend.get('valueToShowWhenCollapsed') + 'Point']);
+                        }}
+                    </div>
+                </div>
+            </div>
 
-                    <td ng-if="legend.get('showTimestampWhenExpanded')">
-                        <span class="plot-series-value cursor-hover hover-value-enabled">
-                            {{ series.closest && series.formatX(series.closest) }}
-                        </span>
-                    </td>
-                    <td ng-if="legend.get('showValueWhenExpanded')">
-                        <span class="plot-series-value cursor-hover hover-value-enabled"
-                              ng-class="series.closest.mctLimitState.cssClass">
-                            {{ series.formatY(series.closest) }}
-                        </span>
-                    </td>
-                    <td ng-if="legend.get('showMinimumWhenExpanded')"
-                        class="mobile-hide">
-                        <span class="plot-series-value">
-                            {{ series.formatY(series.get('stats').minPoint) }}
-                        </span>
-                    </td>
-                    <td ng-if="legend.get('showMaximumWhenExpanded')"
-                        class="mobile-hide">
-                        <span class="plot-series-value">
-                            {{ series.formatY(series.get('stats').maxPoint) }}
-                        </span>
-                    </td>
-                </tr>
-            </table>
+            <!-- EXPANDED PLOT LEGEND -->
+            <div class="plot-wrapper-expanded-legend">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th ng-if="legend.get('showTimestampWhenExpanded')">
+                                Timestamp
+                            </th>
+                            <th ng-if="legend.get('showValueWhenExpanded')">
+                                Value
+                            </th>
+                            <th ng-if="legend.get('showMinimumWhenExpanded')"
+                                class="mobile-hide">
+                                Min
+                            </th>
+                            <th ng-if="legend.get('showMaximumWhenExpanded')"
+                                class="mobile-hide">
+                                Max
+                            </th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="series in series" class="plot-legend-item">
+                        <td class="plot-series-swatch-and-name"
+                            ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
+                            <span class="plot-series-color-swatch"
+                                  ng-style="{ 'background-color': series.get('color').asHexString() }">
+                            </span>
+                            <span class="plot-series-name">{{ series.get('name') }}</span>
+                        </td>
+
+                        <td ng-if="legend.get('showTimestampWhenExpanded')">
+                            <span class="plot-series-value cursor-hover hover-value-enabled">
+                                {{ series.closest && series.formatX(series.closest) }}
+                            </span>
+                        </td>
+                        <td ng-if="legend.get('showValueWhenExpanded')">
+                            <span class="plot-series-value cursor-hover hover-value-enabled"
+                                  ng-class="series.closest.mctLimitState.cssClass">
+                                {{ series.formatY(series.closest) }}
+                            </span>
+                        </td>
+                        <td ng-if="legend.get('showMinimumWhenExpanded')"
+                            class="mobile-hide">
+                            <span class="plot-series-value">
+                                {{ series.formatY(series.get('stats').minPoint) }}
+                            </span>
+                        </td>
+                        <td ng-if="legend.get('showMaximumWhenExpanded')"
+                            class="mobile-hide">
+                            <span class="plot-series-value">
+                                {{ series.formatY(series.get('stats').maxPoint) }}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <div class="gl-plot-axis-area gl-plot-y"
+        <div class="gl-plot-axis-area gl-plot-y has-local-controls"
              ng-style="{
                  width: (tickWidth + 30) + 'px'
              }">
 
-            <div class="gl-plot-label gl-plot-y-label">
-                {{ yAxis.get('label') }}
+            <div class="gl-plot-label gl-plot-y-label"
+                ng-class="{'icon-gear': (yKeyOptions.length > 1 && series.length === 1)}"
+                >{{yAxis.get('label')}}
             </div>
 
+            <select  class="gl-plot-y-label__select local-controls--hidden"
+                     ng-if="yKeyOptions.length > 1 && series.length === 1"
+                     ng-model="yAxisLabel" ng-change="plot.toggleYAxisLabel(yAxisLabel, yKeyOptions, series[0])">
+                <option ng-repeat="option in yKeyOptions"
+                        value="{{option.name}}"
+                        ng-selected="option.name === yAxisLabel">
+                    {{option.name}}
+                </option>
+            </select>
+            
+
             <mct-ticks axis="yAxis">
-                <div ng-repeat="tick in ticks track by tick.text"
+                <div ng-repeat="tick in ticks track by tick.value"
                      class="gl-plot-tick gl-plot-y-tick-label"
                      ng-style="{ top: (100 * (max - tick.value) / interval) + '%' }"
                      title="{{:: tick.fullText || tick.text }}"
@@ -133,8 +150,15 @@
              ng-style="{
                      left: (tickWidth + 30) + 'px'
                  }">
-            <span class="t-object-alert t-alert-unsynced" title="This plot is not currently displaying the latest data. Reset Pan/zoom to return to view latest data."></span>
-            <div class="gl-plot-display-area">
+            <div class="l-state-indicators">
+                <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                      title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
+                <span class="l-state-indicators__alert-cursor-lock icon-cursor-lock"
+                      title="Telemetry point selection is locked. Click anywhere in the plot to unlock."
+                      ng-if="lockHighlightPoint"></span>
+            </div>
+
+            <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"
@@ -145,14 +169,12 @@
                      </div>
                 </mct-ticks>
 
-
                 <mct-ticks axis="yAxis">
                      <div class="gl-plot-hash hash-h"
                           ng-repeat="tick in ticks track by tick.value"
                           ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
                      </div>
                 </mct-ticks>
-
 
                 <mct-chart config="config"
                            series="series"
@@ -162,32 +184,42 @@
                            the-y-axis="yAxis">
                 </mct-chart>
 
-                <div class="h-local-controls h-local-controls-overlay-content"
-                     ng-show="plotHistory.length">
-                    <div class="l-btn-set">
-                        <a class="s-button icon-arrow-left"
-                           ng-click="plot.back()"
-                           title="Restore previous pan/zoom">
-                        </a>
-                        <a class="s-button icon-reset"
-                           ng-click="plot.clear()"
-                           title="Reset pan/zoom">
-                        </a>
+                <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button class="c-button icon-minus"
+                                ng-click="plot.zoom('out', 0.2)"
+                                title="Zoom out">
+                        </button>
+                        <button class="c-button icon-plus"
+                                ng-click="plot.zoom('in', 0.2)"
+                                title="Zoom in">
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h"
+                         ng-disabled="!plotHistory.length">
+                        <button class="c-button icon-arrow-left"
+                                ng-click="plot.back()"
+                                title="Restore previous pan/zoom">
+                        </button>
+                        <button class="c-button icon-reset"
+                                ng-click="plot.clear()"
+                                title="Reset pan/zoom">
+                        </button>
                     </div>
                 </div>
 
-                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-                </span>
-
+                <!--Cursor guides-->
+                <div class="c-cursor-guide--v js-cursor-guide--v"
+                    ng-show="plot.cursorGuide">
+                </div>
+                <div class="c-cursor-guide--h js-cursor-guide--h"
+                    ng-show="plot.cursorGuide">
+                </div>
             </div>
 
-            <div class="gl-plot-axis-area gl-plot-x"
-                 ng-style="{
-                     left: (tickWidth - 30) + 'px'
-                 }">
-
+            <div class="gl-plot-axis-area gl-plot-x">
                 <mct-ticks axis="xAxis">
-                     <div ng-repeat="tick in ticks track by tick.text"
+                     <div ng-repeat="tick in ticks track by tick.value"
                           class="gl-plot-tick gl-plot-x-tick-label"
                           ng-style="{
                               left: (100 * (tick.value - min) / interval) + '%'

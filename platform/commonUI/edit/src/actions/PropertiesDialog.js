@@ -49,7 +49,7 @@ define(
                     name: "Properties",
                     rows: this.properties.map(function (property, index) {
                         // Property definition is same as form row definition
-                        var row = Object.create(property.getDefinition());
+                        var row = JSON.parse(JSON.stringify(property.getDefinition()));
                         row.key = index;
                         return row;
                     }).filter(function (row) {

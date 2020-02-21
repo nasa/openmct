@@ -22,7 +22,7 @@
 /*global define*/
 
 define(
-    function (){
+    function () {
         "use strict";
 
         var PREFIX = "msl_tlm:",
@@ -32,20 +32,20 @@ define(
                 string: "string"
             };
 
-        function RemsTelemetryModelProvider(adapter){
+        function RemsTelemetryModelProvider(adapter) {
 
             function isRelevant(id) {
                 return id.indexOf(PREFIX) === 0;
             }
 
-            function makeId(element){
+            function makeId(element) {
                 return PREFIX + element.identifier;
             }
 
-            function buildTaxonomy(dictionary){
+            function buildTaxonomy(dictionary) {
                 var models = {};
 
-                function addMeasurement(measurement, parent){
+                function addMeasurement(measurement, parent) {
                     var format = FORMAT_MAPPINGS[measurement.type];
                     models[makeId(measurement)] = {
                         type: "msl.measurement",
@@ -73,12 +73,12 @@ define(
                         location: spacecraftId,
                         composition: measurements.map(makeId)
                     };
-                    measurements.forEach(function(measurement) {
+                    measurements.forEach(function (measurement) {
                         addMeasurement(measurement, instrumentId);
                     });
                 }
 
-                (dictionary.instruments || []).forEach(function(instrument) {
+                (dictionary.instruments || []).forEach(function (instrument) {
                     addInstrument(instrument, "msl:curiosity");
                 });
                 return models;

@@ -1,22 +1,23 @@
 <mct-container key="overlay">
-    <div class="t-message-list">
-        <div class="top-bar">
-            <div class="dialog-title">{{ngModel.dialog.title}}</div>
-            <div class="hint">Displaying {{ngModel.dialog.messages.length}} message<span ng-show="ngModel.dialog.messages.length > 1 ||
-                                                                                                  ngModel.dialog.messages.length == 0">s</span>
+    <div class="t-message-list c-overlay__contents">
+        <div class="c-overlay__top-bar">
+            <div class="c-overlay__dialog-title">{{ngModel.dialog.title}}</div>
+            <div class="c-overlay__dialog-hint">Displaying {{ngModel.dialog.messages.length}} message<span
+                    ng-show="ngModel.dialog.messages.length > 1 ||
+                            ngModel.dialog.messages.length == 0">s</span>
             </div>
         </div>
-        <div class="w-messages">
+        <div class="w-messages c-overlay__messages">
             <mct-include
                 ng-repeat="msg in ngModel.dialog.messages | orderBy: '-'"
-                key="'message'" ng-model="msg.model"></mct-include>
+                key="'notification-message'" ng-model="msg.model"></mct-include>
         </div>
-        <div class="bottom-bar">
-            <a ng-repeat="dialogAction in ngModel.dialog.actions"
-               class="s-button major"
+        <div class="c-overlay__bottom-bar">
+            <button ng-repeat="dialogAction in ngModel.dialog.actions"
+               class="c-button c-button--major"
                ng-click="dialogAction.action()">
                 {{dialogAction.label}}
-            </a>
+            </button>
         </div>
     </div>
 </mct-container>

@@ -20,49 +20,45 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="PlotOptionsController">
-    <ul class="tree l-inspector-part">
-        <h2 title="Display properties for this object">Plot Series Options</h2>
+    <ul class="c-tree">
+        <h2 title="Display properties for this object">Plot Series</h2>
         <li ng-repeat="series in plotSeries"
             ng-controller="PlotSeriesFormController"
             form-model="series">
-            <span class="tree-item menus-to-left">
-                <span class='ui-symbol view-control flex-elem'
-                      ng-class="{ expanded: expanded }"
+            <div class="c-tree__item menus-to-left">
+                <span class='c-disclosure-triangle is-enabled flex-elem'
+                      ng-class="{ 'c-disclosure-triangle--expanded': expanded }"
                       ng-click="expanded = !expanded">
                 </span>
-                <mct-representation class="rep-object-label"
+                <mct-representation class="rep-object-label c-tree__item__label"
                                     key="'label'"
                                     mct-object="series.oldObject">
                 </mct-representation>
-            </span>
+            </div>
             <ul class="grid-properties" ng-show="expanded">
                 <li class="grid-row">
                 <!-- Value to be displayed -->
                     <div class="grid-cell label"
                          title="The field to be plotted as a value for this series.">Value</div>
                     <div class="grid-cell value">
-                        <div class="select">
-                            <select ng-model="form.yKey">
-                                <option ng-repeat="option in yKeyOptions"
-                                        value="{{option.value}}"
-                                        ng-selected="option.value == form.yKey">
-                                    {{option.name}}
-                                </option>
-                            </select>
-                        </div>
+                        <select ng-model="form.yKey">
+                            <option ng-repeat="option in yKeyOptions"
+                                    value="{{option.value}}"
+                                    ng-selected="option.value == form.yKey">
+                                {{option.name}}
+                            </option>
+                        </select>
                     </div>
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="The line rendering style for this series.">Line Style</div>
                     <div class="grid-cell value">
-                        <div class="select">
-                            <select ng-model="form.interpolate">
-                                <option value="none">None</option>
-                                <option value="linear">Linear interpolate</option>
-                                <option value="stepAfter">Step after</option>
-                            </select>
-                        </div>
+                        <select ng-model="form.interpolate">
+                            <option value="none">None</option>
+                            <option value="linear">Linear interpolate</option>
+                            <option value="stepAfter">Step after</option>
+                        </select>
                     </div>
                 </li>
                 <li class="grid-row">
@@ -78,7 +74,7 @@
                 <li class="grid-row" ng-show="form.markers || form.alarmMarkers">
                     <div class="grid-cell label"
                          title="The size of regular and alarm markers for this series.">Marker Size:</div>
-                    <div class="grid-cell value"><input class="sm" type="text" ng-model="form.markerSize"/></div>
+                    <div class="grid-cell value"><input class="c-input--flex" type="text" ng-model="form.markerSize"/></div>
                 </li>
                 <li class="grid-row"
                     ng-controller="ClickAwayController as toggle"
@@ -86,18 +82,20 @@
                     <div class="grid-cell label"
                          title="Manually set the plot line and marker color for this series.">Color</div>
                     <div class="grid-cell value">
-                        <div class="s-menu-button" ng-click="toggle.toggle()">
-                            <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
+                        <div class="c-click-swatch c-click-swatch--menu" ng-click="toggle.toggle()">
+                            <span class="c-color-swatch"
+                                  ng-style="{ background: series.get('color').asHexString() }">
                             </span>
                         </div>
-                        <div class="l-inline-palette" ng-show="toggle.isActive()">
-                            <!-- TODO: redo this as a grid -->
-                            <div class="l-palette-row" ng-repeat="group in config.series.palette.groups()">
-                                <div class="l-palette-item s-palette-item"
-                                     ng-repeat="color in group"
-                                     ng-class="{ 'selected': series.get('color').equalTo(color) }"
-                                     ng-style="{ background: color.asHexString() }"
-                                     ng-click="setColor(color)">
+                        <div class="c-palette c-palette--color">
+                            <div class="c-palette__items" ng-show="toggle.isActive()">
+                                <div class="u-contents" ng-repeat="group in config.series.palette.groups()">
+                                    <div class="c-palette__item"
+                                         ng-repeat="color in group"
+                                         ng-class="{ 'selected': series.get('color').equalTo(color) }"
+                                         ng-style="{ background: color.asHexString() }"
+                                         ng-click="setColor(color)">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +113,7 @@
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Manually override how the Y axis is labeled.">Label</div>
-                <div class="grid-cell value"><input class="control" type="text" ng-model="form.label"/></div>
+                <div class="grid-cell value"><input class="c-input--flex" type="text" ng-model="form.label"/></div>
             </li>
         </ul>
         <ul class="l-inspector-part">
@@ -130,7 +128,7 @@
                      title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc.">
                     Padding</div>
                 <div class="grid-cell value">
-                    <input class="sm" type="text" ng-model="form.autoscalePadding"/>
+                    <input class="c-input--flex" type="text" ng-model="form.autoscalePadding"/>
                 </div>
             </li>
         </ul>
@@ -143,13 +141,13 @@
                 <div class="grid-cell label"
                      title="Minimum Y axis value.">Minimum Value</div>
                 <div class="grid-cell value">
-                    <input class="sm" type="number" ng-model="form.range.min"/>
+                    <input class="c-input--flex" type="number" ng-model="form.range.min"/>
                 </div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Maximum Y axis value.">Maximum Value</div>
-                <div class="grid-cell value"><input class="sm" type="number" ng-model="form.range.max"/></div>
+                <div class="grid-cell value"><input class="c-input--flex" type="number" ng-model="form.range.max"/></div>
             </li>
         </ul>
     </div>
@@ -160,15 +158,13 @@
                 <div class="grid-cell label"
                      title="The position of the legend relative to the plot display area.">Position</div>
                 <div class="grid-cell value">
-                    <div class="select">
-                        <select ng-model="form.position">
-                            <option value="hidden">Hidden</option>
-                            <option value="top">Top</option>
-                            <option value="right">Right</option>
-                            <option value="bottom">Bottom</option>
-                            <option value="left">Left</option>
-                        </select>
-                    </div>
+                    <select ng-model="form.position">
+                        <option value="hidden">Hidden</option>
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="left">Left</option>
+                    </select>
                 </div>
             </li>
             <li class="grid-row">
@@ -180,15 +176,13 @@
                 <div class="grid-cell label"
                      title="What to display in the legend when it's collapsed.">When collapsed show</div>
                 <div class="grid-cell value">
-                    <div class="select">
-                        <select ng-model="form.valueToShowWhenCollapsed">
-                            <option value="none">nothing</option>
-                            <option value="nearestTimestamp">nearest timestamp</option>
-                            <option value="nearestValue">nearest Value</option>
-                            <option value="min">minimum value</option>
-                            <option value="max">maximum value</option>
-                        </select>
-                    </div>
+                    <select ng-model="form.valueToShowWhenCollapsed">
+                        <option value="none">Nothing</option>
+                        <option value="nearestTimestamp">Nearest timestamp</option>
+                        <option value="nearestValue">Nearest value</option>
+                        <option value="min">Minimum value</option>
+                        <option value="max">Maximum value</option>
+                    </select>
                 </div>
             </li>
             <li class="grid-row">

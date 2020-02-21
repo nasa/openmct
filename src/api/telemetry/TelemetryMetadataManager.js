@@ -116,12 +116,32 @@ define([
             return hints.every(hasHint, metadata);
         }
         var matchingMetadata = this.valueMetadatas.filter(hasHints);
-        var sortedMetadata = _.sortBy(matchingMetadata, function (metadata) {
-            return hints.map(function (hint) {
+        let iteratees = hints.map(hint => {
+            return (metadata) => {
                 return metadata.hints[hint];
-            });
+            }
         });
-        return sortedMetadata;
+        return _.sortByAll(matchingMetadata, ...iteratees);
+    };
+
+    TelemetryMetadataManager.prototype.getFilterableValues = function () {
+        return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
+    }
+
+    TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
+        let valueMetadata = this.valuesForHints(['range'])[0];
+
+        if (valueMetadata === undefined) {
+            valueMetadata = this.values().filter(values => {
+                return !(values.hints.domain);
+            })[0];
+        }
+
+        if (valueMetadata === undefined) {
+            valueMetadata = this.values()[0];
+        }
+
+        return valueMetadata.key;
     };
 
 

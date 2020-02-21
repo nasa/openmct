@@ -1,10 +1,10 @@
 <span class="l-progress-bar s-progress-bar"
-      ng-class="{ indeterminate:ngModel.unknownProgress }">
+      ng-class="{ indeterminate:ngModel.progressPerc === 'unknown' }">
     <span class="progress-amt-holder">
-        <span class="progress-amt" style="width: {{ngModel.progress}}%"></span>
+        <span class="progress-amt" style="width: {{ngModel.progressPerc === 'unknown' ? 100 : ngModel.progressPerc}}%"></span>
     </span>
 </span>
 <div class="progress-info hint" ng-hide="ngModel.progressText === undefined">
-    <span class="progress-amt-text" ng-show="ngModel.progress > 0">{{ngModel.progress}}% complete. </span>
+    <span class="progress-amt-text" ng-show="ngModel.progressPerc !== 'unknown' && ngModel.progressPerc > 0">{{ngModel.progressPerc}}% complete. </span>
     {{ngModel.progressText}}
 </div>

@@ -25,7 +25,7 @@ define([
     './plugins/plugins',
     'legacyRegistry'
 ], function (MCT, plugins, legacyRegistry) {
-    describe("MCT", function () {
+    xdescribe("MCT", function () {
         var openmct;
         var mockPlugin;
         var mockPlugin2;

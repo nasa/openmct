@@ -56,7 +56,7 @@ define([
             return action.perform()
                 .then(function () {
                     expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject, true);
+                        .toHaveBeenCalledWith(mockDomainObject, true);
                 });
         });
 

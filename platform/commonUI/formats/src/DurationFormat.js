@@ -56,7 +56,7 @@ define([
     };
 
     DurationFormat.prototype.validate = function (text) {
-        return moment.utc(text, DATE_FORMATS).isValid();
+        return moment.utc(text, DATE_FORMATS, true).isValid();
     };
 
     return DurationFormat;

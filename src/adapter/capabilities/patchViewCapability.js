@@ -48,9 +48,9 @@ define([
                     }
                     return vd;
                 })
-                .sortBy('priority')
-                .map('view')
-                .value();
+                    .sortBy('priority')
+                    .map('view')
+                    .value();
             };
             return capability;
         };

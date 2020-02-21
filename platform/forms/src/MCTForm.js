@@ -26,7 +26,7 @@
  * @namespace platform/forms
  */
 define(
-    ["./controllers/FormController", "text!../res/templates/form.html"],
+    ["./controllers/FormController", "../res/templates/form.html"],
     function (FormController, formTemplate) {
 
         /**

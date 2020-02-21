@@ -24,7 +24,7 @@ define(
     ['../src/NotificationIndicatorController'],
     function (NotificationIndicatorController) {
 
-        describe("The notification indicator controller ", function () {
+        xdescribe("The notification indicator controller ", function () {
             var mockNotificationService,
                 mockScope,
                 mockDialogService,

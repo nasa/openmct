@@ -33,9 +33,10 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, policyService) {
+        function CopyService($q, policyService, openmct) {
             this.$q = $q;
             this.policyService = policyService;
+            this.openmct = openmct;
         }
 
         CopyService.prototype.validate = function (object, parentCandidate) {
@@ -45,11 +46,7 @@ define(
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
-            return this.policyService.allow(
-                "composition",
-                parentCandidate,
-                object
-            );
+            return this.openmct.composition.checkPolicy(parentCandidate.useCapability('adapter'), object.useCapability('adapter'));
         };
 
         /**

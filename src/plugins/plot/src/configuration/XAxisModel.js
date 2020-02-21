@@ -31,6 +31,7 @@ define([
     var XAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
+            this.set('label', options.model.name || '');
             this.on('change:range', function (newValue, oldValue, model) {
                 if (!model.get('frozen')) {
                     model.set('displayRange', newValue);

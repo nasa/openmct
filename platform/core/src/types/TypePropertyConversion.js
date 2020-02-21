@@ -29,7 +29,7 @@ define(
                     toModelValue: parseFloat,
                     toFormValue: function (modelValue) {
                         return (typeof modelValue === 'number') ?
-                                modelValue.toString(10) : undefined;
+                            modelValue.toString(10) : undefined;
                     }
                 },
                 identity: {

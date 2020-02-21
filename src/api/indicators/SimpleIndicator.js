@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', 'text!./res/indicator-template.html'],
+define(['zepto', './res/indicator-template.html'],
     function ($, indicatorTemplate) {
         var DEFAULT_ICON_CLASS = 'icon-info';
 
@@ -28,11 +28,11 @@ define(['zepto', 'text!./res/indicator-template.html'],
             this.openmct = openmct;
             this.element = $(indicatorTemplate)[0];
 
-            this.textElement = this.element.querySelector('.indicator-text');
+            this.textElement = this.element.querySelector('.js-indicator-text');
 
             //Set defaults
             this.text('New Indicator');
-            this.description('A simple indicator');
+            this.description('');
             this.iconClass(DEFAULT_ICON_CLASS);
             this.statusClass('');
         }

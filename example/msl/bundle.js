@@ -24,92 +24,92 @@
 define([
     "./src/RemsTelemetryServerAdapter",
     "./src/RemsTelemetryModelProvider",
-    "./src/RemsTelemetryProvider",
-    'legacyRegistry',
-    "module"
+    "./src/RemsTelemetryProvider"
 ], function (
     RemsTelemetryServerAdapter,
     RemsTelemetryModelProvider,
-    RemsTelemetryProvider,
-    legacyRegistry
+    RemsTelemetryProvider
 ) {
     "use strict";
-    legacyRegistry.register("example/msl", {
-        "name" : "Mars Science Laboratory Data Adapter",
-        "extensions" : {
-            "types": [
-                {
-                    "name":"Mars Science Laboratory",
-                    "key": "msl.curiosity",
-                    "cssClass": "icon-object"
-                },
-                {
-                    "name": "Instrument",
-                    "key": "msl.instrument",
-                    "cssClass": "icon-object",
-                    "model": {"composition": []}
-                },
-                {
-                    "name": "Measurement",
-                    "key": "msl.measurement",
-                    "cssClass": "icon-telemetry",
-                    "model": {"telemetry": {}},
-                    "telemetry": {
-                        "source": "rems.source",
-                        "domains": [
-                            {
-                                "name": "Time",
-                                "key": "utc",
-                                "format": "utc"
-                            }
-                        ]
+    return {
+        name:"example/msl",
+        definition: {
+            "name" : "Mars Science Laboratory Data Adapter",
+            "extensions" : {
+                "types": [
+                    {
+                        "name":"Mars Science Laboratory",
+                        "key": "msl.curiosity",
+                        "cssClass": "icon-object"
+                    },
+                    {
+                        "name": "Instrument",
+                        "key": "msl.instrument",
+                        "cssClass": "icon-object",
+                        "model": {"composition": []}
+                    },
+                    {
+                        "name": "Measurement",
+                        "key": "msl.measurement",
+                        "cssClass": "icon-telemetry",
+                        "model": {"telemetry": {}},
+                        "telemetry": {
+                            "source": "rems.source",
+                            "domains": [
+                                {
+                                    "name": "Time",
+                                    "key": "utc",
+                                    "format": "utc"
+                                }
+                            ]
+                        }
                     }
-                }
-            ],
-            "constants": [
-                {
-                    "key": "REMS_WS_URL",
-                    "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
-                }
-            ],
-            "roots": [
-                {
-                    "id": "msl:curiosity"
-                }
-            ],
-            "models": [
-                {
-                    "id": "msl:curiosity",
-                    "priority": "preferred",
-                    "model": {
-                        "type": "msl.curiosity",
-                        "name": "Mars Science Laboratory",
-                        "composition": ["msl_tlm:rems"]
+                ],
+                "constants": [
+                    {
+                        "key": "REMS_WS_URL",
+                        "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
                     }
-                }
-            ],
-            "services": [
-                {
-                    "key":"rems.adapter",
-                    "implementation": RemsTelemetryServerAdapter,
-                    "depends": ["$http", "$log", "REMS_WS_URL"]
-                }
-            ],
-            "components": [
-                {
-                    "provides": "modelService",
-                    "type": "provider",
-                    "implementation": RemsTelemetryModelProvider,
-                    "depends": ["rems.adapter"]
-                },
-                {
-                    "provides": "telemetryService",
-                    "type": "provider",
-                    "implementation": RemsTelemetryProvider,
-                    "depends": ["rems.adapter", "$q"]
-                }
-            ]
+                ],
+                "roots": [
+                    {
+                        "id": "msl:curiosity"
+                    }
+                ],
+                "models": [
+                    {
+                        "id": "msl:curiosity",
+                        "priority": "preferred",
+                        "model": {
+                            "type": "msl.curiosity",
+                            "name": "Mars Science Laboratory",
+                            "composition": ["msl_tlm:rems"]
+                        }
+                    }
+                ],
+                "services": [
+                    {
+                        "key":"rems.adapter",
+                        "implementation": RemsTelemetryServerAdapter,
+                        "depends": ["$http", "$log", "REMS_WS_URL"]
+                    }
+                ],
+                "components": [
+                    {
+                        "provides": "modelService",
+                        "type": "provider",
+                        "implementation": RemsTelemetryModelProvider,
+                        "depends": ["rems.adapter"]
+                    },
+                    {
+                        "provides": "telemetryService",
+                        "type": "provider",
+                        "implementation": RemsTelemetryProvider,
+                        "depends": ["rems.adapter", "$q"]
+                    }
+                ]
+            }
         }
-    });
+    };
 });
 

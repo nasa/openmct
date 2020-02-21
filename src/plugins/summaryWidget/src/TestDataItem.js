@@ -1,5 +1,5 @@
 define([
-    'text!../res/testDataItemTemplate.html',
+    '../res/testDataItemTemplate.html',
     './input/ObjectSelect',
     './input/KeySelect',
     './eventHelpers',

@@ -216,7 +216,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
 
         it('gets the keys for possible operations', function () {
             expect(evaluator.getOperationKeys()).toEqual(
-              ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']
+                ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']
             );
         });
 

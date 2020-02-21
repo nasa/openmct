@@ -29,7 +29,7 @@ define(
     ],
     function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
-        describe("The export JSON action", function () {
+        xdescribe("The export JSON action", function () {
 
             var context,
                 action,
@@ -53,9 +53,9 @@ define(
                 openmct.objects.addProvider('', mockObjectProvider);
 
                 exportService = jasmine.createSpyObj('exportService',
-                ['exportJSON']);
+                    ['exportJSON']);
                 identifierService = jasmine.createSpyObj('identifierService',
-                            ['generate']);
+                    ['generate']);
                 policyService = jasmine.createSpyObj('policyService',
                     ['allow']);
                 mockType = jasmine.createSpyObj('type', ['hasFeature']);
@@ -87,7 +87,7 @@ define(
                 });
 
                 action = new ExportAsJSONAction(openmct, exportService, policyService,
-                        identifierService, typeService, context);
+                    identifierService, typeService, context);
             });
 
             function invokeAdapter() {

@@ -32,14 +32,6 @@ define(
                 mockPromise,
                 handler;
 
-            function asPromise(value) {
-                return (value || {}).then ? value : {
-                    then: function (callback) {
-                        return asPromise(callback(value));
-                    }
-                };
-            }
-
             function makeMockFailure(id, index) {
                 var mockFailure = jasmine.createSpyObj(
                         'failure-' + id,
@@ -74,43 +66,14 @@ define(
                 handler = new PersistenceFailureHandler(mockQ, mockDialogService);
             });
 
-            it("shows a dialog to handle failures", function () {
+            it("discards on handle", function () {
                 handler.handle(mockFailures);
-                expect(mockDialogService.getUserChoice).toHaveBeenCalled();
-            });
-
-            it("overwrites on request", function () {
-                mockQ.all.and.returnValue(asPromise([]));
-                handler.handle(mockFailures);
-                // User chooses overwrite
-                mockPromise.then.calls.mostRecent().args[0](Constants.OVERWRITE_KEY);
-                // Should refresh, remutate, and requeue all objects
-                mockFailures.forEach(function (mockFailure, i) {
-                    expect(mockFailure.persistence.refresh).toHaveBeenCalled();
-                    expect(mockFailure.requeue).toHaveBeenCalled();
-                    expect(mockFailure.domainObject.useCapability).toHaveBeenCalledWith(
-                        'mutation',
-                        jasmine.any(Function),
-                        i // timestamp
-                    );
-                    expect(mockFailure.domainObject.useCapability.calls.mostRecent().args[1]())
-                        .toEqual({ id: mockFailure.id, modified: i });
-                });
-            });
-
-            it("discards on request", function () {
-                mockQ.all.and.returnValue(asPromise([]));
-                handler.handle(mockFailures);
-                // User chooses overwrite
-                mockPromise.then.calls.mostRecent().args[0](false);
-                // Should refresh, but not remutate, and requeue all objects
                 mockFailures.forEach(function (mockFailure) {
                     expect(mockFailure.persistence.refresh).toHaveBeenCalled();
                     expect(mockFailure.requeue).not.toHaveBeenCalled();
                     expect(mockFailure.domainObject.useCapability).not.toHaveBeenCalled();
                 });
             });
-
         });
     }
 );

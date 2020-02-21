@@ -20,20 +20,20 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="PlotOptionsController">
-    <ul class="tree">
+    <ul class="c-tree">
         <h2 title="Plot series display properties in this object">Plot Series</h2>
         <li ng-repeat="series in config.series.models">
-            <span class="tree-item menus-to-left">
-                <span class='ui-symbol view-control flex-elem'
-                      ng-class="{ expanded: series.expanded }"
+            <div class="c-tree__item menus-to-left">
+                <span class='c-disclosure-triangle is-enabled flex-elem'
+                      ng-class="{ 'c-disclosure-triangle--expanded': series.expanded }"
                       ng-click="series.expanded = !series.expanded">
                 </span>
                 <mct-representation
-                        class="rep-object-label"
+                        class="rep-object-label c-tree__item__label"
                         key="'label'"
                         mct-object="series.oldObject">
                 </mct-representation>
-            </span>
+            </div>
             <ul class="grid-properties" ng-show="series.expanded">
                 <li class="grid-row">
                     <div class="grid-cell label"
@@ -70,17 +70,9 @@
                     <div class="grid-cell label"
                          title="The plot line and marker color for this series.">Color</div>
                     <div class="grid-cell value">
-                        <!-- TODO: get this into a class -->
-                         <span class="color-swatch"
+                         <span class="c-color-swatch"
                                   ng-style="{
-                                  'background': series.get('color').asHexString(),
-                                  'display': 'inline-block',
-                                  'border': '1px solid rgba(255, 255, 255, 0.2)',
-                                  'height': '10px',
-                                  'width': '10px',
-                                  'vertical-align': 'middle',
-                                  'margin-left': '3px',
-                                  'margin-top': -'2px'
+                                  'background': series.get('color').asHexString()
                                }">
                          </span>
                     </div>

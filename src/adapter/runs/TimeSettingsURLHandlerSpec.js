@@ -32,7 +32,7 @@ define([
         var $location;
         var $rootScope;
         var search;
-        var handler;
+        var handler; // eslint-disable-line
         var clockA;
         var clockB;
         var timeSystemA;

@@ -61,7 +61,6 @@ define([
                     "key": "url",
                     "name": "URL",
                     "control": "textfield",
-                    "pattern": "^(ftp|https?)\\:\\/\\/",
                     "required": false,
                     "cssClass": "l-input-lg"
                 },
@@ -70,15 +69,15 @@ define([
                     "name": "Tab to Open Hyperlink",
                     "control": "select",
                     "options": [
-                            {
-                                "value": "thisTab",
-                                "name": "Open in this tab"
-                            },
-                            {
-                                "value": "newTab",
-                                "name": "Open in a new tab"
-                            }
-                        ],
+                        {
+                            "value": "thisTab",
+                            "name": "Open in this tab"
+                        },
+                        {
+                            "value": "newTab",
+                            "name": "Open in a new tab"
+                        }
+                    ],
                     "cssClass": "l-inline"
                 }
             ]

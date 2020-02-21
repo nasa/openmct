@@ -44,7 +44,7 @@ define([
     function CompositionAPI(publicAPI) {
         this.registry = [];
         this.policies = [];
-        this.addProvider(new DefaultCompositionProvider(publicAPI));
+        this.addProvider(new DefaultCompositionProvider(publicAPI, this));
         this.publicAPI = publicAPI;
     }
 

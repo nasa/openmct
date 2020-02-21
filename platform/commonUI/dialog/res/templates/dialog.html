@@ -19,24 +19,24 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="abs top-bar">
-    <div class="dialog-title">{{ngModel.title}}</div>
-    <div class="hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+<div class="c-overlay__top-bar">
+    <div class="c-overlay__dialog-title">{{ngModel.title}}</div>
+    <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
 </div>
-<div class='abs editor'>
+<div class='c-overlay__contents-main'>
     <mct-form ng-model="ngModel.value"
               structure="ngModel.structure"
               class="validates"
               name="createForm">
     </mct-form>
 </div>
-<div class="abs bottom-bar">
-    <a class='s-button major'
+<div class="c-overlay__button-bar">
+    <a class='c-button c-button--major'
        ng-class="{ disabled: !createForm.$valid }"
        ng-click="ngModel.confirm()">
         OK
     </a>
-    <a class='s-button'
+    <a class='c-button  '
        ng-click="ngModel.cancel()">
         Cancel
     </a>

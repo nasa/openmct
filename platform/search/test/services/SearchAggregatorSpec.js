@@ -160,9 +160,9 @@ define([
 
         it('can send queries to providers', function () {
             var provider = jasmine.createSpyObj(
-                    'provider',
-                    ['query']
-                );
+                'provider',
+                ['query']
+            );
             provider.query.and.returnValue('i prooomise!');
             providers.push(provider);
 
@@ -177,9 +177,9 @@ define([
 
         it('supplies max results when none is provided', function () {
             var provider = jasmine.createSpyObj(
-                    'provider',
-                    ['query']
-                );
+                'provider',
+                ['query']
+            );
             providers.push(provider);
             aggregator.query('find me');
             expect(provider.query).toHaveBeenCalledWith(
@@ -190,23 +190,23 @@ define([
 
         it('can combine responses from multiple providers', function () {
             var providerResponses = [
-                    {
-                        hits: [
-                            'oneHit',
-                            'twoHit'
-                        ],
-                        total: 2
-                    },
-                    {
-                        hits: [
-                            'redHit',
-                            'blueHit',
-                            'by',
-                            'Pete'
-                        ],
-                        total: 4
-                    }
-                ];
+                {
+                    hits: [
+                        'oneHit',
+                        'twoHit'
+                    ],
+                    total: 2
+                },
+                {
+                    hits: [
+                        'redHit',
+                        'blueHit',
+                        'by',
+                        'Pete'
+                    ],
+                    total: 4
+                }
+            ];
 
             $q.all.and.returnValue(Promise.resolve(providerResponses));
             spyOn(aggregator, 'orderByScore').and.returnValue('orderedByScore!');

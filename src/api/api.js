@@ -25,28 +25,32 @@ define([
     './objects/ObjectAPI',
     './composition/CompositionAPI',
     './types/TypeRegistry',
-    './ui/Dialog',
-    './ui/GestureAPI',
     './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI'
+    './indicators/IndicatorAPI',
+    './notifications/NotificationAPI',
+    './contextMenu/ContextMenuAPI',
+    './Editor'
+
 ], function (
     TimeAPI,
     ObjectAPI,
     CompositionAPI,
     TypeRegistry,
-    Dialog,
-    GestureAPI,
     TelemetryAPI,
-    IndicatorAPI
+    IndicatorAPI,
+    NotificationAPI,
+    ContextMenuAPI,
+    EditorAPI
 ) {
     return {
         TimeAPI: TimeAPI,
         ObjectAPI: ObjectAPI,
         CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
         TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
         TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI
+        IndicatorAPI: IndicatorAPI,
+        NotificationAPI: NotificationAPI.default,
+        EditorAPI: EditorAPI,
+        ContextMenuRegistry: ContextMenuAPI.default
     };
 });

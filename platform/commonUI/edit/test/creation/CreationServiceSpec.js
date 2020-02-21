@@ -114,7 +114,7 @@ define(
                 mockNewObject.getId.and.returnValue('newId');
                 mockNewObject.getCapability.and.callFake(function (c) {
                     return c === 'persistence' ?
-                            mockNewPersistenceCapability : undefined;
+                        mockNewPersistenceCapability : undefined;
                 });
 
                 mockPersistenceCapability.persist

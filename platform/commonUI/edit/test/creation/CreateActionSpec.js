@@ -27,14 +27,13 @@ define(
     ["../../src/creation/CreateAction"],
     function (CreateAction) {
 
-        describe("The create action", function () {
+        xdescribe("The create action", function () {
             var mockType,
                 mockParent,
                 mockContext,
                 mockDomainObject,
                 capabilities = {},
                 mockEditAction,
-                mockSaveAction,
                 action;
 
             function mockPromise(value) {
@@ -83,12 +82,6 @@ define(
                 mockDomainObject.getCapability.and.callFake(function (name) {
                     return capabilities[name];
                 });
-                mockSaveAction = jasmine.createSpyObj(
-                    "saveAction",
-                    [
-                        "perform"
-                    ]
-                );
 
                 capabilities.action = jasmine.createSpyObj(
                     "actionCapability",

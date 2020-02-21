@@ -1,0 +1,872 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/******************************************************** BUTTONS */
+// Optionally can include icon in :before via markup
+button {
+    @include htmlInputReset();
+}
+
+.c-button,
+.c-button--menu {
+    @include cButton();
+}
+
+.c-button {
+    &--menu {
+        &:after {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+            opacity: 0.5;
+        }
+    }
+
+    &--swatched {
+        // Used with c-button--menu: a visual button with a larger swatch element adjacent to an icon
+        .c-swatch {
+            $d: 12px;
+            margin-left: $interiorMarginSm;
+            height: $d; width: $d;
+        }
+    }
+
+    &[class*='__collapse-button'] {
+        box-shadow: none;
+        background: $splitterBtnColorBg;
+        color: $splitterBtnColorFg;
+        border-radius: $smallCr;
+        font-size: 6px;
+        line-height: 90%;
+        padding: 3px 10px;
+
+        @include hover() {
+            background: $colorBtnBgHov;
+            color: $colorBtnFgHov;
+        }
+    }
+
+    &.is-active {
+        background: $colorBtnActiveBg;
+        color: $colorBtnActiveFg;
+    }
+
+    &.is-selected {
+        background: $colorBtnSelectedBg;
+        color: $colorBtnSelectedFg;
+    }
+}
+
+/********* Icon Buttons and Links */
+.c-click-icon {
+    @include cClickIcon();
+}
+
+.c-click-link {
+    // A clickable element, typically inline, with an icon and label
+    @include cControl();
+    cursor: pointer;
+}
+
+.c-icon-button,
+.c-click-swatch {
+    @include cClickIconButton();
+
+    &--menu {
+        @include hasMenu();
+    }
+}
+
+.c-icon-button {
+    .c-icon-button__label {
+        margin-left: $interiorMargin;
+    }
+
+    $c1: nth($mixedSettingBg, 1);
+    $c2: nth($mixedSettingBg, 2);
+    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
+
+    &--mixed {
+        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
+        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+    }
+
+    &--swatched {
+        // Color control, show swatch element
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        justify-content: center;
+
+        > [class*='swatch'] {
+            box-shadow: inset rgba($editUIBaseColorFg, 0.2) 0 0 0 1px;
+            flex: 0 0 auto;
+            height: 5px;
+            width: 100%;
+            margin-top: 1px;
+        }
+
+        &:before {
+            // Reduce size of icon to make a bit of room
+            flex: 1 1 auto;
+            font-size: 1.1em;
+        }
+
+        &--mixed {
+            // Styling for swatched buttons when settings are mixed
+            > [class*='swatch'] {
+                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+            }
+        }
+    }
+}
+
+/******************************************************** DISCLOSURE CONTROLS */
+/********* Disclosure Button */
+// Provides a downward arrow icon that when clicked displays additional options and/or info.
+// Always placed AFTER an element
+.c-disclosure-button {
+    @include cClickIcon();
+    margin-left: $interiorMarginSm;
+
+    &:before {
+        content: $glyph-icon-arrow-down;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+    }
+}
+/********* Disclosure Triangle */
+// Provides an arrow icon that when clicked expands an element to reveal its contents.
+// Used in tree items, plot legends. Always placed BEFORE an element.
+.c-disclosure-triangle {
+    $d: 12px;
+    color: $colorDisclosureCtrl;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: $d;
+    position: relative;
+
+    &.is-enabled {
+        cursor: pointer;
+
+        &:hover {
+            color: $colorDisclosureCtrlHov;
+        }
+
+        &:before {
+            $s: .65;
+            content: $glyph-icon-arrow-right-equilateral;
+            display: block;
+            font-family: symbolsfont;
+            font-size: 1rem * $s;
+        }
+    }
+
+    &--expanded {
+        &:before {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+/******************************************************** FORM ELEMENTS */
+input, textarea {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+}
+
+input[type=text],
+input[type=search],
+input[type=number],
+textarea {
+    @include reactive-input();
+    padding: $inputTextP;
+    &.numeric {
+        text-align: right;
+    }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    margin-right: -5px !important;
+    margin-top: -1px !important;
+}
+
+.c-input {
+    &--flex {
+        width: 100%;
+        min-width: 20px;
+    }
+
+    &--datetime {
+        // Sized for values such as 2018-09-28 22:32:33.468Z
+        width: 160px;
+    }
+
+    &--hrs-min-sec {
+        // Sized for values such as 00:25:00
+        width: 60px;
+    }
+
+    &-inline,
+    &--inline {
+        // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
+        @include reactive-input($bg: transparent);
+        box-shadow: none;
+        display: block !important;
+        min-width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        overflow: hidden;
+        transition: all 250ms ease;
+        white-space: nowrap;
+
+        &:not(:focus) {
+            text-overflow: ellipsis;
+        }
+
+        &:hover,
+        &:focus {
+            background: $colorInputBg;
+            padding-left: $inputTextPLeftRight;
+            padding-right: $inputTextPLeftRight;
+        }
+    }
+
+    &--labeled {
+        // TODO: replace .c-labeled-input with this
+        // An input used in the Toolbar
+        // Assumes label is before the input
+        @include cControl();
+
+        input {
+            margin-left: $interiorMarginSm;
+        }
+    }
+
+    &--sm {
+        // Small inputs, like small numerics
+        width: 40px;
+    }
+}
+
+input[type=number].c-input-number--no-spinners {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    -moz-appearance: textfield;
+}
+
+.c-labeled-input {
+    // An input used in the Toolbar
+    // Assumes label is before the input
+    @include cControl();
+
+    input {
+        margin-left: $interiorMarginSm;
+    }
+}
+
+// SELECTS
+select {
+    @include appearanceNone();
+    background-color: $colorSelectBg;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
+    color: $colorSelectFg;
+    box-shadow: $shdwSelect;
+    background-repeat: no-repeat, no-repeat;
+    background-position: right .4em top 80%, 0 0;
+    border: none;
+    border-radius: $controlCr;
+    padding: 1px 20px 1px $interiorMargin;
+
+    *,
+    option {
+        background: $colorBtnBg;
+        color: $colorBtnFg;
+    }
+}
+
+// CHECKBOX LISTS
+// __input followed by __label
+.c-checkbox-list {
+    // Rows
+    &__row + &__row { margin-top: $interiorMarginSm; }
+
+    // input and label in each __row
+    &__row {
+        > * + * { margin-left: $interiorMargin; }
+    }
+}
+
+/******************************************************** TABS */
+.c-tabs {
+    // Single horizontal strip of tabs, with a bottom divider line
+    @include userSelectNone();
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    position: relative; // Required in case this is applied to a <ul>
+
+    &:before {
+        // Separator line at bottom of tabs
+        content: '';
+        display: block;
+        height: 1px;
+        width: 100%;
+        background: $colorBtnReverseBg;
+        position: absolute;
+        bottom: 0px;
+        z-index: 1;
+    }
+}
+
+.c-tab {
+    // Used in Tab View, generic tabs
+    background: $colorBtnBg;
+    color: $colorBtnFg;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    margin: 1px 1px 0 0;
+    padding: $interiorMargin $interiorMarginLg;
+    white-space: nowrap;
+
+    --notchSize: 7px;
+
+    clip-path:
+        polygon(
+            0% 0%,
+            calc(100% - var(--notchSize)) 0%,
+            100% var(--notchSize),
+            100% calc(100% - var(--notchSize)),
+            100% 100%,
+            0% 100%
+        );
+
+    @include hover() {
+        background: $colorBtnBgHov;
+    }
+
+    &.is-current {
+        background: $colorBtnReverseBg;
+        color: $colorBtnReverseFg;
+        pointer-events: none;
+    }
+}
+
+/******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
+.c-hyperlink {
+    &--link {
+        color: $colorKey;
+    }
+
+    &--button {
+        @include cButton();
+    }
+}
+
+/******************************************************** MENUS */
+@mixin menuOuter() {
+    border-radius: $basicCr;
+    background: $colorMenuBg;
+    text-shadow: $shdwMenuText;
+    padding: $interiorMarginSm;
+    box-shadow: $shdwMenu;
+    display: block;
+    position: absolute;
+    z-index: 100;
+}
+
+@mixin menuInner() {
+    li {
+        @include cControl();
+        justify-content: start;
+        color: $colorMenuFg;
+        cursor: pointer;
+        display: flex;
+        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
+        transition: $transIn;
+        white-space: nowrap;
+
+        &:hover {
+            background: $colorMenuHovBg;
+            color: $colorMenuHovFg;
+            &:before {
+                color: $colorMenuHovIc;
+            }
+        }
+
+        &:before {
+            color: $colorMenuIc;
+            font-size: 1em;
+            margin-right: $interiorMargin;
+            min-width: 1em;
+        }
+
+        &:not([class]):before {
+             content: ''; // Add this element so that menu items without an icon still indent properly
+        }
+    }
+}
+
+.c-menu {
+    @include menuOuter();
+    @include menuInner();
+}
+
+.c-super-menu {
+    // Two column layout, menu items on left with detail of hover element on right
+    @include menuOuter();
+    display: flex;
+    padding: $interiorMarginLg;
+    flex-direction: row;
+
+    > [class*="__"] {
+        $m: $interiorMarginLg;
+        flex: 1 1 50%;
+        &:first-child {
+            margin-right: $m;
+        }
+
+        &:last-child {
+            border-left: 1px solid $colorInteriorBorder;
+            padding-left: $m;
+        }
+    }
+
+    &__menu {
+        @include menuInner();
+        overflow: auto;
+
+        ul {
+            margin-right: $interiorMarginSm; // Fend off scrollbar
+        }
+
+        li {
+            border-radius: $controlCr;
+        }
+    }
+
+    &__item-description {
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+
+        .l-item-description {
+            &__name,
+            &__description {
+                margin-top: $interiorMarginLg;
+            }
+
+            &__icon {
+                min-height: 20%;
+                margin: 10% 25%;
+            }
+
+            &__name {
+                color: $colorMenuFg;
+                flex: 0 0 auto;
+                font-size: 1.25em;
+            }
+
+            &__description {
+                font-size: $fontBaseSize;
+            }
+        }
+    }
+}
+
+/******************************************************** PALETTES */
+.c-palette {
+    display: flex;
+    flex-flow: column nowrap;
+    line-height: normal;
+
+    &__items {
+        display: grid;
+        grid-gap: 1px;
+        grid-template-columns: repeat(auto-fill, 12px);
+        flex: 1 1 auto;
+
+        .c-menu & {
+            min-width: $paletteMenuMinW;
+        }
+    }
+
+    &__item {
+        $d: 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        width: $d;
+        height: $d;
+        text-align: center;
+        transition: $transOut;
+
+        &:hover {
+            transition: $transIn;
+        }
+
+        &.is-selected {
+            border-width: 1px;
+        }
+    }
+
+    &__item-none {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMarginSm;
+
+        .c-palette__item {
+            @include noColor();
+            border-color: $paletteItemBorderInnerColor;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--color {
+        .c-palette__item {
+            &:hover {
+                border-color: rgba($paletteItemBorderOuterColorSelected, 0.7);
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 0.7) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                border-color: $paletteItemBorderOuterColorSelected !important;
+                box-shadow: inset rgba($paletteItemBorderInnerColorSelected, 1) 0 0 0 1px;
+            }
+        }
+    }
+
+    &--icon {
+        .c-palette__items {
+            grid-gap: 3px;
+        }
+
+        .c-palette__item {
+            border-radius: $smallCr;
+            font-size: 0.6rem;
+
+            &:before {
+                display: block;
+                width: 100%;
+            }
+
+            &:hover {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.3) 0 0 0 1px;
+            }
+
+            &.is-selected {
+                box-shadow: rgba($paletteItemBorderInnerColorSelected, 0.6) 0 0 0 1px;
+            }
+        }
+    }
+}
+
+/******************************************************** SWATCHES */
+.c-color-swatch {
+    border: 1px solid rgba(#fff, 0.2);
+    box-shadow: rgba(#000, 0.2) 0 0 0 1px;
+}
+
+/******************************************************** TOOLBAR */
+.c-ctrl-wrapper {
+    @include cCtrlWrapper();
+}
+
+.c-toolbar,
+.c-toolbar .c-ctrl-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+@mixin cToolbarSeparator() {
+    $m: 1px;
+    $b: 1px;
+    display: block;
+    width: $m + $b; // Allow for border
+    border-right: $b solid $colorInteriorBorder;
+    margin-right: $m;
+}
+
+.c-separator {
+    @include cToolbarSeparator();
+}
+
+.c-toolbar {
+    > * + * {
+        margin-left: 2px;
+    }
+
+    &__separator {
+        @include cToolbarSeparator();
+    }
+
+    .c-icon-button,
+    .c-labeled-input {
+        color: $editUIBaseColorFg;
+    }
+
+    .c-icon-button {
+        @include cControl();
+        $pLR: $interiorMargin - 1;
+        $pTB: 2px;
+        padding: $pTB $pLR;
+
+        &:hover {
+            background: $editUIBaseColorHov !important;
+            color: $editUIBaseColorFg !important;
+        }
+
+        &--swatched {
+            padding-bottom: floor($pTB / 2);
+            width: 2em; // Standardize the width
+        }
+
+        &[class*='--caution'] {
+            &:before {
+                color: $colorBtnCautionBg;
+            }
+
+            &:hover {
+                background: rgba($colorBtnCautionBgHov, 0.2);
+                :before {
+                    color: $colorBtnCautionBgHov;
+                }
+            }
+        }
+    }
+
+    .c-labeled-input {
+        font-size: 0.9em;
+        input[type='number'] {
+            width: 40px; // Number input sucks and must have size set using this method
+        }
+
+        + .c-labeled-input {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+/********* Button Sets */
+.c-button-set {
+    display: inline-flex;
+    flex: 0 0 auto;
+
+    > * {
+        // Assume buttons are immediate descendants
+        flex: 0 0 auto;
+    }
+
+    &[class*='--strip'] {
+        // Buttons are smashed together with minimal margin
+        // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
+        // c-icon-buttons get grouped more closely together
+        [class^="c-button"] {
+            // Only apply the following to buttons that have background, eg. c-button
+            border-radius: 0;
+        }
+    }
+
+    &[class*='--strip-h'] {
+        // Horizontal strip
+
+        + .c-button-set {
+            margin-left: $interiorMargin;
+        }
+
+        [class^="c-button"] {
+            + * {
+                margin-left: 1px;
+            }
+
+            &:first-child {
+                border-top-left-radius: $controlCr;
+                border-bottom-left-radius: $controlCr;
+            }
+
+            &:last-child {
+                border-top-right-radius: $controlCr;
+                border-bottom-right-radius: $controlCr;
+            }
+        }
+    }
+}
+
+/***************************************************** SLIDERS */
+.c-slider {
+    @include cControl();
+    > * + * { margin-left: $interiorMargin; }
+}
+
+
+/******************************************************** SLIDERS AND RANGE */
+@mixin sliderKnobRound() {
+    $h: 12px;
+    @include themedButton();
+    cursor: pointer;
+    width: $h;
+    height: $h;
+    border-radius: 50% !important;
+    transform: translateY(-42%);
+}
+
+input[type="range"] {
+    // HTML5 range inputs
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: transparent; /* Otherwise white in Chrome */
+    &:focus {
+        outline: none; /* Removes the blue border. */
+    }
+
+    // Thumb
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        @include sliderKnobRound();
+    }
+    &::-moz-range-thumb {
+        border: none;
+        @include sliderKnobRound();
+    }
+    &::-ms-thumb {
+        border: none;
+        @include sliderKnobRound();
+    }
+
+    // Track
+    &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+
+    &::-moz-range-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+}
+
+/******************************************************** LOCAL CONTROLS */
+.h-local-controls {
+    // Holder for local controls
+    &--horz {
+        // Horizontal layout be
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &--overlay-content {
+        > .c-button {
+            background: $colorLocalControlOvrBg;
+            border-radius: $controlCr;
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+        }
+    }
+}
+
+.c-local-controls {
+    // Controls that are in close proximity to an element they effect
+    &--show-on-hover {
+        // Hidden by default; requires a hover 1 - 3 levels above to display
+        transition: $transOut;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.has-local-controls:hover {
+    > .c-local-controls--show-on-hover,
+    > * > .c-local-controls--show-on-hover,
+    > * > * > .c-local-controls--show-on-hover,
+    > * > * > * > .c-local-controls--show-on-hover
+    {
+        transition: $transIn;
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
+
+/***************************************************** DRAG AND DROP */
+.c-drop-hint {
+    // Used in Tabs View, Flexible Grid Layouts
+    @include abs();
+    background-color: $colorDropHintBg;
+    color: $colorDropHintFg;
+    border-radius: $basicCr;
+    border: 1px dashed $colorDropHintFg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: $transOut;
+    z-index: 50;
+
+    &:not(.c-drop-hint--always-show) {
+        opacity: 0; // Must use this (rather than display: none) to enable transition effects
+        pointer-events: none;
+    }
+
+    &:before {
+        $h: 80%;
+        $mh: 25px;
+        background: $bg-icon-plus;
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+        content: '';
+        display: block;
+        filter: $colorKeyFilterHov;
+        height: $h; width: $h;
+        max-height: $mh; max-width: $mh;
+    }
+
+    .is-dragging &,
+    &.is-dragging {
+        pointer-events: inherit;
+        transition: $transIn;
+        opacity: 0.8;
+    }
+
+    .is-mouse-over &,
+    &.is-mouse-over {
+        transition: $transIn;
+        background-color: $colorDropHintBgHov;
+        opacity: 0.9;
+    }
+}
+
+/***************************************************** LEGACY */
+.l-btn-set {
+    display: flex;
+    align-items: center;
+}

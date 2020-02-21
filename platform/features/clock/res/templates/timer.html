@@ -19,21 +19,19 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-time-display l-digital l-timer s-timer s-state-{{timer.timerState}}" ng-controller="TimerController as timer">
-	<div class="l-elem-wrapper l-flex-row">
-        <div class="l-elem-wrapper l-flex-row controls">
-            <a ng-click="timer.clickStopButton()"
-               title="Stop"
-               class="flex-elem s-icon-button t-btn-stop icon-box"></a>
-            <a ng-click="timer.clickButton()"
-               title="{{timer.buttonText()}}"
-               class="flex-elem s-icon-button t-btn-pauseplay {{timer.buttonCssClass()}}"></a>
-        </div>
-	    <span class="flex-elem l-value {{timer.signClass()}}">
-	        <span class="value"
-		        ng-class="{ active:timer.text() }">{{timer.text() || "--:--:--"}}
-            </span>
-	    </span>
-	    <span ng-controller="RefreshingController"></span>
+<div class="c-timer is-{{timer.timerState}}" ng-controller="TimerController as timer">
+    <div class="c-timer__controls">
+        <button ng-click="timer.clickStopButton()"
+                ng-hide="timer.timerState == 'stopped'"
+                title="Reset"
+                class="c-timer__ctrl-reset c-icon-button c-icon-button--major icon-reset"></button>
+        <button ng-click="timer.clickButton()"
+                title="{{timer.buttonText()}}"
+                class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major {{timer.buttonCssClass()}}"></button>
+    </div>
+    <div class="c-timer__direction {{timer.signClass()}}"
+        ng-hide="!timer.signClass()"></div>
+	<div class="c-timer__value">{{timer.text() || "--:--:--"}}
 	</div>
+	<span class="c-timer__ng-controller u-contents" ng-controller="RefreshingController"></span>
 </div>

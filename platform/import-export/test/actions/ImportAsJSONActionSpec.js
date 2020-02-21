@@ -27,7 +27,7 @@ define(
     ],
     function (ImportAsJSONAction, domainObjectFactory) {
 
-        describe("The import JSON action", function () {
+        xdescribe("The import JSON action", function () {
 
             var context = {};
             var action,
@@ -62,18 +62,17 @@ define(
                             "capabilities": {}
                         };
                         var locationCapability = {
-                            setPrimaryLocation: jasmine.createSpy
-                                ('setPrimaryLocation').and.callFake(
-                                    function (newLocation) {
-                                        config.model.location = newLocation;
-                                    }
-                                )
+                            setPrimaryLocation: jasmine.createSpy('setPrimaryLocation')
+                                .and
+                                .callFake(function (newLocation) {
+                                    config.model.location = newLocation;
+                                })
                         };
                         config.capabilities.location = locationCapability;
                         if (model.composition) {
                             var compCapability =
                                 jasmine.createSpy('compCapability')
-                                .and.returnValue(model.composition);
+                                    .and.returnValue(model.composition);
                             compCapability.add = jasmine.createSpy('add')
                                 .and.callFake(function (newObj) {
                                     config.model.composition.push(newObj.getId());

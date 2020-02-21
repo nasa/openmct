@@ -97,7 +97,7 @@ define([
             return identifier.key;
         }
         return [
-            identifier.namespace.replace(/\:/g, '\\:'),
+            identifier.namespace.replace(/:/g, '\\:'),
             identifier.key
         ].join(':');
     }
