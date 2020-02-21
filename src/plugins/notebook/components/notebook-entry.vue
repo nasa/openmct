@@ -20,7 +20,7 @@
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
-                    :objectPath="embed.objectPath"
+                    :object-path="embed.objectPath"
                     :entry="entry"
                 />
             </div>
@@ -35,7 +35,6 @@
     </div>
 </li>
 </template>
-
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
