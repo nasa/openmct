@@ -1,7 +1,3 @@
-export const addNotebookEntry = (domainObject, selectedSection, selectedPage) => {
-    console.log('addNotebookEntry');
-}
-
 export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     if (!notebookStorage || !domainObject) {
         return null;
@@ -31,6 +27,37 @@ export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     return entries[defaultSection.id][defaultPage.id];
 }
 
+export const addNotebookEntry = (openmct, domainObject, notebookStorage, embedObject = null, imageUrl = null) => {
+    const date = Date.now();
+    const configuration = domainObject.configuration;
+    const entries = configuration.entries || {};
+
+    if (!entries) {
+        return;
+    }
+
+    const embeds = embedObject
+        ? [{
+            name: embedObject.name,
+            cssClass: embedObject.cssClass,
+            type: embedObject.id,
+            id: 'embed-' + date,
+            createdOn: date,
+            snapshot: imageUrl ? { src: imageUrl } : ''
+        }]
+        : [];
+
+    const pages = getNotebookDefaultEntries(notebookStorage, domainObject);
+    pages.push({
+        id: 'entry-' + date,
+        createdOn: date,
+        text: date,
+        embeds
+    });
+
+    openmct.objects.mutate(domainObject, 'configuration.entries', entries);
+}
+
 export const getNotebookEntries = (domainObject, selectedSection, selectedPage) => {
     if (!domainObject || !selectedSection || !selectedPage) {
         return null;
@@ -51,4 +78,3 @@ export const getNotebookEntries = (domainObject, selectedSection, selectedPage) 
 
     return entries[selectedSection.id][selectedPage.id];
 }
-

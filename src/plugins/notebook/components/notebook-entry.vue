@@ -78,7 +78,6 @@ export default {
         }
     },
     mounted() {
-        console.log('entry', this.entry, this.selectedSession, this.selectedPage);
         this.updateEntries = this.updateEntries.bind(this);
     },
     methods: {
@@ -117,7 +116,7 @@ export default {
             });
         },
         dropOnEntry(entryId, $event) {
-            console.log(entryId, $event);
+            console.log('TODO: Implement dropOnEntry', entryId, $event);
         },
         entryPosById(entryId) {
             const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
@@ -136,7 +135,6 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         textBlur($event, entryId) {
-            console.log('textBlur');
             const target = $event.target;
             if (!target) {
                 return;

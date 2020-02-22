@@ -79,9 +79,8 @@ import Multipane from '@/ui/layout/multipane.vue';
 import Pane from '@/ui/layout/pane.vue';
 import Search from '@/ui/components/search.vue';
 import Sidebar from './sidebar.vue';
-import { setDefaultNotebook } from '../utils/notebook-storage';
-import { getNotebookEntries } from '../utils/notebook-entries';
-
+import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
+import { addNotebookEntry, getNotebookEntries } from '../utils/notebook-entries';
 import { EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants';
 
 export default {
@@ -148,9 +147,7 @@ export default {
     },
     methods: {
         updateDefaultNotebook(selectedSection, selectedPage) {
-            // TODO: make this notebook, selected section and page as default.
             setDefaultNotebook(this, selectedSection, selectedPage);
-            console.log(this, selectedSection, selectedPage);
         },
         getPages() {
             const selectedSession = this.getSelectedSession();
@@ -184,6 +181,9 @@ export default {
             this.search = '';
 
             this.updateDefaultNotebook(selectedSection, selectedPage);
+
+            const notebookStorage = getDefaultNotebook();
+            addNotebookEntry(this.openmct, this.domainObject, notebookStorage);
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;

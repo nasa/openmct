@@ -91,7 +91,7 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         openSnapshot() {
-            console.log('openSnapshot');
+            console.log('TODO: openSnapshot');
         },
         populateActionMenu() {
             var self = this;
