@@ -18,7 +18,9 @@
         <span v-if="criterion.telemetry"
               class="controls"
         >
-            <select v-model="criterion.metadata">
+            <select v-model="criterion.metadata"
+                    @change="updateOperations"
+            >
                 <option value="">- Select Field -</option>
                 <option v-for="option in telemetryMetadataOptions"
                         :key="option.key"
@@ -35,7 +37,7 @@
                     @change="updateOperationInputVisibility"
             >
                 <option value="">- Select Comparison -</option>
-                <option v-for="option in operations"
+                <option v-for="option in filteredOps"
                         :key="option.name"
                         :value="option.name"
                 >
@@ -83,6 +85,7 @@ export default {
             telemetryMetadata: {},
             telemetryMetadataOptions: {},
             operations: OPERATIONS,
+            filteredOps: [],
             isInputOperation: false,
             rowLabel: ''
         }
@@ -96,25 +99,44 @@ export default {
     mounted() {
         this.updateMetadataOptions();
         this.updateOperationInputVisibility();
-        console.log('this.criterion.metadata', this.criterion.metadata);
     },
     methods: {
         updateMetadataOptions() {
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    this.telemetryMetadataOptions = this.openmct.telemetry.getMetadata(telemetryObject).values();
-                    // console.log('this.openmct.telemetry.getFormatMap(telemetryObject)', this.openmct.telemetry.getFormatMap(this.openmct.telemetry.getMetadata(telemetryObject)));
-                    console.log('this.telemetryMetadata', this.openmct.telemetry.getMetadata(telemetryObject));
+                    this.telemetryMetadataOptions = this.telemetryMetadata.values();
                 });
             }
             this.persist();
         },
+        updateOperations(ev) {
+            let operationFormat = 'string';
+            this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
+                if (value.key === ev.target.value) {
+                    let valueMetadata = this.telemetryMetadataOptions[index];
+                    if (valueMetadata.formatString) {
+                        operationFormat = 'number';
+                    } else if (valueMetadata.format) {
+                        if (valueMetadata.format === 'utc') {
+                            operationFormat = 'number';
+                        } else if (valueMetadata.format === 'enum') {
+                            operationFormat = 'enum';
+                        }
+                    }
+                }
+            });
+            this.filteredOps = [...this.operations.filter(op => op.appliesTo.indexOf(operationFormat) !== -1)];
+        },
         updateOperationInputVisibility() {
-            for (let i=0; i < this.operations.length; i++) {
-                if (this.criterion.operation === this.operations[i].name) {
-                    this.isInputOperation = this.operations[i].inputCount > 0;
-                    if (!this.isInputOperation) {this.criterion.input = ''}
+            if (this.criterion.operation === '') {
+                this.isInputOperation = false;
+            } else {
+                for (let i = 0; i < this.filteredOps.length; i++) {
+                    if (this.criterion.operation === this.filteredOps[i].name) {
+                        this.isInputOperation = this.filteredOps[i].inputCount > 0;
+                        if (!this.isInputOperation) {this.criterion.input = ''}
+                    }
                 }
             }
             this.persist();
