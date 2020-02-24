@@ -98,22 +98,34 @@ export default {
     },
     mounted() {
         this.updateMetadataOptions();
-        this.updateOperationInputVisibility();
     },
     methods: {
-        updateMetadataOptions() {
+        updateMetadataOptions(ev) {
+            if (ev) {
+                this.criterion.metadata = '';
+                this.criterion.operation = '';
+                this.criterion.input = [];
+            }
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
+                    this.updateOperations();
+                    this.updateOperationInputVisibility();
                 });
+            } else {
+                this.criterion.metadata = '';
             }
             this.persist();
         },
         updateOperations(ev) {
+            if (ev) {
+                this.criterion.operation = '';
+                this.criterion.input = [];
+            }
             let operationFormat = 'string';
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
-                if (value.key === ev.target.value) {
+                if (value.key === this.criterion.metadata) {
                     let valueMetadata = this.telemetryMetadataOptions[index];
                     if (valueMetadata.formatString) {
                         operationFormat = 'number';
@@ -128,7 +140,10 @@ export default {
             });
             this.filteredOps = [...this.operations.filter(op => op.appliesTo.indexOf(operationFormat) !== -1)];
         },
-        updateOperationInputVisibility() {
+        updateOperationInputVisibility(ev) {
+            if (ev) {
+                this.criterion.input = [];
+            }
             if (this.criterion.operation === '') {
                 this.isInputOperation = false;
             } else {

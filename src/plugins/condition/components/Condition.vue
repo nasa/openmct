@@ -82,7 +82,7 @@
                                                     :key="option"
                                                     :value="option"
                                             >
-                                                {{ option.charAt(0).toUpperCase() + option.slice(1) }}
+                                                {{ initCap(option) }}
                                             </option>
                                         </select>
                                         <input v-if="selectedOutputKey === outputOptions[2]"
@@ -203,11 +203,6 @@ export default {
             outputOptions: ['false', 'true', 'string']
         };
     },
-    computed: {
-        initCap: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1)
-        }
-    },
     destroyed() {
         this.destroy();
     },
@@ -289,6 +284,9 @@ export default {
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry
             return this.currentCriteria && identifier;
+        },
+        initCap: function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1)
         }
     }
 }
