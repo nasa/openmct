@@ -1,17 +1,37 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div v-if="isEditing">
     <div v-if="domainObject"
          class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
          :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
-         :data-condition-index="conditionIndex"
-         :draggable="!domainObject.isDefault"
-         @dragstart="dragStart"
-         @dragover.stop
     >
         <div class="title-bar">
-            <span
-                class="c-c__menu-hamburger"
-                :class="{ 'is-enabled': !domainObject.isDefault }"
+            <span class="c-c__menu-hamburger"
+                  :class="{ 'is-enabled': !domainObject.isDefault }"
+                  :draggable="!domainObject.isDefault"
+                  @dragstart="dragStart"
+                  @dragover.stop
             ></span>
             <span
                 class="is-enabled flex-elem"
@@ -20,6 +40,7 @@
             ></span>
             <div class="condition-summary">
                 <span class="condition-name">{{ domainObject.configuration.name }}</span>
+                <!-- TODO: description should be derived from criteria -->
                 <span class="condition-description">{{ domainObject.configuration.name }}</span>
             </div>
             <span v-if="!domainObject.isDefault"
@@ -209,7 +230,9 @@ export default {
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
-            this.$emit('setMoveIndex', Number(e.target.getAttribute('data-condition-index')));
+            e.dataTransfer.effectAllowed = "copyMove";
+            e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
+            this.$emit('setMoveIndex', this.conditionIndex);
         },
         destroy() {
         },
