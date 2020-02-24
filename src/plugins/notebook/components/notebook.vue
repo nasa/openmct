@@ -6,30 +6,6 @@
                 @input="search"
                 @clear="search"
         />
-        <div class="c-notebook__controls ">
-            <select v-model="showTime"
-                    class="c-notebook__controls__time"
-            >
-                <option value="0"
-                        selected="selected"
-                >
-                    Show all
-                </option>
-                <option value="1">Last hour</option>
-                <option value="8">Last 8 hours</option>
-                <option value="24">Last 24 hours</option>
-            </select>
-            <select v-model="defaultSort"
-                    class="c-notebook__controls__time"
-            >
-                <option value="newest"
-                        :selected="defaultSort === 'newest'"
-                >Newest first</option>
-                <option value="oldest"
-                        :selected="defaultSort === 'oldest'"
-                >Oldest first</option>
-            </select>
-        </div>
     </div>
     <Multipane type="horizontal">
         <Pane>
@@ -41,9 +17,35 @@
             />
         </Pane>
         <Pane handle="before">
-            <div class="bread-crumb">
-                {{ getSelectedSession() ? getSelectedSession().name : '' }}
-                {{ getSelectedPage() ? getSelectedPage().name : '' }}
+            <div class="c-notebook__controls ">
+                <div class="bread-crumb">
+                    {{ getSelectedSession() ? getSelectedSession().name : '' }}
+                    {{ getSelectedPage() ? getSelectedPage().name : '' }}
+                </div>
+                <div>
+                    <select v-model="showTime"
+                            class="c-notebook__controls__time"
+                    >
+                        <option value="0"
+                                selected="selected"
+                        >
+                            Show all
+                        </option>
+                        <option value="1">Last hour</option>
+                        <option value="8">Last 8 hours</option>
+                        <option value="24">Last 24 hours</option>
+                    </select>
+                    <select v-model="defaultSort"
+                            class="c-notebook__controls__time"
+                    >
+                        <option value="newest"
+                                :selected="defaultSort === 'newest'"
+                        >Newest first</option>
+                        <option value="oldest"
+                                :selected="defaultSort === 'oldest'"
+                        >Oldest first</option>
+                    </select>
+                </div>
             </div>
             <div v-if="!getSelectedSession() || !getSelectedPage()">
                 <EmptyNotebook />
