@@ -38,7 +38,7 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
-import { getNotebookEntries } from '../utils/notebook-entries';
+import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
 
 export default {
@@ -116,7 +116,21 @@ export default {
             });
         },
         dropOnEntry(entryId, $event) {
-            console.log('TODO: Implement dropOnEntry', entryId, $event);
+            var data = $event.dataTransfer.getData('openmct/domain-object-path');
+
+            const objectPath = JSON.parse(data);
+            const domainObject = objectPath[0];
+            const domainObjectKey = domainObject.identifier.key;
+            const domainObjectType = this.openmct.types.get(domainObject.type);
+            const cssClass = domainObjectType && domainObjectType.definition
+                ? domainObjectType.definition.cssClass
+                : 'icon-object-unknown';
+            const entryPos = this.entryPosById(entryId);
+            const newEmbed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+            const currentEntryEmbeds = entries[entryPos].embeds;
+            currentEntryEmbeds.push(newEmbed);
+            this.updateEntries(entries);
         },
         entryPosById(entryId) {
             const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);

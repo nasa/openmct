@@ -68,9 +68,9 @@ export default {
             }
         },
         objectPath: {
-            type: Object,
+            type: Array,
             default() {
-                return {};
+                return [];
             }
         }
     },

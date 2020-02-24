@@ -27,6 +27,28 @@ export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     return entries[defaultSection.id][defaultPage.id];
 }
 
+export const createNewEmbed = (name, cssClass, type, snapshot = '', domainObject, objectPath) => {
+    const date = Date.now();
+    const embed = {
+        name,
+        cssClass,
+        type,
+        id: 'embed-' + date,
+        createdOn: date,
+        snapshot
+    }
+
+    if (domainObject) {
+        embed.domainObject = domainObject;
+    }
+
+    if (objectPath) {
+        embed.objectPath = objectPath;
+    }
+
+    return embed;
+}
+
 export const addNotebookEntry = (openmct, domainObject, notebookStorage, embedObject = null, imageUrl = null) => {
     const date = Date.now();
     const configuration = domainObject.configuration;
@@ -37,15 +59,8 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embedOb
     }
 
     const embeds = embedObject
-        ? [{
-            name: embedObject.name,
-            cssClass: embedObject.cssClass,
-            type: embedObject.id,
-            id: 'embed-' + date,
-            createdOn: date,
-            snapshot: imageUrl ? { src: imageUrl } : ''
-        }]
-        : [];
+        ? [createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '')]
+        :[];
 
     const pages = getNotebookDefaultEntries(notebookStorage, domainObject);
     pages.push({
