@@ -242,7 +242,7 @@ export default {
                 criteria: isDefault ? [] : [{
                     telemetry: '',
                     operation: '',
-                    input: '',
+                    input: [],
                     metadata: '',
                     key: ''
                 }]
