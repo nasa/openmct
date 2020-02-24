@@ -67,7 +67,6 @@
                                :condition-index="index"
                                :telemetry="telemetryObjs"
                                :is-editing="isEditing"
-                               @updateCurrentCondition="updateCurrentCondition"
                                @removeCondition="removeCondition"
                                @cloneCondition="cloneCondition"
                                @setMoveIndex="setMoveIndex"
@@ -110,7 +109,7 @@ export default {
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
         if(this.conditionManager) {
-            this.conditionManager.off('conditionResultUpdated', this.handleConditionResult);
+            this.conditionManager.off('conditionSetResultUpdated', this.handleOutputUpdated);
         }
         if (typeof this.stopObservingForChanges === 'function') {
             this.stopObservingForChanges();
@@ -123,7 +122,7 @@ export default {
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.conditionManager.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        this.conditionManager.on('conditionSetResultUpdated', this.handleOutputUpdated.bind(this));
         this.observeForChanges();
     },
     methods: {
@@ -178,22 +177,8 @@ export default {
         dragLeave(e) {
             e.target.classList.remove("dragging");
         },
-        handleConditionResult(args) {
-            let idAsString = this.openmct.objects.makeKeyString(args.id);
-            this.conditionResults[idAsString] = args.result;
-            this.updateCurrentConditionId();
-        },
-        updateCurrentConditionId() {
-            let currentConditionIdentifier = this.conditionCollection[this.conditionCollection.length-1];
-            for (let i = 0; i < this.conditionCollection.length - 1; i++) {
-                let conditionIdAsString = this.openmct.objects.makeKeyString(this.conditionCollection[i]);
-                if (this.conditionResults[conditionIdAsString]) {
-                    //first condition to be true wins
-                    currentConditionIdentifier = this.conditionCollection[i];
-                    break;
-                }
-            }
-            this.$emit('currentConditionUpdated', currentConditionIdentifier);
+        handleOutputUpdated(args) {
+            this.$emit('currentConditionSetOutputUpdated', args);
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
