@@ -2,7 +2,7 @@
 <div class="c-ne__embed">
     <div v-if="embed.snapshot"
          class="c-ne__embed__snap-thumb"
-         @click="openSnapshot(domainObject, entry, embed)"
+         @click="openSnapshot()"
     >
         <img :src="embed.snapshot.src">
     </div>
@@ -43,9 +43,11 @@
 <script>
 import Moment from 'moment';
 import $ from 'zepto';
-import PreviewAction from '../../../ui/preview/PreviewAction';
 import objectLink from '../../../ui/mixins/object-link';
-// import Painterro from 'painterro';
+import PreviewAction from '../../../ui/preview/PreviewAction';
+import Painterro from 'painterro';
+import SnapshotTemplate from './snapshot-template.html';
+import Vue from 'vue';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -87,11 +89,138 @@ export default {
         this.populateActionMenu();
     },
     methods: {
+        annotateSnapshot() {
+            console.log('TODO: annotateSnapshot');
+            const self = this;
+
+            let save = false;
+            let painterroInstance = {};
+            const annotateVue = new Vue({
+                template: '<div id="snap-annotation"></div>'
+            });
+
+            let annotateOverlay = self.openmct.overlays.overlay({
+                element: annotateVue.$mount().$el,
+                size: 'large',
+                dismissable: false,
+                buttons: [
+                    {
+                        label: 'Cancel',
+                        callback: function () {
+                            save = false;
+                            painterroInstance.save();
+                            annotateOverlay.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Save',
+                        callback: function () {
+                            save = true;
+                            painterroInstance.save();
+                            annotateOverlay.dismiss();
+                        }
+                    }
+                ],
+                onDestroy: function () {
+                    annotateVue.$destroy(true);
+                }
+            });
+
+            painterroInstance = Painterro({
+                id: 'snap-annotation',
+                activeColor: '#ff0000',
+                activeColorAlpha: 1.0,
+                activeFillColor: '#fff',
+                activeFillColorAlpha: 0.0,
+                backgroundFillColor: '#000',
+                backgroundFillColorAlpha: 0.0,
+                defaultFontSize: 16,
+                defaultLineWidth: 2,
+                defaultTool: 'ellipse',
+                hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                translation: {
+                    name: 'en',
+                    strings: {
+                        lineColor: 'Line',
+                        fillColor: 'Fill',
+                        lineWidth: 'Size',
+                        textColor: 'Color',
+                        fontSize: 'Size',
+                        fontStyle: 'Style'
+                    }
+                },
+                saveHandler: function (image, done) {
+                    if (save) {
+                        // const entryPos = self.findInArray(domainObject.entries, entry.id);
+                        // const embedPos = self.findInArray(entry.embeds, embed.id);
+
+                        const entryPos = -1;
+                        const embedPos = -1;
+
+                        console.log('save handler', this);
+
+                        if (entryPos !== -1 && embedPos !== -1) {
+                            var url = image.asBlob(),
+                                reader = new window.FileReader();
+
+                            reader.readAsDataURL(url);
+                            reader.onloadend = function () {
+                                var snapshot = reader.result,
+                                    snapshotObject = {
+                                        src: snapshot,
+                                        type: url.type,
+                                        size: url.size,
+                                        modified: Date.now()
+                                    },
+                                    dirString = 'entries[' + entryPos + '].embeds[' + embedPos + '].snapshot';
+
+                                this.openmct.objects.mutate(this.domainObject, dirString, snapshotObject);
+                            };
+                        }
+                    } else {
+                        console.log('You cancelled the annotation!!!');
+                    }
+                    done(true);
+                }
+            }).show(this.embed.snapshot.src);
+        },
+        findInArray() {
+            console.log('TODO: findInArray');
+        },
         formatTime(unixTime, timeFormat) {
             return Moment(unixTime).format(timeFormat);
         },
         openSnapshot() {
-            console.log('TODO: openSnapshot');
+            const self = this;
+            const snapshot = new Vue({
+                data: () => {
+                    return {
+                        embed: self.embed
+                    };
+                },
+                methods: {
+                    formatTime: self.formatTime,
+                    annotateSnapshot: self.annotateSnapshot,
+                    findInArray: self.findInArray
+                },
+                template: SnapshotTemplate
+            });
+
+            const snapshotOverlay = this.openmct.overlays.overlay({
+                element: snapshot.$mount().$el,
+                onDestroy: () => { snapshot.$destroy(true) },
+                size: 'large',
+                dismissable: true,
+                buttons: [
+                    {
+                        label: 'Done',
+                        emphasis: true,
+                        callback: () => {
+                            snapshotOverlay.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         populateActionMenu() {
             var self = this;
