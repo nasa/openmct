@@ -68,6 +68,7 @@
                                         <input v-model="domainObject.configuration.name"
                                                class="t-condition-input__name"
                                                type="text"
+                                               :disabled="!telemetry.length"
                                         >
                                     </span>
                                 </li>
@@ -75,6 +76,7 @@
                                     <label>Output</label>
                                     <span class="controls">
                                         <select v-model="selectedOutputKey"
+                                                :disabled="!telemetry.length"
                                                 @change="checkInputValue"
                                         >
                                             <option value="">- Select Output -</option>
