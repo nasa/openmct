@@ -21,7 +21,9 @@
  *****************************************************************************/
 <template>
 <div class="c-table-wrapper">
-    <div class="c-table-control-bar c-control-bar">
+    <!-- main contolbar  start-->
+    <div v-if="!alternateControlBar.enable"
+        class="c-table-control-bar c-control-bar">
         <button
             v-if="allowExport"
             class="c-button icon-download labeled"
@@ -64,6 +66,32 @@
         </button>
         <slot name="buttons"></slot>
     </div>
+    <!-- main controlbar end -->
+
+    <!-- alternate controlbar start -->
+    <div v-if="alternateControlBar.enable"
+         class="c-table-control-bar c-control-bar">
+        <div v-if="markedRows.length">
+            {{markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowName}'s selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
+        </div>
+
+        <button
+            v-show="markedRows.length"
+            class="c-button icon-x labeled"
+            title="Deselect All"
+            @click="unmarkAllRows()">
+            <span class="c-button__label">Deselect All</span>
+        </button>
+
+        <toggle-switch
+            id="show-filtered-rows-toggle"
+            :checked="showingMarkedRowsOnly"
+            @change="toggleMarkedRows">
+        </toggle-switch>
+
+        <slot name="buttons"></slot>
+    </div>
+    <!-- alternate controlbar end  -->
 
     <div
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
@@ -205,6 +233,7 @@ import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -216,7 +245,8 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator
+        TelemetryFilterIndicator,
+        ToggleSwitch
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -239,6 +269,15 @@ export default {
         enableMarking: {
             type: Boolean,
             default: false
+        },
+        alternateControlBar: {
+            type: Object,
+            default:() => {
+                return {
+                    enable: true,
+                    rowName: 'Session'
+                }
+            }
         }
     },
     data() {
@@ -270,7 +309,8 @@ export default {
             scrollW: 0,
             markCounter: 0,
             paused: false,
-            markedRows: []
+            markedRows: [],
+            showingMarkedRowsOnly: false
         }
     },
     computed: {
@@ -317,6 +357,7 @@ export default {
         this.table.on('object-removed', this.removeObject);
         this.table.on('outstanding-requests', this.outstandingRequests);
         this.table.on('refresh', this.clearRowsAndRerender);
+        this.table.on('historical-rows-processed', this.checkForMarkedRows);
 
         this.table.filteredRows.on('add', this.rowsAdded);
         this.table.filteredRows.on('remove', this.rowsRemoved);
@@ -693,6 +734,7 @@ export default {
         unmarkAllRows(skipUnpause) {
             this.markedRows.forEach(row => row.marked = false);
             this.markedRows = [];
+            this.showingMarkedRowsOnly = false;
             this.unpause();
         },
         markMultipleConcurrentRows(rowIndex) {
@@ -732,6 +774,24 @@ export default {
                         this.markedRows.push(row);
                     }
                 }
+            }
+        },
+        checkForMarkedRows() {
+            this.markedRows = this.table.filteredRows.getRows().filter(row => row.marked);
+        },
+        showMarkedRowsOnly() {
+            this.showingMarkedRowsOnly = true;
+            this.table.filteredRows.rows = this.markedRows;
+            this.table.filteredRows.emit('filter');
+            this.setHeight();
+        },
+        toggleMarkedRows(flag) {
+            if (flag) {
+                this.pause();
+                this.showMarkedRowsOnly();
+            } else {
+                this.showingMarkedRowsOnly = false;
+                this.unpause();
             }
         }
     }

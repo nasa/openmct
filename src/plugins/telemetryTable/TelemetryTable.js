@@ -155,6 +155,7 @@ define([
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows.add(telemetryRows);
+            this.emit('historical-rows-processed');
         }
 
         /**
