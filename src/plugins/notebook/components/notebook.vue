@@ -183,9 +183,8 @@ export default {
             this.search = '';
 
             this.updateDefaultNotebook(selectedSection, selectedPage);
-
             const notebookStorage = getDefaultNotebook();
-            addNotebookEntry(this.openmct, this.domainObject, notebookStorage);
+            addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
