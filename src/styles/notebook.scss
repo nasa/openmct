@@ -49,7 +49,7 @@
         }
     }
 
-    > [class*="__"] + [class*="__"] {
+    > * + * {
         margin-top: $interiorMargin;
     }
 

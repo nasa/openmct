@@ -184,14 +184,14 @@
 
     &__main {
         > .l-pane {
-            padding: nth($shellPanePad, 1) nth($shellPanePad, 2);
+            padding: nth($shellPanePad, 1) 0;
         }
     }
 
     body.desktop & {
         &__main {
             // Top and bottom padding in container that holds tree, __pane-main and Inspector
-            padding: $shellMainPad;
+            padding: nth($shellPanePad, 1) 0;
             min-height: 0;
 
             > .l-pane {
@@ -202,15 +202,17 @@
 
         &__pane-tree,
         &__pane-inspector {
-            max-width: 30%;
+            max-width: 70%;
         }
 
         &__pane-tree {
             width: 300px;
+            padding-left: nth($shellPanePad, 2);
         }
 
         &__pane-inspector {
             width: 200px;
+            padding-right: nth($shellPanePad, 2);
         }
     }
 
