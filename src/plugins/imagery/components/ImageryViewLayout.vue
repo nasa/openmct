@@ -1,74 +1,68 @@
 <template>
-    <div class="c-imagery">
-        <div class="c-imagery__main-image-wrapper has-local-controls">
-            <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
-                <span class="holder flex-elem grows c-imagery__lc__sliders">
-                    <input v-model="filters.brightness"
-                           class="icon-brightness"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                    <input v-model="filters.contrast"
-                           class="icon-contrast"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                </span>
-                <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
-                    <a class="s-icon-button icon-reset t-btn-reset"
-                       @click="filters={brightness: 100, contrast: 100}"
-                    ></a>
-                </span>
-            </div>
-            <div class="main-image s-image-main c-imagery__main-image"
-                 :class="{'paused unnsynced': paused(),'stale':false }"
-                 :style="{'background-image': `url(${getImageUrl()})`,
-                          'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
-            >
-            </div>
-            <div class="c-imagery__control-bar">
-                <div class="c-imagery__timestamp">{{ getTime() }}</div>
-                <div class="h-local-controls flex-elem">
-                    <a class="c-button icon-pause pause-play"
-                       :class="{'is-paused': paused()}"
-                       @click="paused(!paused())"
-                    ></a>
-                </div>
-            </div>
-        </div>
-        <div ref="thumbsWrapper"
-             class="c-imagery__thumbs-wrapper"
-             :class="{'is-paused': paused()}"
-             @scroll="handleScroll"
-        >
-            <div v-for="(imageData, index) in imageHistory"
-                 :key="index"
-                 class="c-imagery__thumb c-thumb"
-                 :class="{selected: imageData.selected}"
-                 @click="setSelectedImage(imageData)"
-            >
-                <img class="c-thumb__image"
-                     :src="getImageUrl(imageData)"
+<div class="c-imagery">
+    <div class="c-imagery__main-image-wrapper has-local-controls">
+        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
+            <span class="holder flex-elem grows c-imagery__lc__sliders">
+                <input v-model="filters.brightness"
+                       class="icon-brightness"
+                       type="range"
+                       min="0"
+                       max="500"
                 >
-                <div class="c-thumb__timestamp">{{ getTime(imageData) }}</div>
+                <input v-model="filters.contrast"
+                       class="icon-contrast"
+                       type="range"
+                       min="0"
+                       max="500"
+                >
+            </span>
+            <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
+                <a class="s-icon-button icon-reset t-btn-reset"
+                   @click="filters={brightness: 100, contrast: 100}"
+                ></a>
+            </span>
+        </div>
+        <div class="main-image s-image-main c-imagery__main-image"
+             :class="{'paused unnsynced': paused(),'stale':false }"
+             :style="{'background-image': `url(${getImageUrl()})`,
+                      'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
+        >
+        </div>
+        <div class="c-imagery__control-bar">
+            <div class="c-imagery__timestamp">{{ getTime() }}</div>
+            <div class="h-local-controls flex-elem">
+                <a class="c-button icon-pause pause-play"
+                   :class="{'is-paused': paused()}"
+                   @click="paused(!paused())"
+                ></a>
             </div>
         </div>
     </div>
+    <div ref="thumbsWrapper"
+         class="c-imagery__thumbs-wrapper"
+         :class="{'is-paused': paused()}"
+         @scroll="handleScroll"
+    >
+        <div v-for="(imageData, index) in imageHistory"
+             :key="index"
+             class="c-imagery__thumb c-thumb"
+             :class="{selected: imageData.selected}"
+             @click="setSelectedImage(imageData)"
+        >
+            <img class="c-thumb__image"
+                 :src="getImageUrl(imageData)"
+            >
+            <div class="c-thumb__timestamp">{{ getTime(imageData) }}</div>
+        </div>
+    </div>
+</div>
 </template>
 
 <script>
-import multipane from '@/ui/layout/multipane.vue';
-import pane from '@/ui/layout/pane.vue';
 import _ from 'lodash';
 
 export default {
     inject: ['openmct', 'domainObject'],
-    components: {
-        multipane,
-        pane
-    },
     data() {
         return {
             autoScroll: true,
