@@ -672,18 +672,19 @@ export default {
         },
         unpause(unpausedByButton) {
             if (unpausedByButton) {
-                this.paused = false;
+                this.undoMarkedRows();
                 this.table.unpause();
-                this.markedRows = [];
+                this.paused = false;
                 this.pausedByButton = false;
             } else {
                 if (!this.pausedByButton) {
-                    this.paused = false;
-                    this.table.unpause();
-                    this.markedRows = [];
+                   this.undoMarkedRows();
+                   this.table.unpause();
+                   this.paused = false;
                 }
             }
-
+            
+            this.showingMarkedRowsOnly = false;
         },
         togglePauseByButton() {
             if (this.paused) {
@@ -696,20 +697,19 @@ export default {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
-        unmarkRow(rowIndex, ctrlKeyModifier) {
-            if (ctrlKeyModifier) {
+        unmarkRow(rowIndex) {
+            if (this.markedRows.length > 1) {
                 let row = this.visibleRows[rowIndex],
                     positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
-
-                if (this.markedRows.length === 0) {
-                    this.unpause();
-                }
-            } else if (this.markedRows.length) {
+            } else if (this.markedRows.length === 1) {
                 this.undoMarkedRows();
-                this.markRow(rowIndex);
+            }
+
+            if (this.markedRows.length === 0) {
+                this.unpause();
             }
         },
         markRow(rowIndex, keyModifier) {
@@ -732,8 +732,7 @@ export default {
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
-            this.markedRows.forEach(row => row.marked = false);
-            this.markedRows = [];
+            this.undoMarkedRows();
             this.showingMarkedRowsOnly = false;
             this.unpause();
         },
@@ -779,19 +778,24 @@ export default {
         checkForMarkedRows() {
             this.markedRows = this.table.filteredRows.getRows().filter(row => row.marked);
         },
-        showMarkedRowsOnly() {
-            this.showingMarkedRowsOnly = true;
-            this.table.filteredRows.rows = this.markedRows;
+        showRows(rows) {
+            this.table.filteredRows.rows = rows;
             this.table.filteredRows.emit('filter');
-            this.setHeight();
         },
         toggleMarkedRows(flag) {
             if (flag) {
-                this.pause();
-                this.showMarkedRowsOnly();
+                this.showingMarkedRowsOnly = true;
+                this.userScroll = this.scrollable.scrollTop;
+                this.allRows = this.table.filteredRows.getRows();
+
+                this.showRows(this.markedRows);
             } else {
                 this.showingMarkedRowsOnly = false;
-                this.unpause();
+                this.showRows(this.allRows);
+
+                this.allRows = [];
+                this.setHeight();
+                this.scrollable.scrollTop = this.userScroll;
             }
         }
     }

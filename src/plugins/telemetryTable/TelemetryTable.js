@@ -221,6 +221,7 @@ define([
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+            let datumCache = [];
 
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 //Check that telemetry object has not been removed since telemetry was requested.
@@ -228,7 +229,16 @@ define([
                     return;
                 }
 
-                if (!this.paused) {
+                if (this.paused) {
+                    datumCache.push(datum);
+                } else {
+                    if (datumCache.length) {
+                        datumCache.forEach(cachedDatum => {
+                            this.processRealtimeDatum(cachedDatum, columnMap, keyString, limitEvaluator);
+                        });
+                        datumCache = [];
+                    }
+
                     this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
                 }
             }, subscribeOptions);
@@ -268,13 +278,10 @@ define([
 
         pause() {
             this.paused = true;
-            this.boundedRows.unsubscribeFromBounds();
         }
 
         unpause() {
             this.paused = false;
-            this.boundedRows.subscribeToBounds();
-            this.refreshData();
         }
 
         destroy() {
