@@ -97,7 +97,6 @@ export default {
     },
     methods: {
         annotateSnapshot() {
-            console.log('TODO: annotateSnapshot');
             const self = this;
 
             let save = false;
@@ -122,6 +121,7 @@ export default {
                     {
                         label: 'Save',
                         callback: function () {
+
                             save = true;
                             painterroInstance.save();
                             annotateOverlay.dismiss();
@@ -158,33 +158,28 @@ export default {
                 },
                 saveHandler: function (image, done) {
                     if (save) {
-                        // const entryPos = self.findInArray(domainObject.entries, entry.id);
-                        // const embedPos = self.findInArray(entry.embeds, embed.id);
-
-                        const entryPos = -1;
-                        const embedPos = -1;
-
-                        if (entryPos !== -1 && embedPos !== -1) {
-                            var url = image.asBlob(),
-                                reader = new window.FileReader();
-
-                            reader.readAsDataURL(url);
-                            reader.onloadend = function () {
-                                var snapshot = reader.result,
-                                    snapshotObject = {
-                                        src: snapshot,
-                                        type: url.type,
-                                        size: url.size,
-                                        modified: Date.now()
-                                    },
-                                    dirString = 'entries[' + entryPos + '].embeds[' + embedPos + '].snapshot';
-
-                                this.openmct.objects.mutate(this.domainObject, dirString, snapshotObject);
+                        const embed = self.entry.embeds.find(e => e.id === self.embed.id);
+                        const url = image.asBlob();
+                        const reader = new window.FileReader();
+                        reader.readAsDataURL(url);
+                        reader.onloadend = function () {
+                            const snapshot = reader.result;
+                            const snapshotObject = {
+                                src: snapshot,
+                                type: url.type,
+                                size: url.size,
+                                modified: Date.now()
                             };
-                        }
+
+                            if (embed) {
+                                embed.snapshot = snapshotObject;
+                                self.updateEntry(self.entry);
+                            }
+                        };
                     } else {
                         console.log('You cancelled the annotation!!!');
                     }
+
                     done(true);
                 }
             }).show(this.embed.snapshot.src);
@@ -206,6 +201,7 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         openSnapshot() {
+            console.log('openSnapshot');
             const self = this;
             const snapshot = new Vue({
                 data: () => {
@@ -215,8 +211,7 @@ export default {
                 },
                 methods: {
                     formatTime: self.formatTime,
-                    annotateSnapshot: self.annotateSnapshot,
-                    findInArray: self.findInArray
+                    annotateSnapshot: self.annotateSnapshot
                 },
                 template: SnapshotTemplate
             });
