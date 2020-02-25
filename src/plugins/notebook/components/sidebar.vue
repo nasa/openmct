@@ -10,11 +10,14 @@
         </span>
     </div>
     <div class="c-sidebar__contents">
-        <SectionCollection :sections="sections"
+        <SectionCollection :domain-object="domainObject"
+                           :sections="sections"
                            :section-title="sectionTitle"
         />
         <div class="divider"></div>
-        <PageCollection :pages="pages"
+        <PageCollection :domain-object="domainObject"
+                        :pages="pages"
+                        :sections="sections"
                         :page-title="pageTitle"
         />
     </div>
@@ -32,6 +35,12 @@ export default {
         PageCollection
     },
     props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         pages: {
             type: Array,
             required: true,

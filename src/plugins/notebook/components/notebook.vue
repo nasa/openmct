@@ -10,6 +10,7 @@
     <Multipane type="horizontal">
         <Pane>
             <Sidebar ref="sidebar"
+                     :domain-object="internalDomainObject"
                      :page-title="internalDomainObject.configuration.pageTitle"
                      :pages="pages"
                      :section-title="internalDomainObject.configuration.sectionTitle"
@@ -144,7 +145,7 @@ export default {
     },
     methods: {
         updateDefaultNotebook(selectedSection, selectedPage) {
-            setDefaultNotebook(this, selectedSection, selectedPage);
+            setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
         },
         getPages() {
             const selectedSession = this.getSelectedSession();

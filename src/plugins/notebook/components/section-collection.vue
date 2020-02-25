@@ -15,6 +15,8 @@
 
 <script>
 import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION, EVENT_UPDATE_SECTION } from '../notebook-constants';
+import { deleteNotebookEntries } from '../utils/notebook-entries';
+import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import sectionComponent from './section-component.vue';
 import uuid from 'uuid';
 
@@ -24,6 +26,12 @@ export default {
         sectionComponent
     },
     props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         sections: {
             type: Array,
             required: true,
@@ -40,6 +48,11 @@ export default {
     },
     data() {
         return {
+        }
+    },
+    computed: {
+        selectedSession() {
+            return this.sections.find(section => section.isSelected);
         }
     },
     watch: {

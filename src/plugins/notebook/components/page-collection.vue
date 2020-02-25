@@ -15,6 +15,8 @@
 
 <script>
 import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_PAGE } from '../notebook-constants';
+import { deleteNotebookEntries } from '../utils/notebook-entries';
+import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import Page from './page-component.vue';
 import uuid from 'uuid';
 
@@ -24,6 +26,12 @@ export default {
         Page
     },
     props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         pages: {
             type: Array,
             required: true,
@@ -36,10 +44,25 @@ export default {
             default() {
                 return '';
             }
+        },
+        sections: {
+            type: Array,
+            required: true,
+            default() {
+                return [];
+            }
         }
     },
     data() {
         return {
+        }
+    },
+    computed: {
+        selectedPage() {
+            return this.pages.find(page => page.isSelected);
+        },
+        selectedSession() {
+            return this.sections.find(section => section.isSelected);
         }
     },
     watch: {
@@ -86,10 +109,12 @@ export default {
         },
         deletePage(id) {
             const pages = this.pages.filter(page => page.id !== id);
-            // TODO: clean up the entries from configuration for this page
+            deleteNotebookEntries(this.openmct, this.domainObject, this.selectedSession, this.selectedPage);
 
-            if (pages.length) {
+            const selectedPage = pages.find(p => p.isSelected);
+            if (pages.length && !selectedPage) {
                 // TODO: select isDefault page
+                // const defaultNotebook = getDefaultNotebook();
                 pages[0].isSelected = true;
             }
 

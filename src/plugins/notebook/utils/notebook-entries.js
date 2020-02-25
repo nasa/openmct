@@ -97,3 +97,27 @@ export const getNotebookEntries = (domainObject, selectedSection, selectedPage) 
 
     return entries[selectedSection.id][selectedPage.id];
 }
+
+export const deleteNotebookEntries = (openmct, domainObject, selectedSection, selectedPage) => {
+    if (!domainObject || !selectedSection) {
+        return;
+    }
+
+    const configuration = domainObject.configuration;
+    const entries = configuration.entries || {};
+
+    // Delete entire section
+    if (!selectedPage) {
+        delete entries[selectedSection.id];
+
+        return;
+    }
+
+    let section = entries[selectedSection.id];
+    if (!section) {
+        return;
+    }
+
+    delete entries[selectedSection.id][selectedPage.id];
+    openmct.objects.mutate(domainObject, 'configuration.entries', entries);
+}

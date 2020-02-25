@@ -6,10 +6,10 @@ export function getDefaultNotebook() {
     return JSON.parse(notebookStorage);
 }
 
-export function setDefaultNotebook(notebook, section, page) {
+export function setDefaultNotebook(domainObject, section, page) {
     const notebookMeta = {
-        name: notebook.domainObject.name,
-        identifier: notebook.domainObject.identifier
+        name: domainObject.name,
+        identifier: domainObject.identifier
     };
 
     const notebookStorage = {
