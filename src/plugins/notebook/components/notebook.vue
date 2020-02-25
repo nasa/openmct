@@ -47,11 +47,7 @@
                     </select>
                 </div>
             </div>
-            <div v-if="!getSelectedSession() || !getSelectedPage()">
-                <EmptyNotebook />
-            </div>
-            <div v-else
-                 class="c-notebook__drag-area icon-plus"
+            <div class="c-notebook__drag-area icon-plus"
                  @click="newEntry($event)"
                  @drop="newEntry($event)"
             >
@@ -75,7 +71,6 @@
 </template>
 
 <script>
-import EmptyNotebook from './empty-notebook.vue';
 import NotebookEntry from './notebook-entry.vue';
 import Multipane from '@/ui/layout/multipane.vue';
 import Pane from '@/ui/layout/pane.vue';
@@ -88,7 +83,6 @@ import { EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants'
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        EmptyNotebook,
         Multipane,
         NotebookEntry,
         Pane,

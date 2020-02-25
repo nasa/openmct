@@ -46,10 +46,18 @@ export default {
         sections(sections) {
             this.removeAllListeners();
             this.addListeners();
+
+            if (!this.sections.length) {
+                this.addSection();
+            }
         }
     },
     mounted() {
         this.addListeners();
+
+        if (!this.sections.length) {
+            this.addSection();
+        }
     },
     destroyed() {
         this.removeAllListeners();
