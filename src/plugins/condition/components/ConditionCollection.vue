@@ -243,7 +243,7 @@ export default {
             const configurationTemplate = {
                 name: isDefault ? 'Default' : (isClone ? 'Copy of ' : '') + 'Unnamed Condition',
                 output: 'false',
-                trigger: 'any',
+                trigger: 'all',
                 criteria: isDefault ? [] : [{
                     telemetry: '',
                     operation: '',
