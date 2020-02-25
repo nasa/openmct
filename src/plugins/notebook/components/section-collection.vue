@@ -50,11 +50,6 @@ export default {
         return {
         }
     },
-    computed: {
-        selectedSession() {
-            return this.sections.find(section => section.isSelected);
-        }
-    },
     watch: {
         sections(sections) {
             this.removeAllListeners();
@@ -112,14 +107,14 @@ export default {
             const section = this.sections.find(s => s.id === id);
             deleteNotebookEntries(this.openmct, this.domainObject, section);
 
-            const selectedSession = this.sections.find(s => s.isSelected);
+            const selectedSection = this.sections.find(s => s.isSelected);
             const defaultNotebook = getDefaultNotebook();
             const defaultSection = defaultNotebook && defaultNotebook.section;
-            const isSessionSelected = selectedSession && selectedSession.id === id;
-            const isSessionDefault = defaultSection && defaultSection.id === id;
+            const isSectionSelected = selectedSection && selectedSection.id === id;
+            const isSectionDefault = defaultSection && defaultSection.id === id;
             const sections = this.sections.filter(s => s.id !== id);
 
-            if (isSessionSelected) {
+            if (isSectionSelected) {
                 sections.forEach(s => {
                     s.isSelected = false;
                     if (defaultSection && defaultSection.id === s.id) {
@@ -128,11 +123,11 @@ export default {
                 });
             }
 
-            if (isSessionDefault) {
+            if (isSectionDefault) {
                 setDefaultNotebook(this.domainObject, null, null);
             }
 
-            if (isSessionSelected && isSessionDefault && sections.length) {
+            if (isSectionSelected && isSectionDefault && sections.length) {
                 sections[0].isSelected = true;
             }
 

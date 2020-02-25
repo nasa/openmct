@@ -67,7 +67,7 @@ export default {
                 return {};
             }
         },
-        selectedSession: {
+        selectedSection: {
             type: Object,
             default() {
                 return {};
@@ -80,9 +80,9 @@ export default {
         }
     },
     watch: {
-        selectedSession(selectedSession) {
+        selectedSection(selectedSection) {
         },
-        selectedPage(selectedSession) {
+        selectedPage(selectedSection) {
         }
     },
     mounted() {
@@ -104,7 +104,7 @@ export default {
     methods: {
         deleteEntry() {
             const self = this;
-            if (!self.domainObject || !self.selectedSession || !self.selectedPage || !self.entry.id) {
+            if (!self.domainObject || !self.selectedSection || !self.selectedPage || !self.entry.id) {
                 return;
             }
 
@@ -121,7 +121,7 @@ export default {
                         label: "Ok",
                         emphasis: true,
                         callback: () => {
-                            const entries = getNotebookEntries(self.domainObject, self.selectedSession, self.selectedPage);
+                            const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
                             entries.splice(entryPosById, 1);
                             this.updateEntries(entries);
                             dialog.dismiss();
@@ -148,13 +148,13 @@ export default {
                 : 'icon-object-unknown';
             const entryPos = this.entryPosById(entryId);
             const newEmbed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
-            const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const currentEntryEmbeds = entries[entryPos].embeds;
             currentEntryEmbeds.push(newEmbed);
             this.updateEntries(entries);
         },
         entryPosById(entryId) {
-            const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             let foundId = -1;
             entries.forEach((element, index) => {
                 if (element.id === entryId) {
@@ -177,7 +177,7 @@ export default {
 
             const entryPos = this.entryPosById(entryId);
             if (this.currentEntryValue !== target.innerText) {
-                const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+                const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                 entries[entryPos].text = target.textContent.trim();
                 this.updateEntries(entries);
             }
@@ -190,7 +190,7 @@ export default {
             }
         },
         updateEntry(newEntry) {
-            const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             entries.forEach(entry => {
                 if (entry.id === newEntry.id) {
                     entry = newEntry;
@@ -202,7 +202,7 @@ export default {
         updateEntries(entries) {
             const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
-            notebookEntries[this.selectedSession.id][this.selectedPage.id] = entries;
+            notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             this.openmct.objects.mutate(this.domainObject, 'configuration.entries', notebookEntries);
         }

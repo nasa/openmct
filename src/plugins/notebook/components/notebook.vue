@@ -20,7 +20,7 @@
         <Pane handle="before">
             <div class="c-notebook__controls ">
                 <div class="bread-crumb">
-                    {{ getSelectedSession() ? getSelectedSession().name : '' }}
+                    {{ getSelectedSection() ? getSelectedSection().name : '' }}
                     {{ getSelectedPage() ? getSelectedPage().name : '' }}
                 </div>
                 <div>
@@ -54,7 +54,7 @@
             >
                 <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
             </div>
-            <div v-if="selectedSession && selectedPage"
+            <div v-if="selectedSection && selectedPage"
                  class="c-notebook__entries"
             >
                 <ul>
@@ -63,7 +63,7 @@
                                    :entry="entry"
                                    :domain-object="internalDomainObject"
                                    :selected-page="getSelectedPage()"
-                                   :selected-session="getSelectedSession()"
+                                   :selected-section="getSelectedSection()"
                     />
                 </ul>
             </div>
@@ -104,7 +104,7 @@ export default {
     },
     computed: {
         filteredAndSortedEntries() {
-            return getNotebookEntries(this.internalDomainObject, this.selectedSession, this.selectedPage) || [];
+            return getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
         },
         pages() {
             return this.getPages() || [];
@@ -120,7 +120,7 @@ export default {
 
             return pages.find(page => page.isSelected);
         },
-        selectedSession() {
+        selectedSection() {
             if (!this.sections.length) {
                 return null;
             }
@@ -148,12 +148,12 @@ export default {
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
         },
         getPages() {
-            const selectedSession = this.getSelectedSession();
-            if (!selectedSession || !selectedSession.pages.length) {
+            const selectedSection = this.getSelectedSection();
+            if (!selectedSection || !selectedSection.pages.length) {
                 return [];
             }
 
-            return selectedSession.pages;
+            return selectedSection.pages;
         },
         getSelectedPage() {
             const pages = this.getPages();
@@ -163,7 +163,7 @@ export default {
 
             return pages.find(page => page.isSelected);
         },
-        getSelectedSession() {
+        getSelectedSection() {
             if (!this.sections.length) {
                 return null;
             }
@@ -174,7 +174,7 @@ export default {
             this.openmct.objects.mutate(this.internalDomainObject, key, value);
         },
         newEntry(event) {
-            const selectedSection = this.getSelectedSession();
+            const selectedSection = this.getSelectedSection();
             const selectedPage = this.getSelectedPage();
             this.search = '';
 
@@ -186,7 +186,7 @@ export default {
             this.internalDomainObject = domainObject;
         },
         updatePage({ pages = [], id = null}) {
-            const selectedSection = this.getSelectedSession();
+            const selectedSection = this.getSelectedSection();
             if (!selectedSection) {
                 return;
             }
@@ -206,7 +206,7 @@ export default {
             this.mutateObject('configuration.sections', sections);
         },
         updateSelectedPage() {
-            const sections = this.getSelectedSession();
+            const sections = this.getSelectedSection();
             if (!this.defaultSectionId || sections.length) {
                 return;
             }

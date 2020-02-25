@@ -57,14 +57,6 @@ export default {
         return {
         }
     },
-    computed: {
-        selectedPage() {
-            return this.pages.find(page => page.isSelected);
-        },
-        selectedSession() {
-            return this.sections.find(section => section.isSelected);
-        }
-    },
     watch: {
         pages(newpages) {
             if (!newpages.length) {
@@ -109,7 +101,7 @@ export default {
         },
         deletePage(id) {
             const pages = this.pages.filter(page => page.id !== id);
-            deleteNotebookEntries(this.openmct, this.domainObject, this.selectedSession, this.selectedPage);
+            // deleteNotebookEntries(this.openmct, this.domainObject, this.selectedSession, this.selectedPage);
 
             const selectedPage = pages.find(p => p.isSelected);
             if (pages.length && !selectedPage) {
