@@ -76,6 +76,7 @@
                                     <label>Output</label>
                                     <span class="controls">
                                         <select v-model="selectedOutputKey"
+                                                :disabled="!telemetry.length"
                                                 @change="checkInputValue"
                                         >
                                             <option value="">- Select Output -</option>
