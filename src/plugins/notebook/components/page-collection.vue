@@ -100,13 +100,31 @@ export default {
             this.$parent.$emit(EVENT_UPDATE_PAGE, { pages });
         },
         deletePage(id) {
-            const pages = this.pages.filter(page => page.id !== id);
-            // deleteNotebookEntries(this.openmct, this.domainObject, this.selectedSession, this.selectedPage);
+            const selectedSection = this.sections.find(s => s.isSelected);
+            const page = this.pages.filter(p => p.id !== id);
+            deleteNotebookEntries(this.openmct, this.domainObject, selectedSection, page);
 
-            const selectedPage = pages.find(p => p.isSelected);
-            if (pages.length && !selectedPage) {
-                // TODO: select isDefault page
-                // const defaultNotebook = getDefaultNotebook();
+            const selectedPage = this.pages.find(p => p.isSelected);
+            const defaultNotebook = getDefaultNotebook();
+            const defaultpage = defaultNotebook && defaultNotebook.page;
+            const isPageSelected = selectedPage && selectedPage.id === id;
+            const isPageDefault = defaultpage && defaultpage.id === id;
+            const pages = this.pages.filter(s => s.id !== id);
+
+            if (isPageSelected) {
+                pages.forEach(s => {
+                    s.isSelected = false;
+                    if (defaultpage && defaultpage.id === s.id) {
+                        s.isSelected = true;
+                    }
+                });
+            }
+
+            if (isPageDefault) {
+                setDefaultNotebook(this.domainObject, null, null);
+            }
+
+            if (isPageSelected && isPageDefault && pages.length) {
                 pages[0].isSelected = true;
             }
 
