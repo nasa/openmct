@@ -26,6 +26,7 @@
 import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION } from '../notebook-constants';
 
 export default {
+    inject: ['openmct'],
     props: {
         section: {
             type: Object,
@@ -42,14 +43,32 @@ export default {
     },
     methods: {
         deleteSection(event) {
-            const yes = confirm('Delete?');
+            const self = this;
             const target = event.target;
             const id = target.dataset.id;
-            if (!id || !yes) {
+
+            if (!id) {
                 return;
             }
 
-            this.$emit(EVENT_DELETE_SECTION, id);
+            var dialog = self.openmct.overlays.dialog({
+                iconClass: "alert",
+                message: 'This action will delete this section and all of its pages and entries. Do you want to continue?',
+                buttons: [{
+                    label: "No",
+                    callback: function () {
+                        dialog.dismiss();
+                    }
+                },
+                {
+                    label: "Yes",
+                    emphasis: true,
+                    callback: function () {
+                        self.$emit(EVENT_DELETE_SECTION, id);
+                        dialog.dismiss();
+                    }
+                }]
+            });
         },
         selectSection(event) {
             const target = event.target;

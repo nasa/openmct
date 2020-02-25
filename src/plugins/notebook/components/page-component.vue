@@ -22,6 +22,7 @@
 import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_SELECT_PAGE } from '../notebook-constants';
 
 export default {
+    inject: ['openmct'],
     props: {
         page: {
             type: Object,
@@ -38,14 +39,32 @@ export default {
     },
     methods: {
         deletePage() {
-            const yes = confirm('Delete?');
+            const self = this;
             const target = event.target;
             const id = target.dataset.id;
-            if (!id || !yes) {
+
+            if (!id) {
                 return;
             }
 
-            this.$emit(EVENT_DELETE_PAGE, id);
+            var dialog = self.openmct.overlays.dialog({
+                iconClass: "alert",
+                message: 'This action will delete this page and all of its entries. Do you want to continue?',
+                buttons: [{
+                    label: "No",
+                    callback: function () {
+                        dialog.dismiss();
+                    }
+                },
+                {
+                    label: "Yes",
+                    emphasis: true,
+                    callback: function () {
+                        self.$emit(EVENT_DELETE_PAGE, id);
+                        dialog.dismiss();
+                    }
+                }]
+            });
         },
         updateName(event) {
             const name = event.target.textContent.toString();

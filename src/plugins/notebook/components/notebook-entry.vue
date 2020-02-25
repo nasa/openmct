@@ -16,12 +16,12 @@
             >{{ entry.text }}
             </div>
             <div class="c-ne__embeds">
-                <NotebookEmbed
-                    v-for="embed in entry.embeds"
-                    :key="embed.id"
-                    :embed="embed"
-                    :object-path="embed.objectPath"
-                    :entry="entry"
+                <NotebookEmbed v-for="embed in entry.embeds"
+                               ref="notebookEmbed"
+                               :key="embed.id"
+                               :embed="embed"
+                               :object-path="embed.objectPath"
+                               :entry="entry"
                 />
             </div>
         </div>
@@ -39,6 +39,7 @@
 <script>
 import NotebookEmbed from './notebook-embed.vue';
 import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
@@ -79,6 +80,19 @@ export default {
     },
     mounted() {
         this.updateEntries = this.updateEntries.bind(this);
+
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$on(EVENT_UPDATE_ENTRY, this.updateEntry.bind(this));
+            });
+        }
+    },
+    beforeDestory() {
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$off();
+            });
+        }
     },
     methods: {
         deleteEntry() {
@@ -167,6 +181,16 @@ export default {
             } else {
                 $event.target.innerText = '';
             }
+        },
+        updateEntry(newEntry) {
+            const entries = getNotebookEntries(this.domainObject, this.selectedSession, this.selectedPage);
+            entries.forEach(entry => {
+                if (entry.id === newEntry.id) {
+                    entry = newEntry;
+                }
+            });
+
+            this.updateEntries(entries);
         },
         updateEntries(entries) {
             const configuration = this.domainObject.configuration;

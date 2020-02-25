@@ -86,6 +86,7 @@ export default {
         },
         deletePage(id) {
             const pages = this.pages.filter(page => page.id !== id);
+            // TODO: clean up the entries from configuration for this page
 
             if (pages.length) {
                 // TODO: select isDefault page

@@ -89,6 +89,7 @@ export default {
         },
         deleteSection(id) {
             const sections = this.sections.filter(section => section.id !== id);
+            // TODO: clean up the entries from configuration for this section
 
             if (sections.length) {
                 // TODO: select isDefault section

@@ -47,6 +47,7 @@ import objectLink from '../../../ui/mixins/object-link';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import SnapshotTemplate from './snapshot-template.html';
+import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
 import Vue from 'vue';
 
 export default {
@@ -184,8 +185,18 @@ export default {
                 }
             }).show(this.embed.snapshot.src);
         },
-        findInArray() {
-            console.log('TODO: findInArray');
+        findPositionInArray(array, id) {
+            let position = -1;
+            array.some((item, index) => {
+                const found = item.id === id;
+                if (found) {
+                    position = index;
+                }
+
+                return found;
+            });
+
+            return position;
         },
         formatTime(unixTime, timeFormat) {
             return Moment(unixTime).format(timeFormat);
@@ -245,9 +256,7 @@ export default {
                 name: 'Remove Embed',
                 cssClass: 'icon-trash',
                 perform: function (embed, entry) {
-                    var entryPosition = self.findInArray(self.domainObject.entries, entry.id),
-                        embedPosition = self.findInArray(entry.embeds, embed.id);
-
+                    const embedPosition = self.findPositionInArray(entry.embeds, embed.id);
                     var dialog = self.openmct.overlays.dialog({
                         iconClass: "alert",
                         message: 'This Action will permanently delete this embed. Do you wish to continue?',
@@ -262,9 +271,7 @@ export default {
                             emphasis: true,
                             callback: function () {
                                 entry.embeds.splice(embedPosition, 1);
-                                var dirString = 'entries[' + entryPosition + '].embeds';
-
-                                self.openmct.objects.mutate(self.domainObject, dirString, entry.embeds);
+                                self.updateEntry(entry);
                                 dialog.dismiss();
                             }
                         }]
@@ -309,6 +316,9 @@ export default {
             });
 
             body.on(initiatingEvent, menuClickHandler);
+        },
+        updateEntry(entry) {
+            this.$emit(EVENT_UPDATE_ENTRY, entry);
         }
     }
 }
