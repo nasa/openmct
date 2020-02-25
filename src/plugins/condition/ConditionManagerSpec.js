@@ -25,55 +25,74 @@ import ConditionManager  from './ConditionManager';
 describe('ConditionManager', () => {
 
     let conditionMgr;
-    let testTelemetryObject;
+    let mockListener;
     let openmct = {};
-    let parentDomainObject;
-    let composition;
+    let conditionSetDomainObject = {
+        identifier: {
+            namespace: "",
+            key: "600a7372-8d48-4dc4-98b6-548611b1ff7e"
+        },
+        type: "conditionSet",
+        location: "mine",
+        configuration: {
+            conditionCollection: []
+        }
+    };
+    let mockConditionDomainObject = {
+        isDefault: true,
+        type: 'condition',
+        identifier: {
+            namespace: '',
+            key: '1234-5678'
+        }
+    };
 
-    beforeAll(function () {
-        testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
-            type: "test-object",
-            name: "Test Object",
-            telemetry: {
-                values: [{
-                    key: "some-key",
-                    name: "Some attribute",
-                    hints: {
-                        domain: 1
-                    }
-                }, {
-                    key: "some-other-key",
-                    name: "Another attribute",
-                    hints: {
-                        range: 1
-                    }
-                }]
+    function mockAngularComponents() {
+        let mockInjector = jasmine.createSpyObj('$injector', ['get']);
+
+        let mockInstantiate = jasmine.createSpy('mockInstantiate');
+        mockInstantiate.and.returnValue(mockInstantiate);
+
+        let mockDomainObject = {
+            useCapability: function () {
+                return mockConditionDomainObject;
             }
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
-        openmct.objects.get.and.returnValue(testTelemetryObject);
-        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject']);
-        conditionMgr = new ConditionManager(openmct);
-        parentDomainObject = {};
-        composition = {};
+        mockInstantiate.and.callFake(function () {
+            return mockDomainObject;
+        });
+        mockInjector.get.and.callFake(function (service) {
+            return {
+                'instantiate': mockInstantiate
+            }[service];
+        });
+
+        openmct.$injector = mockInjector;
+    }
+
+    beforeAll(function () {
+
+        mockAngularComponents();
+
+        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString', 'observe', 'mutate']);
+        openmct.objects.get.and.returnValues(new Promise(function (resolve, reject) {
+            resolve(conditionSetDomainObject);
+        }), new Promise(function (resolve, reject) {
+            resolve(mockConditionDomainObject);
+        }));
+        openmct.objects.makeKeyString.and.returnValue(conditionSetDomainObject.identifier.key);
+        openmct.objects.observe.and.returnValue(function () {});
+        openmct.objects.mutate.and.returnValue(function () {});
+        conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
+        mockListener = jasmine.createSpy('mockListener');
+
+        conditionMgr.on('conditionSetResultUpdated', mockListener);
     });
 
     it('creates a conditionCollection with a default condition', function () {
-
-    });
-
-    it('adds a condition to the collection with one criterion', function () {
-
-    });
-
-    it('updates a condition\'s criteria to something valid', function () {
-
-    });
-
-    it('removes a condition from the conditionCollection', function () {
-
+        expect(conditionMgr.domainObject.configuration.conditionCollection.length).toEqual(1);
+        let defaultConditionIdentifier = conditionMgr.domainObject.configuration.conditionCollection[0];
+        expect(defaultConditionIdentifier).toEqual(mockConditionDomainObject.identifier);
     });
 
 });

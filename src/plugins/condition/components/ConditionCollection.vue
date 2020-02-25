@@ -200,12 +200,7 @@ export default {
             this.currentConditionIdentifier = identifier;
         },
         removeCondition(identifier) {
-            let index = _.findIndex(this.conditionCollection, (condition) => {
-                let conditionId = this.openmct.objects.makeKeyString(condition);
-                let id = this.openmct.objects.makeKeyString(identifier);
-                return conditionId === id;
-            });
-            this.conditionManager.removeCondition(null, index);
+            this.conditionManager.removeCondition(identifier);
         },
         reorder(reorderPlan) {
             this.conditionManager.reorderConditions(reorderPlan);

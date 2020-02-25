@@ -58,11 +58,11 @@ export default class ConditionClass extends EventEmitter {
         this.id = this.openmct.objects.makeKeyString(conditionConfiguration.identifier);
         this.criteria = [];
         this.criteriaResults = {};
+        this.result = null;
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.result = null;
         this.openmct.objects.get(this.id).then(obj => this.observeForChanges(obj));
     }
 
@@ -199,9 +199,7 @@ export default class ConditionClass extends EventEmitter {
 
     subscribe() {
         this.criteria.forEach((criterion) => {
-            if (criterion.isValid()) {
-                criterion.subscribe();
-            }
+            criterion.subscribe();
         })
     }
 

@@ -91,6 +91,11 @@ export default class ConditionManager extends EventEmitter {
         } else {
             this.conditionCollection.unshift(condition);
         }
+        //There are no criteria for a default condition and hence no subscriptions.
+        //Hence the conditionResult must be manually triggered for it.
+        if (conditionConfiguration.isDefault) {
+            this.handleConditionResult();
+        }
     }
 
     createConditionDomainObject(isDefault, conditionConfiguration) {
@@ -160,7 +165,7 @@ export default class ConditionManager extends EventEmitter {
         if (found) {
             let index = found.index;
             let condition = this.conditionCollection[index];
-            let conditionIdAsString = this.openmct.objects.makeKeyString(condition.identifier);
+            let conditionIdAsString = condition.id;
             condition.destroyCriteria();
             condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
             this.conditionCollection.splice(index, 1);
@@ -169,6 +174,7 @@ export default class ConditionManager extends EventEmitter {
                 delete this.conditionResults[conditionIdAsString];
             }
             this.persist();
+            this.handleConditionResult();
         }
     }
 
@@ -201,28 +207,33 @@ export default class ConditionManager extends EventEmitter {
         this.persist();
     }
 
-    handleConditionResult(args) {
-        let idAsString = this.openmct.objects.makeKeyString(args.id);
-        let found = this.findConditionById(idAsString);
+    handleConditionResult(resultObj) {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
         let currentConditionIdentifier = conditionCollection[conditionCollection.length-1];
-        if (found) {
-            this.conditionResults[idAsString] = args.data.result;
 
-            for (let i = 0, ii = conditionCollection.length - 1; i < ii; i++) {
-                let conditionIdAsString = this.openmct.objects.makeKeyString(conditionCollection[i]);
-                if (this.conditionResults[conditionIdAsString]) {
-                    //first condition to be true wins
-                    currentConditionIdentifier = conditionCollection[i];
-                    break;
-                }
+        if (resultObj) {
+            let idAsString = this.openmct.objects.makeKeyString(resultObj.id);
+            let found = this.findConditionById(idAsString);
+            if (found) {
+                this.conditionResults[idAsString] = resultObj.data.result;
+            }
+        }
+
+        for (let i = 0, ii = conditionCollection.length - 1; i < ii; i++) {
+            let conditionIdAsString = this.openmct.objects.makeKeyString(conditionCollection[i]);
+            if (this.conditionResults[conditionIdAsString]) {
+                //first condition to be true wins
+                currentConditionIdentifier = conditionCollection[i];
+                break;
             }
         }
 
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
+            console.log(obj.configuration.output);
             this.emit('conditionSetResultUpdated', {
                 id: this.domainObject.identifier,
-                output: obj.configuration.output
+                output: obj.configuration.output,
+                conditionId: currentConditionIdentifier
             })
         });
     }
