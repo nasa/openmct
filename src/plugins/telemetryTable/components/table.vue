@@ -64,30 +64,31 @@
                 {{ paused ? 'Play' : 'Pause' }}
             </span>
         </button>
+
         <slot name="buttons"></slot>
     </div>
     <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
-    <div v-if="alternateControlBar.enable"
+    <div v-if="alternateControlBar.enable &&  markedRows.length"
          class="c-table-control-bar c-control-bar">
-        <div v-if="markedRows.length">
-            {{markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowName}'s selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
+        <div class="c-control-bar__label">
+            {{markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowNamePlural} selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
         </div>
 
+        <toggle-switch
+                id="show-filtered-rows-toggle"
+                label="Show selected items only"
+                :checked="showingMarkedRowsOnly"
+                @change="toggleMarkedRows">
+        </toggle-switch>
+
         <button
-            v-show="markedRows.length"
-            class="c-button icon-x labeled"
-            title="Deselect All"
-            @click="unmarkAllRows()">
+                class="c-button icon-x labeled"
+                title="Deselect All"
+                @click="unmarkAllRows()">
             <span class="c-button__label">Deselect All</span>
         </button>
-
-        <toggle-switch
-            id="show-filtered-rows-toggle"
-            :checked="showingMarkedRowsOnly"
-            @change="toggleMarkedRows">
-        </toggle-switch>
 
         <slot name="buttons"></slot>
     </div>
@@ -275,7 +276,8 @@ export default {
             default:() => {
                 return {
                     enable: true,
-                    rowName: 'Session'
+                    rowName: 'session',
+                    rowNamePlural: 'sessions'
                 }
             }
         }
