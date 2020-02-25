@@ -91,21 +91,40 @@ export default {
             telemetryMetadata: {},
             telemetryMetadataOptions: {},
             operations: OPERATIONS,
-            filteredOps: [],
             inputCount: 0,
-            rowLabel: ''
+            rowLabel: '',
+            operationFormat: ''
         }
     },
     computed: {
         setRowLabel: function () {
             let operator = this.trigger === 'all' ? 'and ': 'or ';
             return (this.index !== 0 ? operator : '') + 'when';
+        },
+        filteredOps: function () {
+            return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
         }
     },
     mounted() {
         this.updateMetadataOptions();
     },
     methods: {
+        getOperationFormat() {
+            this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
+                let valueMetadata = this.telemetryMetadataOptions[index];
+                if (valueMetadata.formatString) {
+                    this.operationFormat = 'number';
+                } else if (valueMetadata.format) {
+                    if (valueMetadata.format === 'utc') {
+                        this.operationFormat = 'number';
+                    } else if (valueMetadata.format === 'enum') {
+                        this.operationFormat = 'enum';
+                    }
+                } else {
+                    this.operationFormat = 'string';
+                }
+            });
+        },
         updateMetadataOptions(ev) {
             if (ev) {this.clearInputs()}
             if (this.criterion.telemetry) {
@@ -121,27 +140,13 @@ export default {
         },
         updateOperations(ev) {
             if (ev) {this.clearInputs()}
-            let operationFormat = 'string';
-            this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
-                if (value.key === this.criterion.metadata) {
-                    let valueMetadata = this.telemetryMetadataOptions[index];
-                    if (valueMetadata.formatString) {
-                        operationFormat = 'number';
-                    } else if (valueMetadata.format) {
-                        if (valueMetadata.format === 'utc') {
-                            operationFormat = 'number';
-                        } else if (valueMetadata.format === 'enum') {
-                            operationFormat = 'enum';
-                        }
-                    }
-                }
-            });
-            this.filteredOps = [...this.operations.filter(op => op.appliesTo.indexOf(operationFormat) !== -1)];
+            this.getOperationFormat();
             this.persist();
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = [];
+                this.inputCount = 0;
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
