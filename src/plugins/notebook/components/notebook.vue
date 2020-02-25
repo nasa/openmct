@@ -60,6 +60,7 @@
                     <NotebookEntry v-for="entry in filteredAndSortedEntries"
                                    :key="entry.key"
                                    :entry="entry"
+                                   :domain-object="internalDomainObject"
                                    :selected-page="getSelectedPage()"
                                    :selected-session="getSelectedSession()"
                     />

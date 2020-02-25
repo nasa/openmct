@@ -19,6 +19,7 @@
                 <NotebookEmbed v-for="embed in entry.embeds"
                                ref="notebookEmbed"
                                :key="embed.id"
+                               :domain-object="domainObject"
                                :embed="embed"
                                :object-path="embed.objectPath"
                                :entry="entry"
@@ -43,12 +44,18 @@ import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     components: {
         NotebookEmbed
     },
     props: {
         entry: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        domainObject: {
             type: Object,
             default() {
                 return {};

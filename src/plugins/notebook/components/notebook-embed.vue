@@ -51,11 +51,17 @@ import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     components: {
     },
     mixins: [objectLink],
     props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         embed: {
             type: Object,
             default() {
@@ -157,8 +163,6 @@ export default {
 
                         const entryPos = -1;
                         const embedPos = -1;
-
-                        console.log('save handler', this);
 
                         if (entryPos !== -1 && embedPos !== -1) {
                             var url = image.asBlob(),
