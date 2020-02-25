@@ -109,11 +109,30 @@ export default {
             this.selectSection(id, sections);
         },
         deleteSection(id) {
-            const sections = this.sections.filter(section => section.id !== id);
-            // TODO: clean up the entries from configuration for this section
+            const section = this.sections.find(s => s.id === id);
+            deleteNotebookEntries(this.openmct, this.domainObject, section);
 
-            if (sections.length) {
-                // TODO: select isDefault section
+            const selectedSession = this.sections.find(s => s.isSelected);
+            const defaultNotebook = getDefaultNotebook();
+            const defaultSection = defaultNotebook && defaultNotebook.section;
+            const isSessionSelected = selectedSession && selectedSession.id === id;
+            const isSessionDefault = defaultSection && defaultSection.id === id;
+            const sections = this.sections.filter(s => s.id !== id);
+
+            if (isSessionSelected) {
+                sections.forEach(s => {
+                    s.isSelected = false;
+                    if (defaultSection && defaultSection.id === s.id) {
+                        s.isSelected = true;
+                    }
+                });
+            }
+
+            if (isSessionDefault) {
+                setDefaultNotebook(this.domainObject, null, null);
+            }
+
+            if (isSessionSelected && isSessionDefault && sections.length) {
                 sections[0].isSelected = true;
             }
 
