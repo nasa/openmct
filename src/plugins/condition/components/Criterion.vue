@@ -44,8 +44,15 @@
                     {{ option.text }}
                 </option>
             </select>
-            <input v-if="isInputOperation"
-                   v-model="criterion.input"
+            <input v-if="inputCount > 0"
+                   v-model="criterion.input[0]"
+                   class="t-condition-name-input"
+                   type="text"
+                   @blur="persist"
+            >
+            <span v-if="inputCount === 2">and</span>
+            <input v-if="inputCount === 2"
+                   v-model="criterion.input[1]"
                    class="t-condition-name-input"
                    type="text"
                    @blur="persist"
@@ -53,7 +60,6 @@
         </span>
     </span>
 </li>
-
 </template>
 
 <script>
@@ -86,7 +92,7 @@ export default {
             telemetryMetadataOptions: {},
             operations: OPERATIONS,
             filteredOps: [],
-            isInputOperation: false,
+            inputCount: 0,
             rowLabel: ''
         }
     },
@@ -101,11 +107,7 @@ export default {
     },
     methods: {
         updateMetadataOptions(ev) {
-            if (ev) {
-                this.criterion.metadata = '';
-                this.criterion.operation = '';
-                this.criterion.input = [];
-            }
+            if (ev) {this.clearInputs()}
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -116,13 +118,9 @@ export default {
             } else {
                 this.criterion.metadata = '';
             }
-            this.persist();
         },
         updateOperations(ev) {
-            if (ev) {
-                this.criterion.operation = '';
-                this.criterion.input = [];
-            }
+            if (ev) {this.clearInputs()}
             let operationFormat = 'string';
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
                 if (value.key === this.criterion.metadata) {
@@ -139,22 +137,24 @@ export default {
                 }
             });
             this.filteredOps = [...this.operations.filter(op => op.appliesTo.indexOf(operationFormat) !== -1)];
+            this.persist();
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = [];
             }
-            if (this.criterion.operation === '') {
-                this.isInputOperation = false;
-            } else {
-                for (let i = 0; i < this.filteredOps.length; i++) {
-                    if (this.criterion.operation === this.filteredOps[i].name) {
-                        this.isInputOperation = this.filteredOps[i].inputCount > 0;
-                        if (!this.isInputOperation) {this.criterion.input = ''}
-                    }
+            for (let i = 0; i < this.filteredOps.length; i++) {
+                if (this.criterion.operation === this.filteredOps[i].name) {
+                    this.inputCount = this.filteredOps[i].inputCount;
+                    if (!this.inputCount) {this.criterion.input = []}
                 }
             }
             this.persist();
+        },
+        clearInputs() {
+            this.criterion.operation = '';
+            this.criterion.input = [];
+            this.inputCount = 0;
         },
         updateMetadataSelection() {
             this.updateOperationInputVisibility();
