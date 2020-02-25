@@ -66,6 +66,8 @@ export default {
     },
     watch: {
         pages(newpages) {
+        },
+        sections(newSections) {
         }
     },
     mounted() {
@@ -76,6 +78,7 @@ export default {
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
 
+            console.log('TODO: Sidebar toggleCollapse');
             // if (this.collapsed) {
             //     this.currentSize = (this.dragCollapse === true)? this.initial : this.$el.style[this.styleProp];
             //     this.$el.style[this.styleProp] = '';

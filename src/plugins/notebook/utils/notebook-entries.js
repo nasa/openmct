@@ -50,6 +50,10 @@ export const createNewEmbed = (name, cssClass, type, snapshot = '', domainObject
 }
 
 export const addNotebookEntry = (openmct, domainObject, notebookStorage, embedObject = null, imageUrl = null) => {
+    if (!openmct || !domainObject || !notebookStorage) {
+        return;
+    }
+
     const date = Date.now();
     const configuration = domainObject.configuration;
     const entries = configuration.entries || {};
@@ -62,8 +66,8 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embedOb
         ? [createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '')]
         :[];
 
-    const pages = getNotebookDefaultEntries(notebookStorage, domainObject);
-    pages.push({
+    const defaultEntries = getNotebookDefaultEntries(notebookStorage, domainObject);
+    defaultEntries.push({
         id: 'entry-' + date,
         createdOn: date,
         text: date,
