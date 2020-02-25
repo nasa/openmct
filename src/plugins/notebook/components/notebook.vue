@@ -10,9 +10,9 @@
     <Multipane type="horizontal">
         <Pane>
             <Sidebar ref="sidebar"
-                     :page-title="domainObject.configuration.pageTitle"
+                     :page-title="internalDomainObject.configuration.pageTitle"
                      :pages="pages"
-                     :section-title="domainObject.configuration.sectionTitle"
+                     :section-title="internalDomainObject.configuration.sectionTitle"
                      :sections="sections"
             />
         </Pane>
