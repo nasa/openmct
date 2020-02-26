@@ -275,7 +275,7 @@ export default {
             type: Object,
             default:() => {
                 return {
-                    enable: true,
+                    enable: false,
                     rowName: 'session',
                     rowNamePlural: 'sessions'
                 }
@@ -707,9 +707,9 @@ export default {
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
             } else if (this.markedRows.length === 1) {
-                this.undoMarkedRows();
+                this.unmarkAllRows();
             }
-
+            
             if (this.markedRows.length === 0) {
                 this.unpause();
             }
@@ -737,6 +737,7 @@ export default {
             this.undoMarkedRows();
             this.showingMarkedRowsOnly = false;
             this.unpause();
+            this.restorePreviousRows();
         },
         markMultipleConcurrentRows(rowIndex) {
             if (!this.enableMarking) {
@@ -791,10 +792,15 @@ export default {
                 this.allRows = this.table.filteredRows.getRows();
 
                 this.showRows(this.markedRows);
+                this.setHeight();
             } else {
                 this.showingMarkedRowsOnly = false;
+                this.restorePreviousRows();
+            }
+        },
+        restorePreviousRows() {
+            if (this.allRows && this.allRows.length) {
                 this.showRows(this.allRows);
-
                 this.allRows = [];
                 this.setHeight();
                 this.scrollable.scrollTop = this.userScroll;

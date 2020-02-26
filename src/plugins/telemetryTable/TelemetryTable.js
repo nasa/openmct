@@ -278,10 +278,12 @@ define([
 
         pause() {
             this.paused = true;
+            this.boundedRows.unsubscribeFromBounds();
         }
 
         unpause() {
             this.paused = false;
+            this.boundedRows.subscribeToBounds();
         }
 
         destroy() {
