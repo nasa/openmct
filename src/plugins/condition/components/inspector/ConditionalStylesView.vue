@@ -1,11 +1,43 @@
 <template>
-<div>Conditional Styles inspector view</div>
+<div>
+    <div v-if="!conditionalStyles.length"
+         class="holder c-c-button-wrapper align-left"
+    >
+        <button
+            class="c-c-button c-c-button--minor add-criteria-button"
+            @click="addConditionSet"
+        >
+            <span class="c-c-button__label">Use conditional styling</span>
+        </button>
+    </div>
+    <div v-else>
+        <div class="holder c-c-button-wrapper align-left">
+            <button
+                class="c-c-button c-c-button--minor add-criteria-button"
+                @click="removeConditionSet"
+            >
+                <span class="c-c-button__label">Remove conditional styling</span>
+            </button>
+        </div>
+        <ul>
+            <li v-for="conditionStyle in conditionalStyles"
+                :key="conditionStyle.conditionIdentifier.key"
+            >
+                <conditional-style :condition-identifier="conditionStyle.conditionIdentifier"
+                                   :condition-style="conditionStyle.style"
+                />
+            </li>
+        </ul>
+    </div>
+</div>
 </template>
 
 <script>
 
+import ConditionalStyle from "./ConditionalStyle.vue";
 export default {
     components: {
+        ConditionalStyle
     },
     inject: [
         'openmct',
@@ -13,7 +45,8 @@ export default {
     ],
     data() {
         return {
-            conditionalStyles: []
+            conditionalStyles: [],
+            conditionSets: []
         }
     },
     destroyed() {
@@ -24,22 +57,25 @@ export default {
     mounted() {
         this.layoutItem = this.context.layoutItem;
         this.domainObject = this.context.item;
-        this.conditionalStyles = (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || [];
-        //TODO: this.conditionSetIdentifier will be set by the UI later
-        if(this.domainObject.type === 'layout' || this.domainObject.type === 'generator') {
-            this.addConditionSet();
+        if (this.domainObject.configuration &&
+            this.domainObject.configuration.conditionalStyle &&
+            this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
+            this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
         }
-        // this.styleRuleManager = new StyleRuleManager(this.domainObject, {
-        //     identifier: this.conditionSetIdentifier
-        // }, this.openmct);
     },
     methods: {
         addConditionSet() {
+            //TODO: this.conditionSetIdentifier will be set by the UI later from a modal
             this.conditionSetIdentifier = {
                 namespace: '',
                 key: '600a7372-8d48-4dc4-98b6-548611b1ff7e'
             };
             this.initializeConditionalStyles();
+        },
+        removeConditionSet() {
+            this.conditionSetIdentifier = '';
+            this.conditionalStyles = [];
+            this.persist();
         },
         initializeConditionalStyles() {
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
@@ -47,7 +83,7 @@ export default {
                     if (!this.findStyleByConditionId(identifier)) {
                         this.conditionalStyles.push({
                             conditionIdentifier: identifier,
-                            style: index ? '': {backgroundColor: 'red'}
+                            style: index ? {backgroundColor: 'gray'} : {backgroundColor: 'red'}
                         });
                     }
                 });

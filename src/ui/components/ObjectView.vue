@@ -176,7 +176,7 @@ export default {
                 delete this.styleRuleManager;
             }
 
-            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle) {
+            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle && this.currentObject.configuration.conditionalStyle.conditionSetIdentifier) {
                 this.styleRuleManager = new StyleRuleManager(this.currentObject, this.openmct);
                 this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
             }
