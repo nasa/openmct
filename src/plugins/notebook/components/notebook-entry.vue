@@ -49,13 +49,13 @@ export default {
         NotebookEmbed
     },
     props: {
-        entry: {
+        domainObject: {
             type: Object,
             default() {
                 return {};
             }
         },
-        domainObject: {
+        entry: {
             type: Object,
             default() {
                 return {};
