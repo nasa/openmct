@@ -283,6 +283,7 @@ export default {
             } else {
                 this.domainObject.configuration.output = this.selectedOutputKey;
             }
+            this.persist();
         },
         updateCurrentCondition() {
             this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
