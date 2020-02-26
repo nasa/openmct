@@ -19,11 +19,12 @@ export default function NotebookPlugin() {
             cssClass: 'icon-notebook',
             initialize: domainObject => {
                 domainObject.configuration = {
+                    defaultSort: 'oldest',
                     entries: {},
+                    pageTitle: 'Page',
                     sections: [],
                     sectionTitle: 'Section',
-                    pageTitle: 'Page',
-                    defaultSort: 'oldest'
+                    type: 'General'
                 };
             },
             form: [
@@ -45,6 +46,16 @@ export default function NotebookPlugin() {
                     property: [
                         "configuration",
                         "defaultSort"
+                    ]
+                },
+                {
+                    key: 'type',
+                    name: 'Note book Type',
+                    control: 'textfield',
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "type"
                     ]
                 },
                 {
