@@ -1,5 +1,6 @@
 <template>
-<div :class="['section c-notebook__entry c-ne has-local-controls', {'selected': section.isSelected}]">
+<div class="c-list-item"
+     :class="{'selected': section.isSelected}">
     <span contenteditable="true"
           :data-id="section.id"
           @blur="updateName"
@@ -7,14 +8,12 @@
     >
         {{ section.name.length ? section.name : `Unnamed ${section.sectionTitle}` }}
     </span>
-    <div class="c-ne__local-controls--hidden">
-        <button class="c-icon-button c-icon-button--major icon-trash"
-                :data-id="section.id"
-                title="Delete Section"
-                @click="deleteSection"
-        >
-        </button>
-    </div>
+    <button class="c-icon-button icon-trash"
+            :data-id="section.id"
+            title="Delete Section"
+            @click="deleteSection"
+    >
+    </button>
 </div>
 </template>
 

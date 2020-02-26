@@ -15,6 +15,7 @@
         }
 
         > * + * {
+            // Add margin-top to first and second level children
             margin-top: $interiorMargin;
         }
     }
@@ -24,14 +25,25 @@
         padding: $interiorMargin;
     }
 
+    &__contents-and-controls {
+        // Encloses pane buttons and contents elements
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
     &__header {
         background: $sideBarHeaderBg;
         color: $sideBarHeaderFg;
+        display: flex;
+        align-items: center;
         text-transform: uppercase;
     }
 
     &__contents {
-        overflow: auto;
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: scroll;
     }
 
 
@@ -48,14 +60,6 @@
         //    flex-basis: 50%;
         //}
 
-        .title {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .divider {
-            flex-basis: 5px;
-        }
 
         button {
             flex-basis: 10px;

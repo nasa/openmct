@@ -1,16 +1,13 @@
 <template>
-<div>
-    <button @click="addPage">+ Add {{ pageTitle }}</button>
-    <ul>
-        <li v-for="page in pages"
-            :key="page.id"
-        >
-            <Page ref="pageComponent"
-                  :page="page"
-            />
-        </li>
-    </ul>
-</div>
+<ul>
+    <li v-for="page in pages"
+        :key="page.id"
+    >
+        <Page ref="pageComponent"
+              :page="page"
+        />
+    </li>
+</ul>
 </template>
 
 <script>
@@ -39,12 +36,6 @@ export default {
                 return [];
             }
         },
-        pageTitle: {
-            type: String,
-            default() {
-                return '';
-            }
-        },
         sections: {
             type: Array,
             required: true,
@@ -59,10 +50,6 @@ export default {
     },
     watch: {
         pages(newpages) {
-            if (!newpages.length) {
-                this.addPage();
-            }
-
             this.removeAllListeners();
             this.addListeners();
         }
@@ -84,20 +71,6 @@ export default {
                     });
                 }
             },0);
-        },
-        addPage() {
-            const pageTitle = this.pageTitle;
-            const page = {
-                id : uuid(),
-                isDefault : false,
-                isSelected: true,
-                name : `Unnamed ${pageTitle}`,
-                pageTitle
-            };
-
-            this.pages.forEach(p => p.isSelected = false);
-            const pages = this.pages.concat(page);
-            this.$parent.$emit(EVENT_UPDATE_PAGE, { pages });
         },
         deletePage(id) {
             const selectedSection = this.sections.find(s => s.isSelected);

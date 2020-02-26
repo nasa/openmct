@@ -1,16 +1,13 @@
 <template>
-<div>
-    <button @click="addSection">+ Add {{ sectionTitle }}</button>
-    <ul>
-        <li v-for="section in sections"
-            :key="section.id"
-        >
-            <sectionComponent ref="sectionComponent"
-                              :section="section"
-            />
-        </li>
-    </ul>
-</div>
+<ul>
+    <li v-for="section in sections"
+        :key="section.id"
+    >
+        <sectionComponent ref="sectionComponent"
+                          :section="section"
+        />
+    </li>
+</ul>
 </template>
 
 <script>
@@ -18,7 +15,6 @@ import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION, EVENT
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import sectionComponent from './section-component.vue';
-import uuid from 'uuid';
 
 export default {
     inject: ['openmct'],
@@ -38,12 +34,6 @@ export default {
             default() {
                 return [];
             }
-        },
-        sectionTitle: {
-            type: String,
-            default() {
-                return '';
-            }
         }
     },
     data() {
@@ -54,18 +44,10 @@ export default {
         sections(sections) {
             this.removeAllListeners();
             this.addListeners();
-
-            if (!this.sections.length) {
-                this.addSection();
-            }
         }
     },
     mounted() {
         this.addListeners();
-
-        if (!this.sections.length) {
-            this.addSection();
-        }
     },
     destroyed() {
         this.removeAllListeners();
@@ -86,22 +68,6 @@ export default {
             if (this.$refs.sectionComponent) {
                 this.$refs.sectionComponent.forEach(element => element.$off());
             }
-        },
-        addSection() {
-            const sectionTitle = this.sectionTitle;
-            const id = uuid();
-            const section = {
-                id,
-                isDefault : false,
-                isSelected: true,
-                name : `Unnamed ${sectionTitle}`,
-                pages : [],
-                sectionTitle
-            };
-
-            this.sections.forEach(s => s.isSelected = false);
-            const sections = this.sections.concat(section);
-            this.selectSection(id, sections);
         },
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);
