@@ -23,6 +23,7 @@ export default class ConditionSetTelemetryProvider {
 
         return function unsubscribe() {
             conditionManager.off('conditionSetResultUpdated');
+            conditionManager.destroy();
         }
     }
 }
