@@ -98,13 +98,14 @@ export default {
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',
-
             showTime: 0
         }
     },
     computed: {
         filteredAndSortedEntries() {
-            return getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
+            const pageEntries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
+
+            return pageEntries.sort(this.sortEntries);
         },
         pages() {
             return this.getPages() || [];
@@ -181,6 +182,11 @@ export default {
             this.updateDefaultNotebook(selectedSection, selectedPage);
             const notebookStorage = getDefaultNotebook();
             addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
+        },
+        sortEntries(right, left) {
+            return this.defaultSort === 'newest'
+                ? left.createdOn - right.createdOn
+                : right.createdOn - left.createdOn;
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
