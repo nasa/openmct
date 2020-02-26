@@ -122,7 +122,7 @@
                                                    :is-default="domainObject.configuration.criteria.length === 1"
                                                    @persist="persist"
                                         />
-                                        <div class="temp">
+                                        <div>
                                             <span class="is-enabled c-c__duplicate"
                                                   @click="cloneCriterion(index)"
                                             ></span>
