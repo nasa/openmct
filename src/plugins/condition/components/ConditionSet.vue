@@ -54,12 +54,21 @@ export default {
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.provideTelemetry();
+    },
+    beforeDestroy() {
+        if (this.stopProvidingTelemetry) {
+            this.stopProvidingTelemetry();
+        }
     },
     methods: {
         updateCurrentOutput(currentConditionResult) {
             if (this.openmct.objects.makeKeyString(currentConditionResult.id) === this.conditionSetIdentifier) {
                 this.currentConditionOutput = currentConditionResult.output;
             }
+        },
+        provideTelemetry() {
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject);
         }
     }
 };
