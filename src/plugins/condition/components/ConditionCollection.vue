@@ -250,7 +250,6 @@ export default {
             let conditionObj = {
                 isDefault: isDefault,
                 type: 'condition',
-                name: isDefault ? 'Default' : (isClone ? 'Copy of ' : '') + 'Unnamed Condition',
                 identifier: {
                     namespace: this.domainObject.identifier.namespace,
                     key: uuid()

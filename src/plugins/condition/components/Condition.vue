@@ -68,6 +68,7 @@
                                         <input v-model="domainObject.configuration.name"
                                                class="t-condition-input__name"
                                                type="text"
+                                               @blur="persist"
                                         >
                                     </span>
                                 </li>
