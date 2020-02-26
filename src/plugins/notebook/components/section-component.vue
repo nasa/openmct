@@ -1,8 +1,8 @@
 <template>
 <div class="c-list-item"
-     :class="{'selected': section.isSelected}">
-    <span contenteditable="true"
-          :data-id="section.id"
+     :class="{'selected': section.isSelected}"
+>
+    <span :data-id="section.id"
           @blur="updateName"
           @click="selectSection"
     >
@@ -18,7 +18,6 @@
 </template>
 
 <style lang="scss">
-
 </style>
 
 <script>
@@ -36,7 +35,13 @@ export default {
         return {
         }
     },
+    watch: {
+        section(newSection) {
+            this.toggleContentEditable(newSection);
+        }
+    },
     mounted() {
+        this.toggleContentEditable();
     },
     destroyed() {
     },
@@ -71,15 +76,30 @@ export default {
         },
         selectSection(event) {
             const target = event.target;
+            target.contentEditable = true;
+            const section = target.closest('.c-list-item');
+
+            if (section.className.indexOf('selected') > -1) {
+                return;
+            }
+
             const id = target.dataset.id;
+
             if (!id) {
                 return;
             }
 
             this.$emit(EVENT_SELECT_SECTION, id);
         },
+        toggleContentEditable(section = this.section) {
+            const sectionTitle = this.$el.querySelector('span');
+            sectionTitle.contentEditable = section.isSelected;
+        },
         updateName(event) {
-            const name = event.target.textContent.trim();
+            const target = event.target;
+            target.contentEditable = false;
+            const name = target.textContent.trim();
+
             if (this.section.name === name) {
                 return;
             }
