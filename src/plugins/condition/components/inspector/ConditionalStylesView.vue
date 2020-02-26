@@ -62,6 +62,7 @@ export default {
             this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
             this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
         }
+        this.backgroundColors = ['red', 'blue', 'orange', 'purple', 'gray'];
     },
     methods: {
         addConditionSet() {
@@ -83,7 +84,7 @@ export default {
                     if (!this.findStyleByConditionId(identifier)) {
                         this.conditionalStyles.push({
                             conditionIdentifier: identifier,
-                            style: index ? {backgroundColor: 'gray'} : {backgroundColor: 'red'}
+                            style: {backgroundColor: this.backgroundColors[index]}
                         });
                     }
                 });
