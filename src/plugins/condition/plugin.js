@@ -48,6 +48,7 @@ export default function ConditionPlugin() {
                     conditionCollection: []
                 };
                 domainObject.composition = [];
+                domainObject.telemetry = {};
             }
         });
 

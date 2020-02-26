@@ -4,6 +4,9 @@ export default class ConditionSetTelemetryProvider {
     constructor(openmct) {
         this.openmct = openmct;
     }
+    isTelemetryObject(domainObject) {
+        return domainObject.type === 'conditionSet';
+    }
 
     supportsRequest(domainObject, options) {
         return false;
