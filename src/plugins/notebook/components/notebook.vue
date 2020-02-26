@@ -7,7 +7,8 @@
                 @clear="search"
         />
     </div>
-    <Multipane type="horizontal" class="c-notebook__multipane">
+    <Multipane type="horizontal"
+               class="c-notebook__multipane">
         <Pane class="c-notebook__nav">
             <Sidebar ref="sidebar"
                      :domain-object="internalDomainObject"
@@ -17,7 +18,8 @@
                      :sections="sections"
             />
         </Pane>
-        <Pane handle="before" class="c-notebook__contents">
+        <Pane handle="before"
+              class="c-notebook__contents">
             <div class="c-notebook__controls ">
                 <div class="bread-crumb">
                     {{ getSelectedSection() ? getSelectedSection().name : '' }}
@@ -93,8 +95,6 @@ export default {
     },
     data() {
         return {
-            defaultPageId: null,
-            defaultSectionId: null,
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',
@@ -133,9 +133,6 @@ export default {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.$refs.sidebar.$on(EVENT_UPDATE_SECTION, this.updateSection.bind(this));
         this.$refs.sidebar.$on(EVENT_UPDATE_PAGE, this.updatePage.bind(this));
-
-        this.updateSelectedSection();
-        this.updateSelectedPage();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -210,39 +207,6 @@ export default {
         },
         updateSection({ sections, id = null }) {
             this.mutateObject('configuration.sections', sections);
-        },
-        updateSelectedPage() {
-            const sections = this.getSelectedSection();
-            if (!this.defaultSectionId || sections.length) {
-                return;
-            }
-
-            const defaultSection = sections.find(section => section.id === this.defaultSectionId);
-            if (!defaultSection) {
-                return;
-            }
-
-            sections.forEach(section => {
-                section.isSelected = (section.id === this.defaultSectionId);
-            });
-
-            this.updateSection(sections);
-        },
-        updateSelectedSection() {
-            const pages = this.getPages();
-            if (!this.defaultPageId || !pages.length) {
-                return;
-            }
-
-            const defaultPage = pages.find(page => page.id === this.defaultPageId);
-            if (!defaultPage) {
-                return;
-            }
-
-            pages.forEach(page => {
-                page.isSelected = (page.id === this.defaultPageId);
-            });
-            this.updatePage(pages);
         }
     }
 }

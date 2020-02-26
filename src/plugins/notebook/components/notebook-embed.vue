@@ -201,7 +201,6 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         openSnapshot() {
-            console.log('openSnapshot');
             const self = this;
             const snapshot = new Vue({
                 data: () => {
