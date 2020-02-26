@@ -2,6 +2,7 @@
 .l-multipane {
     display: flex;
     flex: 1 1 auto;
+    overflow: hidden;
 
     &--horizontal,
     > .l-pane {

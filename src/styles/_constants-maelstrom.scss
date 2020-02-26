@@ -91,6 +91,9 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: $interiorMargin, 7px;
+$sideBarBg: rgba(black, 0.2);
+$sideBarHeaderBg: rgba(black, 0.25);
+$sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
