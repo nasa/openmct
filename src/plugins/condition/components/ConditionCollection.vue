@@ -110,6 +110,7 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
         if(this.conditionManager) {
             this.conditionManager.off('conditionSetResultUpdated', this.handleOutputUpdated);
+            this.conditionManager.destroy();
         }
         if (typeof this.stopObservingForChanges === 'function') {
             this.stopObservingForChanges();
