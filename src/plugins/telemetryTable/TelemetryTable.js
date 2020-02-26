@@ -47,6 +47,7 @@ define([
             this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
+            this.datumCache = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
@@ -221,7 +222,6 @@ define([
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            let datumCache = [];
 
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 //Check that telemetry object has not been removed since telemetry was requested.
@@ -230,18 +230,25 @@ define([
                 }
 
                 if (this.paused) {
-                    datumCache.push(datum);
-                } else {
-                    if (datumCache.length) {
-                        datumCache.forEach(cachedDatum => {
-                            this.processRealtimeDatum(cachedDatum, columnMap, keyString, limitEvaluator);
-                        });
-                        datumCache = [];
-                    }
+                    let realtimeDatum = {
+                        datum,
+                        columnMap,
+                        keyString,
+                        limitEvaluator
+                    };
 
+                    this.datumCache.push(realtimeDatum);
+                } else {
                     this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
                 }
             }, subscribeOptions);
+        }
+
+        processDatumCache() {
+            this.datumCache.forEach(cachedDatum => {
+                this.processRealtimeDatum(cachedDatum.datum, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
+            });
+            this.datumCache = [];
         }
 
         processRealtimeDatum(datum, columnMap, keyString, limitEvaluator) {
@@ -283,6 +290,7 @@ define([
 
         unpause() {
             this.paused = false;
+            this.processDatumCache();
             this.boundedRows.subscribeToBounds();
         }
 

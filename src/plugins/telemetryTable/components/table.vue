@@ -23,7 +23,8 @@
 <div class="c-table-wrapper">
     <!-- main contolbar  start-->
     <div v-if="!alternateControlBar.enable"
-        class="c-table-control-bar c-control-bar">
+         class="c-table-control-bar c-control-bar"
+    >
         <button
             v-if="allowExport"
             class="c-button icon-download labeled"
@@ -70,23 +71,26 @@
     <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
-    <div v-if="alternateControlBar.enable &&  markedRows.length"
-         class="c-table-control-bar c-control-bar">
+    <div v-if="alternateControlBar.enable && markedRows.length"
+         class="c-table-control-bar c-control-bar"
+    >
         <div class="c-control-bar__label">
-            {{markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowNamePlural} selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
+            {{ markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowNamePlural} selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
         </div>
 
         <toggle-switch
-                id="show-filtered-rows-toggle"
-                label="Show selected items only"
-                :checked="showingMarkedRowsOnly"
-                @change="toggleMarkedRows">
-        </toggle-switch>
+            id="show-filtered-rows-toggle"
+            label="Show selected items only"
+            :checked="showingMarkedRowsOnly"
+            @change="toggleMarkedRows"
+        />
+
 
         <button
-                class="c-button icon-x labeled"
-                title="Deselect All"
-                @click="unmarkAllRows()">
+            class="c-button icon-x labeled"
+            title="Deselect All"
+            @click="unmarkAllRows()"
+        >
             <span class="c-button__label">Deselect All</span>
         </button>
 
@@ -276,8 +280,8 @@ export default {
             default:() => {
                 return {
                     enable: false,
-                    rowName: 'session',
-                    rowNamePlural: 'sessions'
+                    rowName: '',
+                    rowNamePlural: ''
                 }
             }
         }
@@ -680,12 +684,12 @@ export default {
                 this.pausedByButton = false;
             } else {
                 if (!this.pausedByButton) {
-                   this.undoMarkedRows();
-                   this.table.unpause();
-                   this.paused = false;
+                    this.undoMarkedRows();
+                    this.table.unpause();
+                    this.paused = false;
                 }
             }
-            
+
             this.showingMarkedRowsOnly = false;
         },
         togglePauseByButton() {
@@ -709,7 +713,7 @@ export default {
             } else if (this.markedRows.length === 1) {
                 this.unmarkAllRows();
             }
-            
+
             if (this.markedRows.length === 0) {
                 this.unpause();
             }
