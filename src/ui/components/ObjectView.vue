@@ -4,6 +4,7 @@
 
 <script>
 import _ from "lodash"
+import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 
 export default {
     inject: ["openmct"],
@@ -76,6 +77,12 @@ export default {
             this.clear();
             this.updateView(true);
         },
+        updateStyle(styleObj) {
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                this.$el.style[key] = styleObj[key];
+            })
+        },
         updateView(immediatelySelect) {
             this.clear();
             if (!this.currentObject) {
@@ -129,6 +136,10 @@ export default {
                 this.unlisten();
             }
 
+            if (this.unlistenStyles) {
+                this.unlistenStyles();
+            }
+
             if (this.removeSelectable) {
                 this.removeSelectable();
                 delete this.removeSelectable;
@@ -148,8 +159,27 @@ export default {
                 this.currentObject = mutatedObject;
             });
 
+            this.unlistenStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (mutatedObject) => {
+                this.initConditionalStyles();
+            });
+
             this.viewKey = viewKey;
+
+            this.initConditionalStyles();
+
             this.updateView(immediatelySelect);
+        },
+        initConditionalStyles() {
+            if (this.styleRuleManager) {
+                this.styleRuleManager.destroy();
+                this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
+                delete this.styleRuleManager;
+            }
+
+            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle) {
+                this.styleRuleManager = new StyleRuleManager(this.currentObject, this.openmct);
+                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+            }
         },
         loadComposition() {
             return this.composition.load();

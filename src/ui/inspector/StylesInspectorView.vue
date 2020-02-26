@@ -25,27 +25,27 @@ export default {
     },
     methods: {
         updateSelection(selection) {
-            this.selection = selection;
+            if (selection.length > 0 && selection[0].length > 0) {
+                if (this.component) {
+                    this.component.$destroy();
+                    this.component = undefined;
+                    this.$el.innerHTML = '';
+                }
 
-            if (this.component) {
-                this.component.$destroy();
-                this.component = undefined;
-                this.$el.innerHTML = '';
+                let viewContainer = document.createElement('div');
+                this.$el.append(viewContainer);
+                this.component = new Vue({
+                    provide: {
+                        openmct: this.openmct,
+                        context: selection[0][0].context
+                    },
+                    el: viewContainer,
+                    components: {
+                        ConditionalStylesView
+                    },
+                    template: '<conditional-styles-view></conditional-styles-view>'
+                });
             }
-
-            let viewContainer = document.createElement('div');
-            this.$el.append(viewContainer);
-            this.component = new Vue({
-                provide: {
-                    openmct: this.openmct
-                },
-                el: viewContainer,
-                components: {
-                    ConditionalStylesView
-                },
-                template: '<conditional-styles-view></conditional-styles-view>'
-            });
-
         }
     }
 }

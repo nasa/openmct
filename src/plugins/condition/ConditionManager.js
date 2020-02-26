@@ -27,16 +27,16 @@ import * as EventEmitter from 'eventemitter3';
 export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
-        this.domainObject = domainObject;
         this.openmct = openmct;
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.initialize();
+        this.initialize(domainObject);
     }
 
-    initialize() {
+    initialize(domainObject) {
         this.conditionResults = {};
-        this.openmct.objects.get(this.domainObject.identifier).then((obj) => {
+        this.openmct.objects.get(domainObject.identifier).then((obj) => {
             this.observeForChanges(obj);
+            this.domainObject = obj;
             this.conditionCollection = [];
             if (this.domainObject.configuration.conditionCollection.length) {
                 this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
@@ -229,7 +229,6 @@ export default class ConditionManager extends EventEmitter {
         }
 
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
-            console.log(obj.configuration.output);
             this.emit('conditionSetResultUpdated', {
                 id: this.domainObject.identifier,
                 output: obj.configuration.output,
