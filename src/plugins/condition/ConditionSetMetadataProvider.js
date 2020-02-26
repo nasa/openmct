@@ -26,7 +26,7 @@ export default class ConditionSetMetadataProvider {
                 {
                     name: 'Output',
                     key: 'output',
-                    type: 'string',
+                    format: 'string',
                     hints: {
                         range: 1
                     }

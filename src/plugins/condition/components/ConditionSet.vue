@@ -68,7 +68,7 @@ export default {
             }
         },
         provideTelemetry() {
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject);
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject, (output) => output);
         }
     }
 };
