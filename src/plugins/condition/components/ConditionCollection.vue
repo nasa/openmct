@@ -81,7 +81,6 @@
 <script>
 import Condition from '../../condition/components/Condition.vue';
 import ConditionManager from '../../condition/ConditionManager';
-import uuid from 'uuid';
 
 
 export default {
