@@ -30,4 +30,4 @@ export const TypeKeyConstants = {
     TABS: 'tabs',
     TELEMETRY_MEAN: 'telemetry-mean',
     TELEMETRY_TABLE: 'table'
-}
+};
