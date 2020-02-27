@@ -1,5 +1,9 @@
 <template>
-<div></div>
+<div class="c-properties c-properties--properties">
+    <div class="c-properties__header">
+        Object Styles
+    </div>
+</div>
 </template>
 
 <style>
