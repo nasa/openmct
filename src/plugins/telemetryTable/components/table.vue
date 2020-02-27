@@ -21,11 +21,16 @@
  *****************************************************************************/
 <template>
 <div class="c-table-wrapper">
-    <div class="c-table-control-bar c-control-bar">
-        <button class="c-button icon-download labeled"
-                v-if="allowExport"
-                v-on:click="exportAllDataAsCSV()"
-                title="Export This View's Data">
+    <!-- main contolbar  start-->
+    <div v-if="!marking.useAlternateControlBar"
+         class="c-table-control-bar c-control-bar"
+    >
+        <button
+            v-if="allowExport"
+            class="c-button icon-download labeled"
+            title="Export This View's Data"
+            @click="exportAllDataAsCSV()"
+        >
             <span class="c-button__label">Export Table Data</span>
         </button>
         <button class="c-button icon-download labeled"
@@ -41,20 +46,52 @@
                 title="Unmark All Rows">
             <span class="c-button__label">Unmark All Rows</span>
         </button>
-        <div v-if="enableMarking"
-            class="c-separator">
-        </div>
-        <button v-if="enableMarking"
-                class="c-button icon-pause pause-play labeled"
-                :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
-                v-on:click="togglePauseByButton()"
-                :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
-                <span class="c-button__label">
-                    {{paused ? 'Play' : 'Pause'}}
-                </span>
+        <div
+            v-if="marking.enable"
+            class="c-separator"
+        ></div>
+        <button
+            v-if="marking.enable"
+            class="c-button icon-pause pause-play labeled"
+            :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
+            :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'"
+            @click="togglePauseByButton()"
+        >
+            <span class="c-button__label">
+                {{ paused ? 'Play' : 'Pause' }}
+            </span>
         </button>
+
         <slot name="buttons"></slot>
     </div>
+    <!-- main controlbar end -->
+
+    <!-- alternate controlbar start -->
+    <div v-if="marking.useAlternateControlBar && markedRows.length"
+         class="c-table-control-bar c-control-bar"
+    >
+        <div class="c-control-bar__label">
+            {{ markedRows.length > 1 ? `${markedRows.length} ${marking.rowNamePlural} selected`: `${markedRows.length} ${marking.rowName} selected` }}
+        </div>
+
+        <toggle-switch
+            id="show-filtered-rows-toggle"
+            label="Show selected items only"
+            :checked="isShowingMarkedRowsOnly"
+            @change="toggleMarkedRows"
+        />
+
+        <button
+            class="c-button icon-x labeled"
+            title="Deselect All"
+            @click="unmarkAllRows()"
+        >
+            <span class="c-button__label">Deselect All</span>
+        </button>
+
+        <slot name="buttons"></slot>
+    </div>
+    <!-- alternate controlbar end  -->
 
     <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
          :class="{
@@ -338,6 +375,7 @@ import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -352,7 +390,8 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator
+        TelemetryFilterIndicator,
+        ToggleSwitch
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -372,9 +411,16 @@ export default {
             'type': Boolean,
             'default': true
         },
-        enableMarking: {
-            type: Boolean,
-            default: false
+        marking: {
+            type: Object,
+            default() {
+                return {
+                    enable: false,
+                    useAlternateControlBar: false,
+                    rowName: '',
+                    rowNamePlural: ""
+                }
+            }
         }
     },
     data() {
@@ -406,7 +452,8 @@ export default {
             scrollW: 0,
             markCounter: 0,
             paused: false,
-            markedRows: []
+            markedRows: [],
+            isShowingMarkedRowsOnly: false
         }
     },
     computed: {
@@ -439,6 +486,60 @@ export default {
             }
             return style;
         }
+    },
+    created() {
+        this.filterChanged = _.debounce(this.filterChanged, 500);
+    },
+    mounted() {
+        this.csvExporter = new CSVExporter();
+        this.rowsAdded = _.throttle(this.rowsAdded, 200);
+        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
+        this.scroll = _.throttle(this.scroll, 100);
+
+        this.table.on('object-added', this.addObject);
+        this.table.on('object-removed', this.removeObject);
+        this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('refresh', this.clearRowsAndRerender);
+        this.table.on('historical-rows-processed', this.checkForMarkedRows);
+
+        this.table.filteredRows.on('add', this.rowsAdded);
+        this.table.filteredRows.on('remove', this.rowsRemoved);
+        this.table.filteredRows.on('sort', this.updateVisibleRows);
+        this.table.filteredRows.on('filter', this.updateVisibleRows);
+
+        //Default sort
+        this.sortOptions = this.table.filteredRows.sortBy();
+        this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
+        this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
+        this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
+        this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
+
+        this.table.configuration.on('change', this.updateConfiguration);
+
+        this.calculateTableSize();
+        this.pollForResize();
+        this.calculateScrollbarWidth();
+
+        this.table.initialize();
+    },
+    destroyed() {
+        this.table.off('object-added', this.addObject);
+        this.table.off('object-removed', this.removeObject);
+        this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('refresh', this.clearRowsAndRerender);
+
+        this.table.filteredRows.off('add', this.rowsAdded);
+        this.table.filteredRows.off('remove', this.rowsRemoved);
+        this.table.filteredRows.off('sort', this.updateVisibleRows);
+        this.table.filteredRows.off('filter', this.updateVisibleRows);
+
+        this.table.configuration.off('change', this.updateConfiguration);
+
+        clearInterval(this.resizePollHandle);
+
+        this.table.configuration.destroy();
+
+        this.table.destroy();
     },
     methods: {
         updateVisibleRows() {
@@ -714,18 +815,19 @@ export default {
         },
         unpause(unpausedByButton) {
             if (unpausedByButton) {
-                this.paused = false;
+                this.undoMarkedRows();
                 this.table.unpause();
-                this.markedRows = [];
+                this.paused = false;
                 this.pausedByButton = false;
             } else {
                 if (!this.pausedByButton) {
-                    this.paused = false;
+                    this.undoMarkedRows();
                     this.table.unpause();
-                    this.markedRows = [];
+                    this.paused = false;
                 }
             }
-            
+
+            this.isShowingMarkedRowsOnly = false;
         },
         togglePauseByButton() {
             if (this.paused) {
@@ -738,24 +840,23 @@ export default {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
-        unmarkRow(rowIndex, ctrlKeyModifier) {
-            if (ctrlKeyModifier) {
+        unmarkRow(rowIndex) {
+            if (this.markedRows.length > 1) {
                 let row = this.visibleRows[rowIndex],
                     positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
-                this.markedRows.splice(positionInMarkedArray, 1); 
+                this.markedRows.splice(positionInMarkedArray, 1);
+            } else if (this.markedRows.length === 1) {
+                this.unmarkAllRows();
+            }
 
-                if (this.markedRows.length === 0) {
-                    this.unpause();
-                }
-            } else if (this.markedRows.length) {
-                this.undoMarkedRows();
-                this.markRow(rowIndex);
+            if (this.markedRows.length === 0) {
+                this.unpause();
             }
         },
         markRow(rowIndex, keyModifier) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -774,12 +875,13 @@ export default {
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
-            this.markedRows.forEach(row => row.marked = false);
-            this.markedRows = [];
+            this.undoMarkedRows();
+            this.isShowingMarkedRowsOnly = false;
             this.unpause();
+            this.restorePreviousRows();
         },
         markMultipleConcurrentRows(rowIndex) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -815,6 +917,34 @@ export default {
                         this.markedRows.push(row);
                     }
                 }
+            }
+        },
+        checkForMarkedRows() {
+            this.markedRows = this.table.filteredRows.getRows().filter(row => row.marked);
+        },
+        showRows(rows) {
+            this.table.filteredRows.rows = rows;
+            this.table.filteredRows.emit('filter');
+        },
+        toggleMarkedRows(flag) {
+            if (flag) {
+                this.isShowingMarkedRowsOnly = true;
+                this.userScroll = this.scrollable.scrollTop;
+                this.allRows = this.table.filteredRows.getRows();
+
+                this.showRows(this.markedRows);
+                this.setHeight();
+            } else {
+                this.isShowingMarkedRowsOnly = false;
+                this.restorePreviousRows();
+            }
+        },
+        restorePreviousRows() {
+            if (this.allRows && this.allRows.length) {
+                this.showRows(this.allRows);
+                this.allRows = [];
+                this.setHeight();
+                this.scrollable.scrollTop = this.userScroll;
             }
         }
     },
