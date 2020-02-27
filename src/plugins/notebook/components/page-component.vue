@@ -1,8 +1,8 @@
 <template>
-    <div class="c-list-item"
-         :class="{'selected': page.isSelected}">
-    <span contenteditable="true"
-          :data-id="page.id"
+<div class="c-list-item"
+     :class="{'selected': page.isSelected}"
+>
+    <span :data-id="page.id"
           @click="selectPage"
           @blur="updateName"
     >
@@ -32,7 +32,13 @@ export default {
         return {
         }
     },
+    watch: {
+        page(newPage) {
+            this.toggleContentEditable(newPage);
+        }
+    },
     mounted() {
+        this.toggleContentEditable();
     },
     destroyed() {
     },
@@ -65,8 +71,31 @@ export default {
                 }]
             });
         },
+        selectPage(event) {
+            const target = event.target;
+            target.contentEditable = true;
+            const page = target.closest('.c-list-item');
+
+            if (page.className.indexOf('selected') > -1) {
+                return;
+            }
+
+            const id = target.dataset.id;
+            if (!id) {
+                return;
+            }
+
+            this.$emit(EVENT_SELECT_PAGE, id);
+        },
+        toggleContentEditable(page = this.page) {
+            const pageTitle = this.$el.querySelector('span');
+            pageTitle.contentEditable = page.isSelected;
+        },
         updateName(event) {
-            const name = event.target.textContent.toString();
+            const target = event.target;
+            const name = target.textContent.toString();
+            target.contentEditable = false;
+
             if (this.page.name === name) {
                 return;
             }
@@ -76,15 +105,6 @@ export default {
             }
 
             this.$emit(EVENT_RENAME_PAGE, Object.assign(this.page, { name }));
-        },
-        selectPage(event) {
-            const target = event.target;
-            const id = target.dataset.id;
-            if (!id) {
-                return;
-            }
-
-            this.$emit(EVENT_SELECT_PAGE, id);
         }
     }
 }
