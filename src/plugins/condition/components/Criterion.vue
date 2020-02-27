@@ -71,10 +71,6 @@ export default {
         trigger: {
             type: String,
             required: true
-        },
-        isDefault: {
-            type: Boolean,
-            default: false
         }
     },
     data() {
