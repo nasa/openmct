@@ -22,7 +22,7 @@
 <template>
 <div class="c-table-wrapper">
     <!-- main contolbar  start-->
-    <div v-if="!alternateControlBar.enable"
+    <div v-if="!marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
     >
         <button
@@ -51,11 +51,11 @@
             <span class="c-button__label">Unmark All Rows</span>
         </button>
         <div
-            v-if="enableMarking"
+            v-if="marking.enable"
             class="c-separator"
         ></div>
         <button
-            v-if="enableMarking"
+            v-if="marking.enable"
             class="c-button icon-pause pause-play labeled"
             :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
             :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'"
@@ -71,20 +71,19 @@
     <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
-    <div v-if="alternateControlBar.enable && markedRows.length"
+    <div v-if="marking.useAlternateControlBar && markedRows.length"
          class="c-table-control-bar c-control-bar"
     >
         <div class="c-control-bar__label">
-            {{ markedRows.length > 1 ? `${markedRows.length} ${alternateControlBar.rowNamePlural} selected`: `${markedRows.length} ${alternateControlBar.rowName} selected` }}
+            {{ markedRows.length > 1 ? `${markedRows.length} ${marking.rowNamePlural} selected`: `${markedRows.length} ${marking.rowName} selected` }}
         </div>
 
         <toggle-switch
             id="show-filtered-rows-toggle"
             label="Show selected items only"
-            :checked="showingMarkedRowsOnly"
+            :checked="isShowingMarkedRowsOnly"
             @change="toggleMarkedRows"
         />
-
 
         <button
             class="c-button icon-x labeled"
@@ -271,17 +270,14 @@ export default {
             'type': Boolean,
             'default': true
         },
-        enableMarking: {
-            type: Boolean,
-            default: false
-        },
-        alternateControlBar: {
+        marking: {
             type: Object,
-            default:() => {
+            default() {
                 return {
                     enable: false,
+                    useAlternateControlBar: false,
                     rowName: '',
-                    rowNamePlural: ''
+                    rowNamePlural: ""
                 }
             }
         }
@@ -316,7 +312,7 @@ export default {
             markCounter: 0,
             paused: false,
             markedRows: [],
-            showingMarkedRowsOnly: false
+            isShowingMarkedRowsOnly: false
         }
     },
     computed: {
@@ -690,7 +686,7 @@ export default {
                 }
             }
 
-            this.showingMarkedRowsOnly = false;
+            this.isShowingMarkedRowsOnly = false;
         },
         togglePauseByButton() {
             if (this.paused) {
@@ -719,7 +715,7 @@ export default {
             }
         },
         markRow(rowIndex, keyModifier) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -739,12 +735,12 @@ export default {
         },
         unmarkAllRows(skipUnpause) {
             this.undoMarkedRows();
-            this.showingMarkedRowsOnly = false;
+            this.isShowingMarkedRowsOnly = false;
             this.unpause();
             this.restorePreviousRows();
         },
         markMultipleConcurrentRows(rowIndex) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -791,14 +787,14 @@ export default {
         },
         toggleMarkedRows(flag) {
             if (flag) {
-                this.showingMarkedRowsOnly = true;
+                this.isShowingMarkedRowsOnly = true;
                 this.userScroll = this.scrollable.scrollTop;
                 this.allRows = this.table.filteredRows.getRows();
 
                 this.showRows(this.markedRows);
                 this.setHeight();
             } else {
-                this.showingMarkedRowsOnly = false;
+                this.isShowingMarkedRowsOnly = false;
                 this.restorePreviousRows();
             }
         },
