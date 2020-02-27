@@ -125,7 +125,7 @@ export default class ConditionManager extends EventEmitter {
                     criteria: isDefault ? [] : [{
                         telemetry: '',
                         operation: '',
-                        input: '',
+                        input: [],
                         metadata: ''
                     }]
                 },
@@ -185,7 +185,7 @@ export default class ConditionManager extends EventEmitter {
                 found = {
                     item: this.conditionCollection[i],
                     index: i
-                }
+                };
                 break;
             }
         }
@@ -197,13 +197,11 @@ export default class ConditionManager extends EventEmitter {
     reorderConditions(reorderPlan) {
         let oldConditions = Array.from(this.domainObject.configuration.conditionCollection);
         let newCollection = [];
-        console.log(this.domainObject.configuration.conditionCollection);
         reorderPlan.forEach((reorderEvent) => {
             let item = oldConditions[reorderEvent.oldIndex];
             newCollection.push(item);
             this.domainObject.configuration.conditionCollection = newCollection;
         });
-        console.log(this.domainObject.configuration.conditionCollection);
         this.persist();
     }
 
