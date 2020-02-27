@@ -75,8 +75,8 @@
                                 <li>
                                     <label>Output</label>
                                     <span class="controls">
-                                        <select v-model="selectedOutputKey"
-                                                @change="checkInputValue"
+                                        <select v-model="selectedOutputSelection"
+                                                @change="setOutputValue"
                                         >
                                             <option value="">- Select Output -</option>
                                             <option v-for="option in outputOptions"
@@ -86,7 +86,7 @@
                                                 {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                                             </option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2]"
+                                        <input v-if="selectedOutputSelection === outputOptions[2]"
                                                v-model="domainObject.configuration.output"
                                                class="t-condition-name-input"
                                                type="text"
@@ -199,7 +199,7 @@ export default {
             currentCriteria: this.currentCriteria,
             expanded: true,
             trigger: 'all',
-            selectedOutputKey: '',
+            selectedOutputSelection: '',
             stringOutputField: false,
             outputOptions: ['false', 'true', 'string']
         };
@@ -220,11 +220,29 @@ export default {
     },
     methods: {
         initialize() {
-            this.setOutput();
+            this.setOutputSelection();
             if (!this.domainObject.isDefault) {
                 this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
                 this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
             }
+        },
+        setOutputSelection() {
+            let conditionOutput = this.domainObject.configuration.output;
+            if (conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputSelection = 'string';
+                } else {
+                    this.selectedOutputSelection = conditionOutput;
+                }
+            }
+        },
+        setOutputValue() {
+            if (this.selectedOutputSelection === 'string') {
+                this.domainObject.configuration.output = '';
+            } else {
+                this.domainObject.configuration.output = this.selectedOutputSelection;
+            }
+            this.persist();
         },
         addCriteria() {
             const criteriaObject = {
@@ -264,33 +282,15 @@ export default {
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
         },
-        setOutput() {
-            let conditionOutput = this.domainObject.configuration.output;
-            if (conditionOutput) {
-                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                    this.selectedOutputKey = 'string';
-                } else {
-                    this.selectedOutputKey = conditionOutput;
-                }
-            }
-        },
-        persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
-        },
-        checkInputValue() {
-            if (this.selectedOutputKey === 'string') {
-                this.domainObject.configuration.output = '';
-            } else {
-                this.domainObject.configuration.output = this.selectedOutputKey;
-            }
-            this.persist();
-        },
         updateCurrentCondition() {
             this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry
             return this.currentCriteria && identifier;
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         }
     }
 }
