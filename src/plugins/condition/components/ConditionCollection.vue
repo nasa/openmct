@@ -79,9 +79,8 @@
 </template>
 
 <script>
-import Condition from '../../condition/components/Condition.vue';
-import ConditionManager from '../../condition/ConditionManager';
-import uuid from 'uuid';
+import Condition from './Condition.vue';
+import ConditionManager from '../ConditionManager';
 
 
 export default {

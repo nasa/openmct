@@ -79,8 +79,6 @@ export default class TelemetryCriterion extends EventEmitter {
             params.push(data[this.metadata]);
             if (this.input instanceof Array && this.input.length) {
                 params.push(this.input[0]);
-            } else if (this.input) {
-                params.push(this.input);
             }
             if (typeof comparator === 'function') {
                 result = comparator(params);

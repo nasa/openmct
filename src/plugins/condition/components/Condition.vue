@@ -68,6 +68,7 @@
                                         <input v-model="domainObject.configuration.name"
                                                class="t-condition-input__name"
                                                type="text"
+                                               @blur="persist"
                                         >
                                     </span>
                                 </li>
@@ -161,7 +162,7 @@
 </template>
 
 <script>
-import Criterion from '../../condition/components/Criterion.vue';
+import Criterion from './Criterion.vue';
 
 export default {
     inject: ['openmct'],
