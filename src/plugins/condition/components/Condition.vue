@@ -236,6 +236,7 @@ export default {
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
+            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
