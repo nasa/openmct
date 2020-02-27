@@ -1,36 +1,42 @@
 <template>
-    <div class="c-sidebar">
-        <div class="c-sidebar__pane">
-            <div class="c-sidebar__header">
-                <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
-            </div>
-            <div class="c-sidebar__contents-and-controls">
-                <button @click="addSection">+ Add {{ sectionTitle }}</button>
-                <SectionCollection class="c-sidebar__contents"
-                                   :domain-object="domainObject"
-                                   :sections="sections"
-                                   :section-title="sectionTitle"
-                />
-            </div>
+<div class="c-sidebar">
+    <div class="c-sidebar__pane">
+        <div class="c-sidebar__header">
+            <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
         </div>
-        <div class="c-sidebar__pane">
-            <div class="c-sidebar__header">
-                <span class="c-sidebar__header-label">{{ pageTitle }}</span>
-                <button class="l-pane__collapse-button c-button"
-                        @click="toggleCollapse"
-                ></button>
-            </div>
-            <div class="c-sidebar__contents-and-controls">
-                <button @click="addPage">+ Add {{ pageTitle }}</button>
-                <PageCollection class="c-sidebar__contents"
-                                :domain-object="domainObject"
-                                :pages="pages"
-                                :sections="sections"
-                                :page-title="pageTitle"
-                />
-            </div>
+        <div class="c-sidebar__contents-and-controls">
+            <button class="c-list-button" @click="addSection">
+                <span class="c-button c-list-button__button icon-plus"></span>
+                <span class="c-list-button__label">Add {{ sectionTitle }}</span>
+            </button>
+            <SectionCollection class="c-sidebar__contents"
+                               :domain-object="domainObject"
+                               :sections="sections"
+                               :section-title="sectionTitle"
+            />
         </div>
     </div>
+    <div class="c-sidebar__pane">
+        <div class="c-sidebar__header">
+            <span class="c-sidebar__header-label">{{ pageTitle }}</span>
+            <button class="l-pane__collapse-button c-button"
+                    @click="toggleCollapse"
+            ></button>
+        </div>
+        <div class="c-sidebar__contents-and-controls">
+            <button class="c-list-button" @click="addPage">
+                <span class="c-button c-list-button__button icon-plus"></span>
+                <span class="c-list-button__label">Add {{ pageTitle }}</span>
+            </button>
+            <PageCollection class="c-sidebar__contents"
+                            :domain-object="domainObject"
+                            :pages="pages"
+                            :sections="sections"
+                            :page-title="pageTitle"
+            />
+        </div>
+    </div>
+</div>
 </template>
 
 <script>

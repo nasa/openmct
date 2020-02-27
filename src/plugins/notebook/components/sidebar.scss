@@ -5,7 +5,6 @@
 
     > * {
         // One or more columns
-        background: $sideBarBg;
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
@@ -14,7 +13,8 @@
             margin-left: $interiorMarginSm;
         }
 
-        > * + * {
+        > * + *,
+        > * > * + * {
             // Add margin-top to first and second level children
             margin-top: $interiorMargin;
         }
@@ -38,14 +38,23 @@
         display: flex;
         align-items: center;
         text-transform: uppercase;
+        &-label {
+            @include ellipsize();
+        }
     }
 
     &__contents {
+        border-top: 1px solid $colorInteriorBorder;
         flex: 1 1 auto;
         overflow-x: hidden;
         overflow-y: scroll;
     }
 
+    .c-list-button {
+        .c-button {
+            font-size: 0.8em;
+        }
+    }
 
 
 

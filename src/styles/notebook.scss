@@ -40,6 +40,7 @@
     }
 
     .c-sidebar {
+        background: $sideBarBg;
         .c-sidebar__pane {
             flex-basis: 50%;
         }
