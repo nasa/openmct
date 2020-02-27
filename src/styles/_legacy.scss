@@ -28,6 +28,16 @@
     height: $controlBarH;
 }
 
+.c-control-bar {
+    display: flex;
+    align-items: center;
+
+    &__label {
+        display: inline-block;
+        white-space: nowrap;
+    }
+}
+
 .l-view-section {
     @include abs();
     overflow: auto;
