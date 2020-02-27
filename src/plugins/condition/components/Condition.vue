@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import Criterion from '../../condition/components/Criterion.vue';
+import Criterion from './Criterion.vue';
 
 export default {
     inject: ['openmct'],

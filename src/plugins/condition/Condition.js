@@ -22,9 +22,9 @@
 
 import * as EventEmitter from 'eventemitter3';
 import uuid from 'uuid';
-import TelemetryCriterion from "@/plugins/condition/criterion/TelemetryCriterion";
-import { TRIGGER } from "@/plugins/condition/utils/constants";
-import {computeCondition} from "@/plugins/condition/utils/evaluator";
+import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import { TRIGGER } from "./utils/constants";
+import {computeCondition} from "./utils/evaluator";
 
 /*
 * conditionConfiguration = {
