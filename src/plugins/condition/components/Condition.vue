@@ -114,14 +114,27 @@
                                 <ul v-if="telemetry.length"
                                     class="t-widget-condition-config"
                                 >
-                                    <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
-                                               :key="index"
-                                               :telemetry="telemetry"
-                                               :criterion="criterion"
-                                               :index="index"
-                                               :trigger="domainObject.configuration.trigger"
-                                               @persist="persist"
-                                    />
+                                    <li v-for="(criterion, index) in domainObject.configuration.criteria"
+                                        :key="index"
+                                        class="has-local-controls t-condition"
+                                    >
+                                        <Criterion :telemetry="telemetry"
+                                                   :criterion="criterion"
+                                                   :index="index"
+                                                   :trigger="domainObject.configuration.trigger"
+                                                   :is-default="domainObject.configuration.criteria.length === 1"
+                                                   @persist="persist"
+                                        />
+                                        <div class="c-c__criterion-controls">
+                                            <span class="is-enabled c-c__duplicate"
+                                                  @click="cloneCriterion(index)"
+                                            ></span>
+                                            <span v-if="!(domainObject.configuration.criteria.length === 1)"
+                                                  class="is-enabled c-c__trash"
+                                                  @click="removeCriterion(index)"
+                                            ></span>
+                                        </div>
+                                    </li>
                                 </ul>
                                 <div class="holder c-c-button-wrapper align-left">
                                     <span class="c-c-label-spacer"></span>
@@ -202,7 +215,8 @@ export default {
             expanded: true,
             selectedOutputKey: '',
             stringOutputField: false,
-            outputOptions: ['false', 'true', 'string']
+            outputOptions: ['false', 'true', 'string'],
+            criterionIndex: 0
         };
     },
     computed: {
@@ -265,6 +279,16 @@ export default {
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
         },
+        removeCriterion(index) {
+            this.domainObject.configuration.criteria.splice(index, 1);
+            this.persist()
+        },
+        cloneCriterion(index) {
+            const clonedCriterion = {...this.domainObject.configuration.criteria[index]};
+            this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
+            this.persist()
+        },
+
         setOutput() {
             let conditionOutput = this.domainObject.configuration.output;
             if (conditionOutput) {
