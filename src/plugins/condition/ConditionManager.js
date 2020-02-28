@@ -29,7 +29,6 @@ export default class ConditionManager extends EventEmitter {
         super();
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.timeAPI = this.openmct.time;
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.initialize();
     }
