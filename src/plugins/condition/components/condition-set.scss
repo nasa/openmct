@@ -64,6 +64,10 @@ section {
     margin-top: 5px;
 }
 
+.c-c__condition-collection.is-disabled {
+    opacity: 0.5;
+}
+
 .widget-condition form {
     padding: 0.5em;
     display: flex;
@@ -91,6 +95,10 @@ section {
     font-weight: bold;
     color: #eee;
     border-radius: 6px;
+
+    &.is-disabled {
+        opacity: 0.5;
+    }
 }
 
 .c-cs__disclosure-triangle,
