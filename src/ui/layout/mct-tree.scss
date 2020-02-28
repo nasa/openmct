@@ -156,6 +156,7 @@
     &__item {
         &__name {
             $p: $interiorMarginSm;
+            @include ellipsize();
             padding-bottom: $p;
             padding-top: $p;
         }
