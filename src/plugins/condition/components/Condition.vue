@@ -102,7 +102,9 @@
                                     <li class="has-local-controls t-condition">
                                         <label>Match when</label>
                                         <span class="controls">
-                                            <select v-model="trigger">
+                                            <select v-model="domainObject.configuration.trigger"
+                                                    @change="persist"
+                                            >
                                                 <option value="all">all criteria are met</option>
                                                 <option value="any">any criteria are met</option>
                                             </select>
@@ -119,7 +121,7 @@
                                         <Criterion :telemetry="telemetry"
                                                    :criterion="criterion"
                                                    :index="index"
-                                                   :trigger="trigger"
+                                                   :trigger="domainObject.configuration.trigger"
                                                    :is-default="domainObject.configuration.criteria.length === 1"
                                                    @persist="persist"
                                         />
@@ -211,7 +213,6 @@ export default {
             domainObject: this.domainObject,
             currentCriteria: this.currentCriteria,
             expanded: true,
-            trigger: 'all',
             selectedOutputKey: '',
             stringOutputField: false,
             outputOptions: ['false', 'true', 'string'],
