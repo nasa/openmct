@@ -25,7 +25,8 @@
     }
 }
 
-.c-tree {
+.c-tree,
+.c-list {
     @include userSelectNone();
     overflow-x: hidden;
     overflow-y: auto;
@@ -33,11 +34,7 @@
 
     li {
         position: relative;
-        &.c-tree__item-h { display: block; }
-    }
-
-    .c-tree {
-        margin-left: 15px;
+        &[class*="__item-h"] { display: block; }
     }
 
     &__item {
@@ -47,20 +44,13 @@
         align-items: center;
         cursor: pointer;
         line-height: 110%;
-        padding: $interiorMargin - $aPad;
+        padding: $interiorMarginSm;
         transition: background 150ms ease;
-
-        > * + * {
-            margin-left: $interiorMarginSm;
-        }
 
         &:hover {
             background: $colorItemTreeHoverBg;
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
 
-            .c-tree__item__name {
+            [class*="__name"] {
                 color: $colorItemTreeHoverFg;
             }
         }
@@ -68,13 +58,44 @@
         &.is-navigated-object,
         &.is-selected {
             background: $colorItemTreeSelectedBg;
+
+            [class*="__name"] {
+                color: $colorItemTreeSelectedFg;
+            }
+        }
+    }
+}
+
+.c-tree {
+    .c-tree {
+        margin-left: 15px;
+    }
+
+    &__item {
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        &:hover {
+            //background: $colorItemTreeHoverBg;
             .c-tree__item__type-icon:before {
                 color: $colorItemTreeIconHover;
             }
 
-            .c-tree__item__name {
-                color: $colorItemTreeSelectedFg;
+            //.c-tree__item__name {
+            //    color: $colorItemTreeHoverFg;
+            //}
+        }
+
+        &.is-navigated-object,
+        &.is-selected {
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeIconHover;
             }
+
+            //.c-tree__item__name {
+            //    color: $colorItemTreeSelectedFg;
+            //}
         }
 
         &.is-being-edited {

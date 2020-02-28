@@ -1,8 +1,9 @@
 <template>
-<div class="c-list-item"
-     :class="{'selected': page.isSelected}"
+<div class="c-list__item js-list__item"
+     :class="{'is-selected': page.isSelected}"
 >
-    <span :data-id="page.id"
+    <span class="c-list__item__name"
+          :data-id="page.id"
           @click="selectPage"
           @blur="updateName"
     >
@@ -74,7 +75,7 @@ export default {
         selectPage(event) {
             const target = event.target;
             target.contentEditable = true;
-            const page = target.closest('.c-list-item');
+            const page = target.closest('.js-list__item');
 
             if (page.className.indexOf('selected') > -1) {
                 return;

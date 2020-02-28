@@ -20,6 +20,10 @@
         }
     }
 
+    &__pane {
+        // Holds header, contents-and-controls
+    }
+
     &__header,
     &__contents {
         padding: $interiorMargin;
@@ -36,6 +40,7 @@
         background: $sideBarHeaderBg;
         color: $sideBarHeaderFg;
         display: flex;
+        flex: 0 0 auto;
         align-items: center;
         text-transform: uppercase;
     }
@@ -44,35 +49,5 @@
         flex: 1 1 auto;
         overflow-x: hidden;
         overflow-y: scroll;
-    }
-
-
-
-
-
-
-
-
-    .c-sidebar__header, .c-sidebar__contents {
-        //display: flex;
-        //
-        //div, span {
-        //    flex-basis: 50%;
-        //}
-
-
-        button {
-            flex-basis: 10px;
-            margin-right: 10px;
-        }
-
-        .section, .page {
-            border-radius: 4px;
-            padding: 2px 5px 2px 12px;
-
-            &.selected {
-                background-color: #7d7d7d;
-            }
-        }
     }
 }
