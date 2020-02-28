@@ -487,6 +487,13 @@ export default {
             return style;
         }
     },
+    watch: {
+        markedRows: {
+            handler(newVal, oldVal) {
+                this.$emit('marked-rows-updated', newVal, oldVal);
+            }
+        }
+    },
     created() {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
@@ -920,6 +927,7 @@ export default {
             }
         },
         checkForMarkedRows() {
+            this.isShowingMarkedRowsOnly = false;
             this.markedRows = this.table.filteredRows.getRows().filter(row => row.marked);
         },
         showRows(rows) {
