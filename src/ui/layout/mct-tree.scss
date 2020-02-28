@@ -35,6 +35,9 @@
     li {
         position: relative;
         &[class*="__item-h"] { display: block; }
+        + li {
+            margin-top: 1px;
+        }
     }
 
     &__item {
@@ -44,7 +47,7 @@
         align-items: center;
         cursor: pointer;
         line-height: 110%;
-        padding: $interiorMarginSm;
+        padding: $interiorMarginSm $interiorMargin;
         transition: background 150ms ease;
 
         &:hover {
@@ -77,14 +80,9 @@
         }
 
         &:hover {
-            //background: $colorItemTreeHoverBg;
             .c-tree__item__type-icon:before {
                 color: $colorItemTreeIconHover;
             }
-
-            //.c-tree__item__name {
-            //    color: $colorItemTreeHoverFg;
-            //}
         }
 
         &.is-navigated-object,
@@ -92,10 +90,6 @@
             .c-tree__item__type-icon:before {
                 color: $colorItemTreeIconHover;
             }
-
-            //.c-tree__item__name {
-            //    color: $colorItemTreeSelectedFg;
-            //}
         }
 
         &.is-being-edited {
@@ -154,6 +148,16 @@
             [class*="view-control"] {
                 width: ceil($mobileTreeItemH * 0.5);
             }
+        }
+    }
+}
+
+.c-list {
+    &__item {
+        &__name {
+            $p: $interiorMarginSm;
+            padding-bottom: $p;
+            padding-top: $p;
         }
     }
 }
