@@ -37,7 +37,7 @@ import {computeCondition} from "./utils/evaluator";
 *       {
 *           telemetry: '',
 *           operation: '',
-*           input: '',
+*           input: [],
 *           metadata: ''
 *       }
 *   ]
