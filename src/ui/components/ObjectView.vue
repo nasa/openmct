@@ -32,6 +32,9 @@ export default {
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
         }
+        if (this.unlistenStyles) {
+            this.unlistenStyles();
+        }
     },
     created() {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
@@ -44,6 +47,16 @@ export default {
             capture: true
         });
         this.$el.addEventListener('drop', this.addObjectToParent);
+        if (this.currentObject) {
+            this.initConditionalStyles();
+            if (this.unlistenStyles) {
+                this.unlistenStyles();
+            }
+            this.unlistenStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (mutatedObject) => {
+                this.initConditionalStyles();
+            });
+        }
+
     },
     methods: {
         clear() {

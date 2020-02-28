@@ -36,6 +36,7 @@
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
+            :style="conditionalStyle"
         >
             <div class="c-telemetry-view__label-text">
                 {{ domainObject.name }}
@@ -47,6 +48,7 @@
             :title="fieldName"
             class="c-telemetry-view__value"
             :class="[telemetryClass]"
+            :style="!telemetryClass && conditionalStyle"
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
@@ -59,6 +61,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
+import StyleRuleManager from "../../condition/StyleRuleManager";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],
@@ -109,7 +112,8 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined
+            currentObjectPath: undefined,
+            conditionalStyle: ''
         }
     },
     computed: {
@@ -182,6 +186,10 @@ export default {
             this.removeSelectable();
         }
 
+        if (this.unlistenStyles) {
+            this.unlistenStyles();
+        }
+
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
@@ -224,6 +232,13 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.initConditionalStyles();
+            if (this.unlistenStyles) {
+                this.unlistenStyles();
+            }
+            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.conditionalStyle', (mutatedObject) => {
+                this.initConditionalStyles();
+            });
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -248,6 +263,21 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        },
+        initConditionalStyles() {
+            if (this.styleRuleManager) {
+                this.styleRuleManager.destroy();
+                this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
+                delete this.styleRuleManager;
+            }
+
+            if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle && this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
+                this.styleRuleManager = new StyleRuleManager(this.domainObject, this.openmct);
+                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+            }
+        },
+        updateStyle(styleObj) {
+            this.conditionalStyle = styleObj;
         }
     }
 }
