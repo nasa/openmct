@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
 import Condition from "./Condition";
 import uuid from "uuid";
 import * as EventEmitter from 'eventemitter3';
