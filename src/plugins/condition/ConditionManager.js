@@ -228,7 +228,7 @@ export default class ConditionManager extends EventEmitter {
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
             this.emit('conditionSetResultUpdated',
                 Object.assign({},
-                    resultObj.data,
+                    resultObj ? resultObj.data : {},
                     { output: obj.configuration.output }
                 )
             )
