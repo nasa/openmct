@@ -190,14 +190,15 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleCriterionResult(eventData) {
-        let id = eventData.id;
+        const id = eventData.id;
+        const conditionData = eventData.data;
+        
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = eventData.data.result;
         }
-        // change criterion result to be condition result as passed down the line
-        // hacky but trying not to make sweeping changes to current architecture
-        eventData.data.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
-        this.emitEvent('conditionResultUpdated', eventData.data);
+
+        conditionData.data.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        this.emitEvent('conditionResultUpdated', conditionData);
     }
 
     subscribe() {
