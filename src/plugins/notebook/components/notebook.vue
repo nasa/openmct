@@ -15,7 +15,8 @@
                type="horizontal"
                class="c-notebook__multipane"
     >
-        <Pane class="c-notebook__nav">
+        <Pane handle="after"
+              class="c-notebook__nav">
             <Sidebar ref="sidebar"
                      :domain-object="internalDomainObject"
                      :page-title="internalDomainObject.configuration.pageTitle"
@@ -24,7 +25,7 @@
                      :sections="sections"
             />
         </Pane>
-        <Pane handle="before"
+        <Pane
               class="c-notebook__contents"
         >
             <div class="c-notebook__controls ">
