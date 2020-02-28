@@ -115,7 +115,6 @@ export default class ConditionManager extends EventEmitter {
             conditionObj = {
                 isDefault: isDefault,
                 type: 'condition',
-                name: isDefault ? 'Default' : 'Unnamed Condition',
                 identifier: {
                     ...this.domainObject.identifier,
                     key: uuid()
@@ -123,7 +122,7 @@ export default class ConditionManager extends EventEmitter {
                 configuration: {
                     name: isDefault ? 'Default' : 'Unnamed Condition',
                     output: 'false',
-                    trigger: 'any',
+                    trigger: 'all',
                     criteria: isDefault ? [] : [{
                         telemetry: '',
                         operation: '',
