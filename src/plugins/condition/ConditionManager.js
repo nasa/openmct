@@ -208,29 +208,29 @@ export default class ConditionManager extends EventEmitter {
     handleConditionResult(resultObj) {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
         let currentConditionIdentifier = conditionCollection[conditionCollection.length-1];
-        // This sets timestamps for the default condition
-        let currentConditionResult = resultObj ? resultObj.data : {};
 
         if (resultObj) {
             let idAsString = this.openmct.objects.makeKeyString(resultObj.id);
             if (this.findConditionById(idAsString)) {
-                this.conditionResults[idAsString] = resultObj.data;
+                this.conditionResults[idAsString] = resultObj.data.result;
             }
         }
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
             let conditionIdAsString = this.openmct.objects.makeKeyString(conditionCollection[i]);
-            if (this.conditionResults[conditionIdAsString] && this.conditionResults[conditionIdAsString].result) {
+            if (this.conditionResults[conditionIdAsString]) {
                 //first condition to be true wins
                 currentConditionIdentifier = conditionCollection[i];
-                currentConditionResult = this.conditionResults[conditionIdAsString];
                 break;
             }
         }
 
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
             this.emit('conditionSetResultUpdated',
-                Object.assign(currentConditionResult, {output: obj.configuration.output})
+                Object.assign({},
+                    resultObj.data,
+                    { output: obj.configuration.output }
+                )
             )
         });
     }
