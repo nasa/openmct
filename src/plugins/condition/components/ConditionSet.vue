@@ -63,12 +63,10 @@ export default {
     },
     methods: {
         updateCurrentOutput(currentConditionResult) {
-            if (this.openmct.objects.makeKeyString(currentConditionResult.id) === this.conditionSetIdentifier) {
-                this.currentConditionOutput = currentConditionResult.output;
-            }
+            this.currentConditionOutput = currentConditionResult.output;
         },
         provideTelemetry() {
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject, (output) => output);
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject, output => output);
         }
     }
 };
