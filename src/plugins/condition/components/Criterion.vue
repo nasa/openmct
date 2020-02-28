@@ -44,19 +44,16 @@
                     {{ option.text }}
                 </option>
             </select>
-            <input v-if="inputCount > 0"
-                   v-model="criterion.input[0]"
-                   class="t-condition-name-input"
-                   type="text"
-                   @blur="persist"
+            <span v-for="(item, inputIndex) in Array, inputCount"
+                  :key="inputIndex"
             >
-            <span v-if="inputCount === 2">and</span>
-            <input v-if="inputCount === 2"
-                   v-model="criterion.input[1]"
-                   class="t-condition-name-input"
-                   type="text"
-                   @blur="persist"
-            >
+                <input v-model="criterion.input[inputIndex]"
+                       class="t-condition-name-input"
+                       type="text"
+                       @blur="persist"
+                >
+                <span v-if="inputIndex < inputCount-1">and</span>
+            </span>
         </span>
     </span>
 </li>
