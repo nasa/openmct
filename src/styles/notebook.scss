@@ -130,9 +130,41 @@
         }
     }
 
+    /***** PAGE VIEW */
+    &__page-view {
+        &__header {
+            display: flex;
+            > * {
+                // First thing should expand as much as it can...
+                flex: 1 1 auto;
+                + * {
+                    // Following things should keep to themselves and stay small
+                    flex: 0 0 auto;
+                    margin-left: $interiorMargin;
+                }
+            }
+        }
+
+        &__path {
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 1.3em;
+            > * {
+                // Section
+                flex: 0 0 auto;
+                + * {
+                    // Page
+                    display: inline;
+                    flex: 1 1 auto;
+                    @include ellipsize();
+                }
+            }
+        }
+    }
+
     &__entries {
         flex-direction: column;
-        flex: 1 1 auto;
+        flex: 1 1 auto !important;
         padding-right: $interiorMarginSm;
         overflow-x: hidden;
         overflow-y: scroll;
@@ -140,9 +172,10 @@
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
         }
-
     }
 }
+
+
 
 /****************************** ENTRIES */
 .c-ne {

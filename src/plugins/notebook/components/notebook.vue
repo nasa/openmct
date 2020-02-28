@@ -11,12 +11,16 @@
                    ref="searchResults"
                    :results="getSearchResults()"
     />
+
     <Multipane v-else
                type="horizontal"
                class="c-notebook__multipane"
     >
         <Pane handle="after"
-              class="c-notebook__nav">
+              collapsable
+              label="Navigation"
+              class="c-notebook__nav"
+        >
             <Sidebar ref="sidebar"
                      :domain-object="internalDomainObject"
                      :page-title="internalDomainObject.configuration.pageTitle"
@@ -25,15 +29,17 @@
                      :sections="sections"
             />
         </Pane>
-        <Pane
-              class="c-notebook__contents"
-        >
-            <div class="c-notebook__controls ">
-                <div class="bread-crumb">
-                    {{ getSelectedSection() ? getSelectedSection().name : '' }}
-                    {{ getSelectedPage() ? getSelectedPage().name : '' }}
+        <Pane class="c-notebook__page-view">
+            <div class="c-notebook__page-view__header">
+                <div class="c-notebook__page-view__path c-path">
+                    <span class="c-notebook__path__section c-path__item">
+                        {{ getSelectedSection() ? getSelectedSection().name : '' }}
+                    </span>
+                    <span class="c-notebook__path__page c-path__item">
+                        {{ getSelectedPage() ? getSelectedPage().name : '' }}
+                    </span>
                 </div>
-                <div>
+                <div class="c-notebook__page-view__controls">
                     <select v-model="showTime"
                             class="c-notebook__controls__time"
                     >

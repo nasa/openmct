@@ -16,9 +16,6 @@
     <div class="c-sidebar__pane">
         <div class="c-sidebar__header">
             <span class="c-sidebar__header-label">{{ pageTitle }}</span>
-            <button class="l-pane__collapse-button c-button icon-arrow-right-equilateral"
-                    @click="toggleCollapse"
-            ></button>
         </div>
         <div class="c-sidebar__contents-and-controls">
             <button @click="addPage">+ Add {{ pageTitle }}</button>
