@@ -83,7 +83,7 @@
                                                     :key="option"
                                                     :value="option"
                                             >
-                                                {{ option.charAt(0).toUpperCase() + option.slice(1) }}
+                                                {{ initCap(option) }}
                                             </option>
                                         </select>
                                         <input v-if="selectedOutputSelection === outputOptions[2]"
@@ -219,11 +219,6 @@ export default {
             criterionIndex: 0
         };
     },
-    computed: {
-        initCap: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1)
-        }
-    },
     destroyed() {
         this.destroy();
     },
@@ -302,6 +297,9 @@ export default {
         },
         persist() {
             this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        },
+        initCap: function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1)
         }
     }
 }
