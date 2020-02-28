@@ -72,17 +72,19 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     computeResult(data) {
-        let comparator = this.findOperation(this.operation);
-        let params = [];
         let result = false;
-        params.push(data[this.metadata]);
-        if (this.input instanceof Array && this.input.length) {
-            params.push(this.input[0]);
-        } else if (this.input) {
-            params.push(this.input);
-        }
-        if (typeof comparator === 'function') {
-            result = comparator(params);
+        if (data) {
+            let comparator = this.findOperation(this.operation);
+            let params = [];
+            params.push(data[this.metadata]);
+            if (this.input instanceof Array && this.input.length) {
+                params.push(this.input[0]);
+            } else {
+                params.push(this.input);
+            }
+            if (typeof comparator === 'function') {
+                result = comparator(params);
+            }
         }
         return result;
     }
@@ -100,12 +102,17 @@ export default class TelemetryCriterion extends EventEmitter {
 
     /**
      *  Subscribes to the telemetry object and returns an unsubscribe function
+     *  If the telemetry is not valid, returns nothing
      */
     subscribe() {
-        this.unsubscribe();
-        this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
-            this.handleSubscription(datum);
-        });
+        if (this.isValid()) {
+            this.unsubscribe();
+            this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
+                this.handleSubscription(datum);
+            });
+        } else {
+            this.handleSubscription();
+        }
     }
 
     /**

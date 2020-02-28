@@ -177,8 +177,7 @@
 </template>
 
 <script>
-import ConditionClass from "@/plugins/condition/Condition";
-import Criterion from '../../condition/components/Criterion.vue';
+import Criterion from './Criterion.vue';
 
 export default {
     inject: ['openmct'],
@@ -236,10 +235,6 @@ export default {
     methods: {
         initialize() {
             this.setOutput();
-            if (!this.domainObject.isDefault) {
-                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
-                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-            }
         },
         addCriteria() {
             const criteriaObject = {
@@ -256,19 +251,6 @@ export default {
             this.$emit('setMoveIndex', this.conditionIndex);
         },
         destroy() {
-            if (this.conditionClass) {
-                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-                if (typeof this.conditionClass.destroy === 'function') {
-                    this.conditionClass.destroy();
-                }
-                delete this.conditionClass;
-            }
-        },
-        handleConditionResult(args) {
-            this.$emit('conditionResultUpdated', {
-                id: this.conditionIdentifier,
-                result: args.data.result
-            })
         },
         removeCondition(ev) {
             this.$emit('removeCondition', this.conditionIdentifier);
@@ -308,9 +290,6 @@ export default {
             } else {
                 this.domainObject.configuration.output = this.selectedOutputKey;
             }
-        },
-        updateCurrentCondition() {
-            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry
