@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import _ from 'lodash';
 import Condition from "./Condition";
 import uuid from "uuid";
 import * as EventEmitter from 'eventemitter3';
@@ -29,6 +30,7 @@ export default class ConditionManager extends EventEmitter {
         super();
         this.domainObject = domainObject;
         this.openmct = openmct;
+        this.timeAPI = this.openmct.time;
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.initialize();
     }
@@ -207,9 +209,9 @@ export default class ConditionManager extends EventEmitter {
 
     handleConditionResult(resultObj) {
         let conditionCollection = this.domainObject.configuration.conditionCollection;
-        // set current condition to default condition
         let currentConditionIdentifier = conditionCollection[conditionCollection.length-1];
-        let currentConditionResult = {};
+        // This sets timestamps for the default condition
+        let currentConditionResult = resultObj ? resultObj.data : {};
 
         if (resultObj) {
             let idAsString = this.openmct.objects.makeKeyString(resultObj.id);
