@@ -25,9 +25,7 @@
     <div class="c-sw-edit__ui holder">
         <CurrentOutput :output="currentConditionOutput" />
         <TestData :is-editing="isEditing" />
-        <ConditionCollection :is-editing="isEditing"
-                             @currentConditionSetOutputUpdated="updateCurrentOutput"
-        />
+        <ConditionCollection :is-editing="isEditing" />
     </div>
 </div>
 </template>
@@ -66,7 +64,8 @@ export default {
             this.currentConditionOutput = currentConditionResult.output;
         },
         provideTelemetry() {
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.domainObject, output => output);
+            this.stopProvidingTelemetry = this.openmct.telemetry
+                .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });
         }
     }
 };

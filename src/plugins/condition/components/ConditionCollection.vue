@@ -110,7 +110,6 @@ export default {
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
         if(this.conditionManager) {
-            this.conditionManager.off('conditionSetResultUpdated', this.handleOutputUpdated);
             this.conditionManager.destroy();
         }
         if (typeof this.stopObservingForChanges === 'function') {
@@ -124,7 +123,6 @@ export default {
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.conditionManager.on('conditionSetResultUpdated', this.handleOutputUpdated.bind(this));
         this.observeForChanges();
     },
     methods: {
@@ -178,9 +176,6 @@ export default {
         },
         dragLeave(e) {
             e.target.classList.remove("dragging");
-        },
-        handleOutputUpdated(args) {
-            this.$emit('currentConditionSetOutputUpdated', args);
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
