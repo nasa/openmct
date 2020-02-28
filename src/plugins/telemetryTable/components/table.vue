@@ -854,6 +854,10 @@ export default {
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
+
+                if (this.isShowingMarkedRowsOnly) {
+                    this.visibleRows.splice(rowIndex, 1);
+                }
             } else if (this.markedRows.length === 1) {
                 this.unmarkAllRows();
             }
