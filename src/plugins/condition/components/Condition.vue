@@ -68,6 +68,7 @@
                                         <input v-model="domainObject.configuration.name"
                                                class="t-condition-input__name"
                                                type="text"
+                                               @blur="persist"
                                         >
                                     </span>
                                 </li>
@@ -101,7 +102,9 @@
                                     <li class="has-local-controls t-condition">
                                         <label>Match when</label>
                                         <span class="controls">
-                                            <select v-model="trigger">
+                                            <select v-model="domainObject.configuration.trigger"
+                                                    @change="persist"
+                                            >
                                                 <option value="all">all criteria are met</option>
                                                 <option value="any">any criteria are met</option>
                                             </select>
@@ -111,14 +114,27 @@
                                 <ul v-if="telemetry.length"
                                     class="t-widget-condition-config"
                                 >
-                                    <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
-                                               :key="index"
-                                               :telemetry="telemetry"
-                                               :criterion="criterion"
-                                               :index="index"
-                                               :trigger="trigger"
-                                               @persist="persist"
-                                    />
+                                    <li v-for="(criterion, index) in domainObject.configuration.criteria"
+                                        :key="index"
+                                        class="has-local-controls t-condition"
+                                    >
+                                        <Criterion :telemetry="telemetry"
+                                                   :criterion="criterion"
+                                                   :index="index"
+                                                   :trigger="domainObject.configuration.trigger"
+                                                   :is-default="domainObject.configuration.criteria.length === 1"
+                                                   @persist="persist"
+                                        />
+                                        <div class="c-c__criterion-controls">
+                                            <span class="is-enabled c-c__duplicate"
+                                                  @click="cloneCriterion(index)"
+                                            ></span>
+                                            <span v-if="!(domainObject.configuration.criteria.length === 1)"
+                                                  class="is-enabled c-c__trash"
+                                                  @click="removeCriterion(index)"
+                                            ></span>
+                                        </div>
+                                    </li>
                                 </ul>
                                 <div class="holder c-c-button-wrapper align-left">
                                     <span class="c-c-label-spacer"></span>
@@ -161,8 +177,7 @@
 </template>
 
 <script>
-import ConditionClass from "@/plugins/condition/Condition";
-import Criterion from '../../condition/components/Criterion.vue';
+import Criterion from './Criterion.vue';
 
 export default {
     inject: ['openmct'],
@@ -197,10 +212,10 @@ export default {
             domainObject: this.domainObject,
             currentCriteria: this.currentCriteria,
             expanded: true,
-            trigger: 'all',
             selectedOutputKey: '',
             stringOutputField: false,
-            outputOptions: ['false', 'true', 'string']
+            outputOptions: ['false', 'true', 'string'],
+            criterionIndex: 0
         };
     },
     destroyed() {
@@ -215,10 +230,6 @@ export default {
     methods: {
         initialize() {
             this.setOutput();
-            if (!this.domainObject.isDefault) {
-                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
-                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-            }
         },
         addCriteria() {
             const criteriaObject = {
@@ -235,19 +246,6 @@ export default {
             this.$emit('setMoveIndex', this.conditionIndex);
         },
         destroy() {
-            if (this.conditionClass) {
-                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-                if (typeof this.conditionClass.destroy === 'function') {
-                    this.conditionClass.destroy();
-                }
-                delete this.conditionClass;
-            }
-        },
-        handleConditionResult(args) {
-            this.$emit('conditionResultUpdated', {
-                id: this.conditionIdentifier,
-                result: args.data.result
-            })
         },
         removeCondition(ev) {
             this.$emit('removeCondition', this.conditionIdentifier);
@@ -258,6 +256,16 @@ export default {
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
         },
+        removeCriterion(index) {
+            this.domainObject.configuration.criteria.splice(index, 1);
+            this.persist()
+        },
+        cloneCriterion(index) {
+            const clonedCriterion = {...this.domainObject.configuration.criteria[index]};
+            this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
+            this.persist()
+        },
+
         setOutput() {
             let conditionOutput = this.domainObject.configuration.output;
             if (conditionOutput) {
@@ -278,9 +286,6 @@ export default {
                 this.domainObject.configuration.output = this.selectedOutputKey;
             }
             this.persist();
-        },
-        updateCurrentCondition() {
-            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry

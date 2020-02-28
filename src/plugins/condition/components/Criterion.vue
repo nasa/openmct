@@ -1,5 +1,5 @@
 <template>
-<li class="has-local-controls t-condition">
+<div>
     <label>{{ setRowLabel }}</label>
     <span class="t-configuration">
         <span class="controls">
@@ -56,7 +56,7 @@
             </span>
         </span>
     </span>
-</li>
+</div>
 </template>
 
 <script>

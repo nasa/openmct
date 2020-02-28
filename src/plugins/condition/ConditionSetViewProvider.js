@@ -26,6 +26,7 @@ import Vue from 'vue';
 export default class ConditionSetViewProvider {
     constructor(openmct) {
         this.openmct = openmct;
+        this.name = 'Conditions View';
         this.key = 'conditionSet.view';
         this.cssClass = 'icon-conditional'; // TODO: replace with class for new icon
     }
