@@ -197,7 +197,7 @@ export default class ConditionClass extends EventEmitter {
             this.criteriaResults[id] = eventData.data.result;
         }
 
-        conditionData.data.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        conditionData.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
         this.emitEvent('conditionResultUpdated', conditionData);
     }
 
