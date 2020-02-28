@@ -228,7 +228,11 @@ export default class ConditionManager extends EventEmitter {
             this.emit('conditionSetResultUpdated',
                 Object.assign({},
                     resultObj ? resultObj.data : {},
-                    { output: obj.configuration.output }
+                    {
+                        output: obj.configuration.output,
+                        id: this.domainObject.identifier,
+                        conditionId: currentConditionIdentifier
+                    }
                 )
             )
         });
