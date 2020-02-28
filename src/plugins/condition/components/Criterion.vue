@@ -44,7 +44,7 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span v-for="(item, inputIndex) in Array, inputCount"
+            <span v-for="(item, inputIndex) in inputCount"
                   :key="inputIndex"
             >
                 <input v-model="criterion.input[inputIndex]"
@@ -108,17 +108,19 @@ export default {
     methods: {
         getOperationFormat() {
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
-                let valueMetadata = this.telemetryMetadataOptions[index];
-                if (valueMetadata.formatString) {
-                    this.operationFormat = 'number';
-                } else if (valueMetadata.format) {
-                    if (valueMetadata.format === 'utc') {
-                        this.operationFormat = 'number';
-                    } else if (valueMetadata.format === 'enum') {
+                if (value.key === this.criterion.metadata) {
+                    let valueMetadata = this.telemetryMetadataOptions[index];
+                    if (valueMetadata.enumerations !== undefined) {
                         this.operationFormat = 'enum';
+                    } else if (valueMetadata.hints.hasOwnProperty('range')) {
+                        this.operationFormat = 'number';
+                    } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+                        this.operationFormat = 'number';
+                    } else if (valueMetadata.key === 'name') {
+                        this.operationFormat = 'string';
+                    } else {
+                        this.operationFormat = 'string';
                     }
-                } else {
-                    this.operationFormat = 'string';
                 }
             });
         },
