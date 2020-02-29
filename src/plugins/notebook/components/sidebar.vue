@@ -1,8 +1,10 @@
 <template>
 <div class="c-sidebar">
     <div class="c-sidebar__pane">
-        <div class="c-sidebar__header">
-            <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
+        <div class="c-sidebar__header-w">
+            <div class="c-sidebar__header">
+                <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
+            </div>
         </div>
         <div class="c-sidebar__contents-and-controls">
             <button @click="addSection">+ Add {{ sectionTitle }}</button>
@@ -14,9 +16,13 @@
         </div>
     </div>
     <div class="c-sidebar__pane">
-        <div class="c-sidebar__header">
-            <span class="c-sidebar__header-label">{{ pageTitle }}</span>
+        <div class="c-sidebar__header-w">
+            <div class="c-sidebar__header">
+                <span class="c-sidebar__header-label">{{ pageTitle }}</span>
+            </div>
+            <button class="c-icon-button icon-x" @click="toggleNav"></button>
         </div>
+
         <div class="c-sidebar__contents-and-controls">
             <button @click="addPage">+ Add {{ pageTitle }}</button>
             <PageCollection class="c-sidebar__contents"
@@ -78,7 +84,6 @@ export default {
     },
     data() {
         return {
-            collapsed: false
         }
     },
     watch: {
@@ -131,19 +136,9 @@ export default {
             const sections = this.sections.concat(section);
             this.$emit(EVENT_UPDATE_SECTION, { sections });
         },
-        toggleCollapse: function () {
-            this.collapsed = !this.collapsed;
-
-            console.log('TODO: Sidebar toggleCollapse');
-            // if (this.collapsed) {
-            //     this.currentSize = (this.dragCollapse === true)? this.initial : this.$el.style[this.styleProp];
-            //     this.$el.style[this.styleProp] = '';
-            // } else {
-            //     // Pane is collapsed and is being expanded
-            //     this.$el.style[this.styleProp] = this.currentSize;
-            //     delete this.currentSize;
-            //     delete this.dragCollapse;
-            // }
+        toggleNav: function () {
+            this.$parent.toggleNav();
+            // console.log('TODO: Sidebar toggleCollapse');
         }
     }
 }

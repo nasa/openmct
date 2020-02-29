@@ -31,40 +31,32 @@
     bottom: 0px;
     left: 0px;
 
-    /****************************** NAV SIDEBAR */
+    /****************************** CONTENT */
+    &__body {
+        // Holds __nav and __page-view
+        display: flex;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
     &__nav {
+        flex: 0 0 auto;
         * {
             overflow: hidden;
         }
     }
 
-    .c-sidebar {
-        .c-sidebar__pane {
-            flex-basis: 50%;
-        }
-    }
-
-    /****************************** CONTENT */
-    &__nav {
-        width: 30%;
-    }
-
-
-    &-snapshot {
-        flex: 1 1 auto;
+    &__page-view {
+        // Holds __header, __drag-area and __entries
         display: flex;
+        flex: 1 1 auto;
         flex-direction: column;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__header {
+        width: 100%;
+        > * {
             flex: 0 0 auto;
-        }
-
-        &__image {
-            flex: 1 1 auto;
+            + * {
+                margin-top: $interiorMargin;
+            }
         }
     }
 
@@ -135,17 +127,15 @@
         &__header {
             display: flex;
             > * {
-                // First thing should expand as much as it can...
-                flex: 1 1 auto;
+                flex: 0 0 auto;
                 + * {
-                    // Following things should keep to themselves and stay small
-                    flex: 0 0 auto;
                     margin-left: $interiorMargin;
                 }
             }
         }
 
         &__path {
+            flex: 1 1 auto;
             overflow: hidden;
             white-space: nowrap;
             font-size: 1.3em;
@@ -164,7 +154,7 @@
 
     &__entries {
         flex-direction: column;
-        flex: 1 1 auto !important;
+        flex: 1 1 auto;
         padding-right: $interiorMarginSm;
         overflow-x: hidden;
         overflow-y: scroll;
@@ -319,6 +309,24 @@
 .overlay.snapshot {
     // Handle overflow-y issues with tables and html2canvas
     .l-sticky-headers .l-tabular-body { overflow: auto; }
+}
+
+.c-notebook-snapshot {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__header {
+        flex: 0 0 auto;
+    }
+
+    &__image {
+        flex: 1 1 auto;
+    }
 }
 
 /****************************** PAINTERRO OVERRIDES */
