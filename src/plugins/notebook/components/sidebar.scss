@@ -43,6 +43,9 @@
         flex: 0 0 auto;
         align-items: center;
         text-transform: uppercase;
+        > * {
+            @include ellipsize();
+        }
     }
 
     &__contents {
