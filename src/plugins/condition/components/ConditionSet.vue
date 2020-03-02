@@ -29,7 +29,9 @@
             </div>
             <div class="c-cs__ui_content">
                 <span v-if="currentConditionOutput"
-                      class="current-output">{{ currentConditionOutput }}
+                      class="current-output"
+                >
+                    {{ currentConditionOutput }}
                 </span>
                 <span v-else>No output selected</span>
             </div>
