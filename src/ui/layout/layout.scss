@@ -6,6 +6,19 @@
     flex-flow: column nowrap;
     overflow: hidden;
 
+    &__drawer {
+        border-bottom: 1px solid $colorInteriorBorder;
+        height: 0;
+        min-height: 0;
+        overflow: hidden;
+        transition: $transIn;
+
+        &.is-expanded {
+            height: 20%;
+            min-height: 150px;
+        }
+    }
+
     &__pane-tree {
         width: 40%;
 
