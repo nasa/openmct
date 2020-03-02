@@ -28,10 +28,10 @@
                 <span class="c-cs__ui__header-label">Current Output</span>
             </div>
             <div class="c-cs__ui_content">
-                <div v-if="currentConditionOutput">
-                    <span class="current-output">{{ currentConditionOutput }}</span>
-                </div>
-                <div v-else>No output selected</div>
+                <span v-if="currentConditionOutput"
+                      class="current-output">{{ currentConditionOutput }}
+                </span>
+                <span v-else>No output selected</span>
             </div>
         </section>
         <TestData :is-editing="isEditing" />
