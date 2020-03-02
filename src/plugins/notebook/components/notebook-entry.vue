@@ -3,13 +3,14 @@
     @drop.prevent="dropOnEntry(entry.id, $event)"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time">
+        <div v-if="!readOnly"
+             class="c-ne__time"
+        >
             <span>{{ formatTime(entry.createdOn, 'YYYY-MM-DD') }}</span>
             <span>{{ formatTime(entry.createdOn, 'HH:mm:ss') }}</span>
         </div>
         <div class="c-ne__content">
-            <div ref="contenteditable"
-                 class="c-ne__text c-input-inline"
+            <div class="c-ne__text c-input-inline"
                  contenteditable="true"
                  @blur="textBlur($event, entry.id)"
                  @focus="textFocus($event, entry.id)"
@@ -27,7 +28,9 @@
             </div>
         </div>
     </div>
-    <div class="c-ne__local-controls--hidden">
+    <div v-if="!readOnly"
+         class="c-ne__local-controls--hidden"
+    >
         <button class="c-icon-button c-icon-button--major icon-trash"
                 title="Delete this entry"
                 @click="deleteEntry"
@@ -72,6 +75,12 @@ export default {
             default() {
                 return {};
             }
+        },
+        readOnly: {
+            type: Boolean,
+            default() {
+                return true;
+            }
         }
     },
     data() {
@@ -80,6 +89,9 @@ export default {
         }
     },
     watch: {
+        readOnly(readOnly) {
+            // this.$el.querySelector('.c-ne__text c-input-inline').contenteditable = !this.readOnly;
+        },
         selectedSection(selectedSection) {
         },
         selectedPage(selectedSection) {
@@ -137,6 +149,10 @@ export default {
             });
         },
         dropOnEntry(entryId, $event) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             var data = $event.dataTransfer.getData('openmct/domain-object-path');
 
             const objectPath = JSON.parse(data);
@@ -154,6 +170,10 @@ export default {
             this.updateEntries(entries);
         },
         entryPosById(entryId) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             let foundId = -1;
             entries.forEach((element, index) => {
@@ -170,6 +190,10 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         textBlur($event, entryId) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             const target = $event.target;
             if (!target) {
                 return;
@@ -183,6 +207,10 @@ export default {
             }
         },
         textFocus($event) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             if ($event.target) {
                 this.currentEntryValue = $event.target.innerText;
             } else {
@@ -190,6 +218,10 @@ export default {
             }
         },
         updateEntry(newEntry) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             entries.forEach(entry => {
                 if (entry.id === newEntry.id) {
@@ -200,6 +232,10 @@ export default {
             this.updateEntries(entries);
         },
         updateEntries(entries) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
             const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;

@@ -1,14 +1,20 @@
 <template>
 <div class="c-notebook">
     <div class="c-notebook__head">
-        <search class="c-notebook__search"
+        <Search class="c-notebook__search"
                 :value="search"
-                @input="search"
-                @clear="search"
+                @input="throttledSearchItem"
+                @clear="throttledSearchItem"
         />
     </div>
-    <Multipane type="horizontal"
-               class="c-notebook__multipane">
+    <SearchResults v-if="search.length"
+                   ref="searchResults"
+                   :results="getSearchResults()"
+    />
+    <Multipane v-else
+               type="horizontal"
+               class="c-notebook__multipane"
+    >
         <Pane class="c-notebook__nav">
             <Sidebar ref="sidebar"
                      :domain-object="internalDomainObject"
@@ -19,7 +25,8 @@
             />
         </Pane>
         <Pane handle="before"
-              class="c-notebook__contents">
+              class="c-notebook__contents"
+        >
             <div class="c-notebook__controls ">
                 <div class="bread-crumb">
                     {{ getSelectedSection() ? getSelectedSection().name : '' }}
@@ -66,6 +73,7 @@
                                    :domain-object="internalDomainObject"
                                    :selected-page="getSelectedPage()"
                                    :selected-section="getSelectedSection()"
+                                   :read-only="false"
                     />
                 </ul>
             </div>
@@ -79,10 +87,12 @@ import NotebookEntry from './notebook-entry.vue';
 import Multipane from '@/ui/layout/multipane.vue';
 import Pane from '@/ui/layout/pane.vue';
 import Search from '@/ui/components/search.vue';
+import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import { addNotebookEntry, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants';
+import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants';
+import { throttle } from 'lodash';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -91,10 +101,13 @@ export default {
         NotebookEntry,
         Pane,
         Search,
+        SearchResults,
         Sidebar
     },
     data() {
         return {
+            defaultPageId: null,
+            defaultSectionId: null,
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',
@@ -129,6 +142,24 @@ export default {
             return this.sections.find(section => section.isSelected);
         }
     },
+    watch: {
+        search(searchTerm) {
+            if (!this.$refs.searchResults)  {
+                return;
+            }
+
+            if (!searchTerm.length) {
+                this.$refs.searchResults.$off();
+
+                return;
+            }
+
+            this.$refs.searchResults.$on(EVENT_CHANGE_SECTION_PAGE, this.changeSelectedSection.bind(this));
+        }
+    },
+    beforeMount() {
+        this.throttledSearchItem = throttle(this.searchItem, 500);
+    },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.$refs.sidebar.$on(EVENT_UPDATE_SECTION, this.updateSection.bind(this));
@@ -139,11 +170,73 @@ export default {
             this.unlisten();
         }
 
-        this.$refs.sidebar.$off();
+        if (this.$refs.sidebar) {
+            this.$refs.sidebar.$off();
+        }
     },
     methods: {
+        changeSelectedSection({ sectionId, pageId }) {
+            const sections = this.sections.map(s => {
+                s.isSelected = false;
+
+                if (s.id === sectionId) {
+                    s.isSelected = true;
+                }
+
+                s.pages.forEach((p, i) => {
+                    p.isSelected = false;
+
+                    if (pageId && pageId === p.id) {
+                        p.isSelected = true;
+                    }
+
+                    if (!pageId && i === 0) {
+                        p.isSelected = true;
+                    }
+                });
+
+                return s;
+            });
+
+            this.search = '';
+            this.updateSection({ sections });
+        },
         updateDefaultNotebook(selectedSection, selectedPage) {
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
+        },
+        getPage(section, id) {
+            return section.pages.find(p => p.id === id);
+        },
+        getSection(id) {
+            return this.sections.find(s => s.id === id);
+        },
+        getSearchResults() {
+            if (!this.search.length) {
+                return [];
+            }
+
+            const output = [];
+            const entries = this.internalDomainObject.configuration.entries;
+            const sectionKeys = Object.keys(entries);
+            sectionKeys.forEach(sectionKey => {
+                const pages = entries[sectionKey];
+                const pageKeys = Object.keys(pages);
+                pageKeys.forEach(pageKey => {
+                    const pageEntries = entries[sectionKey][pageKey];
+                    pageEntries.forEach(entry => {
+                        if (entry.text && entry.text.toLowerCase().includes(this.search.toLowerCase())) {
+                            const section = this.getSection(sectionKey);
+                            output.push({
+                                section,
+                                page: this.getPage(section, pageKey),
+                                entry
+                            });
+                        }
+                    });
+                });
+            });
+
+            return output;
         },
         getPages() {
             const selectedSection = this.getSelectedSection();
@@ -179,6 +272,9 @@ export default {
             this.updateDefaultNotebook(selectedSection, selectedPage);
             const notebookStorage = getDefaultNotebook();
             addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
+        },
+        searchItem(input) {
+            this.search = input;
         },
         sortEntries(right, left) {
             return this.defaultSort === 'newest'
