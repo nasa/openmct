@@ -210,13 +210,12 @@ export default class ConditionManager extends EventEmitter {
 
         if (resultObj) {
             let idAsString = this.openmct.objects.makeKeyString(resultObj.id);
-            let found = this.findConditionById(idAsString);
-            if (found) {
+            if (this.findConditionById(idAsString)) {
                 this.conditionResults[idAsString] = resultObj.data.result;
             }
         }
 
-        for (let i = 0, ii = conditionCollection.length - 1; i < ii; i++) {
+        for (let i = 0; i < conditionCollection.length - 1; i++) {
             let conditionIdAsString = this.openmct.objects.makeKeyString(conditionCollection[i]);
             if (this.conditionResults[conditionIdAsString]) {
                 //first condition to be true wins
@@ -226,11 +225,16 @@ export default class ConditionManager extends EventEmitter {
         }
 
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
-            this.emit('conditionSetResultUpdated', {
-                id: this.domainObject.identifier,
-                output: obj.configuration.output,
-                conditionId: currentConditionIdentifier
-            })
+            this.emit('conditionSetResultUpdated',
+                Object.assign({},
+                    resultObj ? resultObj.data : {},
+                    {
+                        output: obj.configuration.output,
+                        id: this.domainObject.identifier,
+                        conditionId: currentConditionIdentifier
+                    }
+                )
+            )
         });
     }
 

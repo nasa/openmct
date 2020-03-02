@@ -38,6 +38,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.openmct = openmct;
         this.objectAPI = this.openmct.objects;
         this.telemetryAPI = this.openmct.telemetry;
+        this.timeAPI = this.openmct.time;
         this.id = telemetryDomainObjectDefinition.id;
         this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
@@ -55,11 +56,15 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleSubscription(data) {
-        let result = this.computeResult(data);
-        this.emitEvent('criterionResultUpdated', {
-            result: result,
-            error: null
-        })
+        const datum = {};
+        const timeSystemKey = this.timeAPI.timeSystem().key;
+
+        datum.result = this.computeResult(data);
+        if (data && data[timeSystemKey]) {
+            datum[timeSystemKey] = data[timeSystemKey]
+        }
+
+        this.emitEvent('criterionResultUpdated', datum);
     }
 
     findOperation(operation) {

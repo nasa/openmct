@@ -23,6 +23,8 @@
 import ConditionSet from './components/ConditionSet.vue';
 import Vue from 'vue';
 
+const DEFAULT_VIEW_PRIORITY = 100;
+
 export default class ConditionSetViewProvider {
     constructor(openmct) {
         this.openmct = openmct;
@@ -70,5 +72,13 @@ export default class ConditionSetViewProvider {
                 component = undefined;
             }
         };
+    }
+
+    priority(domainObject) {
+        if (domainObject.type === 'conditionSet') {
+            return Number.MAX_VALUE;
+        } else {
+            return DEFAULT_VIEW_PRIORITY;
+        }
     }
 }
