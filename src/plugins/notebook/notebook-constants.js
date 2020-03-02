@@ -14,3 +14,5 @@ export const EVENT_UPDATE_SECTION = 'UPDATE_SECTION';
 
 export const NOTEBOOK_DEFAULT = 'DEFAULT';
 export const NOTEBOOK_SNAPSHOT = 'SNAPSHOT';
+
+export const TOGGLE_NAV = 'TOGGLE_NAV';

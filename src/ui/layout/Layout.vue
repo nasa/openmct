@@ -35,7 +35,7 @@
         <app-logo />
     </div>
 
-    <div class="l-shell__drawer c-drawer">
+    <div class="l-shell__drawer c-drawer is-expanded">
 
     </div>
 

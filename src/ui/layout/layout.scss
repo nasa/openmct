@@ -7,13 +7,13 @@
     overflow: hidden;
 
     &__drawer {
-        border-bottom: 1px solid $colorInteriorBorder;
         height: 0;
         min-height: 0;
         overflow: hidden;
         transition: $transIn;
 
         &.is-expanded {
+            box-shadow: rgba(black, 0.2) 0 5px 15px;
             height: 20%;
             min-height: 150px;
         }

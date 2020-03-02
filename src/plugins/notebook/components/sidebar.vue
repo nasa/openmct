@@ -35,7 +35,9 @@
                             :domain-object="domainObject"
                             :pages="pages"
                             :sections="sections"
+                            :sidebar-covers-entries="sidebarCoversEntries"
                             :page-title="pageTitle"
+                            ref="pageCollection"
             />
         </div>
     </div>
@@ -45,7 +47,7 @@
 <script>
 import SectionCollection from './section-collection.vue';
 import PageCollection from './page-collection.vue';
-import { EVENT_UPDATE_PAGE, EVENT_UPDATE_SECTION } from '../notebook-constants';
+import { EVENT_UPDATE_PAGE, EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import uuid from 'uuid';
 
 export default {
@@ -86,6 +88,12 @@ export default {
             default() {
                 return '';
             }
+        },
+        sidebarCoversEntries: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     data() {
@@ -108,6 +116,7 @@ export default {
         if (!this.sections.length) {
             this.addSection();
         }
+        this.$refs.pageCollection.$on(TOGGLE_NAV, () => this.$emit(TOGGLE_NAV));
     },
     destroyed() {
     },

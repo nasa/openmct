@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_PAGE } from '../notebook-constants';
+import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_PAGE, TOGGLE_NAV } from '../notebook-constants';
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import Page from './page-component.vue';
@@ -42,6 +42,12 @@ export default {
             required: true,
             default() {
                 return [];
+            }
+        },
+        sidebarCoversEntries: {
+            type: Boolean,
+            default() {
+                return false;
             }
         }
     },
@@ -120,6 +126,11 @@ export default {
             });
 
             this.$parent.$emit(EVENT_UPDATE_PAGE, { pages, id });
+
+            // Add test here for whether or not to toggle the nav
+            if (this.sidebarCoversEntries) {
+                this.$emit(TOGGLE_NAV);
+            }
         },
         updatePage(newPage) {
             const pages = this.pages.map(page =>

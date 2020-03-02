@@ -2,6 +2,9 @@
     // New sliding overlay element to contain nav structures
     // Designed for mobile and compact desktop scenarios
     //position: relative;
+    &--cover {
+        background: deeppink !important;
+    }
 }
 
 
@@ -115,4 +118,8 @@
             .icon-trash { display: block; }
         }
     }
+}
+
+.l-layout__frame .c-sidebar {
+    background: deeppink !important;
 }

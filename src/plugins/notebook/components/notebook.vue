@@ -13,15 +13,16 @@
     />
 
     <div v-if="!search.length"
-        class="c-notebook__body">
+         class="c-notebook__body">
         <Sidebar ref="sidebar"
-                class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-                 :class="{'is-expanded': showNav}"
-                :domain-object="internalDomainObject"
-                :page-title="internalDomainObject.configuration.pageTitle"
-                :pages="pages"
-                :section-title="internalDomainObject.configuration.sectionTitle"
-                :sections="sections"
+                 class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
+                 :class="[{'is-expanded': showNav}, {'c-drawer--cover': sidebarCoversEntries}]"
+                 :domain-object="internalDomainObject"
+                 :page-title="internalDomainObject.configuration.pageTitle"
+                 :pages="pages"
+                 :section-title="internalDomainObject.configuration.sectionTitle"
+                 :sections="sections"
+                 :sidebar-covers-entries="sidebarCoversEntries"
         />
         <div class="c-notebook__page-view">
             <div class="c-notebook__page-view__header">
@@ -93,7 +94,7 @@ import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import { addNotebookEntry, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION } from '../notebook-constants';
+import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import { throttle } from 'lodash';
 
 export default {
@@ -112,7 +113,8 @@ export default {
             internalDomainObject: this.domainObject,
             search: '',
             showTime: 0,
-            showNav: false
+            showNav: false,
+            sidebarCoversEntries: false
         }
     },
     computed: {
@@ -165,6 +167,9 @@ export default {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.$refs.sidebar.$on(EVENT_UPDATE_SECTION, this.updateSection.bind(this));
         this.$refs.sidebar.$on(EVENT_UPDATE_PAGE, this.updatePage.bind(this));
+        this.$refs.sidebar.$on(TOGGLE_NAV, this.toggleNav);
+        this.formatSidebar();
+        window.addEventListener('orientationchange', this.orientationChange);
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -274,8 +279,20 @@ export default {
             const notebookStorage = getDefaultNotebook();
             addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
         },
+        orientationChange() {
+            console.log('changed orientation');
+            this.formatSidebar();
+        },
         searchItem(input) {
             this.search = input;
+        },
+        formatSidebar() {
+            const self = this;
+            setTimeout(() => {
+                const MOBILE_PORTRAIT = !!document.querySelector('body.mobile.portrait');
+                self.sidebarCoversEntries = MOBILE_PORTRAIT || self.$el.closest('.c-so-view');
+                console.log("MOBILE_PORTRAIT", MOBILE_PORTRAIT);
+            }, 0);
         },
         sortEntries(right, left) {
             return this.defaultSort === 'newest'
