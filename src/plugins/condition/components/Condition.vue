@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 <template>
-<div v-if="isEditing">
-    <div v-if="domainObject"
-         class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
-         :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
-    >
+<div v-if="isEditing"
+     class="c-c-editui__conditions c-c-container__container c-c__drag-wrapper"
+     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+>
+    <template v-if="domainObject">
         <div class="title-bar">
             <span class="c-c__menu-hamburger"
                   :class="{ 'is-enabled': !domainObject.isDefault }"
@@ -43,14 +43,14 @@
                 <!-- TODO: description should be derived from criteria -->
                 <span class="condition-description">{{ domainObject.configuration.name }}</span>
             </div>
-            <span v-if="!domainObject.isDefault"
-                  class="is-enabled c-c__duplicate"
-                  @click="cloneCondition"
-            ></span>
-            <span v-if="!domainObject.isDefault"
-                  class="is-enabled c-c__trash"
-                  @click="removeCondition"
-            ></span>
+            <template v-if="!domainObject.isDefault">
+                <span class="is-enabled c-c__duplicate"
+                      @click="cloneCondition"
+                ></span>
+                <span class="is-enabled c-c__trash"
+                      @click="removeCondition"
+                ></span>
+            </template>
         </div>
         <div v-if="expanded"
              class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
@@ -60,105 +60,103 @@
             >
                 <div class="c-c-condition">
                     <div class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls">
-                        <div>
+                        <ul class="c-c-condition__ui l-compact-form l-widget-condition has-local-controls t-widget-condition-config">
+                            <li>
+                                <label>Condition Name</label>
+                                <span class="controls">
+                                    <input v-model="domainObject.configuration.name"
+                                           class="t-condition-input__name"
+                                           type="text"
+                                           @blur="persist"
+                                    >
+                                </span>
+                            </li>
+                            <li>
+                                <label>Output</label>
+                                <span class="controls">
+                                    <select v-model="selectedOutputKey"
+                                            @change="checkInputValue"
+                                    >
+                                        <option value="">- Select Output -</option>
+                                        <option v-for="option in outputOptions"
+                                                :key="option"
+                                                :value="option"
+                                        >
+                                            {{ initCap(option) }}
+                                        </option>
+                                    </select>
+                                    <input v-if="selectedOutputKey === outputOptions[2]"
+                                           v-model="domainObject.configuration.output"
+                                           class="t-condition-name-input"
+                                           type="text"
+                                           @blur="persist"
+                                    >
+                                </span>
+                            </li>
+                        </ul>
+                        <div v-if="!domainObject.isDefault"
+                             class="widget-condition-content expanded"
+                        >
                             <ul class="t-widget-condition-config">
-                                <li>
-                                    <label>Condition Name</label>
+                                <li class="has-local-controls t-condition">
+                                    <label>Match when</label>
                                     <span class="controls">
-                                        <input v-model="domainObject.configuration.name"
-                                               class="t-condition-input__name"
-                                               type="text"
-                                               @blur="persist"
+                                        <select v-model="domainObject.configuration.trigger"
+                                                @change="persist"
                                         >
-                                    </span>
-                                </li>
-                                <li>
-                                    <label>Output</label>
-                                    <span class="controls">
-                                        <select v-model="selectedOutputKey"
-                                                @change="checkInputValue"
-                                        >
-                                            <option value="">- Select Output -</option>
-                                            <option v-for="option in outputOptions"
-                                                    :key="option"
-                                                    :value="option"
-                                            >
-                                                {{ initCap(option) }}
-                                            </option>
+                                            <option value="all">all criteria are met</option>
+                                            <option value="any">any criteria are met</option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2]"
-                                               v-model="domainObject.configuration.output"
-                                               class="t-condition-name-input"
-                                               type="text"
-                                               @blur="persist"
-                                        >
                                     </span>
                                 </li>
                             </ul>
-                            <div v-if="!domainObject.isDefault"
-                                 class="widget-condition-content expanded"
+                            <ul v-if="telemetry.length"
+                                class="t-widget-condition-config"
                             >
-                                <ul class="t-widget-condition-config">
-                                    <li class="has-local-controls t-condition">
-                                        <label>Match when</label>
-                                        <span class="controls">
-                                            <select v-model="domainObject.configuration.trigger"
-                                                    @change="persist"
-                                            >
-                                                <option value="all">all criteria are met</option>
-                                                <option value="any">any criteria are met</option>
-                                            </select>
-                                        </span>
-                                    </li>
-                                </ul>
-                                <ul v-if="telemetry.length"
-                                    class="t-widget-condition-config"
+                                <li v-for="(criterion, index) in domainObject.configuration.criteria"
+                                    :key="index"
+                                    class="has-local-controls t-condition"
                                 >
-                                    <li v-for="(criterion, index) in domainObject.configuration.criteria"
-                                        :key="index"
-                                        class="has-local-controls t-condition"
-                                    >
-                                        <Criterion :telemetry="telemetry"
-                                                   :criterion="criterion"
-                                                   :index="index"
-                                                   :trigger="domainObject.configuration.trigger"
-                                                   :is-default="domainObject.configuration.criteria.length === 1"
-                                                   @persist="persist"
-                                        />
-                                        <div class="c-c__criterion-controls">
-                                            <span class="is-enabled c-c__duplicate"
-                                                  @click="cloneCriterion(index)"
-                                            ></span>
-                                            <span v-if="!(domainObject.configuration.criteria.length === 1)"
-                                                  class="is-enabled c-c__trash"
-                                                  @click="removeCriterion(index)"
-                                            ></span>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="holder c-c-button-wrapper align-left">
-                                    <span class="c-c-label-spacer"></span>
-                                    <button
-                                        class="c-c-button c-c-button--minor add-criteria-button"
-                                        @click="addCriteria"
-                                    >
-                                        <span class="c-c-button__label">Add Criteria</span>
-                                    </button>
-                                </div>
+                                    <Criterion :telemetry="telemetry"
+                                               :criterion="criterion"
+                                               :index="index"
+                                               :trigger="domainObject.configuration.trigger"
+                                               :is-default="domainObject.configuration.criteria.length === 1"
+                                               @persist="persist"
+                                    />
+                                    <div class="c-c__criterion-controls">
+                                        <span class="is-enabled c-c__duplicate"
+                                              @click="cloneCriterion(index)"
+                                        ></span>
+                                        <span v-if="!(domainObject.configuration.criteria.length === 1)"
+                                              class="is-enabled c-c__trash"
+                                              @click="removeCriterion(index)"
+                                        ></span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="holder c-c-button-wrapper align-left">
+                                <span class="c-c-label-spacer"></span>
+                                <button
+                                    class="c-c-button c-c-button--minor add-criteria-button"
+                                    @click="addCriteria"
+                                >
+                                    <span class="c-c-button__label">Add Criteria</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </template>
 </div>
-<div v-else>
-    <div v-if="domainObject"
-         id="conditionArea"
-         class="c-cs-ui__conditions"
-         :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
-    >
+<div v-else
+     id="conditionArea"
+     class="c-cs-ui__conditions"
+     :class="['widget-condition', { 'widget-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }]"
+>
+    <template v-if="domainObject">
         <div class="title-bar">
             <span class="condition-name">
                 {{ domainObject.configuration.name }}
@@ -172,7 +170,7 @@
                 {{ domainObject.configuration.description }}
             </span>
         </div>
-    </div>
+    </template>
 </div>
 </template>
 

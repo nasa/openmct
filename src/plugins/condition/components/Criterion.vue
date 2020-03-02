@@ -15,46 +15,46 @@
                 </option>
             </select>
         </span>
-        <span v-if="criterion.telemetry"
-              class="controls"
-        >
-            <select v-model="criterion.metadata"
-                    @change="updateOperations"
-            >
-                <option value="">- Select Field -</option>
-                <option v-for="option in telemetryMetadataOptions"
-                        :key="option.key"
-                        :value="option.key"
+        <template v-if="criterion.telemetry">
+            <span class="controls">
+                <select v-model="criterion.metadata"
+                        @change="updateOperations"
                 >
-                    {{ option.name }}
-                </option>
-            </select>
-        </span>
-        <span v-if="criterion.telemetry && criterion.metadata"
-              class="controls"
-        >
-            <select v-model="criterion.operation"
-                    @change="updateOperationInputVisibility"
-            >
-                <option value="">- Select Comparison -</option>
-                <option v-for="option in filteredOps"
-                        :key="option.name"
-                        :value="option.name"
-                >
-                    {{ option.text }}
-                </option>
-            </select>
-            <span v-for="(item, inputIndex) in inputCount"
-                  :key="inputIndex"
-            >
-                <input v-model="criterion.input[inputIndex]"
-                       class="t-condition-name-input"
-                       type="text"
-                       @blur="persist"
-                >
-                <span v-if="inputIndex < inputCount-1">and</span>
+                    <option value="">- Select Field -</option>
+                    <option v-for="option in telemetryMetadataOptions"
+                            :key="option.key"
+                            :value="option.key"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
             </span>
-        </span>
+            <span v-if="criterion.metadata"
+                  class="controls"
+            >
+                <select v-model="criterion.operation"
+                        @change="updateOperationInputVisibility"
+                >
+                    <option value="">- Select Comparison -</option>
+                    <option v-for="option in filteredOps"
+                            :key="option.name"
+                            :value="option.name"
+                    >
+                        {{ option.text }}
+                    </option>
+                </select>
+                <span v-for="(item, inputIndex) in inputCount"
+                      :key="inputIndex"
+                >
+                    <input v-model="criterion.input[inputIndex]"
+                           class="t-condition-name-input"
+                           type="text"
+                           @blur="persist"
+                    >
+                    <span v-if="inputIndex < inputCount-1">and</span>
+                </span>
+            </span>
+        </template> 
     </span>
 </div>
 </template>
