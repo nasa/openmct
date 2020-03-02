@@ -6,7 +6,7 @@
         <div>{{ condition.configuration.name }}</div>
         <div>Background Color
             <span class="icon-box-round-corners"
-                  :style="{ color: conditionStyle.backgroundColor}"
+                  :style=conditionStyle
             ></span></div>
     </div>
 </div>

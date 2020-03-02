@@ -62,16 +62,11 @@ export default {
             this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
             this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
         }
-        this.backgroundColors = ['red', 'blue', 'orange', 'purple', 'gray'];
     },
     methods: {
         addConditionSet() {
             //TODO: this.conditionSetIdentifier will be set by the UI later from a modal
-            this.conditionSetIdentifier = {
-                namespace: '',
-                key: '600a7372-8d48-4dc4-98b6-548611b1ff7e'
-            };
-            this.initializeConditionalStyles();
+            // this.initializeConditionalStyles();
         },
         removeConditionSet() {
             this.conditionSetIdentifier = '';
@@ -84,7 +79,7 @@ export default {
                     if (!this.findStyleByConditionId(identifier)) {
                         this.conditionalStyles.push({
                             conditionIdentifier: identifier,
-                            style: {backgroundColor: this.backgroundColors[index]}
+                            style: {}
                         });
                     }
                 });

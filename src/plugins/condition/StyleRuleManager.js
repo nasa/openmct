@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import * as EventEmitter from 'eventemitter3';
-import ConditionManager from "./ConditionManager";
 
 export default class StyleRuleManager extends EventEmitter {
     constructor(domainObject, openmct) {
@@ -38,8 +37,9 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     initialize() {
-        this.conditionManager = new ConditionManager(this.conditionSetDomainObject, this.openmct);
-        this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated.bind(this));
+        this.openmct.objects.get(this.conditionSetDomainObject.identifier).then((obj) => {
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(obj, output => this.handleConditionSetResultUpdated(output));
+        });
     }
 
     findStyleByConditionId(id) {
@@ -72,10 +72,8 @@ export default class StyleRuleManager extends EventEmitter {
 
     destroy() {
         this.updateDomainObjectStyle(this.defaultStyle);
-        if (this.conditionManager) {
-            this.conditionManager.off('conditionSetResultUpdated', this.handleConditionSetResultUpdated.bind(this));
-            this.conditionManager.destroy();
-            delete this.conditionManager;
+        if (this.stopProvidingTelemetry) {
+            this.stopProvidingTelemetry();
         }
     }
 
