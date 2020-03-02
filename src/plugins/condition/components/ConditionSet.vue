@@ -23,7 +23,17 @@
 <template>
 <div class="c-cs-edit w-condition-set">
     <div class="c-sw-edit__ui holder">
-        <CurrentOutput :output="currentConditionOutput" />
+        <section id="current-output">
+            <div class="c-cs__ui__header">
+                <span class="c-cs__ui__header-label">Current Output</span>
+            </div>
+            <div class="c-cs__ui_content">
+                <span v-if="currentConditionOutput"
+                      class="current-output">{{ currentConditionOutput }}
+                </span>
+                <span v-else>No output selected</span>
+            </div>
+        </section>
         <TestData :is-editing="isEditing" />
         <ConditionCollection :is-editing="isEditing"
                              @currentConditionSetOutputUpdated="updateCurrentOutput"
@@ -33,14 +43,12 @@
 </template>
 
 <script>
-import CurrentOutput from './CurrentOutput.vue';
 import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
 
 export default {
     inject: ["openmct", "domainObject"],
     components: {
-        CurrentOutput,
         TestData,
         ConditionCollection
     },
