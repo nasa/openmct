@@ -214,7 +214,6 @@ export default {
             expanded: true,
             trigger: 'all',
             selectedOutputSelection: '',
-            stringOutputField: false,
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0
         };
@@ -231,10 +230,6 @@ export default {
     methods: {
         initialize() {
             this.setOutputSelection();
-            if (!this.domainObject.isDefault) {
-                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
-                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-            }
         },
         setOutputSelection() {
             let conditionOutput = this.domainObject.configuration.output;
@@ -278,9 +273,6 @@ export default {
                 identifier: this.conditionIdentifier,
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
-        },
-        updateCurrentCondition() {
-            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
         },
         removeCriterion(index) {
             this.domainObject.configuration.criteria.splice(index, 1);
