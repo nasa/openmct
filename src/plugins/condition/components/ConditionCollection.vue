@@ -35,11 +35,11 @@
     <div v-if="expanded"
          class="c-cs__ui_content"
     >
-        <template v-show="isEditing"
-                  class="help"
-        >
-            <span v-if="!telemetryObjs.length">Drag telemetry into Condition Set in order to add conditions.</span>
-            <span v-else>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
+        <template v-show="isEditing">
+            <div class="help">
+                <span v-if="!telemetryObjs.length">Drag telemetry into Condition Set in order to add conditions.</span>
+                <span v-else>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
+            </div>
             <div class="holder add-condition-button-wrapper align-left">
                 <button
                     id="addCondition"
