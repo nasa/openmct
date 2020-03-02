@@ -54,9 +54,9 @@ define([
 
                 let markingProp = {
                     enable: true,
-                    useAlternateControlBar: true,
-                    rowName: 'Session',
-                    rowNamePlural: "Session's"
+                    useAlternateControlBar: false,
+                    rowName: '',
+                    rowNamePlural: ''
                 };
 
                 return {
