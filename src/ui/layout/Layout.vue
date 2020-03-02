@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import Inspector from '../inspector/Inspector.vue';
+import Inspector from '../inspector/InspectorViews.vue';
 import MctTree from './mct-tree.vue';
 import ObjectView from '../components/ObjectView.vue';
 import MctTemplate from '../legacy/mct-template.vue';
