@@ -31,6 +31,7 @@
                   :class="{ 'is-enabled': !domainObject.isDefault }"
                   :draggable="!domainObject.isDefault"
                   @dragstart="dragStart"
+                  @dragstop="dragStop"
                   @dragover.stop
             ></span>
             <span
@@ -75,8 +76,8 @@
                                 <li>
                                     <label>Output</label>
                                     <span class="controls">
-                                        <select v-model="selectedOutputKey"
-                                                @change="checkInputValue"
+                                        <select v-model="selectedOutputSelection"
+                                                @change="setOutputValue"
                                         >
                                             <option value="">- Select Output -</option>
                                             <option v-for="option in outputOptions"
@@ -86,7 +87,7 @@
                                                 {{ initCap(option) }}
                                             </option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2]"
+                                        <input v-if="selectedOutputSelection === outputOptions[2]"
                                                v-model="domainObject.configuration.output"
                                                class="t-condition-name-input"
                                                type="text"
@@ -212,8 +213,8 @@ export default {
             domainObject: this.domainObject,
             currentCriteria: this.currentCriteria,
             expanded: true,
-            selectedOutputKey: '',
-            stringOutputField: false,
+            trigger: 'all',
+            selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0
         };
@@ -229,7 +230,25 @@ export default {
     },
     methods: {
         initialize() {
-            this.setOutput();
+            this.setOutputSelection();
+        },
+        setOutputSelection() {
+            let conditionOutput = this.domainObject.configuration.output;
+            if (conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputSelection = 'string';
+                } else {
+                    this.selectedOutputSelection = conditionOutput;
+                }
+            }
+        },
+        setOutputValue() {
+            if (this.selectedOutputSelection === 'string') {
+                this.domainObject.configuration.output = '';
+            } else {
+                this.domainObject.configuration.output = this.selectedOutputSelection;
+            }
+            this.persist();
         },
         addCriteria() {
             const criteriaObject = {
@@ -241,9 +260,13 @@ export default {
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
+            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
+        },
+        dragStop(e) {
+            e.dataTransfer.clearData();
         },
         destroy() {
         },
@@ -265,31 +288,12 @@ export default {
             this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
         },
-
-        setOutput() {
-            let conditionOutput = this.domainObject.configuration.output;
-            if (conditionOutput) {
-                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                    this.selectedOutputKey = 'string';
-                } else {
-                    this.selectedOutputKey = conditionOutput;
-                }
-            }
-        },
-        persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
-        },
-        checkInputValue() {
-            if (this.selectedOutputKey === 'string') {
-                this.domainObject.configuration.output = '';
-            } else {
-                this.domainObject.configuration.output = this.selectedOutputKey;
-            }
-            this.persist();
-        },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry
             return this.currentCriteria && identifier;
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
         },
         initCap: function (string) {
             return string.charAt(0).toUpperCase() + string.slice(1)
