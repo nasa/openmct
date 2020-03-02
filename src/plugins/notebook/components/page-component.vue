@@ -1,9 +1,11 @@
 <template>
-<div class="c-list-item"
-     :class="{'selected': page.isSelected}"
+<div class="c-list__item js-list__item"
+     :class="{'is-selected': page.isSelected}"
+     :data-id="page.id"
+     @click="selectPage"
 >
-    <span :data-id="page.id"
-          @click="selectPage"
+    <span class="c-list__item__name js-list__item__name"
+          :data-id="page.id"
           @blur="updateName"
     >
         {{ page.name.length ? page.name : `Unnamed ${page.pageTitle}` }}
@@ -73,10 +75,13 @@ export default {
         },
         selectPage(event) {
             const target = event.target;
-            target.contentEditable = true;
-            const page = target.closest('.c-list-item');
+            const page = target.closest('.js-list__item');
+            const input = page.querySelector('.js-list__item__name');
 
-            if (page.className.indexOf('selected') > -1) {
+            if (page.className.indexOf('is-selected') > -1) {
+                input.contentEditable = true;
+                input.classList.add('c-input-inline');
+                document.execCommand('selectAll',false,null);
                 return;
             }
 
@@ -95,6 +100,7 @@ export default {
             const target = event.target;
             const name = target.textContent.toString();
             target.contentEditable = false;
+            target.classList.remove('c-input-inline');
 
             if (this.page.name === name) {
                 return;

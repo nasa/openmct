@@ -1,5 +1,6 @@
 import { addNotebookEntry } from './utils/notebook-entries';
 import { getDefaultNotebook } from './utils/notebook-storage';
+import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 
 export default class Snapshot {
     constructor(openmct) {
@@ -11,13 +12,13 @@ export default class Snapshot {
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
-    capture(snapShotDomainObject, domElement) {
+    capture(notebookType, snapShotDomainObject, domElement) {
         this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
                 var reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(reader.result, snapShotDomainObject);
+                    this._saveSnapShot(notebookType, reader.result, snapShotDomainObject);
                 }.bind(this);
             }.bind(this));
     }
@@ -72,7 +73,7 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(imageUrl, snapShotDomainObject) {
+    _saveSnapShot(notebookType, imageUrl, snapShotDomainObject) {
         const type = this.openmct.types.get(snapShotDomainObject.type);
         const embedObject = {
             id: snapShotDomainObject.identifier.key,
@@ -80,10 +81,30 @@ export default class Snapshot {
             name: snapShotDomainObject.name
         };
 
+        if (notebookType === NOTEBOOK_DEFAULT) {
+            this._saveToDefaultNoteBook(embedObject, imageUrl);
+
+            return;
+        }
+
+        this._saveToNotebookSnapshots(embedObject, imageUrl);
+    }
+
+    /**
+     * @private
+     */
+    _saveToDefaultNoteBook(embedObject, imageUrl) {
         const notebookStorage = getDefaultNotebook();
         this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
             .then(domainObject => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embedObject, imageUrl);
             });
+    }
+
+    /**
+     * @private
+     */
+    _saveToNotebookSnapshots(embedObject, imageUrl) {
+        console.log('TODO: Save to Notebook Snapshots', embedObject, imageUrl);
     }
 }

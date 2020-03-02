@@ -1,12 +1,40 @@
+.c-drawer {
+    // New sliding overlay element to contain nav structures
+    // Designed for mobile and compact desktop scenarios
+    //position: relative;
+}
+
+
 .c-sidebar {
+    // Default is collapsed, :not is-expanded
     display: flex;
-    height: 100%;
     justify-content: stretch;
+    //padding: $interiorMarginSm;
+    position: absolute;
+    height: 100%;
+    min-width: 0;
+    max-width: 500px;
+    width: 0;
+    z-index: 3;
+    transition: $transOut;
+
+    &:not(.is-expanded) {
+        > * {
+            display: none;
+        }
+    }
+
+    &.is-expanded {
+        background: #454545; //$overlayColorBg;
+        box-shadow: rgba(0, 0, 0, 0.7) 3px 0px 20px;
+        width: 95%;
+    }
 
     > * {
-        // One or more columns
+        // Hardcoded for two columns
+        background: $sideBarBg;
         display: flex;
-        flex: 1 1 auto;
+        flex: 1 1 50%;
         flex-direction: column;
 
         + * {
@@ -18,6 +46,10 @@
             // Add margin-top to first and second level children
             margin-top: $interiorMargin;
         }
+    }
+
+    &__pane {
+        // Holds header, contents-and-controls
     }
 
     &__header,
@@ -32,13 +64,25 @@
         flex: 1 1 auto;
     }
 
-    &__header {
+    &__header-w {
+        // Wraps header, used for page pane with collapse button
+        display: flex;
+        flex: 0 0 auto;
+        //border-bottom: 2px solid $sideBarHeaderBg;
         background: $sideBarHeaderBg;
+        align-items: center;
+        .c-icon-button {
+            font-size: 0.8em;
+            color: $colorBodyFg;
+        }
+    }
+
+    &__header {
         color: $sideBarHeaderFg;
         display: flex;
-        align-items: center;
+        flex: 1 1 auto;
         text-transform: uppercase;
-        &-label {
+        > * {
             @include ellipsize();
         }
     }
@@ -56,32 +100,19 @@
         }
     }
 
-
-
-
-
-
-
-    .c-sidebar__header, .c-sidebar__contents {
-        //display: flex;
-        //
-        //div, span {
-        //    flex-basis: 50%;
-        //}
-
-
-        button {
-            flex-basis: 10px;
-            margin-right: 10px;
+    // TEMP
+    .c-list__item {
+        &__name {
+            flex: 1 1 auto;
+        }
+        .icon-trash {
+            display: none;
+            font-size: 0.8em;
+            flex: 0 0 auto;
         }
 
-        .section, .page {
-            border-radius: 4px;
-            padding: 2px 5px 2px 12px;
-
-            &.selected {
-                background-color: #7d7d7d;
-            }
+        &:hover {
+            .icon-trash { display: block; }
         }
     }
 }

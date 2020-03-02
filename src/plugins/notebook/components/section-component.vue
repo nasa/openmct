@@ -1,10 +1,12 @@
 <template>
-<div class="c-list-item"
-     :class="{'selected': section.isSelected}"
+<div class="c-list__item js-list__item"
+     :class="{'is-selected': section.isSelected}"
+     :data-id="section.id"
+     @click="selectSection"
 >
-    <span :data-id="section.id"
+    <span class="c-list__item__name js-list__item__name"
+          :data-id="section.id"
           @blur="updateName"
-          @click="selectSection"
     >
         {{ section.name.length ? section.name : `Unnamed ${section.sectionTitle}` }}
     </span>
@@ -76,10 +78,13 @@ export default {
         },
         selectSection(event) {
             const target = event.target;
-            target.contentEditable = true;
-            const section = target.closest('.c-list-item');
+            const section = target.closest('.js-list__item');
+            const input = section.querySelector('.js-list__item__name');
 
-            if (section.className.indexOf('selected') > -1) {
+            if (section.className.indexOf('is-selected') > -1) {
+                input.contentEditable = true;
+                input.classList.add('c-input-inline');
+                document.execCommand('selectAll',false,null);
                 return;
             }
 
@@ -98,6 +103,7 @@ export default {
         updateName(event) {
             const target = event.target;
             target.contentEditable = false;
+            target.classList.remove('c-input-inline');
             const name = target.textContent.trim();
 
             if (this.section.name === name) {

@@ -1,6 +1,7 @@
 <template>
-<ul>
-    <li v-for="page in pages"
+<ul class="c-list">
+    <li class="c-list__item-h"
+        v-for="page in pages"
         :key="page.id"
     >
         <Page ref="pageComponent"

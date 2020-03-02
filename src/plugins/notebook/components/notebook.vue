@@ -11,28 +11,32 @@
                    ref="searchResults"
                    :results="getSearchResults()"
     />
-    <Multipane v-else
-               type="horizontal"
-               class="c-notebook__multipane"
-    >
-        <Pane class="c-notebook__nav">
-            <Sidebar ref="sidebar"
-                     :domain-object="internalDomainObject"
-                     :page-title="internalDomainObject.configuration.pageTitle"
-                     :pages="pages"
-                     :section-title="internalDomainObject.configuration.sectionTitle"
-                     :sections="sections"
-            />
-        </Pane>
-        <Pane handle="before"
-              class="c-notebook__contents"
-        >
-            <div class="c-notebook__controls ">
-                <div class="bread-crumb">
-                    {{ getSelectedSection() ? getSelectedSection().name : '' }}
-                    {{ getSelectedPage() ? getSelectedPage().name : '' }}
+
+    <div v-if="!search.length"
+        class="c-notebook__body">
+        <Sidebar ref="sidebar"
+                class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
+                 :class="{'is-expanded': showNav}"
+                :domain-object="internalDomainObject"
+                :page-title="internalDomainObject.configuration.pageTitle"
+                :pages="pages"
+                :section-title="internalDomainObject.configuration.sectionTitle"
+                :sections="sections"
+        />
+        <div class="c-notebook__page-view">
+            <div class="c-notebook__page-view__header">
+                <button class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major icon-menu-hamburger"
+                        @click="toggleNav"
+                ></button>
+                <div class="c-notebook__page-view__path c-path">
+                    <span class="c-notebook__path__section c-path__item">
+                        {{ getSelectedSection() ? getSelectedSection().name : '' }}
+                    </span>
+                    <span class="c-notebook__path__page c-path__item">
+                        {{ getSelectedPage() ? getSelectedPage().name : '' }}
+                    </span>
                 </div>
-                <div>
+                <div class="c-notebook__page-view__controls">
                     <select v-model="showTime"
                             class="c-notebook__controls__time"
                     >
@@ -63,8 +67,8 @@
             >
                 <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
             </div>
-            <div v-if="selectedSection && selectedPage"
-                 class="c-notebook__entries"
+            <div class="c-notebook__entries"
+                 v-if="selectedSection && selectedPage"
             >
                 <ul>
                     <NotebookEntry v-for="entry in filteredAndSortedEntries"
@@ -77,15 +81,13 @@
                     />
                 </ul>
             </div>
-        </Pane>
-    </Multipane>
+        </div>
+    </div>
 </div>
 </template>
 
 <script>
 import NotebookEntry from './notebook-entry.vue';
-import Multipane from '@/ui/layout/multipane.vue';
-import Pane from '@/ui/layout/pane.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
@@ -97,9 +99,7 @@ import { throttle } from 'lodash';
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        Multipane,
         NotebookEntry,
-        Pane,
         Search,
         SearchResults,
         Sidebar
@@ -111,7 +111,8 @@ export default {
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',
-            showTime: 0
+            showTime: 0,
+            showNav: false
         }
     },
     computed: {
@@ -303,6 +304,9 @@ export default {
         },
         updateSection({ sections, id = null }) {
             this.mutateObject('configuration.sections', sections);
+        },
+        toggleNav: function () {
+            this.showNav = !this.showNav;
         }
     }
 }

@@ -33,13 +33,13 @@
             @setView="setView"
         />
         <!-- Action buttons -->
+        <menu-switcher v-if="notebookEnabled"
+                       :current-type="{ name: 'notebook', cssClass: 'icon-notebook' }"
+                       :get-data="setNotebookTypes"
+                       :on-switch="snapshot"
+                       :types="notebookTypes"
+        />
         <div class="l-browse-bar__actions">
-            <button
-                v-if="notebookEnabled"
-                class="l-browse-bar__actions__notebook-entry c-button icon-notebook"
-                title="New Notebook entry"
-                @click="snapshot()"
-            ></button>
             <button
                 v-if="isViewEditable & !isEditing"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
@@ -93,16 +93,21 @@
 <script>
 import Snapshot from '@/plugins/notebook/snapshot';
 import ViewSwitcher from './ViewSwitcher.vue';
+import MenuSwitcher from './menu-switcher.vue';
+import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage';
+import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '@/plugins/notebook/notebook-constants';
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
     components: {
+        MenuSwitcher,
         ViewSwitcher
     },
     data: function () {
         return {
+            notebookTypes: [],
             showViewMenu: false,
             showSaveMenu: false,
             domainObject: PLACEHOLDER_OBJECT,
@@ -185,6 +190,36 @@ export default {
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
     methods: {
+        async setNotebookTypes() {
+            if (!this.notebookEnabled) {
+                return;
+            }
+
+            const notebookTypes = [];
+            const defaultNotebook = getDefaultNotebook();
+
+            let defaultPath = '';
+            if (defaultNotebook) {
+                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier).then(d => d);
+                defaultPath = `${domainObject.name} > ${defaultNotebook.section.name} > ${defaultNotebook.page.name}`
+            }
+
+            notebookTypes.push({
+                cssClass: 'icon-notebook',
+                disable: !!defaultNotebook,
+                name: `Save to Notebook ${defaultPath}`,
+                type: NOTEBOOK_DEFAULT
+            });
+
+            notebookTypes.push({
+                cssClass: 'icon-notebook',
+                disable: false,
+                name: 'Save to Notebook Snapshots',
+                type: NOTEBOOK_SNAPSHOT
+            });
+
+            this.notebookTypes = notebookTypes;
+        },
         toggleSaveMenu() {
             this.showSaveMenu = !this.showSaveMenu;
         },
@@ -267,9 +302,9 @@ export default {
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
         },
-        snapshot() {
+        snapshot(notebook) {
             let element = document.getElementsByClassName("l-shell__main-container")[0];
-            this.notebookSnapshot.capture(this.domainObject, element);
+            this.notebookSnapshot.capture(notebook.type, this.domainObject, element);
         },
         goToParent() {
             window.location.hash = this.parentUrl;

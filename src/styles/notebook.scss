@@ -31,9 +31,16 @@
     bottom: 0px;
     left: 0px;
 
-    /****************************** NAV SIDEBAR */
-    &__nav {
+    /****************************** CONTENT */
+    &__body {
+        // Holds __nav and __page-view
+        display: flex;
+        flex: 1 1 auto;
         overflow: hidden;
+    }
+
+    &__nav {
+        flex: 0 0 auto;
         * {
             overflow: hidden;
         }
@@ -51,22 +58,17 @@
         width: 70%;
     }
 
-
-    &-snapshot {
-        flex: 1 1 auto;
+    &__page-view {
+        // Holds __header, __drag-area and __entries
         display: flex;
+        flex: 1 1 auto;
         flex-direction: column;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__header {
+        width: 100%;
+        > * {
             flex: 0 0 auto;
-        }
-
-        &__image {
-            flex: 1 1 auto;
+            + * {
+                margin-top: $interiorMargin;
+            }
         }
     }
 
@@ -132,6 +134,36 @@
         }
     }
 
+    /***** PAGE VIEW */
+    &__page-view {
+        &__header {
+            display: flex;
+            > * {
+                flex: 0 0 auto;
+                + * {
+                    margin-left: $interiorMargin;
+                }
+            }
+        }
+
+        &__path {
+            flex: 1 1 auto;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 1.3em;
+            > * {
+                // Section
+                flex: 0 0 auto;
+                + * {
+                    // Page
+                    display: inline;
+                    flex: 1 1 auto;
+                    @include ellipsize();
+                }
+            }
+        }
+    }
+
     &__entries {
         flex-direction: column;
         flex: 1 1 auto;
@@ -142,7 +174,6 @@
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
         }
-
     }
 }
 
@@ -288,6 +319,24 @@
 .overlay.snapshot {
     // Handle overflow-y issues with tables and html2canvas
     .l-sticky-headers .l-tabular-body { overflow: auto; }
+}
+
+.c-notebook-snapshot {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__header {
+        flex: 0 0 auto;
+    }
+
+    &__image {
+        flex: 1 1 auto;
+    }
 }
 
 /****************************** PAINTERRO OVERRIDES */
