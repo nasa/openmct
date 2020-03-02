@@ -192,7 +192,7 @@ export default class ConditionClass extends EventEmitter {
     handleCriterionResult(eventData) {
         const id = eventData.id;
         const conditionData = eventData.data;
-        
+
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = eventData.data.result;
         }
