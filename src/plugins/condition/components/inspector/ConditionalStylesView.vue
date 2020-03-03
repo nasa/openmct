@@ -3,20 +3,22 @@
     <div class="controls">
         <div class="preview">ABC</div>
         <button class="c-icon-button--swatched icon-paint-bucket"
-                @click="applyStyle('background-color')"
+                data-style-prop="backgroundColor"
+                @click="applyStyle"
         ></button>
         <button class="c-icon-button--swatched icon-line-horz"
-                @click="applyStyle('border')"
+                data-style-prop="borderColor"
+                @click="applyStyle"
         ></button>
         <button class="c-icon-button--swatched icon-font"
-                @click="applyStyle('color')"
+                data-style-prop="color"
+                @click="applyStyle"
         ></button>
     </div>
 </div>
 </template>
 
 <script>
-const previewElem = document.querySelector('.preview');
 
 export default {
     name: 'ConditionalStylesView',
@@ -26,14 +28,15 @@ export default {
     data() {
         return {
             backgroundColor: 'red',
-            border: 'green',
+            borderColor: 'green',
             color: 'blue'
         }
     },
     methods: {
-        applyStyle(type) {
-            console.log('applyStyle', previewElem);
-            previewElem.style[`${type}`] = this.backgroundColor;
+        applyStyle(ev) {
+            const prop = ev.target.dataset.styleProp;
+            const previewElem = ev.target.closest('.controls').querySelector('.preview')
+            previewElem.style[`${prop}`] = this[prop];
         }
     }
 }

@@ -1,13 +1,16 @@
 .controls {
     width: 100%;
-    margin: 5px 10px;
+    margin: 0.2em 0.5em;
 }
 .preview {
     color: #aaa;
-    margin-right: 20px;
+    margin-right: 1.5em;
+    padding: 0.5em 1.5em;
+    border-radius: 5px;
     display: inline-block;
-    height: 20px;
-    width: 40px;
+    border: solid 1.5px #fff;
+    background-color: inherit;
+
 }
 .controls button {
     display: inline-block;
