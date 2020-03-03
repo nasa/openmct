@@ -28,7 +28,7 @@
         <button
             v-if="allowExport"
             class="c-button icon-download labeled"
-            title="Export This View's Data"
+            title="Export this view's data"
             @click="exportAllDataAsCSV()"
         >
             <span class="c-button__label">Export Table Data</span>
@@ -37,7 +37,7 @@
             v-if="allowExport"
             v-show="markedRows.length"
             class="c-button icon-download labeled"
-            title="Export Marked Rows As CSV"
+            title="Export marked rows as CSV"
             @click="exportMarkedDataAsCSV()"
         >
             <span class="c-button__label">Export Marked Rows</span>
@@ -45,7 +45,7 @@
         <button
             v-show="markedRows.length"
             class="c-button icon-x labeled"
-            title="Unmark All Rows"
+            title="Unmark all rows"
             @click="unmarkAllRows()"
         >
             <span class="c-button__label">Unmark All Rows</span>
@@ -58,7 +58,7 @@
             v-if="marking.enable"
             class="c-button icon-pause pause-play labeled"
             :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
-            :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'"
+            :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
             @click="togglePauseByButton()"
         >
             <span class="c-button__label">
@@ -66,12 +66,15 @@
             </span>
         </button>
         <div
+            v-if="isAutosizeEnabled"
             class="c-separator"
         ></div>
         <button
-            class="c-button icon-refresh labeled"
+            v-if="isAutosizeEnabled"
+            class="c-button icon-arrows-right-left labeled"
+            title="Increase column widths to fit currently available data."
             @click="recalculateColumnWidths">
-            <span class="c-button__label">Recalculate Column Width's</span>
+            <span class="c-button__label">Fit Columns</span>
         </button>
 
         <slot name="buttons"></slot>
@@ -481,7 +484,7 @@ export default {
                     if (columnWidths[headerKey]) {
                         let currentWidth = columnWidths[headerKey],
                             newWidth = cell.offsetWidth;
-                        
+
                         if (newWidth > currentWidth) {
                             columnWidths[headerKey] = newWidth;
                         }
