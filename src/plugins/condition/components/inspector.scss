@@ -2,14 +2,19 @@
     width: 100%;
     margin: 5px 10px;
 }
-
-.controls label {
+.preview {
     color: #aaa;
-    margin-right: 10px;
+    margin-right: 20px;
+    display: inline-block;
+    height: 20px;
+    width: 40px;
 }
 .controls button {
     display: inline-block;
-    margin: 0 -5px;
+    margin: 0 -0.5em;
     color: #aaa;
     font-size: 0.8em;
+}
+.c-properties__row--span-all {
+    border-bottom: 1px solid #ccc;
 }
