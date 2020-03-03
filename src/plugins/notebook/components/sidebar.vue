@@ -7,7 +7,9 @@
             </div>
         </div>
         <div class="c-sidebar__contents-and-controls">
-            <button class="c-list-button" @click="addSection">
+            <button class="c-list-button"
+                    @click="addSection"
+            >
                 <span class="c-button c-list-button__button icon-plus"></span>
                 <span class="c-list-button__label">Add {{ sectionTitle }}</span>
             </button>
@@ -29,17 +31,19 @@
         </div>
 
         <div class="c-sidebar__contents-and-controls">
-            <button class="c-list-button" @click="addPage">
+            <button class="c-list-button"
+                    @click="addPage"
+            >
                 <span class="c-button c-list-button__button icon-plus"></span>
                 <span class="c-list-button__label">Add {{ pageTitle }}</span>
             </button>
-            <PageCollection class="c-sidebar__contents"
+            <PageCollection ref="pageCollection"
+                            class="c-sidebar__contents"
                             :domain-object="domainObject"
                             :pages="pages"
                             :sections="sections"
                             :sidebar-covers-entries="sidebarCoversEntries"
                             :page-title="pageTitle"
-                            ref="pageCollection"
             />
         </div>
     </div>

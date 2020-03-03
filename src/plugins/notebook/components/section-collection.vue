@@ -1,8 +1,8 @@
 <template>
 <ul class="c-list">
-    <li  class="c-list__item-h"
-         v-for="section in sections"
+    <li v-for="section in sections"
         :key="section.id"
+        class="c-list__item-h"
     >
         <sectionComponent ref="sectionComponent"
                           :section="section"

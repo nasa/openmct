@@ -1,8 +1,8 @@
 <template>
 <ul class="c-list">
-    <li class="c-list__item-h"
-        v-for="page in pages"
+    <li v-for="page in pages"
         :key="page.id"
+        class="c-list__item-h"
     >
         <Page ref="pageComponent"
               :page="page"
@@ -16,7 +16,6 @@ import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_P
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import Page from './page-component.vue';
-import uuid from 'uuid';
 
 export default {
     inject: ['openmct'],

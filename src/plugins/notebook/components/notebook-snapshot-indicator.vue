@@ -25,13 +25,6 @@ export default {
         this.updateSnapshotIndicatorTitle();
     },
     methods: {
-        updateSnapshotIndicatorTitle() {
-            const snapshotCount = snapshotContainer.getSnapshots().length;
-            const snapshotTitleSuffix = snapshotCount === 1
-                ? 'Snapshot'
-                : 'Snapshots';
-            this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
-        },
         snapshotsUpdated() {
             this.updateSnapshotIndicatorTitle();
         },
@@ -63,6 +56,13 @@ export default {
                 },
                 template: '<SnapshotContainerComponent :toggleSnapshot="toggleSnapshot"></SnapshotContainerComponent>'
             }).$mount();
+        },
+        updateSnapshotIndicatorTitle() {
+            const snapshotCount = snapshotContainer.getSnapshots().length;
+            const snapshotTitleSuffix = snapshotCount === 1
+                ? 'Snapshot'
+                : 'Snapshots';
+            this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
         }
     }
 }
