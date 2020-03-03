@@ -377,7 +377,7 @@ define([
          * @public
          */
         updateFiltersAndRefresh: function (updatedFilters) {
-            if (this.filters) {
+            if (this.filters && !_.isEqual(this.filters, updatedFilters)) {
                 this.filters = updatedFilters;
                 this.reset();
                 if (this.unsubscribe) {

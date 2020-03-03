@@ -68,7 +68,7 @@ define([
                                 table,
                                 objectPath
                             },
-                            template: '<table-component :isEditing="isEditing" :enableMarking="true"></table-component>'
+                            template: '<table-component :isEditing="isEditing" :marking="{enable: true}"/>'
                         });
                     },
                     onEditModeChange(editMode) {
@@ -86,7 +86,7 @@ define([
             priority() {
                 return 1;
             }
-        }
+        };
     }
     return TelemetryTableViewProvider;
 });
