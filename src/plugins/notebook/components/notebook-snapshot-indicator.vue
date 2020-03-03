@@ -1,14 +1,13 @@
 <template>
 <div class="c-indicator c-indicator--clickable icon-notebook s-status-caution">
     <span class="label c-indicator__label">
-        <button @click="globalToggleSnapshot">Snapshots</button>
+        <button @click="toggleSnapshot">Snapshots</button>
     </span>
 </div>
 </template>
 
 <script>
 import SnapshotContainerComponent from './notebook-snapshot-container.vue';
-import snapshotContainer from '../snapshot-container';
 import Vue from 'vue';
 
 export default {
@@ -18,47 +17,40 @@ export default {
             expanded: false
         }
     },
+    mounted() {
+    },
     methods: {
-        globalToggleSnapshot() {
-            const self = this;
+        snapshotsUpdated() {
+            this.updateSnapshotContainer();
+        },
+        toggleSnapshot() {
+            this.expanded = !this.expanded;
 
-            if (this.expanded) {
-                this.destroy();
+            const drawerElement = document.querySelector('.l-shell__drawer');
+            drawerElement.classList.toggle('is-expanded');
 
-                return;
-            }
-
-            this.expanded = true;
+            this.updateSnapshotContainer();
+        },
+        updateSnapshotContainer() {
             const openmct = this.openmct;
-            const destroy = self.destroy.bind(self);
-            const drawer = document.querySelector('.l-shell__drawer');
+            const toggleSnapshot = this.toggleSnapshot.bind(this);
+            const drawerElement = document.querySelector('.l-shell__drawer');
+            drawerElement.innerHTML = '<div></div';
+            const divElement = document.querySelector('.l-shell__drawer div');
 
             this.component = new Vue({
                 provide: { openmct },
+                el: divElement,
                 components: {
                     SnapshotContainerComponent
                 },
                 data() {
                     return {
-                        snapshots: snapshotContainer.getSnapshots() || [],
-                        destroy
+                        toggleSnapshot
                     };
                 },
-                template: '<SnapshotContainerComponent :snapshots="snapshots" :destroy="destroy"></SnapshotContainerComponent>'
+                template: '<SnapshotContainerComponent :toggleSnapshot="toggleSnapshot"></SnapshotContainerComponent>'
             }).$mount();
-
-            drawer.appendChild(this.component.$el);
-            drawer.classList.add('is-expanded');
-        },
-        destroy() {
-            this.component.$destroy();
-            const drawer = document.querySelector('.l-shell__drawer');
-            drawer.classList.remove('is-expanded');
-            const children = drawer.children;
-            for (var child of children) {
-                child.remove();
-            }
-            this.expanded = false;
         }
     }
 }

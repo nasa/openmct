@@ -1,9 +1,14 @@
+import EventEmitter from 'EventEmitter';
+import { EVENT_SNAPSHOTS_UPDATED } from './notebook-constants';
+
 const NOTEBOOK_SNAPSHOT_STORAGE = 'notebook-snapshot-storage';
 const NOTEBOOK_SANAPSHOT_MAX_COUNT = 10;
 
-class SnapshotContainer {
+class SnapshotContainer extends EventEmitter {
     constructor() {
-        if (! SnapshotContainer.instance) {
+        super();
+
+        if (!SnapshotContainer.instance) {
             SnapshotContainer.instance = this;
         }
 
@@ -16,22 +21,26 @@ class SnapshotContainer {
             snapshots.pop();
         }
 
-        snapshots.shift(embedObject);
+        snapshots.unshift(embedObject);
         window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify(snapshots));
+        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
     }
 
     getSnapshots() {
-        const snapshots = window.localStorage.getItem(NOTEBOOK_SNAPSHOT_STORAGE);
+        const snapshots = window.localStorage.getItem(NOTEBOOK_SNAPSHOT_STORAGE) || '[]';
 
         return JSON.parse(snapshots);
     }
 
     removeSnapshot() {
-        console.log('remove Snapshot');
+        console.log('TODO: remove Snapshot');
+        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
     }
 
     removeAllSnapshots() {
+        console.log('TODO: remove ALL Snapshot');
         window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify([]));
+        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
     }
 }
 

@@ -35,7 +35,7 @@
         <app-logo />
     </div>
 
-    <div class="l-shell__drawer c-drawer"></div>
+    <div class="l-shell__drawer"></div>
 
     <multipane
         class="l-shell__main"
