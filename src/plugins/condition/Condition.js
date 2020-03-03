@@ -208,6 +208,12 @@ export default class ConditionClass extends EventEmitter {
         })
     }
 
+    handleConditionUpdated() {
+        // trigger an updated event so that consumers can react accordingly
+        this.evaluate();
+        this.emitEvent('conditionResultUpdated', {result: this.result});
+    }
+
     getCriteria() {
         return this.criteria;
     }
@@ -219,6 +225,10 @@ export default class ConditionClass extends EventEmitter {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
         return success;
+    }
+
+    evaluate() {
+        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }
 
     emitEvent(eventName, data) {
