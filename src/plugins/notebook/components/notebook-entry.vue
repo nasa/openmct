@@ -20,7 +20,6 @@
                 <NotebookEmbed v-for="embed in entry.embeds"
                                ref="notebookEmbed"
                                :key="embed.id"
-                               :domain-object="domainObject"
                                :embed="embed"
                                :object-path="embed.objectPath"
                                :entry="entry"
@@ -43,7 +42,7 @@
 <script>
 import NotebookEmbed from './notebook-embed.vue';
 import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
+import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRY } from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
@@ -102,7 +101,8 @@ export default {
 
         if (this.$refs.notebookEmbed) {
             this.$refs.notebookEmbed.forEach(embed => {
-                embed.$on(EVENT_UPDATE_ENTRY, this.updateEntry.bind(this));
+                embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
+                embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
             });
         }
     },
@@ -186,8 +186,26 @@ export default {
 
             return foundId;
         },
+        findPositionInArray(array, id) {
+            let position = -1;
+            array.some((item, index) => {
+                const found = item.id === id;
+                if (found) {
+                    position = index;
+                }
+
+                return found;
+            });
+
+            return position;
+        },
         formatTime(unixTime, timeFormat) {
             return Moment(unixTime).format(timeFormat);
+        },
+        removeEmbed(id) {
+            const embedPosition = this.findPositionInArray(this.entry.embeds, id);
+            this.entry.embeds.splice(embedPosition, 1);
+            this.updateEntry(this.entry);
         },
         textBlur($event, entryId) {
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
@@ -216,6 +234,16 @@ export default {
             } else {
                 $event.target.innerText = '';
             }
+        },
+        updateEmbed(newEmbed) {
+            let embed = this.entry.embeds.find(e => e.id === newEmbed.id);
+
+            if (!embed) {
+                return;
+            }
+
+            embed = newEmbed;
+            this.updateEntry(this.entry);
         },
         updateEntry(newEntry) {
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {

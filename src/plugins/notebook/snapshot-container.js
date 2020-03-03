@@ -15,15 +15,14 @@ class SnapshotContainer extends EventEmitter {
         return SnapshotContainer.instance;
     }
 
-    saveSnapshot(embedObject) {
+    addSnapshot(embedObject) {
         const snapshots = this.getSnapshots();
         if (snapshots.length >= NOTEBOOK_SNAPSHOT_MAX_COUNT) {
             snapshots.pop();
         }
 
         snapshots.unshift(embedObject);
-        window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify(snapshots));
-        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
+        this.saveSnapshots(snapshots);
     }
 
     getSnapshots() {
@@ -32,15 +31,33 @@ class SnapshotContainer extends EventEmitter {
         return JSON.parse(snapshots);
     }
 
-    removeSnapshot() {
-        console.log('TODO: remove Snapshot');
-        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
+    removeSnapshot(id) {
+        if (!id) {
+            return;
+        }
+
+        const snapshots = this.getSnapshots();
+        const filteredsnapshots = snapshots.filter(snapshot => snapshot.id !== id);
+        this.saveSnapshots(filteredsnapshots);
     }
 
     removeAllSnapshots() {
-        console.log('TODO: remove ALL Snapshot');
-        window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify([]));
+        this.saveSnapshots([]);
+    }
+
+    saveSnapshots(snapshots) {
+        window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify(snapshots));
         this.emit(EVENT_SNAPSHOTS_UPDATED, true);
+    }
+
+    updateSnapshot(snapshot) {
+        const snapshots = this.getSnapshots();
+        const updatedSnapshots = snapshots.map(s => {
+            return s.id === snapshot.id
+                ? snapshot
+                : s;
+        });
+        this.saveSnapshots(updatedSnapshots);
     }
 }
 

@@ -32,28 +32,30 @@
         </div>
     </div>
     <div class="">
-        <ul>
-            <li v-for="(snapshot, index) in snapshots"
-                :key="snapshot.id"
-            >
-                {{ index + 1 }} : {{ snapshot.id }} {{ snapshot.name }}
-            </li>
-        </ul>
+        <span v-for="snapshot in snapshots"
+              :key="snapshot.id"
+        >
+            <NotebookEmbed ref="notebookEmbed"
+                           :key="snapshot.id"
+                           :embed="snapshot"
+                           :remove-action-string="'Delete Snapshot'"
+            />
+        </span>
     </div>
 </div>
 </template>
 
 <script>
-// import NotebookEmbed from './notebook-embed.vue';
+import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer, { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
+import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 
 import $ from 'zepto';
 
 export default {
     inject: ['openmct'],
     components: {
-        // NotebookEmbed
+        NotebookEmbed
     },
     props: {
         toggleSnapshot: {
@@ -72,6 +74,13 @@ export default {
     },
     mounted() {
         snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
+
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$on(EVENT_REMOVE_EMBED, this.removeSnapshot.bind(this));
+                embed.$on(EVENT_UPDATE_EMBED, this.updateSnapshot.bind(this));
+            });
+        }
     },
     methods: {
         close() {
@@ -86,7 +95,7 @@ export default {
             return {
                 name: 'Delete All Snapshots',
                 cssClass: 'icon-trash',
-                perform: function (embed, entry) {
+                perform: function (embed) {
                     var dialog = self.openmct.overlays.dialog({
                         iconClass: "error",
                         message: 'This action will delete all Notebook Snapshots. Do you want to continue?',
@@ -112,6 +121,9 @@ export default {
         },
         removeAllSnapshots() {
             snapshotContainer.removeAllSnapshots();
+        },
+        removeSnapshot(id) {
+            snapshotContainer.removeSnapshot(id);
         },
         snapshotsUpdated() {
             this.snapshots = snapshotContainer.getSnapshots();
@@ -157,6 +169,9 @@ export default {
             });
 
             body.on(initiatingEvent, menuClickHandler);
+        },
+        updateSnapshot(snapshot) {
+            snapshotContainer.updateSnapshot(snapshot);
         }
     }
 }

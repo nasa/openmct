@@ -23,7 +23,7 @@
                         <li v-for="action in actions"
                             :key="action.name"
                             :class="action.cssClass"
-                            @click="action.perform(embed, entry)"
+                            @click="action.perform(embed)"
                         >
                             {{ action.name }}
                         </li>
@@ -47,7 +47,7 @@ import objectLink from '../../../ui/mixins/object-link';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import SnapshotTemplate from './snapshot-template.html';
-import { EVENT_UPDATE_ENTRY } from '../notebook-constants';
+import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED } from '../notebook-constants';
 import Vue from 'vue';
 
 export default {
@@ -56,19 +56,7 @@ export default {
     },
     mixins: [objectLink],
     props: {
-        domainObject: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
         embed: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
-        entry: {
             type: Object,
             default() {
                 return {};
@@ -79,15 +67,19 @@ export default {
             default() {
                 return [];
             }
+        },
+        removeActionString: {
+            type: String,
+            default() {
+                return 'Remove Embed';
+            }
         }
     },
     data() {
         return {
             actions: [this.removeEmbedAction()],
             agentService: this.openmct.$injector.get('agentService'),
-            currentEntryValue: '',
-            popupService: this.openmct.$injector.get('popupService'),
-            showActionMenu: false
+            popupService: this.openmct.$injector.get('popupService')
         }
     },
     watch: {
@@ -158,7 +150,6 @@ export default {
                 },
                 saveHandler: function (image, done) {
                     if (save) {
-                        const embed = self.entry.embeds.find(e => e.id === self.embed.id);
                         const url = image.asBlob();
                         const reader = new window.FileReader();
                         reader.readAsDataURL(url);
@@ -171,10 +162,8 @@ export default {
                                 modified: Date.now()
                             };
 
-                            if (embed) {
-                                embed.snapshot = snapshotObject;
-                                self.updateEntry(self.entry);
-                            }
+                            self.embed.snapshot = snapshotObject;
+                            self.updateEmbed(self.embed);
                         };
                     } else {
                         console.log('You cancelled the annotation!!!');
@@ -183,19 +172,6 @@ export default {
                     done(true);
                 }
             }).show(this.embed.snapshot.src);
-        },
-        findPositionInArray(array, id) {
-            let position = -1;
-            array.some((item, index) => {
-                const found = item.id === id;
-                if (found) {
-                    position = index;
-                }
-
-                return found;
-            });
-
-            return position;
         },
         formatTime(unixTime, timeFormat) {
             return Moment(unixTime).format(timeFormat);
@@ -247,14 +223,16 @@ export default {
                     });
                 });
         },
+        removeEmbed(id) {
+            this.$emit(EVENT_REMOVE_EMBED, id);
+        },
         removeEmbedAction() {
             var self = this;
 
             return {
-                name: 'Remove Embed',
+                name: this.removeActionString,
                 cssClass: 'icon-trash',
-                perform: function (embed, entry) {
-                    const embedPosition = self.findPositionInArray(entry.embeds, embed.id);
+                perform: function (embed) {
                     var dialog = self.openmct.overlays.dialog({
                         iconClass: "alert",
                         message: 'This Action will permanently delete this embed. Do you wish to continue?',
@@ -268,9 +246,8 @@ export default {
                             label: "Yes",
                             emphasis: true,
                             callback: function () {
-                                entry.embeds.splice(embedPosition, 1);
-                                self.updateEntry(entry);
                                 dialog.dismiss();
+                                self.removeEmbed(embed.id);
                             }
                         }]
                     });
@@ -315,8 +292,8 @@ export default {
 
             body.on(initiatingEvent, menuClickHandler);
         },
-        updateEntry(entry) {
-            this.$emit(EVENT_UPDATE_ENTRY, entry);
+        updateEmbed(embed) {
+            this.$emit(EVENT_UPDATE_EMBED, embed);
         }
     }
 }

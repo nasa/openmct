@@ -107,6 +107,6 @@ export default class Snapshot {
      */
     _saveToNotebookSnapshots(embedObject, imageUrl) {
         const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
-        SnapShotContainer.saveSnapshot(embed);
+        SnapShotContainer.addSnapshot(embed);
     }
 }
