@@ -65,6 +65,14 @@
                 {{ paused ? 'Play' : 'Pause' }}
             </span>
         </button>
+        <div
+            class="c-separator"
+        ></div>
+        <button
+            class="c-button icon-refresh labeled"
+            @click="recalculateColumnWidths">
+            <span class="c-button__label">Recalculate Column Width's</span>
+        </button>
 
         <slot name="buttons"></slot>
     </div>
@@ -462,21 +470,34 @@ export default {
         calculateColumnWidths() {
             let columnWidths = {};
             let totalWidth = 0;
-            let sizingRowEl = this.sizingTable.children[0];
-            let sizingCells = Array.from(sizingRowEl.children);
             let headerKeys = Object.keys(this.headers);
+            let sizingTableChildren = Array.from(this.sizingTable.children);
 
             headerKeys.forEach((headerKey, headerIndex)=>{
-                let cell = sizingCells[headerIndex];
-                let columnWidth = cell.offsetWidth;
-                columnWidths[headerKey] = columnWidth;
-                totalWidth += columnWidth;
+                sizingTableChildren.forEach(sizingRowEl => {
+                    let sizingCells = Array.from(sizingRowEl.children),
+                        cell = sizingCells[headerIndex];
+
+                    if (columnWidths[headerKey]) {
+                        let currentWidth = columnWidths[headerKey],
+                            newWidth = cell.offsetWidth;
+                        
+                        if (newWidth > currentWidth) {
+                            columnWidths[headerKey] = newWidth;
+                        }
+                    } else {
+                        columnWidths[headerKey] = cell.offsetWidth;
+                    }
+                });
+                totalWidth += columnWidths[headerKey];
             });
 
             this.columnWidths = columnWidths;
             this.totalWidth = totalWidth;
 
             this.calculateScrollbarWidth();
+
+            return Promise.resolve();
         },
         sortBy(columnKey) {
             // If sorting by the same column, flip the sort direction.
@@ -813,6 +834,20 @@ export default {
                 this.setHeight();
                 this.scrollable.scrollTop = this.userScroll;
             }
+        },
+        clearSizingTable() {
+            this.visibleRows.forEach((row, i) => {
+                delete this.sizingRows[i];
+            });
+        },
+        recalculateColumnWidths() {
+            this.visibleRows.forEach((row,i) => {
+                this.$set(this.sizingRows, i, row);
+            });
+
+            this.$nextTick()
+                .then(this.calculateColumnWidths)
+                .then(this.clearSizingTable);
         }
     }
 }
