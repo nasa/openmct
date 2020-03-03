@@ -1,27 +1,39 @@
 <template>
 <div class="c-indicator c-indicator--clickable icon-notebook s-status-caution">
     <span class="label c-indicator__label">
-        <button @click="toggleSnapshot">Snapshots</button>
+        <button @click="toggleSnapshot">{{ indicatorTitle }}</button>
     </span>
 </div>
 </template>
 
 <script>
 import SnapshotContainerComponent from './notebook-snapshot-container.vue';
+import snapshotContainer from '../snapshot-container';
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import Vue from 'vue';
 
 export default {
     inject: ['openmct'],
     data() {
         return {
-            expanded: false
+            expanded: false,
+            indicatorTitle: ''
         }
     },
     mounted() {
+        snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
+        this.updateSnapshotIndicatorTitle();
     },
     methods: {
+        updateSnapshotIndicatorTitle() {
+            const snapshotCount = snapshotContainer.getSnapshots().length;
+            const snapshotTitleSuffix = snapshotCount === 1
+                ? 'Snapshot'
+                : 'Snapshots';
+            this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
+        },
         snapshotsUpdated() {
-            this.updateSnapshotContainer();
+            this.updateSnapshotIndicatorTitle();
         },
         toggleSnapshot() {
             this.expanded = !this.expanded;
