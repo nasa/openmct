@@ -27,9 +27,9 @@ export default {
     ],
     data() {
         return {
-            backgroundColor: 'red',
-            borderColor: 'green',
-            color: 'blue'
+            backgroundColor: '#666',
+            borderColor: '#000',
+            color: '#ccc'
         }
     },
     methods: {

@@ -1,9 +1,9 @@
 <template>
 <div class="c-inspector">
-    <div class="c-inspector__tabs"
-    >
+    <div class="c-inspector__tabs">
         <div v-if="showStyles"
-             class="c-inspector__tabs__holder">
+             class="c-inspector__tabs__holder"
+        >
             <div v-for="tabbedView in tabbedViews"
                  :key="tabbedView.key"
                  class="c-inspector__tabs__header"
@@ -22,7 +22,7 @@
                 <pane class="c-inspector__properties">
                     <properties />
                     <location />
-                    <inspector-views/>
+                    <inspector-views />
                 </pane>
                 <pane
                     v-if="isEditing && hasComposition"
@@ -36,7 +36,7 @@
             <pane v-else
                   class="c-inspector__styles"
             >
-                <styles-inspector-view/>
+                <styles-inspector-view />
             </pane>
         </div>
     </div>
