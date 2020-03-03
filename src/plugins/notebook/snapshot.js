@@ -1,6 +1,7 @@
-import { addNotebookEntry } from './utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
+import SnapShotContainer from './snapshot-container';
 
 export default class Snapshot {
     constructor(openmct) {
@@ -105,6 +106,7 @@ export default class Snapshot {
      * @private
      */
     _saveToNotebookSnapshots(embedObject, imageUrl) {
-        console.log('TODO: Save to Notebook Snapshots', embedObject, imageUrl);
+        const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
+        SnapShotContainer.saveSnapshot(embed);
     }
 }

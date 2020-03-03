@@ -1,5 +1,5 @@
-// import NotebookController from './notebook-controller';
 import Notebook from './components/notebook.vue';
+import NotebookSnapshotIndicator from './components/notebook-snapshot-indicator.vue';
 import Vue from 'vue';
 
 let installed  = false;
@@ -81,6 +81,19 @@ export default function NotebookPlugin() {
             ]
         };
         openmct.types.addType('notebook', notebookType);
+
+        const notebookSnapshotIndicator = new Vue ({
+            provide: { openmct },
+            components: {
+                NotebookSnapshotIndicator
+            },
+            template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
+        });
+        const indicator = {
+            element: notebookSnapshotIndicator.$mount().$el
+        };
+
+        openmct.indicators.add(indicator);
 
         openmct.objectViews.addProvider({
             key: 'notebook-vue',

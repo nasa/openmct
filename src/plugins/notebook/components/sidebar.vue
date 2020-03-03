@@ -23,7 +23,9 @@
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
             </div>
-            <button class="c-icon-button icon-x" @click="toggleNav"></button>
+            <button class="c-icon-button icon-x"
+                    @click="toggleNav"
+            ></button>
         </div>
 
         <div class="c-sidebar__contents-and-controls">
@@ -153,7 +155,6 @@ export default {
         },
         toggleNav: function () {
             this.$parent.toggleNav();
-            // console.log('TODO: Sidebar toggleCollapse');
         }
     }
 }

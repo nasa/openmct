@@ -13,7 +13,8 @@
     />
 
     <div v-if="!search.length"
-         class="c-notebook__body">
+         class="c-notebook__body"
+    >
         <Sidebar ref="sidebar"
                  class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
                  :class="[{'is-expanded': showNav}, {'c-drawer--cover': sidebarCoversEntries}]"
@@ -68,8 +69,8 @@
             >
                 <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
             </div>
-            <div class="c-notebook__entries"
-                 v-if="selectedSection && selectedPage"
+            <div v-if="selectedSection && selectedPage"
+                 class="c-notebook__entries"
             >
                 <ul>
                     <NotebookEntry v-for="entry in filteredAndSortedEntries"
@@ -299,6 +300,9 @@ export default {
                 ? left.createdOn - right.createdOn
                 : right.createdOn - left.createdOn;
         },
+        toggleNav: function () {
+            this.showNav = !this.showNav;
+        },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
         },
@@ -321,9 +325,6 @@ export default {
         },
         updateSection({ sections, id = null }) {
             this.mutateObject('configuration.sections', sections);
-        },
-        toggleNav: function () {
-            this.showNav = !this.showNav;
         }
     }
 }
