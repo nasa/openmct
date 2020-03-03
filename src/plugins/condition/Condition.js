@@ -22,12 +22,12 @@
 
 import * as EventEmitter from 'eventemitter3';
 import uuid from 'uuid';
-import TelemetryCriterion from "@/plugins/condition/criterion/TelemetryCriterion";
-import { TRIGGER } from "@/plugins/condition/utils/constants";
-import {computeCondition} from "@/plugins/condition/utils/evaluator";
+import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import { TRIGGER } from "./utils/constants";
+import {computeCondition} from "./utils/evaluator";
 
 /*
-* conditionDefinition = {
+* conditionConfiguration = {
 *   identifier: {
 *       key: '',
 *       namespace: ''
@@ -35,10 +35,10 @@ import {computeCondition} from "@/plugins/condition/utils/evaluator";
 *   trigger: 'any'/'all',
 *   criteria: [
 *       {
+*           telemetry: '',
 *           operation: '',
-*           input: '',
-*           metaDataKey: '',
-*           key: 'someTelemetryObjectKey'
+*           input: [],
+*           metadata: ''
 *       }
 *   ]
 * }
@@ -48,21 +48,21 @@ export default class ConditionClass extends EventEmitter {
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
-     * @param conditionDefinition: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param conditionConfiguration: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
      */
-    constructor(conditionDefinition, openmct) {
+    constructor(conditionConfiguration, openmct) {
         super();
 
         this.openmct = openmct;
-        this.id = this.openmct.objects.makeKeyString(conditionDefinition.identifier);
+        this.id = this.openmct.objects.makeKeyString(conditionConfiguration.identifier);
         this.criteria = [];
         this.criteriaResults = {};
-        if (conditionDefinition.definition.criteria) {
-            this.createCriteria(conditionDefinition.definition.criteria);
+        this.result = undefined;
+        if (conditionConfiguration.configuration.criteria) {
+            this.createCriteria(conditionConfiguration.configuration.criteria);
         }
-        this.trigger = conditionDefinition.definition.trigger;
-        this.result = null;
+        this.trigger = conditionConfiguration.configuration.trigger;
         this.openmct.objects.get(this.id).then(obj => this.observeForChanges(obj));
     }
 
@@ -71,8 +71,8 @@ export default class ConditionClass extends EventEmitter {
     }
 
     update(newDomainObject) {
-        this.updateTrigger(newDomainObject.definition.trigger);
-        this.updateCriteria(newDomainObject.definition.criteria);
+        this.updateTrigger(newDomainObject.configuration.trigger);
+        this.updateCriteria(newDomainObject.configuration.criteria);
     }
 
     updateTrigger(trigger) {
@@ -82,42 +82,40 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    generateCriterion(criterionDefinition) {
+    generateCriterion(criterionConfiguration) {
         return {
             id: uuid(),
-            operation: criterionDefinition.operation || '',
-            input: criterionDefinition.input === undefined ? [] : criterionDefinition.input,
-            metaDataKey: criterionDefinition.metaDataKey || '',
-            key: criterionDefinition.key || ''
+            telemetry: criterionConfiguration.telemetry || '',
+            operation: criterionConfiguration.operation || '',
+            input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
+            metadata: criterionConfiguration.metadata || ''
         };
     }
 
-    createCriteria(criterionDefinitions) {
-        criterionDefinitions.forEach((criterionDefinition) => {
-            this.addCriterion(criterionDefinition);
+    createCriteria(criterionConfigurations) {
+        criterionConfigurations.forEach((criterionConfiguration) => {
+            this.addCriterion(criterionConfiguration);
         });
     }
 
-    updateCriteria(criterionDefinitions) {
+    updateCriteria(criterionConfigurations) {
         this.destroyCriteria();
-        this.createCriteria(criterionDefinitions);
+        this.createCriteria(criterionConfigurations);
     }
 
     /**
      *  adds criterion to the condition.
      */
-    addCriterion(criterionDefinition) {
-        let criterionDefinitionWithId = this.generateCriterion(criterionDefinition || null);
-        let criterion = new TelemetryCriterion(criterionDefinitionWithId, this.openmct);
+    addCriterion(criterionConfiguration) {
+        let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
+        let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
         if (!this.criteria) {
             this.criteria = [];
         }
         this.criteria.push(criterion);
-        //Do we need this here?
-        this.handleConditionUpdated();
-        return criterionDefinitionWithId.id;
+        return criterionConfigurationWithId.id;
     }
 
     findCriterion(id) {
@@ -135,11 +133,11 @@ export default class ConditionClass extends EventEmitter {
         return criterion;
     }
 
-    updateCriterion(id, criterionDefinition) {
+    updateCriterion(id, criterionConfiguration) {
         let found = this.findCriterion(id);
         if (found) {
-            const newCriterionDefinition = this.generateCriterion(criterionDefinition);
-            let newCriterion = new TelemetryCriterion(newCriterionDefinition, this.openmct);
+            const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
+            let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             newCriterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
 
@@ -151,7 +149,6 @@ export default class ConditionClass extends EventEmitter {
             if (this.criteriaResults[criterion.id] !== undefined) {
                 delete this.criteriaResults[criterion.id];
             }
-            this.handleConditionUpdated();
         }
     }
 
@@ -166,6 +163,7 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             let criterion = found.item;
             criterion.destroy();
+            // TODO this is passing the wrong args
             criterion.off('criterionUpdated', (result) => {
                 this.handleCriterionUpdated(id, result);
             });
@@ -182,8 +180,8 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            //Most likely don't need this.
             this.subscribe();
+            // TODO nothing is listening to this
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
                 criteria: this.criteria
@@ -192,25 +190,22 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleCriterionResult(eventData) {
-        let id = eventData.id;
-        let result = eventData.data.result;
-        let found = this.findCriterion(id);
-        if (found) {
-            this.criteriaResults[id] = result;
+        const id = eventData.id;
+        const conditionData = eventData.data;
+        
+        if (this.findCriterion(id)) {
+            this.criteriaResults[id] = eventData.data.result;
         }
-        this.handleConditionUpdated();
+
+        conditionData.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        this.emitEvent('conditionResultUpdated', conditionData);
     }
 
     subscribe() {
+        // TODO it looks like on any single criterion update subscriptions fire for all criteria
         this.criteria.forEach((criterion) => {
             criterion.subscribe();
         })
-    }
-
-    handleConditionUpdated() {
-        // trigger an updated event so that consumers can react accordingly
-        this.evaluate();
-        this.emitEvent('conditionResultUpdated', {result: this.result});
     }
 
     getCriteria() {
@@ -224,11 +219,6 @@ export default class ConditionClass extends EventEmitter {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
         return success;
-    }
-
-    //TODO: implement as part of the evaluator class task.
-    evaluate() {
-        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }
 
     emitEvent(eventName, data) {
