@@ -1,16 +1,20 @@
-.c-imagery-layout {
+.c-imagery {
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow: hidden;
+    height: 100%;
 
-    .main-image-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding-bottom: 5px;
+    > * + * {
+        margin-top: $interiorMargin;
     }
 
-    .main-image {
+    &__main-image-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
+    &__main-image {
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
@@ -21,12 +25,137 @@
         }
     }
 
-    .l-image-controller {
+    &__control-bar {
         padding: 5px 0 0 0;
+        display: flex;
+        align-items: center;
     }
 
-    .thumbs-layout {
-        margin-top: 5px;
-        overflow: auto;
+    &__timestamp {
+        flex: 1 1 auto;
+    }
+
+    &__thumbs-wrapper {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: row;
+        height: 135px;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        &.is-paused {
+            background: rgba($colorPausedBg, 0.4);
+        }
+
+        .c-thumb:last-child {
+            // Hilite the lastest thumb
+            background: $colorBodyFg;
+            color: $colorBodyBg;
+        }
+    }
+}
+
+/*************************************** THUMBS */
+.c-thumb {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    width: $imageThumbsD;
+
+    &:hover {
+        background: $colorThumbHoverBg;
+    }
+
+    &.selected {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg !important;
+    }
+
+    &__image {
+        background-color: rgba($colorBodyFg, 0.2);
+        width: 100%;
+    }
+
+    &__timestamp {
+        flex: 0 0 auto;
+        padding: 2px 3px;
+    }
+}
+
+.l-layout,
+.c-fl {
+    .c-imagery__thumbs-wrapper {
+        //  When Imagery is in a layout, hide the thumbs area
+        display: none;
+    }
+}
+
+.s-image-main {
+    background-color: $colorPlotBg;
+    border: 1px solid transparent;
+}
+
+/*************************************** IMAGERY LOCAL CONTROLS*/
+.c-imagery {
+    .h-local-controls--overlay-content {
+        position: absolute;
+        right: $interiorMargin; top: $interiorMargin;
+        z-index: 2;
+        background: $colorLocalControlOvrBg;
+        border-radius: $basicCr;
+        max-width: 200px;
+        min-width: 100px;
+        width: 35%;
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
+
+        input[type="range"] {
+            display: block;
+            width: 100%;
+            &:not(:first-child) {
+                margin-top: $interiorMarginLg;
+            }
+
+            &:before {
+                margin-right: $interiorMarginSm;
+            }
+        }
+    }
+
+    &__lc {
+        &__reset-btn {
+            $bc: $scrollbarTrackColorBg;
+            &:before,
+            &:after {
+                border-right: 1px solid $bc;
+                content:'';
+                display: block;
+                width: 5px;
+                height: 4px;
+            }
+
+            &:before {
+                border-top: 1px solid $bc;
+                margin-bottom: 2px;
+            }
+
+            &:after {
+                border-bottom: 1px solid $bc;
+                margin-top: 2px;
+            }
+        }
+    }
+}
+
+/*************************************** BUTTONS */
+.c-button.pause-play {
+    // Pause icon set by default in markup
+    &.is-paused {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg;
+
+        &:before {
+            content: $glyph-icon-play;
+        }
     }
 }
