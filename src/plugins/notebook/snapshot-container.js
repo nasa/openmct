@@ -2,7 +2,7 @@ import EventEmitter from 'EventEmitter';
 import { EVENT_SNAPSHOTS_UPDATED } from './notebook-constants';
 
 const NOTEBOOK_SNAPSHOT_STORAGE = 'notebook-snapshot-storage';
-const NOTEBOOK_SANAPSHOT_MAX_COUNT = 10;
+export const NOTEBOOK_SNAPSHOT_MAX_COUNT = 10;
 
 class SnapshotContainer extends EventEmitter {
     constructor() {
@@ -17,7 +17,7 @@ class SnapshotContainer extends EventEmitter {
 
     saveSnapshot(embedObject) {
         const snapshots = this.getSnapshots();
-        if (snapshots.length >= NOTEBOOK_SANAPSHOT_MAX_COUNT) {
+        if (snapshots.length >= NOTEBOOK_SNAPSHOT_MAX_COUNT) {
             snapshots.pop();
         }
 

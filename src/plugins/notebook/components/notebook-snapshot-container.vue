@@ -25,6 +25,7 @@
                     </div>
                 </div>
             </div>
+            <div class="">{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}</div>
         </div>
         <div class="l-browse-bar__end">
             <button @click="close">X</button>
@@ -35,7 +36,7 @@
             <li v-for="(snapshot, index) in snapshots"
                 :key="snapshot.id"
             >
-                {{ index }} : {{ snapshot.id }} {{ snapshot.name }}
+                {{ index + 1 }} : {{ snapshot.id }} {{ snapshot.name }}
             </li>
         </ul>
     </div>
@@ -44,7 +45,7 @@
 
 <script>
 // import NotebookEmbed from './notebook-embed.vue';
-import snapshotContainer from '../snapshot-container';
+import snapshotContainer, { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 
 import $ from 'zepto';
@@ -75,6 +76,9 @@ export default {
     methods: {
         close() {
             this.toggleSnapshot();
+        },
+        getNotebookSnapshotMaxCount() {
+            return NOTEBOOK_SNAPSHOT_MAX_COUNT;
         },
         removeAllSnapshotAction() {
             var self = this;
