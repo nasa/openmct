@@ -17,7 +17,7 @@
     >
         <Sidebar ref="sidebar"
                  class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-                 :class="[{'is-expanded': showNav}, {'c-drawer--cover': sidebarCoversEntries}]"
+                 :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}]"
                  :domain-object="internalDomainObject"
                  :page-title="internalDomainObject.configuration.pageTitle"
                  :pages="pages"
@@ -170,7 +170,7 @@ export default {
         this.$refs.sidebar.$on(EVENT_UPDATE_PAGE, this.updatePage.bind(this));
         this.$refs.sidebar.$on(TOGGLE_NAV, this.toggleNav);
         this.formatSidebar();
-        window.addEventListener('orientationchange', this.orientationChange);
+        window.addEventListener('orientationchange', this.formatSidebar);
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -210,6 +210,24 @@ export default {
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
+        },
+        formatSidebar() {
+            /*
+                Determine if the sidebar should slide over content, or compress it
+                Slide over checks:
+                - phone (all orientations)
+                - tablet portrait
+                - in a layout frame (within .c-so-view)
+            */
+            const classList = document.querySelector('body').classList;
+            const isPhone = Array.from(classList).includes('phone');
+            const isTablet = Array.from(classList).includes('tablet');
+            const isPortrait = window.screen.orientation.type.includes('portrait');
+            const isInLayout = !!this.$el.closest('.c-so-view');
+            console.log('formatSidebar: isPhone, isTablet, isPortrait, isInLayout',isPhone, isTablet, isPortrait, isInLayout);
+            const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
+            this.sidebarCoversEntries = sidebarCoversEntries;
+            console.log('sidebarCoversEntries', sidebarCoversEntries);
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
@@ -281,19 +299,10 @@ export default {
             addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
         },
         orientationChange() {
-            console.log('changed orientation');
             this.formatSidebar();
         },
         searchItem(input) {
             this.search = input;
-        },
-        formatSidebar() {
-            const self = this;
-            setTimeout(() => {
-                const MOBILE_PORTRAIT = !!document.querySelector('body.mobile.portrait');
-                self.sidebarCoversEntries = MOBILE_PORTRAIT || self.$el.closest('.c-so-view');
-                console.log("MOBILE_PORTRAIT", MOBILE_PORTRAIT);
-            }, 0);
         },
         sortEntries(right, left) {
             return this.defaultSort === 'newest'

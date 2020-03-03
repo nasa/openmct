@@ -1,25 +1,23 @@
 .c-drawer {
     // New sliding overlay element to contain nav structures
     // Designed for mobile and compact desktop scenarios
-    //position: relative;
-    &--cover {
-        background: deeppink !important;
-    }
-}
-
-
-.c-sidebar {
-    // Default is collapsed, :not is-expanded
-    display: flex;
-    justify-content: stretch;
-    //padding: $interiorMarginSm;
     position: absolute;
-    height: 100%;
-    min-width: 0;
-    max-width: 500px;
-    width: 0;
-    z-index: 3;
-    transition: $transOut;
+
+    &--align-left {
+        height: 100%;
+        min-width: 0;
+        max-width: 500px;
+        width: 0;
+        z-index: 3;
+        transition: $transOut;
+    }
+
+    &.c-drawer--push {
+        position: relative;
+        &.is-expanded {
+            box-shadow: none;
+        }
+    }
 
     &:not(.is-expanded) {
         > * {
@@ -28,10 +26,16 @@
     }
 
     &.is-expanded {
-        background: #454545; //$overlayColorBg;
-        box-shadow: rgba(0, 0, 0, 0.7) 3px 0px 20px;
+        box-shadow: rgba(black, 0.7) 3px 0 20px;
+        margin-right: $interiorMargin;
         width: 95%;
     }
+}
+
+.c-sidebar {
+    background: $sideBarBg;
+    display: flex;
+    justify-content: stretch;
 
     > * {
         // Hardcoded for two columns
