@@ -237,6 +237,7 @@ export default {
                 this.unlistenStyles();
             }
             this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.conditionalStyle', (mutatedObject) => {
+                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.initConditionalStyles();
             });
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -271,7 +272,7 @@ export default {
                 delete this.styleRuleManager;
             }
 
-            if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle && this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
+            if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
                 this.styleRuleManager = new StyleRuleManager(this.domainObject, this.openmct);
                 this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
             }

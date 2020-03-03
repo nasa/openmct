@@ -26,48 +26,45 @@ export default class StyleRuleManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
         this.domainObject = domainObject;
-        this.conditionSetDomainObject = {
-            identifier: this.domainObject.configuration.conditionalStyle.conditionSetIdentifier
-        };
         this.openmct = openmct;
-        //TODO: this default style also has to come from the domainObject
-        this.defaultStyle = {backgroundColor: 'inherit'};
-        this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
-        this.initialize();
+        if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
+            this.conditionSetIdentfier = this.domainObject.configuration.conditionalStyle.conditionSetIdentifier;
+            this.defaultStyle = this.domainObject.configuration.conditionalStyle.defaultStyle;
+            this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+            this.initialize();
+        }
     }
 
     initialize() {
-        this.openmct.objects.get(this.conditionSetDomainObject.identifier).then((obj) => {
+        this.openmct.objects.get(this.conditionSetIdentfier).then((obj) => {
             this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(obj, output => this.handleConditionSetResultUpdated(output));
         });
     }
 
     findStyleByConditionId(id) {
-        let found = false;
         for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
             if (this.openmct.objects.makeKeyString(this.conditionalStyles[i].conditionIdentifier) === this.openmct.objects.makeKeyString(id)) {
-                found = {
-                    index: i,
-                    item: this.conditionalStyles[i]
-                };
-                break;
+                return this.conditionalStyles[i];
             }
         }
-        return found;
     }
 
     handleConditionSetResultUpdated(resultData) {
         let identifier = this.openmct.objects.makeKeyString(resultData.conditionId);
         let found = this.findStyleByConditionId(identifier);
-        if (found && found.item.style) {
-            this.updateDomainObjectStyle(found.item.style);
+        if (found) {
+            if (found.style !== this.currentStyle) {
+                this.currentStyle = found.style;
+            }
         } else {
-            this.updateDomainObjectStyle(this.defaultStyle);
+            if (this.currentStyle !== this.defaultStyle) {
+                this.currentStyle = this.defaultStyle;
+            }
         }
     }
 
-    updateDomainObjectStyle(style) {
-        this.emit('conditionalStyleUpdated', style)
+    updateDomainObjectStyle() {
+        this.emit('conditionalStyleUpdated', this.currentStyle)
     }
 
     destroy() {

@@ -4,10 +4,6 @@
          class="holder c-c-button-wrapper align-left"
     >
         <div>{{ condition.configuration.name }}</div>
-        <div>Background Color
-            <span class="icon-box-round-corners"
-                  :style=conditionStyle
-            ></span></div>
     </div>
 </div>
 </template>
@@ -18,15 +14,10 @@ export default {
     components: {
     },
     inject: [
-        'openmct',
-        'context'
+        'openmct'
     ],
     props: {
         conditionIdentifier: {
-            type: Object,
-            required: true
-        },
-        conditionStyle: {
             type: Object,
             required: true
         }
@@ -42,8 +33,6 @@ export default {
         this.openmct.objects.get(this.conditionIdentifier).then((conditionDomainObject) => {
             this.condition = conditionDomainObject;
         });
-    },
-    methods: {
     }
 }
 </script>

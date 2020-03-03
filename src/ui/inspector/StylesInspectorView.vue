@@ -26,6 +26,14 @@ export default {
     methods: {
         updateSelection(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
+                let domainObject = selection[0][0].context.item;
+                let layoutItem;
+                if (selection[0].length > 1) {
+                    //this is a non-domain object layout item
+                    domainObject = selection[0][1].context.item;
+                    layoutItem = selection[0][0].context.layoutItem;
+                }
+
                 if (this.component) {
                     this.component.$destroy();
                     this.component = undefined;
@@ -37,7 +45,8 @@ export default {
                 this.component = new Vue({
                     provide: {
                         openmct: this.openmct,
-                        context: selection[0][0].context
+                        domainObject: domainObject,
+                        layoutItem: layoutItem
                     },
                     el: viewContainer,
                     components: {

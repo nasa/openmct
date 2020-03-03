@@ -48,6 +48,7 @@ export default {
         });
         this.$el.addEventListener('drop', this.addObjectToParent);
         if (this.currentObject) {
+            //This is to apply styles to subobjects in a layout
             this.initConditionalStyles();
             if (this.unlistenStyles) {
                 this.unlistenStyles();
@@ -91,6 +92,9 @@ export default {
             this.updateView(true);
         },
         updateStyle(styleObj) {
+            if (!styleObj) {
+                return;
+            }
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
                 this.$el.style[key] = styleObj[key];
@@ -173,6 +177,7 @@ export default {
             });
 
             this.unlistenStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (mutatedObject) => {
+                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.initConditionalStyles();
             });
 
@@ -189,7 +194,7 @@ export default {
                 delete this.styleRuleManager;
             }
 
-            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle && this.currentObject.configuration.conditionalStyle.conditionSetIdentifier) {
+            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle) {
                 this.styleRuleManager = new StyleRuleManager(this.currentObject, this.openmct);
                 this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
             }

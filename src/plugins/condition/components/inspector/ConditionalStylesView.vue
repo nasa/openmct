@@ -1,12 +1,10 @@
 <template>
 <div>
     <div v-if="!conditionalStyles.length"
-         class="holder c-c-button-wrapper align-left"
-    >
+         class="holder c-c-button-wrapper align-left">
         <button
             class="c-c-button c-c-button--minor add-criteria-button"
-            @click="addConditionSet"
-        >
+            @click="addConditionSet">
             <span class="c-c-button__label">Use conditional styling</span>
         </button>
     </div>
@@ -14,18 +12,15 @@
         <div class="holder c-c-button-wrapper align-left">
             <button
                 class="c-c-button c-c-button--minor add-criteria-button"
-                @click="removeConditionSet"
-            >
+                @click="removeConditionSet">
                 <span class="c-c-button__label">Remove conditional styling</span>
             </button>
         </div>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionIdentifier.key"
-            >
+                :key="conditionStyle.conditionIdentifier.key">
                 <conditional-style :condition-identifier="conditionStyle.conditionIdentifier"
-                                   :condition-style="conditionStyle.style"
-                />
+                                   :condition-style="conditionStyle.style"/>
             </li>
         </ul>
     </div>
@@ -41,12 +36,12 @@ export default {
     },
     inject: [
         'openmct',
-        'context'
+        'domainObject',
+        'layoutItem'
     ],
     data() {
         return {
-            conditionalStyles: [],
-            conditionSets: []
+            conditionalStyles: []
         }
     },
     destroyed() {
@@ -55,18 +50,20 @@ export default {
         }
     },
     mounted() {
-        this.layoutItem = this.context.layoutItem;
-        this.domainObject = this.context.item;
-        if (this.domainObject.configuration &&
-            this.domainObject.configuration.conditionalStyle &&
-            this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
-            this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+        if (this.layoutItem) {
+            //TODO: Handle layout items
+        }
+        if (this.domainObject.configuration) {
+            this.defautStyle = this.domainObject.configuration.defaultStyle;
+            if (this.domainObject.configuration.conditionalStyle) {
+                this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+            }
         }
     },
     methods: {
         addConditionSet() {
-            //TODO: this.conditionSetIdentifier will be set by the UI later from a modal
-            // this.initializeConditionalStyles();
+            //TODO: this.conditionSetIdentifier will be set by the UI before calling this
+            this.initializeConditionalStyles();
         },
         removeConditionSet() {
             this.conditionSetIdentifier = '';
@@ -76,41 +73,37 @@ export default {
         initializeConditionalStyles() {
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
                 conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
-                    if (!this.findStyleByConditionId(identifier)) {
-                        this.conditionalStyles.push({
-                            conditionIdentifier: identifier,
-                            style: {}
-                        });
-                    }
+                    this.conditionalStyles.push({
+                        conditionIdentifier: identifier,
+                        style: this.defautStyle
+                    });
                 });
-                this.persist();
+                this.persist({
+                    defaultStyle: this.defaultStyle,
+                    conditionSetIdentifier: this.conditionSetIdentifier,
+                    styles: this.conditionalStyles
+                });
             });
         },
         findStyleByConditionId(id) {
-            let found = false;
             for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
                 if (this.openmct.objects.makeKeyString(this.conditionalStyles[i].conditionIdentifier) === this.openmct.objects.makeKeyString(id)) {
-                    found = {
+                    return {
                         index: i,
                         item: this.conditionalStyles[i]
                     };
-                    break;
                 }
             }
-            return found;
         },
-        addConditionalStyle(style, conditionIdentifier) {
+        updateConditionalStyle(conditionIdentifier, style) {
             let found = this.findStyleByConditionId(conditionIdentifier);
             if (found) {
                 this.conditionalStyles[found.index].style = style;
             }
             this.persist();
         },
-        persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionalStyle', {
-                conditionSetIdentifier: this.conditionSetIdentifier,
-                styles: this.conditionalStyles
-            });
+        persist(conditionalStyle) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionalStyle', conditionalStyle);
         }
     }
 }
