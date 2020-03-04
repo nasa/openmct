@@ -39,8 +39,8 @@
              class="hint"
              :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
         >
-            <span v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure conditions.</span>
-            <span v-else>The first condition to match is the one that is applied. Drag conditions to reorder.</span>
+            <template v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure conditions.</template>
+            <template v-else>The first condition to match is the one that is applied. Drag conditions to reorder.</template>
         </div>
 
         <button
