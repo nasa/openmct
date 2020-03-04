@@ -14,6 +14,7 @@
                 <span class="c-list-button__label">Add {{ sectionTitle }}</span>
             </button>
             <SectionCollection class="c-sidebar__contents"
+                               :default-section-id="defaultSectionId"
                                :domain-object="domainObject"
                                :sections="sections"
                                :section-title="sectionTitle"
@@ -39,6 +40,7 @@
             </button>
             <PageCollection ref="pageCollection"
                             class="c-sidebar__contents"
+                            :default-page-id="defaultPageId"
                             :domain-object="domainObject"
                             :pages="pages"
                             :sections="sections"
@@ -63,6 +65,18 @@ export default {
         PageCollection
     },
     props: {
+        defaultPageId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
+        defaultSectionId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         domainObject: {
             type: Object,
             default() {

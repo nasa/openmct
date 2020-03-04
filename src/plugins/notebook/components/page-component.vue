@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="{'is-selected': page.isSelected}"
+     :class="[{ 'is-selected': page.isSelected, 'is-default' : (defaultPageId === page.id) }]"
      :data-id="page.id"
      @click="selectPage"
 >
@@ -25,6 +25,12 @@ import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_SELECT_PAGE } from '../note
 export default {
     inject: ['openmct'],
     props: {
+        defaultPageId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         page: {
             type: Object,
             required: true

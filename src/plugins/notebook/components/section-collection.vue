@@ -5,6 +5,7 @@
         class="c-list__item-h"
     >
         <sectionComponent ref="sectionComponent"
+                          :default-section-id="defaultSectionId"
                           :section="section"
         />
     </li>
@@ -23,6 +24,12 @@ export default {
         sectionComponent
     },
     props: {
+        defaultSectionId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         domainObject: {
             type: Object,
             default() {

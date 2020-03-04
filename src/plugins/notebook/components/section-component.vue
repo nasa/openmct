@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="{'is-selected': section.isSelected}"
+     :class="[{ 'is-selected': section.isSelected, 'is-default' : (defaultSectionId === section.id) }]"
      :data-id="section.id"
      @click="selectSection"
 >
@@ -28,6 +28,12 @@ import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION } from
 export default {
     inject: ['openmct'],
     props: {
+        defaultSectionId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         section: {
             type: Object,
             required: true

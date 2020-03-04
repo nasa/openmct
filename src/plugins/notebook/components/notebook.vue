@@ -18,6 +18,8 @@
         <Sidebar ref="sidebar"
                  class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
                  :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}]"
+                 :default-page-id="defaultPageId"
+                 :default-section-id="defaultSectionId"
                  :domain-object="internalDomainObject"
                  :page-title="internalDomainObject.configuration.pageTitle"
                  :pages="pages"
@@ -113,8 +115,8 @@ export default {
     },
     data() {
         return {
-            defaultPageId: null,
-            defaultSectionId: null,
+            defaultPageId: getDefaultNotebook().page.id,
+            defaultSectionId: getDefaultNotebook().section.id,
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',
@@ -253,6 +255,9 @@ export default {
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
+
+            this.defaultSectionId = selectedSection.id;
+            this.defaultPageId = selectedPage.id;
         },
         formatSidebar() {
             /*

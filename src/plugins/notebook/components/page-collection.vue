@@ -5,6 +5,7 @@
         class="c-list__item-h"
     >
         <Page ref="pageComponent"
+              :default-page-id="defaultPageId"
               :page="page"
         />
     </li>
@@ -23,6 +24,12 @@ export default {
         Page
     },
     props: {
+        defaultPageId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         domainObject: {
             type: Object,
             default() {
