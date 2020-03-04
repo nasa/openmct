@@ -71,7 +71,7 @@
     <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
-    <div v-if="marking.useAlternateControlBar && markedRows.length"
+    <div v-if="marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
     >
         <div class="c-control-bar__label">
@@ -86,6 +86,7 @@
         />
 
         <button
+            :class="{'hide-nice': !markedRows.length}"
             class="c-button icon-x labeled"
             title="Deselect All"
             @click="unmarkAllRows()"
@@ -713,6 +714,10 @@ export default {
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
+
+                if (this.isShowingMarkedRowsOnly) {
+                    this.visibleRows.splice(rowIndex, 1);
+                }
             } else if (this.markedRows.length === 1) {
                 this.unmarkAllRows();
             }
