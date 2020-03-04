@@ -100,7 +100,7 @@ export default {
             if (found) {
                 this.conditionalStyles[found.index].style = style;
             }
-            this.persist();
+            this.persist(undefined);
         },
         persist(conditionalStyle) {
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionalStyle', conditionalStyle);

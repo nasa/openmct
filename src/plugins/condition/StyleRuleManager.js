@@ -52,7 +52,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.destroy();
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier ||
-                                    (this.openmct.objects.makeKeyString(this.conditionSetIdentifier) !== this.openmct.objects.makeKeyString(conditionalStyleConfiguration.conditionSetIdentifier));
+                                    this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, conditionalStyleConfiguration.conditionSetIdentifier);
             this.initialize(conditionalStyleConfiguration);
             //Only resubscribe if the conditionSet has changed.
             if (isNewConditionSet) {
