@@ -22,7 +22,7 @@
 
 <template>
 <section id="conditionCollection"
-         class="c-cs__conditions-section"
+         class="c-cs__conditions"
 >
     <div class="c-cs__header c-section__header">
         <span
@@ -33,7 +33,7 @@
         <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
     <div v-if="expanded"
-         class="c-cs__content c-cs__conditions-w"
+         class="c-cs__content"
     >
         <div v-show="isEditing"
              class="hint"
@@ -54,8 +54,9 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions">
-            <div v-for="(conditionIdentifier, index) in conditionCollection"
+        <div class="c-cs__conditions-h">
+            <div class="c-condition-h"
+                 v-for="(conditionIdentifier, index) in conditionCollection"
                  :key="conditionIdentifier.key"
             >
                 <div v-if="isEditing"

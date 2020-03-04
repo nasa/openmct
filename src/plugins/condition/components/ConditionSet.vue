@@ -22,12 +22,11 @@
 
 <template>
 <div class="c-cs">
-    <section id="current-output"
-        class="c-cs__current-output c-section">
+    <section class="c-cs__current-output c-section">
         <div class="c-cs__header c-section__header">
             <span class="c-cs__header-label c-section__label">Current Output</span>
         </div>
-        <div class="c-cs__content">
+        <div class="c-cs__content c-cs__current-output-value">
             <span v-if="currentConditionOutput"
               class="current-output"
             >

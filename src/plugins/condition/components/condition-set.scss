@@ -4,9 +4,10 @@
     height: 100%;
     overflow: hidden;
 
-
     &__content {
-        //display: block;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
         overflow: hidden;
 
         > * {
@@ -31,19 +32,19 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-
-        &.c-cs__current-output,
-        &.c-cs__test-data {
-            flex: 0 0 auto;
-        }
     }
 
-    &__conditions-section,
-    &__conditions-w,
-    &__conditions {
+    &__conditions-h {
         display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+        overflow: auto;
+        padding-right: $interiorMarginSm;
+
+        > * + * {
+            // .c-condition-h, the condition holder
+            margin-top: $interiorMarginSm;
+        }
     }
 
     &__conditions {
@@ -57,84 +58,42 @@
     .hint {
         padding: $interiorMarginSm;
     }
+
+    /************************** SPECIFIC ITEMS */
+    &__current-output {
+        flex: 0 0 auto;
+    }
+
+    &__test-data {
+        flex: 0 1 auto;
+    }
+
+    &__conditions {
+        flex: 1 1 auto;
+    }
 }
 
-.widget-condition form {
-    padding: 0.5em;
-    display: flex;
-    align-items: center;
-    justify-content: stretch;
+/***************************** TEST DATA */
+.c-cs-test-h {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding-right: $interiorMarginSm;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
 }
 
-.widget-condition form label {
-    flex-grow: 1;
-    margin-left: 0;
-}
-
-.widget-condition form input {
-    min-height: 24px;
-}
-
-.c-cs-button[class*="--major"],
-.c-cs-button[class*='is-active'],
-.c-cs-button--menu[class*="--major"],
-.c-cs-button--menu[class*='is-active'] {
-    border: solid 1.5px #0B427C;
-    background-color: #4778A3;
-    padding: 0.2em 0.6em;
-    margin: 0.4em;
-    font-weight: bold;
-    color: #eee;
-    border-radius: 6px;
-}
-
-.c-cs__disclosure-triangle,
-.c-cs__menu-hamburger,
-.c-cs__duplicate,
-.c-cs__trash {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
-    width: $d;
-    visibility: hidden;
-
-    &.is-enabled {
-        cursor: pointer;
-        visibility: visible;
-
-        &:hover {
-            color: $colorDisclosureCtrlHov;
-        }
-
-        &:before {
-            $s: .5;
-            display: block;
-            font-family: symbolsfont;
-            font-size: 1rem * $s;
+.c-test-datum {
+    > * {
+        flex: 0 0 auto;
+        + * {
+            margin-left: $interiorMargin;
         }
     }
-}
-
-.c-cs__disclosure-triangle {
-    &:before {
-        content: $glyph-icon-arrow-right;
+    &__controls {
+        flex: 1 1 auto;
     }
 
-    &--expanded {
-        &:before {
-            transform: rotate(90deg);
-        }
-    }
 }
 
-.c-cs__duplicate {
-    margin-right: 0.3em;
-    &:before {
-        content: $glyph-icon-duplicate;
-    }
-}
-
-.c-cs__trash {
-    &:before {
-        content: $glyph-icon-trash;
-    }
-}

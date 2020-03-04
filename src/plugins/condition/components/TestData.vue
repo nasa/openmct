@@ -45,30 +45,23 @@
             <span class="c-toggle-switch__slider"></span>
             <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
-        <div class="t-test-data-config">
-            <div class="c-cs-editui__conditions widget-condition">
-                <form>
-                    <label>
-                        <span>Set</span>
-                        <select>
-                            <option>- Select Input -</option>
-                        </select>
-                    </label>
-                    <span class="is-enabled  flex-elem c-cs__duplicate"></span>
-                    <span class="is-enabled  flex-elem c-cs__trash"></span>
-                </form>
-            </div>
-            <div class="c-cs-editui__conditions widget-condition">
-                <form>
-                    <label>
-                        <span>Set</span>
-                        <select>
-                            <option>- Select Input -</option>
-                        </select>
-                    </label>
-                    <span class="is-enabled c-cs__duplicate"></span>
-                    <span class="is-enabled c-cs__trash"></span>
-                </form>
+        <div class="c-cs-test-h">
+            <div class="c-test-datum"
+                 v-for="n in 10">
+                <span class="c-test-datum__label">Set</span>
+                <div class="c-test-datum__controls">
+                    <select>
+                        <option>- Select Input -</option>
+                    </select>
+                </div>
+                <div class="c-test-datum__buttons">
+                    <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
+                            title="Duplicate this test data value"
+                    ></button>
+                    <button class="c-click-icon c-test-data__delete-button icon-trash"
+                            title="Delete this test data value"
+                    ></button>
+                </div>
             </div>
         </div>
     </div>
