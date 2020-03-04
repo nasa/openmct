@@ -2,11 +2,90 @@
 
 }
 .c-condition {
-    // widget-condition
+    $testBg: rgba(deeppink, 0.2);
     $p: $interiorMarginSm;
     @include discreteItem();
-    //display: flex;
-    padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
+    display: flex;
+    flex-direction: column;
+    padding: $interiorMargin;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+    /***************************** HEADER */
+    &__header {
+        display: flex;
+        align-items: center;
+        align-content: stretch;
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-left: $interiorMarginSm;
+            }
+        }
+
+        &:hover {
+            background: $testBg;
+        }
+    }
+
+    &__name {
+    }
+
+    &__summary {
+        color: $colorFormSectionHeaderFg;
+        flex: 1 1 auto;
+    }
+
+    /***************************** CONDITION DEFINITION, EDITING */
+    .c-cdef {
+        display: grid;
+        grid-row-gap: $interiorMarginSm;
+        grid-column-gap: $interiorMargin;
+        grid-auto-columns: min-content 1fr 50px;
+        align-items: start;
+        min-width: 150px;
+        margin-left: 29px;
+
+        &__match-type,
+        &__criterias,
+        &__criteria {
+            display: contents;
+        }
+
+        &__criteria {
+            &:hover span {
+                background: $testBg;
+            }
+        }
+
+        &__label {
+            grid-column: 1;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        &__options {
+            grid-column: 2 / span 2;
+
+        }
+
+        &__separator {
+            grid-column: 1 / span 3;
+        }
+
+        &__controls {
+            grid-column: 2;
+        }
+
+    }
+
+    /***************************** TEMP */
+    //> * > * {
+    //    border: 1px solid rgba(green, 0.2);
+    //}
+
+
 }
 
 

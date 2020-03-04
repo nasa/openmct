@@ -208,6 +208,13 @@ button {
     }
 }
 
+/******************************************************** DRAG AFFORDANCES */
+.c-grippy {
+    $d: 10px;
+    @include grippy($c: $colorItemTreeVC, $dir: 'y');
+    width: $d; height: $d;
+}
+
 /******************************************************** SECTION */
 section {
     flex: 0 0 auto;
@@ -660,6 +667,11 @@ select {
 
 .c-separator {
     @include cToolbarSeparator();
+}
+
+.c-row-separator {
+    border-top: 1px solid $colorInteriorBorder;
+    height: 1px;
 }
 
 .c-toolbar {

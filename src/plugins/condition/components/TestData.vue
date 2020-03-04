@@ -26,12 +26,12 @@
          class="c-cs__test-data"
 >
     <div class="c-cs__header c-section__header">
+        <span
+            class="c-disclosure-triangle c-tree__item__view-control is-enabled"
+            :class="{ 'c-disclosure-triangle--expanded': expanded }"
+            @click="expanded = !expanded"
+        ></span>
         <div class="c-cs__header-label c-section__label">Test Data</div>
-        <button
-                class="c-click-icon--section-collapse"
-                :class="{ 'is-collapsed': !expanded }"
-                @click="expanded = !expanded"
-        ></button>
     </div>
     <div v-if="expanded"
          class="c-cs__content"

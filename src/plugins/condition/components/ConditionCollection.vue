@@ -25,32 +25,33 @@
          class="c-cs__conditions-section"
 >
     <div class="c-cs__header c-section__header">
-        <div class="c-cs__header-label c-section__label">Conditions</div>
-        <button
-            class="c-click-icon--section-collapse"
-            :class="{ 'is-collapsed': !expanded }"
+        <span
+            class="c-disclosure-triangle c-tree__item__view-control is-enabled"
+            :class="{ 'c-disclosure-triangle--expanded': expanded }"
             @click="expanded = !expanded"
-        ></button>
+        ></span>
+        <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
     <div v-if="expanded"
-         class="c-cs__content c-cs__conditions-w">
+         class="c-cs__content c-cs__conditions-w"
+    >
         <div v-show="isEditing"
              class="hint"
-             :class="{ 's-status-icon-warning-lo':  !telemetryObjs.length }"
+             :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
         >
             <span v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure conditions.</span>
             <span v-else>The first condition to match is the one that is applied. Drag conditions to rearrange.</span>
         </div>
 
         <button
-                v-show="isEditing"
-                id="addCondition"
-                class="c-button c-button--major icon-plus labeled"
-                :class="{ 'is-disabled': !telemetryObjs.length}"
-                :disabled="!telemetryObjs.length"
-                @click="addCondition"
-            >
-                <span class="c-cs-button__label">Add Condition</span>
+            v-show="isEditing"
+            id="addCondition"
+            class="c-button c-button--major icon-plus labeled"
+            :class="{ 'is-disabled': !telemetryObjs.length}"
+            :disabled="!telemetryObjs.length"
+            @click="addCondition"
+        >
+            <span class="c-cs-button__label">Add Condition</span>
         </button>
 
         <div class="c-cs__conditions">
@@ -69,8 +70,6 @@
                            :condition-index="index"
                            :telemetry="telemetryObjs"
                            :is-editing="isEditing"
-                           class="c-cs__condition"
-                           :class="{ 'c-cs__condition--edit': isEditing }"
                            @removeCondition="removeCondition"
                            @cloneCondition="cloneCondition"
                            @setMoveIndex="setMoveIndex"

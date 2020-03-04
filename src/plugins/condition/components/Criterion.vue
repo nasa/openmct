@@ -1,7 +1,7 @@
 <template>
-<div>
-    <label>{{ setRowLabel }}</label>
-    <span class="t-configuration">
+<div class="u-contents">
+    <span class="c-cdef__label">{{ setRowLabel }}</span>
+    <span class="c-cdef__controls">
         <span class="controls">
             <select v-model="criterion.telemetry"
                     @change="updateMetadataOptions"
