@@ -38,6 +38,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.openmct = openmct;
         this.objectAPI = this.openmct.objects;
         this.telemetryAPI = this.openmct.telemetry;
+        this.timeAPI = this.openmct.time;
         this.id = telemetryDomainObjectDefinition.id;
         this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
@@ -55,11 +56,17 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleSubscription(data) {
-        let result = this.computeResult(data);
-        this.emitEvent('criterionResultUpdated', {
-            result: result,
-            error: null
-        })
+        const datum = {
+            result: this.computeResult(data)
+        };
+        if (data) {
+            // TODO check back to see if we should format times here
+            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+                datum[timeSystem.key] = data[timeSystem.key]
+            });
+        }
+
+        this.emitEvent('criterionResultUpdated', datum);
     }
 
     findOperation(operation) {
@@ -72,17 +79,17 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     computeResult(data) {
-        let comparator = this.findOperation(this.operation);
-        let params = [];
         let result = false;
-        params.push(data[this.metadata]);
-        if (this.input instanceof Array && this.input.length) {
-            params.push(this.input[0]);
-        } else if (this.input) {
-            params.push(this.input);
-        }
-        if (typeof comparator === 'function') {
-            result = comparator(params);
+        if (data) {
+            let comparator = this.findOperation(this.operation);
+            let params = [];
+            params.push(data[this.metadata]);
+            if (this.input instanceof Array && this.input.length) {
+                this.input.forEach(input => params.push(input));
+            }
+            if (typeof comparator === 'function') {
+                result = comparator(params);
+            }
         }
         return result;
     }
@@ -100,12 +107,17 @@ export default class TelemetryCriterion extends EventEmitter {
 
     /**
      *  Subscribes to the telemetry object and returns an unsubscribe function
+     *  If the telemetry is not valid, returns nothing
      */
     subscribe() {
-        this.unsubscribe();
-        this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
-            this.handleSubscription(datum);
-        });
+        if (this.isValid()) {
+            this.unsubscribe();
+            this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
+                this.handleSubscription(datum);
+            });
+        } else {
+            this.handleSubscription();
+        }
     }
 
     /**

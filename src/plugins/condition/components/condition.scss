@@ -197,3 +197,12 @@
         border-radius: 2px;
     }
 }
+
+.c-c__criterion-controls {
+    width: 28px;
+
+    .c-c__duplicate,
+    .c-c__trash {
+        display: inline-block;
+    }
+}

@@ -31,6 +31,7 @@
                   :class="{ 'is-enabled': !domainObject.isDefault }"
                   :draggable="!domainObject.isDefault"
                   @dragstart="dragStart"
+                  @dragstop="dragStop"
                   @dragover.stop
             ></span>
             <span
@@ -68,24 +69,25 @@
                                         <input v-model="domainObject.configuration.name"
                                                class="t-condition-input__name"
                                                type="text"
+                                               @blur="persist"
                                         >
                                     </span>
                                 </li>
                                 <li>
                                     <label>Output</label>
                                     <span class="controls">
-                                        <select v-model="selectedOutputKey"
-                                                @change="checkInputValue"
+                                        <select v-model="selectedOutputSelection"
+                                                @change="setOutputValue"
                                         >
                                             <option value="">- Select Output -</option>
                                             <option v-for="option in outputOptions"
                                                     :key="option"
                                                     :value="option"
                                             >
-                                                {{ option.charAt(0).toUpperCase() + option.slice(1) }}
+                                                {{ initCap(option) }}
                                             </option>
                                         </select>
-                                        <input v-if="selectedOutputKey === outputOptions[2]"
+                                        <input v-if="selectedOutputSelection === outputOptions[2]"
                                                v-model="domainObject.configuration.output"
                                                class="t-condition-name-input"
                                                type="text"
@@ -101,7 +103,9 @@
                                     <li class="has-local-controls t-condition">
                                         <label>Match when</label>
                                         <span class="controls">
-                                            <select v-model="trigger">
+                                            <select v-model="domainObject.configuration.trigger"
+                                                    @change="persist"
+                                            >
                                                 <option value="all">all criteria are met</option>
                                                 <option value="any">any criteria are met</option>
                                             </select>
@@ -111,14 +115,27 @@
                                 <ul v-if="telemetry.length"
                                     class="t-widget-condition-config"
                                 >
-                                    <Criterion v-for="(criterion, index) in domainObject.configuration.criteria"
-                                               :key="index"
-                                               :telemetry="telemetry"
-                                               :criterion="criterion"
-                                               :index="index"
-                                               :trigger="trigger"
-                                               @persist="persist"
-                                    />
+                                    <li v-for="(criterion, index) in domainObject.configuration.criteria"
+                                        :key="index"
+                                        class="has-local-controls t-condition"
+                                    >
+                                        <Criterion :telemetry="telemetry"
+                                                   :criterion="criterion"
+                                                   :index="index"
+                                                   :trigger="domainObject.configuration.trigger"
+                                                   :is-default="domainObject.configuration.criteria.length === 1"
+                                                   @persist="persist"
+                                        />
+                                        <div class="c-c__criterion-controls">
+                                            <span class="is-enabled c-c__duplicate"
+                                                  @click="cloneCriterion(index)"
+                                            ></span>
+                                            <span v-if="!(domainObject.configuration.criteria.length === 1)"
+                                                  class="is-enabled c-c__trash"
+                                                  @click="removeCriterion(index)"
+                                            ></span>
+                                        </div>
+                                    </li>
                                 </ul>
                                 <div class="holder c-c-button-wrapper align-left">
                                     <span class="c-c-label-spacer"></span>
@@ -161,8 +178,7 @@
 </template>
 
 <script>
-import ConditionClass from "@/plugins/condition/Condition";
-import Criterion from '../../condition/components/Criterion.vue';
+import Criterion from './Criterion.vue';
 
 export default {
     inject: ['openmct'],
@@ -198,15 +214,10 @@ export default {
             currentCriteria: this.currentCriteria,
             expanded: true,
             trigger: 'all',
-            selectedOutputKey: '',
-            stringOutputField: false,
-            outputOptions: ['false', 'true', 'string']
+            selectedOutputSelection: '',
+            outputOptions: ['false', 'true', 'string'],
+            criterionIndex: 0
         };
-    },
-    computed: {
-        initCap: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1)
-        }
     },
     destroyed() {
         this.destroy();
@@ -219,11 +230,25 @@ export default {
     },
     methods: {
         initialize() {
-            this.setOutput();
-            if (!this.domainObject.isDefault) {
-                this.conditionClass = new ConditionClass(this.domainObject, this.openmct);
-                this.conditionClass.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+            this.setOutputSelection();
+        },
+        setOutputSelection() {
+            let conditionOutput = this.domainObject.configuration.output;
+            if (conditionOutput) {
+                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+                    this.selectedOutputSelection = 'string';
+                } else {
+                    this.selectedOutputSelection = conditionOutput;
+                }
             }
+        },
+        setOutputValue() {
+            if (this.selectedOutputSelection === 'string') {
+                this.domainObject.configuration.output = '';
+            } else {
+                this.domainObject.configuration.output = this.selectedOutputSelection;
+            }
+            this.persist();
         },
         addCriteria() {
             const criteriaObject = {
@@ -235,24 +260,15 @@ export default {
             this.domainObject.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
+            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-c-container__container'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
-        destroy() {
-            if (this.conditionClass) {
-                this.conditionClass.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-                if (typeof this.conditionClass.destroy === 'function') {
-                    this.conditionClass.destroy();
-                }
-                delete this.conditionClass;
-            }
+        dragStop(e) {
+            e.dataTransfer.clearData();
         },
-        handleConditionResult(args) {
-            this.$emit('conditionResultUpdated', {
-                id: this.conditionIdentifier,
-                result: args.data.result
-            })
+        destroy() {
         },
         removeCondition(ev) {
             this.$emit('removeCondition', this.conditionIdentifier);
@@ -263,32 +279,24 @@ export default {
                 index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
             });
         },
-        setOutput() {
-            let conditionOutput = this.domainObject.configuration.output;
-            if (conditionOutput) {
-                if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-                    this.selectedOutputKey = 'string';
-                } else {
-                    this.selectedOutputKey = conditionOutput;
-                }
-            }
+        removeCriterion(index) {
+            this.domainObject.configuration.criteria.splice(index, 1);
+            this.persist()
         },
-        persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
-        },
-        checkInputValue() {
-            if (this.selectedOutputKey === 'string') {
-                this.domainObject.configuration.output = '';
-            } else {
-                this.domainObject.configuration.output = this.selectedOutputKey;
-            }
-        },
-        updateCurrentCondition() {
-            this.$emit('updateCurrentCondition', this.currentConditionIdentifier);
+        cloneCriterion(index) {
+            const clonedCriterion = {...this.domainObject.configuration.criteria[index]};
+            this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
+            this.persist()
         },
         hasTelemetry(identifier) {
             // TODO: check parent domainObject.composition.hasTelemetry
             return this.currentCriteria && identifier;
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        },
+        initCap: function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1)
         }
     }
 }
