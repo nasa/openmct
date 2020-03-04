@@ -41,8 +41,9 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
+import snapshotContainer from '../snapshot-container';
 import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRY } from '../notebook-constants';
+import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED } from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
@@ -153,8 +154,14 @@ export default {
                 return;
             }
 
-            var data = $event.dataTransfer.getData('openmct/domain-object-path');
+            const snapshotId = $event.dataTransfer.getData('snapshot/id');
+            if (snapshotId.length) {
+                this.moveSnapshot(snapshotId);
 
+                return;
+            }
+
+            const data = $event.dataTransfer.getData('openmct/domain-object-path');
             const objectPath = JSON.parse(data);
             const domainObject = objectPath[0];
             const domainObjectKey = domainObject.identifier.key;
@@ -201,6 +208,12 @@ export default {
         },
         formatTime(unixTime, timeFormat) {
             return Moment(unixTime).format(timeFormat);
+        },
+        moveSnapshot(snapshotId) {
+            const snapshot = snapshotContainer.getSnapshot(snapshotId);
+            this.entry.embeds.push(snapshot);
+            this.updateEntry(this.entry);
+            snapshotContainer.removeSnapshot(snapshotId);
         },
         removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);

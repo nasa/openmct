@@ -34,6 +34,8 @@
     <div class="">
         <span v-for="snapshot in snapshots"
               :key="snapshot.id"
+              draggable="true"
+              @dragstart="startEmbedDrag(snapshot)"
         >
             <NotebookEmbed ref="notebookEmbed"
                            :key="snapshot.id"
@@ -127,6 +129,11 @@ export default {
         },
         snapshotsUpdated() {
             this.snapshots = snapshotContainer.getSnapshots();
+        },
+        startEmbedDrag(snapshot) {
+            // TODO: unable to make this drop only with 2nd statmente
+            event.dataTransfer.setData('text/plain', snapshot.id);
+            event.dataTransfer.setData('snapshot/id', snapshot.id);
         },
         toggleActionMenu(event) {
             event.preventDefault();

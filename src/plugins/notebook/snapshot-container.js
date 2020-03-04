@@ -25,6 +25,12 @@ class SnapshotContainer extends EventEmitter {
         this.saveSnapshots(snapshots);
     }
 
+    getSnapshot(id) {
+        const snapshots = this.getSnapshots();
+
+        return snapshots.find(s => s.id === id);
+    }
+
     getSnapshots() {
         const snapshots = window.localStorage.getItem(NOTEBOOK_SNAPSHOT_STORAGE) || '[]';
 
