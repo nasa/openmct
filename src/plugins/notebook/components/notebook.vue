@@ -99,7 +99,7 @@ import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
 import snapshotContainer from '../snapshot-container';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_ENTRIES, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import { throttle } from 'lodash';
 

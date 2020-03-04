@@ -11,7 +11,7 @@
             <span>{{ formatTime(entry.createdOn, 'HH:mm:ss') }}</span>
         </div>
         <div class="c-ne__content">
-            <div class="c-ne__text c-input-inline"
+            <div :class="['c-ne__text', {'c-input-inline' : !readOnly }]"
                  contenteditable="true"
                  @blur="textBlur($event, entry.id)"
                  @focus="textFocus($event, entry.id)"
@@ -91,7 +91,6 @@ export default {
     },
     watch: {
         readOnly(readOnly) {
-            // this.$el.querySelector('.c-ne__text c-input-inline').contenteditable = !this.readOnly;
         },
         selectedSection(selectedSection) {
         },
@@ -99,6 +98,7 @@ export default {
         }
     },
     mounted() {
+        document.querySelector('.c-ne__text').contentEditable = !this.readOnly;
         this.updateEntries = this.updateEntries.bind(this);
 
         if (this.$refs.notebookEmbed) {
