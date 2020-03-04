@@ -68,9 +68,6 @@ define([
                                     markingProp
                                 };
                             },
-                            components: {
-                                TableComponent: TableComponent.default
-                            },
                             provide: {
                                 openmct,
                                 table,
