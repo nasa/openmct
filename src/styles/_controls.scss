@@ -224,7 +224,7 @@ section {
         > * + * { margin-left: $interiorMarginSm; }
     }
 
-    [class*='__label'] {
+    > [class*='__label'] {
         flex: 1 1 auto;
         text-transform: uppercase;
     }

@@ -26,7 +26,7 @@
          class="c-cs__test-data"
 >
     <div class="c-cs__header c-section__header">
-        <div class="c-cs__header c-section__label">Test Data</div>
+        <div class="c-cs__header-label c-section__label">Test Data</div>
         <button
                 class="c-click-icon--section-collapse"
                 :class="{ 'is-collapsed': !expanded }"
@@ -43,7 +43,7 @@
                 @change="applyTestData"
             >
             <span class="c-toggle-switch__slider"></span>
-            <span>Apply Test Data</span>
+            <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
         <div class="t-test-data-config">
             <div class="c-cs-editui__conditions widget-condition">

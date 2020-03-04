@@ -108,8 +108,9 @@ tr {
 }
 
 /*************************************************** STATUS */
-[class*='s-status'] {
+[class*='s-status-icon'] {
     &:before {
+        font-family: symbolsfont;
         margin-right: $interiorMargin;
     }
 }

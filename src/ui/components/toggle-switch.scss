@@ -39,7 +39,6 @@
         display: inline-block;
         height: $d + ($m*2);
         position: relative;
-        transform: translateY(2px); // TODO: get this to work without this kind of hack!
         width: $d*2 + $m*2;
 
         &:before {

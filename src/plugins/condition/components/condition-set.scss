@@ -2,9 +2,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
+
 
     &__content {
-        display: block;
+        //display: block;
         overflow: hidden;
 
         > * {
@@ -21,21 +23,23 @@
     }
 
     .is-editing & {
+        // Add some space to kick away from blue editing border indication
         padding: $interiorMargin;
     }
 
     section {
         display: flex;
         flex-direction: column;
-        flex: 0 0 auto;
         overflow: hidden;
+
+        &.c-cs__current-output,
+        &.c-cs__test-data {
+            flex: 0 0 auto;
+        }
     }
 
-    &__conditions-collection {
-        flex: 1 1 auto !important; // TODO: FIX SO DO DON'T NEED TO USE IMPORTANT
-    }
-
-    &__conditions-wrapper,
+    &__conditions-section,
+    &__conditions-w,
     &__conditions {
         display: flex;
         flex-direction: column;
@@ -45,6 +49,10 @@
     &__conditions {
         padding-right: $interiorMarginSm; // Kick off from scrollbar
         overflow: auto;
+    }
+
+    .hint {
+        padding: $interiorMarginSm;
     }
 }
 

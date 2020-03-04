@@ -54,7 +54,7 @@
             ></span>
         </div>
         <div v-if="expanded"
-             class="condition-config-edit widget-condition-content c-sw-editui__conditions-wrapper holder widget-conditions-wrapper flex-elem expanded"
+             class="woohoo-voodoo"
         >
             <div id="conditionArea"
                  class="c-c-editui__condition widget-conditions"
