@@ -38,16 +38,13 @@
         <div v-show="isEditing"
              class="help"
         >
-            <span v-if="!telemetryObjs.length">Drag telemetry into Condition Set in order to add conditions.</span>
-            <span v-else>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
+            <span>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
         </div>
         <div class="holder add-condition-button-wrapper align-left">
             <button
                 v-show="isEditing"
                 id="addCondition"
                 class="c-cs-button c-cs-button--major add-condition-button"
-                :class="{ 'is-disabled': !telemetryObjs.length}"
-                :disabled="!telemetryObjs.length"
                 @click="addCondition"
             >
                 <span class="c-cs-button__label">Add Condition</span>

@@ -111,6 +111,9 @@
                                             </select>
                                         </span>
                                     </li>
+                                    <li v-if="!telemetry.length">
+                                        <span class="help">Drag telemetry into the condition set to enable selection of telemetry parameters.</span>
+                                    </li>
                                 </ul>
                                 <ul v-if="telemetry.length"
                                     class="t-widget-condition-config"
