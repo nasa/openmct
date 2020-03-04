@@ -35,7 +35,7 @@ export default class StyleRuleManager extends EventEmitter {
     initialize(conditionalStyleConfiguration) {
         this.conditionSetIdentifier = conditionalStyleConfiguration.conditionSetIdentifier;
         this.defaultStyle = conditionalStyleConfiguration.defaultStyle;
-        this.conditionalStyles = conditionalStyleConfiguration.styles || [];
+        this.updateConditionStylesMap(conditionalStyleConfiguration.styles || []);
     }
 
     subscribeToConditionSet() {
@@ -61,20 +61,21 @@ export default class StyleRuleManager extends EventEmitter {
         }
     }
 
-    findStyleByConditionId(id) {
-        for(let i=0; i < this.conditionalStyles.length; i++) {
-            if (this.openmct.objects.makeKeyString(this.conditionalStyles[i].conditionIdentifier) === this.openmct.objects.makeKeyString(id)) {
-                return this.conditionalStyles[i];
-            }
-        }
+    updateConditionStylesMap(conditionStyles) {
+        let conditionStyleMap = {};
+        conditionStyles.forEach((conditionStyle) => {
+            const identifier = this.openmct.objects.makeKeyString(conditionStyle.conditionIdentifier);
+            conditionStyleMap[identifier] = conditionStyle.style;
+        });
+        this.conditionalStyleMap = conditionStyleMap;
     }
 
     handleConditionSetResultUpdated(resultData) {
         let identifier = this.openmct.objects.makeKeyString(resultData.conditionId);
-        let found = this.findStyleByConditionId(identifier);
-        if (found) {
-            if (found.style !== this.currentStyle) {
-                this.currentStyle = found.style;
+        let foundStyle = this.conditionalStyleMap[identifier];
+        if (foundStyle) {
+            if (foundStyle !== this.currentStyle) {
+                this.currentStyle = foundStyle;
             }
         } else {
             if (this.currentStyle !== this.defaultStyle) {
