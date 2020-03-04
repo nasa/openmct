@@ -190,6 +190,12 @@ export default {
             this.unlistenStyles();
         }
 
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
+            delete this.styleRuleManager;
+        }
+
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
@@ -233,13 +239,6 @@ export default {
         setObject(domainObject) {
             this.domainObject = domainObject;
             this.initConditionalStyles();
-            if (this.unlistenStyles) {
-                this.unlistenStyles();
-            }
-            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.conditionalStyle', (mutatedObject) => {
-                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
-                this.initConditionalStyles();
-            });
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -266,16 +265,16 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         },
         initConditionalStyles() {
-            if (this.styleRuleManager) {
-                this.styleRuleManager.destroy();
-                this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
-                delete this.styleRuleManager;
-            }
+            this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.conditionalStyle, this.openmct);
+            this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
 
-            if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
-                this.styleRuleManager = new StyleRuleManager(this.domainObject, this.openmct);
-                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+            if (this.unlistenStyles) {
+                this.unlistenStyles();
             }
+            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.conditionalStyle', (newConditionalStyle) => {
+                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateConditionalStyleConfig(newConditionalStyle);
+            });
         },
         updateStyle(styleObj) {
             this.conditionalStyle = styleObj;

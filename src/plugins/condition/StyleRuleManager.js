@@ -23,22 +23,42 @@
 import EventEmitter from 'EventEmitter';
 
 export default class StyleRuleManager extends EventEmitter {
-    constructor(domainObject, openmct) {
+    constructor(conditionalStyleConfiguration, openmct) {
         super();
-        this.domainObject = domainObject;
         this.openmct = openmct;
-        if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
-            this.conditionSetIdentfier = this.domainObject.configuration.conditionalStyle.conditionSetIdentifier;
-            this.defaultStyle = this.domainObject.configuration.conditionalStyle.defaultStyle;
-            this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
-            this.initialize();
+        if (conditionalStyleConfiguration && conditionalStyleConfiguration.conditionSetIdentifier) {
+            this.initialize(conditionalStyleConfiguration);
+            this.subscribeToConditionSet();
         }
     }
 
-    initialize() {
-        this.openmct.objects.get(this.conditionSetIdentfier).then((conditionSetDomainObject) => {
+    initialize(conditionalStyleConfiguration) {
+        this.conditionSetIdentifier = conditionalStyleConfiguration.conditionSetIdentifier;
+        this.defaultStyle = conditionalStyleConfiguration.defaultStyle;
+        this.conditionalStyles = conditionalStyleConfiguration.styles || [];
+    }
+
+    subscribeToConditionSet() {
+        if (this.stopProvidingTelemetry) {
+            this.stopProvidingTelemetry();
+        }
+        this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
             this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, output => this.handleConditionSetResultUpdated(output));
         });
+    }
+
+    updateConditionalStyleConfig(conditionalStyleConfiguration) {
+        if (!conditionalStyleConfiguration || !conditionalStyleConfiguration.conditionSetIdentifier) {
+            this.destroy();
+        } else {
+            let isNewConditionSet = !this.conditionSetIdentifier ||
+                                    (this.openmct.objects.makeKeyString(this.conditionSetIdentifier) !== this.openmct.objects.makeKeyString(conditionalStyleConfiguration.conditionSetIdentifier));
+            this.initialize(conditionalStyleConfiguration);
+            //Only resubscribe if the conditionSet has changed.
+            if (isNewConditionSet) {
+                this.subscribeToConditionSet();
+            }
+        }
     }
 
     findStyleByConditionId(id) {
@@ -70,10 +90,12 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     destroy() {
-        this.updateDomainObjectStyle(this.defaultStyle);
+        this.currentStyle = this.defaultStyle;
+        this.updateDomainObjectStyle();
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
         }
+        this.conditionSetIdentifier = undefined;
     }
 
 }

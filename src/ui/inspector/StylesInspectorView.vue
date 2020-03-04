@@ -29,9 +29,13 @@ export default {
                 let domainObject = selection[0][0].context.item;
                 let layoutItem;
                 if (selection[0].length > 1) {
-                    //this is a non-domain object layout item
-                    domainObject = selection[0][1].context.item;
-                    layoutItem = selection[0][0].context.layoutItem;
+                    //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
+                    //The second item in the selection[0] list is the container object (usually a layout)
+                    domainObject = selection[0][0].context.item;
+                    if (!domainObject) {
+                        layoutItem = selection[0][0].context.layoutItem;
+                        domainObject = selection[0][1].context.item;
+                    }
                 }
 
                 if (this.component) {

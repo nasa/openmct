@@ -58,6 +58,10 @@ export default {
     methods: {
         addConditionSet() {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
+            this.conditionSetIdentifier = {
+                namespace: '',
+                key: 'bb0f61ad-268d-4d3e-bb30-90ca4a2053c4'
+            };
             this.initializeConditionalStyles();
         },
         removeConditionSet() {
@@ -66,15 +70,16 @@ export default {
             this.persist(undefined);
         },
         initializeConditionalStyles() {
+            const backgroundColors = [{backgroundColor: 'red'},{backgroundColor: 'orange'}, {backgroundColor: 'blue'}];
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
                 conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
                     this.conditionalStyles.push({
                         conditionIdentifier: identifier,
-                        style: this.defautStyle
+                        style: backgroundColors[index]
                     });
                 });
                 this.persist({
-                    defaultStyle: this.defaultStyle,
+                    defaultStyle: this.defaultStyle || {backgroundColor: 'inherit'},
                     conditionSetIdentifier: this.conditionSetIdentifier,
                     styles: this.conditionalStyles
                 });

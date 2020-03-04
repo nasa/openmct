@@ -32,8 +32,19 @@ export default {
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
         }
-        if (this.unlistenStyles) {
-            this.unlistenStyles();
+
+        if (this.unlisten) {
+            this.unlisten();
+        }
+
+        if (this.stopListeningConditionalStyles) {
+            this.stopListeningConditionalStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
+            delete this.styleRuleManager;
         }
     },
     created() {
@@ -50,12 +61,6 @@ export default {
         if (this.currentObject) {
             //This is to apply styles to subobjects in a layout
             this.initConditionalStyles();
-            if (this.unlistenStyles) {
-                this.unlistenStyles();
-            }
-            this.unlistenStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (mutatedObject) => {
-                this.initConditionalStyles();
-            });
         }
 
     },
@@ -153,10 +158,6 @@ export default {
                 this.unlisten();
             }
 
-            if (this.unlistenStyles) {
-                this.unlistenStyles();
-            }
-
             if (this.removeSelectable) {
                 this.removeSelectable();
                 delete this.removeSelectable;
@@ -176,11 +177,6 @@ export default {
                 this.currentObject = mutatedObject;
             });
 
-            this.unlistenStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (mutatedObject) => {
-                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
-                this.initConditionalStyles();
-            });
-
             this.viewKey = viewKey;
 
             this.initConditionalStyles();
@@ -188,16 +184,21 @@ export default {
             this.updateView(immediatelySelect);
         },
         initConditionalStyles() {
-            if (this.styleRuleManager) {
-                this.styleRuleManager.destroy();
-                this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
-                delete this.styleRuleManager;
+            if (!this.styleRuleManager) {
+                this.styleRuleManager = new StyleRuleManager((this.currentObject.configuration && this.currentObject.configuration.conditionalStyle), this.openmct);
+                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+            } else {
+                this.styleRuleManager.updateConditionalStyleConfig(this.currentObject.configuration && this.currentObject.configuration.conditionalStyle);
             }
 
-            if (this.currentObject.configuration && this.currentObject.configuration.conditionalStyle) {
-                this.styleRuleManager = new StyleRuleManager(this.currentObject, this.openmct);
-                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+            if (this.stopListeningConditionalStyles) {
+                this.stopListeningConditionalStyles();
             }
+
+            this.stopListeningConditionalStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (newConditionalStyle) => {
+                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateConditionalStyleConfig(newConditionalStyle);
+            });
         },
         loadComposition() {
             return this.composition.load();
