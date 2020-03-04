@@ -56,12 +56,14 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleSubscription(data) {
-        const datum = {};
-        const timeSystemKey = this.timeAPI.timeSystem().key;
-
-        datum.result = this.computeResult(data);
-        if (data && data[timeSystemKey]) {
-            datum[timeSystemKey] = data[timeSystemKey]
+        const datum = {
+            result: this.computeResult(data)
+        };
+        if (data) {
+            // TODO check back to see if we should format times here
+            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+                datum[timeSystem.key] = data[timeSystem.key]
+            });
         }
 
         this.emitEvent('criterionResultUpdated', datum);
