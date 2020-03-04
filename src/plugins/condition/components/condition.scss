@@ -2,11 +2,11 @@
 
 }
 .c-condition {
-    $testBg: rgba(deeppink, 0.2);
     $p: $interiorMarginSm;
     @include discreteItem();
     display: flex;
     flex-direction: column;
+    line-height: 160%; // For layout when inputs wrap, like in criteria
     padding: $interiorMargin;
 
     > * + * {
@@ -23,13 +23,6 @@
                 margin-left: $interiorMarginSm;
             }
         }
-
-        &:hover {
-            background: $testBg;
-        }
-    }
-
-    &__name {
     }
 
     &__summary {
@@ -42,21 +35,14 @@
         display: grid;
         grid-row-gap: $interiorMarginSm;
         grid-column-gap: $interiorMargin;
-        grid-auto-columns: min-content 1fr 50px;
+        grid-auto-columns: min-content 1fr max-content;
         align-items: start;
         min-width: 150px;
         margin-left: 29px;
 
-        &__match-type,
-        &__criterias,
-        &__criteria {
+        &__criteria,
+        &__match-and-criteria {
             display: contents;
-        }
-
-        &__criteria {
-            &:hover span {
-                background: $testBg;
-            }
         }
 
         &__label {
@@ -65,31 +51,30 @@
             white-space: nowrap;
         }
 
-        &__options {
-            grid-column: 2 / span 2;
-
-        }
-
         &__separator {
             grid-column: 1 / span 3;
         }
 
         &__controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            //line-height: 200%;
             grid-column: 2;
+
+            > * > * {
+                margin-right: $interiorMarginSm;
+            }
         }
 
+        &__buttons {
+            grid-column: 3;
+        }
     }
-
-    /***************************** TEMP */
-    //> * > * {
-    //    border: 1px solid rgba(green, 0.2);
-    //}
-
-
 }
 
 
-
+/*
 
 
 
@@ -255,7 +240,7 @@
     &:before {
         content: $glyph-icon-trash;
     }
-}
+}*/
 
 .c-c__drag-ghost {
     width: 100%;

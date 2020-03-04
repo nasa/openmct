@@ -213,6 +213,10 @@ button {
     $d: 10px;
     @include grippy($c: $colorItemTreeVC, $dir: 'y');
     width: $d; height: $d;
+
+    &--vertical-drag {
+        cursor: ns-resize;
+    }
 }
 
 /******************************************************** SECTION */

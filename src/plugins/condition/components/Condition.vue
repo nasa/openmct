@@ -23,11 +23,12 @@
 <template>
 <div v-if="isEditing"
      class="c-condition is-editing js-condition-drag-wrapper"
-     :class="{ 'widget-condition--current c-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
+     :class="{ 'c-condition--current-match': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Edit view -->
     <div class="c-condition__header">
-        <span class="c-condition__drag-grippy c-grippy"
+        <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
+              title="Drag to reorder conditions"
               :class="[{ 'is-enabled': !domainObject.isDefault }, { 'hide-nice': domainObject.isDefault }]"
               :draggable="!domainObject.isDefault"
               @dragstart="dragStart"
@@ -44,15 +45,19 @@
         <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">{{ domainObject.configuration.name }}</span>
 
-        <button v-if="!domainObject.isDefault"
-                class="c-icon-button c-condition__duplicate-button icon-duplicate"
-                @click="cloneCondition"
-        ></button>
+        <div class="c-condition__buttons">
+            <button v-if="!domainObject.isDefault"
+                    class="c-click-icon c-condition__duplicate-button icon-duplicate"
+                    title="Duplicate this condition"
+                    @click="cloneCondition"
+            ></button>
 
-        <button v-if="!domainObject.isDefault"
-                class="c-icon-button c-condition__delete-button icon-trash"
-                @click="removeCondition"
-        ></button>
+            <button v-if="!domainObject.isDefault"
+                    class="c-click-icon c-condition__delete-button icon-trash"
+                    title="Delete this condition"
+                    @click="removeCondition"
+            ></button>
+        </div>
     </div>
     <div v-if="expanded"
          class="c-cdef"
@@ -89,7 +94,7 @@
         </span>
 
         <div v-if="!domainObject.isDefault"
-             class="c-cdef__match-type"
+             class="c-cdef__match-and-criteria"
         >
             <span class="c-cdef__separator c-row-separator"></span>
             <span class="c-cdef__label">Match</span>
@@ -102,34 +107,32 @@
                 </select>
             </span>
 
-            <div v-if="telemetry.length"
-                 class="c-cdef__criterias"
+            <div v-for="(criterion, index) in domainObject.configuration.criteria"
+                 :key="index"
+                 class="c-cdef__criteria"
             >
-                <div v-for="(criterion, index) in domainObject.configuration.criteria"
-                     :key="index"
-                     class="c-cdef__criteria has-local-controls"
-                >
-                    <span class="c-cdef__separator c-row-separator"></span>
-                    <Criterion :telemetry="telemetry"
-                               :criterion="criterion"
-                               :index="index"
-                               :trigger="domainObject.configuration.trigger"
-                               :is-default="domainObject.configuration.criteria.length === 1"
-                               @persist="persist"
-                    />
-                    <div class="c-cdef__criteria__controls">
-                        <span class="is-enabled c-c__duplicate"
-                              @click="cloneCriterion(index)"
-                        ></span>
-                        <span v-if="!(domainObject.configuration.criteria.length === 1)"
-                              class="is-enabled c-c__trash"
-                              @click="removeCriterion(index)"
-                        ></span>
-                    </div>
+                <span class="c-cdef__separator c-row-separator"></span>
+                <Criterion :telemetry="telemetry"
+                           :criterion="criterion"
+                           :index="index"
+                           :trigger="domainObject.configuration.trigger"
+                           :is-default="domainObject.configuration.criteria.length === 1"
+                           @persist="persist"
+                />
+                <div class="c-cdef__criteria__buttons">
+                    <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
+                            title="Duplicate this criteria"
+                            @click="cloneCriterion(index)"
+                    ></button>
+                    <button v-if="!(domainObject.configuration.criteria.length === 1)"
+                            class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
+                            title="Delete this criteria"
+                            @click="removeCriterion(index)"
+                    ></button>
                 </div>
             </div>
 
-            <div class="c-row-separator"></div>
+            <div class="c-cdef__separator c-row-separator"></div>
             <div class="c-cdef__controls">
                 <button
                     class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"

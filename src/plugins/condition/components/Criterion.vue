@@ -2,7 +2,7 @@
 <div class="u-contents">
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
-        <span class="controls">
+        <span class="c-cdef__control">
             <select v-model="criterion.telemetry"
                     @change="updateMetadataOptions"
             >
@@ -15,8 +15,8 @@
                 </option>
             </select>
         </span>
-        <span v-if="criterion.telemetry"
-              class="controls"
+        <span class="c-cdef__control"
+              v-if="criterion.telemetry"
         >
             <select v-model="criterion.metadata"
                     @change="updateOperations"
@@ -31,7 +31,7 @@
             </select>
         </span>
         <span v-if="criterion.telemetry && criterion.metadata"
-              class="controls"
+              class="c-cdef__control"
         >
             <select v-model="criterion.operation"
                     @change="updateOperationInputVisibility"
@@ -44,11 +44,12 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span v-for="(item, inputIndex) in inputCount"
+            <span class="c-cdef__control__inputs"
+                  v-for="(item, inputIndex) in inputCount"
                   :key="inputIndex"
             >
                 <input v-model="criterion.input[inputIndex]"
-                       class="t-condition-name-input"
+                       class="c-cdef__control__input"
                        type="text"
                        @blur="persist"
                 >
