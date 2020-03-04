@@ -49,6 +49,9 @@
     &__conditions {
         padding-right: $interiorMarginSm; // Kick off from scrollbar
         overflow: auto;
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
     }
 
     .hint {

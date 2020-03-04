@@ -6,12 +6,22 @@
     @include discreteItem();
     display: flex;
     flex-direction: column;
-    line-height: 160%; // For layout when inputs wrap, like in criteria
     padding: $interiorMargin;
 
     > * + * {
         margin-top: $interiorMarginSm;
     }
+    &--browse {
+        .c-condition__summary {
+            border-top: 1px solid $colorInteriorBorder;
+            padding-top: $interiorMargin;
+        }
+    }
+
+    &--edit {
+        line-height: 160%; // For layout when inputs wrap, like in criteria
+    }
+
     /***************************** HEADER */
     &__header {
         display: flex;
@@ -24,9 +34,13 @@
             }
         }
     }
+    &__name {
+        font-weight: bold;
+        align-self: baseline; // Fixes bold line-height offset problem
+    }
 
+    &__output,
     &__summary {
-        color: $colorFormSectionHeaderFg;
         flex: 1 1 auto;
     }
 

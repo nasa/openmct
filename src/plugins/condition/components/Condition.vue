@@ -22,7 +22,7 @@
 
 <template>
 <div v-if="isEditing"
-     class="c-condition is-editing js-condition-drag-wrapper"
+     class="c-condition c-condition--edit js-condition-drag-wrapper"
      :class="{ 'c-condition--current-match': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Edit view -->
@@ -43,7 +43,9 @@
 
         <span class="c-condition__name">{{ domainObject.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
-        <span class="c-condition__summary">{{ domainObject.configuration.name }}</span>
+        <span class="c-condition__summary">
+            Description/summary goes here {{ domainObject.configuration.description }}
+        </span>
 
         <div class="c-condition__buttons">
             <button v-if="!domainObject.isDefault"
@@ -60,7 +62,7 @@
         </div>
     </div>
     <div v-if="expanded"
-         class="c-cdef"
+         class="c-condition__definition c-cdef"
     >
         <span class="c-cdef__separator c-row-separator"></span>
         <span class="c-cdef__label">Condition Name</span>
@@ -145,23 +147,20 @@
     </div>
 </div>
 <div v-else
-     id="conditionArea"
-     class="c-condition js-condition-drag-wrapper"
-     :class="{ 'widget-condition--current c-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
+     class="c-condition c-condition--browse"
+     :class="{ 'c-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Browse view -->
-    <div class="title-bar">
-        <span class="condition-name">
+    <div class="c-condition__header">
+        <span class="c-condition__name">
             {{ domainObject.configuration.name }}
         </span>
-        <span class="condition-output">
+        <span class="c-condition__output">
             Output: {{ domainObject.configuration.output }}
         </span>
     </div>
-    <div class="condition-config">
-        <span class="condition-description">
-            {{ domainObject.configuration.description }}
-        </span>
+    <div class="c-condition__summary">
+        Description/summary goes here {{ domainObject.configuration.description }}
     </div>
 </div>
 </template>
