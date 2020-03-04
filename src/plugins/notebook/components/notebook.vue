@@ -64,16 +64,20 @@
                 </div>
             </div>
             <div class="c-notebook__drag-area icon-plus"
-                 @click="newEntry($event)"
-                 @drop="newEntry($event)"
+                 @click="newEntry()"
+                 @dragover="dragover"
+                 @drop="dropOnEntry($event)"
             >
-                <span class="c-notebook__drag-area__label">To start a new entry, click here or drag and drop any object</span>
+                <span class="c-notebook__drag-area__label">
+                    To start a new entry, click here or drag and drop any object
+                </span>
             </div>
             <div v-if="selectedSection && selectedPage"
                  class="c-notebook__entries"
             >
                 <ul>
                     <NotebookEntry v-for="entry in filteredAndSortedEntries"
+                                   ref="notebookEntry"
                                    :key="entry.key"
                                    :entry="entry"
                                    :domain-object="internalDomainObject"
@@ -93,9 +97,10 @@ import NotebookEntry from './notebook-entry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
+import snapshotContainer from '../snapshot-container';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
-import { addNotebookEntry, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
+import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_ENTRIES, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import { throttle } from 'lodash';
 
 export default {
@@ -169,6 +174,12 @@ export default {
         this.$refs.sidebar.$on(EVENT_UPDATE_SECTION, this.updateSection.bind(this));
         this.$refs.sidebar.$on(EVENT_UPDATE_PAGE, this.updatePage.bind(this));
         this.$refs.sidebar.$on(TOGGLE_NAV, this.toggleNav);
+
+        if (this.$refs.notebookEntry) {
+            this.$refs.notebookEntry.forEach(entry => {
+                entry.$on(EVENT_UPDATE_ENTRIES, this.updateEntries);
+            });
+        }
         this.formatSidebar();
         window.addEventListener('orientationchange', this.formatSidebar);
     },
@@ -179,6 +190,12 @@ export default {
 
         if (this.$refs.sidebar) {
             this.$refs.sidebar.$off();
+        }
+
+        if (this.$refs.notebookEntry) {
+            this.$refs.notebookEntry.forEach(entry => {
+                entry.$off();
+            });
         }
     },
     methods: {
@@ -207,6 +224,32 @@ export default {
 
             this.search = '';
             this.updateSection({ sections });
+        },
+        dragover(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        },
+        dropOnEntry(event) {
+            event.preventDefault();
+            const snapshotId = event.dataTransfer.getData('snapshot/id');
+            if (snapshotId.length) {
+                const snapshot = snapshotContainer.getSnapshot(snapshotId);
+                this.newEntry(snapshot);
+                snapshotContainer.removeSnapshot(snapshotId);
+                return;
+            }
+
+            const data = event.dataTransfer.getData('openmct/domain-object-path');
+            const objectPath = JSON.parse(data);
+            const domainObject = objectPath[0];
+            const domainObjectKey = domainObject.identifier.key;
+            const domainObjectType = this.openmct.types.get(domainObject.type);
+            const cssClass = domainObjectType && domainObjectType.definition
+                ? domainObjectType.definition.cssClass
+                : 'icon-object-unknown';
+
+            const embed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            this.newEntry(embed);
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
@@ -289,14 +332,16 @@ export default {
         mutateObject(key, value) {
             this.openmct.objects.mutate(this.internalDomainObject, key, value);
         },
-        newEntry(event) {
+        newEntry(embed = null) {
             const selectedSection = this.getSelectedSection();
             const selectedPage = this.getSelectedPage();
             this.search = '';
 
             this.updateDefaultNotebook(selectedSection, selectedPage);
             const notebookStorage = getDefaultNotebook();
-            addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage);
+            const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
+
+            return id;
         },
         orientationChange() {
             this.formatSidebar();
@@ -309,8 +354,15 @@ export default {
                 ? left.createdOn - right.createdOn
                 : right.createdOn - left.createdOn;
         },
-        toggleNav: function () {
+        toggleNav() {
             this.showNav = !this.showNav;
+        },
+        updateEntries(entries) {
+            const configuration = this.internalDomainObject.configuration;
+            const notebookEntries = configuration.entries || {};
+            notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
+
+            this.mutateObject('configuration.entries', notebookEntries);
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;

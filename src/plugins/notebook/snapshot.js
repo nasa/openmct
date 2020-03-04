@@ -98,7 +98,8 @@ export default class Snapshot {
         const notebookStorage = getDefaultNotebook();
         this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
             .then(domainObject => {
-                addNotebookEntry(this.openmct, domainObject, notebookStorage, embedObject, imageUrl);
+                const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
+                addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
             });
     }
 

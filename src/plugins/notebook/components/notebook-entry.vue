@@ -1,5 +1,6 @@
 <template>
 <li class="c-notebook__entry c-ne has-local-controls"
+    @dragover="dragover"
     @drop.prevent="dropOnEntry(entry.id, $event)"
 >
     <div class="c-ne__time-and-content">
@@ -42,8 +43,8 @@
 <script>
 import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer from '../snapshot-container';
-import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED } from '../notebook-constants';
+import { createNewEmbed, getEntryPosById,getNotebookEntries } from '../utils/notebook-entries';
+import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRIES } from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
@@ -149,6 +150,10 @@ export default {
                 ]
             });
         },
+        dragover() {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        },
         dropOnEntry(entryId, $event) {
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
@@ -177,21 +182,7 @@ export default {
             this.updateEntries(entries);
         },
         entryPosById(entryId) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            let foundId = -1;
-            entries.forEach((element, index) => {
-                if (element.id === entryId) {
-                    foundId = index;
-
-                    return;
-                }
-            });
-
-            return foundId;
+            return getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -273,15 +264,7 @@ export default {
             this.updateEntries(entries);
         },
         updateEntries(entries) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
-            const configuration = this.domainObject.configuration;
-            const notebookEntries = configuration.entries || {};
-            notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
-
-            this.openmct.objects.mutate(this.domainObject, 'configuration.entries', notebookEntries);
+            this.$emit(EVENT_UPDATE_ENTRIES, entries);
         }
     }
 }
