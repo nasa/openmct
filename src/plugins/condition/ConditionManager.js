@@ -28,6 +28,8 @@ export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
         this.openmct = openmct;
+        this.timeAPI = this.openmct.time;
+        this.latestTimestamp = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.initialize(domainObject);
     }
@@ -213,6 +215,7 @@ export default class ConditionManager extends EventEmitter {
             if (this.findConditionById(idAsString)) {
                 this.conditionResults[idAsString] = resultObj.data.result;
             }
+            this.updateTimestamp(resultObj.data);
         }
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
@@ -226,15 +229,25 @@ export default class ConditionManager extends EventEmitter {
 
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
             this.emit('conditionSetResultUpdated',
-                Object.assign({},
-                    resultObj ? resultObj.data : {},
+                Object.assign(
                     {
                         output: obj.configuration.output,
                         id: this.domainObject.identifier,
                         conditionId: currentConditionIdentifier
-                    }
+                    },
+                    this.latestTimestamp
                 )
             )
+        });
+    }
+
+    updateTimestamp(timestamp) {
+        this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+            if (!this.latestTimestamp[timeSystem.key]
+                || timestamp[timeSystem.key] > this.latestTimestamp[timeSystem.key]
+            ) {
+                this.latestTimestamp[timeSystem.key] = timestamp[timeSystem.key];
+            }
         });
     }
 

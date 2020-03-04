@@ -191,14 +191,12 @@ export default class ConditionClass extends EventEmitter {
 
     handleCriterionResult(eventData) {
         const id = eventData.id;
-        const conditionData = eventData.data;
 
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = eventData.data.result;
         }
 
-        conditionData.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
-        this.emitEvent('conditionResultUpdated', conditionData);
+        this.handleConditionUpdated(eventData.data);
     }
 
     subscribe() {
@@ -206,6 +204,14 @@ export default class ConditionClass extends EventEmitter {
         this.criteria.forEach((criterion) => {
             criterion.subscribe();
         })
+    }
+
+    handleConditionUpdated(datum) {
+        // trigger an updated event so that consumers can react accordingly
+        this.evaluate();
+        this.emitEvent('conditionResultUpdated',
+            Object.assign({}, datum, { result: this.result })
+        );
     }
 
     getCriteria() {
@@ -219,6 +225,10 @@ export default class ConditionClass extends EventEmitter {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
         return success;
+    }
+
+    evaluate() {
+        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }
 
     emitEvent(eventName, data) {
