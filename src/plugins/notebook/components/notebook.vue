@@ -67,7 +67,8 @@
             </div>
             <div class="c-notebook__drag-area icon-plus"
                  @click="newEntry()"
-                 @dragover="dragover"
+                 @dragover="dragOver"
+                 @drop.capture="dropCapture"
                  @drop="dropOnEntry($event)"
             >
                 <span class="c-notebook__drag-area__label">
@@ -227,12 +228,20 @@ export default {
             this.search = '';
             this.updateSection({ sections });
         },
-        dragover(event) {
+        dragOver(event) {
             event.preventDefault();
             event.dataTransfer.dropEffect = "copy";
         },
+        dropCapture(event) {
+            const isEditing = this.openmct.editor.isEditing();
+            if (isEditing) {
+                this.openmct.editor.cancel();
+            }
+        },
         dropOnEntry(event) {
             event.preventDefault();
+            event.stopImmediatePropagation();
+
             const snapshotId = event.dataTransfer.getData('snapshot/id');
             if (snapshotId.length) {
                 const snapshot = snapshotContainer.getSnapshot(snapshotId);
