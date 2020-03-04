@@ -22,7 +22,7 @@
 
 import Condition from "./Condition";
 import uuid from "uuid";
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {

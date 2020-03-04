@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 
 export default class StyleRuleManager extends EventEmitter {
     constructor(domainObject, openmct) {
@@ -36,13 +36,13 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     initialize() {
-        this.openmct.objects.get(this.conditionSetIdentfier).then((obj) => {
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(obj, output => this.handleConditionSetResultUpdated(output));
+        this.openmct.objects.get(this.conditionSetIdentfier).then((conditionSetDomainObject) => {
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, output => this.handleConditionSetResultUpdated(output));
         });
     }
 
     findStyleByConditionId(id) {
-        for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
+        for(let i=0; i < this.conditionalStyles.length; i++) {
             if (this.openmct.objects.makeKeyString(this.conditionalStyles[i].conditionIdentifier) === this.openmct.objects.makeKeyString(id)) {
                 return this.conditionalStyles[i];
             }
@@ -61,6 +61,8 @@ export default class StyleRuleManager extends EventEmitter {
                 this.currentStyle = this.defaultStyle;
             }
         }
+
+        this.updateDomainObjectStyle();
     }
 
     updateDomainObjectStyle() {

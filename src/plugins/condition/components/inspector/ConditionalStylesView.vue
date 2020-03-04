@@ -44,11 +44,6 @@ export default {
             conditionalStyles: []
         }
     },
-    destroyed() {
-        if (this.styleRuleManager) {
-            this.styleRuleManager.destroy();
-        }
-    },
     mounted() {
         if (this.layoutItem) {
             //TODO: Handle layout items
@@ -68,7 +63,7 @@ export default {
         removeConditionSet() {
             this.conditionSetIdentifier = '';
             this.conditionalStyles = [];
-            this.persist();
+            this.persist(undefined);
         },
         initializeConditionalStyles() {
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
