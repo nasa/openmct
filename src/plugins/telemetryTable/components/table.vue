@@ -65,17 +65,26 @@
                 {{ paused ? 'Play' : 'Pause' }}
             </span>
         </button>
-        <div
-            v-if="isAutosizeEnabled"
-            class="c-separator"
-        ></div>
-        <button
-            v-if="isAutosizeEnabled"
-            class="c-button icon-arrows-right-left labeled"
-            title="Increase column widths to fit currently available data."
-            @click="recalculateColumnWidths">
-            <span class="c-button__label">Fit Columns</span>
-        </button>
+
+        <template v-if="!isEditing">
+            <div
+                class="c-separator">
+            </div>
+            <button
+                v-if="isAutosizeEnabled"
+                class="c-button icon-arrows-right-left labeled"
+                title="Increase column widths to fit currently available data."
+                @click="recalculateColumnWidths">
+                <span class="c-button__label">Expand Columns</span>
+            </button>
+            <button
+                v-else
+                class="c-button icon-expand labeled"
+                title="Increase column widths to fit currently available data."
+                @click="autosizeColumns">
+                <span class="c-button__label">Autosize Columns</span>
+            </button>
+        </template>
 
         <slot name="buttons"></slot>
     </div>
@@ -476,22 +485,26 @@ export default {
             let headerKeys = Object.keys(this.headers);
             let sizingTableChildren = Array.from(this.sizingTable.children);
 
-            headerKeys.forEach((headerKey, headerIndex)=>{
-                sizingTableChildren.forEach(sizingRowEl => {
-                    let sizingCells = Array.from(sizingRowEl.children),
-                        cell = sizingCells[headerIndex];
+            headerKeys.forEach((headerKey, headerIndex, array)=>{
+                if (this.isAutosizeEnabled) {
+                    columnWidths[headerKey] = this.sizingTable.offsetWidth / array.length;
+                } else {
+                    sizingTableChildren.forEach(sizingRowEl => {
+                        let sizingCells = Array.from(sizingRowEl.children),
+                            cell = sizingCells[headerIndex];
 
-                    if (columnWidths[headerKey]) {
-                        let currentWidth = columnWidths[headerKey],
-                            newWidth = cell.offsetWidth;
+                        if (columnWidths[headerKey]) {
+                            let currentWidth = columnWidths[headerKey],
+                                newWidth = cell.offsetWidth;
 
-                        if (newWidth > currentWidth) {
-                            columnWidths[headerKey] = newWidth;
+                            if (newWidth > currentWidth) {
+                                columnWidths[headerKey] = newWidth;
+                            }
+                        } else {
+                            columnWidths[headerKey] = cell.offsetWidth;
                         }
-                    } else {
-                        columnWidths[headerKey] = cell.offsetWidth;
-                    }
-                });
+                    });
+                }
                 totalWidth += columnWidths[headerKey];
             });
 
@@ -838,19 +851,33 @@ export default {
                 this.scrollable.scrollTop = this.userScroll;
             }
         },
-        clearSizingTable() {
+        updateWidthsAndClearSizingTable() {
+            this.configuredColumnWidths = this.columnWidths;
+
             this.visibleRows.forEach((row, i) => {
+                this.$set(this.sizingRows, i, undefined);
                 delete this.sizingRows[i];
             });
+
         },
         recalculateColumnWidths() {
             this.visibleRows.forEach((row,i) => {
                 this.$set(this.sizingRows, i, row);
             });
 
+            this.configuredColumnWidths = {};
+            this.isAutosizeEnabled = false;
+
             this.$nextTick()
                 .then(this.calculateColumnWidths)
-                .then(this.clearSizingTable);
+                .then(this.updateWidthsAndClearSizingTable);
+        },
+        autosizeColumns() {
+            let config = this.table.configuration.getConfiguration();
+            config.autosize = true;
+            config.columnWidths = {};
+
+            this.updateConfiguration(config);
         }
     }
 }
