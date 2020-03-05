@@ -144,7 +144,7 @@ button {
     color: $colorBodyFg;
     cursor: pointer;
     justify-content: start;
-    padding: $interiorMarginSm $interiorMargin;
+    padding: $interiorMargin;
 
     > * + * {
         margin-left: $interiorMargin;

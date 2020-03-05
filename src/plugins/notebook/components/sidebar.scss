@@ -12,13 +12,6 @@
         transition: $transOut;
     }
 
-    &.c-drawer--push {
-        position: relative;
-        &.is-expanded {
-            box-shadow: none;
-        }
-    }
-
     &:not(.is-expanded) {
         > * {
             display: none;
@@ -29,6 +22,17 @@
         box-shadow: rgba(black, 0.7) 3px 0 20px;
         margin-right: $interiorMargin;
         width: 95%;
+    }
+}
+
+.c-drawer--push {
+    position: relative;
+
+    &.c-drawer--align-left {
+        &.is-expanded {
+            box-shadow: rgba(black, 0.4) 1px 0 20px;
+            margin-right: $interiorMarginLg;
+        }
     }
 }
 
@@ -59,25 +63,13 @@
         // Holds header, contents-and-controls
     }
 
-    &__header,
-    &__contents {
-        padding: $interiorMargin;
-    }
-
-    &__contents-and-controls {
-        // Encloses pane buttons and contents elements
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-    }
-
     &__header-w {
         // Wraps header, used for page pane with collapse button
         display: flex;
         flex: 0 0 auto;
-        //border-bottom: 2px solid $sideBarHeaderBg;
         background: $sideBarHeaderBg;
         align-items: center;
+
         .c-icon-button {
             font-size: 0.8em;
             color: $colorBodyFg;
@@ -88,17 +80,36 @@
         color: $sideBarHeaderFg;
         display: flex;
         flex: 1 1 auto;
+        padding: $interiorMargin;
         text-transform: uppercase;
+
         > * {
             @include ellipsize();
         }
     }
 
+    &__contents-and-controls {
+        // Encloses pane buttons and contents elements
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+
+        > * {
+            margin: auto $interiorMargin $interiorMargin $interiorMargin;
+            &:first-child {
+                border-bottom: 1px solid $colorInteriorBorder;
+            }
+            + * {
+                margin-top: $interiorMargin;
+            }
+        }
+    }
+
     &__contents {
-        border-top: 1px solid $colorInteriorBorder;
         flex: 1 1 auto;
         overflow-x: hidden;
         overflow-y: scroll;
+        padding: auto $interiorMargin;
     }
 
     .c-list-button {
@@ -112,6 +123,7 @@
         &__name {
             flex: 1 1 auto;
         }
+
         .icon-trash {
             display: none;
             font-size: 0.8em;
@@ -119,7 +131,9 @@
         }
 
         &:hover {
-            .icon-trash { display: block; }
+            .icon-trash {
+                display: block;
+            }
         }
     }
 }
