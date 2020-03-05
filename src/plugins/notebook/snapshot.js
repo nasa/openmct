@@ -100,6 +100,10 @@ export default class Snapshot {
             .then(domainObject => {
                 const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
+
+                const defaultPath = `${domainObject.name} > ${notebookStorage.section.name} > ${notebookStorage.page.name}`;
+                const msg = `Saved to Notebook ${defaultPath}`;
+                this._showNotification(msg);
             });
     }
 
@@ -109,5 +113,12 @@ export default class Snapshot {
     _saveToNotebookSnapshots(embedObject, imageUrl) {
         const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
         SnapShotContainer.addSnapshot(embed);
+
+        const msg = 'Saved to Notebook Snapshots - click to view.';
+        this._showNotification(msg);
+    }
+
+    _showNotification(msg) {
+        this.openmct.notifications.info(msg);
     }
 }
