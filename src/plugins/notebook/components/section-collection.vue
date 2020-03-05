@@ -88,7 +88,7 @@ export default {
             const isSectionDefault = defaultSection && defaultSection.id === id;
             const sections = this.sections.filter(s => s.id !== id);
 
-            if (isSectionSelected) {
+            if (isSectionSelected && defaultSection) {
                 sections.forEach(s => {
                     s.isSelected = false;
                     if (defaultSection && defaultSection.id === s.id) {
@@ -101,7 +101,7 @@ export default {
                 clearDefaultNotebook();
             }
 
-            if (isSectionSelected && isSectionDefault && sections.length) {
+            if (sections.length && isSectionSelected && (!defaultSection || isSectionDefault)) {
                 sections[0].isSelected = true;
             }
 

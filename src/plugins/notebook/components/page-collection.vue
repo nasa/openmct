@@ -97,7 +97,7 @@ export default {
             const isPageDefault = defaultpage && defaultpage.id === id;
             const pages = this.pages.filter(s => s.id !== id);
 
-            if (isPageSelected) {
+            if (isPageSelected && defaultpage) {
                 pages.forEach(s => {
                     s.isSelected = false;
                     if (defaultpage && defaultpage.id === s.id) {
@@ -110,7 +110,7 @@ export default {
                 clearDefaultNotebook();
             }
 
-            if (isPageSelected && isPageDefault && pages.length) {
+            if (pages.length && isPageSelected && (!defaultpage || isPageDefault)) {
                 pages[0].isSelected = true;
             }
 
