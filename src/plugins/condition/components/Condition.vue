@@ -109,33 +109,35 @@
                 </select>
             </span>
 
-            <div v-for="(criterion, index) in domainObject.configuration.criteria"
-                 :key="index"
-                 class="c-cdef__criteria"
-            >
-                <span class="c-cdef__separator c-row-separator"></span>
-                <Criterion :telemetry="telemetry"
-                           :criterion="criterion"
-                           :index="index"
-                           :trigger="domainObject.configuration.trigger"
-                           :is-default="domainObject.configuration.criteria.length === 1"
-                           @persist="persist"
-                />
-                <div class="c-cdef__criteria__buttons">
-                    <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
-                            title="Duplicate this criteria"
-                            @click="cloneCriterion(index)"
-                    ></button>
-                    <button v-if="!(domainObject.configuration.criteria.length === 1)"
-                            class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
-                            title="Delete this criteria"
-                            @click="removeCriterion(index)"
-                    ></button>
+            <template v-if="telemetry.length">
+                <div v-for="(criterion, index) in domainObject.configuration.criteria"
+                     :key="index"
+                     class="c-cdef__criteria"
+                >
+                    <Criterion :telemetry="telemetry"
+                               :criterion="criterion"
+                               :index="index"
+                               :trigger="domainObject.configuration.trigger"
+                               :is-default="domainObject.configuration.criteria.length === 1"
+                               @persist="persist"
+                    />
+                    <div class="c-cdef__criteria__buttons">
+                        <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
+                                title="Duplicate this criteria"
+                                @click="cloneCriterion(index)"
+                        ></button>
+                        <button v-if="!(domainObject.configuration.criteria.length === 1)"
+                                class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
+                                title="Delete this criteria"
+                                @click="removeCriterion(index)"
+                        ></button>
+                    </div>
                 </div>
-            </div>
-
+            </template>
             <div class="c-cdef__separator c-row-separator"></div>
-            <div class="c-cdef__controls">
+            <div class="c-cdef__controls"
+                 :disabled="!telemetry.length"
+            >
                 <button
                     class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
                     @click="addCriteria"
@@ -198,7 +200,9 @@ export default {
     },
     data() {
         return {
-            domainObject: this.domainObject,
+            domainObject: {
+                configuration: {}
+            },
             currentCriteria: this.currentCriteria,
             expanded: true,
             trigger: 'all',
@@ -289,5 +293,3 @@ export default {
     }
 }
 </script>
-
-

@@ -39,7 +39,7 @@
              class="hint"
              :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
         >
-            <template v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure conditions.</template>
+            <template v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure Conditions and add criteria.</template>
             <template v-else>The first condition to match is the one that is applied. Drag conditions to reorder.</template>
         </div>
 
@@ -47,8 +47,6 @@
             v-show="isEditing"
             id="addCondition"
             class="c-button c-button--major icon-plus labeled"
-            :class="{ 'is-disabled': !telemetryObjs.length}"
-            :disabled="!telemetryObjs.length"
             @click="addCondition"
         >
             <span class="c-cs-button__label">Add Condition</span>

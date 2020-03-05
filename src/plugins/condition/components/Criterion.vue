@@ -1,5 +1,6 @@
 <template>
 <div class="u-contents">
+    <div class="c-cdef__separator c-row-separator"></div>
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
@@ -15,8 +16,8 @@
                 </option>
             </select>
         </span>
-        <span class="c-cdef__control"
-              v-if="criterion.telemetry"
+        <span v-if="criterion.telemetry"
+              class="c-cdef__control"
         >
             <select v-model="criterion.metadata"
                     @change="updateOperations"
@@ -44,9 +45,9 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span class="c-cdef__control__inputs"
-                  v-for="(item, inputIndex) in inputCount"
+            <span v-for="(item, inputIndex) in inputCount"
                   :key="inputIndex"
+                  class="c-cdef__control__inputs"
             >
                 <input v-model="criterion.input[inputIndex]"
                        class="c-cdef__control__input"

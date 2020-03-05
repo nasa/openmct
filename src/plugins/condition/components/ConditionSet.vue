@@ -27,12 +27,10 @@
             <span class="c-cs__header-label c-section__label">Current Output</span>
         </div>
         <div class="c-cs__content c-cs__current-output-value">
-            <span v-if="currentConditionOutput"
-              class="current-output"
-            >
+            <template v-if="currentConditionOutput">
                 {{ currentConditionOutput }}
-            </span>
-            <span v-else>No output selected</span>
+            </template>
+            <template v-else>No output selected</template>
         </div>
     </section>
     <TestData :is-editing="isEditing" />
