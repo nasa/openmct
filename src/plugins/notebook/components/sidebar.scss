@@ -108,7 +108,7 @@
     &__contents {
         flex: 1 1 auto;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding: auto $interiorMargin;
     }
 
@@ -136,8 +136,4 @@
             }
         }
     }
-}
-
-.l-layout__frame .c-sidebar {
-    background: deeppink !important;
 }

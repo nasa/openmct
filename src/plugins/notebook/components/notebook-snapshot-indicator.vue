@@ -1,8 +1,14 @@
 <template>
-<div class="c-indicator c-indicator--clickable icon-notebook s-status-caution">
+<div class="c-indicator c-indicator--clickable icon-notebook"
+     :class="[{ 's-status-available': snapshotCount === 0 }, { 's-status-on': snapshotCount > 0 }]"
+>
     <span class="label c-indicator__label">
-        <button @click="toggleSnapshot">{{ indicatorTitle }}</button>
+        {{ indicatorTitle }}
+        <button @click="toggleSnapshot">
+            {{ expanded? 'Hide' : 'Show' }}
+        </button>
     </span>
+    <span class="c-indicator__count">{{ snapshotCount }}</span>
 </div>
 </template>
 
@@ -17,7 +23,8 @@ export default {
     data() {
         return {
             expanded: false,
-            indicatorTitle: ''
+            indicatorTitle: '',
+            snapshotCount: 0
         }
     },
     mounted() {
@@ -59,6 +66,7 @@ export default {
         },
         updateSnapshotIndicatorTitle() {
             const snapshotCount = snapshotContainer.getSnapshots().length;
+            this.snapshotCount = snapshotCount;
             const snapshotTitleSuffix = snapshotCount === 1
                 ? 'Snapshot'
                 : 'Snapshots';

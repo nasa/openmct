@@ -87,7 +87,9 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: $interiorMargin, 7px;
-$sideBarBg: lighten($colorBodyBg, 5%);
+$drawerBg: lighten($colorBodyBg, 5%);
+$drawerFg: lighten($colorBodyFg, 5%);
+$sideBarBg: $drawerBg;
 $sideBarHeaderBg: rgba($colorBodyFg, 0.2);
 $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
