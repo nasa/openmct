@@ -208,7 +208,7 @@ export default {
             });
         },
         populateActionMenu() {
-            var self = this;
+            const self = this;
             const actions = [new PreviewAction(self.openmct)];
             self.openmct.objects.get(self.embed.type)
                 .then((domainObject) => {
@@ -227,14 +227,14 @@ export default {
             this.$emit(EVENT_REMOVE_EMBED, id);
         },
         removeEmbedAction() {
-            var self = this;
+            const self = this;
 
             return {
                 name: this.removeActionString,
                 cssClass: 'icon-trash',
                 perform: function (embed) {
-                    var dialog = self.openmct.overlays.dialog({
-                        iconClass: "alert",
+                    const dialog = self.openmct.overlays.dialog({
+                        iconClass: "error",
                         message: 'This Action will permanently delete this embed. Do you wish to continue?',
                         buttons: [{
                             label: "No",

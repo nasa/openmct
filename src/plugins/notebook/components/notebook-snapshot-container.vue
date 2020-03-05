@@ -92,13 +92,13 @@ export default {
             return NOTEBOOK_SNAPSHOT_MAX_COUNT;
         },
         removeAllSnapshotAction() {
-            var self = this;
+            const self = this;
 
             return {
                 name: 'Delete All Snapshots',
                 cssClass: 'icon-trash',
                 perform: function (embed) {
-                    var dialog = self.openmct.overlays.dialog({
+                    const dialog = self.openmct.overlays.dialog({
                         iconClass: "error",
                         message: 'This action will delete all Notebook Snapshots. Do you want to continue?',
                         buttons: [

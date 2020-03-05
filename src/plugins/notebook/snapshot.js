@@ -16,59 +16,12 @@ export default class Snapshot {
     capture(notebookType, snapShotDomainObject, domElement) {
         this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
-                var reader = new window.FileReader();
+                const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
                     this._saveSnapShot(notebookType, reader.result, snapShotDomainObject);
                 }.bind(this);
             }.bind(this));
-    }
-
-    /**
-     * @private
-     */
-    _generateTaskForm(url) {
-        var taskForm = {
-            name: "Create a Notebook Entry",
-            hint: "Please select a Notebook",
-            sections: [{
-                rows: [
-                    {
-                        name: 'Entry',
-                        key: 'entry',
-                        control: 'textarea',
-                        required: false,
-                        cssClass: "l-textarea-sm"
-                    },
-                    {
-                        name: 'Snap Preview',
-                        key:"snapPreview",
-                        control: "snap-view",
-                        cssClass: "l-textarea-sm",
-                        src: url
-                    },
-                    {
-                        name: 'Save in Notebook',
-                        key: 'notebook',
-                        control: 'locator',
-                        validate: validateLocation
-                    }
-                ]
-            }]
-        };
-
-        var overlayModel = {
-            title: taskForm.name,
-            message: 'Notebook Snapshot',
-            structure: taskForm,
-            value: {'entry': ""}
-        };
-
-        function validateLocation(newParentObj) {
-            return newParentObj.model.type === 'notebook';
-        }
-
-        return overlayModel;
     }
 
     /**

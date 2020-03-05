@@ -60,8 +60,8 @@ export default {
                 return;
             }
 
-            var dialog = self.openmct.overlays.dialog({
-                iconClass: "alert",
+            const dialog = self.openmct.overlays.dialog({
+                iconClass: "error",
                 message: 'This action will delete this page and all of its entries. Do you want to continue?',
                 buttons: [{
                     label: "No",
