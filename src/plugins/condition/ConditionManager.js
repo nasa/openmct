@@ -28,28 +28,26 @@ export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
         this.openmct = openmct;
+        this.domainObject = domainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.initialize(domainObject);
+        this.initialize();
     }
 
-    initialize(domainObject) {
+    initialize() {
         this.conditionResults = {};
-        this.openmct.objects.get(domainObject.identifier).then((obj) => {
-            this.observeForChanges(obj);
-            this.domainObject = obj;
-            this.conditionCollection = [];
-            if (this.domainObject.configuration.conditionCollection.length) {
-                this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
-                    this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                        this.initCondition(conditionConfiguration, index)
-                    });
+        this.observeForChanges(this.domainObject);
+        this.conditionCollection = [];
+        if (this.domainObject.configuration.conditionCollection.length) {
+            this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
+                this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
+                    this.initCondition(conditionConfiguration, index)
                 });
-            } else {
-                this.addCondition(true);
-            }
-        });
+            });
+        } else {
+            this.addCondition(true);
+        }
     }
 
     observeForChanges(domainObject) {
