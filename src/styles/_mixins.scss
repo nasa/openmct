@@ -251,7 +251,7 @@
 
 @mixin reverseEllipsis() {
     @include ellipsize();
-    direction: rtl;
+    direction: ltr;
     unicode-bidi:bidi-override;
 }
 
