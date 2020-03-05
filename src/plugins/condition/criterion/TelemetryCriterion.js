@@ -55,10 +55,11 @@ export default class TelemetryCriterion extends EventEmitter {
         this.emitEvent('criterionUpdated', this);
     }
 
-    handleSubscription(data) {
+    formatData(data) {
         const datum = {
             result: this.computeResult(data)
-        };
+        }
+
         if (data) {
             // TODO check back to see if we should format times here
             this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
@@ -66,7 +67,15 @@ export default class TelemetryCriterion extends EventEmitter {
             });
         }
 
-        this.emitEvent('criterionResultUpdated', datum);
+        return datum;
+    }
+
+    handleRequest(data) {
+        this.emitEvent('criterionLADResultUpdated', this.formatData(data));
+    }
+
+    handleSubscription(data) {
+        this.emitEvent('criterionResultUpdated', this.formatData(data));
     }
 
     findOperation(operation) {
@@ -103,6 +112,29 @@ export default class TelemetryCriterion extends EventEmitter {
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
+    }
+
+    requestLatest(options) {
+        if (this.isValid()) {
+            options = Object.assign({},
+                options,
+                {
+                    strategy: 'latest',
+                    size: 1
+                }
+            );
+
+            this.telemetryAPI.request(
+                this.telemetryObject,
+                options
+            ).then(results => {
+                if(results && results.length) {
+                    results[results.length - 1]
+                }
+            })
+        } else {
+            // default
+        }
     }
 
     /**

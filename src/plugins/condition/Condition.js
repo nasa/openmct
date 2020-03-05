@@ -189,6 +189,10 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
+    handleLADCriterionResult(eventData) {
+
+    }
+
     handleCriterionResult(eventData) {
         const id = eventData.id;
 
@@ -197,6 +201,13 @@ export default class ConditionClass extends EventEmitter {
         }
 
         this.handleConditionUpdated(eventData.data);
+    }
+
+    requestLatest() {
+        const promises = 
+
+        Promise.all(promises)
+            .then()
     }
 
     subscribe() {

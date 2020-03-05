@@ -9,12 +9,21 @@ export default class ConditionSetTelemetryProvider {
         return domainObject.type === 'conditionSet';
     }
 
-    supportsRequest(domainObject, options) {
-        return false;
+    supportsRequest(domainObject) {
+        return domainObject.type === 'conditionSet';
     }
 
     supportsSubscribe(domainObject) {
         return domainObject.type === 'conditionSet';
+    }
+
+    request(domainObject, options) {
+        let conditionManager = new ConditionManager(domainObject, this.openmct);
+        return conditionManager.requestLatest()
+            .then(latestDatum => {
+                return latestDatum ? [latestDatum] : [];
+            });
+        // return Promise.resolve([]);
     }
 
     subscribe(domainObject, callback) {
