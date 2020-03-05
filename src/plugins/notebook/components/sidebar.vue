@@ -26,7 +26,7 @@
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
             </div>
-            <button class="c-icon-button icon-x"
+            <button class="c-click-icon c-click-icon--major icon-x"
                     @click="toggleNav"
             ></button>
         </div>
