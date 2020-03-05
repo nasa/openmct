@@ -2,17 +2,12 @@
 <div class="c-properties__row--span-all">
     <div class="controls">
         <div class="preview">ABC</div>
-        <button class="c-icon-button--swatched icon-paint-bucket"
-                data-style-prop="backgroundColor"
-                @click="applyStyle"
-        ></button>
-        <button class="c-icon-button--swatched icon-line-horz"
-                data-style-prop="borderColor"
-                @click="applyStyle"
-        ></button>
-        <button class="c-icon-button--swatched icon-font"
-                data-style-prop="color"
-                @click="applyStyle"
+        <button v-for="(item, index) in defaults"
+                :key="index"
+                class="c-icon-button--swatched"
+                :class="item.iconClass"
+                :data-style-prop="item.name"
+                @click="applyStyle(index)"
         ></button>
     </div>
 </div>
@@ -27,17 +22,30 @@ export default {
     ],
     data() {
         return {
-            backgroundColor: '#666',
-            borderColor: '#000',
-            color: '#ccc'
+            defaults: [
+                {   name: 'backgroundColor',
+                    iconClass: 'icon-paint-bucket',
+                    value: '#666'
+                },
+                {   name: 'borderColor',
+                    iconClass: 'icon-line-horz',
+                    value: '#000'
+                },
+                {   name: 'color',
+                    iconClass: 'icon-font',
+                    value: '#ccc'
+                }
+            ]
         }
     },
     methods: {
-        applyStyle(ev) {
-            const prop = ev.target.dataset.styleProp;
-            const previewElem = ev.target.closest('.controls').querySelector('.preview')
-            previewElem.style[`${prop}`] = this[prop];
+        applyStyle(index) {
+            const propName = event.target.dataset.styleProp;
+            const previewElem = event.target.closest('.controls').querySelector('.preview')
+            previewElem.style[`${propName}`] = this.defaults[index].value;
+            event.target.setAttribute(`style`, `border-bottom: solid 2px ${this.defaults[index].value};`)
         }
     }
 }
 </script>
+
