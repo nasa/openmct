@@ -47,8 +47,9 @@
             <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
         <div class="c-cs-test-h">
-            <div class="c-test-datum"
-                 v-for="n in 5">
+            <div v-for="n in 5"
+                 class="c-test-datum"
+            >
                 <span class="c-test-datum__label">Set</span>
                 <div class="c-test-datum__controls">
                     <select>

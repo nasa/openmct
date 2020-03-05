@@ -54,9 +54,9 @@
         </button>
 
         <div class="c-cs__conditions-h">
-            <div class="c-condition-h"
-                 v-for="(conditionIdentifier, index) in conditionCollection"
+            <div v-for="(conditionIdentifier, index) in conditionCollection"
                  :key="conditionIdentifier.key"
+                 class="c-condition-h"
             >
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
