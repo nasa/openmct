@@ -24,6 +24,7 @@
 <section v-show="isEditing"
          id="test-data"
          class="c-cs__test-data"
+         :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
         <span
@@ -47,7 +48,7 @@
         </label>
         <div class="c-cs-test-h">
             <div class="c-test-datum"
-                 v-for="n in 10">
+                 v-for="n in 5">
                 <span class="c-test-datum__label">Set</span>
                 <div class="c-test-datum__controls">
                     <select>

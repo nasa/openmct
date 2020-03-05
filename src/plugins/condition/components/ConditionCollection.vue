@@ -23,6 +23,7 @@
 <template>
 <section id="conditionCollection"
          class="c-cs__conditions"
+         :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
         <span

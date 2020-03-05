@@ -222,8 +222,13 @@ button {
 /******************************************************** SECTION */
 section {
     flex: 0 0 auto;
+    overflow: hidden;
     + section {
         margin-top: $interiorMargin;
+    }
+
+    &.is-expanded {
+        flex: 1 1 100%;
     }
 
     .c-section__header {

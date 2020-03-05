@@ -48,8 +48,6 @@
     }
 
     &__conditions {
-        padding-right: $interiorMarginSm; // Kick off from scrollbar
-        overflow: auto;
         > * + * {
             margin-top: $interiorMarginSm;
         }
@@ -60,16 +58,9 @@
     }
 
     /************************** SPECIFIC ITEMS */
-    &__current-output {
-        flex: 0 0 auto;
-    }
-
-    &__test-data {
-        flex: 0 1 auto;
-    }
-
-    &__conditions {
-        flex: 1 1 auto;
+    &__current-output-value {
+        font-size: 1.25em;
+        padding: $interiorMargin;
     }
 }
 
