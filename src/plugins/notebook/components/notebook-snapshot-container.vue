@@ -28,7 +28,9 @@
             <div class="">{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}</div>
         </div>
         <div class="l-browse-bar__end">
-            <button @click="close">X</button>
+            <button class="c-icon-button icon-x"
+                    @click="close"
+            ></button>
         </div>
     </div>
     <div class="">
