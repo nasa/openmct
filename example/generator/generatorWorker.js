@@ -65,8 +65,8 @@
                         name: data.name,
                         utc: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
-                        sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase),
-                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase)
+                        sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                     }
                 });
                 nextStep += step;
@@ -99,19 +99,20 @@
         var offset = request.offset;
         var dataRateInHz = request.dataRateInHz;
         var phase = request.phase;
+        var randomness = request.randomness;
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
 
         var data = [];
 
-        for (; nextStep < end && data.length < 5000; nextStep += step) {
+        for (; nextStep < end && data.length < 50000; nextStep += step) {
             data.push({
                 name: request.name,
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
-                sin: sin(nextStep, period, amplitude, offset, phase),
-                cos: cos(nextStep, period, amplitude, offset, phase)
+                sin: sin(nextStep, period, amplitude, offset, phase, randomness),
+                cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
         self.postMessage({
@@ -120,14 +121,14 @@
         });
     }
 
-    function cos(timestamp, period, amplitude, offset, phase) {
+    function cos(timestamp, period, amplitude, offset, phase, randomness) {
         return amplitude *
-            Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + offset;
+            Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
-    function sin(timestamp, period, amplitude, offset, phase) {
+    function sin(timestamp, period, amplitude, offset, phase, randomness) {
         return amplitude *
-            Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + offset;
+            Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
     function sendError(error, message) {
