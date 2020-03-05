@@ -106,7 +106,7 @@
 
         var data = [];
 
-        for (; nextStep < end && data.length < 50000; nextStep += step) {
+        for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
                 name: request.name,
                 utc: nextStep,
