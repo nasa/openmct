@@ -8,19 +8,32 @@
           :data-id="page.id"
           @blur="updateName"
     >
-        {{ page.name.length ? page.name : `Unnamed ${page.pageTitle}` }}
+        {{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}
     </span>
-    <button class="c-icon-button icon-trash"
-            :data-id="page.id"
-            title="Delete Page"
-            @click="deletePage"
-    >
-    </button>
+    <a class="c-ne__embed__context-available icon-arrow-down"
+       @click="toggleActionMenu"
+    ></a>
+    <div class="hide-menu hidden">
+        <div class="menu-element context-menu-wrapper mobile-disable-select">
+            <div class="c-menu">
+                <ul>
+                    <li v-for="action in actions"
+                        :key="action.name"
+                        :class="action.cssClass"
+                        @click="action.perform(page.id)"
+                    >
+                        {{ action.name }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
 <script>
 import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_SELECT_PAGE } from '../notebook-constants';
+import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
     inject: ['openmct'],
@@ -34,10 +47,17 @@ export default {
         page: {
             type: Object,
             required: true
+        },
+        pageTitle: {
+            type: String,
+            default() {
+                return '';
+            }
         }
     },
     data() {
         return {
+            actions: [this.deletePage()]
         }
     },
     watch: {
@@ -53,31 +73,33 @@ export default {
     methods: {
         deletePage() {
             const self = this;
-            const target = event.target;
-            const id = target.dataset.id;
 
-            if (!id) {
-                return;
-            }
-
-            const dialog = self.openmct.overlays.dialog({
-                iconClass: "error",
-                message: 'This action will delete this page and all of its entries. Do you want to continue?',
-                buttons: [{
-                    label: "No",
-                    callback: function () {
-                        dialog.dismiss();
-                    }
-                },
-                {
-                    label: "Yes",
-                    emphasis: true,
-                    callback: function () {
-                        self.$emit(EVENT_DELETE_PAGE, id);
-                        dialog.dismiss();
-                    }
-                }]
-            });
+            return {
+                name: `Delete ${this.pageTitle}`,
+                cssClass: 'icon-trash',
+                perform: function (id) {
+                    const dialog = self.openmct.overlays.dialog({
+                        iconClass: "error",
+                        message: 'This action will delete this page and all of its entries. Do you want to continue?',
+                        buttons: [
+                            {
+                                label: "No",
+                                callback: () => {
+                                    dialog.dismiss();
+                                }
+                            },
+                            {
+                                label: "Yes",
+                                emphasis: true,
+                                callback: () => {
+                                    self.$emit(EVENT_DELETE_PAGE, id);
+                                    dialog.dismiss();
+                                }
+                            }
+                        ]
+                    });
+                }
+            };
         },
         selectPage(event) {
             const target = event.target;
@@ -97,6 +119,10 @@ export default {
             }
 
             this.$emit(EVENT_SELECT_PAGE, id);
+        },
+        toggleActionMenu(event) {
+            event.preventDefault();
+            togglePopupMenu(event, this.openmct);
         },
         toggleContentEditable(page = this.page) {
             const pageTitle = this.$el.querySelector('span');

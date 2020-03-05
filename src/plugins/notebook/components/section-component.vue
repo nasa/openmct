@@ -8,14 +8,26 @@
           :data-id="section.id"
           @blur="updateName"
     >
-        {{ section.name.length ? section.name : `Unnamed ${section.sectionTitle}` }}
+        {{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}
     </span>
-    <button class="c-icon-button icon-trash"
-            :data-id="section.id"
-            title="Delete Section"
-            @click="deleteSection"
-    >
-    </button>
+    <a class="c-ne__embed__context-available icon-arrow-down"
+       @click="toggleActionMenu"
+    ></a>
+    <div class="hide-menu hidden">
+        <div class="menu-element context-menu-wrapper mobile-disable-select">
+            <div class="c-menu">
+                <ul>
+                    <li v-for="action in actions"
+                        :key="action.name"
+                        :class="action.cssClass"
+                        @click="action.perform(section.id)"
+                    >
+                        {{ action.name }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -24,6 +36,7 @@
 
 <script>
 import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION } from '../notebook-constants';
+import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
     inject: ['openmct'],
@@ -37,10 +50,17 @@ export default {
         section: {
             type: Object,
             required: true
+        },
+        sectionTitle: {
+            type: String,
+            default() {
+                return '';
+            }
         }
     },
     data() {
         return {
+            actions: [this.deleteSection()]
         }
     },
     watch: {
@@ -54,33 +74,35 @@ export default {
     destroyed() {
     },
     methods: {
-        deleteSection(event) {
+        deleteSection() {
             const self = this;
-            const target = event.target;
-            const id = target.dataset.id;
 
-            if (!id) {
-                return;
-            }
-
-            const dialog = self.openmct.overlays.dialog({
-                iconClass: "error",
-                message: 'This action will delete this section and all of its pages and entries. Do you want to continue?',
-                buttons: [{
-                    label: "No",
-                    callback: function () {
-                        dialog.dismiss();
-                    }
-                },
-                {
-                    label: "Yes",
-                    emphasis: true,
-                    callback: function () {
-                        self.$emit(EVENT_DELETE_SECTION, id);
-                        dialog.dismiss();
-                    }
-                }]
-            });
+            return {
+                name: `Delete ${this.sectionTitle}`,
+                cssClass: 'icon-trash',
+                perform: function (id) {
+                    const dialog = self.openmct.overlays.dialog({
+                        iconClass: "error",
+                        message: 'This action will delete this section and all of its pages and entries. Do you want to continue?',
+                        buttons: [
+                            {
+                                label: "No",
+                                callback: () => {
+                                    dialog.dismiss();
+                                }
+                            },
+                            {
+                                label: "Yes",
+                                emphasis: true,
+                                callback: () => {
+                                    self.$emit(EVENT_DELETE_SECTION, id);
+                                    dialog.dismiss();
+                                }
+                            }
+                        ]
+                    });
+                }
+            };
         },
         selectSection(event) {
             const target = event.target;
@@ -101,6 +123,9 @@ export default {
             }
 
             this.$emit(EVENT_SELECT_SECTION, id);
+        },
+        toggleActionMenu(event) {
+            togglePopupMenu(event, this.openmct);
         },
         toggleContentEditable(section = this.section) {
             const sectionTitle = this.$el.querySelector('span');

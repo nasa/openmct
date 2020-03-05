@@ -7,6 +7,7 @@
         <Page ref="pageComponent"
               :default-page-id="defaultPageId"
               :page="page"
+              :page-title="pageTitle"
         />
     </li>
 </ul>
@@ -48,6 +49,12 @@ export default {
             required: true,
             default() {
                 return [];
+            }
+        },
+        pageTitle: {
+            type: String,
+            default() {
+                return '';
             }
         },
         sidebarCoversEntries: {

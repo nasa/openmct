@@ -42,12 +42,12 @@
 
 <script>
 import Moment from 'moment';
-import $ from 'zepto';
 import objectLink from '../../../ui/mixins/object-link';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import SnapshotTemplate from './snapshot-template.html';
 import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED } from '../notebook-constants';
+import { togglePopupMenu } from '../utils/popup-menu';
 import Vue from 'vue';
 
 export default {
@@ -255,42 +255,7 @@ export default {
             };
         },
         toggleActionMenu(event) {
-            event.preventDefault();
-
-            const body = $(document.body);
-            const container = $(event.target.parentElement.parentElement);
-            const initiatingEvent = this.agentService.isMobile()
-                ? 'touchstart'
-                : 'mousedown';
-            const menu = container.find('.menu-element');
-            let dismissExistingMenu;
-
-            function dismiss() {
-                container.find('.hide-menu').append(menu);
-                body.off(initiatingEvent, menuClickHandler);
-                dismissExistingMenu = undefined;
-            }
-
-            function menuClickHandler(e) {
-                window.setTimeout(() => {
-                    dismiss();
-                }, 100);
-            }
-
-            // Dismiss any menu which was already showing
-            if (dismissExistingMenu) {
-                dismissExistingMenu();
-            }
-
-            // ...and record the presence of this menu.
-            dismissExistingMenu = dismiss;
-
-            this.popupService.display(menu, [event.pageX,event.pageY], {
-                marginX: 0,
-                marginY: -50
-            });
-
-            body.on(initiatingEvent, menuClickHandler);
+            togglePopupMenu(event, this.openmct);
         },
         updateEmbed(embed) {
             this.$emit(EVENT_UPDATE_EMBED, embed);

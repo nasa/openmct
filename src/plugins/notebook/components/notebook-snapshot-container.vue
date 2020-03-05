@@ -53,8 +53,7 @@
 import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer, { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
-
-import $ from 'zepto';
+import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
     inject: ['openmct'],
@@ -72,7 +71,6 @@ export default {
     data() {
         return {
             actions: [this.removeAllSnapshotAction()],
-            popupService: this.openmct.$injector.get('popupService'),
             snapshots: snapshotContainer.getSnapshots()
         }
     },
@@ -155,46 +153,7 @@ export default {
             event.dataTransfer.setData('snapshot/id', snapshot.id);
         },
         toggleActionMenu(event) {
-            event.preventDefault();
-
-            const body = $(document.body);
-            const container = $(event.target.parentElement.parentElement);
-            const classList = document.querySelector('body').classList;
-            const isPhone = Array.from(classList).includes('phone');
-            const isTablet = Array.from(classList).includes('tablet');
-
-            const initiatingEvent = isPhone || isTablet
-                ? 'touchstart'
-                : 'mousedown';
-            const menu = container.find('.menu-element');
-            let dismissExistingMenu;
-
-            function dismiss() {
-                container.find('.hide-menu').append(menu);
-                body.off(initiatingEvent, menuClickHandler);
-                dismissExistingMenu = undefined;
-            }
-
-            function menuClickHandler(e) {
-                window.setTimeout(() => {
-                    dismiss();
-                }, 100);
-            }
-
-            // Dismiss any menu which was already showing
-            if (dismissExistingMenu) {
-                dismissExistingMenu();
-            }
-
-            // ...and record the presence of this menu.
-            dismissExistingMenu = dismiss;
-
-            this.popupService.display(menu, [event.pageX,event.pageY], {
-                marginX: 0,
-                marginY: -50
-            });
-
-            body.on(initiatingEvent, menuClickHandler);
+            togglePopupMenu(event, this.openmct);
         },
         updateSnapshot(snapshot) {
             snapshotContainer.updateSnapshot(snapshot);

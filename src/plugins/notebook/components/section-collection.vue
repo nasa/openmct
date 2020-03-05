@@ -7,6 +7,7 @@
         <sectionComponent ref="sectionComponent"
                           :default-section-id="defaultSectionId"
                           :section="section"
+                          :section-title="sectionTitle"
         />
     </li>
 </ul>
@@ -41,6 +42,12 @@ export default {
             required: true,
             default() {
                 return [];
+            }
+        },
+        sectionTitle: {
+            type: String,
+            default() {
+                return '';
             }
         }
     },
