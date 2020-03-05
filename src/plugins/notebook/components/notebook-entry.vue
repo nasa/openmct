@@ -1,6 +1,7 @@
 <template>
 <li class="c-notebook__entry c-ne has-local-controls"
     @dragover="dragover"
+    @drop.capture="dropCapture"
     @drop.prevent="dropOnEntry(entry.id, $event)"
 >
     <div class="c-ne__time-and-content">
@@ -167,7 +168,15 @@ export default {
             event.preventDefault();
             event.dataTransfer.dropEffect = "copy";
         },
+        dropCapture(event) {
+            const isEditing = this.openmct.editor.isEditing();
+            if (isEditing) {
+                this.openmct.editor.cancel();
+            }
+        },
         dropOnEntry(entryId, $event) {
+            event.stopImmediatePropagation();
+
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
             }
