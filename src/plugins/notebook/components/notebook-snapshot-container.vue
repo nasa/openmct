@@ -84,6 +84,13 @@ export default {
             });
         }
     },
+    beforeDestory() {
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$off();
+            });
+        }
+    },
     methods: {
         close() {
             this.toggleSnapshot();
@@ -129,6 +136,17 @@ export default {
         },
         snapshotsUpdated() {
             this.snapshots = snapshotContainer.getSnapshots();
+            this.$nextTick(() => {
+                if (!this.$refs.notebookEmbed) {
+                    return;
+                }
+
+                this.$refs.notebookEmbed.forEach(embed => {
+                    embed.$off();
+                    embed.$on(EVENT_REMOVE_EMBED, this.removeSnapshot.bind(this));
+                    embed.$on(EVENT_UPDATE_EMBED, this.updateSnapshot.bind(this));
+                });
+            });
         },
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);

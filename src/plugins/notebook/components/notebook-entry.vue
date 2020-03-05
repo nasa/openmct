@@ -90,6 +90,19 @@ export default {
         }
     },
     watch: {
+        entry() {
+            this.$nextTick(() => {
+                if (!this.$refs.notebookEmbed) {
+                    return;
+                }
+
+                this.$refs.notebookEmbed.forEach(embed => {
+                    embed.$off();
+                    embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
+                    embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
+                });
+            });
+        },
         readOnly(readOnly) {
         },
         selectedSection(selectedSection) {
