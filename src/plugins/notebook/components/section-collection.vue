@@ -15,7 +15,7 @@
 <script>
 import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION, EVENT_UPDATE_SECTION } from '../notebook-constants';
 import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook, clearDefaultNotebook } from '../utils/notebook-storage';
 import sectionComponent from './section-component.vue';
 
 export default {
@@ -98,7 +98,7 @@ export default {
             }
 
             if (isSectionDefault) {
-                setDefaultNotebook(this.domainObject, null, null);
+                clearDefaultNotebook();
             }
 
             if (isSectionSelected && isSectionDefault && sections.length) {

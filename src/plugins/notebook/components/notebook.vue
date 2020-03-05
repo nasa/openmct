@@ -116,8 +116,8 @@ export default {
     },
     data() {
         return {
-            defaultPageId: getDefaultNotebook().page.id,
-            defaultSectionId: getDefaultNotebook().section.id,
+            defaultPageId: getDefaultNotebook() ? getDefaultNotebook().page.id : '',
+            defaultSectionId: getDefaultNotebook() ? getDefaultNotebook().section.id : '',
             defaultSort: this.domainObject.configuration.defaultSort,
             internalDomainObject: this.domainObject,
             search: '',

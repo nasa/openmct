@@ -15,7 +15,7 @@
 <script>
 import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_PAGE, TOGGLE_NAV } from '../notebook-constants';
 import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook, clearDefaultNotebook } from '../utils/notebook-storage';
 import Page from './page-component.vue';
 
 export default {
@@ -107,7 +107,7 @@ export default {
             }
 
             if (isPageDefault) {
-                setDefaultNotebook(this.domainObject, null, null);
+                clearDefaultNotebook();
             }
 
             if (isPageSelected && isPageDefault && pages.length) {
