@@ -480,30 +480,18 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {};
-            let totalWidth = 0;
-            let headerKeys = Object.keys(this.headers);
-            let sizingTableChildren = Array.from(this.sizingTable.children);
+            let columnWidths = {},
+                totalWidth = 0,
+                headerKeys = Object.keys(this.headers),
+                sizingTableRow = this.sizingTable.children[0],
+                sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array)=>{
                 if (this.isAutosizeEnabled) {
                     columnWidths[headerKey] = this.sizingTable.offsetWidth / array.length;
                 } else {
-                    sizingTableChildren.forEach(sizingRowEl => {
-                        let sizingCells = Array.from(sizingRowEl.children),
-                            cell = sizingCells[headerIndex];
-
-                        if (columnWidths[headerKey]) {
-                            let currentWidth = columnWidths[headerKey],
-                                newWidth = cell.offsetWidth;
-
-                            if (newWidth > currentWidth) {
-                                columnWidths[headerKey] = newWidth;
-                            }
-                        } else {
-                            columnWidths[headerKey] = cell.offsetWidth;
-                        }
-                    });
+                    let cell = sizingCells[headerIndex];
+                    columnWidths[headerKey] = cell.offsetWidth;
                 }
                 totalWidth += columnWidths[headerKey];
             });
