@@ -189,25 +189,36 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    handleLADCriterionResult(eventData) {
-
-    }
-
-    handleCriterionResult(eventData) {
+    updateCriteriaResults(eventData) {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = eventData.data.result;
         }
+    }
 
+    handleCriterionResult(eventData) {
+        this.updateCriteriaResults(eventData);
         this.handleConditionUpdated(eventData.data);
     }
 
-    requestLatest() {
-        const promises = 
+    requestLADConditionResult() {
+        const criteriaResults = [];
 
-        Promise.all(promises)
-            .then()
+        this.criteria.forEach(criterion => {
+            criteriaResults.push(
+                criterion.requestLAD()
+            );
+        });
+
+        Promise.all(criteriaResults)
+            .then(results => {
+                results.forEach(result => {
+                    this.updateCriteriaResults(result);
+                });
+
+                return Object.assign({}, /*datum,*/ { result: this.result });
+            });
     }
 
     subscribe() {
