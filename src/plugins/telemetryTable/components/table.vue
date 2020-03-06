@@ -68,20 +68,23 @@
 
         <template v-if="!isEditing">
             <div
-                class="c-separator">
+                class="c-separator"
+            >
             </div>
             <button
                 v-if="isAutosizeEnabled"
                 class="c-button icon-arrows-right-left labeled"
                 title="Increase column widths to fit currently available data."
-                @click="recalculateColumnWidths">
+                @click="recalculateColumnWidths"
+            >
                 <span class="c-button__label">Expand Columns</span>
             </button>
             <button
                 v-else
                 class="c-button icon-expand labeled"
                 title="Automatically size columns to fit the table into the available space."
-                @click="autosizeColumns">
+                @click="autosizeColumns"
+            >
                 <span class="c-button__label">Autosize Columns</span>
             </button>
         </template>
