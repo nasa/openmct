@@ -44,6 +44,61 @@ export default {
             const previewElem = event.target.closest('.controls').querySelector('.preview')
             previewElem.style[`${propName}`] = this.defaults[index].value;
             event.target.setAttribute(`style`, `border-bottom: solid 2px ${this.defaults[index].value};`)
+        },
+        getFillMenu(selectedParent, selection) {
+            return {
+                control: "color-picker",
+                domainObject: selectedParent,
+                applicableSelectedItems: selection.filter(selectionPath => {
+                    let type = selectionPath[0].context.layoutItem.type;
+                    return type === 'text-view' ||
+                        type === 'telemetry-view' ||
+                        type === 'box-view';
+                }),
+                property: function (selectionPath) {
+                    return getPath(selectionPath) + ".fill";
+                },
+                icon: "icon-paint-bucket",
+                title: "Set fill color"
+            };
+        },
+
+        getStrokeMenu(selectedParent, selection) {
+            return {
+                control: "color-picker",
+                domainObject: selectedParent,
+                applicableSelectedItems: selection.filter(selectionPath => {
+                    let type = selectionPath[0].context.layoutItem.type;
+                    return type === 'text-view' ||
+                        type === 'telemetry-view' ||
+                        type === 'box-view' ||
+                        type === 'image-view' ||
+                        type === 'line-view';
+                }),
+                property: function (selectionPath) {
+                    return getPath(selectionPath) + ".stroke";
+                },
+                icon: "icon-line-horz",
+                title: "Set border color"
+            };
+        },
+
+        getTextColorMenu(selectedParent, selection) {
+            return {
+                control: "color-picker",
+                domainObject: selectedParent,
+                applicableSelectedItems: selection.filter(selectionPath => {
+                    let type = selectionPath[0].context.layoutItem.type;
+                    return type === 'text-view' || type === 'telemetry-view';
+                }),
+                property: function (selectionPath) {
+                    return getPath(selectionPath) + ".color";
+                },
+                icon: "icon-font",
+                mandatory: true,
+                title: "Set text color",
+                preventNone: true
+            };
         }
     }
 }
