@@ -80,7 +80,7 @@
             <button
                 v-else
                 class="c-button icon-expand labeled"
-                title="Increase column widths to fit currently available data."
+                title="Automatically size columns to fit the table into the available space."
                 @click="autosizeColumns">
                 <span class="c-button__label">Autosize Columns</span>
             </button>
