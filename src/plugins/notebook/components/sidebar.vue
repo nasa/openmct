@@ -1,5 +1,5 @@
 <template>
-<div class="c-sidebar">
+<div class="c-sidebar c-drawer c-drawer--align-left">
     <div class="c-sidebar__pane">
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">

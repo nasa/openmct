@@ -18,7 +18,7 @@
                  @focus="textFocus($event, entry.id)"
             >{{ entry.text }}
             </div>
-            <div class="c-ne__embeds">
+            <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                ref="notebookEmbed"
                                :key="embed.id"

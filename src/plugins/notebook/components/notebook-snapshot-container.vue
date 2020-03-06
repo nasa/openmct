@@ -1,14 +1,18 @@
 <template>
-<div class="c-snapshot-container">
+<div class="c-snapshots-h">
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <div class="c-ne__embed__info">
-                <div class="c-ne__embed__name">
+            <div class="l-browse-bar__object-name--w icon-notebook">
+                <div class="l-browse-bar__object-name">
                     Notebook Snapshots
-                    <a class="c-ne__embed__context-available icon-arrow-down"
-                       @click="toggleActionMenu"
-                    ></a>
+                    <span class="l-browse-bar__object-details"
+                          v-if="snapshots.length"
+                    >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
+                    </span>
                 </div>
+                <a class="l-browse-bar__context-actions c-disclosure-button"
+                   @click="toggleActionMenu"
+                ></a>
                 <div class="hide-menu hidden">
                     <div class="menu-element context-menu-wrapper mobile-disable-select">
                         <div class="c-menu">
@@ -25,15 +29,15 @@
                     </div>
                 </div>
             </div>
-            <div class="">{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}</div>
+
         </div>
         <div class="l-browse-bar__end">
-            <button class="c-icon-button icon-x"
+            <button class="c-click-icon c-click-icon--major  icon-x"
                     @click="close"
             ></button>
         </div>
-    </div>
-    <div class="">
+    </div><!-- closes l-browse-bar -->
+    <div class="c-snapshots">
         <span v-for="snapshot in snapshots"
               :key="snapshot.id"
               draggable="true"

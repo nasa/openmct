@@ -1,45 +1,17 @@
-.c-drawer {
-    // New sliding overlay element to contain nav structures
-    // Designed for mobile and compact desktop scenarios
-    position: absolute;
-
-    &--align-left {
-        height: 100%;
-        min-width: 0;
-        max-width: 500px;
-        width: 0;
-        z-index: 3;
-        transition: $transOut;
-    }
-
-    &:not(.is-expanded) {
-        > * {
-            display: none;
-        }
-    }
-
-    &.is-expanded {
-        box-shadow: rgba(black, 0.7) 3px 0 20px;
-        margin-right: $interiorMargin;
-        width: 95%;
-    }
-}
-
-.c-drawer--push {
-    position: relative;
-
-    &.c-drawer--align-left {
-        &.is-expanded {
-            box-shadow: rgba(black, 0.4) 1px 0 20px;
-            margin-right: $interiorMarginLg;
-        }
-    }
-}
-
 .c-sidebar {
     background: $sideBarBg;
     display: flex;
     justify-content: stretch;
+    max-width: 300px;
+
+    &.c-drawer--push.is-expanded {
+        margin-right: $interiorMargin;
+        width: 50%;
+    }
+
+    &.c-drawer--overlays.is-expanded {
+        width: 95%;
+    }
 
     > * {
         // Hardcoded for two columns
@@ -57,10 +29,6 @@
             // Add margin-top to first and second level children
             margin-top: $interiorMargin;
         }
-    }
-
-    &__pane {
-        // Holds header, contents-and-controls
     }
 
     &__header-w {
@@ -96,9 +64,11 @@
 
         > * {
             margin: auto $interiorMargin $interiorMargin $interiorMargin;
+
             &:first-child {
                 border-bottom: 1px solid $colorInteriorBorder;
             }
+
             + * {
                 margin-top: $interiorMargin;
             }

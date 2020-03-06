@@ -7,15 +7,17 @@
     overflow: hidden;
 
     &__drawer {
+        background: $drawerBg;
+        display: flex;
+        flex-direction: column;
         height: 0;
         min-height: 0;
+        max-height: 15%;
         overflow: hidden;
         transition: $transIn;
 
         &.is-expanded {
-            box-shadow: rgba(black, 0.2) 0 5px 15px;
-            height: 20%;
-            min-height: 150px;
+            height: max-content;
         }
     }
 
@@ -251,3 +253,68 @@
         }
     }
 }
+
+.c-drawer {
+    /* New sliding overlay or push element to contain things
+    * Designed for mobile and compact desktop scenarios
+    * Variations:
+    * --overlays: position absolute, overlays neighboring elements
+    * --push: position relative, pushs/collapses neighboring elements
+    * --align-left, align-top: opens from left or top respectively
+    * &.is-expanded: applied when expanded.
+     */
+
+    transition: $transOut;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+
+    &:not(.is-expanded) {
+        // When collapsed, hide internal elements
+        > * {
+            display: none;
+        }
+    }
+
+    &.c-drawer--align-left {
+        height: 100%;
+    }
+
+    &.c-drawer--align-top {
+        // Need anything here?
+    }
+
+    &.c-drawer--overlays {
+        position: absolute;
+        z-index: 3;
+
+        &.is-expanded {
+            // Height and width must be set per usage
+            &.c-drawer--align-left {
+                box-shadow: rgba(black, 0.7) 3px 0 20px;
+            }
+
+            &.c-drawer--align-top {
+                box-shadow: rgba(black, 0.7) 0 3px 20px;
+            }
+        }
+    }
+
+    &.c-drawer--push {
+        position: relative;
+
+        &.is-expanded {
+            // Height and width must be set per usage
+            &.c-drawer--align-left {
+                box-shadow: rgba(black, 0.2) 3px 0 20px;
+                margin-right: $interiorMarginLg;
+            }
+
+            &.c-drawer--align-top {
+                box-shadow: rgba(black, 0.2) 0 3px 20px;
+                margin-bottom: $interiorMarginLg; // Not sure this is desired here
+            }
+        }
+    }
+}
+

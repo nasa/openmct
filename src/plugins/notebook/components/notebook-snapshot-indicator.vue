@@ -1,6 +1,6 @@
 <template>
 <div class="c-indicator c-indicator--clickable icon-notebook"
-     :class="[{ 's-status-available': snapshotCount === 0 }, { 's-status-on': snapshotCount > 0 }]"
+     :class="[{ 's-status-off': snapshotCount === 0 }, { 's-status-on': snapshotCount > 0 }, { 's-status-caution': snapshotCount === snapshotMaxCount }]"
 >
     <span class="label c-indicator__label">
         {{ indicatorTitle }}
@@ -16,6 +16,7 @@
 import SnapshotContainerComponent from './notebook-snapshot-container.vue';
 import snapshotContainer from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import Vue from 'vue';
 
 export default {
@@ -24,7 +25,8 @@ export default {
         return {
             expanded: false,
             indicatorTitle: '',
-            snapshotCount: 0
+            snapshotCount: 0,
+            snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT
         }
     },
     mounted() {
@@ -47,7 +49,7 @@ export default {
             const openmct = this.openmct;
             const toggleSnapshot = this.toggleSnapshot.bind(this);
             const drawerElement = document.querySelector('.l-shell__drawer');
-            drawerElement.innerHTML = '<div></div';
+            drawerElement.innerHTML = '<div></div>';
             const divElement = document.querySelector('.l-shell__drawer div');
 
             this.component = new Vue({

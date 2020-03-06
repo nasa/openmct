@@ -412,6 +412,10 @@
     transition: $transOut;
     transform-origin: center;
 
+    &[class*="--major"] {
+        color: $colorBtnMajorBg !important;
+    }
+
     @include hover() {
         transform: scale(1.1);
         transition: $transIn;

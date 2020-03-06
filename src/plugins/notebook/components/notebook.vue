@@ -17,7 +17,7 @@
     >
         <Sidebar ref="sidebar"
                  class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-                 :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}]"
+                 :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
                  :default-page-id="defaultPageId"
                  :default-section-id="defaultSectionId"
                  :domain-object="internalDomainObject"

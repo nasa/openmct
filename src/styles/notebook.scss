@@ -235,10 +235,10 @@
     }
 
     &__embeds {
-        flex-wrap: wrap;
+        //flex-wrap: wrap;
 
         > [class*="__embed"] {
-            margin: 0 $interiorMarginSm $interiorMarginSm 0;
+            //margin: 0 $interiorMarginSm $interiorMarginSm 0;
         }
     }
 }
@@ -246,7 +246,7 @@
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 50px;
+    $d: 30px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -336,6 +336,35 @@
 
     &__image {
         flex: 1 1 auto;
+    }
+}
+
+/****************************** SNAPSHOT CONTAINER */
+.c-snapshots-h {
+    // Is hidden when the parent div l-shell__drawer is collapsed, so no worries about padding, etc.
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: $interiorMarginLg;
+
+    > * {
+        flex: 1 1 auto;
+        &:first-child {
+            flex: 0 0 auto;
+        }
+    }
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+}
+
+.c-snapshots {
+    flex-wrap: wrap;
+    overflow: auto;
+
+    .c-snapshot {
+        margin: 0 $interiorMarginSm $interiorMarginSm 0;
     }
 }
 

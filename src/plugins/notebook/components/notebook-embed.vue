@@ -1,5 +1,5 @@
 <template>
-<div class="c-ne__embed">
+<div class="c-snapshot c-ne__embed">
     <div v-if="embed.snapshot"
          class="c-ne__embed__snap-thumb"
          @click="openSnapshot()"
