@@ -59,6 +59,7 @@ export default class ConditionClass extends EventEmitter {
         this.criteria = [];
         this.criteriaResults = {};
         this.result = undefined;
+        this.latestTimestamp = {};
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
@@ -203,21 +204,18 @@ export default class ConditionClass extends EventEmitter {
     }
 
     requestLADConditionResult() {
-        const criteriaResults = [];
-
-        this.criteria.forEach(criterion => {
-            criteriaResults.push(
-                criterion.requestLAD()
-            );
-        });
+        const criteriaResults = this.criteria.map(criterion =>
+            criterion.requestLAD()
+        );
 
         return Promise.all(criteriaResults)
             .then(results => {
                 results.forEach(result => {
                     this.updateCriteriaResults(result);
+                    this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result)
                 });
-
-                return Object.assign({}, /*datum,*/ { result: this.result });
+console.log(Object.assign({}, this.latestTimestamp, { result: this.result }));
+                return Object.assign({}, this.latestTimestamp, { result: this.result });
             });
     }
 
@@ -251,6 +249,20 @@ export default class ConditionClass extends EventEmitter {
 
     evaluate() {
         this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+    }
+
+    getLatestTimestamp(current, compare) {
+        const timestamp = Object.assign({}, current);
+
+        this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
+            if (!timestamp[timeSystem.key]
+                || compare[timeSystem.key] > timestamp[timeSystem.key]
+            ) {
+                timestamp[timeSystem.key] = compare[timeSystem.key];
+            }
+        });
+
+        return timestamp;
     }
 
     emitEvent(eventName, data) {

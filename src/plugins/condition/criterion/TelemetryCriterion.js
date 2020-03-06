@@ -118,7 +118,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 size: 1
             }
         );
-        
+
         return this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry))
             .then((obj) => {
                 if (!obj || !this.metadata || !this.operation) {
@@ -128,8 +128,8 @@ export default class TelemetryCriterion extends EventEmitter {
                     obj,
                     options
                 ).then(results => {
-                    const datum = results.length ? results[results.length - 1] : {};
-                    return this.formatData(datum);
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    return this.formatData(latestDatum);
                 });
             });
     }
