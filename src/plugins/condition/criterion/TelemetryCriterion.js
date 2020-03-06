@@ -111,10 +111,6 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     requestLAD(options) {
-        if (!this.isValid()) {
-            return this.formatData({});
-        }
-
         options = Object.assign({},
             options,
             {
@@ -122,14 +118,20 @@ export default class TelemetryCriterion extends EventEmitter {
                 size: 1
             }
         );
-
-        this.telemetryAPI.request(
-            this.telemetryObject,
-            options
-        ).then(results => {
-            const datum = results.length ? results[results.length - 1] : {};
-            return this.formatData(datum);
-        });
+        
+        return this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry))
+            .then((obj) => {
+                if (!obj || !this.metadata || !this.operation) {
+                    return this.formatData({});
+                }
+                return this.telemetryAPI.request(
+                    obj,
+                    options
+                ).then(results => {
+                    const datum = results.length ? results[results.length - 1] : {};
+                    return this.formatData(datum);
+                });
+            });
     }
 
     /**

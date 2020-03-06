@@ -211,7 +211,7 @@ export default class ConditionClass extends EventEmitter {
             );
         });
 
-        Promise.all(criteriaResults)
+        return Promise.all(criteriaResults)
             .then(results => {
                 results.forEach(result => {
                     this.updateCriteriaResults(result);
