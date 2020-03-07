@@ -42,7 +42,7 @@
             <div class="condition-summary">
                 <span class="condition-name">{{ domainObject.configuration.name }}</span>
                 <!-- TODO: description should be derived from criteria -->
-                <span class="condition-description">{{ domainObject.configuration.name }}</span>
+                <span class="condition-description">{{ getDescription }}</span>
             </div>
             <span v-if="!domainObject.isDefault"
                   class="is-enabled c-c__duplicate"
@@ -170,7 +170,7 @@
         </div>
         <div class="condition-config">
             <span class="condition-description">
-                {{ domainObject.configuration.description }}
+                {{ getDescription }}
             </span>
         </div>
     </div>
@@ -179,6 +179,7 @@
 
 <script>
 import Criterion from './Criterion.vue';
+import { OPERATIONS } from '../utils/operations';
 
 export default {
     inject: ['openmct'],
@@ -219,6 +220,36 @@ export default {
             criterionIndex: 0
         };
     },
+    computed: {
+        getDescription: function () {
+            let config = this.domainObject.configuration;
+
+            if (!config.criteria.length) {
+                return 'When all else fails';
+            } else {
+                let description = '';
+                if (config.criteria.length === 1) {
+                    if (config.criteria[0].operation && config.criteria[0].input.length) {
+                        description += `When ${config.criteria[0].telemetry.name} value ${this.findDescription(config.criteria[0].operation, config.criteria[0].input)}`
+                    }
+                } else {
+                    let conjunction = '';
+                    config.criteria.forEach((criterion, index) => {
+                        if (criterion.operation && criterion.input.length) {
+                            if (index !== config.criteria.length - 1 && (criterion.operation && criterion.input.length)) {
+                                conjunction = config.trigger === 'all' ? 'and ' : 'or ';
+                            } else {
+                                conjunction = '';
+                            }
+                            description += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)} ${conjunction}`
+                        }
+                    });
+                }
+
+                return description;
+            }
+        }
+    },
     destroyed() {
         this.destroy();
     },
@@ -229,6 +260,15 @@ export default {
         }));
     },
     methods: {
+        findDescription(operation, values) {
+            for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
+                if (operation === OPERATIONS[i].name) {
+                    console.log('OPERATIONS[i].getDescription()', OPERATIONS[i].getDescription(values));
+                    return OPERATIONS[i].getDescription(values);
+                }
+            }
+            return null;
+        },
         initialize() {
             this.setOutputSelection();
         },
@@ -301,5 +341,3 @@ export default {
     }
 }
 </script>
-
-
