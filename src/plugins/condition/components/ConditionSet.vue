@@ -77,7 +77,7 @@ export default {
             this.openmct.telemetry
                 .request(this.domainObject)
                 .then(output => {
-                    this.updateCurrentOutput(output);
+                    this.updateCurrentOutput(output[0]);
                 });
             this.stopProvidingTelemetry = this.openmct.telemetry
                 .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });

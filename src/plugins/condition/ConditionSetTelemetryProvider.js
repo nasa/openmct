@@ -20,16 +20,17 @@ export default class ConditionSetTelemetryProvider {
     request(domainObject, options) {
         const conditionManager = new ConditionManager(domainObject, this.openmct);
 
-        return conditionManager.requestLADConditionSetOutput();
+        return conditionManager.requestLADConditionSetOutput()
+            .then(latestOutput => { return latestOutput ? [latestOutput] : []; });
     }
 
     subscribe(domainObject, callback) {
-        // const conditionManager = new ConditionManager(domainObject, this.openmct);
-        // conditionManager.on('conditionSetResultUpdated', callback);
+        const conditionManager = new ConditionManager(domainObject, this.openmct);
+        conditionManager.on('conditionSetResultUpdated', callback);
 
-        // return function unsubscribe() {
-        //     conditionManager.off('conditionSetResultUpdated');
-        //     conditionManager.destroy();
-        // }
+        return function unsubscribe() {
+            conditionManager.off('conditionSetResultUpdated');
+            conditionManager.destroy();
+        }
     }
 }

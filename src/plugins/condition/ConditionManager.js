@@ -32,8 +32,9 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.loaded = undefined;
         this.conditionCollection = [];
+        this.composition = this.openmct.composition.get(domainObject);
+        this.loaded = this.composition.load();
         this.initialize();
     }
 
@@ -45,7 +46,7 @@ export default class ConditionManager extends EventEmitter {
         this.conditionResults = {};
 
         this.openmct.objects.get(this.domainObject.identifier)
-            .then((obj) => {                
+            .then((obj) => {
                 this.observeForChanges(obj);
                 if (this.domainObject.configuration.conditionCollection.length) {
                     this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
@@ -225,7 +226,6 @@ export default class ConditionManager extends EventEmitter {
                 break;
             }
         }
-
         return currentConditionIdentifier;
     }
 
@@ -247,7 +247,6 @@ export default class ConditionManager extends EventEmitter {
         this.updateConditionResults(resultObj);
 
         const currentConditionIdentifier = this.getCurrentConditionId();
-
         this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
             this.emit('conditionSetResultUpdated',
                 Object.assign(
@@ -277,41 +276,36 @@ export default class ConditionManager extends EventEmitter {
             return Promise.resolve([]);
         }
 
-        const conditionResults = [];
+        return this.load().then(() => {
+            if (this.conditionCollection && this.conditionCollection.length === 1) {
+                return Promise([]);
+            }
 
-        this.domainObject.configuration.conditionCollection.forEach((conditionId, index) => {
-            this.openmct.objects.get(conditionId)
-                .then(conditionConfiguration => {
-                    let condition = new Condition(conditionConfiguration, this.openmct);
-                    if (index !== undefined) {
-                        this.conditionCollection.splice(index + 1, 0, condition);
-                    } else {
-                        this.conditionCollection.unshift(condition);
-                    }
+            let ladConditionResults = [];
 
-                    conditionResults.push(
-                        condition.requestLADConditionResult()
-                    );
+            // do not request LAD for default collection, which is always last
+            for (let i = 0; i < this.conditionCollection.length - 1; i++) {
+                ladConditionResults.push(this.conditionCollection[i].requestLADConditionResult());
+            }
+            return Promise.all(ladConditionResults)
+                .then((results) => {
+                    results.forEach(resultObj => { this.updateConditionResults(resultObj); });
+                    const currentConditionIdentifier = this.getCurrentConditionId();
+                    return this.openmct.objects.get(currentConditionIdentifier)
+                        .then(obj => {
+                            // uncomment to see output of lad request (before subscriptions kick in)
+                            // console.log(obj.configuration.output);
+                            return Object.assign(
+                                {
+                                    output: obj.configuration.output,
+                                    id: this.domainObject.identifier,
+                                    conditionId: currentConditionIdentifier
+                                },
+                                this.latestTimestamp
+                            );
+                        });
                 });
         });
-
-        return Promise.all(conditionResults)
-            .then((results) => {
-                results.forEach(resultObj => { this.updateConditionResults(resultObj); });
-                const currentConditionIdentifier = this.getCurrentConditionId();
-
-                this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
-                    return Object.assign(
-                        {
-                            output: obj.configuration.output,
-                            id: this.domainObject.identifier,
-                            conditionId: currentConditionIdentifier
-                        },
-                        this.latestTimestamp
-                    );
-                });
-            });
-
     }
 
     persist() {

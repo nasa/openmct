@@ -66,7 +66,6 @@ export default class TelemetryCriterion extends EventEmitter {
                 datum[timeSystem.key] = data[timeSystem.key]
             });
         }
-
         return datum;
     }
 
@@ -129,7 +128,10 @@ export default class TelemetryCriterion extends EventEmitter {
                     options
                 ).then(results => {
                     const latestDatum = results.length ? results[results.length - 1] : {};
-                    return this.formatData(latestDatum);
+                    return {
+                        id: this.id,
+                        data: this.formatData(latestDatum)
+                    };
                 });
             });
     }

@@ -204,9 +204,8 @@ export default class ConditionClass extends EventEmitter {
     }
 
     requestLADConditionResult() {
-        const criteriaResults = this.criteria.map(criterion =>
-            criterion.requestLAD()
-        );
+        const criteriaResults = this.criteria
+            .map(criterion => criterion.requestLAD());
 
         return Promise.all(criteriaResults)
             .then(results => {
@@ -214,8 +213,12 @@ export default class ConditionClass extends EventEmitter {
                     this.updateCriteriaResults(result);
                     this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result)
                 });
-console.log(Object.assign({}, this.latestTimestamp, { result: this.result }));
-                return Object.assign({}, this.latestTimestamp, { result: this.result });
+                this.evaluate();
+
+                return {
+                    id: this.id,
+                    data: Object.assign({}, this.latestTimestamp, { result: this.result })
+                }
             });
     }
 
