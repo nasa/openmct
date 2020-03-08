@@ -24,11 +24,14 @@
             margin-left: $interiorMarginSm;
         }
 
-        > * + *,
-        > * > * + * {
+        > * + * {
             // Add margin-top to first and second level children
             margin-top: $interiorMargin;
         }
+    }
+
+    &__pane {
+        > * + * { margin-top: $interiorMargin; }
     }
 
     &__header-w {

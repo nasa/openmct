@@ -78,17 +78,15 @@
             <div v-if="selectedSection && selectedPage"
                  class="c-notebook__entries"
             >
-                <ul>
-                    <NotebookEntry v-for="entry in filteredAndSortedEntries"
-                                   ref="notebookEntry"
-                                   :key="entry.key"
-                                   :entry="entry"
-                                   :domain-object="internalDomainObject"
-                                   :selected-page="getSelectedPage()"
-                                   :selected-section="getSelectedSection()"
-                                   :read-only="false"
-                    />
-                </ul>
+                <NotebookEntry v-for="entry in filteredAndSortedEntries"
+                               ref="notebookEntry"
+                               :key="entry.key"
+                               :entry="entry"
+                               :domain-object="internalDomainObject"
+                               :selected-page="getSelectedPage()"
+                               :selected-section="getSelectedSection()"
+                               :read-only="false"
+                />
             </div>
         </div>
     </div>

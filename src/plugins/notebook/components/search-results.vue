@@ -1,21 +1,26 @@
 <template>
-<div>
-    <header>Search Reults</header>
-    <div v-for="(result, index) in results"
-         :key="index"
-    >
-        <Result :result="result" />
+<div class="c-notebook__search-results">
+    <div class="c-notebook__search-results__header">Search Results</div>
+    <div class="c-notebook__entries">
+        <NotebookEntry v-for="(result, index) in results"
+                      :key="index"
+                      :result="result"
+                      :entry="result.entry"
+                      :read-only="true"
+                      :selected-page="null"
+                      :selected-section="null"
+        />
     </div>
 </div>
 </template>
 
 <script>
-import Result from './result.vue';
+import NotebookEntry from './notebook-entry.vue';
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        Result
+        NotebookEntry
     },
     props:{
         results: {

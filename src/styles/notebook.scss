@@ -22,14 +22,11 @@
 
 /*********************************************** NOTEBOOK */
 .c-notebook {
+    $headerFontSize: 1.3em;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
+    height: 100%;
 
     /****************************** CONTENT */
     &__body {
@@ -150,7 +147,7 @@
             flex: 1 1 auto;
             overflow: hidden;
             white-space: nowrap;
-            font-size: 1.3em;
+            font-size: $headerFontSize;
             > * {
                 // Section
                 flex: 0 0 auto;
@@ -167,12 +164,43 @@
     &__entries {
         flex-direction: column;
         flex: 1 1 auto;
-        padding-right: $interiorMarginSm;
         overflow-x: hidden;
         overflow-y: scroll;
 
+        @include desktop() {
+            padding-right: $interiorMarginSm; // Scrollbar kickoff
+        }
+
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
+        }
+    }
+
+    /***** SEARCH RESULTS */
+    &__search-results {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: 5px;
+        }
+
+        &__header {
+            font-size: $headerFontSize;
+            flex: 0 0 auto;
+        }
+
+        .c-notebook__entries {
+            flex: 1 1 auto;
+        }
+
+        .c-ne {
+            flex-direction: column;
+
+            > * + * {
+                margin-top: $interiorMargin;
+            }
         }
     }
 }
@@ -239,6 +267,25 @@
 
         > [class*="__embed"] {
             //margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        }
+    }
+
+    &__section-and-page {
+        // Shown when c-ne within search results
+        background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
+        border-radius: $controlCr;
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        padding: $interiorMargin;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        [class*='icon'] {
+            font-size: 0.8em;
+            opacity: 0.7;
         }
     }
 }
@@ -500,7 +547,8 @@ body.mobile {
 
     &.phone.portrait {
         .c-notebook__head,
-        .c-notebook__entry {
+        .c-notebook__entry,
+        .c-ne__time-and-content {
             flex-direction: column;
 
             > [class*="__"] + [class*="__"] {
@@ -512,7 +560,6 @@ body.mobile {
         .c-notebook__entry {
             [class*="text"] {
                 min-height: 0;
-                padding: 0;
                 pointer-events: none;
             }
         }
