@@ -49,6 +49,7 @@ define([
                 return domainObject.type === 'table';
             },
             view(domainObject, isEditing, objectPath) {
+                console.log(arguments);
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
 
@@ -62,6 +63,10 @@ define([
                 return {
                     show: function (element, editMode) {
                         component = new Vue({
+                            el: element,
+                            components: {
+                                TableComponent: TableComponent.default
+                            },
                             data() {
                                 return {
                                     isEditing: editMode,
