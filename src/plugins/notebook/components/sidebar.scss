@@ -1,4 +1,5 @@
 .c-sidebar {
+    @include userSelectNone();
     background: $sideBarBg;
     display: flex;
     justify-content: stretch;
@@ -70,6 +71,7 @@
 
             &:first-child {
                 border-bottom: 1px solid $colorInteriorBorder;
+                flex: 0 0 auto;
             }
 
             + * {
@@ -93,8 +95,27 @@
 
     // TEMP
     .c-list__item {
+        &:hover {
+            [class*="__menu-indicator"] {
+                opacity: 0.7;
+                transition: $transIn;
+            }
+        }
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
         &__name {
-            flex: 1 1 auto;
+            flex: 0 1 auto;
+        }
+
+
+        &__menu-indicator {
+            flex: 0 0 auto;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: $transOut;
         }
 
         .icon-trash {

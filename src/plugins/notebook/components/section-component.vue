@@ -10,7 +10,7 @@
     >
         {{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}
     </span>
-    <a class="c-ne__embed__context-available icon-arrow-down"
+    <a class="c-list__item__menu-indicator icon-arrow-down"
        @click="toggleActionMenu"
     ></a>
     <div class="hide-menu hidden">
