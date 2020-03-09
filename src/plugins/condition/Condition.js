@@ -211,7 +211,7 @@ export default class ConditionClass extends EventEmitter {
             .then(results => {
                 results.forEach(result => {
                     this.updateCriteriaResults(result);
-                    this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result)
+                    this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result.data)
                 });
                 this.evaluate();
 
@@ -264,7 +264,6 @@ export default class ConditionClass extends EventEmitter {
                 timestamp[timeSystem.key] = compare[timeSystem.key];
             }
         });
-
         return timestamp;
     }
 
