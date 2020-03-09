@@ -28,22 +28,26 @@
         <button
             v-if="allowExport"
             class="c-button icon-download labeled"
-            title="Export This View's Data"
+            title="Export this view's data"
             @click="exportAllDataAsCSV()"
         >
             <span class="c-button__label">Export Table Data</span>
         </button>
-        <button class="c-button icon-download labeled"
-                v-if="allowExport"
-                v-show="markedRows.length"
-                v-on:click="exportMarkedDataAsCSV()"
-                title="Export Marked Rows As CSV">
+        <button
+            v-if="allowExport"
+            v-show="markedRows.length"
+            class="c-button icon-download labeled"
+            title="Export marked rows as CSV"
+            @click="exportMarkedDataAsCSV()"
+        >
             <span class="c-button__label">Export Marked Rows</span>
         </button>
-        <button class="c-button icon-x labeled"
-                v-show="markedRows.length"
-                v-on:click="unmarkAllRows()"
-                title="Unmark All Rows">
+        <button
+            v-show="markedRows.length"
+            class="c-button icon-x labeled"
+            title="Unmark all rows"
+            @click="unmarkAllRows()"
+        >
             <span class="c-button__label">Unmark All Rows</span>
         </button>
         <div
@@ -54,13 +58,36 @@
             v-if="marking.enable"
             class="c-button icon-pause pause-play labeled"
             :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
-            :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'"
+            :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
             @click="togglePauseByButton()"
         >
             <span class="c-button__label">
                 {{ paused ? 'Play' : 'Pause' }}
             </span>
         </button>
+
+        <template v-if="!isEditing">
+            <div
+                class="c-separator"
+            >
+            </div>
+            <button
+                v-if="isAutosizeEnabled"
+                class="c-button icon-arrows-right-left labeled"
+                title="Increase column widths to fit currently available data."
+                @click="recalculateColumnWidths"
+            >
+                <span class="c-button__label">Expand Columns</span>
+            </button>
+            <button
+                v-else
+                class="c-button icon-expand labeled"
+                title="Automatically size columns to fit the table into the available space."
+                @click="autosizeColumns"
+            >
+                <span class="c-button__label">Autosize Columns</span>
+            </button>
+        </template>
 
         <slot name="buttons"></slot>
     </div>
@@ -602,17 +629,20 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {};
-            let totalWidth = 0;
-            let sizingRowEl = this.sizingTable.children[0];
-            let sizingCells = Array.from(sizingRowEl.children);
-            let headerKeys = Object.keys(this.headers);
+            let columnWidths = {},
+                totalWidth = 0,
+                headerKeys = Object.keys(this.headers),
+                sizingTableRow = this.sizingTable.children[0],
+                sizingCells = sizingTableRow.children;
 
-            headerKeys.forEach((headerKey, headerIndex)=>{
-                let cell = sizingCells[headerIndex];
-                let columnWidth = cell.offsetWidth;
-                columnWidths[headerKey] = columnWidth;
-                totalWidth += columnWidth;
+            headerKeys.forEach((headerKey, headerIndex, array)=>{
+                if (this.isAutosizeEnabled) {
+                    columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
+                } else {
+                    let cell = sizingCells[headerIndex];
+                    columnWidths[headerKey] = cell.offsetWidth;
+                }
+                totalWidth += columnWidths[headerKey];
             });
 
             this.columnWidths = columnWidths;
@@ -959,6 +989,31 @@ export default {
                 this.setHeight();
                 this.scrollable.scrollTop = this.userScroll;
             }
+        },
+        updateWidthsAndClearSizingTable() {
+            this.calculateColumnWidths();
+            this.configuredColumnWidths = this.columnWidths;
+
+            this.visibleRows.forEach((row, i) => {
+                this.$set(this.sizingRows, i, undefined);
+                delete this.sizingRows[i];
+            });
+        },
+        recalculateColumnWidths() {
+            this.visibleRows.forEach((row,i) => {
+                this.$set(this.sizingRows, i, row);
+            });
+
+            this.configuredColumnWidths = {};
+            this.isAutosizeEnabled = false;
+
+            this.$nextTick()
+                .then(this.updateWidthsAndClearSizingTable);
+        },
+        autosizeColumns() {
+            this.isAutosizeEnabled = true;
+
+            this.$nextTick().then(this.calculateColumnWidths);
         }
     },
     created() {
