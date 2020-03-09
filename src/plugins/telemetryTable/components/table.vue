@@ -492,7 +492,7 @@ export default {
 
             headerKeys.forEach((headerKey, headerIndex, array)=>{
                 if (this.isAutosizeEnabled) {
-                    columnWidths[headerKey] = this.sizingTable.offsetWidth / array.length;
+                    columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
                 } else {
                     let cell = sizingCells[headerIndex];
                     columnWidths[headerKey] = cell.offsetWidth;
@@ -504,8 +504,6 @@ export default {
             this.totalWidth = totalWidth;
 
             this.calculateScrollbarWidth();
-
-            return Promise.resolve();
         },
         sortBy(columnKey) {
             // If sorting by the same column, flip the sort direction.
@@ -848,13 +846,13 @@ export default {
             }
         },
         updateWidthsAndClearSizingTable() {
+            this.calculateColumnWidths();
             this.configuredColumnWidths = this.columnWidths;
 
             this.visibleRows.forEach((row, i) => {
                 this.$set(this.sizingRows, i, undefined);
                 delete this.sizingRows[i];
             });
-
         },
         recalculateColumnWidths() {
             this.visibleRows.forEach((row,i) => {
@@ -865,15 +863,12 @@ export default {
             this.isAutosizeEnabled = false;
 
             this.$nextTick()
-                .then(this.calculateColumnWidths)
                 .then(this.updateWidthsAndClearSizingTable);
         },
         autosizeColumns() {
-            let config = this.table.configuration.getConfiguration();
-            config.autosize = true;
-            config.columnWidths = {};
+            this.isAutosizeEnabled = true;
 
-            this.updateConfiguration(config);
+            this.$nextTick().then(this.calculateColumnWidths);
         }
     }
 }
