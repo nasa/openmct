@@ -28,7 +28,7 @@
                 >
                     <span
                         v-if="elements.length > 1 && isEditing"
-                        class="c-elements-pool__grippy"
+                        class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"
                     ></span>
                     <object-label
                         :domain-object="element"

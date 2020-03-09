@@ -22,13 +22,13 @@
 
 import Condition from "./Condition";
 import uuid from "uuid";
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
-        this.domainObject = domainObject;
         this.openmct = openmct;
+        this.domainObject = domainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.instantiate = this.openmct.$injector.get('instantiate');

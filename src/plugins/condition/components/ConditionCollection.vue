@@ -22,60 +22,59 @@
 
 <template>
 <section id="conditionCollection"
-         class="c-cs__ui_section"
+         class="c-cs__conditions"
+         :class="{ 'is-expanded': expanded }"
 >
-    <div class="c-cs__ui__header">
-        <span class="c-cs__ui__header-label">Conditions</span>
+    <div class="c-cs__header c-section__header">
         <span
-            class="is-enabled flex-elem"
-            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
+            class="c-disclosure-triangle c-tree__item__view-control is-enabled"
+            :class="{ 'c-disclosure-triangle--expanded': expanded }"
             @click="expanded = !expanded"
         ></span>
+        <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
     <div v-if="expanded"
-         class="c-cs__ui_content"
+         class="c-cs__content"
     >
         <div v-show="isEditing"
-             class="help"
+             class="hint"
+             :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
         >
-            <span v-if="!telemetryObjs.length">Drag telemetry into Condition Set in order to add conditions.</span>
-            <span v-else>The first condition to match is the one that wins. Drag conditions to rearrange.</span>
+            <template v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure Conditions and add criteria.</template>
+            <template v-else>The first condition to match is the one that is applied. Drag conditions to reorder.</template>
         </div>
-        <div class="holder add-condition-button-wrapper align-left">
-            <button
-                v-show="isEditing"
-                id="addCondition"
-                class="c-cs-button c-cs-button--major add-condition-button"
-                :class="{ 'is-disabled': !telemetryObjs.length}"
-                :disabled="!telemetryObjs.length"
-                @click="addCondition"
+
+        <button
+            v-show="isEditing"
+            id="addCondition"
+            class="c-button c-button--major icon-plus labeled"
+            @click="addCondition"
+        >
+            <span class="c-cs-button__label">Add Condition</span>
+        </button>
+
+        <div class="c-cs__conditions-h">
+            <div v-for="(conditionIdentifier, index) in conditionCollection"
+                 :key="conditionIdentifier.key"
+                 class="c-condition-h"
             >
-                <span class="c-cs-button__label">Add Condition</span>
-            </button>
-        </div>
-        <div class="c-c__condition-collection">
-            <ul class="c-c__container-holder">
-                <li v-for="(conditionIdentifier, index) in conditionCollection"
-                    :key="conditionIdentifier.key"
-                >
-                    <div v-if="isEditing"
-                         class="c-c__drag-ghost"
-                         @drop.prevent="dropCondition"
-                         @dragenter="dragEnter"
-                         @dragleave="dragLeave"
-                         @dragover.prevent
-                    ></div>
-                    <Condition :condition-identifier="conditionIdentifier"
-                               :current-condition-identifier="currentConditionIdentifier"
-                               :condition-index="index"
-                               :telemetry="telemetryObjs"
-                               :is-editing="isEditing"
-                               @removeCondition="removeCondition"
-                               @cloneCondition="cloneCondition"
-                               @setMoveIndex="setMoveIndex"
-                    />
-                </li>
-            </ul>
+                <div v-if="isEditing"
+                     class="c-c__drag-ghost"
+                     @drop.prevent="dropCondition"
+                     @dragenter="dragEnter"
+                     @dragleave="dragLeave"
+                     @dragover.prevent
+                ></div>
+                <Condition :condition-identifier="conditionIdentifier"
+                           :current-condition-identifier="currentConditionIdentifier"
+                           :condition-index="index"
+                           :telemetry="telemetryObjs"
+                           :is-editing="isEditing"
+                           @removeCondition="removeCondition"
+                           @cloneCondition="cloneCondition"
+                           @setMoveIndex="setMoveIndex"
+                />
+            </div>
         </div>
     </div>
 </section>

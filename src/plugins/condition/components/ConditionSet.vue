@@ -21,24 +21,20 @@
  *****************************************************************************/
 
 <template>
-<div class="c-cs-edit w-condition-set">
-    <div class="c-sw-edit__ui holder">
-        <section id="current-output">
-            <div class="c-cs__ui__header">
-                <span class="c-cs__ui__header-label">Current Output</span>
-            </div>
-            <div class="c-cs__ui_content">
-                <span v-if="currentConditionOutput"
-                      class="current-output"
-                >
-                    {{ currentConditionOutput }}
-                </span>
-                <span v-else>No output selected</span>
-            </div>
-        </section>
-        <TestData :is-editing="isEditing" />
-        <ConditionCollection :is-editing="isEditing" />
-    </div>
+<div class="c-cs">
+    <section class="c-cs__current-output c-section">
+        <div class="c-cs__header c-section__header">
+            <span class="c-cs__header-label c-section__label">Current Output</span>
+        </div>
+        <div class="c-cs__content c-cs__current-output-value">
+            <template v-if="currentConditionOutput">
+                {{ currentConditionOutput }}
+            </template>
+            <template v-else>No output selected</template>
+        </div>
+    </section>
+    <TestData :is-editing="isEditing" />
+    <ConditionCollection :is-editing="isEditing" />
 </div>
 </template>
 
