@@ -42,7 +42,6 @@
         padding-right: $interiorMarginSm;
 
         > * + * {
-            // .c-condition-h, the condition holder
             margin-top: $interiorMarginSm;
         }
     }
