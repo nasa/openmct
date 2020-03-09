@@ -62,6 +62,11 @@ button {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
         }
+
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-size: 1.1em;
+        }
     }
 
     &.is-active {
@@ -78,6 +83,20 @@ button {
 /********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+
+    &--section-collapse {
+        color: inherit;
+        display: block;
+        transition: transform $transOutTime;
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+        }
+
+        &.is-collapsed {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .c-click-link {
@@ -186,6 +205,44 @@ button {
         &:before {
             transform: rotate(90deg);
         }
+    }
+}
+
+/******************************************************** DRAG AFFORDANCES */
+.c-grippy {
+    $d: 10px;
+    @include grippy($c: $colorItemTreeVC, $dir: 'y');
+    width: $d; height: $d;
+
+    &--vertical-drag {
+        cursor: ns-resize;
+    }
+}
+
+/******************************************************** SECTION */
+section {
+    flex: 0 0 auto;
+    overflow: hidden;
+    + section {
+        margin-top: $interiorMargin;
+    }
+
+    &.is-expanded {
+        flex: 1 1 100%;
+    }
+
+    .c-section__header {
+        @include propertiesHeader();
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+    > [class*='__label'] {
+        flex: 1 1 auto;
+        text-transform: uppercase;
     }
 }
 
@@ -619,6 +676,11 @@ select {
 
 .c-separator {
     @include cToolbarSeparator();
+}
+
+.c-row-separator {
+    border-top: 1px solid $colorInteriorBorder;
+    height: 1px;
 }
 
 .c-toolbar {
