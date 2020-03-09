@@ -49,7 +49,6 @@ define([
                 return domainObject.type === 'table';
             },
             view(domainObject, isEditing, objectPath) {
-                console.log(arguments);
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
 
