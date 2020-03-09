@@ -101,11 +101,6 @@ export default class ConditionManager extends EventEmitter {
         } else {
             this.conditionCollection.unshift(condition);
         }
-        //There are no criteria for a default condition and hence no subscriptions.
-        //Hence the conditionResult must be manually triggered for it.
-        if (conditionConfiguration.isDefault) {
-            this.handleConditionResult();
-        }
     }
 
     createConditionDomainObject(isDefault, conditionConfiguration) {
