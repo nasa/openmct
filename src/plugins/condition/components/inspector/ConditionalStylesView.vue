@@ -1,10 +1,12 @@
 <template>
 <div>
     <div v-if="!conditionalStyles.length"
-         class="holder c-c-button-wrapper align-left">
+         class="holder c-c-button-wrapper align-left"
+    >
         <button
             class="c-c-button c-c-button--minor add-criteria-button"
-            @click="addConditionSet">
+            @click="addConditionSet"
+        >
             <span class="c-c-button__label">Use conditional styling</span>
         </button>
     </div>
@@ -12,15 +14,18 @@
         <div class="holder c-c-button-wrapper align-left">
             <button
                 class="c-c-button c-c-button--minor add-criteria-button"
-                @click="removeConditionSet">
+                @click="removeConditionSet"
+            >
                 <span class="c-c-button__label">Remove conditional styling</span>
             </button>
         </div>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionIdentifier.key">
+                :key="conditionStyle.conditionIdentifier.key"
+            >
                 <conditional-style :condition-identifier="conditionStyle.conditionIdentifier"
-                                   :condition-style="conditionStyle.style"/>
+                                   :condition-style="conditionStyle.style"
+                />
             </li>
         </ul>
     </div>
