@@ -44,7 +44,7 @@
         <span class="c-condition__name">{{ domainObject.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">
-            Description/summary goes here {{ domainObject.configuration.description }}
+            <!-- {{ getDescription }} -->
         </span>
 
         <div class="c-condition__buttons">
@@ -162,13 +162,14 @@
         </span>
     </div>
     <div class="c-condition__summary">
-        Description/summary goes here {{ domainObject.configuration.description }}
+        <!-- {{ getDescription }} -->
     </div>
 </div>
 </template>
 
 <script>
 import Criterion from './Criterion.vue';
+import { OPERATIONS } from '../utils/operations';
 
 export default {
     inject: ['openmct'],
@@ -211,6 +212,38 @@ export default {
             criterionIndex: 0
         };
     },
+    computed: {
+        getDescription: function () {
+            let config = this.domainObject.configuration;
+
+            if (!config.criteria.length) {
+                return 'When all else fails';
+            } else {
+                let description = '';
+                if (config.criteria.length === 1 && config.criteria[0].telemetry) {
+                    if (config.criteria[0].operation && config.criteria[0].input.length) {
+                        description += `When ${config.criteria[0].telemetry.name} value ${this.findDescription(config.criteria[0].operation, config.criteria[0].input)}`
+                    } else {
+                        description = 'No criteria specified'
+                    }
+                } else {
+                    let conjunction = '';
+                    config.criteria.forEach((criterion, index) => {
+                        if (criterion.operation && criterion.input.length) {
+                            if (index !== config.criteria.length - 1 && (criterion.operation && criterion.input.length)) {
+                                conjunction = config.trigger === 'all' ? 'and ' : 'or ';
+                            } else {
+                                conjunction = '';
+                            }
+                            description += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)} ${conjunction}`
+                        }
+                    });
+                }
+
+                return description;
+            }
+        }
+    },
     destroyed() {
         this.destroy();
     },
@@ -223,6 +256,15 @@ export default {
     methods: {
         initialize() {
             this.setOutputSelection();
+        },
+        findDescription(operation, values) {
+            for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
+                if (operation === OPERATIONS[i].name) {
+                    console.log('OPERATIONS[i].getDescription()', OPERATIONS[i].getDescription(values));
+                    return OPERATIONS[i].getDescription(values);
+                }
+            }
+            return null;
         },
         setOutputSelection() {
             let conditionOutput = this.domainObject.configuration.output;
