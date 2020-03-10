@@ -23,18 +23,19 @@
 <template>
 <section v-show="isEditing"
          id="test-data"
-         class="test-data"
+         class="c-cs__test-data"
+         :class="{ 'is-expanded': expanded }"
 >
-    <div class="c-cs__ui__header">
-        <span class="c-cs__ui__header-label">Test Data</span>
+    <div class="c-cs__header c-section__header">
         <span
-            class="is-enabled flex-elem"
-            :class="['c-cs__disclosure-triangle', { 'c-cs__disclosure-triangle--expanded': expanded }]"
+            class="c-disclosure-triangle c-tree__item__view-control is-enabled"
+            :class="{ 'c-disclosure-triangle--expanded': expanded }"
             @click="expanded = !expanded"
         ></span>
+        <div class="c-cs__header-label c-section__label">Test Data</div>
     </div>
     <div v-if="expanded"
-         class="c-cs__ui_content"
+         class="c-cs__content"
     >
         <label class="c-toggle-switch">
             <input
@@ -43,32 +44,27 @@
                 @change="applyTestData"
             >
             <span class="c-toggle-switch__slider"></span>
-            <span>Apply Test Data</span>
+            <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
-        <div class="t-test-data-config">
-            <div class="c-cs-editui__conditions widget-condition">
-                <form>
-                    <label>
-                        <span>Set</span>
-                        <select>
-                            <option>- Select Input -</option>
-                        </select>
-                    </label>
-                    <span class="is-enabled  flex-elem c-cs__duplicate"></span>
-                    <span class="is-enabled  flex-elem c-cs__trash"></span>
-                </form>
-            </div>
-            <div class="c-cs-editui__conditions widget-condition">
-                <form>
-                    <label>
-                        <span>Set</span>
-                        <select>
-                            <option>- Select Input -</option>
-                        </select>
-                    </label>
-                    <span class="is-enabled c-cs__duplicate"></span>
-                    <span class="is-enabled c-cs__trash"></span>
-                </form>
+        <div class="c-cs-test-h">
+            <div v-for="n in 5"
+                 :key="n"
+                 class="c-test-datum"
+            >
+                <span class="c-test-datum__label">Set</span>
+                <div class="c-test-datum__controls">
+                    <select>
+                        <option>- Select Input -</option>
+                    </select>
+                </div>
+                <div class="c-test-datum__buttons">
+                    <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
+                            title="Duplicate this test data value"
+                    ></button>
+                    <button class="c-click-icon c-test-data__delete-button icon-trash"
+                            title="Delete this test data value"
+                    ></button>
+                </div>
             </div>
         </div>
     </div>
