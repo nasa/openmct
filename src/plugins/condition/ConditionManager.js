@@ -35,9 +35,7 @@ export default class ConditionManager extends EventEmitter {
         this.conditionCollection = [];
         this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(domainObject);
-        console.log(this.composition);
         this.loaded = this.composition.load();
-        console.log(this.loaded);
         this.initialize();
     }
 
