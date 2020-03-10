@@ -31,10 +31,13 @@ export default class ConditionManager extends EventEmitter {
         this.domainObject = domainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
-        this.instantiate = this.openmct.$injector.get('instantiate');
+        this.conditionResults = {};
         this.conditionCollection = [];
+        this.instantiate = this.openmct.$injector.get('instantiate');
         this.composition = this.openmct.composition.get(domainObject);
+        console.log(this.composition);
         this.loaded = this.composition.load();
+        console.log(this.loaded);
         this.initialize();
     }
 
@@ -43,8 +46,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     initialize() {
-        this.conditionResults = {};
-
         this.openmct.objects.get(this.domainObject.identifier)
             .then((obj) => {
                 this.observeForChanges(obj);
