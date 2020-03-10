@@ -3,7 +3,7 @@
     <button
         class="c-button--menu"
         :class="currentType && currentType.cssClass"
-        title="Switch types"
+        title="Switch view type"
         @click="getData"
         @click.stop="toggleMenu"
     >

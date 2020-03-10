@@ -30,7 +30,7 @@
                 @include cClickIconButton();
                 color: $colorKey !important;
                 position: absolute;
-                right: -15px;
+                right: -18px;
                 top: 0;
                 transform: translateX(100%);
                 width: $mobileMenuIconD;
@@ -60,6 +60,10 @@
         }
     }
 
+    &__pane-main {
+        .l-pane__header { display: none; }
+    }
+
     body.mobile & {
         &__pane-main,
         &__pane-tree {
@@ -71,7 +75,7 @@
 
             &[class*="--collapsed"] {
                 [class*="collapse-button"] {
-                    //right: -1 * nth($shellPanePad, 2);
+                    right: -8px;
                 }
             }
         }

@@ -50,6 +50,13 @@
         }
     }
 
+    body.mobile & {
+        .c-list-button,
+        &-snapshot-menubutton {
+            display: none;
+        }
+    }
+
     /****************************** CONTENT */
     &__contents {
         width: 70%;

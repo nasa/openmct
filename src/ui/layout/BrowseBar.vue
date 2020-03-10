@@ -34,6 +34,7 @@
         />
         <!-- Action buttons -->
         <menu-switcher v-if="notebookEnabled"
+                       class="c-notebook-snapshot-menubutton"
                        :current-type="{ name: 'notebook', cssClass: 'icon-notebook' }"
                        :get-data="setNotebookTypes"
                        :on-switch="snapshot"
@@ -201,7 +202,7 @@ export default {
             let defaultPath = '';
             if (defaultNotebook) {
                 const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier).then(d => d);
-                defaultPath = `${domainObject.name} > ${defaultNotebook.section.name} > ${defaultNotebook.page.name}`
+                defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`
             }
 
             notebookTypes.push({
