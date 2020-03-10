@@ -85,16 +85,17 @@ export default class ConditionManager extends EventEmitter {
 
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct);
-        condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
-        if (index !== undefined) {
-            this.conditionCollection.splice(index + 1, 0, condition);
-        } else {
-            this.conditionCollection.unshift(condition);
-        }
         //There are no criteria for a default condition and hence no subscriptions.
         //Hence the conditionResult must be manually triggered for it.
         if (conditionConfiguration.isDefault) {
             this.handleConditionResult();
+        } else {
+            condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        }
+        if (index !== undefined) {
+            this.conditionCollection.splice(index + 1, 0, condition);
+        } else {
+            this.conditionCollection.unshift(condition);
         }
     }
 

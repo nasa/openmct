@@ -76,7 +76,7 @@ export default {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
             // this.conditionSetIdentifier = {
             //     namespace: '',
-            //     key: 'bb0f61ad-268d-4d3e-bb30-90ca4a2053c4'
+            //     key: "bcdb1765-d746-4cae-90a8-e0e1e8596869"
             // };
             this.initializeConditionalStyles();
         },
