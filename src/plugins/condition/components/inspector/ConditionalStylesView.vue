@@ -74,10 +74,10 @@ export default {
     methods: {
         addConditionSet() {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
-            this.conditionSetIdentifier = {
-                namespace: '',
-                key: 'bb0f61ad-268d-4d3e-bb30-90ca4a2053c4'
-            };
+            // this.conditionSetIdentifier = {
+            //     namespace: '',
+            //     key: 'bb0f61ad-268d-4d3e-bb30-90ca4a2053c4'
+            // };
             this.initializeConditionalStyles();
         },
         removeConditionSet() {
