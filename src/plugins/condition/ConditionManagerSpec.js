@@ -46,6 +46,8 @@ describe('ConditionManager', () => {
             key: '1234-5678'
         }
     };
+    let mockComposition;
+    let loader;
 
     function mockAngularComponents() {
         let mockInjector = jasmine.createSpyObj('$injector', ['get']);
@@ -70,9 +72,29 @@ describe('ConditionManager', () => {
         openmct.$injector = mockInjector;
     }
 
-    beforeAll(function () {
+    beforeEach(function () {
 
         mockAngularComponents();
+
+        loader = {};
+        loader.promise = new Promise(function (resolve, reject) {
+            loader.resolve = resolve;
+            loader.reject = reject;
+        });
+
+        mockComposition = jasmine.createSpyObj('compositionCollection', [
+            'load'
+        ]);
+        mockComposition.load.and.callFake(() => {
+            setTimeout(() => {
+                loader.resolve();
+            });
+            return loader.promise;
+        });
+        openmct.composition = jasmine.createSpyObj('compositionAPI', [
+            'get'
+        ]);
+        openmct.composition.get.and.returnValue(mockComposition);
 
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString', 'observe', 'mutate']);
         openmct.objects.get.and.returnValues(new Promise(function (resolve, reject) {
@@ -83,6 +105,7 @@ describe('ConditionManager', () => {
         openmct.objects.makeKeyString.and.returnValue(conditionSetDomainObject.identifier.key);
         openmct.objects.observe.and.returnValue(function () {});
         openmct.objects.mutate.and.returnValue(function () {});
+
         conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
         mockListener = jasmine.createSpy('mockListener');
 
@@ -90,9 +113,15 @@ describe('ConditionManager', () => {
     });
 
     it('creates a conditionCollection with a default condition', function () {
-        expect(conditionMgr.domainObject.configuration.conditionCollection.length).toEqual(1);
-        let defaultConditionIdentifier = conditionMgr.domainObject.configuration.conditionCollection[0];
-        expect(defaultConditionIdentifier).toEqual(mockConditionDomainObject.identifier);
+        return loader.promise.then(function () {
+            return new Promise(function (resolve) {
+                setTimeout(resolve);
+            });
+        }).then(function () {
+            expect(conditionMgr.domainObject.configuration.conditionCollection.length).toEqual(1);
+            let defaultConditionIdentifier = conditionMgr.domainObject.configuration.conditionCollection[0];
+            expect(defaultConditionIdentifier).toEqual(mockConditionDomainObject.identifier);
+        });
     });
 
 });
