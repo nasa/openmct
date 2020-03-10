@@ -6,10 +6,9 @@
 >
     <span class="c-list__item__name js-list__item__name"
           :data-id="page.id"
+          @keydown.enter="updateName"
           @blur="updateName"
-    >
-        {{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}
-    </span>
+    >{{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}</span>
     <a class="c-list__item__menu-indicator icon-arrow-down"
        @click="toggleActionMenu"
     ></a>
