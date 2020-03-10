@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";

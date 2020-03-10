@@ -120,8 +120,7 @@ $colorFilter: $colorFilterFg; // Standalone against $colorBodyBg
 
 // States
 $colorPausedBg: #ff9900;
-$colorPausedFg: #fff;
-$colorOk: #33cc33;
+$colorPausedFg: #333;
 
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
@@ -411,14 +410,20 @@ $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
+$colorDiscreteItemBg: rgba($colorBodyFg,0.1);
+$colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
 
 @mixin discreteItem() {
-    background: rgba($colorBodyFg,0.1);
+    background: $colorDiscreteItemBg;
     border: none;
     border-radius: $controlCr;
 
     .c-input-inline:hover {
         background: $colorBodyBg;
+    }
+
+    &--current-match {
+        background: $colorDiscreteItemCurrentBg;
     }
 }
 

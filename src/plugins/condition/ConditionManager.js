@@ -22,13 +22,13 @@
 
 import Condition from "./Condition";
 import uuid from "uuid";
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {
     constructor(domainObject, openmct) {
         super();
-        this.domainObject = domainObject;
         this.openmct = openmct;
+        this.domainObject = domainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.instantiate = this.openmct.$injector.get('instantiate');
@@ -37,19 +37,17 @@ export default class ConditionManager extends EventEmitter {
 
     initialize() {
         this.conditionResults = {};
-        this.openmct.objects.get(this.domainObject.identifier).then((obj) => {
-            this.observeForChanges(obj);
-            this.conditionCollection = [];
-            if (this.domainObject.configuration.conditionCollection.length) {
-                this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
-                    this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                        this.initCondition(conditionConfiguration, index)
-                    });
+        this.observeForChanges(this.domainObject);
+        this.conditionCollection = [];
+        if (this.domainObject.configuration.conditionCollection.length) {
+            this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
+                this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
+                    this.initCondition(conditionConfiguration, index)
                 });
-            } else {
-                this.addCondition(true);
-            }
-        });
+            });
+        } else {
+            this.addCondition(true);
+        }
     }
 
     observeForChanges(domainObject) {
