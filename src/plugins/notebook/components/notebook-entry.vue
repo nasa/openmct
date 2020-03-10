@@ -15,8 +15,7 @@
                  :contenteditable="!readOnly"
                  @blur="textBlur($event, entry.id)"
                  @focus="textFocus($event, entry.id)"
-            >{{ entry.text }}
-            </div>
+            >{{ entry.text }}</div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                ref="notebookEmbed"
@@ -266,9 +265,12 @@
                 }
 
                 const entryPos = this.entryPosById(entryId);
-                if (this.currentEntryValue !== target.innerText) {
+                const value = target.textContent.trim();
+                if (this.currentEntryValue !== value) {
                     const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                    entries[entryPos].text = target.textContent.trim();
+                    $event.target.innerText = value;
+                    entries[entryPos].text = value;
+
                     this.updateEntries(entries);
                 }
             },
