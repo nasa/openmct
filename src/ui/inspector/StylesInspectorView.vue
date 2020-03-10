@@ -27,7 +27,7 @@ export default {
         updateSelection(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
                 let domainObject = selection[0][0].context.item;
-                let layoutItem;
+                let layoutItem = {};
                 if (selection[0].length > 1) {
                     //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
                     //The second item in the selection[0] list is the container object (usually a layout)
@@ -49,14 +49,18 @@ export default {
                 this.component = new Vue({
                     provide: {
                         openmct: this.openmct,
-                        domainObject: domainObject,
-                        layoutItem: layoutItem
+                        domainObject: domainObject
                     },
                     el: viewContainer,
                     components: {
                         ConditionalStylesView
                     },
-                    template: '<conditional-styles-view></conditional-styles-view>'
+                    data() {
+                        return {
+                            layoutItem
+                        }
+                    },
+                    template: '<conditional-styles-view :item-id="layoutItem.id"></conditional-styles-view>'
                 });
             }
         }

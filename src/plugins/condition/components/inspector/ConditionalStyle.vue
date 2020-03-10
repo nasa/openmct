@@ -4,6 +4,7 @@
          class="holder c-c-button-wrapper align-left"
     >
         <div>{{ condition.configuration.name }}</div>
+        <div :style="conditionStyle">ABC</div>
     </div>
 </div>
 </template>
@@ -18,6 +19,10 @@ export default {
     ],
     props: {
         conditionIdentifier: {
+            type: Object,
+            required: true
+        },
+        conditionStyle: {
             type: Object,
             required: true
         }

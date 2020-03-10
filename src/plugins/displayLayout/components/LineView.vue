@@ -60,6 +60,8 @@
 
 <script>
 
+import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+
 const START_HANDLE_QUADRANTS = {
     1: 'c-frame-edit__handle--sw',
     2: 'c-frame-edit__handle--se',
@@ -85,6 +87,7 @@ export default {
         };
     },
     inject: ['openmct'],
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -123,17 +126,21 @@ export default {
             return {x, y, x2, y2};
         },
         style() {
-            let {x, y, x2, y2} = this.position;
-            let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
-            let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
-            let left = this.gridSize[0] * Math.min(x, x2);
-            let top = this.gridSize[1] * Math.min(y, y2);
-            return {
-                left: `${left}px`,
-                top: `${top}px`,
-                width: `${width}px`,
-                height: `${height}px`
-            };
+            if (this.itemStyle) {
+                return this.itemStyle;
+            } else {
+                let {x, y, x2, y2} = this.position;
+                let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
+                let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
+                let left = this.gridSize[0] * Math.min(x, x2);
+                let top = this.gridSize[1] * Math.min(y, y2);
+                return {
+                    left: `${left}px`,
+                    top: `${top}px`,
+                    width: `${width}px`,
+                    height: `${height}px`
+                };
+            }
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

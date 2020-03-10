@@ -36,22 +36,30 @@ export default {
     },
     inject: [
         'openmct',
-        'domainObject',
-        'layoutItem'
+        'domainObject'
     ],
+    props: {
+        itemId: {
+            type: String
+        }
+    },
     data() {
         return {
             conditionalStyles: []
         }
     },
     mounted() {
-        if (this.layoutItem) {
-            //TODO: Handle layout items
-        }
         if (this.domainObject.configuration) {
             this.defautStyle = this.domainObject.configuration.defaultStyle;
             if (this.domainObject.configuration.conditionalStyle) {
-                this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+                if (this.itemId) {
+                    let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
+                    if (conditionalStyle) {
+                        this.conditionalStyles = conditionalStyle.styles || [];
+                    }
+                } else {
+                    this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+                }
             }
         }
     },
@@ -65,9 +73,20 @@ export default {
             this.initializeConditionalStyles();
         },
         removeConditionSet() {
+            //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
             this.conditionSetIdentifier = '';
             this.conditionalStyles = [];
-            this.persist(undefined);
+            let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+            if (this.itemId) {
+                domainObjectConditionalStyle[this.itemId] = undefined;
+                delete domainObjectConditionalStyle[this.itemId];
+                if (Object.keys(domainObjectConditionalStyle).length === 0) {
+                    domainObjectConditionalStyle = undefined;
+                }
+                this.persist(domainObjectConditionalStyle);
+            } else {
+                this.persist(undefined);
+            }
         },
         initializeConditionalStyles() {
             const backgroundColors = [{backgroundColor: 'red'},{backgroundColor: 'orange'}, {backgroundColor: 'blue'}];
@@ -78,11 +97,20 @@ export default {
                         style: backgroundColors[index]
                     });
                 });
-                this.persist({
+                let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+                let conditionalStyle = {
                     defaultStyle: this.defaultStyle || {backgroundColor: 'inherit'},
                     conditionSetIdentifier: this.conditionSetIdentifier,
                     styles: this.conditionalStyles
-                });
+                };
+                if (this.itemId) {
+                    this.persist({
+                        ...domainObjectConditionalStyle,
+                        [this.itemId]: conditionalStyle
+                    });
+                } else {
+                    this.persist(conditionalStyle);
+                }
             });
         },
         findStyleByConditionId(id) {
