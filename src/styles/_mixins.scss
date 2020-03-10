@@ -408,12 +408,13 @@
     @include cControl();
     cursor: pointer;
     padding: 4px; // Bigger hit area
-    opacity: 0.6;
+    opacity: 0.7;
     transition: $transOut;
     transform-origin: center;
 
     &[class*="--major"] {
         color: $colorBtnMajorBg !important;
+        opacity: 0.8;
     }
 
     @include hover() {

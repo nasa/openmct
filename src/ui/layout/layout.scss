@@ -30,7 +30,7 @@
                 @include cClickIconButton();
                 color: $colorKey !important;
                 position: absolute;
-                right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
+                right: -15px;
                 top: 0;
                 transform: translateX(100%);
                 width: $mobileMenuIconD;
@@ -61,12 +61,17 @@
     }
 
     body.mobile & {
+        &__pane-main,
+        &__pane-tree {
+            padding: $interiorMarginLg;
+        }
+
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
             &[class*="--collapsed"] {
                 [class*="collapse-button"] {
-                    right: -1 * nth($shellPanePad, 2);
+                    //right: -1 * nth($shellPanePad, 2);
                 }
             }
         }

@@ -36,7 +36,7 @@
     &__header {
         display: flex;
         align-items: center;
-        margin-bottom: $interiorMargin;
+        @include desktop() { margin-bottom: $interiorMargin; }
     }
 
     &--reacts {

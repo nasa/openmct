@@ -54,13 +54,16 @@ button {
         background: $splitterBtnColorBg;
         color: $splitterBtnColorFg;
         border-radius: $smallCr;
-        font-size: 6px;
         line-height: 90%;
         padding: 3px 10px;
 
         @include hover() {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
+        }
+
+        @include desktop() {
+            font-size: 6px;
         }
     }
 

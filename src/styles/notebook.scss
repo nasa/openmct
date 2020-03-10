@@ -135,16 +135,16 @@
     &__page-view {
         &__header {
             display: flex;
+            flex-wrap: wrap; // Allows wrapping in mobile portrait and narrow placements
+            line-height: 220%;
             > * {
                 flex: 0 0 auto;
-                + * {
-                    margin-left: $interiorMargin;
-                }
             }
         }
 
         &__path {
             flex: 1 1 auto;
+            margin: 0 $interiorMargin;
             overflow: hidden;
             white-space: nowrap;
             font-size: $headerFontSize;

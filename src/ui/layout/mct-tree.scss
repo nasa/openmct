@@ -1,7 +1,6 @@
 .c-tree-and-search {
     display: flex;
     flex-direction: column;
-    padding-right: $interiorMarginSm;
     overflow: auto;
 
     > * + * { margin-top: $interiorMargin; }
@@ -22,6 +21,7 @@
     &__tree {
         flex: 1 1 auto;
         height: 0; // Chrome 73 overflow bug fix
+        padding-right: $interiorMarginSm;
     }
 }
 
@@ -30,7 +30,6 @@
     @include userSelectNone();
     overflow-x: hidden;
     overflow-y: auto;
-    padding-right: $interiorMargin;
 
     li {
         position: relative;
@@ -153,6 +152,8 @@
 }
 
 .c-list {
+    padding-right: $interiorMargin;
+
     &__item {
         &__name {
             $p: $interiorMarginSm;
