@@ -73,13 +73,9 @@ export default {
     },
     computed: {
         style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
-            } else {
-                return {
-                    backgroundImage: 'url(' + this.item.url + ')',
-                    border: '1px solid ' + this.item.stroke
-                }
+            return {
+                backgroundImage: 'url(' + this.item.url + ')',
+                border: this.itemStyle ? this.itemStyle.border : '1px solid ' + this.item.stroke
             }
         }
     },

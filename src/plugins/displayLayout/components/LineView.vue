@@ -31,7 +31,7 @@
     >
         <line
             v-bind="linePosition"
-            :stroke="item.stroke"
+            :stroke="stroke"
             stroke-width="2"
         />
     </svg>
@@ -125,22 +125,25 @@ export default {
             }
             return {x, y, x2, y2};
         },
-        style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
+        stroke() {
+            if (this.itemStyle && this.itemStyle.border) {
+                return this.itemStyle.border.replace('1px solid ', '');
             } else {
-                let {x, y, x2, y2} = this.position;
-                let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
-                let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
-                let left = this.gridSize[0] * Math.min(x, x2);
-                let top = this.gridSize[1] * Math.min(y, y2);
-                return {
-                    left: `${left}px`,
-                    top: `${top}px`,
-                    width: `${width}px`,
-                    height: `${height}px`
-                };
+                return this.item.stroke;
             }
+        },
+        style() {
+            let {x, y, x2, y2} = this.position;
+            let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
+            let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
+            let left = this.gridSize[0] * Math.min(x, x2);
+            let top = this.gridSize[1] * Math.min(y, y2);
+            return {
+                left: `${left}px`,
+                top: `${top}px`,
+                width: `${width}px`,
+                height: `${height}px`
+            };
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

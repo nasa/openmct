@@ -9,9 +9,7 @@ export default {
     },
     mounted() {
         this.domainObject = this.$parent.domainObject;
-        console.log(this.itemId);
         this.itemId = this.item.id;
-        console.log(this.itemId);
         this.conditionalStyle = this.getConditionalStyleForItem(this.domainObject.configuration.conditionalStyle);
         this.initConditionalStyles();
     },
