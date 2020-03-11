@@ -108,7 +108,6 @@ export default {
             if (page.className.indexOf('is-selected') > -1) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
-                document.execCommand('selectAll',false,null);
                 return;
             }
 
