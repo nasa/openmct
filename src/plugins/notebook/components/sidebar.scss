@@ -93,7 +93,6 @@
         }
     }
 
-    // TEMP
     .c-list__item {
         &:hover {
             [class*="__menu-indicator"] {
@@ -115,18 +114,6 @@
             font-size: 0.8em;
             opacity: 0;
             transition: $transOut;
-        }
-
-        .icon-trash {
-            display: none;
-            font-size: 0.8em;
-            flex: 0 0 auto;
-        }
-
-        &:hover {
-            .icon-trash {
-                display: block;
-            }
         }
     }
 }
