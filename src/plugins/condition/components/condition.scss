@@ -1,199 +1,111 @@
-.widget-condition {
-    background-color: #eee;
-    margin: 0 0 0.33em;
-    border-radius: 3px;
-
-    &--current {
-        background-color: #DEECFA;
-    }
-
-}
-
-.c-c-editui__conditions.widget-condition {
-    margin: 0;
-}
-
-.c-c-button-wrapper {
-    border-top: solid 1px #ccc;
-    padding: 2px;
-}
-
-.c-c-label-spacer {
-    display: inline-block;
-    width: 90px;
-}
-
-.c-c-button[class*="--minor"],
-.c-c-button[class*='is-active'],
-.c-c-button--menu[class*="--minor"],
-.c-c-button--menu[class*='is-active'] {
-    border: solid 1px #666;
-    background-color: #fff;
-    padding: 0.1em 0.4em;
-    margin: 0.4em;
-    font-weight: normal;
-    color: #666;
-    border-radius: 6px;
-}
-
-
-
-.title-bar {
+.c-condition,
+.c-test-datum {
+    @include discreteItem();
     display: flex;
-    align-items: center;
-    justify-content: stretch;
-    padding: 0.4em 0;
+    padding: $interiorMargin;
+
+    &--edit {
+        line-height: 160%; // For layout when inputs wrap, like in criteria
+    }
 }
 
-.title-bar span {
-    margin-right: 0.6em;
-}
+.c-condition {
+    flex-direction: column;
 
-.title-bar span.c-c__duplicate,
-.title-bar span.c-c__trash{
-    margin-right: 0;
-    margin-left: 0.3em;
-}
-
-.widget-condition > div {
-    margin: 0 0.4em;
-}
-
-.condition-name {
-    font-weight: bold;
-}
-
-.condition-summary .condition-description {
-    color: #999;
-}
-
-.condition-summary {
-    flex-grow: 1;
-}
-
-.condition-config {
-    padding: 0.3em 0;
-}
-
-.widget-condition form label {
-    flex-grow: 1;
-    margin-left: 0;
-}
-
-.l-widget-condition {
-    padding: 0;
-}
-
-.l-compact-form ul li {
-    padding: 0;
-}
-
-.widget-condition-content.expanded {
-    margin: 0 3px;
-}
-
-.widget-condition-content.expanded ul li {
-    border-top: solid 1px #ccc;
-    padding: 2px;
-}
-
-.l-compact-form ul li .controls {
-    display: inline-flex;
-    flex-grow: inherit;
-    padding: 2px 0;
-}
-
-.l-compact-form ul li > label {
-    display: block;
-    width: 90px;
-    min-width: 90px;
-    text-align: right;
-    line-height: 20px;
-}
-
-.l-compact-form ul li .controls input[type="text"],
-.l-compact-form ul li .controls input[type="search"],
-.l-compact-form ul li .controls input[type="number"],
-.l-compact-form ul li .controls button,
-.l-compact-form ul li .controls select {
-    min-height: 20px;
-}
-
-.condition-config-edit {
-    padding: 3px 0;
-}
-
-
-.c-c__disclosure-triangle,
-.c-c__menu-hamburger,
-.c-c__duplicate,
-.c-c__trash {
-    $d: 8px;
-    color: $colorDisclosureCtrl;
-    width: $d;
-    visibility: hidden;
-
-    &.is-enabled {
-        cursor: pointer;
-        visibility: visible;
-
-        &:hover {
-            color: $colorDisclosureCtrlHov;
-        }
-
-        &:before {
-            $s: .5;
-            display: block;
-            font-family: symbolsfont;
-            font-size: 1rem * $s;
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+    &--browse {
+        .c-condition__summary {
+            border-top: 1px solid $colorInteriorBorder;
+            padding-top: $interiorMargin;
         }
     }
-}
 
-.c-c__disclosure-triangle {
-    &:before {
-        content: $glyph-icon-arrow-right;
-    }
+    /***************************** HEADER */
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        align-content: stretch;
+        overflow: hidden;
 
-    &--expanded {
-        &:before {
-            transform: rotate(90deg);
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-left: $interiorMarginSm;
+            }
         }
     }
-}
-
-
-.c-c__menu-hamburger {
-    &:active {
-        cursor: grabbing;
-        cursor: -moz-grabbing;
-        cursor: -webkit-grabbing;
+    &__name {
+        font-weight: bold;
+        align-self: baseline; // Fixes bold line-height offset problem
     }
 
-    &:before {
-        content: $glyph-icon-menu-hamburger;
+    &__output,
+    &__summary {
+        flex: 1 1 auto;
     }
 }
 
-.c-c__duplicate {
-    &:before {
-        content: $glyph-icon-duplicate;
-    }
-}
+/***************************** CONDITION DEFINITION, EDITING */
+.c-cdef {
+    display: grid;
+    grid-row-gap: $interiorMarginSm;
+    grid-column-gap: $interiorMargin;
+    grid-auto-columns: min-content 1fr max-content;
+    align-items: start;
+    min-width: 150px;
+    margin-left: 29px;
+    overflow: hidden;
 
-.c-c__trash {
-    &:before {
-        content: $glyph-icon-trash;
+    &__criteria,
+    &__match-and-criteria {
+        display: contents;
+    }
+
+    &__label {
+        grid-column: 1;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    &__separator {
+        grid-column: 1 / span 3;
+    }
+
+    &__controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        //line-height: 200%;
+        grid-column: 2;
+
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &__buttons {
+        grid-column: 3;
     }
 }
 
 .c-c__drag-ghost {
     width: 100%;
-    min-height: 0.33em;
+    min-height: $interiorMarginSm;
+
+    //&:before {
+    //    @include test();
+    //    content: '';
+    //    display: block;
+    //    z-index: 2;
+    //}
+
     &.dragging {
-        min-height: 2em;
-        border: solid 1px blue;
+        min-height: 5em;
+        //border: solid 1px blue;
         background-color: lightblue;
         border-radius: 2px;
     }
+
 }

@@ -377,13 +377,17 @@ define([
          * @public
          */
         updateFiltersAndRefresh: function (updatedFilters) {
-            this.filters = updatedFilters;
-            this.reset();
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                delete this.unsubscribe;
+            if (this.filters && !_.isEqual(this.filters, updatedFilters)) {
+                this.filters = updatedFilters;
+                this.reset();
+                if (this.unsubscribe) {
+                    this.unsubscribe();
+                    delete this.unsubscribe;
+                }
+                this.fetch();
+            } else {
+                this.filters = updatedFilters;
             }
-            this.fetch();
         }
     });
 

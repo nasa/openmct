@@ -21,26 +21,30 @@
  *****************************************************************************/
 
 <template>
-<div class="c-cs-edit w-condition-set">
-    <div class="c-sw-edit__ui holder">
-        <CurrentOutput :condition="currentCondition" />
-        <TestData :is-editing="isEditing" />
-        <ConditionCollection :is-editing="isEditing"
-                             @currentConditionUpdated="updateCurrentCondition"
-        />
-    </div>
+<div class="c-cs">
+    <section class="c-cs__current-output c-section">
+        <div class="c-cs__header c-section__header">
+            <span class="c-cs__header-label c-section__label">Current Output</span>
+        </div>
+        <div class="c-cs__content c-cs__current-output-value">
+            <template v-if="currentConditionOutput">
+                {{ currentConditionOutput }}
+            </template>
+            <template v-else>No output selected</template>
+        </div>
+    </section>
+    <TestData :is-editing="isEditing" />
+    <ConditionCollection :is-editing="isEditing" />
 </div>
 </template>
 
 <script>
-import CurrentOutput from './CurrentOutput.vue';
 import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
 
 export default {
     inject: ["openmct", "domainObject"],
     components: {
-        CurrentOutput,
         TestData,
         ConditionCollection
     },
@@ -49,24 +53,25 @@ export default {
     },
     data() {
         return {
-            currentCondition: this.currentCondition
+            currentConditionOutput: ''
         }
     },
     mounted() {
-        let conditionCollection = this.domainObject.configuration.conditionCollection;
-        this.currentConditionIdentifier = conditionCollection.length ? this.updateCurrentCondition(conditionCollection[0]) : null;
+        this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.provideTelemetry();
+    },
+    beforeDestroy() {
+        if (this.stopProvidingTelemetry) {
+            this.stopProvidingTelemetry();
+        }
     },
     methods: {
-        setCurrentCondition() {
-            if (this.currentConditionIdentifier) {
-                this.openmct.objects.get(this.currentConditionIdentifier).then((obj) => {
-                    this.currentCondition = obj;
-                });
-            }
+        updateCurrentOutput(currentConditionResult) {
+            this.currentConditionOutput = currentConditionResult.output;
         },
-        updateCurrentCondition(conditionIdentifier) {
-            this.currentConditionIdentifier = conditionIdentifier;
-            this.setCurrentCondition();
+        provideTelemetry() {
+            this.stopProvidingTelemetry = this.openmct.telemetry
+                .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });
         }
     }
 };

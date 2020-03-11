@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
-import TelemetryCriterion from "@/plugins/condition/criterion/TelemetryCriterion";
-import { TRIGGER } from "@/plugins/condition/utils/constants";
-import {computeCondition} from "@/plugins/condition/utils/evaluator";
+import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import { TRIGGER } from "./utils/constants";
+import {computeCondition} from "./utils/evaluator";
 
 /*
 * conditionConfiguration = {
@@ -37,7 +37,7 @@ import {computeCondition} from "@/plugins/condition/utils/evaluator";
 *       {
 *           telemetry: '',
 *           operation: '',
-*           input: '',
+*           input: [],
 *           metadata: ''
 *       }
 *   ]
@@ -58,11 +58,11 @@ export default class ConditionClass extends EventEmitter {
         this.id = this.openmct.objects.makeKeyString(conditionConfiguration.identifier);
         this.criteria = [];
         this.criteriaResults = {};
+        this.result = undefined;
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.result = null;
         this.openmct.objects.get(this.id).then(obj => this.observeForChanges(obj));
     }
 
@@ -163,6 +163,7 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             let criterion = found.item;
             criterion.destroy();
+            // TODO this is passing the wrong args
             criterion.off('criterionUpdated', (result) => {
                 this.handleCriterionUpdated(id, result);
             });
@@ -180,6 +181,7 @@ export default class ConditionClass extends EventEmitter {
         if (found) {
             this.criteria[found.index] = criterion.data;
             this.subscribe();
+            // TODO nothing is listening to this
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
                 criteria: this.criteria
@@ -188,27 +190,28 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleCriterionResult(eventData) {
-        let id = eventData.id;
-        let result = eventData.data.result;
-        let found = this.findCriterion(id);
-        if (found) {
-            this.criteriaResults[id] = result;
+        const id = eventData.id;
+
+        if (this.findCriterion(id)) {
+            this.criteriaResults[id] = eventData.data.result;
         }
-        this.handleConditionUpdated();
+
+        this.handleConditionUpdated(eventData.data);
     }
 
     subscribe() {
+        // TODO it looks like on any single criterion update subscriptions fire for all criteria
         this.criteria.forEach((criterion) => {
-            if (criterion.isValid()) {
-                criterion.subscribe();
-            }
+            criterion.subscribe();
         })
     }
 
-    handleConditionUpdated() {
+    handleConditionUpdated(datum) {
         // trigger an updated event so that consumers can react accordingly
         this.evaluate();
-        this.emitEvent('conditionResultUpdated', {result: this.result});
+        this.emitEvent('conditionResultUpdated',
+            Object.assign({}, datum, { result: this.result })
+        );
     }
 
     getCriteria() {

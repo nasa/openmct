@@ -3,20 +3,37 @@
     margin: 0.2em 0.5em;
 }
 .preview {
-    color: #aaa;
     margin-right: 1.5em;
     padding: 0.5em 1em;
-    border-radius: 5px;
+    border-radius: 4px;
     display: inline-block;
-    border: solid 1.5px #fff;
-    background-color: inherit;
+
+    &.box,
+    &.line,
+    &image {
+        height: 20px;
+        width: 40px;
+    }
+
+    &.line {
+        background: linear-gradient(to bottom right, #fff, #fff 46%, gray 46%, gray 54%, #fff 54%, #fff);
+    }
+
+    &.image {
+        height: 20px;
+        width: 40px;
+    }
 }
 .controls button {
     padding: 0 0 0.2em 0;
-    margin: 0.2em 0.5em;
+    margin: 0.2em 0.8em;
     display: inline-block;
     color: #aaa;
     font-size: 0.8em;
+
+    .c-icon-button--swatched {
+        width: 1.5em
+    }
 }
 .c-properties__row--span-all {
     border-bottom: 1px solid #ccc;

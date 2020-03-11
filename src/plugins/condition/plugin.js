@@ -21,6 +21,8 @@
  *****************************************************************************/
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
+import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
+import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
 
 export default function ConditionPlugin() {
 
@@ -46,11 +48,13 @@ export default function ConditionPlugin() {
                     conditionCollection: []
                 };
                 domainObject.composition = [];
+                domainObject.telemetry = {};
             }
         });
 
         openmct.composition.addPolicy(new ConditionSetCompositionPolicy(openmct).allow);
-
+        openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
+        openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
         openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
 
     }
