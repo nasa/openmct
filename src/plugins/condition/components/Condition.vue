@@ -232,6 +232,7 @@ export default {
                     let conjunction = '';
                     summary = 'When ';
                     config.criteria.forEach((criterion, index) => {
+                        rule = '';
                         if (criterion.operation && criterion.input.length) {
                             rule += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)}`
                             if (index === config.criteria.length - 1) {
