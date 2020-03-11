@@ -107,7 +107,7 @@ export default {
             if (page.className.indexOf('is-selected') > -1) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
-                document.execCommand('selectAll',false,null);
+                // document.execCommand('selectAll',false,null); // Commenting out until I can figure out how to do this just in the input
                 return;
             }
 

@@ -51,6 +51,11 @@
                            @removeEmbed="removeSnapshot"
             />
         </span>
+        <div v-if="!snapshots.length > 0"
+             class="hint"
+        >
+            There are no Notebook Snapshots currently.
+        </div>
     </div>
 </div>
 </template>

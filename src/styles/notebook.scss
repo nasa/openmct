@@ -420,6 +420,14 @@
     .c-snapshot {
         margin: 0 $interiorMarginSm $interiorMarginSm 0;
     }
+
+    .hint {
+        font-size: 1.25em;
+        font-style: italic;
+        opacity: 0.7;
+        padding: $interiorMarginLg;
+        text-align: center;
+    }
 }
 
 /****************************** PAINTERRO OVERRIDES */
