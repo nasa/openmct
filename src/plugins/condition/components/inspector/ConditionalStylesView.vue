@@ -17,7 +17,7 @@
                         :data-style-prop="key"
                 >
                     <ToolbarColorPicker
-                        :options="item"
+                        :options="{key: item}"
                         @click="triggerMethod(item, $event)"
                         @change="applyStyle"
                     />
@@ -35,7 +35,8 @@
         <div class="holder c-c-button-wrapper align-left">
             <button
                 class="c-c-button c-c-button--minor add-criteria-button"
-                @click="removeConditionSet">
+                @click="removeConditionSet"
+            >
                 <span class="c-c-button__label">Remove conditional styling</span>
             </button>
         </div>
@@ -90,6 +91,7 @@ export default {
             } else {
                 objectType = 'image'
             }
+            console.log('objectType', objectType)
             return objectType;
         }
     },
@@ -106,14 +108,19 @@ export default {
                 }
             }
         }
+        console.log('initialStyles', this.initialStyles);
     },
     methods: {
-        applyStyle(index) {
+        applyStyle(color) {
             const propName = event.target.closest('button').dataset.styleProp;
             const previewElem = event.target.closest('.controls').querySelector('.preview')
-            console.log('propName', propName);
-            
-            // previewElem.style[`${propName}`] = this.defaults[index].value;
+
+            if (this.getObjectType === 'line') {
+                let propValue = `linear-gradient(to bottom right, #fff, #fff 46%, ${color} 46%, ${color} 54%, #fff 54%, #fff)`;
+                previewElem.style.background = propValue;
+            } else {
+                previewElem.style[`${propName}`] = color;
+            }
         },
         addConditionSet() {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
