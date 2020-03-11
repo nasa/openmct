@@ -71,7 +71,7 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed =
     defaultEntries.push({
         id,
         createdOn: date,
-        text: date.toString(),
+        text: '',
         embeds
     });
 

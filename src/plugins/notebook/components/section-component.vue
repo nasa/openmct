@@ -6,10 +6,9 @@
 >
     <span class="c-list__item__name js-list__item__name"
           :data-id="section.id"
+          @keydown.enter="updateName"
           @blur="updateName"
-    >
-        {{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}
-    </span>
+    >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
     <a class="c-list__item__menu-indicator icon-arrow-down"
        @click="toggleActionMenu"
     ></a>
