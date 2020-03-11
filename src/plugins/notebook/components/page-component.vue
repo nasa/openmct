@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_SELECT_PAGE } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
@@ -91,7 +90,7 @@ export default {
                                 label: "Yes",
                                 emphasis: true,
                                 callback: () => {
-                                    self.$emit(EVENT_DELETE_PAGE, id);
+                                    self.$emit('deletePage', id);
                                     dialog.dismiss();
                                 }
                             }
@@ -116,7 +115,7 @@ export default {
                 return;
             }
 
-            this.$emit(EVENT_SELECT_PAGE, id);
+            this.$emit('selectPage', id);
         },
         toggleActionMenu(event) {
             event.preventDefault();
@@ -140,7 +139,7 @@ export default {
                 return;
             }
 
-            this.$emit(EVENT_RENAME_PAGE, Object.assign(this.page, { name }));
+            this.$emit('renamePage', Object.assign(this.page, { name }));
         }
     }
 }

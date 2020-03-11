@@ -5,8 +5,8 @@
             <div class="l-browse-bar__object-name--w icon-notebook">
                 <div class="l-browse-bar__object-name">
                     Notebook Snapshots
-                    <span class="l-browse-bar__object-details"
-                          v-if="snapshots.length"
+                    <span v-if="snapshots.length"
+                          class="l-browse-bar__object-details"
                     >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
                     </span>
                 </div>
@@ -47,8 +47,15 @@
                            :key="snapshot.id"
                            :embed="snapshot"
                            :remove-action-string="'Delete Snapshot'"
+                           @updateEmbed="updateSnapshot"
+                           @removeEmbed="removeSnapshot"
             />
         </span>
+        <div v-if="!snapshots.length > 0"
+             class="hint"
+        >
+            There are no Notebook Snapshots currently.
+        </div>
     </div>
 </div>
 </template>
@@ -56,7 +63,7 @@
 <script>
 import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer, { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
@@ -80,20 +87,8 @@ export default {
     },
     mounted() {
         snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
-
-        if (this.$refs.notebookEmbed) {
-            this.$refs.notebookEmbed.forEach(embed => {
-                embed.$on(EVENT_REMOVE_EMBED, this.removeSnapshot.bind(this));
-                embed.$on(EVENT_UPDATE_EMBED, this.updateSnapshot.bind(this));
-            });
-        }
     },
     beforeDestory() {
-        if (this.$refs.notebookEmbed) {
-            this.$refs.notebookEmbed.forEach(embed => {
-                embed.$off();
-            });
-        }
     },
     methods: {
         close() {
@@ -140,17 +135,6 @@ export default {
         },
         snapshotsUpdated() {
             this.snapshots = snapshotContainer.getSnapshots();
-            this.$nextTick(() => {
-                if (!this.$refs.notebookEmbed) {
-                    return;
-                }
-
-                this.$refs.notebookEmbed.forEach(embed => {
-                    embed.$off();
-                    embed.$on(EVENT_REMOVE_EMBED, this.removeSnapshot.bind(this));
-                    embed.$on(EVENT_UPDATE_EMBED, this.updateSnapshot.bind(this));
-                });
-            });
         },
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);

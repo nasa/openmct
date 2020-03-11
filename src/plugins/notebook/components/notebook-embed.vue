@@ -46,7 +46,6 @@ import objectLink from '../../../ui/mixins/object-link';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import SnapshotTemplate from './snapshot-template.html';
-import { EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
 import Vue from 'vue';
 
@@ -224,7 +223,7 @@ export default {
                 });
         },
         removeEmbed(id) {
-            this.$emit(EVENT_REMOVE_EMBED, id);
+            this.$emit('removeEmbed', id);
         },
         removeEmbedAction() {
             const self = this;
@@ -258,7 +257,7 @@ export default {
             togglePopupMenu(event, this.openmct);
         },
         updateEmbed(embed) {
-            this.$emit(EVENT_UPDATE_EMBED, embed);
+            this.$emit('updateEmbed', embed);
         }
     }
 }

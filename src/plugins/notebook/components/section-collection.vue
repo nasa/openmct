@@ -8,13 +8,15 @@
                           :default-section-id="defaultSectionId"
                           :section="section"
                           :section-title="sectionTitle"
+                          @deleteSection="deleteSection"
+                          @renameSection="updateSection"
+                          @selectSection="selectSection"
         />
     </li>
 </ul>
 </template>
 
 <script>
-import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION, EVENT_UPDATE_SECTION } from '../notebook-constants';
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook, clearDefaultNotebook } from '../utils/notebook-storage';
 import sectionComponent from './section-component.vue';
@@ -56,34 +58,12 @@ export default {
         }
     },
     watch: {
-        sections(sections) {
-            this.removeAllListeners();
-            this.addListeners();
-        }
     },
     mounted() {
-        this.addListeners();
     },
     destroyed() {
-        this.removeAllListeners();
     },
     methods: {
-        addListeners() {
-            setTimeout(() => {
-                if (this.$refs.sectionComponent) {
-                    this.$refs.sectionComponent.forEach(element => {
-                        element.$on(EVENT_DELETE_SECTION, this.deleteSection);
-                        element.$on(EVENT_RENAME_SECTION, this.updateSection);
-                        element.$on(EVENT_SELECT_SECTION, this.selectSection);
-                    });
-                }
-            }, 0);
-        },
-        removeAllListeners() {
-            if (this.$refs.sectionComponent) {
-                this.$refs.sectionComponent.forEach(element => element.$off());
-            }
-        },
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);
             deleteNotebookEntries(this.openmct, this.domainObject, section);
@@ -112,7 +92,7 @@ export default {
                 sections[0].isSelected = true;
             }
 
-            this.$parent.$emit(EVENT_UPDATE_SECTION, { sections });
+            this.$emit('updateSection', { sections });
         },
         selectSection(id, newSections) {
             const currentSections = newSections || this.sections;
@@ -122,14 +102,14 @@ export default {
 
                 return section;
             });
-            this.$parent.$emit(EVENT_UPDATE_SECTION, { sections, id });
+            this.$emit('updateSection', { sections, id });
         },
         updateSection(newSection) {
             const sections = this.sections.map(section =>
                 section.id === newSection.id
                     ? newSection
                     : section);
-            this.$parent.$emit(EVENT_UPDATE_SECTION, { sections });
+            this.$emit('updateSection', { sections });
         }
     }
 }

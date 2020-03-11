@@ -10,6 +10,7 @@
     <SearchResults v-if="search.length"
                    ref="searchResults"
                    :results="getSearchResults()"
+                   @changeSectionPage="changeSelectedSection"
     />
 
     <div v-if="!search.length"
@@ -26,6 +27,9 @@
                  :section-title="internalDomainObject.configuration.sectionTitle"
                  :sections="sections"
                  :sidebar-covers-entries="sidebarCoversEntries"
+                 @updatePage="updatePage"
+                 @updateSection="updateSection"
+                 @toggleNav="toggleNav"
         />
         <div class="c-notebook__page-view">
             <div class="c-notebook__page-view__header">
@@ -86,6 +90,7 @@
                                :selected-page="getSelectedPage()"
                                :selected-section="getSelectedSection()"
                                :read-only="false"
+                               @updateEntries="updateEntries"
                 />
             </div>
         </div>
@@ -101,7 +106,6 @@ import Sidebar from './sidebar.vue';
 import snapshotContainer from '../snapshot-container';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { EVENT_CHANGE_SECTION_PAGE, EVENT_UPDATE_ENTRIES, EVENT_UPDATE_PAGE , EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import { throttle } from 'lodash';
 
 export default {
@@ -153,50 +157,18 @@ export default {
         }
     },
     watch: {
-        search(searchTerm) {
-            if (!this.$refs.searchResults)  {
-                return;
-            }
-
-            if (!searchTerm.length) {
-                this.$refs.searchResults.$off();
-
-                return;
-            }
-
-            this.$refs.searchResults.$on(EVENT_CHANGE_SECTION_PAGE, this.changeSelectedSection.bind(this));
-        }
     },
     beforeMount() {
         this.throttledSearchItem = throttle(this.searchItem, 500);
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
-        this.$refs.sidebar.$on(EVENT_UPDATE_SECTION, this.updateSection.bind(this));
-        this.$refs.sidebar.$on(EVENT_UPDATE_PAGE, this.updatePage.bind(this));
-        this.$refs.sidebar.$on(TOGGLE_NAV, this.toggleNav);
-
-        if (this.$refs.notebookEntry) {
-            this.$refs.notebookEntry.forEach(entry => {
-                entry.$on(EVENT_UPDATE_ENTRIES, this.updateEntries);
-            });
-        }
         this.formatSidebar();
         window.addEventListener('orientationchange', this.formatSidebar);
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
-        }
-
-        if (this.$refs.sidebar) {
-            this.$refs.sidebar.$off();
-        }
-
-        if (this.$refs.notebookEntry) {
-            this.$refs.notebookEntry.forEach(entry => {
-                entry.$off();
-            });
         }
     },
     methods: {
@@ -223,8 +195,8 @@ export default {
                 return s;
             });
 
-            this.search = '';
             this.updateSection({ sections });
+            this.throttledSearchItem('');
         },
         dragOver(event) {
             event.preventDefault();
@@ -279,10 +251,8 @@ export default {
             const isTablet = Array.from(classList).includes('tablet');
             const isPortrait = window.screen.orientation.type.includes('portrait');
             const isInLayout = !!this.$el.closest('.c-so-view');
-            console.log('formatSidebar: isPhone, isTablet, isPortrait, isInLayout',isPhone, isTablet, isPortrait, isInLayout);
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
-            console.log('sidebarCoversEntries', sidebarCoversEntries);
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
@@ -332,7 +302,18 @@ export default {
                 return null;
             }
 
-            return pages.find(page => page.isSelected);
+            const selectedPage = pages.find(page => page.isSelected);
+            if (selectedPage) {
+                return selectedPage;
+            }
+
+            if (!selectedPage && !pages.length) {
+                return null;
+            }
+
+            pages[0].isSelected = true;
+
+            return pages[0];
         },
         getSelectedSection() {
             if (!this.sections.length) {

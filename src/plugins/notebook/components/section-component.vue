@@ -34,7 +34,6 @@
 </style>
 
 <script>
-import { EVENT_DELETE_SECTION, EVENT_RENAME_SECTION, EVENT_SELECT_SECTION } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
@@ -59,7 +58,7 @@ export default {
     },
     data() {
         return {
-            actions: [this.deleteSection()]
+            actions: [this.deleteSectionAction()]
         }
     },
     watch: {
@@ -73,7 +72,7 @@ export default {
     destroyed() {
     },
     methods: {
-        deleteSection() {
+        deleteSectionAction() {
             const self = this;
 
             return {
@@ -94,7 +93,7 @@ export default {
                                 label: "Yes",
                                 emphasis: true,
                                 callback: () => {
-                                    self.$emit(EVENT_DELETE_SECTION, id);
+                                    self.$emit('deleteSection', id);
                                     dialog.dismiss();
                                 }
                             }
@@ -120,7 +119,7 @@ export default {
                 return;
             }
 
-            this.$emit(EVENT_SELECT_SECTION, id);
+            this.$emit('selectSection', id);
         },
         toggleActionMenu(event) {
             togglePopupMenu(event, this.openmct);
@@ -143,7 +142,7 @@ export default {
                 return;
             }
 
-            this.$emit(EVENT_RENAME_SECTION, Object.assign(this.section, { name }));
+            this.$emit('renameSection', Object.assign(this.section, { name }));
         }
     }
 }

@@ -42,14 +42,12 @@ export default {
     methods: {
         notifyNewSnapshot() {
             this.flashIndicator = true;
-            setTimeout(this.removeNotify, 7500);
+            setTimeout(this.removeNotify, 15000);
         },
         removeNotify() {
             this.flashIndicator = false;
-            console.log("removeNotify");
         },
         snapshotsUpdated() {
-            console.log("snapshotsUpdated", snapshotContainer.getSnapshots().length, this.snapshotCount);
             if (snapshotContainer.getSnapshots().length > this.snapshotCount) { this.notifyNewSnapshot(); }
             this.updateSnapshotIndicatorTitle();
         },
