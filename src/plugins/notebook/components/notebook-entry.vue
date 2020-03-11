@@ -18,11 +18,12 @@
             >{{ entry.text }}</div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
-                               ref="notebookEmbed"
                                :key="embed.id"
                                :embed="embed"
                                :object-path="embed.objectPath"
                                :entry="entry"
+                               @removeEmbed="removeEmbed"
+                               @updateEmbed="updateEmbed"
                 />
             </div>
         </div>
@@ -58,7 +59,6 @@
 import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer from '../snapshot-container';
 import {createNewEmbed, getEntryPosById, getNotebookEntries} from '../utils/notebook-entries';
-import {EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRIES, EVENT_CHANGE_SECTION_PAGE} from '../notebook-constants';
 import Moment from 'moment';
 
 export default {
@@ -111,17 +111,6 @@ export default {
     },
     watch: {
         entry() {
-            this.$nextTick(() => {
-                if (!this.$refs.notebookEmbed) {
-                    return;
-                }
-
-                this.$refs.notebookEmbed.forEach(embed => {
-                    embed.$off();
-                    embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
-                    embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
-                });
-            });
         },
         readOnly(readOnly) {
         },
@@ -132,20 +121,8 @@ export default {
     },
     mounted() {
         this.updateEntries = this.updateEntries.bind(this);
-
-        if (this.$refs.notebookEmbed) {
-            this.$refs.notebookEmbed.forEach(embed => {
-                embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
-                embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
-            });
-        }
     },
     beforeDestory() {
-        if (this.$refs.notebookEmbed) {
-            this.$refs.notebookEmbed.forEach(embed => {
-                embed.$off();
-            });
-        }
     },
     methods: {
         deleteEntry() {
@@ -247,13 +224,16 @@ export default {
             snapshotContainer.removeSnapshot(snapshotId);
         },
         navigateToPage() {
-            this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {
+            this.$emit('changeSectionPage', {
                 sectionId: this.result.section.id,
                 pageId: this.result.page.id
             });
         },
         navigateToSection() {
-            this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {sectionId: this.result.section.id, pageId: null});
+            this.$emit('changeSectionPage', {
+                sectionId: this.result.section.id,
+                pageId: null
+            });
         },
         removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);
@@ -316,7 +296,7 @@ export default {
             this.updateEntries(entries);
         },
         updateEntries(entries) {
-            this.$emit(EVENT_UPDATE_ENTRIES, entries);
+            this.$emit('updateEntries', entries);
         }
     }
 }

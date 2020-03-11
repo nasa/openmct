@@ -9,6 +9,7 @@
                        :read-only="true"
                        :selected-page="null"
                        :selected-section="null"
+                       @changeSectionPage="changeSectionPage"
         />
     </div>
 </div>
@@ -36,7 +37,14 @@ export default {
     watch: {
         results(newResults) {}
     },
+    destroyed() {
+    },
     mounted() {
+    },
+    methods: {
+        changeSectionPage(data) {
+            this.$emit('changeSectionPage', data);
+        }
     }
 }
 </script>

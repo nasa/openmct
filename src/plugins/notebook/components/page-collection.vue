@@ -8,13 +8,15 @@
               :default-page-id="defaultPageId"
               :page="page"
               :page-title="pageTitle"
+              @deletePage="deletePage"
+              @renamePage="updatePage"
+              @selectPage="selectPage"
         />
     </li>
 </ul>
 </template>
 
 <script>
-import { EVENT_DELETE_PAGE, EVENT_RENAME_PAGE, EVENT_UPDATE_PAGE, EVENT_SELECT_PAGE, TOGGLE_NAV } from '../notebook-constants';
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook, clearDefaultNotebook } from '../utils/notebook-storage';
 import Page from './page-component.vue';
@@ -69,29 +71,12 @@ export default {
         }
     },
     watch: {
-        pages(newpages) {
-            this.removeAllListeners();
-            this.addListeners();
-        }
     },
     mounted() {
-        this.addListeners();
     },
     destroyed() {
-        this.removeAllListeners();
     },
     methods: {
-        addListeners() {
-            setTimeout(() => {
-                if (this.$refs.pageComponent) {
-                    this.$refs.pageComponent.forEach(element => {
-                        element.$on(EVENT_DELETE_PAGE, this.deletePage);
-                        element.$on(EVENT_RENAME_PAGE, this.updatePage);
-                        element.$on(EVENT_SELECT_PAGE, this.selectPage);
-                    });
-                }
-            },0);
-        },
         deletePage(id) {
             const selectedSection = this.sections.find(s => s.isSelected);
             const page = this.pages.filter(p => p.id !== id);
@@ -121,14 +106,7 @@ export default {
                 pages[0].isSelected = true;
             }
 
-            this.$parent.$emit(EVENT_UPDATE_PAGE, { pages });
-        },
-        removeAllListeners() {
-            if (this.$refs.pageComponent) {
-                this.$refs.pageComponent.forEach(element => {
-                    element.$off();
-                });
-            }
+            this.$emit('updatePage', { pages });
         },
         selectPage(id) {
             const pages = this.pages.map(page => {
@@ -138,11 +116,11 @@ export default {
                 return page;
             });
 
-            this.$parent.$emit(EVENT_UPDATE_PAGE, { pages, id });
+            this.$emit('updatePage', { pages, id });
 
             // Add test here for whether or not to toggle the nav
             if (this.sidebarCoversEntries) {
-                this.$emit(TOGGLE_NAV);
+                this.$emit('toggleNav');
             }
         },
         updatePage(newPage) {
@@ -150,7 +128,7 @@ export default {
                 page.id === newPage.id
                     ? newPage
                     : page);
-            this.$parent.$emit(EVENT_UPDATE_PAGE, { pages });
+            this.$emit('updatePage', { pages });
         }
     }
 }

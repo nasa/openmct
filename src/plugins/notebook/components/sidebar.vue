@@ -18,6 +18,7 @@
                                :domain-object="domainObject"
                                :sections="sections"
                                :section-title="sectionTitle"
+                               @updateSection="updateSection"
             />
         </div>
     </div>
@@ -46,6 +47,8 @@
                             :sections="sections"
                             :sidebar-covers-entries="sidebarCoversEntries"
                             :page-title="pageTitle"
+                            @toggleNav="toggleNav"
+                            @updatePage="updatePage"
             />
         </div>
     </div>
@@ -55,7 +58,6 @@
 <script>
 import SectionCollection from './section-collection.vue';
 import PageCollection from './page-collection.vue';
-import { EVENT_UPDATE_PAGE, EVENT_UPDATE_SECTION, TOGGLE_NAV } from '../notebook-constants';
 import uuid from 'uuid';
 
 export default {
@@ -136,7 +138,6 @@ export default {
         if (!this.sections.length) {
             this.addSection();
         }
-        this.$refs.pageCollection.$on(TOGGLE_NAV, () => this.$emit(TOGGLE_NAV));
     },
     destroyed() {
     },
@@ -153,7 +154,8 @@ export default {
 
             this.pages.forEach(p => p.isSelected = false);
             const pages = this.pages.concat(page);
-            this.$emit(EVENT_UPDATE_PAGE, { pages });
+
+            this.updatePage({ pages });
         },
         addSection() {
             const sectionTitle = this.sectionTitle;
@@ -169,10 +171,17 @@ export default {
 
             this.sections.forEach(s => s.isSelected = false);
             const sections = this.sections.concat(section);
-            this.$emit(EVENT_UPDATE_SECTION, { sections });
+
+            this.updateSection({ sections });
         },
-        toggleNav: function () {
-            this.$parent.toggleNav();
+        toggleNav() {
+            this.$emit('toggleNav');
+        },
+        updatePage({ pages, id }) {
+            this.$emit('updatePage', { pages, id });
+        },
+        updateSection({ sections, id }) {
+            this.$emit('updateSection', { sections, id });
         }
     }
 }
