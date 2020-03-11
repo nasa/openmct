@@ -11,11 +11,13 @@
             :enabled="hasChildren"
             :propagate="false"
         />
-        <div
-            class="c-tree__item__type-icon c-object-label__type-icon"
-            :class="typeClass"
-        ></div>
-        <div class="c-tree__item__name c-object-label__name">{{ node.object.name }}</div>
+        <div class="c-tree__item__label c-object-label">
+            <div
+                class="c-tree__item__type-icon c-object-label__type-icon"
+                :class="typeClass"
+            ></div>
+            <div class="c-tree__item__name c-object-label__name">{{ node.object.name }}</div>
+        </div>
     </div>
     <ul
         v-if="expanded"

@@ -1,5 +1,5 @@
 <template>
-<div class="c-tree-and-search">
+<div class="c-selector c-tree-and-search">
     <div class="c-tree-and-search__search">
         <search
             ref="shell-search"
