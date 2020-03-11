@@ -5,14 +5,18 @@
     >
         <div>{{ condition.configuration.name }}</div>
         <span :style="conditionStyle">ABC</span>
-        <toolbar-color-picker v-if="conditionStyle.border"
-                              :options="borderColorOption"
-                              @change="updateStyleValue"
-        />
-        <toolbar-color-picker v-if="conditionStyle.backgroundColor"
-                              :options="backgroundColorOption"
-                              @change="updateStyleValue"
-        />
+        <span style="margin-left: 20px;display: inline-block; vertical-align: middle;">
+            <toolbar-color-picker v-if="conditionStyle.border"
+                                  :options="borderColorOption"
+                                  @change="updateStyleValue"
+            />
+        </span>
+        <span style="display: inline-block; vertical-align: middle;">
+            <toolbar-color-picker v-if="conditionStyle.backgroundColor"
+                                  :options="backgroundColorOption"
+                                  @change="updateStyleValue"
+            />
+        </span>
     </div>
 </div>
 </template>

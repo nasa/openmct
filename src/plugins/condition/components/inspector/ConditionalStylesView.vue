@@ -1,24 +1,21 @@
 <template>
 <div>
-    <div v-if="!conditionalStyles.length"
-         class="holder c-c-button-wrapper align-left"
+    <button
+        v-if="!conditionalStyles.length"
+        id="addConditionSet"
+        class="c-button c-button--major icon-plus labeled"
+        @click="addConditionSet"
     >
-        <button
-            class="c-c-button c-c-button--minor add-criteria-button"
-            @click="addConditionSet"
-        >
-            <span class="c-c-button__label">Use conditional styling</span>
-        </button>
-    </div>
+        <span class="c-cs-button__label">Add Conditional styling</span>
+    </button>
     <div v-else>
-        <div class="holder c-c-button-wrapper align-left">
-            <button
-                class="c-c-button c-c-button--minor add-criteria-button"
-                @click="removeConditionSet"
-            >
-                <span class="c-c-button__label">Remove conditional styling</span>
-            </button>
-        </div>
+        <button
+            id="removeConditionSet"
+            class="c-button c-button--major icon-minus labeled"
+            @click="removeConditionSet"
+        >
+            <span class="c-cs-button__label">Remove Conditional styling</span>
+        </button>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
                 :key="conditionStyle.conditionIdentifier.key"
@@ -76,13 +73,16 @@ export default {
     },
     methods: {
         addConditionSet() {
-            //TODO: this.conditionSetIdentifier will be set by the UI before calling this
-            // this.conditionSetIdentifier = {
-            //     namespace: '',
-            //     key: "bcdb1765-d746-4cae-90a8-e0e1e8596869"
-            // };
             let handleItemSelection = (item) => {
-                this.handleItemSelection(item);
+                if (item) {
+                    this.conditionSetDomainObject = item;
+                }
+            };
+            let dismissAndInitialize = (overlay) => {
+                overlay.dismiss();
+                if (this.conditionSetDomainObject) {
+                    this.initializeConditionalStyles();
+                }
             };
             let vm = new Vue({
                 provide: {
@@ -103,19 +103,20 @@ export default {
                 buttons: [
                     {
                         label: 'OK',
-                        callback: () => overlay.dismiss()
+                        emphasis: 'true',
+                        callback: () => dismissAndInitialize(overlay)
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => dismissAndInitialize(overlay)
                     }
                 ],
                 onDestroy: () => vm.$destroy()
             });
-            // this.initializeConditionalStyles();
-        },
-        handleItemSelection(item) {
-            console.log(item);
         },
         removeConditionSet() {
             //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
-            this.conditionSetIdentifier = '';
+            this.conditionSetDomainObject = undefined;
             this.conditionalStyles = [];
             let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle;
             if (domainObjectConditionalStyle) {
@@ -137,30 +138,28 @@ export default {
 
         },
         initializeConditionalStyles() {
-            this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
-                conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
-                    this.conditionalStyles.push({
-                        conditionIdentifier: identifier,
-                        style: Object.assign({}, this.initialStyles)
-                    });
+            this.conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
+                this.conditionalStyles.push({
+                    conditionIdentifier: identifier,
+                    style: Object.assign({}, this.initialStyles)
                 });
-                let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
-                let conditionalStyle = {
-                    conditionSetIdentifier: this.conditionSetIdentifier,
-                    styles: this.conditionalStyles
-                };
-                if (this.itemId) {
-                    this.persist({
-                        ...domainObjectConditionalStyle,
-                        [this.itemId]: conditionalStyle
-                    });
-                } else {
-                    this.persist({
-                        ...domainObjectConditionalStyle,
-                        ...conditionalStyle
-                    });
-                }
             });
+            let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+            let conditionalStyle = {
+                conditionSetIdentifier: this.conditionSetDomainObject.identifier,
+                styles: this.conditionalStyles
+            };
+            if (this.itemId) {
+                this.persist({
+                    ...domainObjectConditionalStyle,
+                    [this.itemId]: conditionalStyle
+                });
+            } else {
+                this.persist({
+                    ...domainObjectConditionalStyle,
+                    ...conditionalStyle
+                });
+            }
         },
         findStyleByConditionId(id) {
             for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
