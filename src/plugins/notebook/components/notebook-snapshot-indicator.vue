@@ -1,6 +1,11 @@
 <template>
 <div class="c-indicator c-indicator--clickable icon-notebook"
-     :class="[{ 's-status-off': snapshotCount === 0 }, { 's-status-on': snapshotCount > 0 }, { 's-status-caution': snapshotCount === snapshotMaxCount }]"
+     :class="[
+     { 's-status-off': snapshotCount === 0 },
+     { 's-status-on': snapshotCount > 0 },
+     { 's-status-caution': snapshotCount === snapshotMaxCount },
+     { 'has-new-snapshot': flashIndicator }
+     ]"
 >
     <span class="label c-indicator__label">
         {{ indicatorTitle }}
@@ -26,7 +31,8 @@ export default {
             expanded: false,
             indicatorTitle: '',
             snapshotCount: 0,
-            snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT
+            snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT,
+            flashIndicator: false
         }
     },
     mounted() {
@@ -34,7 +40,17 @@ export default {
         this.updateSnapshotIndicatorTitle();
     },
     methods: {
+        notifyNewSnapshot() {
+            this.flashIndicator = true;
+            setTimeout(this.removeNotify, 7500);
+        },
+        removeNotify() {
+            this.flashIndicator = false;
+            console.log("removeNotify");
+        },
         snapshotsUpdated() {
+            console.log("snapshotsUpdated", snapshotContainer.getSnapshots().length, this.snapshotCount);
+            if (snapshotContainer.getSnapshots().length > this.snapshotCount) { this.notifyNewSnapshot(); }
             this.updateSnapshotIndicatorTitle();
         },
         toggleSnapshot() {

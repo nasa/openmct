@@ -572,3 +572,9 @@ body.mobile {
         }
     }
 }
+
+/****************************** INDICATOR */
+.c-indicator.has-new-snapshot {
+    $c: $colorOk;
+    @include pulseProp($animName: flashSnapshot, $dur: 150ms, $iter: infinite, $prop: background, $valStart: rgba($c, 0.7), $valEnd: rgba($c, 0.1));
+}
