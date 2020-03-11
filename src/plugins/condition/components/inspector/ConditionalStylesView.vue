@@ -36,6 +36,9 @@
 <script>
 
 import ConditionalStyle from "./ConditionalStyle.vue";
+import ConditionSetSelectorDialog from "./ConditionSetSelectorDialog.vue";
+import Vue from 'vue';
+
 export default {
     components: {
         ConditionalStyle
@@ -78,7 +81,37 @@ export default {
             //     namespace: '',
             //     key: "bcdb1765-d746-4cae-90a8-e0e1e8596869"
             // };
-            this.initializeConditionalStyles();
+            let handleItemSelection = (item) => {
+                this.handleItemSelection(item);
+            };
+            let vm = new Vue({
+                provide: {
+                    openmct: this.openmct
+                },
+                components: {ConditionSetSelectorDialog},
+                data() {
+                    return {
+                        handleItemSelection: handleItemSelection
+                    }
+                },
+                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+            }).$mount();
+
+            let overlay = this.openmct.overlays.overlay({
+                element: vm.$el,
+                size: 'large',
+                buttons: [
+                    {
+                        label: 'OK',
+                        callback: () => overlay.dismiss()
+                    }
+                ],
+                onDestroy: () => vm.$destroy()
+            });
+            // this.initializeConditionalStyles();
+        },
+        handleItemSelection(item) {
+            console.log(item);
         },
         removeConditionSet() {
             //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
