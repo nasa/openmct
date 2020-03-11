@@ -1,8 +1,8 @@
 <template>
 <div class="c-notebook__entry c-ne has-local-controls"
-    @dragover="dragover"
-    @drop.capture="dropCapture"
-    @drop.prevent="dropOnEntry(entry.id, $event)"
+     @dragover="dragover"
+     @drop.capture="dropCapture"
+     @drop.prevent="dropOnEntry(entry.id, $event)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
@@ -36,12 +36,18 @@
         >
         </button>
     </div>
-    <div class="c-ne__section-and-page" v-if="readOnly">
-        <a class="c-click-link" @click="navigateToSection()">
+    <div v-if="readOnly"
+         class="c-ne__section-and-page"
+    >
+        <a class="c-click-link"
+           @click="navigateToSection()"
+        >
             {{ result.section.name }}
         </a>
         <span class="icon-arrow-right"></span>
-        <a class="c-click-link" @click="navigateToPage()">
+        <a class="c-click-link"
+           @click="navigateToPage()"
+        >
             {{ result.page.name }}
         </a>
     </div>
@@ -49,269 +55,269 @@
 </template>
 
 <script>
-    import NotebookEmbed from './notebook-embed.vue';
-    import snapshotContainer from '../snapshot-container';
-    import {createNewEmbed, getEntryPosById, getNotebookEntries} from '../utils/notebook-entries';
-    import {EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRIES, EVENT_CHANGE_SECTION_PAGE} from '../notebook-constants';
-    import Moment from 'moment';
+import NotebookEmbed from './notebook-embed.vue';
+import snapshotContainer from '../snapshot-container';
+import {createNewEmbed, getEntryPosById, getNotebookEntries} from '../utils/notebook-entries';
+import {EVENT_REMOVE_EMBED, EVENT_UPDATE_EMBED, EVENT_UPDATE_ENTRIES, EVENT_CHANGE_SECTION_PAGE} from '../notebook-constants';
+import Moment from 'moment';
 
-    export default {
-        inject: ['openmct'],
-        components: {
-            NotebookEmbed
-        },
-        props: {
-            domainObject: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            entry: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            result: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            selectedPage: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            selectedSection: {
-                type: Object,
-                default() {
-                    return {};
-                }
-            },
-            readOnly: {
-                type: Boolean,
-                default() {
-                    return true;
-                }
+export default {
+    inject: ['openmct'],
+    components: {
+        NotebookEmbed
+    },
+    props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
             }
         },
-        data() {
-            return {
-                currentEntryValue: ''
+        entry: {
+            type: Object,
+            default() {
+                return {};
             }
         },
-        watch: {
-            entry() {
-                this.$nextTick(() => {
-                    if (!this.$refs.notebookEmbed) {
-                        return;
-                    }
-
-                    this.$refs.notebookEmbed.forEach(embed => {
-                        embed.$off();
-                        embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
-                        embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
-                    });
-                });
-            },
-            readOnly(readOnly) {
-            },
-            selectedSection(selectedSection) {
-            },
-            selectedPage(selectedSection) {
+        result: {
+            type: Object,
+            default() {
+                return {};
             }
         },
-        mounted() {
-            this.updateEntries = this.updateEntries.bind(this);
+        selectedPage: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        selectedSection: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        readOnly: {
+            type: Boolean,
+            default() {
+                return true;
+            }
+        }
+    },
+    data() {
+        return {
+            currentEntryValue: ''
+        }
+    },
+    watch: {
+        entry() {
+            this.$nextTick(() => {
+                if (!this.$refs.notebookEmbed) {
+                    return;
+                }
 
-            if (this.$refs.notebookEmbed) {
                 this.$refs.notebookEmbed.forEach(embed => {
+                    embed.$off();
                     embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
                     embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
                 });
-            }
+            });
         },
-        beforeDestory() {
-            if (this.$refs.notebookEmbed) {
-                this.$refs.notebookEmbed.forEach(embed => {
-                    embed.$off();
-                });
-            }
+        readOnly(readOnly) {
         },
-        methods: {
-            deleteEntry() {
-                const self = this;
-                if (!self.domainObject || !self.selectedSection || !self.selectedPage || !self.entry.id) {
-                    return;
-                }
+        selectedSection(selectedSection) {
+        },
+        selectedPage(selectedSection) {
+        }
+    },
+    mounted() {
+        this.updateEntries = this.updateEntries.bind(this);
 
-                const entryPosById = this.entryPosById(this.entry.id);
-                if (entryPosById === -1) {
-                    return;
-                }
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$on(EVENT_REMOVE_EMBED, this.removeEmbed.bind(this));
+                embed.$on(EVENT_UPDATE_EMBED, this.updateEmbed.bind(this));
+            });
+        }
+    },
+    beforeDestory() {
+        if (this.$refs.notebookEmbed) {
+            this.$refs.notebookEmbed.forEach(embed => {
+                embed.$off();
+            });
+        }
+    },
+    methods: {
+        deleteEntry() {
+            const self = this;
+            if (!self.domainObject || !self.selectedSection || !self.selectedPage || !self.entry.id) {
+                return;
+            }
 
-                const dialog = this.openmct.overlays.dialog({
-                    iconClass: 'alert',
-                    message: 'This action will permanently delete this entry. Do you wish to continue?',
-                    buttons: [
-                        {
-                            label: "Ok",
-                            emphasis: true,
-                            callback: () => {
-                                const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
-                                entries.splice(entryPosById, 1);
-                                this.updateEntries(entries);
-                                dialog.dismiss();
-                            }
-                        },
-                        {
-                            label: "Cancel",
-                            callback: () => {
-                                dialog.dismiss();
-                            }
+            const entryPosById = this.entryPosById(this.entry.id);
+            if (entryPosById === -1) {
+                return;
+            }
+
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will permanently delete this entry. Do you wish to continue?',
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: () => {
+                            const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
+                            entries.splice(entryPosById, 1);
+                            this.updateEntries(entries);
+                            dialog.dismiss();
                         }
-                    ]
-                });
-            },
-            dragover() {
-                event.preventDefault();
-                event.dataTransfer.dropEffect = "copy";
-            },
-            dropCapture(event) {
-                const isEditing = this.openmct.editor.isEditing();
-                if (isEditing) {
-                    this.openmct.editor.cancel();
-                }
-            },
-            dropOnEntry(entryId, $event) {
-                event.stopImmediatePropagation();
-
-                if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                    return;
-                }
-
-                const snapshotId = $event.dataTransfer.getData('snapshot/id');
-                if (snapshotId.length) {
-                    this.moveSnapshot(snapshotId);
-
-                    return;
-                }
-
-                const data = $event.dataTransfer.getData('openmct/domain-object-path');
-                const objectPath = JSON.parse(data);
-                const domainObject = objectPath[0];
-                const domainObjectKey = domainObject.identifier.key;
-                const domainObjectType = this.openmct.types.get(domainObject.type);
-                const cssClass = domainObjectType && domainObjectType.definition
-                    ? domainObjectType.definition.cssClass
-                    : 'icon-object-unknown';
-                const entryPos = this.entryPosById(entryId);
-                const newEmbed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
-                const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                const currentEntryEmbeds = entries[entryPos].embeds;
-                currentEntryEmbeds.push(newEmbed);
-                this.updateEntries(entries);
-            },
-            entryPosById(entryId) {
-                return getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
-            },
-            findPositionInArray(array, id) {
-                let position = -1;
-                array.some((item, index) => {
-                    const found = item.id === id;
-                    if (found) {
-                        position = index;
+                    },
+                    {
+                        label: "Cancel",
+                        callback: () => {
+                            dialog.dismiss();
+                        }
                     }
-
-                    return found;
-                });
-
-                return position;
-            },
-            formatTime(unixTime, timeFormat) {
-                return Moment(unixTime).format(timeFormat);
-            },
-            moveSnapshot(snapshotId) {
-                const snapshot = snapshotContainer.getSnapshot(snapshotId);
-                this.entry.embeds.push(snapshot);
-                this.updateEntry(this.entry);
-                snapshotContainer.removeSnapshot(snapshotId);
-            },
-            navigateToPage() {
-                this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {
-                    sectionId: this.result.section.id,
-                    pageId: this.result.page.id
-                });
-            },
-            navigateToSection() {
-                this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {sectionId: this.result.section.id, pageId: null});
-            },
-            removeEmbed(id) {
-                const embedPosition = this.findPositionInArray(this.entry.embeds, id);
-                this.entry.embeds.splice(embedPosition, 1);
-                this.updateEntry(this.entry);
-            },
-            textBlur($event, entryId) {
-                if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                    return;
-                }
-
-                const target = $event.target;
-                if (!target) {
-                    return;
-                }
-
-                const entryPos = this.entryPosById(entryId);
-                const value = target.textContent.trim();
-                if (this.currentEntryValue !== value) {
-                    const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                    $event.target.innerText = value;
-                    entries[entryPos].text = value;
-
-                    this.updateEntries(entries);
-                }
-            },
-            textFocus($event) {
-                if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                    return;
-                }
-
-                if ($event.target) {
-                    this.currentEntryValue = $event.target.innerText;
-                } else {
-                    $event.target.innerText = '';
-                }
-            },
-            updateEmbed(newEmbed) {
-                let embed = this.entry.embeds.find(e => e.id === newEmbed.id);
-
-                if (!embed) {
-                    return;
-                }
-
-                embed = newEmbed;
-                this.updateEntry(this.entry);
-            },
-            updateEntry(newEntry) {
-                if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                    return;
-                }
-
-                const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                entries.forEach(entry => {
-                    if (entry.id === newEntry.id) {
-                        entry = newEntry;
-                    }
-                });
-
-                this.updateEntries(entries);
-            },
-            updateEntries(entries) {
-                this.$emit(EVENT_UPDATE_ENTRIES, entries);
+                ]
+            });
+        },
+        dragover() {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        },
+        dropCapture(event) {
+            const isEditing = this.openmct.editor.isEditing();
+            if (isEditing) {
+                this.openmct.editor.cancel();
             }
+        },
+        dropOnEntry(entryId, $event) {
+            event.stopImmediatePropagation();
+
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
+            const snapshotId = $event.dataTransfer.getData('snapshot/id');
+            if (snapshotId.length) {
+                this.moveSnapshot(snapshotId);
+
+                return;
+            }
+
+            const data = $event.dataTransfer.getData('openmct/domain-object-path');
+            const objectPath = JSON.parse(data);
+            const domainObject = objectPath[0];
+            const domainObjectKey = domainObject.identifier.key;
+            const domainObjectType = this.openmct.types.get(domainObject.type);
+            const cssClass = domainObjectType && domainObjectType.definition
+                ? domainObjectType.definition.cssClass
+                : 'icon-object-unknown';
+            const entryPos = this.entryPosById(entryId);
+            const newEmbed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            const currentEntryEmbeds = entries[entryPos].embeds;
+            currentEntryEmbeds.push(newEmbed);
+            this.updateEntries(entries);
+        },
+        entryPosById(entryId) {
+            return getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
+        },
+        findPositionInArray(array, id) {
+            let position = -1;
+            array.some((item, index) => {
+                const found = item.id === id;
+                if (found) {
+                    position = index;
+                }
+
+                return found;
+            });
+
+            return position;
+        },
+        formatTime(unixTime, timeFormat) {
+            return Moment(unixTime).format(timeFormat);
+        },
+        moveSnapshot(snapshotId) {
+            const snapshot = snapshotContainer.getSnapshot(snapshotId);
+            this.entry.embeds.push(snapshot);
+            this.updateEntry(this.entry);
+            snapshotContainer.removeSnapshot(snapshotId);
+        },
+        navigateToPage() {
+            this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {
+                sectionId: this.result.section.id,
+                pageId: this.result.page.id
+            });
+        },
+        navigateToSection() {
+            this.$parent.$emit(EVENT_CHANGE_SECTION_PAGE, {sectionId: this.result.section.id, pageId: null});
+        },
+        removeEmbed(id) {
+            const embedPosition = this.findPositionInArray(this.entry.embeds, id);
+            this.entry.embeds.splice(embedPosition, 1);
+            this.updateEntry(this.entry);
+        },
+        textBlur($event, entryId) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
+            const target = $event.target;
+            if (!target) {
+                return;
+            }
+
+            const entryPos = this.entryPosById(entryId);
+            const value = target.textContent.trim();
+            if (this.currentEntryValue !== value) {
+                const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+                $event.target.innerText = value;
+                entries[entryPos].text = value;
+
+                this.updateEntries(entries);
+            }
+        },
+        textFocus($event) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
+            if ($event.target) {
+                this.currentEntryValue = $event.target.innerText;
+            } else {
+                $event.target.innerText = '';
+            }
+        },
+        updateEmbed(newEmbed) {
+            let embed = this.entry.embeds.find(e => e.id === newEmbed.id);
+
+            if (!embed) {
+                return;
+            }
+
+            embed = newEmbed;
+            this.updateEntry(this.entry);
+        },
+        updateEntry(newEntry) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            entries.forEach(entry => {
+                if (entry.id === newEntry.id) {
+                    entry = newEntry;
+                }
+            });
+
+            this.updateEntries(entries);
+        },
+        updateEntries(entries) {
+            this.$emit(EVENT_UPDATE_ENTRIES, entries);
         }
     }
+}
 </script>

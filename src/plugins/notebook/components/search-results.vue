@@ -3,12 +3,12 @@
     <div class="c-notebook__search-results__header">Search Results</div>
     <div class="c-notebook__entries">
         <NotebookEntry v-for="(result, index) in results"
-                      :key="index"
-                      :result="result"
-                      :entry="result.entry"
-                      :read-only="true"
-                      :selected-page="null"
-                      :selected-section="null"
+                       :key="index"
+                       :result="result"
+                       :entry="result.entry"
+                       :read-only="true"
+                       :selected-page="null"
+                       :selected-section="null"
         />
     </div>
 </div>
