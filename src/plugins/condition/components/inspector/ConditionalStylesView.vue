@@ -8,7 +8,7 @@
                 <div class="preview"
                      :class="getObjectType"
                 >
-                    <template v-if="getObjectType === 'text'">ABC</template>
+                    <template v-if="getObjectType !== 'line'">ABC</template>
                 </div>
                 <button v-for="(item, key) in initialStyles"
                         :key="key"
@@ -91,7 +91,6 @@ export default {
             } else {
                 objectType = 'image'
             }
-            console.log('objectType', objectType)
             return objectType;
         }
     },
@@ -108,7 +107,6 @@ export default {
                 }
             }
         }
-        console.log('initialStyles', this.initialStyles);
     },
     methods: {
         applyStyle(color) {

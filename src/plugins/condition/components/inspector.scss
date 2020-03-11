@@ -1,6 +1,6 @@
 .controls {
     width: 100%;
-    margin: 0.2em 0.5em;
+    margin: 0.5em 0.5em 0;
 }
 .preview {
     margin-right: 1.5em;
@@ -9,15 +9,10 @@
     border-radius: 4px;
     display: inline-block;
 
-    &.box,
-    &.line,
-    &image {
-        height: 20px;
-        width: 40px;
-    }
-
     &.line {
-        background: linear-gradient(to bottom right, #fff, #fff 46%, gray 46%, gray 54%, #fff 54%, #fff);
+        height: 2em;
+        width: 5em;
+        background: linear-gradient(to bottom right, #fff, #fff 48%, gray 48%, gray 52%, #fff 52%, #fff);
     }
 
     &.image {
