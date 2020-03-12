@@ -66,7 +66,7 @@ export default {
             this.stopProvidingTelemetry();
         }
         if (this.stopObservingForChanges) {
-            this.this.stopObservingForChanges();
+            this.stopObservingForChanges();
         }
     },
     methods: {
