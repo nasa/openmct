@@ -677,6 +677,7 @@ select {
 
 .c-separator {
     @include cToolbarSeparator();
+    height: 100%;
 }
 
 .c-row-separator {
