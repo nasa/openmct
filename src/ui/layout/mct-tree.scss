@@ -137,3 +137,11 @@
         }
     }
 }
+
+.c-selector {
+    .c-tree-and-search__tree.c-tree {
+        border: 1px solid $colorInteriorBorder;
+        border-radius: $controlCr;
+        padding: $interiorMargin;
+    }
+}
