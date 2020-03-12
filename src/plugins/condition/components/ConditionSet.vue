@@ -67,6 +67,7 @@ export default {
     },
     methods: {
         updateCurrentOutput(currentConditionResult) {
+            console.log(currentConditionResult);
             this.currentConditionOutput = currentConditionResult.output;
         },
         provideTelemetry() {

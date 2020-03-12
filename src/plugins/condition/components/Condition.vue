@@ -23,7 +23,6 @@
 <template>
 <div v-if="isEditing"
      class="c-condition c-condition--edit js-condition-drag-wrapper"
-     :class="{ 'c-condition--current-match': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Edit view -->
     <div class="c-condition__header">
@@ -150,7 +149,6 @@
 </div>
 <div v-else
      class="c-condition c-condition--browse"
-     :class="{ 'c-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Browse view -->
     <div class="c-condition__header">
@@ -176,11 +174,7 @@ export default {
         Criterion
     },
     props: {
-        conditionIdentifier: {
-            type: Object,
-            required: true
-        },
-        currentConditionIdentifier: {
+        condition: {
             type: Object,
             required: true
         },
@@ -215,10 +209,8 @@ export default {
         this.destroy();
     },
     mounted() {
-        this.openmct.objects.get(this.conditionIdentifier).then((domainObject => {
-            this.domainObject = domainObject;
-            this.initialize();
-        }));
+        this.domainObject = this.condition;
+        this.initialize();
     },
     methods: {
         initialize() {
@@ -263,12 +255,15 @@ export default {
         destroy() {
         },
         removeCondition(ev) {
-            this.$emit('removeCondition', this.conditionIdentifier);
+            this.$emit('removeCondition', {
+                condition: this.condition,
+                index: this.conditionIndex
+            });
         },
         cloneCondition(ev) {
             this.$emit('cloneCondition', {
-                identifier: this.conditionIdentifier,
-                index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
+                condition: this.condition,
+                index: this.conditionIndex
             });
         },
         removeCriterion(index) {
@@ -285,10 +280,13 @@ export default {
             return this.currentCriteria && identifier;
         },
         persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+            this.$emit('updateCondition', {
+                condition: this.domainObject,
+                index: this.conditionIndex
+            });
         },
-        initCap: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1)
+        initCap: function (sentence) {
+            return sentence.charAt(0).toUpperCase() + sentence.slice(1)
         }
     }
 }

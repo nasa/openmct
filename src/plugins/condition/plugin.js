@@ -23,19 +23,11 @@ import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
+import uuid from "uuid";
 
 export default function ConditionPlugin() {
 
     return function install(openmct) {
-        openmct.types.addType('condition', {
-            name: 'Condition',
-            key: 'condition',
-            description: 'A list of criteria which will be evaluated based on a trigger',
-            creatable: false,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-            }
-        });
 
         openmct.types.addType('conditionSet', {
             name: 'Condition Set',
@@ -45,7 +37,18 @@ export default function ConditionPlugin() {
             cssClass: 'icon-conditional',  // TODO: replace with class for new icon
             initialize: function (domainObject) {
                 domainObject.configuration = {
-                    conditionCollection: []
+                    conditionCollection: [{
+                        isDefault: true,
+                        type: 'condition',
+                        id: uuid(),
+                        configuration: {
+                            name: 'Default',
+                            output: 'false',
+                            trigger: 'all',
+                            criteria: []
+                        },
+                        summary: 'Default condition'
+                    }]
                 };
                 domainObject.composition = [];
                 domainObject.telemetry = {};
