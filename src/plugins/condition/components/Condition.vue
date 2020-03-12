@@ -44,7 +44,7 @@
         <span class="c-condition__name">{{ domainObject.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">
-            {{ getDescription }}
+            {{ getSummary }}
         </span>
 
         <div class="c-condition__buttons">
@@ -162,7 +162,7 @@
         </span>
     </div>
     <div class="c-condition__summary">
-        {{ getDescription }}
+        {{ getSummary }}
     </div>
 </div>
 </template>
@@ -213,34 +213,41 @@ export default {
         };
     },
     computed: {
-        getDescription: function () {
+        getSummary: function () {
             let config = this.domainObject.configuration;
 
             if (!config.criteria.length) {
                 return 'When all else fails';
             } else {
                 let rule = '';
-                let summary = '';
+                let summary = 'No criteria specified';
                 if (config.criteria.length === 1 && config.criteria[0].telemetry) {
-                    if (config.criteria[0].operation && config.criteria[0].input.length) {
-                        rule += `${config.criteria[0].telemetry.name} value ${this.findDescription(config.criteria[0].operation, config.criteria[0].input)}`
-                        summary = `When ${rule}`;
-                    } else {
-                        summary = 'No criteria specified'
+                    if (config.criteria[0].operation) {
+                        if (config.criteria[0].input.length ||
+                            (config.criteria[0].operation === 'isDefined' ||
+                             config.criteria[0].operation === 'isUndefined')) {
+                            rule += `When ${config.criteria[0].telemetry.name} value ${this.findDescription(config.criteria[0].operation, config.criteria[0].input)}`
+                            summary = rule;
+                        }
                     }
                 } else {
                     let conjunction = '';
-                    summary = 'When ';
+                    summary = config.criteria.length === 1 ? 'No criteria specified' : 'When ';
                     config.criteria.forEach((criterion, index) => {
                         rule = '';
-                        if (criterion.operation && criterion.input.length) {
-                            rule += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)}`
-                            if (index === config.criteria.length - 1) {
-                                conjunction = config.trigger === 'all' ? 'and' : 'or';
-                            } else {
-                                conjunction = '';
+                        if (criterion.operation) {
+                            if (criterion.input.length ||
+                                (criterion.operation === 'isDefined' ||
+                                 criterion.operation === 'isUndefined')) {
+                                rule += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)}`
+                                if (index === config.criteria.length - 1) {
+                                    conjunction = config.trigger === 'all' ? 'and' : 'or';
+                                } else {
+                                    conjunction = '';
+                                }
+                                summary += ` ${conjunction} ${rule}`
                             }
-                            summary += ` ${conjunction} ${rule}`
+
                         }
                     });
                 }

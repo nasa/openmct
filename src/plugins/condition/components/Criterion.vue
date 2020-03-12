@@ -51,7 +51,7 @@
             >
                 <input v-model="criterion.input[inputIndex]"
                        class="c-cdef__control__input"
-                       type="text"
+                       :type="setInputType"
                        @blur="persist"
                 >
                 <span v-if="inputIndex < inputCount-1">and</span>
@@ -102,6 +102,19 @@ export default {
         },
         filteredOps: function () {
             return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
+        },
+        setInputType: function () {
+            let type = '';
+            for (let i = 0; i < this.filteredOps.length; i++) {
+                if (this.criterion.operation === this.filteredOps[i].name) {
+                    if (this.filteredOps[i].appliesTo.length === 1) {
+                        type = this.filteredOps[i].appliesTo[0];
+                    } else {
+                        type = 'string'
+                    }
+                }
+            }
+            return type;
         }
     },
     mounted() {
