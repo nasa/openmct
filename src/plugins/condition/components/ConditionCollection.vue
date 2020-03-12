@@ -61,8 +61,6 @@
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
                      @drop.prevent="dropCondition"
-                     @dragenter="dragEnter"
-                     @dragleave="dragLeave"
                      @dragover.prevent
                 ></div>
                 <Condition :condition-identifier="conditionIdentifier"
@@ -73,6 +71,8 @@
                            @removeCondition="removeCondition"
                            @cloneCondition="cloneCondition"
                            @setMoveIndex="setMoveIndex"
+                           @dragenter="dragEnter"
+                           @dragleave="dragLeave"
                 />
             </div>
         </div>
