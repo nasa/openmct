@@ -27,6 +27,14 @@ describe('ConditionManager', () => {
     let conditionMgr;
     let mockListener;
     let openmct = {};
+    let mockCondition = {
+        isDefault: true,
+        type: 'condition',
+        id: '1234-5678',
+        configuration: {
+            criteria: []
+        }
+    };
     let conditionSetDomainObject = {
         identifier: {
             namespace: "",
@@ -35,13 +43,10 @@ describe('ConditionManager', () => {
         type: "conditionSet",
         location: "mine",
         configuration: {
-            conditionCollection: []
+            conditionCollection: [
+                mockCondition
+            ]
         }
-    };
-    let mockCondition = {
-        isDefault: true,
-        type: 'condition',
-        id: '1234-5678'
     };
 
     function mockAngularComponents() {
@@ -87,9 +92,9 @@ describe('ConditionManager', () => {
     });
 
     it('creates a conditionCollection with a default condition', function () {
-        expect(conditionMgr.domainObject.configuration.conditionCollection.length).toEqual(1);
-        let defaultCondition = conditionMgr.domainObject.configuration.conditionCollection[0];
-        expect(defaultCondition).toEqual(mockCondition);
+        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(1);
+        let defaultConditionId = conditionMgr.conditionClassCollection[0].id;
+        expect(defaultConditionId).toEqual(mockCondition.id);
     });
 
 });
