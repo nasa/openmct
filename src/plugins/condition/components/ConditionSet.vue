@@ -58,19 +58,33 @@ export default {
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.observeForChanges();
         this.provideTelemetry();
     },
     beforeDestroy() {
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
         }
+        if (this.stopObservingForChanges) {
+            this.this.stopObservingForChanges();
+        }
     },
     methods: {
+        observeForChanges() {
+            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
+                //Since the domain object changes in conditionCollection.vue we need to resubscribe when that happens
+                this.domainObject = newDomainObject;
+                this.provideTelemetry();
+            });
+        },
         updateCurrentOutput(currentConditionResult) {
             console.log(currentConditionResult);
             this.currentConditionOutput = currentConditionResult.output;
         },
         provideTelemetry() {
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+            }
             this.stopProvidingTelemetry = this.openmct.telemetry
                 .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });
         }
