@@ -123,11 +123,8 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    removeCondition(condition, index) {
-        // const found = this.findConditionById(id);
-        // if (found) {
-        //     const index = found.index;
-        //     let condition = this.conditionClassCollection[index];
+    removeCondition(conditionConfiguration, index) {
+        let condition = this.conditionClassCollection[index];
         condition.destroyCriteria();
         condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         this.conditionClassCollection.splice(index, 1);
@@ -137,7 +134,6 @@ export default class ConditionManager extends EventEmitter {
         }
         this.persistConditions();
         this.handleConditionResult();
-        // }
     }
 
     findConditionById(id) {
