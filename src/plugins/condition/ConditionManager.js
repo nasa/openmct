@@ -38,7 +38,6 @@ export default class ConditionManager extends EventEmitter {
         this.loadComposition = this.openmct.composition.get(this.domainObject);
         this.composition = this.loadComposition.load();
         this.subscriptionManager = undefined;
-        // this.listenTo(this.composition, 'add', this.addChild, this)
         this.initialize();
     }
 
