@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Condition from "./Condition";
+import ConditionSubscriptionManager from './ConditionSubscriptionManager';
 import uuid from "uuid";
 import EventEmitter from 'EventEmitter';
 
@@ -34,23 +35,29 @@ export default class ConditionManager extends EventEmitter {
         this.conditionResults = {};
         this.conditionCollection = [];
         this.instantiate = this.openmct.$injector.get('instantiate');
-        this.composition = this.openmct.composition.get(domainObject);
-        this.loaded = this.composition.load();
+        this.loadComposition = this.openmct.composition.get(this.domainObject);
+        this.composition = this.loadComposition.load();
+        this.subscriptionManager = undefined;
+        // this.listenTo(this.composition, 'add', this.addChild, this)
         this.initialize();
     }
 
     load() {
-        return this.loaded;
+        return this.composition;
     }
 
     initialize() {
         this.openmct.objects.get(this.domainObject.identifier)
             .then((obj) => {
                 this.observeForChanges(obj);
+                this.load().then(() => {
+                    this.subscriptionManager = new ConditionSubscriptionManager(this.composition, openmct);
+                });
+
                 if (this.domainObject.configuration.conditionCollection.length) {
                     this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
                         this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                            this.initCondition(conditionConfiguration, index);
+                            this.initCondition(conditionConfiguration, index, this.subscriptionManager);
                         });
                     });
                 } else {
@@ -86,14 +93,14 @@ export default class ConditionManager extends EventEmitter {
         for (let i = 0; i < newConditionCount; i++) {
             let conditionConfigurationId = this.domainObject.configuration.conditionCollection[i];
             this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                this.initCondition(conditionConfiguration, i);
+                this.initCondition(conditionConfiguration, i, this.subscriptionManager);
             });
         }
 
     }
 
-    initCondition(conditionConfiguration, index) {
-        let condition = new Condition(conditionConfiguration, this.openmct);
+    initCondition(conditionConfiguration, index, subscriptionManager) {
+        let condition = new Condition(conditionConfiguration, this.openmct, subscriptionManager);
         condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
             this.conditionCollection.splice(index + 1, 0, condition);
