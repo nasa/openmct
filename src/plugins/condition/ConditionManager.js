@@ -45,38 +45,12 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    // observeForChanges(conditionSetDomainObject) {
-    //     this.stopObservingForChanges = this.openmct.objects.observe(conditionSetDomainObject, 'configuration.conditionCollection', this.handleConditionCollectionUpdated.bind(this));
-    // }
-    //
-    // handleConditionCollectionUpdated(newConditionCollection) {
-    //     // let oldConditionIds = this.conditionSetDomainObject.configuration.conditionCollection.map((conditionConfiguration) => {
-    //     //     return conditionConfiguration.id;
-    //     // });
-    //     // let newConditionIds = newConditionCollection.map((conditionConfiguration) => {
-    //     //     return conditionConfiguration.id;
-    //     // });
-    //
-    //     this.conditionSetDomainObject.configuration.conditionCollection = newConditionCollection;
-    //
-    //     // //check for removed conditions
-    //     // oldConditionIds.forEach((id, index) => {
-    //     //     if (newConditionIds.indexOf(id) < 0) {
-    //     //         this.removeCondition(id);
-    //     //     }
-    //     // });
-    //
-    //     // const conditionSetDOConditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-    //     //should not need to check for removed conditions since this happens from the ConditionManager itself
-    //
-    //     for (let i = 0; i < newConditionCollection.length; i++) {
-    //         const conditionConfiguration = newConditionCollection[i];
-    //         const found = this.findConditionById(conditionConfiguration.id);
-    //         if (!found) {
-    //             this.initCondition(conditionConfiguration, i);
-    //         }
-    //     }
-    // }
+    //this should not happen very frequently
+    update(newConditionCollection) {
+        this.destroy();
+        this.conditionSetDomainObject.configuration.conditionCollection = newConditionCollection;
+        this.initialize();
+    }
 
     updateCondition(conditionConfiguration, index) {
         let condition = this.conditionClassCollection[index];
@@ -240,9 +214,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
-        if (typeof this.stopObservingForChanges === 'function') {
-            this.stopObservingForChanges();
-        }
         this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
