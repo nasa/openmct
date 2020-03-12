@@ -51,10 +51,11 @@ export default class ConditionClass extends EventEmitter {
      * @param conditionConfiguration: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
      */
-    constructor(conditionConfiguration, openmct) {
+    constructor(conditionConfiguration, openmct, subscriptionManager) {
         super();
 
         this.openmct = openmct;
+        this.subscriptionManager = subscriptionManager;
         this.id = this.openmct.objects.makeKeyString(conditionConfiguration.identifier);
         this.criteria = [];
         this.criteriaResults = {};
