@@ -124,8 +124,8 @@ export default {
     },
     methods: {
         observeForChanges() {
-            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
-                this.conditionCollection = newDomainObject.configuration.conditionCollection;
+            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
+                this.conditionCollection = newConditionCollection;
             });
         },
         setMoveIndex(index) {
