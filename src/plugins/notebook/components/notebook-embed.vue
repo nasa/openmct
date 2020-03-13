@@ -229,12 +229,12 @@ export default {
             const self = this;
 
             return {
-                name: this.removeActionString,
+                name: self.removeActionString,
                 cssClass: 'icon-trash',
                 perform: function (embed) {
                     const dialog = self.openmct.overlays.dialog({
                         iconClass: "error",
-                        message: 'This Action will permanently delete this embed. Do you wish to continue?',
+                        message: `This action will permanently ${self.removeActionString.toLowerCase()}. Do you wish to continue?`,
                         buttons: [{
                             label: "No",
                             callback: function () {

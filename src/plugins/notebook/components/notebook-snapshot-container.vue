@@ -32,7 +32,7 @@
 
         </div>
         <div class="l-browse-bar__end">
-            <button class="c-click-icon c-click-icon--major  icon-x"
+            <button class="c-click-icon c-click-icon--major icon-x"
                     @click="close"
             ></button>
         </div>
@@ -106,7 +106,7 @@ export default {
                 perform: function (embed) {
                     const dialog = self.openmct.overlays.dialog({
                         iconClass: "error",
-                        message: 'This action will delete all Notebook Snapshots. Do you want to continue?',
+                        message: 'This action will delete all notebook snapshots. Do you want to continue?',
                         buttons: [
                             {
                                 label: "No",

@@ -220,7 +220,7 @@ function (
 
                 var dialog = self.openmct.overlays.dialog({
                     iconClass: "alert",
-                    message: 'This Action will permanently delete this embed. Do you wish to continue?',
+                    message: 'This action will permanently delete this embed. Do you wish to continue?',
                     buttons: [{
                         label: "No",
                         callback: function () {
