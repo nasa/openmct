@@ -39,7 +39,6 @@ export default function ConditionPlugin() {
                 domainObject.configuration = {
                     conditionCollection: [{
                         isDefault: true,
-                        type: 'condition',
                         id: uuid(),
                         configuration: {
                             name: 'Default',

@@ -79,12 +79,14 @@ export default class ConditionManager extends EventEmitter {
         if (conditionConfiguration) {
             conditionObj = {
                 ...conditionConfiguration,
-                name: `Copy of ${conditionConfiguration.name}`,
-                id: uuid()
+                id: uuid(),
+                configuration: {
+                    ...conditionConfiguration.configuration,
+                    name: `Copy of ${conditionConfiguration.configuration.name}`
+                }
             };
         } else {
             conditionObj = {
-                type: 'condition',
                 id: uuid(),
                 configuration: {
                     name: 'Unnamed Condition',
@@ -109,7 +111,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     cloneCondition(conditionConfiguration, index) {
-        this.createAndSaveCondition(false, index, conditionConfiguration);
+        this.createAndSaveCondition(index, conditionConfiguration);
     }
 
     createAndSaveCondition(index, conditionConfiguration) {

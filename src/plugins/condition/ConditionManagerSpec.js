@@ -29,7 +29,6 @@ describe('ConditionManager', () => {
     let openmct = {};
     let mockCondition = {
         isDefault: true,
-        type: 'condition',
         id: '1234-5678',
         configuration: {
             criteria: []

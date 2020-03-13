@@ -285,8 +285,8 @@ export default {
                 index: this.conditionIndex
             });
         },
-        initCap: function (sentence) {
-            return sentence.charAt(0).toUpperCase() + sentence.slice(1)
+        initCap: function (value) {
+            return value.charAt(0).toUpperCase() + value.slice(1)
         }
     }
 }
