@@ -32,7 +32,7 @@ export default class ConditionSetTelemetryProvider {
         let conditionManager = new ConditionManager(domainObject, this.openmct);
         conditionManager.on('conditionSetResultUpdated', callback);
 
-        return () => { // unsubscribe function
+        return function unsubscribe() {
             conditionManager.off('conditionSetResultUpdated');
             conditionManager.destroy();
             conditionManager = undefined;
