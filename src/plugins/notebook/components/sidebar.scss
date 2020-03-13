@@ -94,7 +94,7 @@
     }
 
     .c-list__item {
-        &:hover {
+        @include hover() {
             [class*="__menu-indicator"] {
                 opacity: 0.7;
                 transition: $transIn;
