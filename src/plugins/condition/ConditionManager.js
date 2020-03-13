@@ -124,7 +124,7 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    removeCondition(conditionConfiguration, index) {
+    removeCondition(index) {
         let condition = this.conditionClassCollection[index];
         condition.destroyCriteria();
         condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));

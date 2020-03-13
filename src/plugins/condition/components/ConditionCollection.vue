@@ -193,8 +193,8 @@ export default {
         updateCondition(data) {
             this.conditionManager.updateCondition(data.condition, data.index);
         },
-        removeCondition(data) {
-            this.conditionManager.removeCondition(data.condition, data.index);
+        removeCondition(index) {
+            this.conditionManager.removeCondition(index);
         },
         reorder(reorderPlan) {
             this.conditionManager.reorderConditions(reorderPlan);
