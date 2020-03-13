@@ -13,9 +13,10 @@
             <div class="c-ne__text"
                  :class="{'c-input-inline' : !readOnly }"
                  :contenteditable="!readOnly"
+                 :style="!entry.text.length ? defaultEntryStyle : ''"
                  @blur="textBlur($event, entry.id)"
                  @focus="textFocus($event, entry.id)"
-            >{{ entry.text }}</div>
+            >{{ entry.text.length ? entry.text : defaultText }}</div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
@@ -106,7 +107,12 @@ export default {
     },
     data() {
         return {
-            currentEntryValue: ''
+            currentEntryValue: '',
+            defaultEntryStyle: {
+                fontStyle: 'italic',
+                color: '#6e6e6e'
+            },
+            defaultText: 'add description'
         }
     },
     watch: {
@@ -240,6 +246,13 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
             this.updateEntry(this.entry);
         },
+        selectTextInsideElement(element) {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        },
         textBlur($event, entryId) {
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
@@ -254,21 +267,21 @@ export default {
             const value = target.textContent.trim();
             if (this.currentEntryValue !== value) {
                 const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                $event.target.innerText = value;
                 entries[entryPos].text = value;
 
                 this.updateEntries(entries);
             }
         },
         textFocus($event) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+            if (this.readOnly || !this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
             }
 
-            if ($event.target) {
-                this.currentEntryValue = $event.target.innerText;
-            } else {
-                $event.target.innerText = '';
+            const target = $event.target
+            this.currentEntryValue = target ? target.innerText : '';
+
+            if (!this.entry.text.length) {
+                this.selectTextInsideElement(target);
             }
         },
         updateEmbed(newEmbed) {
