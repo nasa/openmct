@@ -109,7 +109,7 @@ export default {
         if(this.conditionManager) {
             this.conditionManager.destroy();
         }
-        if (typeof this.stopObservingForChanges === 'function') {
+        if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
     },
@@ -124,8 +124,8 @@ export default {
     },
     methods: {
         observeForChanges() {
-            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
-                this.conditionCollection = newConditionCollection;
+            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
+                this.conditionCollection = newDomainObject.configuration.conditionCollection;
             });
         },
         setMoveIndex(index) {
