@@ -43,16 +43,9 @@ export default class ConditionSetTelemetryProvider {
         let conditionManager = new ConditionManager(domainObject, this.openmct);
         conditionManager.on('conditionSetResultUpdated', callback);
 
-        let stopObservingForChanges = this.openmct.objects.observe(domainObject, '*', (newDomainObject) => {
-            conditionManager.update(newDomainObject);
-        });
-
         return function unsubscribe() {
             conditionManager.off('conditionSetResultUpdated');
             conditionManager.destroy();
-            if (stopObservingForChanges) {
-                stopObservingForChanges();
-            }
         }
     }
 }

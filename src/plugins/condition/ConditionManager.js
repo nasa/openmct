@@ -32,6 +32,10 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.initialize();
+
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
+            this.update(newDomainObject);
+        });
     }
 
     initialize() {
@@ -48,6 +52,9 @@ export default class ConditionManager extends EventEmitter {
     update(newDomainObject) {
         this.destroy();
         this.conditionSetDomainObject = newDomainObject;
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDO) => {
+            this.update(newDO);
+        });
         this.initialize();
     }
 
@@ -218,6 +225,9 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
+        if(this.stopObservingForChanges) {
+            this.stopObservingForChanges();
+        }
         this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
