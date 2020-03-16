@@ -214,14 +214,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     persistConditions() {
-        this.openmct.objects.get(this.conditionSetDomainObject.identifier).then((conditionSetDomainObject) => {
-            let conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-            //we want to keep our copy of the conditionSet domain object in sync
-            this.conditionSetDomainObject = conditionSetDomainObject;
-            //but we want to ensure that the conditionCollection we have is the latest
-            this.conditionSetDomainObject.configuration.conditionCollection = conditionCollection;
-            this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
-        });
+        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
     }
 
     destroy() {
