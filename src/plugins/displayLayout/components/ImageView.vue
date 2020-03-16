@@ -74,7 +74,7 @@ export default {
     computed: {
         style() {
             return {
-                backgroundImage: 'url(' + this.item.url + ')',
+                backgroundImage: this.itemStyle ? 'url(' + this.itemStyle.imageUrl + ')' : 'url(' + this.item.url + ')',
                 border: this.itemStyle ? this.itemStyle.border : '1px solid ' + this.item.stroke
             }
         }

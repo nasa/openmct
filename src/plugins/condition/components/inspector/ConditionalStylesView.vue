@@ -1,13 +1,15 @@
 <template>
 <div>
-    <button
-        v-if="!conditionalStyles.length"
-        id="addConditionSet"
-        class="c-button c-button--major icon-plus labeled"
-        @click="addConditionSet"
-    >
-        <span class="c-cs-button__label">Add Conditional styling</span>
-    </button>
+    <div v-if="!conditionalStyles.length">
+        <button
+            id="addConditionSet"
+            class="c-button c-button--major icon-plus labeled"
+            @click="addConditionSet"
+        >
+            <span class="c-cs-button__label">Add Conditional styling</span>
+        </button>
+        <conditional-style :condition-style="defaultStyle"/>
+    </div>
     <div v-else>
         <button
             id="removeConditionSet"
@@ -53,7 +55,12 @@ export default {
     },
     data() {
         return {
-            conditionalStyles: []
+            conditionalStyles: [],
+            defaultStyle: {
+                conditionId: 'default',
+                conditionName: '',
+                style: Object.assign({}, this.initialStyles)
+            }
         }
     },
     mounted() {

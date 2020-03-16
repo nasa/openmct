@@ -1,23 +1,28 @@
 <template>
 <div>
-    {{conditionStyle}}
     <div v-if="conditionStyle.conditionId"
          class="holder c-c-button-wrapper align-left"
     >
         <div>{{ conditionStyle.conditionName }}</div>
-        <span :style="conditionStyle.style">ABC</span>
-        <span style="margin-left: 20px;display: inline-block; vertical-align: middle;">
+        <div class="c-toolbar">
+            <span :style="conditionStyle.style">ABC</span>
             <toolbar-color-picker v-if="conditionStyle.style.border"
                                   :options="borderColorOption"
                                   @change="updateStyleValue"
             />
-        </span>
-        <span style="display: inline-block; vertical-align: middle;">
             <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
                                   :options="backgroundColorOption"
                                   @change="updateStyleValue"
             />
-        </span>
+            <toolbar-color-picker v-if="conditionStyle.style.color"
+                                  :options="colorOption"
+                                  @change="updateStyleValue"
+            />
+            <toolbar-button v-if="conditionStyle.style.imageUrl"
+                            :options="imageUrlOption"
+                            @change="updateStyleValue"
+            />
+        </div>
     </div>
 </div>
 </template>
@@ -25,8 +30,10 @@
 <script>
 
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
+import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 export default {
     components: {
+        ToolbarButton,
         ToolbarColorPicker
     },
     inject: [
@@ -54,6 +61,39 @@ export default {
                 value: this.conditionStyle.style.backgroundColor,
                 property: 'backgroundColor'
             }
+        },
+        colorOption() {
+            return {
+                icon: 'icon-font',
+                title: 'Set text color',
+                value: this.conditionStyle.style.color,
+                property: 'color'
+            }
+        },
+        imageUrlOption() {
+            return {
+                icon: 'icon-image',
+                title: 'Edit image properties',
+                dialog: {
+                    name: "Image Properties",
+                    sections: [
+                        {
+                            rows: [
+                                {
+                                    key: "url",
+                                    control: "textfield",
+                                    name: "Image URL",
+                                    "cssClass": "l-input-lg",
+                                    required: true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                property: 'imageUrl',
+                formKeys: ['url'],
+                value: {url: this.conditionStyle.style.imageUrl}
+            }
         }
     },
     methods: {
@@ -61,7 +101,11 @@ export default {
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
-            this.conditionStyle.style[item.property] = value;
+            if (value && value.url) {
+                this.conditionStyle.style[item.property] = value.url;
+            } else {
+                this.conditionStyle.style[item.property] = value;
+            }
             this.$emit('persist', this.conditionStyle.conditionId, this.conditionStyle.style);
         }
     }

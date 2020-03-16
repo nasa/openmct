@@ -18,6 +18,10 @@ export const getStyleProp = (key, defaultValue) => {
         color: defaultValue || 'inherit'
     };
         break;
+    case 'url': styleProp = {
+        imageUrl: defaultValue || 'inherit'
+    };
+        break;
     }
 
     return styleProp;
