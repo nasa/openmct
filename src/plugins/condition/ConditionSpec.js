@@ -64,6 +64,7 @@ describe("The condition", function () {
         openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
 
         testConditionDefinition = {
+            id: '123-456',
             configuration: {
                 trigger: TRIGGER.ANY,
                 criteria: [
