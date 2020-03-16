@@ -70,6 +70,9 @@ export default {
             this.currentConditionOutput = currentConditionResult.output;
         },
         provideTelemetry() {
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+            }
             this.stopProvidingTelemetry = this.openmct.telemetry
                 .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });
         }

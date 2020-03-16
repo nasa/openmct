@@ -54,8 +54,8 @@
         </button>
 
         <div class="c-cs__conditions-h">
-            <div v-for="(conditionIdentifier, index) in conditionCollection"
-                 :key="conditionIdentifier.key"
+            <div v-for="(condition, index) in conditionCollection"
+                 :key="condition.id"
                  class="c-condition-h"
             >
                 <div v-if="isEditing"
@@ -63,11 +63,11 @@
                      @drop.prevent="dropCondition"
                      @dragover.prevent
                 ></div>
-                <Condition :condition-identifier="conditionIdentifier"
-                           :current-condition-identifier="currentConditionIdentifier"
+                <Condition :condition="condition"
                            :condition-index="index"
                            :telemetry="telemetryObjs"
                            :is-editing="isEditing"
+                           @updateCondition="updateCondition"
                            @removeCondition="removeCondition"
                            @cloneCondition="cloneCondition"
                            @setMoveIndex="setMoveIndex"
@@ -95,11 +95,9 @@ export default {
     data() {
         return {
             expanded: true,
-            parentKeyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
             conditionCollection: [],
             conditionResults: {},
             conditions: [],
-            currentConditionIdentifier: this.currentConditionIdentifier || {},
             telemetryObjs: [],
             moveIndex: Number,
             isDragging: false
@@ -111,7 +109,7 @@ export default {
         if(this.conditionManager) {
             this.conditionManager.destroy();
         }
-        if (typeof this.stopObservingForChanges === 'function') {
+        if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
     },
@@ -121,13 +119,13 @@ export default {
         this.composition.on('remove', this.removeTelemetryObject);
         this.composition.load();
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.observeForChanges();
+        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
     },
     methods: {
         observeForChanges() {
-            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
-                this.conditionCollection = newDomainObject.configuration.conditionCollection;
+            this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
+                this.conditionCollection = newConditionCollection;
             });
         },
         setMoveIndex(index) {
@@ -189,20 +187,20 @@ export default {
                 this.telemetryObjs.splice(index, 1);
             }
         },
-        addCondition(event, isDefault, index) {
-            this.conditionManager.addCondition(!!isDefault, index);
+        addCondition() {
+            this.conditionManager.addCondition();
         },
-        updateCurrentCondition(identifier) {
-            this.currentConditionIdentifier = identifier;
+        updateCondition(data) {
+            this.conditionManager.updateCondition(data.condition, data.index);
         },
-        removeCondition(identifier) {
-            this.conditionManager.removeCondition(identifier);
+        removeCondition(index) {
+            this.conditionManager.removeCondition(index);
         },
         reorder(reorderPlan) {
             this.conditionManager.reorderConditions(reorderPlan);
         },
-        cloneCondition(condition) {
-            this.conditionManager.cloneCondition(condition.identifier, condition.index);
+        cloneCondition(data) {
+            this.conditionManager.cloneCondition(data.condition, data.index);
         }
     }
 }
