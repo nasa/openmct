@@ -51,11 +51,15 @@ export default class TelemetryCriterion extends EventEmitter {
 
     initialize(obj) {
         this.telemetryObject = obj;
+        this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
         this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
         this.emitEvent('criterionUpdated', this);
     }
 
     handleSubscription(data) {
+        if (data) {
+            data = this.createNormalizedDatum(data);
+        }
         const datum = {
             result: this.computeResult(data)
         };
@@ -67,6 +71,13 @@ export default class TelemetryCriterion extends EventEmitter {
         }
 
         this.emitEvent('criterionResultUpdated', datum);
+    }
+
+    createNormalizedDatum(telemetryDatum) {
+        return Object.values(this.telemetryMetaData).reduce((normalizedDatum, metadatum) => {
+            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+            return normalizedDatum;
+        }, {});
     }
 
     findOperation(operation) {
