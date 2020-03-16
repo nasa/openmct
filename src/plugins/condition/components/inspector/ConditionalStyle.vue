@@ -1,9 +1,9 @@
 <template>
 <div>
-    <div v-if="condition"
+    <div v-if="conditionName"
          class="holder c-c-button-wrapper align-left"
     >
-        <div>{{ condition.configuration.name }}</div>
+        <div>{{ conditionName }}</div>
         <span :style="conditionStyle">ABC</span>
         <toolbar-color-picker v-if="conditionStyle.border"
                               :options="borderColorOption"
@@ -28,8 +28,8 @@ export default {
         'openmct'
     ],
     props: {
-        conditionIdentifier: {
-            type: Object,
+        conditionName: {
+            type: String,
             required: true
         },
         conditionStyle: {

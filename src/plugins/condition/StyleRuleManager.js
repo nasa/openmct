@@ -63,15 +63,13 @@ export default class StyleRuleManager extends EventEmitter {
     updateConditionStylesMap(conditionStyles) {
         let conditionStyleMap = {};
         conditionStyles.forEach((conditionStyle) => {
-            const identifier = this.openmct.objects.makeKeyString(conditionStyle.conditionIdentifier);
-            conditionStyleMap[identifier] = conditionStyle.style;
+            conditionStyleMap[conditionStyle.conditionId] = conditionStyle.style;
         });
         this.conditionalStyleMap = conditionStyleMap;
     }
 
     handleConditionSetResultUpdated(resultData) {
-        let identifier = this.openmct.objects.makeKeyString(resultData.conditionId);
-        let foundStyle = this.conditionalStyleMap[identifier];
+        let foundStyle = this.conditionalStyleMap[resultData.conditionId];
         if (foundStyle) {
             if (foundStyle !== this.currentStyle) {
                 this.currentStyle = foundStyle;

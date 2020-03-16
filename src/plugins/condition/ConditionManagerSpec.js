@@ -27,6 +27,13 @@ describe('ConditionManager', () => {
     let conditionMgr;
     let mockListener;
     let openmct = {};
+    let mockCondition = {
+        isDefault: true,
+        id: '1234-5678',
+        configuration: {
+            criteria: []
+        }
+    };
     let conditionSetDomainObject = {
         identifier: {
             namespace: "",
@@ -35,15 +42,9 @@ describe('ConditionManager', () => {
         type: "conditionSet",
         location: "mine",
         configuration: {
-            conditionCollection: []
-        }
-    };
-    let mockConditionDomainObject = {
-        isDefault: true,
-        type: 'condition',
-        identifier: {
-            namespace: '',
-            key: '1234-5678'
+            conditionCollection: [
+                mockCondition
+            ]
         }
     };
 
@@ -55,7 +56,7 @@ describe('ConditionManager', () => {
 
         let mockDomainObject = {
             useCapability: function () {
-                return mockConditionDomainObject;
+                return mockCondition;
             }
         };
         mockInstantiate.and.callFake(function () {
@@ -78,7 +79,7 @@ describe('ConditionManager', () => {
         openmct.objects.get.and.returnValues(new Promise(function (resolve, reject) {
             resolve(conditionSetDomainObject);
         }), new Promise(function (resolve, reject) {
-            resolve(mockConditionDomainObject);
+            resolve(mockCondition);
         }));
         openmct.objects.makeKeyString.and.returnValue(conditionSetDomainObject.identifier.key);
         openmct.objects.observe.and.returnValue(function () {});
@@ -90,9 +91,9 @@ describe('ConditionManager', () => {
     });
 
     it('creates a conditionCollection with a default condition', function () {
-        expect(conditionMgr.domainObject.configuration.conditionCollection.length).toEqual(1);
-        let defaultConditionIdentifier = conditionMgr.domainObject.configuration.conditionCollection[0];
-        expect(defaultConditionIdentifier).toEqual(mockConditionDomainObject.identifier);
+        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(1);
+        let defaultConditionId = conditionMgr.conditionClassCollection[0].id;
+        expect(defaultConditionId).toEqual(mockCondition.id);
     });
 
 });
