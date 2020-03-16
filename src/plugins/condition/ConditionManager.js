@@ -48,7 +48,6 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    // this should not happen very frequently
     update(newDomainObject) {
         this.destroy();
         this.conditionSetDomainObject = newDomainObject;
