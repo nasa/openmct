@@ -25,71 +25,52 @@ import uuid from "uuid";
 import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {
-    constructor(domainObject, openmct) {
+    constructor(conditionSetDomainObject, openmct) {
         super();
         this.openmct = openmct;
-        this.domainObject = domainObject;
+        this.conditionSetDomainObject = conditionSetDomainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
-        this.instantiate = this.openmct.$injector.get('instantiate');
         this.initialize();
+
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
+            this.update(newDomainObject);
+        });
     }
 
     initialize() {
         this.conditionResults = {};
-        this.observeForChanges(this.domainObject);
-        this.conditionCollection = [];
-        if (this.domainObject.configuration.conditionCollection.length) {
-            this.domainObject.configuration.conditionCollection.forEach((conditionConfigurationId, index) => {
-                this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                    this.initCondition(conditionConfiguration, index)
-                });
+        this.conditionClassCollection = [];
+        if (this.conditionSetDomainObject.configuration.conditionCollection.length) {
+            this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
+                this.initCondition(conditionConfiguration, index);
             });
-        } else {
-            this.addCondition(true);
         }
     }
 
-    observeForChanges(domainObject) {
-        //TODO: Observe only the conditionCollection property instead of the whole domainObject
-        this.stopObservingForChanges = this.openmct.objects.observe(domainObject, '*', this.handleConditionCollectionUpdated.bind(this));
+    update(newDomainObject) {
+        this.destroy();
+        this.conditionSetDomainObject = newDomainObject;
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDO) => {
+            this.update(newDO);
+        });
+        this.initialize();
     }
 
-    handleConditionCollectionUpdated(newDomainObject) {
-        let oldConditionIdentifiers = this.domainObject.configuration.conditionCollection.map((conditionConfigurationId) => {
-            return this.openmct.objects.makeKeyString(conditionConfigurationId);
-        });
-        let newConditionIdentifiers = newDomainObject.configuration.conditionCollection.map((conditionConfigurationId) => {
-            return this.openmct.objects.makeKeyString(conditionConfigurationId);
-        });
-
-        this.domainObject = newDomainObject;
-
-        //check for removed conditions
-        oldConditionIdentifiers.forEach((identifier, index) => {
-            if (newConditionIdentifiers.indexOf(identifier) < 0) {
-                this.removeCondition(identifier);
-            }
-        });
-
-        let newConditionCount = this.domainObject.configuration.conditionCollection.length - this.conditionCollection.length;
-
-        for (let i = 0; i < newConditionCount; i++) {
-            let conditionConfigurationId = this.domainObject.configuration.conditionCollection[i];
-            this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-                this.initCondition(conditionConfiguration, i);
-            });
-        }
-
+    updateCondition(conditionConfiguration, index) {
+        let condition = this.conditionClassCollection[index];
+        condition.update(conditionConfiguration);
+        this.conditionSetDomainObject.configuration.conditionCollection[index] = conditionConfiguration;
+        this.persistConditions();
     }
 
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct);
         condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
-            this.conditionCollection.splice(index + 1, 0, condition);
+            this.conditionClassCollection.splice(index + 1, 0, condition);
         } else {
-            this.conditionCollection.unshift(condition);
+            this.conditionClassCollection.unshift(condition);
         }
         //There are no criteria for a default condition and hence no subscriptions.
         //Hence the conditionResult must be manually triggered for it.
@@ -98,30 +79,25 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    createConditionDomainObject(isDefault, conditionConfiguration) {
+    createCondition(conditionConfiguration) {
         let conditionObj;
         if (conditionConfiguration) {
             conditionObj = {
                 ...conditionConfiguration,
-                name: `Copy of ${conditionConfiguration.name}`,
-                identifier: {
-                    ...this.domainObject.identifier,
-                    key: uuid()
+                id: uuid(),
+                configuration: {
+                    ...conditionConfiguration.configuration,
+                    name: `Copy of ${conditionConfiguration.configuration.name}`
                 }
             };
         } else {
             conditionObj = {
-                isDefault: isDefault,
-                type: 'condition',
-                identifier: {
-                    ...this.domainObject.identifier,
-                    key: uuid()
-                },
+                id: uuid(),
                 configuration: {
-                    name: isDefault ? 'Default' : 'Unnamed Condition',
+                    name: 'Unnamed Condition',
                     output: 'false',
                     trigger: 'all',
-                    criteria: isDefault ? [] : [{
+                    criteria: [{
                         telemetry: '',
                         operation: '',
                         input: [],
@@ -131,58 +107,48 @@ export default class ConditionManager extends EventEmitter {
                 summary: ''
             };
         }
-        let conditionDomainObjectKeyString = this.openmct.objects.makeKeyString(conditionObj.identifier);
-        let newDomainObject = this.instantiate(conditionObj, conditionDomainObjectKeyString);
 
-        return newDomainObject.useCapability('adapter');
+        return conditionObj;
     }
 
-    addCondition(isDefault, index) {
-        this.createAndSaveConditionDomainObject(!!isDefault, index);
+    addCondition() {
+        this.createAndSaveCondition();
     }
 
-    cloneCondition(conditionConfigurationId, index) {
-        this.openmct.objects.get(conditionConfigurationId).then((conditionConfiguration) => {
-            this.createAndSaveConditionDomainObject(false, index, conditionConfiguration);
-        });
+    cloneCondition(conditionConfiguration, index) {
+        this.createAndSaveCondition(index, conditionConfiguration);
     }
 
-    createAndSaveConditionDomainObject(isDefault, index, conditionConfiguration) {
-        let newConditionDomainObject = this.createConditionDomainObject(isDefault, conditionConfiguration);
-        //persist the condition domain object so that we can do an openmct.objects.get on it and only persist the identifier in the conditionCollection of conditionSet
-        this.openmct.objects.mutate(newConditionDomainObject, 'created', new Date());
+    createAndSaveCondition(index, conditionConfiguration) {
+        let newCondition = this.createCondition(conditionConfiguration);
         if (index !== undefined) {
-            this.domainObject.configuration.conditionCollection.splice(index + 1, 0, newConditionDomainObject.identifier);
+            this.conditionSetDomainObject.configuration.conditionCollection.splice(index + 1, 0, newCondition);
         } else {
-            this.domainObject.configuration.conditionCollection.unshift(newConditionDomainObject.identifier);
+            this.conditionSetDomainObject.configuration.conditionCollection.unshift(newCondition);
         }
-        this.persist();
+        this.initCondition(newCondition, index);
+        this.persistConditions();
     }
 
-    removeCondition(identifier) {
-        let found = this.findConditionById(identifier);
-        if (found) {
-            let index = found.index;
-            let condition = this.conditionCollection[index];
-            let conditionIdAsString = condition.id;
-            condition.destroyCriteria();
-            condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
-            this.conditionCollection.splice(index, 1);
-            this.domainObject.configuration.conditionCollection.splice(index, 1);
-            if (this.conditionResults[conditionIdAsString] !== undefined) {
-                delete this.conditionResults[conditionIdAsString];
-            }
-            this.persist();
-            this.handleConditionResult();
+    removeCondition(index) {
+        let condition = this.conditionClassCollection[index];
+        condition.destroyCriteria();
+        condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+        this.conditionClassCollection.splice(index, 1);
+        this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
+        if (this.conditionResults[condition.id] !== undefined) {
+            delete this.conditionResults[condition.id];
         }
+        this.persistConditions();
+        this.handleConditionResult();
     }
 
-    findConditionById(identifier) {
+    findConditionById(id) {
         let found;
-        for (let i=0, ii=this.conditionCollection.length; i < ii; i++) {
-            if (this.conditionCollection[i].id === this.openmct.objects.makeKeyString(identifier)) {
+        for (let i=0, ii=this.conditionClassCollection.length; i < ii; i++) {
+            if (this.conditionClassCollection[i].id === id) {
                 found = {
-                    item: this.conditionCollection[i],
+                    item: this.conditionClassCollection[i],
                     index: i
                 };
                 break;
@@ -192,51 +158,48 @@ export default class ConditionManager extends EventEmitter {
         return found;
     }
 
-    //this.$set(this.conditionCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
+    //this.$set(this.conditionClassCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
     reorderConditions(reorderPlan) {
-        let oldConditions = Array.from(this.domainObject.configuration.conditionCollection);
+        let oldConditions = Array.from(this.conditionSetDomainObject.configuration.conditionCollection);
         let newCollection = [];
         reorderPlan.forEach((reorderEvent) => {
             let item = oldConditions[reorderEvent.oldIndex];
             newCollection.push(item);
-            this.domainObject.configuration.conditionCollection = newCollection;
+            this.conditionSetDomainObject.configuration.conditionCollection = newCollection;
         });
-        this.persist();
+        this.persistConditions();
     }
 
     handleConditionResult(resultObj) {
-        let conditionCollection = this.domainObject.configuration.conditionCollection;
-        let currentConditionIdentifier = conditionCollection[conditionCollection.length-1];
+        const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+        let currentCondition = conditionCollection[conditionCollection.length-1];
 
         if (resultObj) {
-            let idAsString = this.openmct.objects.makeKeyString(resultObj.id);
-            if (this.findConditionById(idAsString)) {
-                this.conditionResults[idAsString] = resultObj.data.result;
+            const id = resultObj.id;
+            if (this.findConditionById(id)) {
+                this.conditionResults[id] = resultObj.data.result;
             }
             this.updateTimestamp(resultObj.data);
         }
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            let conditionIdAsString = this.openmct.objects.makeKeyString(conditionCollection[i]);
-            if (this.conditionResults[conditionIdAsString]) {
+            if (this.conditionResults[conditionCollection[i].id]) {
                 //first condition to be true wins
-                currentConditionIdentifier = conditionCollection[i];
+                currentCondition = conditionCollection[i];
                 break;
             }
         }
 
-        this.openmct.objects.get(currentConditionIdentifier).then((obj) => {
-            this.emit('conditionSetResultUpdated',
-                Object.assign(
-                    {
-                        output: obj.configuration.output,
-                        id: this.domainObject.identifier,
-                        conditionId: currentConditionIdentifier
-                    },
-                    this.latestTimestamp
-                )
+        this.emit('conditionSetResultUpdated',
+            Object.assign(
+                {
+                    output: currentCondition.configuration.output,
+                    id: this.conditionSetDomainObject.identifier,
+                    conditionId: currentCondition.id
+                },
+                this.latestTimestamp
             )
-        });
+        )
     }
 
     updateTimestamp(timestamp) {
@@ -249,15 +212,15 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
-    persist() {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.conditionCollection', this.domainObject.configuration.conditionCollection);
+    persistConditions() {
+        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
     }
 
     destroy() {
-        if (typeof this.stopObservingForChanges === 'function') {
+        if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
-        this.conditionCollection.forEach((condition) => {
+        this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
         })

@@ -52,7 +52,7 @@
                 <input v-model="criterion.input[inputIndex]"
                        class="c-cdef__control__input"
                        type="text"
-                       @blur="persist"
+                       @change="persist"
                 >
                 <span v-if="inputIndex < inputCount-1">and</span>
             </span>
