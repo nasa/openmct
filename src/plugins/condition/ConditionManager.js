@@ -235,10 +235,6 @@ export default class ConditionManager extends EventEmitter {
             const ladConditionResults = this.conditionClassCollection
                 .filter(condition => !condition.isDefault)
                 .map(condition => condition.requestLADConditionResult());
-            // // do not request LAD for default collection, which is always last
-            // for (let i = 0; i < this.conditionClassCollection.length - 1; i++) {
-            //     ladConditionResults.push(this.conditionClassCollection[i].requestLADConditionResult());
-            // }
 
             return Promise.all(ladConditionResults)
                 .then((results) => {
