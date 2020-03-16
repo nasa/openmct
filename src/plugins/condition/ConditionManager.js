@@ -32,6 +32,10 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.initialize();
+
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
+            this.update(newDomainObject);
+        });
     }
 
     initialize() {
@@ -44,10 +48,12 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    // this should not happen very frequently
     update(newDomainObject) {
         this.destroy();
         this.conditionSetDomainObject = newDomainObject;
+        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDO) => {
+            this.update(newDO);
+        });
         this.initialize();
     }
 
@@ -207,17 +213,13 @@ export default class ConditionManager extends EventEmitter {
     }
 
     persistConditions() {
-        this.openmct.objects.get(this.conditionSetDomainObject.identifier).then((conditionSetDomainObject) => {
-            let conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-            //we want to keep our copy of the conditionSet domain object in sync
-            this.conditionSetDomainObject = conditionSetDomainObject;
-            //but we want to ensure that the conditionCollection we have is the latest
-            this.conditionSetDomainObject.configuration.conditionCollection = conditionCollection;
-            this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
-        });
+        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
     }
 
     destroy() {
+        if(this.stopObservingForChanges) {
+            this.stopObservingForChanges();
+        }
         this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
