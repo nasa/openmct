@@ -18,10 +18,9 @@
         </button>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionIdentifier.key"
+                :key="conditionStyle.conditionId"
             >
-                <conditional-style :condition-identifier="conditionStyle.conditionIdentifier"
-                                   :condition-style="conditionStyle.style"
+                <conditional-style :condition-style="conditionStyle"
                                    @persist="updateConditionalStyle"
                 />
             </li>
@@ -138,9 +137,10 @@ export default {
 
         },
         initializeConditionalStyles() {
-            this.conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
+            this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.conditionalStyles.push({
-                    conditionIdentifier: identifier,
+                    conditionId: conditionConfiguration.id,
+                    conditionName: conditionConfiguration.configuration.name,
                     style: Object.assign({}, this.initialStyles)
                 });
             });
@@ -163,7 +163,7 @@ export default {
         },
         findStyleByConditionId(id) {
             for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
-                if (this.openmct.objects.areIdsEqual(this.conditionalStyles[i].conditionIdentifier,id)) {
+                if (this.conditionalStyles[i].conditionId === id) {
                     return {
                         index: i,
                         item: this.conditionalStyles[i]
@@ -171,8 +171,8 @@ export default {
                 }
             }
         },
-        updateConditionalStyle(conditionIdentifier, style) {
-            let found = this.findStyleByConditionId(conditionIdentifier);
+        updateConditionalStyle(conditionId, style) {
+            let found = this.findStyleByConditionId(conditionId);
             if (found) {
                 this.conditionalStyles[found.index].style = style;
                 let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};

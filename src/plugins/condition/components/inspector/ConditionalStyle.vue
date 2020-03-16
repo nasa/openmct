@@ -1,18 +1,19 @@
 <template>
 <div>
-    <div v-if="condition"
+    {{conditionStyle}}
+    <div v-if="conditionStyle.conditionId"
          class="holder c-c-button-wrapper align-left"
     >
-        <div>{{ condition.configuration.name }}</div>
-        <span :style="conditionStyle">ABC</span>
+        <div>{{ conditionStyle.conditionName }}</div>
+        <span :style="conditionStyle.style">ABC</span>
         <span style="margin-left: 20px;display: inline-block; vertical-align: middle;">
-            <toolbar-color-picker v-if="conditionStyle.border"
+            <toolbar-color-picker v-if="conditionStyle.style.border"
                                   :options="borderColorOption"
                                   @change="updateStyleValue"
             />
         </span>
         <span style="display: inline-block; vertical-align: middle;">
-            <toolbar-color-picker v-if="conditionStyle.backgroundColor"
+            <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
                                   :options="backgroundColorOption"
                                   @change="updateStyleValue"
             />
@@ -32,18 +33,9 @@ export default {
         'openmct'
     ],
     props: {
-        conditionIdentifier: {
-            type: Object,
-            required: true
-        },
         conditionStyle: {
             type: Object,
             required: true
-        }
-    },
-    data() {
-        return {
-            condition: null
         }
     },
     computed: {
@@ -51,7 +43,7 @@ export default {
             return {
                 icon: 'icon-line-horz',
                 title: 'Set border color',
-                value: this.conditionStyle.border.replace('1px solid ', ''),
+                value: this.conditionStyle.style.border.replace('1px solid ', ''),
                 property: 'border'
             }
         },
@@ -59,25 +51,18 @@ export default {
             return {
                 icon: 'icon-paint-bucket',
                 title: 'Set background color',
-                value: this.conditionStyle.backgroundColor,
+                value: this.conditionStyle.style.backgroundColor,
                 property: 'backgroundColor'
             }
         }
-    },
-    destroyed() {
-    },
-    mounted() {
-        this.openmct.objects.get(this.conditionIdentifier).then((conditionDomainObject) => {
-            this.condition = conditionDomainObject;
-        });
     },
     methods: {
         updateStyleValue(value, item) {
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
-            this.conditionStyle[item.property] = value;
-            this.$emit('persist', this.conditionIdentifier, this.conditionStyle)
+            this.conditionStyle.style[item.property] = value;
+            this.$emit('persist', this.conditionStyle.conditionId, this.conditionStyle.style);
         }
     }
 }

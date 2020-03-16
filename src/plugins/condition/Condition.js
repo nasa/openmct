@@ -28,10 +28,7 @@ import {computeCondition} from "./utils/evaluator";
 
 /*
 * conditionConfiguration = {
-*   identifier: {
-*       key: '',
-*       namespace: ''
-*   },
+*   id: uuid,
 *   trigger: 'any'/'all',
 *   criteria: [
 *       {
@@ -48,14 +45,14 @@ export default class ConditionClass extends EventEmitter {
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
-     * @param conditionConfiguration: {identifier: {domainObject.identifier},trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+     * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
      */
     constructor(conditionConfiguration, openmct) {
         super();
 
         this.openmct = openmct;
-        this.id = this.openmct.objects.makeKeyString(conditionConfiguration.identifier);
+        this.id = conditionConfiguration.id;
         this.criteria = [];
         this.criteriaResults = {};
         this.result = undefined;
@@ -63,16 +60,11 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.openmct.objects.get(this.id).then(obj => this.observeForChanges(obj));
     }
 
-    observeForChanges(conditionDO) {
-        this.stopObservingForChanges = this.openmct.objects.observe(conditionDO, '*', this.update.bind(this));
-    }
-
-    update(newDomainObject) {
-        this.updateTrigger(newDomainObject.configuration.trigger);
-        this.updateCriteria(newDomainObject.configuration.criteria);
+    update(conditionConfiguration) {
+        this.updateTrigger(conditionConfiguration.configuration.trigger);
+        this.updateCriteria(conditionConfiguration.configuration.criteria);
     }
 
     updateTrigger(trigger) {
