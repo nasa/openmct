@@ -1,10 +1,12 @@
 <template>
 <div>
     <div v-if="!conditionalStyles.length"
-         class="holder c-c-button-wrapper align-left">
+         class="holder c-c-button-wrapper align-left"
+    >
         <button
             class="c-c-button c-c-button--minor add-criteria-button"
-            @click="addConditionSet">
+            @click="addConditionSet"
+        >
             <span class="c-c-button__label">Use conditional styling</span>
         </button>
     </div>
@@ -12,15 +14,18 @@
         <div class="holder c-c-button-wrapper align-left">
             <button
                 class="c-c-button c-c-button--minor add-criteria-button"
-                @click="removeConditionSet">
+                @click="removeConditionSet"
+            >
                 <span class="c-c-button__label">Remove conditional styling</span>
             </button>
         </div>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionIdentifier.key">
-                <conditional-style :condition-identifier="conditionStyle.conditionIdentifier"
-                                   :condition-style="conditionStyle.style"/>
+                :key="conditionStyle.conditionId"
+            >
+                <conditional-style :condition-name="conditionStyle.conditionName"
+                                   :condition-style="conditionStyle.style"
+                />
             </li>
         </ul>
     </div>
@@ -72,9 +77,10 @@ export default {
         initializeConditionalStyles() {
             const backgroundColors = [{backgroundColor: 'red'},{backgroundColor: 'orange'}, {backgroundColor: 'blue'}];
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
-                conditionSetDomainObject.configuration.conditionCollection.forEach((identifier, index) => {
+                conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                     this.conditionalStyles.push({
-                        conditionIdentifier: identifier,
+                        conditionId: conditionConfiguration.id,
+                        conditionName: conditionConfiguration.name,
                         style: backgroundColors[index]
                     });
                 });
@@ -87,7 +93,7 @@ export default {
         },
         findStyleByConditionId(id) {
             for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
-                if (this.openmct.objects.makeKeyString(this.conditionalStyles[i].conditionIdentifier) === this.openmct.objects.makeKeyString(id)) {
+                if (this.conditionalStyles[i].conditionId === id) {
                     return {
                         index: i,
                         item: this.conditionalStyles[i]
@@ -95,8 +101,8 @@ export default {
                 }
             }
         },
-        updateConditionalStyle(conditionIdentifier, style) {
-            let found = this.findStyleByConditionId(conditionIdentifier);
+        updateConditionalStyle(conditionId, style) {
+            let found = this.findStyleByConditionId(conditionId);
             if (found) {
                 this.conditionalStyles[found.index].style = style;
             }
