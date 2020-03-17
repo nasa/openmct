@@ -165,6 +165,8 @@ export default {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.formatSidebar();
         window.addEventListener('orientationchange', this.formatSidebar);
+
+        this.navigateToSectionPage();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -325,6 +327,24 @@ export default {
         mutateObject(key, value) {
             this.openmct.objects.mutate(this.internalDomainObject, key, value);
         },
+        navigateToSectionPage() {
+            const { pageId, sectionId } = this.openmct.router.getParams();
+            if(!pageId || !sectionId) {
+                return;
+            }
+
+            const sections = this.sections.map(s => {
+                s.isSelected = false;
+                if (s.id === sectionId) {
+                    s.isSelected = true;
+                    s.pages.forEach(p => p.isSelected = (p.id === pageId));
+                }
+
+                return s;
+            });
+
+            this.updateSection({ sections });
+        },
         newEntry(embed = null) {
             const selectedSection = this.getSelectedSection();
             const selectedPage = this.getSelectedPage();
@@ -377,8 +397,33 @@ export default {
 
             this.updateSection({ sections });
         },
+        updateParams(sections) {
+            const selectedSection = sections.find(s => s.isSelected);
+            if (!selectedSection) {
+                return;
+            }
+
+            const selectedPage = selectedSection.pages.find(p => p.isSelected);
+            if (!selectedPage) {
+                return;
+            }
+
+            const sectionId = selectedSection.id;
+            const pageId = selectedPage.id;
+
+            if (!sectionId || !pageId) {
+                return;
+            }
+
+            this.openmct.router.updateParams({
+                sectionId,
+                pageId
+            });
+        },
         updateSection({ sections, id = null }) {
             this.mutateObject('configuration.sections', sections);
+
+            this.updateParams(sections);
         }
     }
 }
