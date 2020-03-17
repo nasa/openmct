@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { searchObjectInTree } from '../../ui/utils/tree';
+
 export default class RemoveAction {
     constructor(openmct) {
         this.name = 'Remove';
@@ -90,6 +92,15 @@ export default class RemoveAction {
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
+
+        setTimeout(async () => {
+            const foundInTree = await searchObjectInTree(this.openmct, child.identifier);
+            if (foundInTree) {
+                return;
+            }
+
+            this.openmct.objects.mutate(child, 'isRemovedFromTree', !foundInTree);
+        }, 0);
     }
 
     appliesTo(objectPath) {
