@@ -23,14 +23,13 @@
 <template>
 <div v-if="isEditing"
      class="c-condition c-condition--edit js-condition-drag-wrapper"
-     :class="{ 'c-condition--current-match': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Edit view -->
     <div class="c-condition__header">
         <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
               title="Drag to reorder conditions"
-              :class="[{ 'is-enabled': !domainObject.isDefault }, { 'hide-nice': domainObject.isDefault }]"
-              :draggable="!domainObject.isDefault"
+              :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
+              :draggable="!condition.isDefault"
               @dragstart="dragStart"
               @dragstop="dragStop"
               @dragover.stop
@@ -41,20 +40,20 @@
               @click="expanded = !expanded"
         ></span>
 
-        <span class="c-condition__name">{{ domainObject.configuration.name }}</span>
+        <span class="c-condition__name">{{ condition.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">
             {{ getSummary }}
         </span>
 
         <div class="c-condition__buttons">
-            <button v-if="!domainObject.isDefault"
+            <button v-if="!condition.isDefault"
                     class="c-click-icon c-condition__duplicate-button icon-duplicate"
                     title="Duplicate this condition"
                     @click="cloneCondition"
             ></button>
 
-            <button v-if="!domainObject.isDefault"
+            <button v-if="!condition.isDefault"
                     class="c-click-icon c-condition__delete-button icon-trash"
                     title="Delete this condition"
                     @click="removeCondition"
@@ -67,7 +66,7 @@
         <span class="c-cdef__separator c-row-separator"></span>
         <span class="c-cdef__label">Condition Name</span>
         <span class="c-cdef__controls">
-            <input v-model="domainObject.configuration.name"
+            <input v-model="condition.configuration.name"
                    class="t-condition-input__name"
                    type="text"
                    @blur="persist"
@@ -88,20 +87,20 @@
                 </option>
             </select>
             <input v-if="selectedOutputSelection === outputOptions[2]"
-                   v-model="domainObject.configuration.output"
+                   v-model="condition.configuration.output"
                    class="t-condition-name-input"
                    type="text"
                    @blur="persist"
             >
         </span>
 
-        <div v-if="!domainObject.isDefault"
+        <div v-if="!condition.isDefault"
              class="c-cdef__match-and-criteria"
         >
             <span class="c-cdef__separator c-row-separator"></span>
             <span class="c-cdef__label">Match</span>
             <span class="c-cdef__controls">
-                <select v-model="domainObject.configuration.trigger"
+                <select v-model="condition.configuration.trigger"
                         @change="persist"
                 >
                     <option value="all">when all criteria are met</option>
@@ -110,15 +109,15 @@
             </span>
 
             <template v-if="telemetry.length">
-                <div v-for="(criterion, index) in domainObject.configuration.criteria"
+                <div v-for="(criterion, index) in condition.configuration.criteria"
                      :key="index"
                      class="c-cdef__criteria"
                 >
                     <Criterion :telemetry="telemetry"
                                :criterion="criterion"
                                :index="index"
-                               :trigger="domainObject.configuration.trigger"
-                               :is-default="domainObject.configuration.criteria.length === 1"
+                               :trigger="condition.configuration.trigger"
+                               :is-default="condition.configuration.criteria.length === 1"
                                @persist="persist"
                     />
                     <div class="c-cdef__criteria__buttons">
@@ -126,7 +125,7 @@
                                 title="Duplicate this criteria"
                                 @click="cloneCriterion(index)"
                         ></button>
-                        <button v-if="!(domainObject.configuration.criteria.length === 1)"
+                        <button v-if="!(condition.configuration.criteria.length === 1)"
                                 class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
                                 title="Delete this criteria"
                                 @click="removeCriterion(index)"
@@ -150,15 +149,14 @@
 </div>
 <div v-else
      class="c-condition c-condition--browse"
-     :class="{ 'c-condition--current': currentConditionIdentifier && (currentConditionIdentifier.key === conditionIdentifier.key) }"
 >
     <!-- Browse view -->
     <div class="c-condition__header">
         <span class="c-condition__name">
-            {{ domainObject.configuration.name }}
+            {{ condition.configuration.name }}
         </span>
         <span class="c-condition__output">
-            Output: {{ domainObject.configuration.output }}
+            Output: {{ condition.configuration.output }}
         </span>
     </div>
     <div class="c-condition__summary">
@@ -177,11 +175,7 @@ export default {
         Criterion
     },
     props: {
-        conditionIdentifier: {
-            type: Object,
-            required: true
-        },
-        currentConditionIdentifier: {
+        condition: {
             type: Object,
             required: true
         },
@@ -201,9 +195,6 @@ export default {
     },
     data() {
         return {
-            domainObject: {
-                configuration: {}
-            },
             currentCriteria: this.currentCriteria,
             expanded: true,
             trigger: 'all',
@@ -214,60 +205,44 @@ export default {
     },
     computed: {
         getSummary: function () {
-            let config = this.domainObject.configuration;
-
-            if (!config.criteria.length) {
-                return 'When all else fails';
-            } else {
-                let rule = '';
-                let summary = 'No criteria specified';
-                if (config.criteria.length === 1 && config.criteria[0].telemetry) {
-                    if (config.criteria[0].operation) {
-                        if (config.criteria[0].input.length ||
-                            (config.criteria[0].operation === 'isDefined' ||
-                             config.criteria[0].operation === 'isUndefined')) {
-                            rule += `When ${config.criteria[0].telemetry.name} value ${this.findDescription(config.criteria[0].operation, config.criteria[0].input)}`
-                            summary = rule;
-                        }
-                    }
-                } else {
-                    let conjunction = '';
-                    summary = config.criteria.length === 1 ? 'No criteria specified' : 'When ';
-                    config.criteria.forEach((criterion, index) => {
-                        rule = '';
-                        if (criterion.operation) {
-                            if (criterion.input.length ||
-                                (criterion.operation === 'isDefined' ||
-                                 criterion.operation === 'isUndefined')) {
-                                rule += `${criterion.telemetry.name} value ${this.findDescription(criterion.operation, criterion.input)}`
-                                if (index === config.criteria.length - 1) {
-                                    conjunction = config.trigger === 'all' ? 'and' : 'or';
-                                } else {
-                                    conjunction = '';
-                                }
-                                summary += ` ${conjunction} ${rule}`
-                            }
-
-                        }
-                    });
-                }
-
-                return summary;
+            if (!this.condition.configuration.criteria.length) {
+                return 'When all else fails'
             }
+            let config = this.condition.configuration;
+            let summary = '';
+            if (config.criteria.length === 1 &&
+               config.criteria[0].telemetry &&
+               config.criteria[0].operation) {
+                summary = this.getRules(config.criteria[0]);
+            } else {
+                config.criteria.forEach((criterion, index) => {
+                    if (criterion.telemetry &&
+                       criterion.operation) {
+                        summary += this.getRules(criterion, index);
+                    }
+                });
+            }
+            return summary;
         }
     },
     destroyed() {
         this.destroy();
     },
     mounted() {
-        this.openmct.objects.get(this.conditionIdentifier).then((domainObject => {
-            this.domainObject = domainObject;
-            this.initialize();
-        }));
+        this.setOutputSelection();
     },
     methods: {
-        initialize() {
-            this.setOutputSelection();
+        getRules(criterion, index) {
+            let adverb = criterion.input.length === 1 && index === 0 ? 'When ' : '';
+            let conjunction = (this.condition.configuration.criteria.length - 1 === index) ?
+                (this.condition.configuration.trigger === 'all' ? ' and ' : ' or ') : '';
+            if (criterion.operation) {
+                if (criterion.input.length ||
+                    (criterion.operation === 'isDefined' ||
+                     criterion.operation === 'isUndefined')) {
+                    return `${adverb}${conjunction}${criterion.telemetry.name} ${criterion.metadata} value ${this.findDescription(criterion.operation, criterion.input)}`;
+                }
+            }
         },
         findDescription(operation, values) {
             for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
@@ -278,7 +253,7 @@ export default {
             return null;
         },
         setOutputSelection() {
-            let conditionOutput = this.domainObject.configuration.output;
+            let conditionOutput = this.condition.configuration.output;
             if (conditionOutput) {
                 if (conditionOutput !== 'false' && conditionOutput !== 'true') {
                     this.selectedOutputSelection = 'string';
@@ -289,9 +264,9 @@ export default {
         },
         setOutputValue() {
             if (this.selectedOutputSelection === 'string') {
-                this.domainObject.configuration.output = '';
+                this.condition.configuration.output = '';
             } else {
-                this.domainObject.configuration.output = this.selectedOutputSelection;
+                this.condition.configuration.output = this.selectedOutputSelection;
             }
             this.persist();
         },
@@ -302,7 +277,7 @@ export default {
                 input: '',
                 metadata: ''
             };
-            this.domainObject.configuration.criteria.push(criteriaObject);
+            this.condition.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
@@ -316,32 +291,35 @@ export default {
         destroy() {
         },
         removeCondition(ev) {
-            this.$emit('removeCondition', this.conditionIdentifier);
+            this.$emit('removeCondition', this.conditionIndex);
         },
         cloneCondition(ev) {
             this.$emit('cloneCondition', {
-                identifier: this.conditionIdentifier,
-                index: Number(ev.target.closest('.widget-condition').getAttribute('data-condition-index'))
+                condition: this.condition,
+                index: this.conditionIndex
             });
         },
         removeCriterion(index) {
-            this.domainObject.configuration.criteria.splice(index, 1);
+            this.condition.configuration.criteria.splice(index, 1);
             this.persist()
         },
         cloneCriterion(index) {
-            const clonedCriterion = {...this.domainObject.configuration.criteria[index]};
-            this.domainObject.configuration.criteria.splice(index + 1, 0, clonedCriterion);
+            const clonedCriterion = {...this.condition.configuration.criteria[index]};
+            this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
         },
         hasTelemetry(identifier) {
-            // TODO: check parent domainObject.composition.hasTelemetry
+            // TODO: check parent condition.composition.hasTelemetry
             return this.currentCriteria && identifier;
         },
         persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+            this.$emit('updateCondition', {
+                condition: this.condition,
+                index: this.conditionIndex
+            });
         },
-        initCap: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1)
+        initCap: function (str) {
+            return str.charAt(0).toUpperCase() + str.slice(1)
         }
     }
 }

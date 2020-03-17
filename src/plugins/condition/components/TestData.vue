@@ -48,6 +48,7 @@
         </label>
         <div class="c-cs-test-h">
             <div v-for="n in 5"
+                 :key="n"
                  class="c-test-datum"
             >
                 <span class="c-test-datum__label">Set</span>

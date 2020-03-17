@@ -1,9 +1,9 @@
 <template>
 <div>
-    <div v-if="condition"
+    <div v-if="conditionName"
          class="holder c-c-button-wrapper align-left"
     >
-        <div>{{ condition.configuration.name }}</div>
+        <div>{{ conditionName }}</div>
     </div>
 </div>
 </template>
@@ -17,22 +17,12 @@ export default {
         'openmct'
     ],
     props: {
-        conditionIdentifier: {
-            type: Object,
+        conditionName: {
+            type: String,
             required: true
         }
     },
-    data() {
-        return {
-            condition: null
-        }
-    },
     destroyed() {
-    },
-    mounted() {
-        this.openmct.objects.get(this.conditionIdentifier).then((conditionDomainObject) => {
-            this.condition = conditionDomainObject;
-        });
     }
 }
 </script>

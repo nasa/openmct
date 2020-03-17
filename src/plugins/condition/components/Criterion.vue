@@ -112,6 +112,7 @@ export default {
                     } else {
                         type = 'string'
                     }
+                    break;
                 }
             }
             return type;
