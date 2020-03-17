@@ -95,7 +95,7 @@
 import Snapshot from '@/plugins/notebook/snapshot';
 import ViewSwitcher from './ViewSwitcher.vue';
 import MenuSwitcher from './menu-switcher.vue';
-import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage';
+import { clearDefaultNotebook, getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '@/plugins/notebook/notebook-constants';
 
 const PLACEHOLDER_OBJECT = {};
@@ -197,24 +197,29 @@ export default {
             }
 
             const notebookTypes = [];
+            let defaultPath = '';
             const defaultNotebook = getDefaultNotebook();
 
-            let defaultPath = '';
             if (defaultNotebook) {
                 const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier).then(d => d);
-                defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`
+
+                if (domainObject.isRemovedFromTree) {
+                    clearDefaultNotebook();
+                } else {
+                    defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                }
+            }
+
+            if (defaultPath.length !== 0) {
+                notebookTypes.push({
+                    cssClass: 'icon-notebook',
+                    name: `Save to Notebook ${defaultPath}`,
+                    type: NOTEBOOK_DEFAULT
+                });
             }
 
             notebookTypes.push({
                 cssClass: 'icon-notebook',
-                disable: !!defaultNotebook,
-                name: `Save to Notebook ${defaultPath}`,
-                type: NOTEBOOK_DEFAULT
-            });
-
-            notebookTypes.push({
-                cssClass: 'icon-notebook',
-                disable: false,
                 name: 'Save to Notebook Snapshots',
                 type: NOTEBOOK_SNAPSHOT
             });

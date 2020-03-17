@@ -21,6 +21,6 @@ export function setDefaultNotebook(domainObject, section, page) {
     window.localStorage.setItem(NOTEBOOK_LOCAL_STORAGE, JSON.stringify(notebookStorage));
 }
 
-export function clearDefaultNotebook(notebook, section, page) {
+export function clearDefaultNotebook() {
     window.localStorage.setItem(NOTEBOOK_LOCAL_STORAGE, null);
 }
