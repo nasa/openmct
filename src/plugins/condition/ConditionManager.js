@@ -36,7 +36,7 @@ export default class ConditionManager extends EventEmitter {
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
-            this.update(newDomainObject);
+            this.conditionSetDomainObject = newDomainObject;
         });
 
         this.subscribeToTelemetry();
@@ -54,15 +54,6 @@ export default class ConditionManager extends EventEmitter {
                 this.initCondition(conditionConfiguration, index);
             });
         }
-    }
-
-    update(newDomainObject) {
-        this.destroy();
-        this.conditionSetDomainObject = newDomainObject;
-        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDO) => {
-            this.update(newDO);
-        });
-        this.initialize();
     }
 
     updateCondition(conditionConfiguration, index) {
