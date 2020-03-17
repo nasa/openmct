@@ -40,6 +40,9 @@ export default {
         'openmct'
     ],
     props: {
+        isEditing: {
+            type: Boolean
+        },
         conditionStyle: {
             type: Object,
             required: true
@@ -51,15 +54,18 @@ export default {
                 icon: 'icon-line-horz',
                 title: 'Set border color',
                 value: this.conditionStyle.style.border.replace('1px solid ', ''),
-                property: 'border'
+                property: 'border',
+                isEditing: this.isEditing
             }
         },
         backgroundColorOption() {
+            console.log(this.isEditing);
             return {
                 icon: 'icon-paint-bucket',
                 title: 'Set background color',
                 value: this.conditionStyle.style.backgroundColor,
-                property: 'backgroundColor'
+                property: 'backgroundColor',
+                isEditing: this.isEditing
             }
         },
         colorOption() {
@@ -67,7 +73,8 @@ export default {
                 icon: 'icon-font',
                 title: 'Set text color',
                 value: this.conditionStyle.style.color,
-                property: 'color'
+                property: 'color',
+                isEditing: this.isEditing
             }
         },
         imageUrlOption() {
@@ -92,7 +99,8 @@ export default {
                 },
                 property: 'imageUrl',
                 formKeys: ['url'],
-                value: {url: this.conditionStyle.style.imageUrl}
+                value: {url: this.conditionStyle.style.imageUrl},
+                isEditing: this.isEditing
             }
         }
     },

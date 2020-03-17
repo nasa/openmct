@@ -12,6 +12,7 @@
     </div>
     <div v-else>
         <button
+            v-if="isEditing"
             id="removeConditionSet"
             class="c-button c-button--major icon-minus labeled"
             @click="removeConditionSet"
@@ -23,6 +24,7 @@
                 :key="conditionStyle.conditionId"
             >
                 <conditional-style :condition-style="conditionStyle"
+                                   :is-editing="isEditing"
                                    @persist="updateConditionalStyle"
                 />
             </li>
@@ -64,8 +66,12 @@ export default {
                 conditionId: 'default',
                 conditionName: '',
                 style: Object.assign({}, this.initialStyles)
-            }
+            },
+            isEditing: this.openmct.editor.isEditing()
         }
+    },
+    destroyed() {
+        this.openmct.editor.off('isEditing', this.setEditState);
     },
     mounted() {
         if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
@@ -78,8 +84,12 @@ export default {
                 this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
             }
         }
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+        },
         addConditionSet() {
             const handleItemSelection = (item) => {
                 if (item) {
@@ -126,7 +136,6 @@ export default {
             });
         },
         removeConditionSet() {
-            //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
             this.conditionSetDomainObject = undefined;
             this.conditionalStyles = [];
             let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
