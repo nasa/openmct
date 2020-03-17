@@ -38,6 +38,8 @@ export default class ConditionManager extends EventEmitter {
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
             this.update(newDomainObject);
         });
+
+        this.subscribeToTelemetry();
     }
 
     load() {
@@ -252,6 +254,28 @@ export default class ConditionManager extends EventEmitter {
                         this.latestTimestamp
                     );
                 });
+        });
+    }
+
+    subscribeToTelemetry() {
+        this.load().then((endpoints) => {
+            this.unsubscribes = endpoints.map(endpoint => {
+                this.openmct.telemetry.subscribe(
+                    endpoint,
+                    this.broadcastTelemetry
+                        .bind(this, this.openmct.objects.makeKeyString(endpoint.identifier)));
+            });
+        });
+    }
+
+    broadcastTelemetry(id, datum) {
+        this.conditionClassCollection.filter(condition => {
+            return condition.getTelemetrySubscriptions().includes(id);
+        }).forEach(subscribingCondition => {
+            subscribingCondition.emit(
+                `subscription:${id}`,
+                Object.assign({}, datum, {id: id})
+            );
         });
     }
 

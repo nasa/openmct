@@ -44,16 +44,17 @@ export default class TelemetryCriterion extends EventEmitter {
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.subscription = null;
-        this.telemetryObjectIdAsString = null;
-        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
+        // this.subscription = null;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
+        this.on('subscription', this.handleSubscription);
+        // this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
     }
 
-    initialize(obj) {
-        this.telemetryObject = obj;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
-        this.emitEvent('criterionUpdated', this);
-    }
+    // initialize(obj) {
+    //     this.telemetryObject = obj;
+    //     this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
+    //     this.emitEvent('criterionUpdated', this);
+    // }
 
     formatData(data) {
         const datum = {
@@ -70,7 +71,9 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleSubscription(data) {
-        this.emitEvent('criterionResultUpdated', this.formatData(data));
+        if(this.isValid()) {
+            this.emitEvent('criterionResultUpdated', this.formatData(data));
+        }
     }
 
     findOperation(operation) {
@@ -106,7 +109,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     isValid() {
-        return this.telemetryObject && this.metadata && this.operation;
+        return this.metadata && this.operation;
     }
 
     requestLAD(options) {
@@ -120,7 +123,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
         return this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry))
             .then((obj) => {
-                if (!obj || !this.metadata || !this.operation) {
+                if (!obj || !this.isValid()) {
                     return this.formatData({});
                 }
                 return this.telemetryAPI.request(
@@ -136,36 +139,9 @@ export default class TelemetryCriterion extends EventEmitter {
             });
     }
 
-    /**
-     *  Subscribes to the telemetry object and returns an unsubscribe function
-     *  If the telemetry is not valid, returns nothing
-     */
-    subscribe() {
-        if (this.isValid()) {
-            this.unsubscribe();
-            this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
-                this.handleSubscription(datum);
-            });
-        } else {
-            this.handleSubscription();
-        }
-    }
-
-    /**
-     *  Calls an unsubscribe function returned by subscribe() and deletes any initialized data
-     */
-    unsubscribe() {
-        //unsubscribe from telemetry source
-        if (typeof this.subscription === 'function') {
-            this.subscription();
-        }
-        delete this.subscription;
-    }
-
     destroy() {
-        this.unsubscribe();
+        this.off('receivedTelemetry', this.handleSubscription);
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
-        delete this.telemetryObject;
     }
 }

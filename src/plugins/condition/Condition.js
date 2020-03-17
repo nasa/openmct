@@ -61,6 +61,21 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
+        this.unsubscribes = this.getTelemetrySubscriptions().map(id => {
+            this.on(`subscription:${id}`, this.handleReceivedTelemetry)
+        });
+    }
+
+    handleReceivedTelemetry(datum) {
+        if (!datum || !datum.id) {
+            console.log('no data received');
+            return;
+        }
+
+        this.criteria.filter(criterion => criterion.telemetryObjectIdAsString === datum.id)
+            .forEach(subscribingCriterion => {
+                subscribingCriterion.emit(`subscription`, datum)
+            });
     }
 
     update(conditionConfiguration) {
@@ -214,11 +229,8 @@ export default class ConditionClass extends EventEmitter {
             });
     }
 
-    subscribe() {
-        // TODO it looks like on any single criterion update subscriptions fire for all criteria
-        this.criteria.forEach((criterion) => {
-            criterion.subscribe();
-        })
+    getTelemetrySubscriptions() {
+        return this.criteria.map(criterion => criterion.telemetryObjectIdAsString);
     }
 
     handleConditionUpdated(datum) {
