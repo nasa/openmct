@@ -31,10 +31,11 @@
                 <span class="c-tree__item__label">Loading...</span>
             </div>
         </li>
-        <tree-item
+        <condition-set-dialog-tree-item
             v-for="child in children"
             :key="child.id"
             :node="child"
+            :selected-item-id="selectedItemId"
             @itemSelected="handleChildSelection(child.object)"
         />
     </ul>
@@ -47,7 +48,7 @@ import viewControl from '@/ui/components/viewControl.vue';
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 
 export default {
-    name: 'TreeItem',
+    name: 'ConditionSetDialogTreeItem',
     inject: ['openmct'],
     components: {
         viewControl
@@ -56,6 +57,12 @@ export default {
         node: {
             type: Object,
             required: true
+        },
+        selectedItemId: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -63,12 +70,14 @@ export default {
             hasChildren: false,
             isLoading: false,
             loaded: false,
-            navigated: false,
             children: [],
             expanded: false
         }
     },
     computed: {
+        navigated() {
+            return this.selectedItemId && this.openmct.objects.areIdsEqual(this.node.object.identifier, this.selectedItemId);
+        },
         isAlias() {
             let parent = this.node.objectPath[1];
             if (!parent) {

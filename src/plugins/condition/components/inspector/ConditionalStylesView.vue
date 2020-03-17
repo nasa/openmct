@@ -47,10 +47,14 @@ export default {
     ],
     props: {
         itemId: {
-            type: String
+            type: String,
+            default: ''
         },
         initialStyles: {
-            type: Object
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -64,28 +68,29 @@ export default {
         }
     },
     mounted() {
-        if (this.domainObject.configuration) {
-            if (this.domainObject.configuration.conditionalStyle) {
-                if (this.itemId) {
-                    let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
-                    if (conditionalStyle) {
-                        this.conditionalStyles = conditionalStyle.styles || [];
-                    }
-                } else {
-                    this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+        if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
+            if (this.itemId) {
+                let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
+                if (conditionalStyle) {
+                    this.conditionalStyles = conditionalStyle.styles || [];
                 }
+            } else {
+                this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
             }
         }
     },
     methods: {
         addConditionSet() {
-            let handleItemSelection = (item) => {
+            const handleItemSelection = (item) => {
                 if (item) {
                     this.conditionSetDomainObject = item;
                 }
             };
-            let dismissAndInitialize = (overlay) => {
+            const dismissDialog = (overlay, initialize) => {
                 overlay.dismiss();
+                if (!initialize) {
+                    this.conditionSetDomainObject = undefined;
+                }
                 if (this.conditionSetDomainObject) {
                     this.initializeConditionalStyles();
                 }
@@ -105,16 +110,16 @@ export default {
 
             let overlay = this.openmct.overlays.overlay({
                 element: vm.$el,
-                size: 'large',
+                size: 'small',
                 buttons: [
                     {
                         label: 'OK',
                         emphasis: 'true',
-                        callback: () => dismissAndInitialize(overlay)
+                        callback: () => dismissDialog(overlay, true)
                     },
                     {
                         label: 'Cancel',
-                        callback: () => dismissAndInitialize(overlay)
+                        callback: () => dismissDialog(overlay, false)
                     }
                 ],
                 onDestroy: () => vm.$destroy()
@@ -124,7 +129,7 @@ export default {
             //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
             this.conditionSetDomainObject = undefined;
             this.conditionalStyles = [];
-            let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle;
+            let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
             if (domainObjectConditionalStyle) {
                 if (this.itemId) {
                     domainObjectConditionalStyle[this.itemId] = undefined;
@@ -151,7 +156,7 @@ export default {
                     style: Object.assign({}, this.initialStyles)
                 });
             });
-            let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+            let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
             let conditionalStyle = {
                 conditionSetIdentifier: this.conditionSetDomainObject.identifier,
                 styles: this.conditionalStyles
@@ -169,19 +174,12 @@ export default {
             }
         },
         findStyleByConditionId(id) {
-            for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
-                if (this.conditionalStyles[i].conditionId === id) {
-                    return {
-                        index: i,
-                        item: this.conditionalStyles[i]
-                    };
-                }
-            }
+            return this.conditionalStyles.find(conditionalStyle => conditionalStyle.conditionId === id);
         },
-        updateConditionalStyle(conditionId, style) {
-            let found = this.findStyleByConditionId(conditionId);
+        updateConditionalStyle(conditionStyle) {
+            let found = this.findStyleByConditionId(conditionStyle.conditionId);
             if (found) {
-                this.conditionalStyles[found.index].style = style;
+                found.style = conditionStyle.style;
                 let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
 
                 if (this.itemId) {

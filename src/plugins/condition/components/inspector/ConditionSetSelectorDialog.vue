@@ -30,10 +30,11 @@
         v-show="!searchValue"
         class="c-tree-and-search__tree c-tree"
     >
-        <tree-item
+        <condition-set-dialog-tree-item
             v-for="treeItem in allTreeItems"
             :key="treeItem.id"
             :node="treeItem"
+            :selected-item-id="selectedItemId"
             @itemSelected="handleItemSelection"
         />
     </ul>
@@ -44,10 +45,11 @@
         v-if="searchValue"
         class="c-tree-and-search__tree c-tree"
     >
-        <tree-item
+        <condition-set-dialog-tree-item
             v-for="treeItem in filteredTreeItems"
             :key="treeItem.id"
             :node="treeItem"
+            :selected-item-id="selectedItemId"
             @itemSelected="handleItemSelection"/>
     </ul>
     <!-- end search tree -->
@@ -56,14 +58,14 @@
 
 <script>
 import search from '@/ui/components/search.vue';
-import treeItem from './tree-item.vue';
+import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
 
 export default {
     inject: ['openmct'],
     name: 'ConditionSetSelectorDialog',
     components: {
         search,
-        treeItem
+        ConditionSetDialogTreeItem
     },
     data() {
         return {
@@ -71,7 +73,8 @@ export default {
             searchValue: '',
             allTreeItems: [],
             filteredTreeItems: [],
-            isLoading: false
+            isLoading: false,
+            selectedItemId: undefined
         }
     },
     mounted() {
@@ -133,6 +136,7 @@ export default {
         },
         handleItemSelection(item) {
             if (item && item.type === 'conditionSet') {
+                this.selectedItemId = item.identifier;
                 this.$emit('conditionSetSelected', item);
             }
         }

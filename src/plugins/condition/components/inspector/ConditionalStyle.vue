@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div v-if="conditionStyle.conditionId"
+    <div v-if="conditionStyle"
          class="holder c-c-button-wrapper align-left"
     >
         <div>{{ conditionStyle.conditionName }}</div>
@@ -106,7 +106,7 @@ export default {
             } else {
                 this.conditionStyle.style[item.property] = value;
             }
-            this.$emit('persist', this.conditionStyle.conditionId, this.conditionStyle.style);
+            this.$emit('persist', this.conditionStyle);
         }
     }
 }
