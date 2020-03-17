@@ -8,7 +8,7 @@
 <script>
 import ConditionalStylesView from '../../plugins/condition/components/inspector/ConditionalStylesView.vue';
 import Vue from 'vue';
-import {getStyleProp} from "../../plugins/condition/utils/constants";
+import { getStyleProp } from "../../plugins/condition/utils/styleUtils";
 
 export default {
     inject: ['openmct'],
@@ -27,17 +27,9 @@ export default {
     methods: {
         getStyleProperties(item) {
             let styleProps = {};
-            for (let key in item) {
-                if (item.hasOwnProperty(key)) {
-                    let styleProp = getStyleProp(key, item[key]);
-                    if (styleProp) {
-                        styleProps = {
-                            ...styleProps,
-                            ...styleProp
-                        };
-                    }
-                }
-            }
+            Object.keys(item).forEach((key) => {
+                Object.assign(styleProps, getStyleProp(key, item[key]));
+            });
             return styleProps;
         },
         updateSelection(selection) {

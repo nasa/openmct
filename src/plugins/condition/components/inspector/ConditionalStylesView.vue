@@ -23,8 +23,7 @@
             <li v-for="conditionStyle in conditionalStyles"
                 :key="conditionStyle.conditionId"
             >
-                <conditional-style :condition-name="conditionStyle.conditionName"
-                                   :condition-style="conditionStyle.style"
+                <conditional-style :condition-style="conditionStyle"
                                    @persist="updateConditionalStyle"
                 />
             </li>
@@ -46,10 +45,14 @@ export default {
     ],
     props: {
         itemId: {
-            type: String
+            type: String,
+            default: ''
         },
         initialStyles: {
-            type: Object
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -58,33 +61,31 @@ export default {
         }
     },
     mounted() {
-        if (this.domainObject.configuration) {
-            if (this.domainObject.configuration.conditionalStyle) {
-                if (this.itemId) {
-                    let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
-                    if (conditionalStyle) {
-                        this.conditionalStyles = conditionalStyle.styles || [];
-                    }
-                } else {
-                    this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+        if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
+            if (this.itemId) {
+                let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
+                if (conditionalStyle) {
+                    this.conditionalStyles = conditionalStyle.styles || [];
                 }
+            } else {
+                this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
             }
         }
     },
     methods: {
         addConditionSet() {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
-            // this.conditionSetIdentifier = {
-            //     namespace: '',
-            //     key: "bcdb1765-d746-4cae-90a8-e0e1e8596869"
-            // };
+            this.conditionSetIdentifier = {
+                namespace: '',
+                key: "81088c8a-4b80-41fe-9d07-fda8b22d6f5f"
+            };
             this.initializeConditionalStyles();
         },
         removeConditionSet() {
             //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
             this.conditionSetIdentifier = '';
             this.conditionalStyles = [];
-            let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle;
+            let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
             if (domainObjectConditionalStyle) {
                 if (this.itemId) {
                     domainObjectConditionalStyle[this.itemId] = undefined;
@@ -112,7 +113,7 @@ export default {
                         style: Object.assign({}, this.initialStyles)
                     });
                 });
-                let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+                let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
                 let conditionalStyle = {
                     conditionSetIdentifier: this.conditionSetIdentifier,
                     styles: this.conditionalStyles
@@ -131,19 +132,12 @@ export default {
             });
         },
         findStyleByConditionId(id) {
-            for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
-                if (this.conditionalStyles[i].conditionId === id) {
-                    return {
-                        index: i,
-                        item: this.conditionalStyles[i]
-                    };
-                }
-            }
+            return this.conditionalStyles.find(conditionalStyle => conditionalStyle.conditionId === id);
         },
-        updateConditionalStyle(conditionId, style) {
-            let found = this.findStyleByConditionId(conditionId);
+        updateConditionalStyle(conditionStyle) {
+            let found = this.findStyleByConditionId(conditionStyle.conditionId);
             if (found) {
-                this.conditionalStyles[found.index].style = style;
+                found.style = conditionStyle.style;
                 let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
 
                 if (this.itemId) {

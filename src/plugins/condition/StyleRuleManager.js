@@ -88,10 +88,10 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     destroy() {
-        for (let key in this.currentStyle) {
-            if (this.currentStyle.hasOwnProperty(key)) {
+        if (this.currentStyle) {
+            Object.keys(this.currentStyle).forEach(key => {
                 this.currentStyle[key] = 'inherit';
-            }
+            });
         }
         this.updateDomainObjectStyle();
         if (this.stopProvidingTelemetry) {

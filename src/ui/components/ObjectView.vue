@@ -154,6 +154,8 @@ export default {
             this.openmct.objectViews.on('clearData', this.clearData);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
+            this.updateStyle();
+
             if (this.unlisten) {
                 this.unlisten();
             }
