@@ -79,7 +79,7 @@ export default {
     },
     data() {
         return {
-            expanded: true,
+            expanded: false,
             isApplied: true
         };
     },

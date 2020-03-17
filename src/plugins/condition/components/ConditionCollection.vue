@@ -57,12 +57,18 @@
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
                  class="c-condition-h"
+                 @drop.prevent="dropCondition"
+                 @dragover.prevent
+                 @dragenter="dragEnter"
+                 @dragleave="dragLeave"
             >
-                <div v-if="isEditing"
+                <!-- <div v-if="isEditing"
                      class="c-c__drag-ghost"
                      @drop.prevent="dropCondition"
                      @dragover.prevent
-                ></div>
+                     @dragenter="dragEnter"
+                     @dragleave="dragLeave"
+                ></div> -->
                 <Condition :condition="condition"
                            :condition-index="index"
                            :telemetry="telemetryObjs"
@@ -71,8 +77,6 @@
                            @removeCondition="removeCondition"
                            @cloneCondition="cloneCondition"
                            @setMoveIndex="setMoveIndex"
-                           @dragenter="dragEnter"
-                           @dragleave="dragLeave"
                 />
             </div>
         </div>
@@ -165,9 +169,12 @@ export default {
             this.isDragging = false;
         },
         dragEnter(e) {
-            if (!this.isDragging) { return }
-            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (Array.from(e.target.classList).indexOf('js-condition-drag-wrapper') === -1 || !this.isDragging) { return }
+            // console.log(Array.from(e.target.classList).indexOf('js-condition-drag-wrapper'))
+            console.log(document.querySelectorAll('.js-condition-drag-wrapper'))
+            let targetIndex = Array.from(document.querySelectorAll('.js-condition-drag-wrapper')).indexOf(e.target);
+            // if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            console.log('moveIndex', this.moveIndex, 'targetIndex', targetIndex)
             if (this.moveIndex === targetIndex) { return }
             e.target.classList.add("dragging");
         },

@@ -195,7 +195,7 @@ export default {
     data() {
         return {
             currentCriteria: this.currentCriteria,
-            expanded: true,
+            expanded: false,
             trigger: 'all',
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
@@ -235,6 +235,9 @@ export default {
                 metadata: ''
             };
             this.condition.configuration.criteria.push(criteriaObject);
+        },
+        dragEnter(e) {
+            console.log('dragEnter in condition', e.target)
         },
         dragStart(e) {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
