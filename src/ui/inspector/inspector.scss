@@ -1,21 +1,20 @@
 .c-inspector {
-    height: 100%;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
 
-    > [class*="__"] {
-        min-height: 50px;
+    > * + * {
+        margin-top: $interiorMargin;
+    }
 
-        + [class*="__"] {
-            margin-top: $interiorMargin;
-        }
+    &__tabs {
+        flex: 0 0 auto;
+        font-size: 0.8em;
+        text-transform: uppercase;
+    }
 
-        > .l-pane__contents {
-            overflow: auto;
-
-            > * {
-                // Fend off scrollbar
-                margin-right: $interiorMarginSm;
-            }
-        }
+    &__content {
+        flex: 1 1 auto;
     }
 
     &__elements {
@@ -58,41 +57,9 @@
         margin-left: $treeItemIndent;
     }
 
-    &__tabs {
-        $h: 20px;
-        @include abs();
-        display: flex;
-        flex-flow: column nowrap;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__holder {
-            display: flex;
-            min-height: $h;
-
-            &__header {
-
-                &:before {
-                    margin-right: $interiorMarginSm;
-                    opacity: 0.7;
-                }
-            }
-        }
-
-        &__contents {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-
-            &--hidden {
-                height: 1000px;
-                width: 1000px;
-                position: absolute;
-                left: -9999px;
-                top: -9999px;
-            }
+    .l-multipane {
+        .l-pane {
+            min-height: 50px;
         }
     }
 }

@@ -1,44 +1,41 @@
 <template>
 <div class="c-inspector">
-    <div class="c-inspector__tabs">
-        <div v-if="showStyles"
-             class="c-inspector__tabs__holder"
+    <div class="c-inspector__tabs c-tabs"
+        v-if="showStyles"
+    >
+        <div v-for="tabbedView in tabbedViews"
+             :key="tabbedView.key"
+             class="c-inspector__tab c-tab"
+             :class="{'is-current': isCurrent(tabbedView)}"
+             @click="updateCurrentTab(tabbedView)"
         >
-            <div v-for="tabbedView in tabbedViews"
-                 :key="tabbedView.key"
-                 class="c-inspector__tabs__header"
-                 @click="updateCurrentTab(tabbedView)"
-            >
-                <span class="c-inspector__tabs__label c-tab"
-                      :class="{'is-current': isCurrent(tabbedView)}"
-                >{{ tabbedView.name }}</span>
-            </div>
+            {{ tabbedView.name }}
         </div>
-        <div class="c-inspector__tabs__contents">
-            <multipane v-if="currentTabbedView.key === '__properties'"
-                       class="c-inspector"
-                       type="vertical"
-            >
-                <pane class="c-inspector__properties">
-                    <properties />
-                    <location />
-                    <inspector-views />
-                </pane>
-                <pane
+
+    </div>
+    <div class="c-inspector__content">
+        <multipane v-if="currentTabbedView.key === '__properties'"
+                   type="vertical"
+        >
+            <pane class="c-inspector__properties">
+                <properties />
+                <location />
+                <inspector-views />
+            </pane>
+            <pane
                     v-if="isEditing && hasComposition"
                     class="c-inspector__elements"
                     handle="before"
                     label="Elements"
-                >
-                    <elements />
-                </pane>
-            </multipane>
-            <pane v-else
-                  class="c-inspector__styles"
             >
-                <styles-inspector-view />
+                <elements />
             </pane>
-        </div>
+        </multipane>
+        <pane v-else
+              class="c-inspector__styles"
+        >
+            <styles-inspector-view />
+        </pane>
     </div>
 </div>
 </template>
