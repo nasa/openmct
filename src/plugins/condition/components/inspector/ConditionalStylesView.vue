@@ -8,17 +8,24 @@
         >
             <span class="c-cs-button__label">Add Conditional styling</span>
         </button>
-        <conditional-style :condition-style="defaultStyle"/>
+        <conditional-style :condition-style="defaultStyle" />
     </div>
     <div v-else>
-        <button
-            v-if="isEditing"
-            id="removeConditionSet"
-            class="c-button c-button--major icon-minus labeled"
-            @click="removeConditionSet"
-        >
-            <span class="c-cs-button__label">Remove Conditional styling</span>
-        </button>
+        <div class="c-cs__buttons"
+             v-if="isEditing">
+            <button
+                id="changeConditionSet"
+                class="c-button c-button--major icon-minus labeled"
+                @click="addConditionSet"
+            >
+                <span class="c-cs-button__label">Change</span>
+            </button>
+
+            <button class="c-click-icon c-condition__delete-button icon-trash"
+                    title="Remove conditional styles"
+                    @click="removeConditionSet"
+            ></button>
+        </div>
         <ul>
             <li v-for="conditionStyle in conditionalStyles"
                 :key="conditionStyle.conditionId"
@@ -91,6 +98,7 @@ export default {
             this.isEditing = isEditing;
         },
         addConditionSet() {
+            const selectedConditionSetIdentifier = this.conditionSetDomainObject ? this.conditionSetDomainObject.identifier : undefined;
             const handleItemSelection = (item) => {
                 if (item) {
                     this.conditionSetDomainObject = item;
@@ -112,10 +120,11 @@ export default {
                 components: {ConditionSetSelectorDialog},
                 data() {
                     return {
-                        handleItemSelection: handleItemSelection
+                        handleItemSelection,
+                        selectedConditionSetIdentifier
                     }
                 },
-                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+                template: '<condition-set-selector-dialog :selected-item-id="selectedConditionSetIdentifier" @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
             }).$mount();
 
             let overlay = this.openmct.overlays.overlay({

@@ -6,22 +6,24 @@
         <div>{{ conditionStyle.conditionName }}</div>
         <div class="c-toolbar">
             <span :style="conditionStyle.style">ABC</span>
-            <toolbar-color-picker v-if="conditionStyle.style.border"
-                                  :options="borderColorOption"
-                                  @change="updateStyleValue"
-            />
-            <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
-                                  :options="backgroundColorOption"
-                                  @change="updateStyleValue"
-            />
-            <toolbar-color-picker v-if="conditionStyle.style.color"
-                                  :options="colorOption"
-                                  @change="updateStyleValue"
-            />
-            <toolbar-button v-if="conditionStyle.style.imageUrl"
-                            :options="imageUrlOption"
-                            @change="updateStyleValue"
-            />
+            <span v-if="isEditing">
+                <toolbar-color-picker v-if="conditionStyle.style.border"
+                                      :options="borderColorOption"
+                                      @change="updateStyleValue"
+                />
+                <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
+                                      :options="backgroundColorOption"
+                                      @change="updateStyleValue"
+                />
+                <toolbar-color-picker v-if="conditionStyle.style.color"
+                                      :options="colorOption"
+                                      @change="updateStyleValue"
+                />
+                <toolbar-button v-if="conditionStyle.style.imageUrl"
+                                :options="imageUrlOption"
+                                @change="updateStyleValue"
+                />
+            </span>
         </div>
     </div>
 </div>

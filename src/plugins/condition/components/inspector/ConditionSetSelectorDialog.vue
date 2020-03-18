@@ -67,14 +67,21 @@ export default {
         search,
         ConditionSetDialogTreeItem
     },
+    props: {
+        selectedItemId: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         return {
             expanded: false,
             searchValue: '',
             allTreeItems: [],
             filteredTreeItems: [],
-            isLoading: false,
-            selectedItemId: undefined
+            isLoading: false
         }
     },
     mounted() {
