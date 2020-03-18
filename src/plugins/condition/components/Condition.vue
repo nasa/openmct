@@ -59,7 +59,7 @@
                       :key="index"
                 >
                     {{ getRule(criterion, index) }}
-                    <template v-if="index !== condition.configuration.criteria.length - 1">
+                    <template v-if="!isLastCriterion">
                         {{ getConjunction }}
                     </template>
                 </span>
@@ -196,7 +196,7 @@
                   :key="index"
             >
                 {{ getRule(criterion, index) }}
-                <template v-if="index !== condition.configuration.criteria.length - 1">
+                <template v-if="!isLastCriterion">
                     {{ getConjunction }}
                 </template>
             </span>
@@ -270,6 +270,9 @@ export default {
     methods: {
         getRule(criterion, index) {
             return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
+        },
+        isLastCriterion(index) {
+            return index === this.condition.configuration.criteria.length - 1;
         },
         findDescription(operation, values) {
             for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
