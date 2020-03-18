@@ -24,10 +24,11 @@
         <div class="c-cs-styles__header">
             Conditional Object Styles
         </div>
+        <span v-if="conditionSetDomainObject"
+              class="icon-conditional"> {{conditionSetDomainObject.name}}</span>
         <div v-if="isEditing"
              class="c-cs-styles__buttons"
         >
-            <span v-if="conditionSetDomainObject">{{conditionSetDomainObject.name}}</span>
             <button
                 id="changeConditionSet"
                 class="c-button c-button--major labeled"
