@@ -236,9 +236,6 @@ export default {
             };
             this.condition.configuration.criteria.push(criteriaObject);
         },
-        dragEnter(e) {
-            console.log('dragEnter in condition', e.target)
-        },
         dragStart(e) {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";

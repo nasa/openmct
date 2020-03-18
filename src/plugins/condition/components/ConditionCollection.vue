@@ -137,7 +137,8 @@ export default {
             this.isDragging = true;
         },
         dropCondition(e) {
-            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
+            console.log('dropCondition', e);
+            let targetIndex = Array.from(document.querySelectorAll('.js-condition-drag-wrapper')).indexOf(e.target);
             if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             const oldIndexArr = Object.keys(this.conditionCollection);
             const move = function (arr, old_index, new_index) {
@@ -169,12 +170,10 @@ export default {
             this.isDragging = false;
         },
         dragEnter(e) {
-            if (Array.from(e.target.classList).indexOf('js-condition-drag-wrapper') === -1 || !this.isDragging) { return }
-            // console.log(Array.from(e.target.classList).indexOf('js-condition-drag-wrapper'))
-            console.log(document.querySelectorAll('.js-condition-drag-wrapper'))
+            console.log('dragEnter this.isDragging', this.isDragging);
+            // if (Array.from(e.target.classList).indexOf('js-condition-drag-wrapper') === -1 || !this.isDragging) { return }
             let targetIndex = Array.from(document.querySelectorAll('.js-condition-drag-wrapper')).indexOf(e.target);
-            // if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
-            console.log('moveIndex', this.moveIndex, 'targetIndex', targetIndex)
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.moveIndex === targetIndex) { return }
             e.target.classList.add("dragging");
         },
