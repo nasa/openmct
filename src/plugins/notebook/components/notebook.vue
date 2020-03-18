@@ -108,6 +108,8 @@ import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storag
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';
 
+const DEFAULT_CLASS = 'is-notebook-default';
+
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -174,6 +176,15 @@ export default {
         }
     },
     methods: {
+        addDefaultClass() {
+            const classList = this.internalDomainObject.classList || [];
+            if (classList.includes(DEFAULT_CLASS)) {
+                return;
+            }
+
+            classList.push(DEFAULT_CLASS);
+            this.mutateObject('classList', classList);
+        },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
                 s.isSelected = false;
@@ -235,8 +246,9 @@ export default {
             this.newEntry(embed);
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
+            this.removeDefaultClass();
             setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
-
+            this.addDefaultClass();
             this.defaultSectionId = selectedSection.id;
             this.defaultPageId = selectedPage.id;
         },
@@ -358,6 +370,24 @@ export default {
         },
         orientationChange() {
             this.formatSidebar();
+        },
+        removeDefaultClass() {
+            const oldNotebookStorage = getDefaultNotebook();
+            if (!oldNotebookStorage) {
+                return;
+            }
+
+            this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier)
+                .then(domainObject => {
+                    const classList = domainObject.classList || [];
+                    const index = classList.indexOf(DEFAULT_CLASS);
+                    if (!classList.length || index < 0) {
+                        return;
+                    }
+
+                    classList.splice(index, 1);
+                    this.openmct.objects.mutate(domainObject, 'classList', classList);
+                });
         },
         searchItem(input) {
             this.search = input;

@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': section.isSelected, 'is-default' : (defaultSectionId === section.id) }]"
+     :class="[{ 'is-selected': section.isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
      :data-id="section.id"
      @click="selectSection"
 >

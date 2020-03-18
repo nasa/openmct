@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': page.isSelected, 'is-default' : (defaultPageId === page.id) }]"
+     :class="[{ 'is-selected': page.isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
      :data-id="page.id"
      @click="selectPage"
 >

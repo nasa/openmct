@@ -8,7 +8,7 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w"
-            :class="type.cssClass"
+            :class="[ type.cssClass, classList ]"
         >
             <span
                 class="l-browse-bar__object-name c-input-inline"
@@ -118,6 +118,14 @@ export default {
         }
     },
     computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
+        },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
