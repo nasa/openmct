@@ -45,8 +45,6 @@
 <script>
 import viewControl from '@/ui/components/viewControl.vue';
 
-const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-
 export default {
     name: 'ConditionSetDialogTreeItem',
     inject: ['openmct'],
@@ -106,7 +104,6 @@ export default {
                 this.composition.load().then(this.finishLoading);
                 this.isLoading = true;
             }
-            this.setLocalStorageExpanded(this.navigateToPath);
         }
     },
     mounted() {
@@ -124,16 +121,9 @@ export default {
             this.hasChildren = true;
         }
 
-        this.getLocalStorageExpanded();
     },
     beforeDestroy() {
-        /****
-            * calling this.setLocalStorageExpanded explicitly here because for whatever reason,
-            * the watcher on this.expanded is not triggering this.setLocalStorageExpanded(),
-            * even though Vue documentation states, "At this stage the instance is still fully functional."
-        *****/
         this.expanded = false;
-        this.setLocalStorageExpanded();
     },
     destroyed() {
         if (this.composition) {
@@ -159,43 +149,6 @@ export default {
         finishLoading() {
             this.isLoading = false;
             this.loaded = true;
-        },
-        highlightIfNavigated(newPath, oldPath) {
-            if (newPath === this.navigateToPath) {
-                this.navigated = true;
-            } else if (oldPath === this.navigateToPath) {
-                this.navigated = false;
-            }
-        },
-        getLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-
-            if (expandedPaths) {
-                expandedPaths = JSON.parse(expandedPaths);
-                this.expanded = expandedPaths.includes(this.navigateToPath);
-            }
-        },
-        // expanded nodes/paths are stored in local storage as an array
-        setLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-
-            if (this.expanded) {
-                if (!expandedPaths.includes(this.navigateToPath)) {
-                    expandedPaths.push(this.navigateToPath);
-                }
-            } else {
-                // remove this node path and all children paths from stored expanded paths
-                expandedPaths = expandedPaths.filter(path => path && !path.startsWith(this.navigateToPath));
-            }
-
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
-        },
-        removeLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-            expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         },
         handleSelection() {
             this.$emit('itemSelected', this.node.object);

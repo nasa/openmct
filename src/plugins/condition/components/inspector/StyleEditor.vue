@@ -62,7 +62,6 @@ export default {
             }
         },
         backgroundColorOption() {
-            console.log(this.isEditing);
             return {
                 icon: 'icon-paint-bucket',
                 title: 'Set background color',

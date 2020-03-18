@@ -106,7 +106,9 @@ export default {
                 }
             } else {
                 this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
-                this.openmct.objects.get(this.domainObject.configuration.conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
+                if (this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
+                    this.openmct.objects.get(this.domainObject.configuration.conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
+                }
             }
         }
         this.openmct.editor.on('isEditing', this.setEditState);
@@ -185,6 +187,7 @@ export default {
 
         },
         initializeConditionalStyles() {
+            this.conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.conditionalStyles.push({
                     conditionId: conditionConfiguration.id,
