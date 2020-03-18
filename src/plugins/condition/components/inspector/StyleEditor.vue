@@ -3,7 +3,14 @@
     <div v-if="conditionStyle"
          class="holder c-c-button-wrapper align-left"
     >
-        <div>{{ conditionStyle.conditionName }}</div>
+        <div v-if="condition">
+            <span>{{ condition.configuration.name }}</span>
+            <span v-for="criterionDescription in criterionDescriptions"
+                  :key="criterionDescription"
+            >
+                {{ criterionDescription }}
+            </span>
+        </div>
         <div class="c-toolbar">
             <span :style="conditionStyle.style">ABC</span>
             <span v-if="isEditing">
@@ -33,6 +40,9 @@
 
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
+import {TRIGGER} from "@/plugins/condition/utils/constants";
+import { OPERATIONS } from "@/plugins/condition/utils/operations";
+
 export default {
     name: 'StyleEditor',
     components: {
@@ -49,6 +59,17 @@ export default {
         conditionStyle: {
             type: Object,
             required: true
+        },
+        condition: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
+    data() {
+        return {
+            criterionDescriptions: []
         }
     },
     computed: {
@@ -62,7 +83,6 @@ export default {
             }
         },
         backgroundColorOption() {
-            console.log(this.isEditing);
             return {
                 icon: 'icon-paint-bucket',
                 title: 'Set background color',
@@ -107,6 +127,9 @@ export default {
             }
         }
     },
+    mounted() {
+        this.getConditionDescription();
+    },
     methods: {
         updateStyleValue(value, item) {
             if (item.property === 'border') {
@@ -118,6 +141,35 @@ export default {
                 this.conditionStyle.style[item.property] = value;
             }
             this.$emit('persist', this.conditionStyle);
+        },
+        getConditionDescription() {
+            if (this.condition) {
+                this.criterionDescriptions = [];
+                this.condition.configuration.criteria.forEach((criterion, index) => {
+                    if (!criterion.isDefault) {
+                        this.getCriterionDescription(criterion, index);
+                    }
+                });
+            }
+        },
+        getCriterionDescription(criterion, index) {
+            const triggerDescription = this.condition.trigger === TRIGGER.ANY ? ' or ' : ' and ';
+            if(criterion.telemetry) {
+                this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+                    let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation)} ${criterion.input.join(', ')}`;
+                    if (!index) {
+                        description = 'When ' + description;
+                    }
+                    if (index !== this.condition.configuration.criteria.length -1) {
+                        description = description + triggerDescription;
+                    }
+                    this.criterionDescriptions.splice(index, 0, description);
+                });
+            }
+        },
+        getOperatorText(operationName) {
+            const found = OPERATIONS.find((operation) => operation.name === operationName);
+            return found ? found.shortText || found.text : '';
         }
     }
 }

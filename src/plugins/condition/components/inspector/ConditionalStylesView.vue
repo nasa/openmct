@@ -7,8 +7,6 @@
         <div class="c-cs-styles__content">
             <style-editor class="c-cs-styles__list-item"
                           :condition-style="defaultStyle"
-                          :is-editing="isEditing"
-                          @persist="updateDefaultStyle"
             />
             <button
                 id="addConditionSet"
@@ -20,14 +18,17 @@
         </div>
     </div>
     <div v-else
-         class="c-cs-styles__content">
+         class="c-cs-styles__content"
+    >
         <div class="c-cs-styles__header">
             Conditional Object Styles
         </div>
+        <span v-if="conditionSetDomainObject"
+              class="icon-conditional"
+        > {{ conditionSetDomainObject.name }}</span>
         <div v-if="isEditing"
              class="c-cs-styles__buttons"
         >
-            <span v-if="conditionSetDomainObject">{{conditionSetDomainObject.name}}</span>
             <button
                 id="changeConditionSet"
                 class="c-button c-button--major labeled"
@@ -41,11 +42,12 @@
                     @click="removeConditionSet"
             ></button>
         </div>
-        <ul>
+        <ul v-if="conditions">
             <style-editor v-for="conditionStyle in conditionalStyles"
                           :key="conditionStyle.conditionId"
                           class="c-cs-styles__list-item"
                           :condition-style="conditionStyle"
+                          :condition="conditions[conditionStyle.conditionId]"
                           :is-editing="isEditing"
                           @persist="updateConditionalStyle"
             />
@@ -87,10 +89,10 @@ export default {
             conditionSetDomainObject: undefined,
             defaultStyle: {
                 conditionId: 'default',
-                conditionName: '',
                 style: Object.assign({}, this.initialStyles)
             },
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            conditions: undefined
         }
     },
     destroyed() {
@@ -102,11 +104,13 @@ export default {
                 let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
                 if (conditionalStyle) {
                     this.conditionalStyles = conditionalStyle.styles || [];
-                    this.openmct.objects.get(conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
+                    this.openmct.objects.get(conditionalStyle.conditionSetIdentifier).then(this.getConditions.bind(this));
                 }
             } else {
                 this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
-                this.openmct.objects.get(this.domainObject.configuration.conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
+                if (this.domainObject.configuration.conditionalStyle.conditionSetIdentifier) {
+                    this.openmct.objects.get(this.domainObject.configuration.conditionalStyle.conditionSetIdentifier).then(this.getConditions.bind(this));
+                }
             }
         }
         this.openmct.editor.on('isEditing', this.setEditState);
@@ -116,7 +120,6 @@ export default {
             this.isEditing = isEditing;
         },
         addConditionSet() {
-            const selectedConditionSetIdentifier = this.conditionSetDomainObject ? this.conditionSetDomainObject.identifier : undefined;
             const handleItemSelection = (item) => {
                 if (item) {
                     this.conditionSetDomainObject = item;
@@ -138,11 +141,10 @@ export default {
                 components: {ConditionSetSelectorDialog},
                 data() {
                     return {
-                        handleItemSelection,
-                        selectedConditionSetIdentifier
+                        handleItemSelection
                     }
                 },
-                template: '<condition-set-selector-dialog :selected-item-id="selectedConditionSetIdentifier" @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
             }).$mount();
 
             let overlay = this.openmct.overlays.overlay({
@@ -185,10 +187,10 @@ export default {
 
         },
         initializeConditionalStyles() {
+            this.conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.conditionalStyles.push({
                     conditionId: conditionConfiguration.id,
-                    conditionName: conditionConfiguration.configuration.name,
                     style: Object.assign({}, this.initialStyles)
                 });
             });
@@ -235,28 +237,16 @@ export default {
                 }
             }
         },
-        updateDefaultStyle(defaultStyle) {
-            this.defaultStyle.style = defaultStyle.style;
-            let domainObjectDefaultStyle =  this.domainObject.configuration.defaultStyle || {};
-
-            if (this.itemId) {
-                let itemDefaultStyle = domainObjectDefaultStyle[this.itemId];
-                if (itemDefaultStyle) {
-                    this.persist('configuration.defaultStyle', {
-                        ...domainObjectDefaultStyle,
-                        [this.itemId]: {
-                            ...itemDefaultStyle,
-                            style: this.defaultStyle.style
-                        }
-                    });
-                }
-            } else {
-                domainObjectDefaultStyle.style = this.defaultStyle.style;
-                this.persist('configuration.defaultStyle', domainObjectDefaultStyle);
-            }
-        },
         persist(property, style) {
             this.openmct.objects.mutate(this.domainObject, property, style);
+        },
+        getConditions(conditionSetDomainObject) {
+            this.conditionSetDomainObject = conditionSetDomainObject;
+
+            if (this.conditionSetDomainObject) {
+                this.conditions = {};
+                this.conditionSetDomainObject.configuration.conditionCollection.forEach((condition) => this.conditions[condition.id] = condition);
+            }
         }
     }
 }
