@@ -29,6 +29,7 @@ export const OPERATIONS = [
             return input[0] > input[1];
         },
         text: 'is greater than',
+        shortText: '>',
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
@@ -41,6 +42,7 @@ export const OPERATIONS = [
             return input[0] < input[1];
         },
         text: 'is less than',
+        shortText: '<',
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
@@ -53,6 +55,7 @@ export const OPERATIONS = [
             return input[0] >= input[1];
         },
         text: 'is greater than or equal to',
+        shortText: '>=',
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
@@ -65,6 +68,7 @@ export const OPERATIONS = [
             return input[0] <= input[1];
         },
         text: 'is less than or equal to',
+        shortText: '<=',
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
