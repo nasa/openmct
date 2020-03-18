@@ -42,8 +42,28 @@
 
         <span class="c-condition__name">{{ condition.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
-        <span class="c-condition__summary">
-            {{ getSummary }}
+        <span v-if="condition.isDefault"
+              class="c-condition__summary"
+        >
+            When all else fails
+        </span>
+        <span v-else
+              class="c-condition__summary"
+        >
+            <template v-if="!condition.configuration.criteria[condition.configuration.criteria.length - 1].telemetry">
+                Specify criteria
+            </template>
+            <template v-else>
+                When
+                <span v-for="(criterion, index) in condition.configuration.criteria"
+                      :key="index"
+                >
+                    {{ getRule(criterion, index) }}
+                    <template v-if="index !== condition.configuration.criteria.length - 1">
+                        {{ condition.configuration.trigger === 'all' ? 'and' : 'or' }}
+                    </template>
+                </span>
+            </template>
         </span>
 
         <div class="c-condition__buttons">
@@ -159,8 +179,28 @@
             Output: {{ condition.configuration.output }}
         </span>
     </div>
-    <div class="c-condition__summary">
-        {{ getSummary }}
+    <div v-if="condition.isDefault"
+         class="c-condition__summary"
+    >
+        When all else fails
+    </div>
+    <div v-else
+         class="c-condition__summary"
+    >
+        <template v-if="!condition.configuration.criteria[condition.configuration.criteria.length - 1].telemetry">
+            Specify criteria
+        </template>
+        <template v-else>
+            When
+            <span v-for="(criterion, index) in condition.configuration.criteria"
+                  :key="index"
+            >
+                {{ getRule(criterion, index) }}
+                <template v-if="index !== condition.configuration.criteria.length - 1">
+                    {{ condition.configuration.trigger === 'all' ? 'and' : 'or' }}
+                </template>
+            </span>
+        </template>
     </div>
 </div>
 </template>
@@ -203,28 +243,6 @@ export default {
             criterionIndex: 0
         };
     },
-    computed: {
-        getSummary: function () {
-            if (!this.condition.configuration.criteria.length) {
-                return 'When all else fails'
-            }
-            let config = this.condition.configuration;
-            let summary = '';
-            if (config.criteria.length === 1 &&
-               config.criteria[0].telemetry &&
-               config.criteria[0].operation) {
-                summary = this.getRules(config.criteria[0]);
-            } else {
-                config.criteria.forEach((criterion, index) => {
-                    if (criterion.telemetry &&
-                       criterion.operation) {
-                        summary += this.getRules(criterion, index);
-                    }
-                });
-            }
-            return summary;
-        }
-    },
     destroyed() {
         this.destroy();
     },
@@ -232,16 +250,23 @@ export default {
         this.setOutputSelection();
     },
     methods: {
-        getRules(criterion, index) {
-            let adverb = criterion.input.length === 1 && index === 0 ? 'When ' : '';
-            let conjunction = (this.condition.configuration.criteria.length - 1 === index) ?
-                (this.condition.configuration.trigger === 'all' ? ' and ' : ' or ') : '';
+        getRule(criterion, index) {
             if (criterion.operation) {
-                if (criterion.input.length ||
-                    (criterion.operation === 'isDefined' ||
-                     criterion.operation === 'isUndefined')) {
-                    return `${adverb}${conjunction}${criterion.telemetry.name} ${criterion.metadata} value ${this.findDescription(criterion.operation, criterion.input)}`;
-                }
+                // this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+                    // this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    // this.telemetryMetadataOptions = this.telemetryMetadata.values();
+                    // let metadataName = '';
+                    // for (let i = 0; i < this.telemetryMetadataOptions.length; i++) {
+                    //     if (criterion.metadata === this.telemetryMetadataOptions[i].key) {
+                    //         metadataName = this.telemetryMetadataOptions[i].name;
+                    //     }
+                    // }
+                    if (criterion.input.length ||
+                        (criterion.operation === 'isDefined' ||
+                        criterion.operation === 'isUndefined')) {
+                        return `${criterion.telemetry.name} ${criterion.metadata} ${this.findDescription(criterion.operation, criterion.input)}`;
+                    }
+                // });
             }
         },
         findDescription(operation, values) {
