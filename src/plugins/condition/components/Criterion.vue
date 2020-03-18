@@ -155,7 +155,10 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.criterion.telemetry.fieldName = ev.target.options[ev.target.selectedIndex].text;
+                this.clearInputs()
+            }
             this.getOperationFormat();
             this.persist();
         },

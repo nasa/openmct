@@ -50,8 +50,8 @@
         <span v-else
               class="c-condition__summary"
         >
-            <template v-if="!condition.configuration.criteria[condition.configuration.criteria.length - 1].telemetry">
-                Specify criteria
+            <template v-if="!canEvaluateCriteria">
+                Define criteria
             </template>
             <template v-else>
                 When
@@ -60,7 +60,7 @@
                 >
                     {{ getRule(criterion, index) }}
                     <template v-if="index !== condition.configuration.criteria.length - 1">
-                        {{ condition.configuration.trigger === 'all' ? 'and' : 'or' }}
+                        {{ getConjunction }}
                     </template>
                 </span>
             </template>
@@ -187,8 +187,8 @@
     <div v-else
          class="c-condition__summary"
     >
-        <template v-if="!condition.configuration.criteria[condition.configuration.criteria.length - 1].telemetry">
-            Specify criteria
+        <template v-if="!canEvaluateCriteria">
+            Define criteria
         </template>
         <template v-else>
             When
@@ -197,7 +197,7 @@
             >
                 {{ getRule(criterion, index) }}
                 <template v-if="index !== condition.configuration.criteria.length - 1">
-                    {{ condition.configuration.trigger === 'all' ? 'and' : 'or' }}
+                    {{ getConjunction }}
                 </template>
             </span>
         </template>
@@ -243,6 +243,24 @@ export default {
             criterionIndex: 0
         };
     },
+    computed: {
+        canEvaluateCriteria: function () {
+            let criteria = this.condition.configuration.criteria;
+            let lastCriterion = criteria[criteria.length - 1];
+            if (lastCriterion.telemetry &&
+                lastCriterion.operation &&
+                (lastCriterion.input.length ||
+                lastCriterion.operation === 'isDefined' ||
+                lastCriterion.operation === 'isUndefined')) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        getConjunction: function () {
+            return this.condition.configuration.trigger === 'all' ? 'and' : 'or';
+        }
+    },
     destroyed() {
         this.destroy();
     },
@@ -251,23 +269,7 @@ export default {
     },
     methods: {
         getRule(criterion, index) {
-            if (criterion.operation) {
-                // this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                    // this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    // this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                    // let metadataName = '';
-                    // for (let i = 0; i < this.telemetryMetadataOptions.length; i++) {
-                    //     if (criterion.metadata === this.telemetryMetadataOptions[i].key) {
-                    //         metadataName = this.telemetryMetadataOptions[i].name;
-                    //     }
-                    // }
-                    if (criterion.input.length ||
-                        (criterion.operation === 'isDefined' ||
-                        criterion.operation === 'isUndefined')) {
-                        return `${criterion.telemetry.name} ${criterion.metadata} ${this.findDescription(criterion.operation, criterion.input)}`;
-                    }
-                // });
-            }
+            return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
         },
         findDescription(operation, values) {
             for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
