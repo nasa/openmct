@@ -32,14 +32,41 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
+        this.composition.on('add', this.addTelemetry, this)
+        this.composition.on('remove', this.removeTelemetry, this)
+
         this.loaded = this.composition.load();
+        this.subscriptions = {};
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
             this.conditionSetDomainObject = newDomainObject;
         });
+    }
 
-        this.subscribeToTelemetry();
+    addTelemetry(endpoint) {
+        const id = this.openmct.objects.makeKeyString(endpoint.identifier);
+        if (this.subscriptions[id]) {
+            console.log('subscription already exists');
+            return;
+        }
+
+        this.subscriptions[id] = this.openmct.telemetry.subscribe(
+            endpoint,
+            this.broadcastTelemetry
+                .bind(this, id)
+        );
+    }
+
+    removeTelemetry(endpointIdentifier) {
+        const id = this.openmct.objects.makeKeyString(endpointIdentifier);
+        if (!this.subscriptions[id]) {
+            console.log('no subscription to remove');
+            return;
+        }
+
+        this.subscriptions[id]();
+        delete this.subscriptions[id];
     }
 
     load() {
@@ -248,18 +275,20 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
-    subscribeToTelemetry() {
-        this.load().then((endpoints) => {
-            this.unsubscribes = endpoints.map(endpoint => {
-                this.openmct.telemetry.subscribe(
-                    endpoint,
-                    this.broadcastTelemetry
-                        .bind(this, this.openmct.objects.makeKeyString(endpoint.identifier)));
-            });
-        });
-    }
+    // subscribeToTelemetry() {
+
+    //     this.load().then((endpoints) => {
+    //         this.unsubscribes = endpoints.map(endpoint => {
+    //             this.openmct.telemetry.subscribe(
+    //                 endpoint,
+    //                 this.broadcastTelemetry
+    //                     .bind(this, this.openmct.objects.makeKeyString(endpoint.identifier)));
+    //         });
+    //     });
+    // }
 
     broadcastTelemetry(id, datum) {
+        console.log(this.conditionClassCollection);
         this.conditionClassCollection.filter(condition => {
             return condition.getTelemetrySubscriptions().includes(id);
         }).forEach(subscribingCondition => {
@@ -275,6 +304,8 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
+        this.composition.off('add', this.addTelemetry, this)
+        this.composition.off('remove', this.removeTelemetry, this)
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
