@@ -34,6 +34,7 @@
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 export default {
+    name: 'StyleEditor',
     components: {
         ToolbarButton,
         ToolbarColorPicker

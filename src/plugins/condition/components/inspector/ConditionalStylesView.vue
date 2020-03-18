@@ -1,24 +1,39 @@
 <template>
 <div>
     <div v-if="!conditionalStyles.length">
-        <button
-            id="addConditionSet"
-            class="c-button c-button--major icon-plus labeled"
-            @click="addConditionSet"
-        >
-            <span class="c-cs-button__label">Add Conditional styling</span>
-        </button>
-        <conditional-style :condition-style="defaultStyle" />
-    </div>
-    <div v-else>
-        <div class="c-cs__buttons"
-             v-if="isEditing">
+        <div class="c-cs-styles__header">
+            Object Styles
+        </div>
+        <div class="c-cs-styles__content">
+            <style-editor class="c-cs-styles__list-item"
+                          :condition-style="defaultStyle"
+                          :is-editing="isEditing"
+                          @persist="updateDefaultStyle"
+            />
             <button
-                id="changeConditionSet"
-                class="c-button c-button--major icon-minus labeled"
+                id="addConditionSet"
+                class="c-button c-button--major labeled"
                 @click="addConditionSet"
             >
-                <span class="c-cs-button__label">Change</span>
+                <span class="c-cs-button__label">Use Conditional styling...</span>
+            </button>
+        </div>
+    </div>
+    <div v-else
+         class="c-cs-styles__content">
+        <div class="c-cs-styles__header">
+            Conditional Object Styles
+        </div>
+        <div v-if="isEditing"
+             class="c-cs-styles__buttons"
+        >
+            <span v-if="conditionSetDomainObject">{{conditionSetDomainObject.name}}</span>
+            <button
+                id="changeConditionSet"
+                class="c-button c-button--major labeled"
+                @click="addConditionSet"
+            >
+                <span class="c-cs-button__label">Change...</span>
             </button>
 
             <button class="c-click-icon c-condition__delete-button icon-trash"
@@ -27,14 +42,13 @@
             ></button>
         </div>
         <ul>
-            <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionId"
-            >
-                <conditional-style :condition-style="conditionStyle"
-                                   :is-editing="isEditing"
-                                   @persist="updateConditionalStyle"
-                />
-            </li>
+            <style-editor v-for="conditionStyle in conditionalStyles"
+                          :key="conditionStyle.conditionId"
+                          class="c-cs-styles__list-item"
+                          :condition-style="conditionStyle"
+                          :is-editing="isEditing"
+                          @persist="updateConditionalStyle"
+            />
         </ul>
     </div>
 </div>
@@ -42,13 +56,14 @@
 
 <script>
 
-import ConditionalStyle from "./ConditionalStyle.vue";
+import StyleEditor from "./StyleEditor.vue";
 import ConditionSetSelectorDialog from "./ConditionSetSelectorDialog.vue";
 import Vue from 'vue';
 
 export default {
+    name: 'ConditionalStylesView',
     components: {
-        ConditionalStyle
+        StyleEditor
     },
     inject: [
         'openmct',
@@ -69,6 +84,7 @@ export default {
     data() {
         return {
             conditionalStyles: [],
+            conditionSetDomainObject: undefined,
             defaultStyle: {
                 conditionId: 'default',
                 conditionName: '',
@@ -86,9 +102,11 @@ export default {
                 let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
                 if (conditionalStyle) {
                     this.conditionalStyles = conditionalStyle.styles || [];
+                    this.openmct.objects.get(conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
                 }
             } else {
                 this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
+                this.openmct.objects.get(this.domainObject.configuration.conditionalStyle.conditionSetIdentifier).then((conditionSetDomainObject) => this.conditionSetDomainObject = conditionSetDomainObject);
             }
         }
         this.openmct.editor.on('isEditing', this.setEditState);
@@ -163,7 +181,7 @@ export default {
                 }
             }
 
-            this.persist(domainObjectConditionalStyle);
+            this.persist('configuration.conditionalStyle', domainObjectConditionalStyle);
 
         },
         initializeConditionalStyles() {
@@ -180,12 +198,12 @@ export default {
                 styles: this.conditionalStyles
             };
             if (this.itemId) {
-                this.persist({
+                this.persist('configuration.conditionalStyle', {
                     ...domainObjectConditionalStyle,
                     [this.itemId]: conditionalStyle
                 });
             } else {
-                this.persist({
+                this.persist('configuration.conditionalStyle', {
                     ...domainObjectConditionalStyle,
                     ...conditionalStyle
                 });
@@ -203,7 +221,7 @@ export default {
                 if (this.itemId) {
                     let itemConditionalStyle = domainObjectConditionalStyle[this.itemId];
                     if (itemConditionalStyle) {
-                        this.persist({
+                        this.persist('configuration.conditionalStyle', {
                             ...domainObjectConditionalStyle,
                             [this.itemId]: {
                                 ...itemConditionalStyle,
@@ -213,12 +231,32 @@ export default {
                     }
                 } else {
                     domainObjectConditionalStyle.styles = this.conditionalStyles;
-                    this.persist(domainObjectConditionalStyle);
+                    this.persist('configuration.conditionalStyle', domainObjectConditionalStyle);
                 }
             }
         },
-        persist(conditionalStyle) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionalStyle', conditionalStyle);
+        updateDefaultStyle(defaultStyle) {
+            this.defaultStyle.style = defaultStyle.style;
+            let domainObjectDefaultStyle =  this.domainObject.configuration.defaultStyle || {};
+
+            if (this.itemId) {
+                let itemDefaultStyle = domainObjectDefaultStyle[this.itemId];
+                if (itemDefaultStyle) {
+                    this.persist('configuration.defaultStyle', {
+                        ...domainObjectDefaultStyle,
+                        [this.itemId]: {
+                            ...itemDefaultStyle,
+                            style: this.defaultStyle.style
+                        }
+                    });
+                }
+            } else {
+                domainObjectDefaultStyle.style = this.defaultStyle.style;
+                this.persist('configuration.defaultStyle', domainObjectDefaultStyle);
+            }
+        },
+        persist(property, style) {
+            this.openmct.objects.mutate(this.domainObject, property, style);
         }
     }
 }

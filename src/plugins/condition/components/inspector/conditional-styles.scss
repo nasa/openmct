@@ -1,0 +1,23 @@
+.c-cs-styles {
+  &__header {
+    @include propertiesHeader();
+
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  &__content {
+    > * {
+      margin-top: $interiorMarginSm;
+    }
+  }
+
+  &__list {
+    &-item {
+      @include discreteItem();
+      display: flex;
+      padding: $interiorMargin;
+      margin-top: $interiorMarginSm;
+    }
+  }
+}
