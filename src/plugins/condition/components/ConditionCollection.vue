@@ -121,6 +121,11 @@ export default {
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
+        this.conditionManager.requestLADConditionSetOutput()
+            .then(data => this.$emit('conditionSetResultUpdated', data[0]));
+        this.conditionManager.on('conditionSetResultUpdated', (data) => {
+            this.$emit('conditionSetResultUpdated', data);
+        });
     },
     methods: {
         observeForChanges() {

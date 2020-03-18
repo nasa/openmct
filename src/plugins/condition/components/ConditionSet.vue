@@ -34,7 +34,8 @@
         </div>
     </section>
     <TestData :is-editing="isEditing" />
-    <ConditionCollection :is-editing="isEditing" />
+    <ConditionCollection :is-editing="isEditing"
+                         @conditionSetResultUpdated="updateCurrentOutput" />
 </div>
 </template>
 
@@ -58,7 +59,6 @@ export default {
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.provideTelemetry();
     },
     beforeDestroy() {
         if (this.stopProvidingTelemetry) {
@@ -68,15 +68,6 @@ export default {
     methods: {
         updateCurrentOutput(currentConditionResult) {
             this.currentConditionOutput = currentConditionResult.output;
-        },
-        provideTelemetry() {
-            this.openmct.telemetry
-                .request(this.domainObject)
-                .then(output => {
-                    this.updateCurrentOutput(output[0]);
-                });
-            this.stopProvidingTelemetry = this.openmct.telemetry
-                .subscribe(this.domainObject, output => { this.updateCurrentOutput(output); });
         }
     }
 };

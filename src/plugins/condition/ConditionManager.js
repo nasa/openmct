@@ -165,18 +165,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     findConditionById(id) {
-        let found;
-        for (let i=0, ii=this.conditionClassCollection.length; i < ii; i++) {
-            if (this.conditionClassCollection[i].id === id) {
-                found = {
-                    item: this.conditionClassCollection[i],
-                    index: i
-                };
-                break;
-            }
-        }
-
-        return found;
+        return this.conditionClassCollection.find(conditionClass => conditionClass.id === id);
     }
 
     //this.$set(this.conditionClassCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
