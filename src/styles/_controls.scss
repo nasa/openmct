@@ -229,6 +229,7 @@ section {
 
     &.is-expanded {
         flex: 1 1 100%;
+        max-height: max-content;
     }
 
     .c-section__header {
