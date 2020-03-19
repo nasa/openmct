@@ -169,6 +169,10 @@
         display: flex;
         align-items: center;
 
+        .c-object-label {
+            flex: 1 1 auto;
+        }
+
         .c-button { flex: 0 0 auto; }
     }
 }
