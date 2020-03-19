@@ -4,13 +4,13 @@
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
-            <select v-model="criterion.telemetry"
+            <select v-model="selectedTelemetry"
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
                 <option v-for="telemetryOption in telemetry"
                         :key="telemetryOption.identifier.key"
-                        :value="telemetryOption.identifier"
+                        :value="openmct.objects.makeKeyString(telemetryOption.identifier)"
                 >
                     {{ telemetryOption.name }}
                 </option>
@@ -86,13 +86,18 @@ export default {
         }
     },
     data() {
+        let selectedTelemetry = '';
+        if (this.criterion.telemetry) {
+            selectedTelemetry = this.openmct.objects.makeKeyString(this.criterion.telemetry)
+        }
         return {
             telemetryMetadata: {},
             telemetryMetadataOptions: {},
             operations: OPERATIONS,
             inputCount: 0,
             rowLabel: '',
-            operationFormat: ''
+            operationFormat: '',
+            selectedTelemetry
         }
     },
     computed: {
@@ -142,8 +147,8 @@ export default {
         },
         updateMetadataOptions(ev) {
             if (ev) {this.clearInputs()}
-            if (this.criterion.telemetry) {
-                this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
+            if (this.selectedTelemetry) {
+                this.openmct.objects.get(this.selectedTelemetry).then((telemetryObject) => {
                     this.criterion.telemetry.name = telemetryObject.name;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
