@@ -31,7 +31,7 @@
     >
         <line
             v-bind="linePosition"
-            :stroke="item.stroke"
+            :stroke="stroke"
             stroke-width="2"
         />
     </svg>
@@ -60,6 +60,8 @@
 
 <script>
 
+import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+
 const START_HANDLE_QUADRANTS = {
     1: 'c-frame-edit__handle--sw',
     2: 'c-frame-edit__handle--se',
@@ -85,6 +87,7 @@ export default {
         };
     },
     inject: ['openmct'],
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -121,6 +124,13 @@ export default {
                 ({x, y, x2, y2} = this.dragPosition);
             }
             return {x, y, x2, y2};
+        },
+        stroke() {
+            if (this.itemStyle && this.itemStyle.border) {
+                return this.itemStyle.border.replace('1px solid ', '');
+            } else {
+                return this.item.stroke;
+            }
         },
         style() {
             let {x, y, x2, y2} = this.position;

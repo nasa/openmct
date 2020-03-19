@@ -52,8 +52,8 @@
                 >
                     <input v-model="criterion.input[inputIndex]"
                            class="c-cdef__control__input"
-                           type="text"
-                           @change="persist"
+                           :type="setInputType"
+                           @blur="persist"
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
@@ -117,6 +117,20 @@ export default {
         },
         filteredOps: function () {
             return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
+        },
+        setInputType: function () {
+            let type = '';
+            for (let i = 0; i < this.filteredOps.length; i++) {
+                if (this.criterion.operation === this.filteredOps[i].name) {
+                    if (this.filteredOps[i].appliesTo.length === 1) {
+                        type = this.filteredOps[i].appliesTo[0];
+                    } else {
+                        type = 'string'
+                    }
+                    break;
+                }
+            }
+            return type;
         }
     },
     mounted() {
@@ -147,6 +161,7 @@ export default {
             if (ev) {this.clearInputs()}
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
+                    this.criterion.telemetry.name = telemetryObject.name;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations();
@@ -157,7 +172,10 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.criterion.telemetry.fieldName = ev.target.options[ev.target.selectedIndex].text;
+                this.clearInputs()
+            }
             this.getOperationFormat();
             this.persist();
         },

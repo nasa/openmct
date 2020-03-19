@@ -143,7 +143,7 @@ define([
             let strategy;
 
             if (this.model.interpolate !== 'none') {
-                strategy = 'minMax';
+                strategy = 'minmax';
             }
 
             options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
