@@ -8,7 +8,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' == ' + values[0];
+            return ' is ' + values[0];
         }
     },
     {
@@ -20,7 +20,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' != ' + values[0];
+            return ' is not ' + values[0];
         }
     },
     {
@@ -84,7 +84,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' between ' + values[0] + ' and ' + values[1];
+            return ' is between ' + values[0] + ' and ' + values[1];
         }
     },
     {
@@ -96,7 +96,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' not between ' + values[0] + ' and ' + values[1];
+            return ' is not between ' + values[0] + ' and ' + values[1];
         }
     },
     {
@@ -192,7 +192,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' == ' + values[0];
+            return ' is ' + values[0];
         }
     },
     {
@@ -204,7 +204,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' != ' + values[0];
+            return ' is not ' + values[0];
         }
     }
 ];
