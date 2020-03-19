@@ -1,45 +1,53 @@
 <template>
-<div>
-    <div v-if="conditionStyle"
-         class="holder c-c-button-wrapper align-left">
-        <div v-for="(error, index) in conditionErrors"
-             :key="index">
-            <span :class="error.message.icon"></span>
-            <span>{{ error.message.errorText }}
-                <span v-if="error.additionalInfo">{{ error.additionalInfo }}</span>
-            </span>
-        </div>
-        <div v-if="condition">
-            <span>{{ condition.configuration.name }}</span>
-            <span v-for="(criterionDescription, index) in criterionDescriptions"
-                  :key="criterionDescription.description"
+<div class="c-style-editor">
+    <div v-for="(error, index) in conditionErrors"
+         :key="index"
+    >
+        <span :class="error.message.icon"></span>
+        <span>{{ error.message.errorText }}
+            <span v-if="error.additionalInfo">{{ error.additionalInfo }}</span>
+        </span>
+    </div>
+    <div v-if="condition">
+        <span>{{ condition.configuration.name }}</span>
+        <span v-for="(criterionDescription, index) in criterionDescriptions"
+              :key="criterionDescription.description"
+        >
+            <span v-if="!index">When </span>
+            {{ criterionDescription.description }}
+            <span v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</span>
+        </span>
+    </div>
+    <div class="c-style__thumb-and-toolbar">
+        <span class="c-style-thumb"
+              :style="conditionStyle.style"
+        >
+            <span class="c-style-thumb__text"
+                  :class="{ 'hide-nice': !conditionStyle.style.color }"
             >
-                <span v-if="!index">When </span>
-                {{ criterionDescription.description }}
-                <span v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</span>
+                ABC
             </span>
-        </div>
-        <div class="c-toolbar">
-            <span :style="conditionStyle.style">ABC</span>
-            <span v-if="isEditing">
-                <toolbar-color-picker v-if="conditionStyle.style.border"
-                                      :options="borderColorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
-                                      :options="backgroundColorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-color-picker v-if="conditionStyle.style.color"
-                                      :options="colorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-button v-if="conditionStyle.style.imageUrl"
-                                :options="imageUrlOption"
-                                @change="updateStyleValue"
-                />
-            </span>
-        </div>
+        </span>
+        <span v-if="isEditing"
+              class="c-toolbar"
+        >
+            <toolbar-color-picker v-if="conditionStyle.style.border"
+                                  :options="borderColorOption"
+                                  @change="updateStyleValue"
+            />
+            <toolbar-color-picker v-if="conditionStyle.style.backgroundColor"
+                                  :options="backgroundColorOption"
+                                  @change="updateStyleValue"
+            />
+            <toolbar-color-picker v-if="conditionStyle.style.color"
+                                  :options="colorOption"
+                                  @change="updateStyleValue"
+            />
+            <toolbar-button v-if="conditionStyle.style.imageUrl"
+                            :options="imageUrlOption"
+                            @change="updateStyleValue"
+            />
+        </span>
     </div>
 </div>
 </template>
