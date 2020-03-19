@@ -1,11 +1,4 @@
-.c-cs-styles {
-  &__header {
-    @include propertiesHeader();
-
-    font-size: .85em;
-    text-transform: uppercase;
-  }
-
+.c-inspect-styles {
   &__content {
     > * {
       margin-top: $interiorMarginSm;

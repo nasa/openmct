@@ -23,7 +23,7 @@
     </div>
     <ul
         v-if="expanded"
-        class="c-properties"
+        class="c-inspect-properties"
     >
         <filter-field
             v-for="metadatum in globalMetadata"

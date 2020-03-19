@@ -8,25 +8,10 @@
         margin-top: $interiorMargin;
     }
 
-    &__header {
-        flex: 0 0 auto;
-    }
-
     &__selected-w,
     &__multiple-selected-w {
         @include headerFont(1.1em);
         padding: $interiorMarginSm 0;
-    }
-
-    &__selected-w {
-        display: flex;
-        align-items: center;
-
-        &:before {
-            display: block;
-            margin-right: $interiorMarginSm;
-            opacity: 0.5;
-        }
     }
 
     &__multiple-selected-w {
@@ -105,28 +90,34 @@
     }
 }
 
-.c-properties {
-    display: grid;
-    grid-row-gap: 0;
-    grid-template-columns: 1fr 2fr;
-    align-items: start;
-    min-width: 150px;
-
+.c-inspect-properties,
+.c-inspect-styles {
     [class*="header"] {
         @include propertiesHeader();
+        flex: 0 0 auto;
+        font-size: .85em;
+        text-transform: uppercase;
 
         &:not(:first-child) {
             // Allow multiple headers within a component
             margin-top: $interiorMarginLg;
         }
     }
+}
+/********************************************* INSPECTOR PROPERTIES TAB */
+.c-inspect-properties {
+    display: grid;
+    grid-row-gap: 0;
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+    min-width: 150px;
 
     [class*="span-all"],
     [class*="header"] {
         grid-column: 1 / 3;
     }
 
-    + .c-properties {
+    + .c-inspect-properties {
         margin-top: $interiorMarginLg;
     }
 
@@ -142,11 +133,6 @@
             // Row borders, effected via border-top on child elements of the row
             border-top: 1px solid $colorInspectorSectionHeaderBg;
         }
-    }
-
-    &__header {
-        font-size: .85em;
-        text-transform: uppercase;
     }
 
     &__label,
@@ -172,6 +158,22 @@
         }
     }
 }
+
+/********************************************* INSPECTOR STYLES TAB */
+.c-inspect-styles {
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__condition-set {
+        display: flex;
+        align-items: center;
+
+        .c-button { flex: 0 0 auto; }
+    }
+}
+
+
 /********************************************* LEGACY SUPPORT */
 .c-inspector {
     // FilterField.vue
