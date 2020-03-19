@@ -177,6 +177,14 @@
     }
 }
 
+.c-toggle-styling-button {
+    display: none;
+
+    .is-editing & {
+        display: block;
+    }
+}
+
 
 /********************************************* LEGACY SUPPORT */
 .c-inspector {

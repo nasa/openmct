@@ -5,12 +5,12 @@
             Object Styles
         </div>
         <div class="c-inspect-styles__content">
-            <style-editor class="c-inspect-styles__list-item"
+            <style-editor class="c-inspect-styles__style-editor"
                           :condition-style="defaultStyle"
             />
             <button
                 id="addConditionSet"
-                class="c-button c-button--major labeled"
+                class="c-button c-button--major c-toggle-styling-button labeled"
                 @click="addConditionSet">
                 <span class="c-cs-button__label">Use Conditional Styling...</span>
             </button>
@@ -45,7 +45,7 @@
         <ul v-if="conditionsLoaded">
             <style-editor v-for="conditionStyle in conditionalStyles"
                           :key="conditionStyle.conditionId"
-                          class="c-inspect-styles__list-item"
+                          class="c-inspect-styles__condition"
                           :condition-style="conditionStyle"
                           :condition="getCondition(conditionStyle.conditionId)"
                           :is-editing="isEditing"
