@@ -58,17 +58,19 @@
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
             </span>
-            <span v-if="enumerations.length && criterion.operation"
-                  class="c-cdef__control"
-            >
-                <select v-model="criterion.input[0]">
-                    <option v-for="option in enumerations"
-                            :key="option.string"
-                            :value="option.value.toString()"
-                    >
-                        {{ option.string }}
-                    </option>
-                </select>
+            <span v-else>
+                <span v-if="inputCount && criterion.operation"
+                      class="c-cdef__control"
+                >
+                    <select v-model="criterion.input[0]">
+                        <option v-for="option in enumerations"
+                                :key="option.string"
+                                :value="option.value.toString()"
+                        >
+                            {{ option.string }}
+                        </option>
+                    </select>
+                </span>
             </span>
         </span>
     </span>
