@@ -1,5 +1,6 @@
 <template>
 <div class="c-inspector">
+    <object-name />
     <div class="c-inspector__tabs c-tabs"
         v-if="showStyles"
     >
@@ -46,6 +47,7 @@ import pane from '../layout/pane.vue';
 import Elements from './Elements.vue';
 import Location from './Location.vue';
 import Properties from './Properties.vue';
+import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import StylesInspectorView from "./StylesInspectorView.vue";
@@ -59,6 +61,7 @@ export default {
         pane,
         Elements,
         Properties,
+        ObjectName,
         Location,
         InspectorViews
     },

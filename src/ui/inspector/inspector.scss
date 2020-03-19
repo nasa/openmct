@@ -3,8 +3,49 @@
     flex: 1 1 auto;
     flex-direction: column;
 
-    > * + * {
+    > * {
+        // Thi is on purpose: want extra margin on top object-name element
         margin-top: $interiorMargin;
+    }
+
+    &__header {
+        flex: 0 0 auto;
+    }
+
+    &__selected-w,
+    &__multiple-selected-w {
+        @include headerFont(1.1em);
+        padding: $interiorMarginSm 0;
+    }
+
+    &__selected-w {
+        display: flex;
+        align-items: center;
+
+        &:before {
+            display: block;
+            margin-right: $interiorMarginSm;
+            opacity: 0.5;
+        }
+    }
+
+    &__multiple-selected-w {
+        $p: $interiorMarginLg;
+        background: rgba($colorWarningLo, 0.3);
+        border-radius: $basicCr;
+        display: inline-block;
+        font-style: italic;
+        padding-left: $p;
+        padding-right: $p;
+    }
+
+    &__selected {
+        @include ellipsize();
+        flex: 1 1 auto;
+
+        &--non-domain-object {
+            font-style: italic;
+        }
     }
 
     &__tabs {
