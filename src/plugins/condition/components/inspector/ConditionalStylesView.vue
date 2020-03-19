@@ -1,3 +1,25 @@
+/*****************************************************************************
+* Open MCT, Copyright (c) 2014-2020, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
+
 <template>
 <div class="c-inspector__styles c-inspect-styles">
     <template v-if="!conditionalStyles.length">
@@ -6,12 +28,13 @@
         </div>
         <div class="c-inspect-styles__content">
             <style-editor class="c-inspect-styles__list-item"
-                          :condition-style="defaultStyle"
+                          :style-item="defaultStyle"
             />
             <button
                 id="addConditionSet"
                 class="c-button c-button--major labeled"
-                @click="addConditionSet">
+                @click="addConditionSet"
+            >
                 <span class="c-cs-button__label">Use Conditional Styling...</span>
             </button>
         </div>
@@ -23,7 +46,8 @@
 
         <div class="c-inspect-styles__condition-set">
             <div v-if="conditionSetDomainObject"
-                 class="c-object-label icon-conditional">
+                 class="c-object-label icon-conditional"
+            >
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </div>
             <template v-if="isEditing">
@@ -43,14 +67,22 @@
         </div>
 
         <ul v-if="conditionsLoaded">
-            <style-editor v-for="conditionStyle in conditionalStyles"
-                          :key="conditionStyle.conditionId"
-                          class="c-inspect-styles__list-item"
-                          :condition-style="conditionStyle"
-                          :condition="getCondition(conditionStyle.conditionId)"
-                          :is-editing="isEditing"
-                          @persist="updateConditionalStyle"
-            />
+            <li v-for="conditionStyle in conditionalStyles"
+                :key="conditionStyle.conditionId"
+                class="c-inspect-styles__list-item"
+            >
+                <condition-error :show-label="true"
+                                 :condition="getCondition(conditionStyle.conditionId)"
+                />
+                <condition-description :show-label="true"
+                                       :condition="getCondition(conditionStyle.conditionId)"
+                />
+                <style-editor class="c-inspect-styles__editor"
+                              :style-item="conditionStyle"
+                              :is-editing="isEditing"
+                              @persist="updateConditionalStyle"
+                />
+            </li>
         </ul>
     </template>
 </div>
@@ -60,11 +92,15 @@
 
 import StyleEditor from "./StyleEditor.vue";
 import ConditionSetSelectorDialog from "./ConditionSetSelectorDialog.vue";
+import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
+import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 
 export default {
     name: 'ConditionalStylesView',
     components: {
+        ConditionDescription,
+        ConditionError,
         StyleEditor
     },
     inject: [

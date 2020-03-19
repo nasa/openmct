@@ -11,6 +11,7 @@
       display: flex;
       padding: $interiorMargin;
       margin-top: $interiorMarginSm;
+      flex-flow: column;
     }
   }
 }
