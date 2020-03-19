@@ -33,12 +33,9 @@
             @setView="setView"
         />
         <!-- Action buttons -->
-        <menu-switcher v-if="notebookEnabled"
-                       class="c-notebook-snapshot-menubutton"
-                       :current-type="{ name: 'notebook', cssClass: 'icon-notebook' }"
-                       :get-data="setNotebookTypes"
-                       :on-switch="snapshot"
-                       :types="notebookTypes"
+        <NotebookMenuSwitcher v-if="notebookEnabled"
+                              :domain-object="domainObject"
+                              class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
             <button
@@ -92,18 +89,15 @@
 </template>
 
 <script>
-import Snapshot from '@/plugins/notebook/snapshot';
 import ViewSwitcher from './ViewSwitcher.vue';
-import MenuSwitcher from './menu-switcher.vue';
-import { clearDefaultNotebook, getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage';
-import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '@/plugins/notebook/notebook-constants';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
     components: {
-        MenuSwitcher,
+        NotebookMenuSwitcher,
         ViewSwitcher
     },
     data: function () {
@@ -114,7 +108,7 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: false
+            notebookEnabled: this.openmct.types.get('notebook')
         }
     },
     computed: {
@@ -178,12 +172,6 @@ export default {
         }
     },
     mounted: function () {
-
-        if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new Snapshot(this.openmct);
-            this.notebookEnabled = true;
-        }
-
         document.addEventListener('click', this.closeViewAndSaveMenu);
         window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
 
@@ -199,41 +187,6 @@ export default {
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
     methods: {
-        async setNotebookTypes() {
-            if (!this.notebookEnabled) {
-                return;
-            }
-
-            const notebookTypes = [];
-            let defaultPath = '';
-            const defaultNotebook = getDefaultNotebook();
-
-            if (defaultNotebook) {
-                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier).then(d => d);
-
-                if (domainObject.isRemovedFromTree) {
-                    clearDefaultNotebook();
-                } else {
-                    defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
-                }
-            }
-
-            if (defaultPath.length !== 0) {
-                notebookTypes.push({
-                    cssClass: 'icon-notebook',
-                    name: `Save to Notebook ${defaultPath}`,
-                    type: NOTEBOOK_DEFAULT
-                });
-            }
-
-            notebookTypes.push({
-                cssClass: 'icon-notebook',
-                name: 'Save to Notebook Snapshots',
-                type: NOTEBOOK_SNAPSHOT
-            });
-
-            this.notebookTypes = notebookTypes;
-        },
         toggleSaveMenu() {
             this.showSaveMenu = !this.showSaveMenu;
         },
@@ -315,10 +268,6 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
-        },
-        snapshot(notebook) {
-            let element = document.getElementsByClassName("l-shell__main-container")[0];
-            this.notebookSnapshot.capture(notebook.type, this.domainObject, element);
         },
         goToParent() {
             window.location.hash = this.parentUrl;
