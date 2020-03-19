@@ -40,7 +40,7 @@ export default class ConditionSetTelemetryProvider {
     }
 
     request(domainObject, options) {
-        let conditionManager = new ConditionManager(domainObject, this.openmct);
+        let conditionManager = options.conditionManager || new ConditionManager(domainObject, this.openmct);
 
         return conditionManager.requestLADConditionSetOutput()
             .then(latestOutput => {
@@ -50,8 +50,9 @@ export default class ConditionSetTelemetryProvider {
             });
     }
 
-    subscribe(domainObject, callback) {
-        let conditionManager = new ConditionManager(domainObject, this.openmct);
+    subscribe(domainObject, callback, options) {
+        let conditionManager = options.conditionManager || new ConditionManager(domainObject, this.openmct);
+
         conditionManager.on('conditionSetResultUpdated', callback);
 
         return function unsubscribe() {

@@ -32,8 +32,8 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
-        this.composition.on('add', this.addTelemetry, this)
-        this.composition.on('remove', this.removeTelemetry, this)
+        this.composition.on('add', this.addTelemetry, this);
+        this.composition.on('remove', this.removeTelemetry, this);
 
         this.loaded = this.composition.load();
         this.subscriptions = {};
@@ -53,8 +53,7 @@ export default class ConditionManager extends EventEmitter {
 
         this.subscriptions[id] = this.openmct.telemetry.subscribe(
             endpoint,
-            this.broadcastTelemetry
-                .bind(this, id)
+            this.broadcastTelemetry.bind(this, id)
         );
     }
 
@@ -212,7 +211,6 @@ export default class ConditionManager extends EventEmitter {
         // update conditions results and then calculate the current condition
         this.updateConditionResults(resultObj);
         const currentCondition = this.getCurrentCondition();
-
         this.emit('conditionSetResultUpdated',
             Object.assign(
                 {
@@ -264,20 +262,7 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
-    // subscribeToTelemetry() {
-
-    //     this.load().then((endpoints) => {
-    //         this.unsubscribes = endpoints.map(endpoint => {
-    //             this.openmct.telemetry.subscribe(
-    //                 endpoint,
-    //                 this.broadcastTelemetry
-    //                     .bind(this, this.openmct.objects.makeKeyString(endpoint.identifier)));
-    //         });
-    //     });
-    // }
-
     broadcastTelemetry(id, datum) {
-        console.log(this.conditionClassCollection);
         this.conditionClassCollection.filter(condition => {
             return condition.getTelemetrySubscriptions().includes(id);
         }).forEach(subscribingCondition => {
@@ -293,11 +278,15 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
-        this.composition.off('add', this.addTelemetry, this)
-        this.composition.off('remove', this.removeTelemetry, this)
+        this.composition.off('add', this.addTelemetry, this);
+        this.composition.off('remove', this.removeTelemetry, this);
+        Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
+        this.subscriptions = undefined;
+
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
+
         this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();

@@ -67,12 +67,10 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleReceivedTelemetry(datum) {
-        console.log(`received datum`);
         if (!datum || !datum.id) {
             console.log('no data received');
             return;
         }
-
         this.criteria.filter(criterion => criterion.telemetryObjectIdAsString === datum.id)
             .forEach(subscribingCriterion => {
                 subscribingCriterion.emit(`subscription`, datum)

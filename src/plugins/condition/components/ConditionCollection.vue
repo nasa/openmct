@@ -121,11 +121,15 @@ export default {
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.conditionManager.requestLADConditionSetOutput()
+        console.log(`collection condition manager: ${this.conditionManager.id}`);
+
+        let options = { conditionManager: this.conditionManager };
+        this.openmct.telemetry.request(this.domainObject, options)
             .then(data => this.$emit('conditionSetResultUpdated', data[0]));
-        this.conditionManager.on('conditionSetResultUpdated', (data) => {
-            this.$emit('conditionSetResultUpdated', data);
-        });
+        this.unsubscribe = this.openmct.telemetry.subscribe(
+            this.domainObject,
+            (data) => { this.$emit('conditionSetResultUpdated', data); },
+            options);
     },
     methods: {
         observeForChanges() {
