@@ -59,7 +59,7 @@
                       :key="index"
                 >
                     {{ getRule(criterion, index) }}
-                    <template v-if="!isLastCriterion">
+                    <template v-if="!isLastCriterion(index)">
                         {{ getConjunction }}
                     </template>
                 </span>
@@ -196,7 +196,7 @@
                   :key="index"
             >
                 {{ getRule(criterion, index) }}
-                <template v-if="!isLastCriterion">
+                <template v-if="!isLastCriterion(index)">
                     {{ getConjunction }}
                 </template>
             </span>
@@ -208,6 +208,7 @@
 <script>
 import Criterion from './Criterion.vue';
 import { OPERATIONS } from '../utils/operations';
+import {TRIGGER} from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ['openmct'],
@@ -258,7 +259,7 @@ export default {
             }
         },
         getConjunction: function () {
-            return this.condition.configuration.trigger === 'all' ? 'and' : 'or';
+            return this.condition.configuration.trigger === TRIGGER.ALL ? 'and' : 'or';
         }
     },
     destroyed() {
@@ -269,10 +270,10 @@ export default {
     },
     methods: {
         getRule(criterion, index) {
-            return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
+            return `${criterion.telemetry.name} ${criterion.metadata} ${this.findDescription(criterion.operation, criterion.input)}`;
         },
         isLastCriterion(index) {
-            return index === this.condition.configuration.criteria.length - 1;
+            return index === (this.condition.configuration.criteria.length - 1);
         },
         findDescription(operation, values) {
             for (let i=0, ii= OPERATIONS.length; i < ii; i++) {

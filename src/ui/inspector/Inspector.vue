@@ -112,7 +112,10 @@ export default {
                     let type = this.openmct.types.get(object.type);
                     this.showStyles = (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
                 }
-                this.updateCurrentTab(this.tabbedViews[0]);
+                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key))
+                {
+                    this.updateCurrentTab(this.tabbedViews[0]);
+                }
             }
         },
         updateCurrentTab(view) {

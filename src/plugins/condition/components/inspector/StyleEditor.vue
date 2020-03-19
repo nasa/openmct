@@ -1,14 +1,22 @@
 <template>
 <div>
     <div v-if="conditionStyle"
-         class="holder c-c-button-wrapper align-left"
-    >
+         class="holder c-c-button-wrapper align-left">
+        <div v-for="(error, index) in conditionErrors"
+             :key="index">
+            <span :class="error.message.icon"></span>
+            <span>{{ error.message.errorText }}
+                <span v-if="error.additionalInfo">{{ error.additionalInfo }}</span>
+            </span>
+        </div>
         <div v-if="condition">
             <span>{{ condition.configuration.name }}</span>
-            <span v-for="criterionDescription in criterionDescriptions"
-                  :key="criterionDescription"
+            <span v-for="(criterionDescription, index) in criterionDescriptions"
+                  :key="criterionDescription.description"
             >
-                {{ criterionDescription }}
+                <span v-if="!index">When </span>
+                {{ criterionDescription.description }}
+                <span v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</span>
             </span>
         </div>
         <div class="c-toolbar">
@@ -69,7 +77,19 @@ export default {
     },
     data() {
         return {
-            criterionDescriptions: []
+            criterionDescriptions: [],
+            triggerDescription: '',
+            conditionErrors: [],
+            ERROR: {
+                'TELEMETRY_NOT_FOUND': {
+                    errorText: 'Telemetry not found',
+                    icon: 's-status-icon-warning-hi'
+                },
+                'CONDITION_NOT_FOUND': {
+                    errorText: 'Condition not found',
+                    icon: 's-status-icon-warning-hi'
+                }
+            }
         }
     },
     computed: {
@@ -144,32 +164,46 @@ export default {
         },
         getConditionDescription() {
             if (this.condition) {
+                this.triggerDescription = this.condition.configuration.trigger === TRIGGER.ANY ? ' or ' : ' and ';
                 this.criterionDescriptions = [];
                 this.condition.configuration.criteria.forEach((criterion, index) => {
-                    if (!criterion.isDefault) {
-                        this.getCriterionDescription(criterion, index);
-                    }
+                    this.getCriterionDescription(criterion, index);
                 });
+                if (this.condition.isDefault) {
+                    this.criterionDescriptions.splice(0, 0, {
+                        description: 'all else fails'
+                    });
+                }
+            } else if (this.conditionStyle.conditionId !== 'default') {
+                //couldn't find the condition. That's bad!
+                this.conditionErrors = [{
+                    message: this.ERROR.CONDITION_NOT_FOUND,
+                    additionalInfo: `Condition Id: ${this.conditionStyle.conditionId}`
+                }];
             }
         },
         getCriterionDescription(criterion, index) {
-            const triggerDescription = this.condition.trigger === TRIGGER.ANY ? ' or ' : ' and ';
             if(criterion.telemetry) {
                 this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                    let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation)} ${criterion.input.join(', ')}`;
-                    if (!index) {
-                        description = 'When ' + description;
-                    }
-                    if (index !== this.condition.configuration.criteria.length -1) {
-                        description = description + triggerDescription;
-                    }
-                    this.criterionDescriptions.splice(index, 0, description);
+                    let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
+                    this.criterionDescriptions.splice(index, 0, {
+                        description
+                    });
+                });
+            } else {
+                let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
+                this.criterionDescriptions.splice(index, 0, {
+                    description
+                });
+                this.conditionErrors.push({
+                    message: this.ERROR.TELEMETRY_NOT_FOUND,
+                    additionalInfo: `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}`
                 });
             }
         },
-        getOperatorText(operationName) {
+        getOperatorText(operationName, values) {
             const found = OPERATIONS.find((operation) => operation.name === operationName);
-            return found ? found.shortText || found.text : '';
+            return found ? found.getDescription(values) : '';
         }
     }
 }
