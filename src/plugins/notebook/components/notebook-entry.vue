@@ -198,7 +198,8 @@ export default {
                 ? domainObjectType.definition.cssClass
                 : 'icon-object-unknown';
             const entryPos = this.entryPosById(entryId);
-            const newEmbed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const bounds = this.openmct.time.bounds();
+            const newEmbed = createNewEmbed(bounds, domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const currentEntryEmbeds = entries[entryPos].embeds;
             currentEntryEmbeds.push(newEmbed);

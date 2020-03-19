@@ -27,9 +27,10 @@ export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     return entries[defaultSection.id][defaultPage.id];
 }
 
-export const createNewEmbed = (name, cssClass, type, snapshot = '', domainObject, objectPath) => {
+export const createNewEmbed = (bounds, name, cssClass, type, snapshot = '', domainObject, objectPath) => {
     const date = Date.now();
     const embed = {
+        bounds,
         name,
         cssClass,
         type,

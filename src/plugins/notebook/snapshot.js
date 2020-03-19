@@ -13,13 +13,13 @@ export default class Snapshot {
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
-    capture(notebookType, snapShotDomainObject, domElement) {
+    capture(notebookType, snapShotDomainObject, domElement, bounds) {
         this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(notebookType, reader.result, snapShotDomainObject);
+                    this._saveSnapShot(notebookType, reader.result, snapShotDomainObject, bounds);
                 }.bind(this);
             }.bind(this));
     }
@@ -27,31 +27,25 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(notebookType, imageUrl, snapShotDomainObject) {
+    _saveSnapShot(notebookType, imageUrl, snapShotDomainObject, bounds) {
         const type = this.openmct.types.get(snapShotDomainObject.type);
-        const embedObject = {
-            id: snapShotDomainObject.identifier.key,
-            cssClass: type.cssClass,
-            name: snapShotDomainObject.name
-        };
-
+        const embed = createNewEmbed(bounds, snapShotDomainObject.name, type.cssClass, snapShotDomainObject.identifier.key, imageUrl ? { src: imageUrl } : '');
         if (notebookType === NOTEBOOK_DEFAULT) {
-            this._saveToDefaultNoteBook(embedObject, imageUrl);
+            this._saveToDefaultNoteBook(embed, imageUrl);
 
             return;
         }
 
-        this._saveToNotebookSnapshots(embedObject, imageUrl);
+        this._saveToNotebookSnapshots(embed, imageUrl);
     }
 
     /**
      * @private
      */
-    _saveToDefaultNoteBook(embedObject, imageUrl) {
+    _saveToDefaultNoteBook(embed, imageUrl) {
         const notebookStorage = getDefaultNotebook();
         this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
             .then(domainObject => {
-                const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
                 const defaultPath = `${domainObject.name} > ${notebookStorage.section.name} > ${notebookStorage.page.name}`;
@@ -63,8 +57,7 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveToNotebookSnapshots(embedObject, imageUrl) {
-        const embed = createNewEmbed(embedObject.name, embedObject.cssClass, embedObject.id, imageUrl ? { src: imageUrl } : '');
+    _saveToNotebookSnapshots(embed, imageUrl) {
         SnapShotContainer.addSnapshot(embed);
 
         const msg = 'Saved to Notebook Snapshots - click to view.';

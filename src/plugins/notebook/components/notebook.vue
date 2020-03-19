@@ -241,8 +241,8 @@ export default {
             const cssClass = domainObjectType && domainObjectType.definition
                 ? domainObjectType.definition.cssClass
                 : 'icon-object-unknown';
-
-            const embed = createNewEmbed(domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const bounds = this.openmct.time.bounds();
+            const embed = createNewEmbed(bounds, domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
             this.newEntry(embed);
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
