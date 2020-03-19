@@ -1,11 +1,11 @@
 <template>
-<div>
-    <div v-if="!conditionalStyles.length">
-        <div class="c-cs-styles__header">
+<div class="c-inspector__styles c-inspect-styles">
+    <template v-if="!conditionalStyles.length">
+        <div class="c-inspect-styles__header">
             Object Styles
         </div>
-        <div class="c-cs-styles__content">
-            <style-editor class="c-cs-styles__list-item"
+        <div class="c-inspect-styles__content">
+            <style-editor class="c-inspect-styles__list-item"
                           :condition-style="defaultStyle"
             />
             <button
@@ -13,46 +13,48 @@
                 class="c-button c-button--major labeled"
                 @click="addConditionSet"
             >
-                <span class="c-cs-button__label">Use Conditional styling...</span>
+                <span class="c-cs-button__label">Use Conditional Styling...</span>
             </button>
         </div>
-    </div>
-    <div v-else
-         class="c-cs-styles__content"
-    >
-        <div class="c-cs-styles__header">
+    </template>
+    <template v-else>
+        <div class="c-inspect-styles__header">
             Conditional Object Styles
         </div>
-        <span v-if="conditionSetDomainObject"
-              class="icon-conditional"
-        > {{ conditionSetDomainObject.name }}</span>
-        <div v-if="isEditing"
-             class="c-cs-styles__buttons"
-        >
-            <button
-                id="changeConditionSet"
-                class="c-button c-button--major labeled"
-                @click="addConditionSet"
-            >
-                <span class="c-cs-button__label">Change...</span>
-            </button>
 
-            <button class="c-click-icon c-condition__delete-button icon-trash"
-                    title="Remove conditional styles"
-                    @click="removeConditionSet"
-            ></button>
+        <div class="c-inspect-styles__condition-set">
+            <div v-if="conditionSetDomainObject"
+                 class="c-object-label icon-conditional"
+            >
+                <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
+            </div>
+            <template v-if="isEditing">
+                <button
+                        id="changeConditionSet"
+                        class="c-button labeled"
+                        @click="addConditionSet"
+                >
+                    <span class="c-button__label">Change...</span>
+                </button>
+
+                <button class="c-click-icon icon-x"
+                        title="Remove conditional styles"
+                        @click="removeConditionSet"
+                ></button>
+            </template>
         </div>
+
         <ul v-if="conditions">
             <style-editor v-for="conditionStyle in conditionalStyles"
                           :key="conditionStyle.conditionId"
-                          class="c-cs-styles__list-item"
+                          class="c-inspect-styles__list-item"
                           :condition-style="conditionStyle"
                           :condition="conditions[conditionStyle.conditionId]"
                           :is-editing="isEditing"
                           @persist="updateConditionalStyle"
             />
         </ul>
-    </div>
+    </template>
 </div>
 </template>
 
