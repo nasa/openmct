@@ -90,7 +90,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     initCondition(conditionConfiguration, index) {
-        let condition = new Condition(conditionConfiguration, this.openmct);
+        let condition = new Condition(conditionConfiguration, this.openmct, this);
         condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
             this.conditionClassCollection.splice(index + 1, 0, condition);
@@ -263,14 +263,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     broadcastTelemetry(id, datum) {
-        this.conditionClassCollection.filter(condition => {
-            return condition.getTelemetrySubscriptions().includes(id);
-        }).forEach(subscribingCondition => {
-            subscribingCondition.emit(
-                `subscription:${id}`,
-                Object.assign({}, datum, {id: id})
-            );
-        });
+        this.emit(`broadcastTelemetry`, Object.assign({}, datum, {id: id}));
     }
 
     persistConditions() {

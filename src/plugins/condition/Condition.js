@@ -48,33 +48,32 @@ export default class ConditionClass extends EventEmitter {
      * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
      */
-    constructor(conditionConfiguration, openmct) {
+    constructor(conditionConfiguration, openmct, conditionManager) {
         super();
 
         this.openmct = openmct;
+        this.conditionManager = conditionManager;
         this.id = conditionConfiguration.id;
         this.criteria = [];
         this.criteriaResults = {};
         this.result = undefined;
         this.latestTimestamp = {};
+
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.unsubscribes = this.getTelemetrySubscriptions().map(id => {
-            this.on(`subscription:${id}`, this.handleReceivedTelemetry)
-        });
+        this.conditionManager.on('broadcastTelemetry', this.handleBroadcastTelemetry, this);
     }
 
-    handleReceivedTelemetry(datum) {
+    handleBroadcastTelemetry(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
             return;
         }
-        this.criteria.filter(criterion => criterion.telemetryObjectIdAsString === datum.id)
-            .forEach(subscribingCriterion => {
-                subscribingCriterion.emit(`subscription`, datum)
-            });
+        this.criteria.forEach(criterion => {
+            criterion.emit(`subscription:${datum.id}`, datum);
+        });
     }
 
     update(conditionConfiguration) {
@@ -187,7 +186,7 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            this.subscribe();
+            // this.subscribe();
             // TODO nothing is listening to this
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,

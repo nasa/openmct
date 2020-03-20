@@ -40,25 +40,35 @@ export default class ConditionSetTelemetryProvider {
     }
 
     request(domainObject, options) {
-        let conditionManager = options.conditionManager || new ConditionManager(domainObject, this.openmct);
+        let conditionManager = options.conditionManager;
+        let newConditionManager = false;
+        if (!conditionManager) {
+            newConditionManager = true;
+            conditionManager = new ConditionManager(domainObject, this.openmct);
+        }
 
         return conditionManager.requestLADConditionSetOutput()
             .then(latestOutput => {
-                conditionManager.destroy();
-                conditionManager = undefined;
+                if (newConditionManager) {
+                    conditionManager.destroy();
+                    conditionManager = undefined;
+                }
                 return latestOutput ? [latestOutput] : [];
             });
     }
 
     subscribe(domainObject, callback, options) {
-        let conditionManager = options.conditionManager || new ConditionManager(domainObject, this.openmct);
+        let conditionManager = options.conditionManager;
+        if (!conditionManager) {
+            conditionManager = new ConditionManager(domainObject, this.openmct);
+            conditionManager.on('conditionSetResultUpdated', callback);
+            return function unsubscribe() {
+                conditionManager.off('conditionSetResultUpdated');
+                conditionManager.destroy();
+                conditionManager = undefined;
+            };
+        }
 
         conditionManager.on('conditionSetResultUpdated', callback);
-
-        return function unsubscribe() {
-            conditionManager.off('conditionSetResultUpdated');
-            conditionManager.destroy();
-            conditionManager = undefined;
-        };
     }
 }
