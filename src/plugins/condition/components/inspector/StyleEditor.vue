@@ -23,7 +23,7 @@
 <template>
 <div class="c-style">
     <span class="c-style-thumb"
-          :style="styleItem.style"
+          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
     >
         <span class="c-style-thumb__text"
               :class="{ 'hide-nice': !styleItem.style.color }"
@@ -142,6 +142,7 @@ export default {
             }
             if (value && value.url) {
                 this.styleItem.style[item.property] = value.url;
+                console.log('value.url',item.property, value.url);
             } else {
                 this.styleItem.style[item.property] = value;
             }
