@@ -45,16 +45,32 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span v-for="(item, inputIndex) in inputCount"
-                  :key="inputIndex"
-                  class="c-cdef__control__inputs"
-            >
-                <input v-model="criterion.input[inputIndex]"
-                       class="c-cdef__control__input"
-                       type="text"
-                       @change="persist"
+            <span v-if="!enumerations.length">
+                <span v-for="(item, inputIndex) in inputCount"
+                      :key="inputIndex"
+                      class="c-cdef__control__inputs"
                 >
-                <span v-if="inputIndex < inputCount-1">and</span>
+                    <input v-model="criterion.input[inputIndex]"
+                           class="c-cdef__control__input"
+                           :type="setInputType"
+                           @blur="persist"
+                    >
+                    <span v-if="inputIndex < inputCount-1">and</span>
+                </span>
+            </span>
+            <span v-else>
+                <span v-if="inputCount && criterion.operation"
+                      class="c-cdef__control"
+                >
+                    <select v-model="criterion.input[0]">
+                        <option v-for="option in enumerations"
+                                :key="option.string"
+                                :value="option.value.toString()"
+                        >
+                            {{ option.string }}
+                        </option>
+                    </select>
+                </span>
             </span>
         </span>
     </span>
@@ -92,7 +108,8 @@ export default {
             operations: OPERATIONS,
             inputCount: 0,
             rowLabel: '',
-            operationFormat: ''
+            operationFormat: '',
+            enumerations: []
         }
     },
     computed: {
@@ -102,6 +119,20 @@ export default {
         },
         filteredOps: function () {
             return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
+        },
+        setInputType: function () {
+            let type = '';
+            for (let i = 0; i < this.filteredOps.length; i++) {
+                if (this.criterion.operation === this.filteredOps[i].name) {
+                    if (this.filteredOps[i].appliesTo.length === 1) {
+                        type = this.filteredOps[i].appliesTo[0];
+                    } else {
+                        type = 'string'
+                    }
+                    break;
+                }
+            }
+            return type;
         }
     },
     mounted() {
@@ -109,11 +140,13 @@ export default {
     },
     methods: {
         getOperationFormat() {
+            this.enumerations = [];
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
                 if (value.key === this.criterion.metadata) {
                     let valueMetadata = this.telemetryMetadataOptions[index];
                     if (valueMetadata.enumerations !== undefined) {
                         this.operationFormat = 'enum';
+                        this.enumerations = valueMetadata.enumerations;
                     } else if (valueMetadata.hints.hasOwnProperty('range')) {
                         this.operationFormat = 'number';
                     } else if (valueMetadata.hints.hasOwnProperty('domain')) {
@@ -130,6 +163,7 @@ export default {
             if (ev) {this.clearInputs()}
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
+                    this.criterion.telemetry.name = telemetryObject.name;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations();
@@ -140,13 +174,16 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.criterion.telemetry.fieldName = ev.target.options[ev.target.selectedIndex].text;
+                this.clearInputs()
+            }
             this.getOperationFormat();
             this.persist();
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
-                this.criterion.input = [];
+                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
             }
             for (let i = 0; i < this.filteredOps.length; i++) {

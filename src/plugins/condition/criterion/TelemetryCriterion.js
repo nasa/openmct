@@ -44,7 +44,6 @@ export default class TelemetryCriterion extends EventEmitter {
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        // this.subscription = null;
         this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
 
         this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
@@ -53,18 +52,20 @@ export default class TelemetryCriterion extends EventEmitter {
 
     initialize(obj) {
         this.telemetryObject = obj;
+        this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
         this.emitEvent('criterionUpdated', this);
     }
 
     formatData(data) {
+        const normalizedDatum = this.createNormalizedDatum(data);
         const datum = {
-            result: this.computeResult(data)
+            result: this.computeResult(normalizedDatum)
         }
 
-        if (data) {
+        if (normalizedDatum) {
             // TODO check back to see if we should format times here
             this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
+                datum[timeSystem.key] = normalizedDatum[timeSystem.key]
             });
         }
         return datum;
@@ -74,6 +75,13 @@ export default class TelemetryCriterion extends EventEmitter {
         if(this.isValid()) {
             this.emitEvent('criterionResultUpdated', this.formatData(data));
         }
+    }
+
+    createNormalizedDatum(telemetryDatum) {
+        return Object.values(this.telemetryMetaData).reduce((normalizedDatum, metadatum) => {
+            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+            return normalizedDatum;
+        }, {});
     }
 
     findOperation(operation) {
@@ -109,7 +117,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     isValid() {
-        return this.metadata && this.operation;
+        return this.telemetryObject && this.metadata && this.operation;
     }
 
     requestLAD(options) {
@@ -140,8 +148,9 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     destroy() {
-        this.off('receivedTelemetry', this.handleSubscription);
+        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
+        delete this.telemetryObject;
     }
 }
