@@ -796,6 +796,7 @@ select {
 }
 
 .c-style-thumb {
+    background-size: cover;
     border: 1px solid transparent;
     border-radius: $basicCr;
     box-shadow: rgba(black, 0.2) 0 0 3px;
