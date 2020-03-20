@@ -76,7 +76,7 @@ describe('ConditionManager', () => {
     beforeEach(function () {
 
         mockAngularComponents();
-
+        mockListener = jasmine.createSpy('mockListener');
         loader = {};
         loader.promise = new Promise(function (resolve, reject) {
             loader.resolve = resolve;
@@ -84,7 +84,9 @@ describe('ConditionManager', () => {
         });
 
         mockComposition = jasmine.createSpyObj('compositionCollection', [
-            'load'
+            'load',
+            'on',
+            'off'
         ]);
         mockComposition.load.and.callFake(() => {
             setTimeout(() => {
@@ -92,6 +94,8 @@ describe('ConditionManager', () => {
             });
             return loader.promise;
         });
+        mockComposition.on('add', mockListener);
+        mockComposition.on('remove', mockListener);
         openmct.composition = jasmine.createSpyObj('compositionAPI', [
             'get'
         ]);
@@ -108,15 +112,15 @@ describe('ConditionManager', () => {
         openmct.objects.mutate.and.returnValue(function () {});
 
         conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
-        mockListener = jasmine.createSpy('mockListener');
 
         conditionMgr.on('conditionSetResultUpdated', mockListener);
+        conditionMgr.on('broadcastTelemetry', mockListener);
     });
 
     it('creates a conditionCollection with a default condition', function () {
-       expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(1);
-       let defaultConditionId = conditionMgr.conditionClassCollection[0].id;
-       expect(defaultConditionId).toEqual(mockCondition.id);
+        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(1);
+        let defaultConditionId = conditionMgr.conditionClassCollection[0].id;
+        expect(defaultConditionId).toEqual(mockCondition.id);
     });
 
 });

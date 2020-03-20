@@ -78,7 +78,9 @@ describe("The telemetry criterion", function () {
 
         testCriterionDefinition = {
             id: 'test-criterion-id',
-            telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier)
+            telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier),
+            operation: 'lessThan',
+            metadata: 'sin'
         };
 
         mockListener = jasmine.createSpy('listener');
@@ -102,12 +104,7 @@ describe("The telemetry criterion", function () {
         expect(mockListener2).toHaveBeenCalled();
     });
 
-    it("subscribes to telemetry providers", function () {
-        telemetryCriterion.subscribe();
-        expect(telemetryCriterion.subscription).toBeDefined();
-    });
-
-    it("emits update event on new data from telemetry providers", function () {
+    it("updates and emits event on new data from telemetry providers", function () {
         telemetryCriterion.initialize(testTelemetryObject);
         spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
         telemetryCriterion.handleSubscription({
@@ -115,16 +112,5 @@ describe("The telemetry criterion", function () {
             utc: 'Hi'
         });
         expect(telemetryCriterion.emitEvent).toHaveBeenCalled();
-        expect(mockListener).toHaveBeenCalled();
     });
-
-    it("un-subscribes from telemetry providers", function () {
-        telemetryCriterion.subscribe();
-        expect(telemetryCriterion.subscription).toBeDefined();
-        telemetryCriterion.destroy();
-        expect(telemetryCriterion.subscription).toBeUndefined();
-        expect(telemetryCriterion.telemetryObjectIdAsString).toBeUndefined();
-        expect(telemetryCriterion.telemetryObject).toBeUndefined();
-    });
-
 });
