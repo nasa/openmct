@@ -787,8 +787,7 @@ select {
 }
 
 /******************************************************** STYLE EDITING */
-.c-style__thumb-and-toolbar {
-    background: rgba(deeppink, 0.1);
+.c-style {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
@@ -799,13 +798,9 @@ select {
 .c-style-thumb {
     border: 1px solid transparent;
     border-radius: $basicCr;
-    box-shadow: rgba(black, 0.1) 0 1px 3px;
+    box-shadow: rgba(black, 0.2) 0 0 3px;
     flex: 0 0 auto;
     padding: $interiorMargin $interiorMarginLg;
-
-    &__text {
-
-    }
 }
 
 /******************************************************** SLIDERS */

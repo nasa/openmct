@@ -21,41 +21,36 @@
 *****************************************************************************/
 
 <template>
-<div>
-    <div v-if="styleItem"
-         class="holder c-c-button-wrapper align-left">
-        <div class="c-style__thumb-and-toolbar">
-            <span class="c-style-thumb"
-                  :style="styleItem.style"
-            >
-                <span class="c-style-thumb__text"
-                      :class="{ 'hide-nice': !styleItem.style.color }"
-                >
-                    ABC
-                </span>
-            </span>
-            <span v-if="isEditing"
-                  class="c-toolbar"
-            >
-                <toolbar-color-picker v-if="styleItem.style.border"
-                                      :options="borderColorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-color-picker v-if="styleItem.style.backgroundColor"
-                                      :options="backgroundColorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-color-picker v-if="styleItem.style.color"
-                                      :options="colorOption"
-                                      @change="updateStyleValue"
-                />
-                <toolbar-button v-if="styleItem.style.imageUrl"
-                                :options="imageUrlOption"
-                                @change="updateStyleValue"
-                />
-            </span>
-        </div>
-    </div>
+<div class="c-style">
+    <span class="c-style-thumb"
+          :style="styleItem.style"
+    >
+        <span class="c-style-thumb__text"
+              :class="{ 'hide-nice': !styleItem.style.color }"
+        >
+            ABC
+        </span>
+    </span>
+    <span v-if="isEditing"
+          class="c-toolbar"
+    >
+        <toolbar-color-picker v-if="styleItem.style.border"
+                              :options="borderColorOption"
+                              @change="updateStyleValue"
+        />
+        <toolbar-color-picker v-if="styleItem.style.backgroundColor"
+                              :options="backgroundColorOption"
+                              @change="updateStyleValue"
+        />
+        <toolbar-color-picker v-if="styleItem.style.color"
+                              :options="colorOption"
+                              @change="updateStyleValue"
+        />
+        <toolbar-button v-if="styleItem.style.imageUrl"
+                        :options="imageUrlOption"
+                        @change="updateStyleValue"
+        />
+    </span>
 </div>
 </template>
 

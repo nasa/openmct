@@ -21,14 +21,15 @@
 *****************************************************************************/
 
 <template>
-<div>
+<div v-if="conditionErrors.length"
+     class="c-condition__errors"
+>
     <div v-for="(error, index) in conditionErrors"
          :key="index"
+         class="s-status-icon-warning-hi"
     >
-        <span :class="error.message.icon"></span>
-        <span>{{ error.message.errorText }}
-            <span v-if="error.additionalInfo">{{ error.additionalInfo }}</span>
-        </span>
+        {{ error.message.errorText }}
+        <template v-if="error.additionalInfo"> {{ error.additionalInfo }}</template>
     </div>
 </div>
 </template>
@@ -53,12 +54,10 @@ export default {
             conditionErrors: [],
             ERROR: {
                 'TELEMETRY_NOT_FOUND': {
-                    errorText: 'Telemetry not found',
-                    icon: 's-status-icon-warning-hi'
+                    errorText: 'Telemetry not found'
                 },
                 'CONDITION_NOT_FOUND': {
-                    errorText: 'Condition not found',
-                    icon: 's-status-icon-warning-hi'
+                    errorText: 'Condition not found'
                 }
             }
         }

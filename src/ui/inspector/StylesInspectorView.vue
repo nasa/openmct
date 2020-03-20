@@ -1,9 +1,6 @@
 <template>
-<div></div>
+<div class="u-contents"></div>
 </template>
-
-<style>
-</style>
 
 <script>
 import ConditionalStylesView from '../../plugins/condition/components/inspector/ConditionalStylesView.vue';

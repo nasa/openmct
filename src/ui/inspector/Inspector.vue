@@ -32,11 +32,9 @@
                 <elements />
             </pane>
         </multipane>
-        <pane v-else
-              class="c-inspector__styles"
-        >
+        <template v-else>
             <styles-inspector-view />
-        </pane>
+        </template>
     </div>
 </div>
 </template>

@@ -24,7 +24,7 @@
 <div class="c-inspector__styles c-inspect-styles">
     <template v-if="!conditionalStyles.length">
         <div class="c-inspect-styles__header">
-            Object Styles
+            Object Style
         </div>
         <div class="c-inspect-styles__content">
             <style-editor class="c-inspect-styles__style-editor"
@@ -43,8 +43,7 @@
         <div class="c-inspect-styles__header">
             Conditional Object Styles
         </div>
-
-        <div class="c-inspect-styles__condition-set">
+        <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <div v-if="conditionSetDomainObject"
                  class="c-object-label icon-conditional"
             >
@@ -66,10 +65,12 @@
             </template>
         </div>
 
-        <ul v-if="conditionsLoaded">
-            <li v-for="conditionStyle in conditionalStyles"
-                :key="conditionStyle.conditionId"
-                class="c-inspect-styles__list-item"
+        <div v-if="conditionsLoaded"
+             class="c-inspect-styles__conditions"
+        >
+            <div v-for="conditionStyle in conditionalStyles"
+                 :key="conditionStyle.conditionId"
+                 class="c-inspect-styles__condition"
             >
                 <condition-error :show-label="true"
                                  :condition="getCondition(conditionStyle.conditionId)"
@@ -82,8 +83,8 @@
                               :is-editing="isEditing"
                               @persist="updateConditionalStyle"
                 />
-            </li>
-        </ul>
+            </div>
+        </div>
     </template>
 </div>
 </template>

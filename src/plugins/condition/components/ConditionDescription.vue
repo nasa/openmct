@@ -21,20 +21,24 @@
 *****************************************************************************/
 
 <template>
-<div>
-    <span v-if="showLabel">{{ condition.configuration.name }}</span>
+<div class="c-style__condition-desc">
+    <span v-if="showLabel"
+          class="c-style__condition-desc__name c-condition__name"
+    >
+        {{ condition.configuration.name }}
+    </span>
     <span v-for="(criterionDescription, index) in criterionDescriptions"
           :key="criterionDescription.description"
+          class="c-style__condition-desc__text"
     >
-        <span v-if="!index">When </span>
+        <template v-if="!index">When</template>
         {{ criterionDescription.description }}
-        <span v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</span>
+        <template v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</template>
     </span>
 </div>
-</template>å
+</template>
 
 <script>
-
 import {TRIGGER} from "@/plugins/condition/utils/constants";
 import { OPERATIONS } from "@/plugins/condition/utils/operations";
 
