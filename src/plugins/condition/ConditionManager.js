@@ -240,7 +240,9 @@ export default class ConditionManager extends EventEmitter {
 
         return this.load().then(() => {
             const ladConditionResults = this.conditionClassCollection
-                .filter(condition => !condition.isDefault)
+                .filter((condition, index) => {
+                    return !this.conditionSetDomainObject.configuration.conditionCollection[index].isDefault
+                })
                 .map(condition => condition.requestLADConditionResult());
 
             return Promise.all(ladConditionResults)
