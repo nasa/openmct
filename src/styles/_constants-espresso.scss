@@ -100,10 +100,12 @@ $colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351de
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #3f5e8b;
 $colorStatusCompleteBg: #457638;
-$colorAlert: #ff3c00;
+$colorAlert: #ff8a0d;
 $colorAlertFg: #fff;
-$colorWarningHi: #ff0000;
-$colorWarningHiFg: #ffdad0;
+$colorError: #ff3c00;
+$colorErrorFg: #fff;
+$colorWarningHi: #990000;
+$colorWarningHiFg: #FF9594;
 $colorWarningLo: #ff9900;
 $colorWarningLoFg: #523400;
 $colorDiagnostic: #a4b442;
