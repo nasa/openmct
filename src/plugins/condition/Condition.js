@@ -277,6 +277,7 @@ export default class ConditionClass extends EventEmitter {
     }
 
     destroy() {
+        this.conditionManager.off('broadcastTelemetry', this.handleBroadcastTelemetry, this);
         if (typeof this.stopObservingForChanges === 'function') {
             this.stopObservingForChanges();
         }
