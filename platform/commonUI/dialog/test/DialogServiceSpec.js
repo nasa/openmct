@@ -161,7 +161,7 @@ define(
                 expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
 
-            it("confirms the dialog when a return keydown event is triggered", function() {
+            it("confirms the dialog when a return keydown event is triggered", function () {
                 dialogService.getUserInput({}, {});
                 mockBody.on.calls.mostRecent().args[1]({
                     keyCode: 13
