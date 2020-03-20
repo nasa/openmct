@@ -34,8 +34,6 @@ export default class ConditionManager extends EventEmitter {
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.addTelemetry, this);
         this.composition.on('remove', this.removeTelemetry, this);
-
-        this.loaded = this.composition.load();
         this.subscriptions = {};
         this.initialize();
 
@@ -66,10 +64,6 @@ export default class ConditionManager extends EventEmitter {
 
         this.subscriptions[id]();
         delete this.subscriptions[id];
-    }
-
-    load() {
-        return this.loaded;
     }
 
     initialize() {
@@ -238,7 +232,7 @@ export default class ConditionManager extends EventEmitter {
             return Promise.resolve([]);
         }
 
-        return this.load().then(() => {
+        return this.composition.load().then(() => {
             const ladConditionResults = this.conditionClassCollection
                 .map(condition => condition.requestLADConditionResult());
 
