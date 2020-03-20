@@ -35,14 +35,17 @@
           class="c-toolbar"
     >
         <toolbar-color-picker v-if="styleItem.style.border"
+                              class="u-menu-to--center"
                               :options="borderColorOption"
                               @change="updateStyleValue"
         />
         <toolbar-color-picker v-if="styleItem.style.backgroundColor"
+                              class="u-menu-to--center"
                               :options="backgroundColorOption"
                               @change="updateStyleValue"
         />
         <toolbar-color-picker v-if="styleItem.style.color"
+                              class="u-menu-to--center"
                               :options="colorOption"
                               @change="updateStyleValue"
         />
