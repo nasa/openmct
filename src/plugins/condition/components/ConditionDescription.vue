@@ -59,6 +59,14 @@ export default {
             }
         }
     },
+    watch: {
+        condition: {
+            handler(val) {
+                this.getConditionDescription();
+            },
+            deep: true
+        }
+    },
     data() {
         return {
             criterionDescriptions: [],
@@ -93,9 +101,15 @@ export default {
             if(criterion.telemetry) {
                 this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
                     let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
-                    this.criterionDescriptions.splice(index, 0, {
-                        description
-                    });
+                    if (this.criterionDescriptions[index]) {
+                        this.criterionDescriptions[index] = {
+                            description
+                        };
+                    } else {
+                        this.criterionDescriptions.splice(index, 0, {
+                            description
+                        });
+                    }
                 });
             } else {
                 let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
