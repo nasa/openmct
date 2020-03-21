@@ -406,6 +406,7 @@
 
 @mixin cClickIcon() {
     @include cControl();
+    color: $colorBtnFg;
     cursor: pointer;
     padding: 4px; // Bigger hit area
     opacity: 0.6;

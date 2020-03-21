@@ -799,7 +799,7 @@ select {
     background-size: cover;
     border: 1px solid transparent;
     border-radius: $basicCr;
-    box-shadow: rgba(black, 0.2) 0 0 3px;
+    box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
     flex: 0 0 auto;
     padding: $interiorMargin $interiorMarginLg;
 }

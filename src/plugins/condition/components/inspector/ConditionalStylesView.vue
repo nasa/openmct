@@ -44,11 +44,13 @@
             Conditional Object Styles
         </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
-            <div v-if="conditionSetDomainObject"
-                 class="c-object-label icon-conditional"
+            <a v-if="conditionSetDomainObject"
+               class="c-object-label icon-conditional"
+               :href="navigateToPath"
+               @click="navigateOrPreview"
             >
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
-            </div>
+            </a>
             <template v-if="isEditing">
                 <button
                     id="changeConditionSet"
@@ -96,6 +98,7 @@ import ConditionSetSelectorDialog from "./ConditionSetSelectorDialog.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
+import PreviewAction from "@/ui/preview/PreviewAction.js";
 
 export default {
     name: 'ConditionalStylesView',
@@ -104,6 +107,7 @@ export default {
         ConditionError,
         StyleEditor
     },
+    // mixins: [ObjectLink],
     inject: [
         'openmct',
         'domainObject'
@@ -131,13 +135,15 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
-            errors: {}
+            errors: {},
+            navigateToPath: ''
         }
     },
     destroyed() {
         this.openmct.editor.off('isEditing', this.setEditState);
     },
     mounted() {
+        this.previewAction = new PreviewAction(this.openmct);
         if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
             let conditionalStyle = this.itemId ? this.domainObject.configuration.conditionalStyle[this.itemId] : this.domainObject.configuration.conditionalStyle;
             if (conditionalStyle) {
@@ -156,6 +162,7 @@ export default {
         initialize(conditionSetDomainObject) {
             //If there are new conditions in the conditionSet we need to set those styles to default
             this.conditionSetDomainObject = conditionSetDomainObject;
+            this.enableConditionSetNav();
             this.initializeConditionalStyles();
         },
         setEditState(isEditing) {
@@ -205,6 +212,24 @@ export default {
                 ],
                 onDestroy: () => vm.$destroy()
             });
+        },
+        enableConditionSetNav() {
+            this.openmct.objects.getOriginalPath(this.conditionSetDomainObject.identifier).then(
+                (objectPath) => {
+                    this.objectPath = objectPath;
+                    this.navigateToPath = '#/browse/' + this.objectPath
+                        .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
+                        .reverse()
+                        .join('/');
+                }
+            );
+        },
+        navigateOrPreview(event) {
+            // If editing, display condition set in Preview overlay; otherwise nav to it while browsing
+            if (this.openmct.editor.isEditing()) {
+                event.preventDefault();
+                this.previewAction.invoke(this.objectPath);
+            }
         },
         removeConditionSet() {
             this.conditionSetDomainObject = undefined;
