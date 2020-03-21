@@ -26,10 +26,8 @@
 >
     <div v-for="(error, index) in conditionErrors"
          :key="index"
-         class="s-status-icon-warning-hi"
-    >
-        {{ error.message.errorText }}
-        <template v-if="error.additionalInfo"> {{ error.additionalInfo }}</template>
+         class="u-alert u-alert--block u-alert--with-icon"
+    >{{ error.message.errorText }} <template v-if="error.additionalInfo">{{ error.additionalInfo }}</template>
     </div>
 </div>
 </template>

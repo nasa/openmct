@@ -14,7 +14,7 @@ export const getStyleProp = (key, defaultValue) => {
     };
         break;
     case 'url': styleProp = {
-        imageUrl: defaultValue || 'inherit'
+        imageUrl: defaultValue || 'none'
     };
         break;
     }
