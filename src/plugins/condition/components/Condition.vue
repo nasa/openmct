@@ -139,6 +139,8 @@
                                :trigger="condition.configuration.trigger"
                                :is-default="condition.configuration.criteria.length === 1"
                                @persist="persist"
+                               @setTelemetryName="setTelemetryName"
+                               @setFieldName="setFieldName"
                     />
                     <div class="c-cdef__criteria__buttons">
                         <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
@@ -240,7 +242,9 @@ export default {
             trigger: 'all',
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
-            criterionIndex: 0
+            criterionIndex: 0,
+            selectedTelemetryName: '',
+            selectedFieldName: ''
         };
     },
     computed: {
@@ -268,8 +272,14 @@ export default {
         this.setOutputSelection();
     },
     methods: {
+        setTelemetryName(name) {
+            this.selectedTelemetryName = name;
+        },
+        setFieldName(name) {
+            this.selectedFieldName = name;
+        },
         getRule(criterion, index) {
-            return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
+            return `${this.selectedTelemetryName} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
         },
         isLastCriterion(index) {
             return index === this.condition.configuration.criteria.length - 1;
@@ -337,12 +347,9 @@ export default {
             const clonedCriterion = {...this.condition.configuration.criteria[index]};
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
-        },
-        hasTelemetry(identifier) {
-            // TODO: check parent condition.composition.hasTelemetry
-            return this.currentCriteria && identifier;
-        },
+        },    
         persist() {
+            console.log('persist')
             this.$emit('updateCondition', {
                 condition: this.condition,
                 index: this.conditionIndex

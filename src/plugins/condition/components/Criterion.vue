@@ -163,11 +163,11 @@ export default {
             if (ev) {this.clearInputs()}
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
-                    this.criterion.telemetry.name = telemetryObject.name;
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations();
                     this.updateOperationInputVisibility();
+                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
@@ -175,16 +175,17 @@ export default {
         },
         updateOperations(ev) {
             if (ev) {
-                this.criterion.telemetry.fieldName = ev.target.options[ev.target.selectedIndex].text;
-                this.clearInputs()
+                this.$emit('setFieldName', ev.target.options[ev.target.selectedIndex].text);
+                this.clearInputs();
+                this.persist();
             }
-            this.getOperationFormat();
-            this.persist();
+            this.getOperationFormat();     
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
+                this.persist();
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
@@ -192,7 +193,6 @@ export default {
                     if (!this.inputCount) {this.criterion.input = []}
                 }
             }
-            this.persist();
         },
         clearInputs() {
             this.criterion.operation = '';
