@@ -54,7 +54,7 @@ export default {
             conditionErrors: [],
             ERROR: {
                 'TELEMETRY_NOT_FOUND': {
-                    errorText: 'Telemetry not found'
+                    errorText: 'Telemetry not found for criterion'
                 },
                 'CONDITION_NOT_FOUND': {
                     errorText: 'Condition not found'
@@ -74,23 +74,14 @@ export default {
             }
         },
         getCriterionErrors(criterion, index) {
-            if(criterion.telemetry) {
-                try {
-                    this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                        //do nothing, we got the telemetry
-                    });
-                } catch (e) {
+            this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+                if (telemetryObject.type === 'unknown') {
                     this.conditionErrors.push({
                         message: this.ERROR.TELEMETRY_NOT_FOUND,
-                        additionalInfo: `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}`
+                        additionalInfo: criterion.telemetry ? `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}` : ''
                     });
                 }
-            } else {
-                this.conditionErrors.push({
-                    message: this.ERROR.TELEMETRY_NOT_FOUND,
-                    additionalInfo: `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}`
-                });
-            }
+            });
         }
     }
 }

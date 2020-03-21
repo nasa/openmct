@@ -89,17 +89,16 @@ export default {
                         description: 'all else fails'
                     });
                 }
-            } else if (this.conditionStyle.conditionId !== 'default') {
-                //couldn't find the condition. That's bad!
-                this.conditionErrors = [{
-                    message: this.ERROR.CONDITION_NOT_FOUND,
-                    additionalInfo: `Condition Id: ${this.conditionStyle.conditionId}`
-                }];
             }
         },
         getCriterionDescription(criterion, index) {
-            if(criterion.telemetry) {
-                this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+            this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+                if (telemetryObject.type === 'unknown') {
+                    let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
+                    this.criterionDescriptions.splice(index, 0, {
+                        description
+                    });
+                } else {
                     let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
                     if (this.criterionDescriptions[index]) {
                         this.criterionDescriptions[index] = {
@@ -110,17 +109,8 @@ export default {
                             description
                         });
                     }
-                });
-            } else {
-                let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
-                this.criterionDescriptions.splice(index, 0, {
-                    description
-                });
-                this.conditionErrors.push({
-                    message: this.ERROR.TELEMETRY_NOT_FOUND,
-                    additionalInfo: `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}`
-                });
-            }
+                }
+            });
         },
         getOperatorText(operationName, values) {
             const found = OPERATIONS.find((operation) => operation.name === operationName);
