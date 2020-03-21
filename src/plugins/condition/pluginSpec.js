@@ -82,7 +82,10 @@ describe('the plugin', function () {
         it('provides a view', () => {
             const testViewObject = {
                 id:"test-object",
-                type: "conditionSet"
+                type: "conditionSet",
+                configuration: {
+                    conditionCollection: []
+                }
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject);
