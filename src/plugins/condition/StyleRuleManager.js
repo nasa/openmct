@@ -23,18 +23,24 @@
 import EventEmitter from 'EventEmitter';
 
 export default class StyleRuleManager extends EventEmitter {
-    constructor(conditionalStyleConfiguration, openmct) {
+    constructor(styleConfiguration, openmct, callback) {
         super();
         this.openmct = openmct;
-        if (conditionalStyleConfiguration && conditionalStyleConfiguration.conditionSetIdentifier) {
-            this.initialize(conditionalStyleConfiguration);
-            this.subscribeToConditionSet();
+        this.callback = callback;
+        if (styleConfiguration) {
+            this.initialize(styleConfiguration);
+            if (styleConfiguration.conditionSetIdentifier) {
+                this.subscribeToConditionSet();
+            } else {
+                this.applyStaticStyle();
+            }
         }
     }
 
-    initialize(conditionalStyleConfiguration) {
-        this.conditionSetIdentifier = conditionalStyleConfiguration.conditionSetIdentifier;
-        this.updateConditionStylesMap(conditionalStyleConfiguration.styles || []);
+    initialize(styleConfiguration) {
+        this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
+        this.staticStyle = styleConfiguration.staticStyle;
+        this.updateConditionStylesMap(styleConfiguration.styles || []);
     }
 
     subscribeToConditionSet() {
@@ -46,13 +52,14 @@ export default class StyleRuleManager extends EventEmitter {
         });
     }
 
-    updateConditionalStyleConfig(conditionalStyleConfiguration) {
-        if (!conditionalStyleConfiguration || !conditionalStyleConfiguration.conditionSetIdentifier) {
+    updateObjectStyleConfig(styleConfiguration) {
+        if (!styleConfiguration || !styleConfiguration.conditionSetIdentifier) {
+            this.initialize(styleConfiguration || {});
             this.destroy();
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier ||
-                                    this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, conditionalStyleConfiguration.conditionSetIdentifier);
-            this.initialize(conditionalStyleConfiguration);
+                                    this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
+            this.initialize(styleConfiguration);
             //Only resubscribe if the conditionSet has changed.
             if (isNewConditionSet) {
                 this.subscribeToConditionSet();
@@ -63,7 +70,11 @@ export default class StyleRuleManager extends EventEmitter {
     updateConditionStylesMap(conditionStyles) {
         let conditionStyleMap = {};
         conditionStyles.forEach((conditionStyle) => {
-            conditionStyleMap[conditionStyle.conditionId] = conditionStyle.style;
+            if (conditionStyle.conditionId) {
+                conditionStyleMap[conditionStyle.conditionId] = conditionStyle.style;
+            } else {
+                conditionStyleMap.static = conditionStyle.style;
+            }
         });
         this.conditionalStyleMap = conditionStyleMap;
     }
@@ -74,26 +85,33 @@ export default class StyleRuleManager extends EventEmitter {
             if (foundStyle !== this.currentStyle) {
                 this.currentStyle = foundStyle;
             }
+            this.updateDomainObjectStyle();
         } else {
-            if (this.currentStyle !== this.defaultStyle) {
-                this.currentStyle = this.defaultStyle;
-            }
+            this.applyStaticStyle();
         }
-
-        this.updateDomainObjectStyle();
     }
 
     updateDomainObjectStyle() {
-        this.emit('conditionalStyleUpdated', this.currentStyle)
+        if (this.callback) {
+            this.callback(Object.assign({}, this.currentStyle));
+        }
+    }
+
+    applyStaticStyle() {
+        if (this.staticStyle) {
+            this.currentStyle = this.staticStyle.style;
+        } else {
+            if (this.currentStyle) {
+                Object.keys(this.currentStyle).forEach(key => {
+                    this.currentStyle[key] = 'transparent';
+                });
+            }
+        }
+        this.updateDomainObjectStyle();
     }
 
     destroy() {
-        if (this.currentStyle) {
-            Object.keys(this.currentStyle).forEach(key => {
-                this.currentStyle[key] = 'inherit';
-            });
-        }
-        this.updateDomainObjectStyle();
+        this.applyStaticStyle();
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
         }

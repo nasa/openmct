@@ -36,7 +36,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
-import conditionalStylesMixin from '../mixins/conditionalStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectlStyles-mixin';
 
 export default {
     makeDefinition() {
@@ -73,14 +73,17 @@ export default {
     },
     computed: {
         style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
-            } else {
-                return {
-                    backgroundColor: this.item.fill,
-                    border: '1px solid ' + this.item.stroke
-                };
-            }
+            let style = Object.assign({
+                backgroundColor: this.item.fill,
+                border: '1px solid ' + this.item.stroke
+            }, this.itemStyle);
+            let keys = Object.keys(style);
+            keys.forEach((key) => {
+                if (style[key].indexOf('transparent') > -1) {
+                    style[key] = '';
+                }
+            });
+            return style;
         }
     },
     watch: {

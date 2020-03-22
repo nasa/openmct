@@ -38,7 +38,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
-import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+import conditionalStylesMixin from "../mixins/objectlStyles-mixin";
 
 export default {
     makeDefinition(openmct, gridSize, element) {
@@ -78,16 +78,19 @@ export default {
     },
     computed: {
         style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
-            } else {
-                return {
-                    backgroundColor: this.item.fill,
-                    borderColor: this.item.stroke,
-                    color: this.item.color,
-                    fontSize: this.item.size
-                };
-            }
+            let style = Object.assign({
+                backgroundColor: this.item.fill,
+                border: '1px solid ' + this.item.stroke,
+                color: this.item.color,
+                fontSize: this.item.size
+            }, this.itemStyle);
+            let keys = Object.keys(style);
+            keys.forEach((key) => {
+                if (style[key].indexOf('transparent') > -1) {
+                    style[key] = '';
+                }
+            });
+            return style;
         }
     },
     watch: {

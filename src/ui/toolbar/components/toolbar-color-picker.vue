@@ -148,7 +148,7 @@ export default {
             }
         },
         handleClick(event) {
-            if (this.options.isEditing) {
+            if ((this.options.isEditing === undefined) || this.options.isEditing) {
                 this.toggle(event);
             }
         }

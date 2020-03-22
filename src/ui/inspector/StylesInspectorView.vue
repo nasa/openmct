@@ -34,9 +34,9 @@ export default {
                 let domainObject = selection[0][0].context.item;
                 let layoutItem = {};
                 let styleProps = this.getStyleProperties({
-                    fill: 'inherit',
-                    stroke: 'inherit',
-                    color: 'inherit'
+                    fill: 'transparent',
+                    stroke: 'transparent',
+                    color: 'transparent'
                 });
                 if (selection[0].length > 1) {
                     //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.

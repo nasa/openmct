@@ -49,7 +49,7 @@
                               :options="colorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-button v-if="styleItem.style.imageUrl"
+        <toolbar-button v-if="styleItem.style.imageUrl !== undefined"
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
@@ -121,8 +121,7 @@ export default {
                                     key: "url",
                                     control: "textfield",
                                     name: "Image URL",
-                                    "cssClass": "l-input-lg",
-                                    required: true
+                                    "cssClass": "l-input-lg"
                                 }
                             ]
                         }
@@ -140,9 +139,8 @@ export default {
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
-            if (value && value.url) {
+            if (value && (value.url !== undefined)) {
                 this.styleItem.style[item.property] = value.url;
-                console.log('value.url',item.property, value.url);
             } else {
                 this.styleItem.style[item.property] = value;
             }

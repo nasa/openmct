@@ -22,7 +22,7 @@
 
 <template>
 <div class="c-style__condition-desc">
-    <span v-if="showLabel"
+    <span v-if="showLabel && condition"
           class="c-style__condition-desc__name c-condition__name"
     >
         {{ condition.configuration.name }}
@@ -89,6 +89,8 @@ export default {
                         description: 'all else fails'
                     });
                 }
+            } else {
+                this.criterionDescriptions = [];
             }
         },
         getCriterionDescription(criterion, index) {

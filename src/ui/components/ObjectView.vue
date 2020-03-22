@@ -37,13 +37,12 @@ export default {
             this.unlisten();
         }
 
-        if (this.stopListeningConditionalStyles) {
-            this.stopListeningConditionalStyles();
+        if (this.stopListeningStyles) {
+            this.stopListeningStyles();
         }
 
         if (this.styleRuleManager) {
             this.styleRuleManager.destroy();
-            this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
             delete this.styleRuleManager;
         }
     },
@@ -60,7 +59,7 @@ export default {
         this.$el.addEventListener('drop', this.addObjectToParent);
         if (this.currentObject) {
             //This is to apply styles to subobjects in a layout
-            this.initConditionalStyles();
+            this.initObjectStyles();
         }
 
     },
@@ -102,8 +101,14 @@ export default {
             }
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                this.$el.style[key] = styleObj[key];
-            })
+                if (styleObj[key].indexOf('transparent') > -1) {
+                    if (this.$el.style[key]) {
+                        this.$el.style[key] = '';
+                    }
+                } else {
+                    this.$el.style[key] = styleObj[key];
+                }
+            });
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -181,25 +186,24 @@ export default {
 
             this.viewKey = viewKey;
 
-            this.initConditionalStyles();
+            this.initObjectStyles();
 
             this.updateView(immediatelySelect);
         },
-        initConditionalStyles() {
+        initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleRuleManager = new StyleRuleManager((this.currentObject.configuration && this.currentObject.configuration.conditionalStyle), this.openmct);
-                this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+                this.styleRuleManager = new StyleRuleManager((this.currentObject.configuration && this.currentObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this));
             } else {
-                this.styleRuleManager.updateConditionalStyleConfig(this.currentObject.configuration && this.currentObject.configuration.conditionalStyle);
+                this.styleRuleManager.updateObjectStyleConfig(this.currentObject.configuration && this.currentObject.configuration.objectStyles);
             }
 
-            if (this.stopListeningConditionalStyles) {
-                this.stopListeningConditionalStyles();
+            if (this.stopListeningStyles) {
+                this.stopListeningStyles();
             }
 
-            this.stopListeningConditionalStyles = this.openmct.objects.observe(this.currentObject, 'configuration.conditionalStyle', (newConditionalStyle) => {
-                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
-                this.styleRuleManager.updateConditionalStyleConfig(newConditionalStyle);
+            this.stopListeningStyles = this.openmct.objects.observe(this.currentObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
         },
         loadComposition() {

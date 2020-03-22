@@ -60,7 +60,7 @@
 
 <script>
 
-import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+import conditionalStylesMixin from "../mixins/objectlStyles-mixin";
 
 const START_HANDLE_QUADRANTS = {
     1: 'c-frame-edit__handle--sw',
