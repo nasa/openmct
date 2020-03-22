@@ -73,17 +73,10 @@ export default {
     },
     computed: {
         style() {
-            let style = Object.assign({
+            return Object.assign({
                 backgroundColor: this.item.fill,
                 border: '1px solid ' + this.item.stroke
             }, this.itemStyle);
-            let keys = Object.keys(style);
-            keys.forEach((key) => {
-                if (style[key].indexOf('transparent') > -1) {
-                    style[key] = '';
-                }
-            });
-            return style;
         }
     },
     watch: {

@@ -48,6 +48,12 @@ export default {
         },
         updateStyle(style) {
             this.itemStyle = style;
+            let keys = Object.keys(this.itemStyle);
+            keys.forEach((key) => {
+                if (this.itemStyle[key].indexOf('transparent') > -1) {
+                    delete this.itemStyle[key];
+                }
+            });
         }
     }
 };

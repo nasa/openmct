@@ -73,17 +73,10 @@ export default {
     },
     computed: {
         style() {
-            let style = {
-                backgroundImage: this.itemStyle ? 'url(' + this.itemStyle.imageUrl + ')' : 'url(' + this.item.url + ')',
-                border: this.itemStyle ? this.itemStyle.border : '1px solid ' + this.item.stroke
+            return {
+                backgroundImage: this.itemStyle ? ('url(' + this.itemStyle.imageUrl + ')') : 'url(' + this.item.url + ')',
+                border: (this.itemStyle && this.itemStyle.border) ? this.itemStyle.border : ('1px solid ' + this.item.stroke)
             };
-            let keys = Object.keys(style);
-            keys.forEach((key) => {
-                if (style[key].indexOf('transparent') > -1) {
-                    style[key] = '';
-                }
-            });
-            return style;
         }
     },
     watch: {

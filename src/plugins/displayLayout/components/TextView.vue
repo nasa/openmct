@@ -84,12 +84,6 @@ export default {
                 color: this.item.color,
                 fontSize: this.item.size
             }, this.itemStyle);
-            let keys = Object.keys(style);
-            keys.forEach((key) => {
-                if (style[key].indexOf('transparent') > -1) {
-                    style[key] = '';
-                }
-            });
             return style;
         }
     },
