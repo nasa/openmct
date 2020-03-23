@@ -44,14 +44,16 @@ export default class TelemetryCriterion extends EventEmitter {
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
-        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
-        this.objectAPI.get(this.telemetryObjectIdAsString).then((obj) => this.initialize(obj));
+        this.telemetryObjectIdAsString = undefined;
+        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
     }
 
     initialize(obj) {
         this.telemetryObject = obj;
         this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
+        console.log(`subscription:${this.telemetryObjectIdAsString}`);
+        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionUpdated', this);
     }
 
@@ -128,22 +130,20 @@ export default class TelemetryCriterion extends EventEmitter {
             }
         );
 
-        return this.objectAPI.get(this.telemetryObjectIdAsString)
-            .then((obj) => {
-                if (!obj || !this.isValid()) {
-                    return this.formatData({});
-                }
-                return this.telemetryAPI.request(
-                    obj,
-                    options
-                ).then(results => {
-                    const latestDatum = results.length ? results[results.length - 1] : {};
-                    return {
-                        id: this.id,
-                        data: this.formatData(latestDatum)
-                    };
-                });
-            });
+        if (!this.isValid()) {
+            return this.formatData({});
+        }
+
+        return this.telemetryAPI.request(
+            this.telemetryObject,
+            options
+        ).then(results => {
+            const latestDatum = results.length ? results[results.length - 1] : {};
+            return {
+                id: this.id,
+                data: this.formatData(latestDatum)
+            };
+        });
     }
 
     destroy() {
