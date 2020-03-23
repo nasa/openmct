@@ -266,11 +266,11 @@ export default {
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
-                    foundStyle.style = Object.assign((this.canHide ? { visibility: 'visible' } : {}), this.initialStyles, foundStyle.style);
+                    foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: false } : {}), this.initialStyles, foundStyle.style);
                 } else {
                     this.conditionalStyles.splice(index, 0, {
                         conditionId: conditionConfiguration.id,
-                        style: Object.assign((this.canHide ? { visibility: 'visible' } : {}), this.initialStyles)
+                        style: Object.assign((this.canHide ? { isStyleInvisible: false } : {}), this.initialStyles)
                     });
                 }
             });

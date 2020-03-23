@@ -29,6 +29,7 @@
 >
     <div
         class="c-text-view"
+        :class="[styleClass]"
         :style="style"
     >
         {{ item.text }}
@@ -78,13 +79,15 @@ export default {
     },
     computed: {
         style() {
-            let style = Object.assign({
+            return Object.assign({
                 backgroundColor: this.item.fill,
                 border: '1px solid ' + this.item.stroke,
                 color: this.item.color,
                 fontSize: this.item.size
             }, this.itemStyle);
-            return style;
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {

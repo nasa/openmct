@@ -36,6 +36,7 @@
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
+            :class="[styleClass]"
             :style="objectStyle"
         >
             <div class="c-telemetry-view__label-text">
@@ -47,7 +48,7 @@
             v-if="showValue"
             :title="fieldName"
             class="c-telemetry-view__value"
-            :class="[telemetryClass]"
+            :class="[telemetryClass, !telemetryClass && styleClass]"
             :style="!telemetryClass && objectStyle"
         >
             <div class="c-telemetry-view__value-text">
@@ -132,6 +133,9 @@ export default {
                 color: this.item.color,
                 fontSize: this.item.size
             }
+        },
+        styleClass() {
+            return this.objectStyle && this.objectStyle.isStyleInvisible;
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
@@ -277,7 +281,7 @@ export default {
         updateStyle(styleObj) {
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                if (styleObj[key].indexOf('transparent') > -1) {
+                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
                     if (styleObj[key]) {
                         styleObj[key] = '';
                     }

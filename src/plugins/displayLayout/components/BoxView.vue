@@ -29,6 +29,7 @@
 >
     <div
         class="c-box-view"
+        :class="[styleClass]"
         :style="style"
     ></div>
 </layout-frame>
@@ -77,6 +78,9 @@ export default {
                 backgroundColor: this.item.fill,
                 border: '1px solid ' + this.item.stroke
             }, this.itemStyle);
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {

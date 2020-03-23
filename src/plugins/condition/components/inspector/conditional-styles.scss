@@ -44,3 +44,11 @@
         display: block;
     }
 }
+
+.is-style-invisible {
+    display: none;
+    .is-editing & {
+        display: block;
+        opacity: 0.2;
+    }
+}

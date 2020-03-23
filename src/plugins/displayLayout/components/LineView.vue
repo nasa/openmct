@@ -23,6 +23,7 @@
 <template>
 <div
     class="l-layout__frame c-frame no-frame"
+    :class="[styleClass]"
     :style="style"
 >
     <svg
@@ -138,14 +139,15 @@ export default {
             let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
             let left = this.gridSize[0] * Math.min(x, x2);
             let top = this.gridSize[1] * Math.min(y, y2);
-            let visibility = this.itemStyle ? this.itemStyle.visibility : 'visible';
             return {
                 left: `${left}px`,
                 top: `${top}px`,
                 width: `${width}px`,
-                height: `${height}px`,
-                visibility
+                height: `${height}px`
             };
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

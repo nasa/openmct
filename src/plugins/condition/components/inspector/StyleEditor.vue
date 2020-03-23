@@ -53,8 +53,8 @@
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
-        <toolbar-toggle-button v-show="styleItem.style.visibility"
-                               :options="visibilityOption"
+        <toolbar-toggle-button v-if="styleItem.style.isStyleInvisible !== undefined"
+                               :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
         />
     </span>
@@ -139,20 +139,20 @@ export default {
                 isEditing: this.isEditing
             }
         },
-        visibilityOption() {
+        isStyleInvisibleOption() {
             return {
-                value: this.styleItem.style.visibility,
-                property: 'visibility',
+                value: this.styleItem.style.isStyleInvisible,
+                property: 'isStyleInvisible',
                 isEditing: this.isEditing,
                 options: [
                     {
-                        value: 'hidden',
-                        icon: 'icon-frame-show',
+                        value: '',
+                        icon: 'icon-frame-hide',
                         title: "Hidden"
                     },
                     {
-                        value: 'visible',
-                        icon: 'icon-frame-hide',
+                        value: 'is-style-invisible',
+                        icon: 'icon-frame-show',
                         title: "Visible"
                     }
                 ]

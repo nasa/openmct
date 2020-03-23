@@ -101,7 +101,7 @@ export default {
             }
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                if (styleObj[key].indexOf('transparent') > -1) {
+                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
                     if (this.$el.style[key]) {
                         this.$el.style[key] = '';
                     }
