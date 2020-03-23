@@ -36,11 +36,19 @@
     }
 }
 
-
 .c-toggle-styling-button {
     display: none;
 
     .is-editing & {
         display: block;
+    }
+}
+
+.is-style-invisible {
+    display: none !important;
+
+    .is-editing & {
+        display: block !important;
+        opacity: 0.5;
     }
 }
