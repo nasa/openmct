@@ -279,7 +279,7 @@ export default {
             this.selectedFieldName = name;
         },
         getRule(criterion, index) {
-            return `${this.selectedTelemetryName} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
+            return `${this.selectedTelemetryName} ${this.selectedFieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
         },
         isLastCriterion(index) {
             return index === this.condition.configuration.criteria.length - 1;
@@ -347,9 +347,9 @@ export default {
             const clonedCriterion = {...this.condition.configuration.criteria[index]};
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
-        },    
+        },
         persist() {
-            console.log('persist')
+            console.log('persist called from Condition.vue')
             this.$emit('updateCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
