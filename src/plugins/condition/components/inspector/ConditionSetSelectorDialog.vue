@@ -34,8 +34,8 @@
                 v-for="treeItem in allTreeItems"
                 :key="treeItem.id"
                 :node="treeItem"
-                :selected-item-id="selectedItemId"
-                @itemSelected="handleItemSelection"
+                :selected-item="selectedItem"
+                :handle-item-selected="handleItemSelection"
             />
         </ul>
         <!-- end main tree -->
@@ -48,8 +48,8 @@
                 v-for="treeItem in filteredTreeItems"
                 :key="treeItem.id"
                 :node="treeItem"
-                :selected-item-id="selectedItemId"
-                @itemSelected="handleItemSelection"
+                :selected-item="selectedItem"
+                :handle-item-selected="handleItemSelection"
             />
         </ul>
         <!-- end search tree -->
@@ -75,7 +75,7 @@ export default {
             allTreeItems: [],
             filteredTreeItems: [],
             isLoading: false,
-            selectedItemId: undefined
+            selectedItem: undefined
         }
     },
     mounted() {
@@ -135,9 +135,13 @@ export default {
                 this.getFilteredChildren();
             }
         },
-        handleItemSelection(item) {
+        handleItemSelection(item, node) {
             if (item && item.type === 'conditionSet') {
-                this.selectedItemId = item.identifier;
+                const parentId = (node.objectPath && node.objectPath.length > 1) ? node.objectPath[1].identifier : undefined;
+                this.selectedItem = {
+                    itemId: item.identifier,
+                    parentId
+                };
                 this.$emit('conditionSetSelected', item);
             }
         }

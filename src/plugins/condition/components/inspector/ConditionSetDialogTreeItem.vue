@@ -3,7 +3,7 @@
     <div
         class="c-tree__item"
         :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
-        @click="handleSelection"
+        @click="handleItemSelected(node.object, node)"
     >
         <view-control
             v-model="expanded"
@@ -35,8 +35,8 @@
             v-for="child in children"
             :key="child.id"
             :node="child"
-            :selected-item-id="selectedItemId"
-            @itemSelected="handleChildSelection(child.object)"
+            :selected-item="selectedItem"
+            :handle-item-selected="handleItemSelected"
         />
     </ul>
 </li>
@@ -56,10 +56,16 @@ export default {
             type: Object,
             required: true
         },
-        selectedItemId: {
+        selectedItem: {
             type: Object,
             default() {
                 return undefined;
+            }
+        },
+        handleItemSelected: {
+            type: Function,
+            default() {
+                return (item) => {};
             }
         }
     },
@@ -74,7 +80,13 @@ export default {
     },
     computed: {
         navigated() {
-            return this.selectedItemId && this.openmct.objects.areIdsEqual(this.node.object.identifier, this.selectedItemId);
+            const itemId = this.selectedItem && this.selectedItem.itemId;
+            const isSelectedObject = itemId && this.openmct.objects.areIdsEqual(this.node.object.identifier, itemId);
+            if (isSelectedObject && this.node.objectPath && this.node.objectPath.length > 1) {
+                const isParent = this.openmct.objects.areIdsEqual(this.node.objectPath[1].identifier, this.selectedItem.parentId);
+                return isSelectedObject && isParent;
+            }
+            return isSelectedObject;
         },
         isAlias() {
             let parent = this.node.objectPath[1];
@@ -149,12 +161,6 @@ export default {
         finishLoading() {
             this.isLoading = false;
             this.loaded = true;
-        },
-        handleSelection() {
-            this.$emit('itemSelected', this.node.object);
-        },
-        handleChildSelection(item) {
-            this.$emit('itemSelected', item);
         }
     }
 }
