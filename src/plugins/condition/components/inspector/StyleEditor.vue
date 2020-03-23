@@ -23,7 +23,6 @@
 <template>
 <div class="c-style">
     <span class="c-style-thumb"
-          :class="[styleItem.style.isStyleInvisible]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
     >
         <span class="c-style-thumb__text"
@@ -67,6 +66,7 @@
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 import ToolbarToggleButton from "@/ui/toolbar/components/toolbar-toggle-button.vue";
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
 export default {
     name: 'StyleEditor',
@@ -91,7 +91,7 @@ export default {
         borderColorOption() {
             return {
                 icon: 'icon-line-horz',
-                title: 'Set border color',
+                title: STYLE_CONSTANTS.borderColorTitle,
                 value: this.styleItem.style.border.replace('1px solid ', ''),
                 property: 'border',
                 isEditing: this.isEditing
@@ -100,7 +100,7 @@ export default {
         backgroundColorOption() {
             return {
                 icon: 'icon-paint-bucket',
-                title: 'Set background color',
+                title: STYLE_CONSTANTS.backgroundColorTitle,
                 value: this.styleItem.style.backgroundColor,
                 property: 'backgroundColor',
                 isEditing: this.isEditing
@@ -109,7 +109,7 @@ export default {
         colorOption() {
             return {
                 icon: 'icon-font',
-                title: 'Set text color',
+                title: STYLE_CONSTANTS.textColorTitle,
                 value: this.styleItem.style.color,
                 property: 'color',
                 isEditing: this.isEditing
@@ -118,7 +118,7 @@ export default {
         imageUrlOption() {
             return {
                 icon: 'icon-image',
-                title: 'Edit image properties',
+                title: STYLE_CONSTANTS.imagePropertiesTitle,
                 dialog: {
                     name: "Image Properties",
                     sections: [
@@ -149,12 +149,12 @@ export default {
                     {
                         value: '',
                         icon: 'icon-frame-hide',
-                        title: "Hidden"
+                        title: STYLE_CONSTANTS.visibilityHidden
                     },
                     {
-                        value: 'is-style-invisible',
+                        value: STYLE_CONSTANTS.isStyleInvisible,
                         icon: 'icon-frame-show',
-                        title: "Visible"
+                        title: STYLE_CONSTANTS.visibilityVisible
                     }
                 ]
             }

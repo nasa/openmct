@@ -5,6 +5,7 @@
 <script>
 import _ from "lodash"
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ["openmct"],
@@ -106,6 +107,11 @@ export default {
                         this.$el.style[key] = '';
                     }
                 } else {
+                    if (!styleObj.isStyleInvisible && this.$el.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                        this.$el.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                    } else if (styleObj.isStyleInvisible && !this.$el.classList.contains(styleObj.isStyleInvisible)) {
+                        this.$el.classList.add(styleObj.isStyleInvisible);
+                    }
                     this.$el.style[key] = styleObj[key];
                 }
             });
