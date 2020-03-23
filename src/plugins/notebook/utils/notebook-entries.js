@@ -1,5 +1,3 @@
-import objectLink from '../../../ui/mixins/object-link';
-
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
     END_BOUND: 'tc.endBound',
@@ -7,14 +5,9 @@ const TIME_BOUNDS = {
     END_DELTA: 'tc.endDelta'
 }
 
-export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink, objectPath) => {
+export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
     window.start = bounds.start;
     window.end = bounds.end;
-
-    if (objectPath) {
-        const link = objectLink.computed.objectLink.call({ objectPath, openmct });
-        console.log('link', link);
-    }
 
     if (historicLink.includes('tc.mode=fixed')) {
         return historicLink;
@@ -90,7 +83,7 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
         ? domainObjectType.definition.cssClass
         : 'icon-object-unknown';
     const date = Date.now();
-    const historicLink = link ? getHistoricLinkInFixedMode(openmct, bounds, link, objectPath) : null;
+    const historicLink = link ? getHistoricLinkInFixedMode(openmct, bounds, link) : null;
     const name = domainObject.name;
     const type = domainObject.identifier.key;
 

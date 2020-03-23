@@ -36,12 +36,6 @@
         >
             {{ formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss') }}
         </div>
-        <div>
-            <a class="c-ne__embed__link"
-               :href="embed.historicLink"
-               :class="embed.cssClass"
-            >{{ embed.name }}</a>
-        </div>
     </div>
 </div>
 </template>
