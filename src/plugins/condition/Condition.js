@@ -186,7 +186,6 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            // this.subscribe();
             // TODO nothing is listening to this
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
