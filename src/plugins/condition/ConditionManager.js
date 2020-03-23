@@ -241,8 +241,6 @@ export default class ConditionManager extends EventEmitter {
                     results.forEach(resultObj => { this.updateConditionResults(resultObj); });
                     const currentCondition = this.getCurrentCondition();
 
-                    // uncomment to see output of lad request (before subscriptions kick in)
-                    // console.log(obj.configuration.output);
                     return Object.assign(
                         {
                             output: currentCondition.configuration.output,
