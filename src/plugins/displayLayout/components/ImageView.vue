@@ -73,10 +73,10 @@ export default {
     },
     computed: {
         style() {
-            return {
+            return Object.assign({}, this.itemStyle, {
                 backgroundImage: this.itemStyle ? ('url(' + this.itemStyle.imageUrl + ')') : 'url(' + this.item.url + ')',
                 border: (this.itemStyle && this.itemStyle.border) ? this.itemStyle.border : ('1px solid ' + this.item.stroke)
-            };
+            });
         }
     },
     watch: {

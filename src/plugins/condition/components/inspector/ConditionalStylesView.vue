@@ -127,6 +127,10 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        canHide: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -134,10 +138,6 @@ export default {
             conditionalStyles: [],
             staticStyle: undefined,
             conditionSetDomainObject: undefined,
-            defaultStyle: {
-                conditionId: 'default',
-                style: Object.assign({}, this.initialStyles)
-            },
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
@@ -266,11 +266,11 @@ export default {
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
-                    foundStyle.style = Object.assign({}, this.initialStyles, foundStyle.style);
+                    foundStyle.style = Object.assign((this.canHide ? { visibility: 'visible' } : {}), this.initialStyles, foundStyle.style);
                 } else {
                     this.conditionalStyles.splice(index, 0, {
                         conditionId: conditionConfiguration.id,
-                        style: Object.assign({}, this.initialStyles)
+                        style: Object.assign((this.canHide ? { visibility: 'visible' } : {}), this.initialStyles)
                     });
                 }
             });

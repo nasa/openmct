@@ -53,6 +53,10 @@
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
+        <toolbar-toggle-button v-show="styleItem.style.visibility"
+                               :options="visibilityOption"
+                               @change="updateStyleValue"
+        />
     </span>
 </div>
 </template>
@@ -61,12 +65,14 @@
 
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
+import ToolbarToggleButton from "@/ui/toolbar/components/toolbar-toggle-button.vue";
 
 export default {
     name: 'StyleEditor',
     components: {
         ToolbarButton,
-        ToolbarColorPicker
+        ToolbarColorPicker,
+        ToolbarToggleButton
     },
     inject: [
         'openmct'
@@ -132,6 +138,26 @@ export default {
                 value: {url: this.styleItem.style.imageUrl},
                 isEditing: this.isEditing
             }
+        },
+        visibilityOption() {
+            return {
+                value: this.styleItem.style.visibility,
+                property: 'visibility',
+                isEditing: this.isEditing,
+                options: [
+                    {
+                        value: 'hidden',
+                        icon: 'icon-frame-show',
+                        title: "Hidden"
+                    },
+                    {
+                        value: 'visible',
+                        icon: 'icon-frame-hide',
+                        title: "Visible"
+                    }
+                ]
+            }
+
         }
     },
     methods: {

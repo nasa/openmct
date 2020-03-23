@@ -138,11 +138,13 @@ export default {
             let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
             let left = this.gridSize[0] * Math.min(x, x2);
             let top = this.gridSize[1] * Math.min(y, y2);
+            let visibility = this.itemStyle ? this.itemStyle.visibility : 'visible';
             return {
                 left: `${left}px`,
                 top: `${top}px`,
                 width: `${width}px`,
-                height: `${height}px`
+                height: `${height}px`,
+                visibility
             };
         },
         startHandleClass() {
