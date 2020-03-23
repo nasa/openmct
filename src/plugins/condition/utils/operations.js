@@ -202,5 +202,31 @@ export const OPERATIONS = [
         getDescription: function (values) {
             return ' is not ' + values[0];
         }
+    },
+    {
+        name: 'valueIs',
+        operation: function (input) {
+            const values = input[1].split(',');
+            return values.find((value) => input[0].toString() === value.toString().replace(' ', ''));
+        },
+        text: 'is one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is one of ' + values[0];
+        }
+    },
+    {
+        name: 'valueIsNot',
+        operation: function (input) {
+            const values = input[1].split(',');
+            return values.find((value) => input[0].toString() !== value.toString().replace(' ', ''));
+        },
+        text: 'is not one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is not one of ' + values[0];
+        }
     }
 ];
