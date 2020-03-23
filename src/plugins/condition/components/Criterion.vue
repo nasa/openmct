@@ -45,16 +45,32 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span v-for="(item, inputIndex) in inputCount"
-                  :key="inputIndex"
-                  class="c-cdef__control__inputs"
-            >
-                <input v-model="criterion.input[inputIndex]"
-                       class="c-cdef__control__input"
-                       :type="setInputType"
-                       @blur="persist"
+            <span v-if="!enumerations.length">
+                <span v-for="(item, inputIndex) in inputCount"
+                      :key="inputIndex"
+                      class="c-cdef__control__inputs"
                 >
-                <span v-if="inputIndex < inputCount-1">and</span>
+                    <input v-model="criterion.input[inputIndex]"
+                           class="c-cdef__control__input"
+                           :type="setInputType"
+                           @blur="persist"
+                    >
+                    <span v-if="inputIndex < inputCount-1">and</span>
+                </span>
+            </span>
+            <span v-else>
+                <span v-if="inputCount && criterion.operation"
+                      class="c-cdef__control"
+                >
+                    <select v-model="criterion.input[0]">
+                        <option v-for="option in enumerations"
+                                :key="option.string"
+                                :value="option.value.toString()"
+                        >
+                            {{ option.string }}
+                        </option>
+                    </select>
+                </span>
             </span>
         </span>
     </span>
@@ -92,7 +108,8 @@ export default {
             operations: OPERATIONS,
             inputCount: 0,
             rowLabel: '',
-            operationFormat: ''
+            operationFormat: '',
+            enumerations: []
         }
     },
     computed: {
@@ -123,11 +140,13 @@ export default {
     },
     methods: {
         getOperationFormat() {
+            this.enumerations = [];
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
                 if (value.key === this.criterion.metadata) {
                     let valueMetadata = this.telemetryMetadataOptions[index];
                     if (valueMetadata.enumerations !== undefined) {
                         this.operationFormat = 'enum';
+                        this.enumerations = valueMetadata.enumerations;
                     } else if (valueMetadata.hints.hasOwnProperty('range')) {
                         this.operationFormat = 'number';
                     } else if (valueMetadata.hints.hasOwnProperty('domain')) {
@@ -162,7 +181,7 @@ export default {
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
-                this.criterion.input = [];
+                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
