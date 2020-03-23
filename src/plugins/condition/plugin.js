@@ -23,6 +23,7 @@ import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
+import ConditionSetViewPolicy from './ConditionSetViewPolicy';
 import uuid from "uuid";
 
 export default function ConditionPlugin() {
@@ -34,7 +35,7 @@ export default function ConditionPlugin() {
             key: 'conditionSet',
             description: 'A set of one or more conditions based on user-specified criteria.',
             creatable: true,
-            cssClass: 'icon-conditional',  // TODO: replace with class for new icon
+            cssClass: 'icon-conditional',
             initialize: function (domainObject) {
                 domainObject.configuration = {
                     conditionCollection: [{
@@ -53,7 +54,10 @@ export default function ConditionPlugin() {
                 domainObject.telemetry = {};
             }
         });
-
+        openmct.legacyExtension('policies', {
+            category: 'view',
+            implementation: ConditionSetViewPolicy
+        });
         openmct.composition.addPolicy(new ConditionSetCompositionPolicy(openmct).allow);
         openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
         openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
