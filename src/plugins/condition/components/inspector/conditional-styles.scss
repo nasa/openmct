@@ -36,7 +36,6 @@
     }
 }
 
-
 .c-toggle-styling-button {
     display: none;
 
@@ -46,9 +45,10 @@
 }
 
 .is-style-invisible {
-    display: none;
+    display: none !important;
+
     .is-editing & {
-        display: block;
-        opacity: 0.2;
+        display: block !important;
+        opacity: 0.5;
     }
 }

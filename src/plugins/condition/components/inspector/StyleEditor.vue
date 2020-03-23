@@ -23,6 +23,7 @@
 <template>
 <div class="c-style">
     <span class="c-style-thumb"
+          :class="[styleItem.style.isStyleInvisible]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
     >
         <span class="c-style-thumb__text"
