@@ -52,7 +52,6 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryObject = obj;
         this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
         this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
-        console.log(`subscription:${this.telemetryObjectIdAsString}`);
         this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionUpdated', this);
     }
