@@ -32,8 +32,8 @@ export default class ConditionManager extends EventEmitter {
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
-        this.composition.on('add', this.addTelemetry, this);
-        this.composition.on('remove', this.removeTelemetry, this);
+        this.composition.on('add', this.subscribeToTelemetry, this);
+        this.composition.on('remove', this.unsubscribeFromTelemetry, this);
         this.subscriptions = {};
         this.initialize();
 
@@ -42,7 +42,7 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
-    addTelemetry(endpoint) {
+    subscribeToTelemetry(endpoint) {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
         if (this.subscriptions[id]) {
             console.log('subscription already exists');
@@ -55,7 +55,7 @@ export default class ConditionManager extends EventEmitter {
         );
     }
 
-    removeTelemetry(endpointIdentifier) {
+    unsubscribeFromTelemetry(endpointIdentifier) {
         const id = this.openmct.objects.makeKeyString(endpointIdentifier);
         if (!this.subscriptions[id]) {
             console.log('no subscription to remove');
@@ -264,8 +264,8 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
-        this.composition.off('add', this.addTelemetry, this);
-        this.composition.off('remove', this.removeTelemetry, this);
+        this.composition.off('add', this.subscribeToTelemetry, this);
+        this.composition.off('remove', this.unsubscribeFromTelemetry, this);
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
         this.subscriptions = undefined;
 
