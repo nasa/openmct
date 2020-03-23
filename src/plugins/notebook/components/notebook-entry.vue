@@ -59,7 +59,7 @@
 <script>
 import NotebookEmbed from './notebook-embed.vue';
 import snapshotContainer from '../snapshot-container';
-import {createNewEmbed, getEntryPosById, getNotebookEntries} from '../utils/notebook-entries';
+import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
 
 export default {
@@ -191,15 +191,15 @@ export default {
 
             const data = $event.dataTransfer.getData('openmct/domain-object-path');
             const objectPath = JSON.parse(data);
-            const domainObject = objectPath[0];
-            const domainObjectKey = domainObject.identifier.key;
-            const domainObjectType = this.openmct.types.get(domainObject.type);
-            const cssClass = domainObjectType && domainObjectType.definition
-                ? domainObjectType.definition.cssClass
-                : 'icon-object-unknown';
             const entryPos = this.entryPosById(entryId);
             const bounds = this.openmct.time.bounds();
-            const newEmbed = createNewEmbed(bounds, domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const snapshotMeta = {
+                bounds,
+                link: null,
+                objectPath,
+                openmct: this.openmct
+            }
+            const newEmbed = createNewEmbed(snapshotMeta);
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const currentEntryEmbeds = entries[entryPos].embeds;
             currentEntryEmbeds.push(newEmbed);

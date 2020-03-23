@@ -13,13 +13,13 @@ export default class Snapshot {
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
-    capture(notebookType, snapShotDomainObject, domElement, bounds) {
+    capture(snapshotMeta, notebookType, domElement) {
         this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(notebookType, reader.result, snapShotDomainObject, bounds);
+                    this._saveSnapShot(notebookType, reader.result, snapshotMeta);
                 }.bind(this);
             }.bind(this));
     }
@@ -27,22 +27,22 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(notebookType, imageUrl, snapShotDomainObject, bounds) {
-        const type = this.openmct.types.get(snapShotDomainObject.type);
-        const embed = createNewEmbed(bounds, snapShotDomainObject.name, type.cssClass, snapShotDomainObject.identifier.key, imageUrl ? { src: imageUrl } : '');
+    _saveSnapShot(notebookType, imageUrl, snapshotMeta) {
+        const snapshot = imageUrl ? { src: imageUrl } : '';
+        const embed = createNewEmbed(snapshotMeta, snapshot);
         if (notebookType === NOTEBOOK_DEFAULT) {
-            this._saveToDefaultNoteBook(embed, imageUrl);
+            this._saveToDefaultNoteBook(embed);
 
             return;
         }
 
-        this._saveToNotebookSnapshots(embed, imageUrl);
+        this._saveToNotebookSnapshots(embed);
     }
 
     /**
      * @private
      */
-    _saveToDefaultNoteBook(embed, imageUrl) {
+    _saveToDefaultNoteBook(embed) {
         const notebookStorage = getDefaultNotebook();
         this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
             .then(domainObject => {
@@ -57,7 +57,7 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveToNotebookSnapshots(embed, imageUrl) {
+    _saveToNotebookSnapshots(embed) {
         SnapShotContainer.addSnapshot(embed);
 
         const msg = 'Saved to Notebook Snapshots - click to view.';

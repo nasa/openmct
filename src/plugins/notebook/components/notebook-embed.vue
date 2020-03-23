@@ -9,8 +9,8 @@
     <div class="c-ne__embed__info">
         <div class="c-ne__embed__name">
             <a class="c-ne__embed__link"
-               :href="objectLink"
                :class="embed.cssClass"
+               @click="changeLocation"
             >{{ embed.name }}</a>
             <a class="c-ne__embed__context-available icon-arrow-down"
                @click="toggleActionMenu"
@@ -35,6 +35,12 @@
              class="c-ne__embed__time"
         >
             {{ formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss') }}
+        </div>
+        <div>
+            <a class="c-ne__embed__link"
+               :href="embed.historicLink"
+               :class="embed.cssClass"
+            >{{ embed.name }}</a>
         </div>
     </div>
 </div>
@@ -172,8 +178,28 @@ export default {
                 }
             }).show(this.embed.snapshot.src);
         },
+        changeLocation() {
+            this.openmct.time.stopClock();
+            this.openmct.time.bounds({
+                start: this.embed.bounds.start,
+                end: this.embed.bounds.end
+            });
+
+            document.location.href = this.objectLink;
+
+            const link = this.embed.historicLink;
+            if (!link) {
+                return;
+            }
+
+            setTimeout(() => {
+                document.location.href = link;
+                const message = 'Clock and bounds changed to Fixed Timespan Mode';
+                this.openmct.notifications.alert(message);
+            }, 0);
+        },
         formatTime(unixTime, timeFormat) {
-            return Moment(unixTime).format(timeFormat);
+            return Moment.utc(unixTime).format(timeFormat);
         },
         openSnapshot() {
             const self = this;

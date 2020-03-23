@@ -1,3 +1,52 @@
+import objectLink from '../../../ui/mixins/object-link';
+
+const TIME_BOUNDS = {
+    START_BOUND: 'tc.startBound',
+    END_BOUND: 'tc.endBound',
+    START_DELTA: 'tc.startDelta',
+    END_DELTA: 'tc.endDelta'
+}
+
+export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink, objectPath) => {
+    window.start = bounds.start;
+    window.end = bounds.end;
+
+    if (objectPath) {
+        const link = objectLink.computed.objectLink.call({ objectPath, openmct });
+        console.log('link', link);
+    }
+
+    if (historicLink.includes('tc.mode=fixed')) {
+        return historicLink;
+    }
+
+    openmct.time.getAllClocks().forEach(clock => {
+        if (historicLink.includes(`tc.mode=${clock.key}`)) {
+            historicLink.replace(`tc.mode=${clock.key}`, 'tc.mode=fixed');
+
+            return;
+        }
+    });
+
+    const params = historicLink.split('&').map(param => {
+        if (param.includes(TIME_BOUNDS.START_BOUND)
+                || param.includes(TIME_BOUNDS.START_DELTA)) {
+            console.log('start', param);
+            param = `${TIME_BOUNDS.START_BOUND}=${bounds.start}`;
+        }
+
+        if (param.includes(TIME_BOUNDS.END_BOUND)
+                || param.includes(TIME_BOUNDS.END_DELTA)) {
+            console.log('end', param);
+            param = `${TIME_BOUNDS.END_BOUND}=${bounds.end}`;
+        }
+
+        return param;
+    });
+
+    return params.join('&');
+}
+
 export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     if (!notebookStorage || !domainObject) {
         return null;
@@ -27,27 +76,36 @@ export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     return entries[defaultSection.id][defaultPage.id];
 }
 
-export const createNewEmbed = (bounds, name, cssClass, type, snapshot = '', domainObject, objectPath) => {
-    const date = Date.now();
-    const embed = {
+export const createNewEmbed = (snapshotMeta, snapshot = '') => {
+    const {
         bounds,
-        name,
-        cssClass,
-        type,
-        id: 'embed-' + date,
+        link,
+        objectPath,
+        openmct
+    } = snapshotMeta;
+    const domainObject = objectPath[0];
+    const domainObjectType = openmct.types.get(domainObject.type);
+
+    const cssClass = domainObjectType && domainObjectType.definition
+        ? domainObjectType.definition.cssClass
+        : 'icon-object-unknown';
+    const date = Date.now();
+    const historicLink = link ? getHistoricLinkInFixedMode(openmct, bounds, link, objectPath) : null;
+    const name = domainObject.name;
+    const type = domainObject.identifier.key;
+
+    return {
+        bounds,
         createdOn: date,
-        snapshot
-    }
-
-    if (domainObject) {
-        embed.domainObject = domainObject;
-    }
-
-    if (objectPath) {
-        embed.objectPath = objectPath;
-    }
-
-    return embed;
+        cssClass,
+        domainObject,
+        historicLink,
+        id: 'embed-' + date,
+        name,
+        objectPath,
+        snapshot,
+        type
+    };
 }
 
 export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed = null) => {

@@ -28,9 +28,10 @@
 </template>
 
 <script>
-import Snapshot from '@/plugins/notebook/snapshot';
-import { clearDefaultNotebook, getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage';
-import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '@/plugins/notebook/notebook-constants';
+import Snapshot from '../snapshot';
+import { getHistoricLinkInFixedMode } from '../utils/notebook-entries';
+import { clearDefaultNotebook, getDefaultNotebook } from '../utils/notebook-storage';
+import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
     inject: ['openmct'],
@@ -98,7 +99,16 @@ export default {
         },
         snapshot(notebook) {
             let element = document.getElementsByClassName("l-shell__main-container")[0];
-            this.notebookSnapshot.capture(notebook.type, this.domainObject, element, this.openmct.time.bounds());
+            const bounds = this.openmct.time.bounds();
+            const objectPath = this.openmct.router.path;
+            const snapshotMeta = {
+                bounds,
+                link: window.location.href,
+                objectPath,
+                openmct: this.openmct
+            };
+
+            this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
         }
     }
 }

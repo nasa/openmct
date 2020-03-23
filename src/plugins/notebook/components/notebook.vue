@@ -230,19 +230,20 @@ export default {
                 const snapshot = snapshotContainer.getSnapshot(snapshotId);
                 this.newEntry(snapshot);
                 snapshotContainer.removeSnapshot(snapshotId);
+
                 return;
             }
 
             const data = event.dataTransfer.getData('openmct/domain-object-path');
             const objectPath = JSON.parse(data);
-            const domainObject = objectPath[0];
-            const domainObjectKey = domainObject.identifier.key;
-            const domainObjectType = this.openmct.types.get(domainObject.type);
-            const cssClass = domainObjectType && domainObjectType.definition
-                ? domainObjectType.definition.cssClass
-                : 'icon-object-unknown';
             const bounds = this.openmct.time.bounds();
-            const embed = createNewEmbed(bounds, domainObject.name, cssClass, domainObjectKey, '', domainObject, objectPath);
+            const snapshotMeta = {
+                bounds,
+                link: null,
+                objectPath,
+                openmct: this.openmct
+            };
+            const embed = createNewEmbed(snapshotMeta);
             this.newEntry(embed);
         },
         updateDefaultNotebook(selectedSection, selectedPage) {
