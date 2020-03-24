@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {TRIGGER} from "@/plugins/condition/utils/constants";
+import { TRIGGER } from "@/plugins/condition/utils/constants";
 import { OPERATIONS } from "@/plugins/condition/utils/operations";
 
 export default {
