@@ -48,18 +48,32 @@ export default class ConditionClass extends EventEmitter {
      * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
      */
-    constructor(conditionConfiguration, openmct) {
+    constructor(conditionConfiguration, openmct, conditionManager) {
         super();
 
         this.openmct = openmct;
+        this.conditionManager = conditionManager;
         this.id = conditionConfiguration.id;
         this.criteria = [];
         this.criteriaResults = {};
         this.result = undefined;
+        this.latestTimestamp = {};
+
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
+        this.conditionManager.on('broadcastTelemetry', this.handleBroadcastTelemetry, this);
+    }
+
+    handleBroadcastTelemetry(datum) {
+        if (!datum || !datum.id) {
+            console.log('no data received');
+            return;
+        }
+        this.criteria.forEach(criterion => {
+            criterion.emit(`subscription:${datum.id}`, datum);
+        });
     }
 
     update(conditionConfiguration) {
@@ -172,7 +186,6 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            this.subscribe();
             // TODO nothing is listening to this
             this.emitEvent('conditionUpdated', {
                 trigger: this.trigger,
@@ -181,21 +194,40 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    handleCriterionResult(eventData) {
+    updateCriteriaResults(eventData) {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = eventData.data.result;
         }
+    }
 
+    handleCriterionResult(eventData) {
+        this.updateCriteriaResults(eventData);
         this.handleConditionUpdated(eventData.data);
     }
 
-    subscribe() {
-        // TODO it looks like on any single criterion update subscriptions fire for all criteria
-        this.criteria.forEach((criterion) => {
-            criterion.subscribe();
-        })
+    requestLADConditionResult() {
+        const criteriaResults = this.criteria
+            .map(criterion => criterion.requestLAD());
+
+        return Promise.all(criteriaResults)
+            .then(results => {
+                results.forEach(result => {
+                    this.updateCriteriaResults(result);
+                    this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result.data)
+                });
+                this.evaluate();
+
+                return {
+                    id: this.id,
+                    data: Object.assign({}, this.latestTimestamp, { result: this.result })
+                }
+            });
+    }
+
+    getTelemetrySubscriptions() {
+        return this.criteria.map(criterion => criterion.telemetryObjectIdAsString);
     }
 
     handleConditionUpdated(datum) {
@@ -223,6 +255,19 @@ export default class ConditionClass extends EventEmitter {
         this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
     }
 
+    getLatestTimestamp(current, compare) {
+        const timestamp = Object.assign({}, current);
+
+        this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
+            if (!timestamp[timeSystem.key]
+                || compare[timeSystem.key] > timestamp[timeSystem.key]
+            ) {
+                timestamp[timeSystem.key] = compare[timeSystem.key];
+            }
+        });
+        return timestamp;
+    }
+
     emitEvent(eventName, data) {
         this.emit(eventName, {
             id: this.id,
@@ -231,6 +276,7 @@ export default class ConditionClass extends EventEmitter {
     }
 
     destroy() {
+        this.conditionManager.off('broadcastTelemetry', this.handleBroadcastTelemetry, this);
         if (typeof this.stopObservingForChanges === 'function') {
             this.stopObservingForChanges();
         }

@@ -25,27 +25,60 @@ import ConditionManager from './ConditionManager'
 export default class ConditionSetTelemetryProvider {
     constructor(openmct) {
         this.openmct = openmct;
+        this.conditionManagerPool = {};
     }
 
     isTelemetryObject(domainObject) {
         return domainObject.type === 'conditionSet';
     }
 
-    supportsRequest(domainObject, options) {
-        return false;
+    supportsRequest(domainObject) {
+        return domainObject.type === 'conditionSet';
     }
 
     supportsSubscribe(domainObject) {
         return domainObject.type === 'conditionSet';
     }
 
+    request(domainObject) {
+        let conditionManager = this.getConditionManager(domainObject);
+
+        return conditionManager.requestLADConditionSetOutput()
+            .then(latestOutput => {
+                return latestOutput ? [latestOutput] : [];
+            });
+    }
+
     subscribe(domainObject, callback) {
-        let conditionManager = new ConditionManager(domainObject, this.openmct);
+        let conditionManager = this.getConditionManager(domainObject);
+
         conditionManager.on('conditionSetResultUpdated', callback);
 
-        return function unsubscribe() {
-            conditionManager.off('conditionSetResultUpdated');
-            conditionManager.destroy();
+        return this.destroyConditionManager.bind(this, this.openmct.objects.makeKeyString(domainObject.identifier));
+    }
+
+    /**
+     * returns conditionManager instance for corresponding domain object
+     * creates the instance if it is not yet created
+     * @private
+     */
+    getConditionManager(domainObject) {
+        const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+        if (!this.conditionManagerPool[id]) {
+            this.conditionManagerPool[id] = new ConditionManager(domainObject, this.openmct);
         }
+
+        return this.conditionManagerPool[id];
+    }
+
+    /**
+     * cleans up and destroys conditionManager instance for corresponding domain object id
+     * can be called manually for views that only request but do not subscribe to data
+     */
+    destroyConditionManager(id) {
+        this.conditionManagerPool[id].off('conditionSetResultUpdated');
+        this.conditionManagerPool[id].destroy();
+        delete this.conditionManagerPool[id];
     }
 }
