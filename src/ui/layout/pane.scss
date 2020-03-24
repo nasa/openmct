@@ -63,6 +63,8 @@
     }
 
     &[class*="--horizontal"] {
+        padding-left: $interiorMargin;
+        padding-right: $interiorMargin;
         &.l-pane--collapsed {
             padding-left: 0 !important;
             padding-right: 0 !important;
@@ -70,9 +72,11 @@
     }
 
     &[class*="--vertical"] {
+        padding-top: $interiorMargin;
+        padding-bottom: $interiorMargin;
         &.l-pane--collapsed {
             padding-top: 0 !important;
-            padding-top: 0 !important;
+            padding-bottom: 0 !important;
         }
     }
 
@@ -284,6 +288,9 @@
             /************************** Vertical Splitter Before */
             // Pane collapses downward. Used by Elements pool in Inspector
             &[class*="-before"] {
+                $m: $interiorMarginLg;
+                margin-top: $m;
+                padding-top: $m;
                 > .l-pane__handle {
                     top: 0;
                     transform: translateY(floor($splitterHandleD / -1));
