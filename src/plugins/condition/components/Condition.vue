@@ -349,7 +349,6 @@ export default {
             this.persist()
         },
         persist() {
-            console.log('persist called from Condition.vue')
             this.$emit('updateCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
