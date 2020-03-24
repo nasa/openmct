@@ -23,6 +23,7 @@
 <template>
 <div class="c-style">
     <span class="c-style-thumb"
+          :class="{ 'is-style-invisible': styleItem.style.isStyleInvisible }"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
     >
         <span class="c-style-thumb__text"
@@ -148,12 +149,12 @@ export default {
                 options: [
                     {
                         value: '',
-                        icon: 'icon-frame-hide',
+                        icon: 'icon-eye-disabled',
                         title: STYLE_CONSTANTS.visibilityHidden
                     },
                     {
                         value: STYLE_CONSTANTS.isStyleInvisible,
-                        icon: 'icon-frame-show',
+                        icon: 'icon-eye-open',
                         title: STYLE_CONSTANTS.visibilityVisible
                     }
                 ]
