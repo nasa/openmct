@@ -21,7 +21,6 @@
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
                                :embed="embed"
-                               :object-path="embed.objectPath"
                                :entry="entry"
                                @removeEmbed="removeEmbed"
                                @updateEmbed="updateEmbed"

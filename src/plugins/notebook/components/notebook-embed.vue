@@ -42,7 +42,6 @@
 
 <script>
 import Moment from 'moment';
-import objectLink from '../../../ui/mixins/object-link';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import SnapshotTemplate from './snapshot-template.html';
@@ -53,18 +52,11 @@ export default {
     inject: ['openmct'],
     components: {
     },
-    mixins: [objectLink],
     props: {
         embed: {
             type: Object,
             default() {
                 return {};
-            }
-        },
-        objectPath: {
-            type: Array,
-            default() {
-                return [];
             }
         },
         removeActionString: {
@@ -179,18 +171,14 @@ export default {
                 end: this.embed.bounds.end
             });
 
-            document.location.href = this.objectLink;
-
             const link = this.embed.historicLink;
             if (!link) {
                 return;
             }
 
-            setTimeout(() => {
-                document.location.href = link;
-                const message = 'Clock and bounds changed to Fixed Timespan Mode';
-                this.openmct.notifications.alert(message);
-            }, 0);
+            window.location.href = link;
+            const message = 'Time bounds changed to fixed timespan mode';
+            this.openmct.notifications.alert(message);
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
