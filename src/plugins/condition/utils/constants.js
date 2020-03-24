@@ -12,3 +12,12 @@ export const STYLE_CONSTANTS = {
     visibilityHidden: 'Hidden',
     visibilityVisible: 'Visible'
 };
+
+export const ERROR = {
+    'TELEMETRY_NOT_FOUND': {
+        errorText: 'Telemetry not found for criterion'
+    },
+    'CONDITION_NOT_FOUND': {
+        errorText: 'Condition not found'
+    }
+};

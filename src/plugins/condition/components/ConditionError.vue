@@ -34,6 +34,8 @@
 
 <script>
 
+import { ERROR } from "@/plugins/condition/utils/constants";
+
 export default {
     name: 'ConditionError',
     inject: [
@@ -49,15 +51,7 @@ export default {
     },
     data() {
         return {
-            conditionErrors: [],
-            ERROR: {
-                'TELEMETRY_NOT_FOUND': {
-                    errorText: 'Telemetry not found for criterion'
-                },
-                'CONDITION_NOT_FOUND': {
-                    errorText: 'Condition not found'
-                }
-            }
+            conditionErrors: []
         }
     },
     mounted() {
@@ -75,7 +69,7 @@ export default {
             this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
                 if (telemetryObject.type === 'unknown') {
                     this.conditionErrors.push({
-                        message: this.ERROR.TELEMETRY_NOT_FOUND,
+                        message: ERROR.TELEMETRY_NOT_FOUND,
                         additionalInfo: criterion.telemetry ? `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}` : ''
                     });
                 }

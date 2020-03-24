@@ -113,7 +113,6 @@ export default {
         ConditionError,
         StyleEditor
     },
-    // mixins: [ObjectLink],
     inject: [
         'openmct',
         'domainObject'

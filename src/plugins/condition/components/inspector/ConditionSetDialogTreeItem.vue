@@ -119,10 +119,6 @@ export default {
         }
     },
     mounted() {
-        // TODO: should update on mutation.
-        // TODO: should highlight if navigated to.
-        // TODO: set isAlias per tree-item
-
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
             this.domainObject = newObject;
