@@ -28,11 +28,19 @@ let openmct = {},
     mockListener,
     testConditionDefinition,
     testTelemetryObject,
-    conditionObj;
+    conditionObj,
+    conditionManager,
+    mockBroadcastTelemetry;
 
 describe("The condition", function () {
 
     beforeEach (() => {
+        conditionManager = jasmine.createSpyObj('conditionManager',
+            ['on']
+        );
+        mockBroadcastTelemetry = jasmine.createSpy('listener');
+        conditionManager.on('broadcastTelemetry', mockBroadcastTelemetry);
+
         mockListener = jasmine.createSpy('listener');
         testTelemetryObject = {
             identifier:{ namespace: "", key: "test-object"},
@@ -66,11 +74,14 @@ describe("The condition", function () {
         testConditionDefinition = {
             id: '123-456',
             configuration: {
+                name: 'mock condition',
+                output: 'mock output',
                 trigger: TRIGGER.ANY,
                 criteria: [
                     {
+                        id: '1234-5678-9999-0000',
                         operation: 'equalTo',
-                        input: false,
+                        input: ['0'],
                         metadata: 'value',
                         telemetry: testTelemetryObject.identifier
                     }
@@ -80,14 +91,14 @@ describe("The condition", function () {
 
         conditionObj = new Condition(
             testConditionDefinition,
-            openmct
+            openmct,
+            conditionManager
         );
 
         conditionObj.on('conditionUpdated', mockListener);
-
     });
 
-    it("generates criteria with an id", function () {
+    it("generates criteria with the correct properties", function () {
         const testCriterion = testConditionDefinition.configuration.criteria[0];
         let criterion = conditionObj.generateCriterion(testCriterion);
         expect(criterion.id).toBeDefined();
@@ -98,6 +109,7 @@ describe("The condition", function () {
     });
 
     it("initializes with an id", function () {
+        console.log(conditionObj);
         expect(conditionObj.id).toBeDefined();
     });
 

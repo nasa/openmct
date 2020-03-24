@@ -44,29 +44,44 @@ export default class TelemetryCriterion extends EventEmitter {
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.subscription = null;
-        this.telemetryObjectIdAsString = null;
+        this.telemetryObjectIdAsString = undefined;
         this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
     }
 
     initialize(obj) {
         this.telemetryObject = obj;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetryObject.identifier);
+        this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
+        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionUpdated', this);
     }
 
-    handleSubscription(data) {
+    formatData(data) {
+        const normalizedDatum = this.createNormalizedDatum(data);
         const datum = {
-            result: this.computeResult(data)
-        };
-        if (data) {
-            // TODO check back to see if we should format times here
-            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
-            });
+            result: this.computeResult(normalizedDatum)
         }
 
-        this.emitEvent('criterionResultUpdated', datum);
+        if (normalizedDatum) {
+            // TODO check back to see if we should format times here
+            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+                datum[timeSystem.key] = normalizedDatum[timeSystem.key]
+            });
+        }
+        return datum;
+    }
+
+    handleSubscription(data) {
+        if(this.isValid()) {
+            this.emitEvent('criterionResultUpdated', this.formatData(data));
+        }
+    }
+
+    createNormalizedDatum(telemetryDatum) {
+        return Object.values(this.telemetryMetaData).reduce((normalizedDatum, metadatum) => {
+            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+            return normalizedDatum;
+        }, {});
     }
 
     findOperation(operation) {
@@ -105,34 +120,33 @@ export default class TelemetryCriterion extends EventEmitter {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    /**
-     *  Subscribes to the telemetry object and returns an unsubscribe function
-     *  If the telemetry is not valid, returns nothing
-     */
-    subscribe() {
-        if (this.isValid()) {
-            this.unsubscribe();
-            this.subscription = this.telemetryAPI.subscribe(this.telemetryObject, (datum) => {
-                this.handleSubscription(datum);
-            });
-        } else {
-            this.handleSubscription();
-        }
-    }
+    requestLAD(options) {
+        options = Object.assign({},
+            options,
+            {
+                strategy: 'latest',
+                size: 1
+            }
+        );
 
-    /**
-     *  Calls an unsubscribe function returned by subscribe() and deletes any initialized data
-     */
-    unsubscribe() {
-        //unsubscribe from telemetry source
-        if (typeof this.subscription === 'function') {
-            this.subscription();
+        if (!this.isValid()) {
+            return this.formatData({});
         }
-        delete this.subscription;
+
+        return this.telemetryAPI.request(
+            this.telemetryObject,
+            options
+        ).then(results => {
+            const latestDatum = results.length ? results[results.length - 1] : {};
+            return {
+                id: this.id,
+                data: this.formatData(latestDatum)
+            };
+        });
     }
 
     destroy() {
-        this.unsubscribe();
+        this.off(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionRemoved');
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;

@@ -111,6 +111,7 @@ export default {
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
         if(this.conditionManager) {
+            this.conditionManager.off('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
             this.conditionManager.destroy();
         }
         if (this.stopObservingForChanges) {
@@ -125,8 +126,12 @@ export default {
         this.conditionCollection = this.domainObject.configuration.conditionCollection;
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
+        this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
     },
     methods: {
+        handleConditionSetResultUpdated(data) {
+            this.$emit('conditionSetResultUpdated', data)
+        },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 this.conditionCollection = newConditionCollection;

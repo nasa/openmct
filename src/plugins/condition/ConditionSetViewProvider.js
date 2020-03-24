@@ -30,7 +30,7 @@ export default class ConditionSetViewProvider {
         this.openmct = openmct;
         this.name = 'Conditions View';
         this.key = 'conditionSet.view';
-        this.cssClass = 'icon-conditional'; // TODO: replace with class for new icon
+        this.cssClass = 'icon-conditional';
     }
 
     canView(domainObject) {

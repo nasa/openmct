@@ -23,8 +23,8 @@
             <li v-for="conditionStyle in conditionalStyles"
                 :key="conditionStyle.conditionId"
             >
-                <conditional-style :condition-name="conditionStyle.conditionName"
-                                   :condition-style="conditionStyle.style"
+                <conditional-style :condition-style="conditionStyle"
+                                   @persist="updateConditionalStyle"
                 />
             </li>
         </ul>
@@ -41,21 +41,33 @@ export default {
     },
     inject: [
         'openmct',
-        'domainObject',
-        'layoutItem'
+        'domainObject'
     ],
+    props: {
+        itemId: {
+            type: String,
+            default: ''
+        },
+        initialStyles: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         return {
             conditionalStyles: []
         }
     },
     mounted() {
-        if (this.layoutItem) {
-            //TODO: Handle layout items
-        }
-        if (this.domainObject.configuration) {
-            this.defautStyle = this.domainObject.configuration.defaultStyle;
-            if (this.domainObject.configuration.conditionalStyle) {
+        if (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) {
+            if (this.itemId) {
+                let conditionalStyle = this.domainObject.configuration.conditionalStyle[this.itemId];
+                if (conditionalStyle) {
+                    this.conditionalStyles = conditionalStyle.styles || [];
+                }
+            } else {
                 this.conditionalStyles = this.domainObject.configuration.conditionalStyle.styles || [];
             }
         }
@@ -65,48 +77,85 @@ export default {
             //TODO: this.conditionSetIdentifier will be set by the UI before calling this
             this.conditionSetIdentifier = {
                 namespace: '',
-                key: 'bb0f61ad-268d-4d3e-bb30-90ca4a2053c4'
+                key: "81088c8a-4b80-41fe-9d07-fda8b22d6f5f"
             };
             this.initializeConditionalStyles();
         },
         removeConditionSet() {
+            //TODO: Handle the case where domainObject has items with styles but we're trying to remove the styles on the domainObject itself
             this.conditionSetIdentifier = '';
             this.conditionalStyles = [];
-            this.persist(undefined);
+            let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
+            if (domainObjectConditionalStyle) {
+                if (this.itemId) {
+                    domainObjectConditionalStyle[this.itemId] = undefined;
+                    delete domainObjectConditionalStyle[this.itemId];
+                } else {
+                    domainObjectConditionalStyle.conditionSetIdentifier = undefined;
+                    delete domainObjectConditionalStyle.conditionSetIdentifier;
+                    domainObjectConditionalStyle.styles = undefined;
+                    delete domainObjectConditionalStyle.styles;
+                }
+                if (_.isEmpty(domainObjectConditionalStyle)) {
+                    domainObjectConditionalStyle = undefined;
+                }
+            }
+
+            this.persist(domainObjectConditionalStyle);
+
         },
         initializeConditionalStyles() {
-            const backgroundColors = [{backgroundColor: 'red'},{backgroundColor: 'orange'}, {backgroundColor: 'blue'}];
             this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
                 conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                     this.conditionalStyles.push({
                         conditionId: conditionConfiguration.id,
                         conditionName: conditionConfiguration.name,
-                        style: backgroundColors[index]
+                        style: Object.assign({}, this.initialStyles)
                     });
                 });
-                this.persist({
-                    defaultStyle: this.defaultStyle || {backgroundColor: 'inherit'},
+                let domainObjectConditionalStyle =  (this.domainObject.configuration && this.domainObject.configuration.conditionalStyle) || {};
+                let conditionalStyle = {
                     conditionSetIdentifier: this.conditionSetIdentifier,
                     styles: this.conditionalStyles
-                });
+                };
+                if (this.itemId) {
+                    this.persist({
+                        ...domainObjectConditionalStyle,
+                        [this.itemId]: conditionalStyle
+                    });
+                } else {
+                    this.persist({
+                        ...domainObjectConditionalStyle,
+                        ...conditionalStyle
+                    });
+                }
             });
         },
         findStyleByConditionId(id) {
-            for(let i=0, ii=this.conditionalStyles.length; i < ii; i++) {
-                if (this.conditionalStyles[i].conditionId === id) {
-                    return {
-                        index: i,
-                        item: this.conditionalStyles[i]
-                    };
+            return this.conditionalStyles.find(conditionalStyle => conditionalStyle.conditionId === id);
+        },
+        updateConditionalStyle(conditionStyle) {
+            let found = this.findStyleByConditionId(conditionStyle.conditionId);
+            if (found) {
+                found.style = conditionStyle.style;
+                let domainObjectConditionalStyle =  this.domainObject.configuration.conditionalStyle || {};
+
+                if (this.itemId) {
+                    let itemConditionalStyle = domainObjectConditionalStyle[this.itemId];
+                    if (itemConditionalStyle) {
+                        this.persist({
+                            ...domainObjectConditionalStyle,
+                            [this.itemId]: {
+                                ...itemConditionalStyle,
+                                styles: this.conditionalStyles
+                            }
+                        });
+                    }
+                } else {
+                    domainObjectConditionalStyle.styles = this.conditionalStyles;
+                    this.persist(domainObjectConditionalStyle);
                 }
             }
-        },
-        updateConditionalStyle(conditionId, style) {
-            let found = this.findStyleByConditionId(conditionId);
-            if (found) {
-                this.conditionalStyles[found.index].style = style;
-            }
-            this.persist(undefined);
         },
         persist(conditionalStyle) {
             this.openmct.objects.mutate(this.domainObject, 'configuration.conditionalStyle', conditionalStyle);

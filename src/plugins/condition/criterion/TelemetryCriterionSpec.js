@@ -37,18 +37,25 @@ describe("The telemetry criterion", function () {
             type: "test-object",
             name: "Test Object",
             telemetry: {
-                values: [{
-                    key: "some-key",
-                    name: "Some attribute",
+                valueMetadatas: [{
+                    key: "value",
+                    name: "Value",
+                    hints: {
+                        range: 2
+                    }
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
                     hints: {
                         domain: 1
                     }
                 }, {
-                    key: "some-other-key",
-                    name: "Another attribute",
-                    hints: {
-                        range: 1
-                    }
+                    key: "testSource",
+                    source: "value",
+                    name: "Test",
+                    format: "enum"
                 }]
             }
         };
@@ -60,7 +67,7 @@ describe("The telemetry criterion", function () {
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata"]);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
-        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
+        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
 
         openmct.time = jasmine.createSpyObj('timeAPI',
             ['timeSystem', 'bounds', 'getAllTimeSystems']
@@ -71,7 +78,9 @@ describe("The telemetry criterion", function () {
 
         testCriterionDefinition = {
             id: 'test-criterion-id',
-            telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier)
+            telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier),
+            operation: 'lessThan',
+            metadata: 'sin'
         };
 
         mockListener = jasmine.createSpy('listener');
@@ -95,29 +104,13 @@ describe("The telemetry criterion", function () {
         expect(mockListener2).toHaveBeenCalled();
     });
 
-    it("subscribes to telemetry providers", function () {
-        telemetryCriterion.subscribe();
-        expect(telemetryCriterion.subscription).toBeDefined();
-    });
-
-    it("emits update event on new data from telemetry providers", function () {
+    it("updates and emits event on new data from telemetry providers", function () {
+        telemetryCriterion.initialize(testTelemetryObject);
         spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
         telemetryCriterion.handleSubscription({
-            key: 'some-key',
-            source: 'testSource',
-            testSource: 'Hello'
+            value: 'Hello',
+            utc: 'Hi'
         });
         expect(telemetryCriterion.emitEvent).toHaveBeenCalled();
-        expect(mockListener).toHaveBeenCalled();
     });
-
-    it("un-subscribes from telemetry providers", function () {
-        telemetryCriterion.subscribe();
-        expect(telemetryCriterion.subscription).toBeDefined();
-        telemetryCriterion.destroy();
-        expect(telemetryCriterion.subscription).toBeUndefined();
-        expect(telemetryCriterion.telemetryObjectIdAsString).toBeUndefined();
-        expect(telemetryCriterion.telemetryObject).toBeUndefined();
-    });
-
 });

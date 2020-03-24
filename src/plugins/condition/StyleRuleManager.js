@@ -34,7 +34,6 @@ export default class StyleRuleManager extends EventEmitter {
 
     initialize(conditionalStyleConfiguration) {
         this.conditionSetIdentifier = conditionalStyleConfiguration.conditionSetIdentifier;
-        this.defaultStyle = conditionalStyleConfiguration.defaultStyle;
         this.updateConditionStylesMap(conditionalStyleConfiguration.styles || []);
     }
 
@@ -89,7 +88,11 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     destroy() {
-        this.currentStyle = this.defaultStyle;
+        if (this.currentStyle) {
+            Object.keys(this.currentStyle).forEach(key => {
+                this.currentStyle[key] = 'inherit';
+            });
+        }
         this.updateDomainObjectStyle();
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
