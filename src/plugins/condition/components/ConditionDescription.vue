@@ -59,18 +59,18 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            criterionDescriptions: [],
+            triggerDescription: ''
+        }
+    },
     watch: {
         condition: {
             handler(val) {
                 this.getConditionDescription();
             },
             deep: true
-        }
-    },
-    data() {
-        return {
-            criterionDescriptions: [],
-            triggerDescription: ''
         }
     },
     mounted() {
