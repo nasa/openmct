@@ -101,7 +101,15 @@ export default {
                         description
                     });
                 } else {
-                    let description = `${telemetryObject.name} ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
+                    let metadataValue = criterion.metadata;
+                    if (criterion.metadata) {
+                        this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                        const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
+                        if (metadataObj && metadataObj.name) {
+                            metadataValue = metadataObj.name;
+                        }
+                    }
+                    let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, criterion.input)}`;
                     if (this.criterionDescriptions[index]) {
                         this.criterionDescriptions[index] = {
                             description
