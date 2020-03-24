@@ -41,7 +41,6 @@
         ></span>
 
         <span class="c-condition__name">{{ condition.configuration.name }}</span>
-        <!-- TODO: description should be derived from criteria -->
         <span v-if="condition.isDefault"
               class="c-condition__summary"
         >
@@ -59,7 +58,7 @@
                       :key="index"
                 >
                     {{ getRule(criterion, index) }}
-                    <template v-if="!isLastCriterion">
+                    <template v-if="!isLastCriterion(index)">
                         {{ getConjunction }}
                     </template>
                 </span>
@@ -198,7 +197,7 @@
                   :key="index"
             >
                 {{ getRule(criterion, index) }}
-                <template v-if="!isLastCriterion">
+                <template v-if="!isLastCriterion(index)">
                     {{ getConjunction }}
                 </template>
             </span>

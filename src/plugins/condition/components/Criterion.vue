@@ -4,8 +4,8 @@
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
-            <select ref="telemetrySelect"
-                    v-model="criterion.telemetry"
+            <select v-model="criterion.telemetry"
+                    class="js-telemetry-select"
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
@@ -20,8 +20,8 @@
         <span v-if="criterion.telemetry"
               class="c-cdef__control"
         >
-            <select ref="metadataSelect"
-                    v-model="criterion.metadata"
+            <select v-model="criterion.metadata"
+                    class="js-metadata-select"
                     @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -36,8 +36,7 @@
         <span v-if="criterion.telemetry && criterion.metadata"
               class="c-cdef__control"
         >
-            <select ref="operationSelect"
-                    v-model="criterion.operation"
+            <select v-model="criterion.operation"
                     @change="updateOperationInputVisibility"
             >
                 <option value="">- Select Comparison -</option>
@@ -202,10 +201,10 @@ export default {
             }
         },
         clearDependentFields(el) {
-            if (el === this.$refs.telemetrySelect) {
+            if (el.classList.contains('js-telemetry-select')) {
                 this.criterion.metadata = '';
                 this.criterion.operation = '';
-            } else if (el === this.$refs.metadataSelect) {
+            } else if (el.classList.contains('js-metadata-select')) {
                 this.criterion.operation = '';
             }
             this.criterion.input = [];
