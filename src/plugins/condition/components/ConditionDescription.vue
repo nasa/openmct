@@ -28,11 +28,11 @@
         {{ condition.configuration.name }}
     </span>
     <span v-for="(criterionDescription, index) in criterionDescriptions"
-          :key="criterionDescription.description"
+          :key="criterionDescription"
           class="c-style__condition-desc__text"
     >
         <template v-if="!index">When</template>
-        {{ criterionDescription.description }}
+        {{ criterionDescription }}
         <template v-if="index < (criterionDescriptions.length-1)">{{ triggerDescription }}</template>
     </span>
 </div>
@@ -85,9 +85,7 @@ export default {
                     this.getCriterionDescription(criterion, index);
                 });
                 if (this.condition.isDefault) {
-                    this.criterionDescriptions.splice(0, 0, {
-                        description: 'all else fails'
-                    });
+                    this.criterionDescriptions.splice(0, 0, 'all else fails');
                 }
             } else {
                 this.criterionDescriptions = [];
@@ -97,9 +95,7 @@ export default {
             this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
                 if (telemetryObject.type === 'unknown') {
                     let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
-                    this.criterionDescriptions.splice(index, 0, {
-                        description
-                    });
+                    this.criterionDescriptions.splice(index, 0, description);
                 } else {
                     let metadataValue = criterion.metadata;
                     if (criterion.metadata) {
@@ -111,13 +107,9 @@ export default {
                     }
                     let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, criterion.input)}`;
                     if (this.criterionDescriptions[index]) {
-                        this.criterionDescriptions[index] = {
-                            description
-                        };
+                        this.criterionDescriptions[index] = description;
                     } else {
-                        this.criterionDescriptions.splice(index, 0, {
-                            description
-                        });
+                        this.criterionDescriptions.splice(index, 0, description);
                     }
                 }
             });
