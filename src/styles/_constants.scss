@@ -94,9 +94,6 @@ $tableResizeColHitareaD: 6px;
 $mobileMenuIconD: 24px; // Used
 $mobileTreeItemH: 35px; // Used
 
-/************************** VISUAL */
-$controlDisabledOpacity: 0.5;
-
 /************************** UI ELEMENTS */
 /*************** Progress Bar */
 $colorProgressBarHolder: rgba(black, 0.1);
@@ -148,6 +145,7 @@ $glyph-icon-filter-outline: '\e927';
 $glyph-icon-suitcase: '\e928';
 $glyph-icon-cursor-lock: '\e929';
 $glyph-icon-flag: '\e92a';
+$glyph-icon-eye-disabled: '\e92b';
 $glyph-icon-arrows-right-left: '\ea00';
 $glyph-icon-arrows-up-down: '\ea01';
 $glyph-icon-bullet: '\ea02';

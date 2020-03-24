@@ -1,9 +1,6 @@
 <template>
-<div></div>
+<div class="u-contents"></div>
 </template>
-
-<style>
-</style>
 
 <script>
 import ConditionalStylesView from '../../plugins/condition/components/inspector/ConditionalStylesView.vue';
@@ -34,17 +31,18 @@ export default {
         },
         updateSelection(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
+                let isChildItem = false;
                 let domainObject = selection[0][0].context.item;
                 let layoutItem = {};
                 let styleProps = this.getStyleProperties({
-                    fill: 'inherit',
-                    stroke: 'inherit',
-                    color: 'inherit'
+                    fill: 'transparent',
+                    stroke: 'transparent',
+                    color: 'transparent'
                 });
                 if (selection[0].length > 1) {
+                    isChildItem = true;
                     //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
                     //The second item in the selection[0] list is the container object (usually a layout)
-                    domainObject = selection[0][0].context.item;
                     if (!domainObject) {
                         styleProps = {};
                         layoutItem = selection[0][0].context.layoutItem;
@@ -58,7 +56,6 @@ export default {
                     this.component = undefined;
                     this.$el.innerHTML = '';
                 }
-
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 this.component = new Vue({
@@ -73,10 +70,11 @@ export default {
                     data() {
                         return {
                             layoutItem,
-                            styleProps
+                            styleProps,
+                            isChildItem
                         }
                     },
-                    template: '<conditional-styles-view :item-id="layoutItem.id" :initial-styles="styleProps"></conditional-styles-view>'
+                    template: '<conditional-styles-view :can-hide="isChildItem" :item-id="layoutItem.id" :initial-styles="styleProps"></conditional-styles-view>'
                 });
             }
         }

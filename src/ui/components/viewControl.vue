@@ -5,7 +5,7 @@
         'c-disclosure-triangle--expanded' : value,
         'is-enabled' : enabled
     }"
-    @click="$emit('input', !value)"
+    @click="handleClick"
 ></span>
 </template>
 
@@ -21,6 +21,18 @@ export default {
             // Used as such in the tree - when a node doesn't have children, set disabled to true.
             type: Boolean,
             default: false
+        },
+        propagate: {
+            type: Boolean,
+            default: true
+        }
+    },
+    methods: {
+        handleClick(event) {
+            this.$emit('input', !this.value);
+            if (!this.propagate) {
+                event.stopPropagation();
+            }
         }
     }
 }

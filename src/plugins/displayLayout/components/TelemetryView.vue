@@ -36,7 +36,8 @@
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
-            :style="conditionalStyle"
+            :class="[styleClass]"
+            :style="objectStyle"
         >
             <div class="c-telemetry-view__label-text">
                 {{ domainObject.name }}
@@ -47,8 +48,8 @@
             v-if="showValue"
             :title="fieldName"
             class="c-telemetry-view__value"
-            :class="[telemetryClass]"
-            :style="!telemetryClass && conditionalStyle"
+            :class="[telemetryClass, !telemetryClass && styleClass]"
+            :style="!telemetryClass && objectStyle"
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
@@ -113,7 +114,7 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined,
-            conditionalStyle: ''
+            objectStyle: ''
         }
     },
     computed: {
@@ -132,6 +133,9 @@ export default {
                 color: this.item.color,
                 fontSize: this.item.size
             }
+        },
+        styleClass() {
+            return this.objectStyle && this.objectStyle.isStyleInvisible;
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
@@ -192,7 +196,6 @@ export default {
 
         if (this.styleRuleManager) {
             this.styleRuleManager.destroy();
-            this.styleRuleManager.off('conditionalStyleUpdated', this.updateStyle.bind(this));
             delete this.styleRuleManager;
         }
 
@@ -238,7 +241,7 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
-            this.initConditionalStyles();
+            this.initObjectStyles();
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -264,20 +267,27 @@ export default {
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         },
-        initConditionalStyles() {
-            this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.conditionalStyle, this.openmct);
-            this.styleRuleManager.on('conditionalStyleUpdated', this.updateStyle.bind(this));
+        initObjectStyles() {
+            this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.objectStyles, this.openmct, this.updateStyle.bind(this));
 
             if (this.unlistenStyles) {
                 this.unlistenStyles();
             }
-            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.conditionalStyle', (newConditionalStyle) => {
-                //Updating conditional styles in the inspector view will trigger this so that the changes are reflected immediately
-                this.styleRuleManager.updateConditionalStyleConfig(newConditionalStyle);
+            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
         },
         updateStyle(styleObj) {
-            this.conditionalStyle = styleObj;
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
+                    if (styleObj[key]) {
+                        styleObj[key] = '';
+                    }
+                }
+            });
+            this.objectStyle = styleObj;
         }
     }
 }
