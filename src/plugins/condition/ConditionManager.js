@@ -31,11 +31,40 @@ export default class ConditionManager extends EventEmitter {
         this.conditionSetDomainObject = conditionSetDomainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
+        this.composition = this.openmct.composition.get(conditionSetDomainObject);
+        this.composition.on('add', this.subscribeToTelemetry, this);
+        this.composition.on('remove', this.unsubscribeFromTelemetry, this);
+        this.compositionLoad = this.composition.load();
+        this.subscriptions = {};
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
             this.conditionSetDomainObject = newDomainObject;
         });
+    }
+
+    subscribeToTelemetry(endpoint) {
+        const id = this.openmct.objects.makeKeyString(endpoint.identifier);
+        if (this.subscriptions[id]) {
+            console.log('subscription already exists');
+            return;
+        }
+
+        this.subscriptions[id] = this.openmct.telemetry.subscribe(
+            endpoint,
+            this.broadcastTelemetry.bind(this, id)
+        );
+    }
+
+    unsubscribeFromTelemetry(endpointIdentifier) {
+        const id = this.openmct.objects.makeKeyString(endpointIdentifier);
+        if (!this.subscriptions[id]) {
+            console.log('no subscription to remove');
+            return;
+        }
+
+        this.subscriptions[id]();
+        delete this.subscriptions[id];
     }
 
     initialize() {
@@ -56,17 +85,12 @@ export default class ConditionManager extends EventEmitter {
     }
 
     initCondition(conditionConfiguration, index) {
-        let condition = new Condition(conditionConfiguration, this.openmct);
+        let condition = new Condition(conditionConfiguration, this.openmct, this);
         condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
             this.conditionClassCollection.splice(index + 1, 0, condition);
         } else {
             this.conditionClassCollection.unshift(condition);
-        }
-        //There are no criteria for a default condition and hence no subscriptions.
-        //Hence the conditionResult must be manually triggered for it.
-        if (conditionConfiguration.isDefault) {
-            this.handleConditionResult();
         }
     }
 
@@ -150,17 +174,9 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    handleConditionResult(resultObj) {
+    getCurrentCondition() {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
         let currentCondition = conditionCollection[conditionCollection.length-1];
-
-        if (resultObj) {
-            const id = resultObj.id;
-            if (this.findConditionById(id)) {
-                this.conditionResults[id] = resultObj.data.result;
-            }
-            this.updateTimestamp(resultObj.data);
-        }
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
             if (this.conditionResults[conditionCollection[i].id]) {
@@ -169,7 +185,27 @@ export default class ConditionManager extends EventEmitter {
                 break;
             }
         }
+        return currentCondition;
+    }
 
+    updateConditionResults(resultObj) {
+        if (!resultObj) {
+            return;
+        }
+
+        const id = resultObj.id;
+
+        if (this.findConditionById(id)) {
+            this.conditionResults[id] = resultObj.data.result;
+        }
+
+        this.updateTimestamp(resultObj.data);
+    }
+
+    handleConditionResult(resultObj) {
+        // update conditions results and then calculate the current condition
+        this.updateConditionResults(resultObj);
+        const currentCondition = this.getCurrentCondition();
         this.emit('conditionSetResultUpdated',
             Object.assign(
                 {
@@ -192,14 +228,50 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
+    requestLADConditionSetOutput() {
+        if (!this.conditionClassCollection.length || this.conditionClassCollection.length === 1) {
+            return Promise.resolve([]);
+        }
+
+        return this.compositionLoad.then(() => {
+            const ladConditionResults = this.conditionClassCollection
+                .map(condition => condition.requestLADConditionResult());
+
+            return Promise.all(ladConditionResults)
+                .then((results) => {
+                    results.forEach(resultObj => { this.updateConditionResults(resultObj); });
+                    const currentCondition = this.getCurrentCondition();
+
+                    return Object.assign(
+                        {
+                            output: currentCondition.configuration.output,
+                            id: this.conditionSetDomainObject.identifier,
+                            conditionId: currentCondition.id
+                        },
+                        this.latestTimestamp
+                    );
+                });
+        });
+    }
+
+    broadcastTelemetry(id, datum) {
+        this.emit(`broadcastTelemetry`, Object.assign({}, datum, {id: id}));
+    }
+
     persistConditions() {
         this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
     }
 
     destroy() {
+        this.composition.off('add', this.subscribeToTelemetry, this);
+        this.composition.off('remove', this.unsubscribeFromTelemetry, this);
+        Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
+        this.subscriptions = undefined;
+
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
+
         this.conditionClassCollection.forEach((condition) => {
             condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
