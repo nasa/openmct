@@ -32,29 +32,29 @@
             ABC
         </span>
     </span>
-    <span v-if="isEditing"
-          class="c-toolbar"
-    >
+    <span class="c-toolbar">
         <toolbar-color-picker v-if="styleItem.style.border"
-                              class="u-menu-to--center"
+                              class="c-style__toolbar-button--border-color u-menu-to--center"
                               :options="borderColorOption"
                               @change="updateStyleValue"
         />
         <toolbar-color-picker v-if="styleItem.style.backgroundColor"
-                              class="u-menu-to--center"
+                              class="c-style__toolbar-button--background-color u-menu-to--center"
                               :options="backgroundColorOption"
                               @change="updateStyleValue"
         />
         <toolbar-color-picker v-if="styleItem.style.color"
-                              class="u-menu-to--center"
+                              class="c-style__toolbar-button--color u-menu-to--center"
                               :options="colorOption"
                               @change="updateStyleValue"
         />
         <toolbar-button v-if="styleItem.style.imageUrl !== undefined"
+                        class="c-style__toolbar-button--image-url"
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
         <toolbar-toggle-button v-if="styleItem.style.isStyleInvisible !== undefined"
+                               class="c-style__toolbar-button--toggle-visible"
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
         />

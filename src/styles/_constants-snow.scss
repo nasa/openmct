@@ -217,6 +217,7 @@ $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due 
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);
 $shdwSelect: none;
+$controlDisabledOpacity: 0.3;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);

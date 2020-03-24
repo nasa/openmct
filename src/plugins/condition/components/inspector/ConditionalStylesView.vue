@@ -27,7 +27,7 @@
             Object Style
         </div>
         <div class="c-inspect-styles__content">
-            <div class="c-inspect-styles__condition"
+            <div class="c-inspect-styles__style"
                  v-if="staticStyle">
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"

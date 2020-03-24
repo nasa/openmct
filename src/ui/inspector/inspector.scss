@@ -107,7 +107,7 @@
 /********************************************* INSPECTOR PROPERTIES TAB */
 .c-inspect-properties {
     display: grid;
-    grid-row-gap: 0;
+    grid-row-gap: $interiorMarginSm;
     grid-template-columns: 1fr 2fr;
     align-items: start;
     min-width: 150px;
