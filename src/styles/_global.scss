@@ -35,6 +35,22 @@ div {
     display: contents;
 }
 
+.u-menu-to {
+    &--left {
+        .c-menu {
+            left: auto !important;
+            right: 0;
+        }
+    }
+
+    &--center {
+        .c-menu {
+            left: 50% !important;
+            transform: translateX(-50%);
+        }
+    }
+}
+
 .u-space {
     // Provides a separator space between elements
     &--right {

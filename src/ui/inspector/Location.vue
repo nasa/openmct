@@ -1,20 +1,20 @@
 <template>
-<div class="c-properties c-properties--location">
+<div class="c-inspect-properties c-inspect-properties--location">
     <div
-        class="c-properties__header"
+        class="c-inspect-properties__header"
         title="The location of this linked object."
     >
         Original Location
     </div>
     <ul
         v-if="!multiSelect"
-        class="c-properties__section"
+        class="c-inspect-properties__section"
     >
         <li
             v-if="originalPath.length"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <ul class="c-properties__value c-location">
+            <ul class="c-inspect-properties__value c-location">
                 <li
                     v-for="pathObject in orderedOriginalPath"
                     :key="pathObject.key"
@@ -30,7 +30,7 @@
     </ul>
     <div
         v-if="multiSelect"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No location to display for multiple items
     </div>

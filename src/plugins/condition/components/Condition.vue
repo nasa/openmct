@@ -42,28 +42,15 @@
 
         <span class="c-condition__name">{{ condition.configuration.name }}</span>
         <!-- TODO: description should be derived from criteria -->
-        <span v-if="condition.isDefault"
-              class="c-condition__summary"
-        >
-            When all else fails
-        </span>
-        <span v-else
-              class="c-condition__summary"
-        >
+        <span class="c-condition__summary">
             <template v-if="!canEvaluateCriteria">
                 Define criteria
             </template>
-            <template v-else>
-                When
-                <span v-for="(criterion, index) in condition.configuration.criteria"
-                      :key="index"
-                >
-                    {{ getRule(criterion, index) }}
-                    <template v-if="!isLastCriterion">
-                        {{ getConjunction }}
-                    </template>
-                </span>
-            </template>
+            <span v-else>
+                <condition-description :show-label="false"
+                                       :condition="condition"
+                />
+            </span>
         </span>
 
         <div class="c-condition__buttons">
@@ -179,40 +166,23 @@
             Output: {{ condition.configuration.output }}
         </span>
     </div>
-    <div v-if="condition.isDefault"
-         class="c-condition__summary"
-    >
-        When all else fails
-    </div>
-    <div v-else
-         class="c-condition__summary"
-    >
-        <template v-if="!canEvaluateCriteria">
-            Define criteria
-        </template>
-        <template v-else>
-            When
-            <span v-for="(criterion, index) in condition.configuration.criteria"
-                  :key="index"
-            >
-                {{ getRule(criterion, index) }}
-                <template v-if="!isLastCriterion">
-                    {{ getConjunction }}
-                </template>
-            </span>
-        </template>
+    <div class="c-condition__summary">
+        <condition-description :show-label="false"
+                               :condition="condition"
+        />
     </div>
 </div>
 </template>
 
 <script>
 import Criterion from './Criterion.vue';
-import { OPERATIONS } from '../utils/operations';
+import ConditionDescription from "./ConditionDescription.vue";
 
 export default {
     inject: ['openmct'],
     components: {
-        Criterion
+        Criterion,
+        ConditionDescription
     },
     props: {
         condition: {
@@ -246,19 +216,17 @@ export default {
     computed: {
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
-            let lastCriterion = criteria[criteria.length - 1];
-            if (lastCriterion.telemetry &&
-                lastCriterion.operation &&
-                (lastCriterion.input.length ||
-                lastCriterion.operation === 'isDefined' ||
-                lastCriterion.operation === 'isUndefined')) {
-                return true;
-            } else {
-                return false;
+            if (criteria.length) {
+                let lastCriterion = criteria[criteria.length - 1];
+                if (lastCriterion.telemetry &&
+                    lastCriterion.operation &&
+                    (lastCriterion.input.length ||
+                        lastCriterion.operation === 'isDefined' ||
+                        lastCriterion.operation === 'isUndefined')) {
+                    return true;
+                }
             }
-        },
-        getConjunction: function () {
-            return this.condition.configuration.trigger === 'all' ? 'and' : 'or';
+            return false;
         }
     },
     destroyed() {
@@ -268,20 +236,6 @@ export default {
         this.setOutputSelection();
     },
     methods: {
-        getRule(criterion, index) {
-            return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
-        },
-        isLastCriterion(index) {
-            return index === this.condition.configuration.criteria.length - 1;
-        },
-        findDescription(operation, values) {
-            for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
-                if (operation === OPERATIONS[i].name) {
-                    return OPERATIONS[i].getDescription(values);
-                }
-            }
-            return null;
-        },
         setOutputSelection() {
             let conditionOutput = this.condition.configuration.output;
             if (conditionOutput) {

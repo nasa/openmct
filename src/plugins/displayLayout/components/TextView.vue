@@ -29,6 +29,7 @@
 >
     <div
         class="c-text-view"
+        :class="[styleClass]"
         :style="style"
     >
         {{ item.text }}
@@ -38,7 +39,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
-import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+import conditionalStylesMixin from "../mixins/objectlStyles-mixin";
 
 export default {
     makeDefinition(openmct, gridSize, element) {
@@ -78,16 +79,15 @@ export default {
     },
     computed: {
         style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
-            } else {
-                return {
-                    backgroundColor: this.item.fill,
-                    borderColor: this.item.stroke,
-                    color: this.item.color,
-                    fontSize: this.item.size
-                };
-            }
+            return Object.assign({
+                backgroundColor: this.item.fill,
+                border: '1px solid ' + this.item.stroke,
+                color: this.item.color,
+                fontSize: this.item.size
+            }, this.itemStyle);
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {
