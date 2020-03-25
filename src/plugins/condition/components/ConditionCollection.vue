@@ -53,10 +53,14 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions-h">
+        <div class="c-cs__conditions-h ">
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
                  class="c-condition-h"
+                 @drop.prevent="dropCondition(index)"
+                 @dragover.prevent
+                 @dragenter="dragEnter(index)"
+                 @dragleave="dragLeave"
             >
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
@@ -96,7 +100,8 @@ export default {
             conditions: [],
             telemetryObjs: [],
             moveIndex: Number,
-            isDragging: false
+            isDragging: false,
+            dragCounter: 0
         };
     },
     destroyed() {
@@ -133,10 +138,10 @@ export default {
             this.moveIndex = index;
             this.isDragging = true;
         },
-        dropCondition(e) {
-            console.log('dropCondition', e);
-            let targetIndex = Array.from(document.querySelectorAll('.js-condition-drag-wrapper')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+        dropCondition(index) {
+            let isDefaultCondition = (index === this.conditionCollection.length - 1);
+            if (isDefaultCondition) { return }
+            if (index > this.moveIndex) { index-- } // for 'downward' move
             const oldIndexArr = Object.keys(this.conditionCollection);
             const move = function (arr, old_index, new_index) {
                 while (old_index < 0) {
@@ -154,7 +159,7 @@ export default {
                 arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
                 return arr;
             }
-            const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
+            const newIndexArr = move(oldIndexArr, this.moveIndex, index);
             const reorderPlan = [];
 
             for (let i = 0; i < oldIndexArr.length; i++) {
@@ -163,19 +168,27 @@ export default {
 
             this.reorder(reorderPlan);
 
-            e.target.classList.remove("dragging");
+            event.target.classList.remove("dragging");
             this.isDragging = false;
         },
-        dragEnter(e) {
-            console.log('dragEnter this.isDragging', this.isDragging);
-            // if (Array.from(e.target.classList).indexOf('js-condition-drag-wrapper') === -1 || !this.isDragging) { return }
-            let targetIndex = Array.from(document.querySelectorAll('.js-condition-drag-wrapper')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
-            if (this.moveIndex === targetIndex) { return }
-            e.target.classList.add("dragging");
+        dragEnter(index) {
+            if (event.target.classList.contains('c-c__drag-ghost')) { return }
+            this.dragCounter++;
+
+            if (event.target.classList.contains('js-condition-drag-wrapper')) {
+                if (index === this.conditionCollection.length - 1) { return }
+                if (index > this.moveIndex) { index-- } // for 'downward' move
+                if (this.moveIndex === index) { return }
+                this.isDragging = true;
+                event.target.classList.add("dragging");
+            }
         },
         dragLeave(e) {
-            e.target.classList.remove("dragging");
+            if (e.target.classList.contains('c-c__drag-ghost')) { return }
+            this.dragCounter--;
+            if (!this.dragCounter) {
+                e.target.classList.remove("dragging");
+            }
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
