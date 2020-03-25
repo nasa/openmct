@@ -64,9 +64,14 @@ describe("The telemetry criterion", function () {
             resolve(testTelemetryObject);
         }));
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata"]);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter"]);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
+        openmct.telemetry.getValueFormatter.and.returnValue({
+            parse: function (value) {
+                return value;
+            }
+        });
         openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
 
         openmct.time = jasmine.createSpyObj('timeAPI',

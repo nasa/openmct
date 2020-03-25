@@ -36,7 +36,6 @@ export default class ConditionManager extends EventEmitter {
         this.composition.on('remove', this.unsubscribeFromTelemetry, this);
         this.compositionLoad = this.composition.load();
         this.subscriptions = {};
-        this.telemetryObjects = {};
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
@@ -50,12 +49,11 @@ export default class ConditionManager extends EventEmitter {
             console.log('subscription already exists');
             return;
         }
-        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: this.openmct.telemetry.getMetadata(endpoint).valueMetadatas});
+
         this.subscriptions[id] = this.openmct.telemetry.subscribe(
             endpoint,
             this.broadcastTelemetry.bind(this, id)
         );
-        this.updateConditionTelemetry();
     }
 
     unsubscribeFromTelemetry(endpointIdentifier) {
@@ -67,7 +65,6 @@ export default class ConditionManager extends EventEmitter {
 
         this.subscriptions[id]();
         delete this.subscriptions[id];
-        delete this.telemetryObjects[id];
     }
 
     initialize() {
@@ -78,10 +75,6 @@ export default class ConditionManager extends EventEmitter {
                 this.initCondition(conditionConfiguration, index);
             });
         }
-    }
-
-    updateConditionTelemetry() {
-        this.conditionClassCollection.forEach((condition) => condition.updateTelemetry());
     }
 
     updateCondition(conditionConfiguration, index) {
@@ -262,15 +255,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     broadcastTelemetry(id, datum) {
-        this.emit(`broadcastTelemetry`, Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
-    }
-
-    createNormalizedDatum(telemetryDatum, id) {
-        return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
-            const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            normalizedDatum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
-            return normalizedDatum;
-        }, {});
+        this.emit(`broadcastTelemetry`, Object.assign({}, datum, {id: id}));
     }
 
     persistConditions() {

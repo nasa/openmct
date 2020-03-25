@@ -40,28 +40,32 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryAPI = this.openmct.telemetry;
         this.timeAPI = this.openmct.time;
         this.id = telemetryDomainObjectDefinition.id;
+        this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.telemetryObject = telemetryDomainObjectDefinition.telemetryObject;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.telemetry);
+        this.telemetryObjectIdAsString = undefined;
+        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
+    }
+
+    initialize(obj) {
+        this.telemetryObject = obj;
+        this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
         this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionUpdated', this);
     }
 
-    updateTelemetry(telemetryObjects) {
-        this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
-    }
-
     formatData(data) {
+        const normalizedDatum = this.createNormalizedDatum(data);
         const datum = {
-            result: this.computeResult(data)
-        };
+            result: this.computeResult(normalizedDatum)
+        }
 
-        if (data) {
+        if (normalizedDatum) {
             // TODO check back to see if we should format times here
             this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
+                datum[timeSystem.key] = normalizedDatum[timeSystem.key]
             });
         }
         return datum;
@@ -71,6 +75,14 @@ export default class TelemetryCriterion extends EventEmitter {
         if(this.isValid()) {
             this.emitEvent('criterionResultUpdated', this.formatData(data));
         }
+    }
+
+    createNormalizedDatum(telemetryDatum) {
+        return Object.values(this.telemetryMetaData).reduce((normalizedDatum, metadatum) => {
+            const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
+            normalizedDatum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
+            return normalizedDatum;
+        }, {});
     }
 
     findOperation(operation) {
