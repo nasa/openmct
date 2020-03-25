@@ -380,7 +380,6 @@ define([
             let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
 
             if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
-                console.log('actually updating');
                 this.filters = deepCopiedFilters;
                 this.reset();
                 if (this.unsubscribe) {
