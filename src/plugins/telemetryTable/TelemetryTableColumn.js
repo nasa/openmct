@@ -56,6 +56,14 @@ define(function () {
                 return formattedValue;
             }
         }
+
+        getParsedValue(telemetryDatum) {
+            if (telemetryDatum === undefined) {
+                return '';
+            } else {
+                return this.formatter.parse(telemetryDatum);
+            }
+        }
     }
 
     return TelemetryTableColumn;
