@@ -64,6 +64,7 @@
             >
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
+                     @dragover.prevent
                 ></div>
                 <Condition :condition="condition"
                            :condition-index="index"
@@ -184,10 +185,10 @@ export default {
             }
         },
         dragLeave(e) {
-            if (e.target.classList.contains('c-c__drag-ghost')) { return }
+            if (event.target.classList.contains('c-c__drag-ghost')) { return }
             this.dragCounter--;
             if (!this.dragCounter) {
-                e.target.classList.remove("dragging");
+                e.target.classList.remove("dragging"); 
             }
         },
         addTelemetryObject(domainObject) {

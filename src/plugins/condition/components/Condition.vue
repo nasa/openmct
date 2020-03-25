@@ -25,12 +25,13 @@
      class="c-condition c-condition--edit js-condition-drag-wrapper"
 >
     <!-- Edit view -->
-    <div class="c-condition__header">
+    <div class="c-condition__header"
+         @dragover.prevent
+    >
         <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
               title="Drag to reorder conditions"
               :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
               :draggable="!condition.isDefault"
-              @dragover.prevent
               @dragstart="dragStart"
               @dragstop="dragStop"
         ></span>
@@ -82,6 +83,7 @@
     </div>
     <div v-if="expanded"
          class="c-condition__definition c-cdef"
+         @dragover.prevent
     >
         <span class="c-cdef__separator c-row-separator"></span>
         <span class="c-cdef__label">Condition Name</span>
@@ -268,6 +270,9 @@ export default {
         this.setOutputSelection();
     },
     methods: {
+        dragOver() {
+            // console.log('dragOver')
+        },
         getRule(criterion, index) {
             return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
         },

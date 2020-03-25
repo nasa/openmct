@@ -99,22 +99,11 @@
     }
 }
 
+.dragging {
+    border: 2px solid blue;
+}
+
 .c-c__drag-ghost {
     width: 100%;
     min-height: $interiorMarginSm;
-
-    //&:before {
-    //    @include test();
-    //    content: '';
-    //    display: block;
-    //    z-index: 2;
-    //}
-
-    &.dragging {
-        min-height: 5em;
-        //border: solid 1px blue;
-        background-color: lightblue;
-        border-radius: 2px;
-    }
-
 }
