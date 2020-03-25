@@ -268,9 +268,7 @@ export default class ConditionManager extends EventEmitter {
     createNormalizedDatum(telemetryDatum, id) {
         return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            const data = telemetryDatum[metadatum.source];
-            const parsedValue = formatter.parse(data);
-            normalizedDatum[metadatum.key] = _.isNaN(parsedValue) ? data : parsedValue;
+            normalizedDatum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
             return normalizedDatum;
         }, {});
     }

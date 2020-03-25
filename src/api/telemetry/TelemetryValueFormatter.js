@@ -81,6 +81,15 @@ define([
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };
         }
+        if (valueMetadata.format === 'string') {
+            this.formatter.parse = function (value) {
+                if (typeof value === 'string') {
+                    return value;
+                } else {
+                    return value.toString();
+                }
+            };
+        }
     }
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
