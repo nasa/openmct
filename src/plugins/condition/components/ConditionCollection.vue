@@ -57,18 +57,10 @@
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
                  class="c-condition-h"
-                 @drop.prevent="dropCondition"
-                 @dragover.prevent
-                 @dragenter="dragEnter"
-                 @dragleave="dragLeave"
             >
-                <!-- <div v-if="isEditing"
+                <div v-if="isEditing"
                      class="c-c__drag-ghost"
-                     @drop.prevent="dropCondition"
-                     @dragover.prevent
-                     @dragenter="dragEnter"
-                     @dragleave="dragLeave"
-                ></div> -->
+                ></div>
                 <Condition :condition="condition"
                            :condition-index="index"
                            :telemetry="telemetryObjs"
