@@ -171,7 +171,6 @@ export default {
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations(ev);
                     this.updateOperationInputVisibility();
-                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
@@ -181,7 +180,6 @@ export default {
             if (ev && ev.target === this.$refs.metadataSelect) {
                 this.clearDependentFields(this.$refs.metadataSelect);
                 let selectedOptionText = this.$refs.metadataSelect.options[this.$refs.metadataSelect.selectedIndex].text;
-                this.$emit('setFieldName', selectedOptionText);
             }
             this.getOperationFormat();
             this.persist();

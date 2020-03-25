@@ -126,8 +126,6 @@
                                :trigger="condition.configuration.trigger"
                                :is-default="condition.configuration.criteria.length === 1"
                                @persist="persist"
-                               @setTelemetryName="setTelemetryName"
-                               @setFieldName="setFieldName"
                     />
                     <div class="c-cdef__criteria__buttons">
                         <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
