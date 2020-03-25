@@ -48,6 +48,7 @@ define([
     './clearData/plugin',
     './webPage/plugin',
     './condition/plugin',
+    './conditionWidget/plugin',
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow'
@@ -79,6 +80,7 @@ define([
     ClearData,
     WebPagePlugin,
     ConditionPlugin,
+    ConditionWidgetPlugin,
     Espresso,
     Maelstrom,
     Snow
@@ -188,6 +190,7 @@ define([
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
+    plugins.ConditionWidget = ConditionWidgetPlugin.default;
 
     return plugins;
 });
