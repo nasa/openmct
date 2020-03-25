@@ -9,8 +9,7 @@ define([
             values: [
                 {
                     key: "name",
-                    name: "Name",
-                    format: "string"
+                    name: "Name"
                 },
                 {
                     key: "utc",

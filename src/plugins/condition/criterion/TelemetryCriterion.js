@@ -40,6 +40,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryAPI = this.openmct.telemetry;
         this.timeAPI = this.openmct.time;
         this.id = telemetryDomainObjectDefinition.id;
+        this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;

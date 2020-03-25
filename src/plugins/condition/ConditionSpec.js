@@ -25,6 +25,7 @@ import {TRIGGER} from "./utils/constants";
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 
 let openmct = {},
+    mockListener,
     testConditionDefinition,
     testTelemetryObject,
     conditionObj,
@@ -40,6 +41,7 @@ describe("The condition", function () {
         mockBroadcastTelemetry = jasmine.createSpy('listener');
         conditionManager.on('broadcastTelemetry', mockBroadcastTelemetry);
 
+        mockListener = jasmine.createSpy('listener');
         testTelemetryObject = {
             identifier:{ namespace: "", key: "test-object"},
             type: "test-object",
@@ -92,6 +94,8 @@ describe("The condition", function () {
             openmct,
             conditionManager
         );
+
+        conditionObj.on('conditionUpdated', mockListener);
     });
 
     it("generates criteria with the correct properties", function () {

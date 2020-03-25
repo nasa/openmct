@@ -2,7 +2,7 @@ export const OPERATIONS = [
     {
         name: 'equalTo',
         operation: function (input) {
-            return input[0] === parseInt(input[1]);
+            return input[0] === input[1];
         },
         text: 'is equal to',
         appliesTo: ['number'],
@@ -14,7 +14,7 @@ export const OPERATIONS = [
     {
         name: 'notEqualTo',
         operation: function (input) {
-            return input[0] !== parseInt(input[1]);
+            return input[0] !== input[1];
         },
         text: 'is not equal to',
         appliesTo: ['number'],
@@ -26,7 +26,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThan',
         operation: function (input) {
-            return input[0] > parseInt(input[1]);
+            return input[0] > input[1];
         },
         text: 'is greater than',
         appliesTo: ['number'],
@@ -38,7 +38,7 @@ export const OPERATIONS = [
     {
         name: 'lessThan',
         operation: function (input) {
-            return input[0] < parseInt(input[1]);
+            return input[0] < input[1];
         },
         text: 'is less than',
         appliesTo: ['number'],
@@ -50,7 +50,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThanOrEq',
         operation: function (input) {
-            return input[0] >= parseInt(input[1]);
+            return input[0] >= input[1];
         },
         text: 'is greater than or equal to',
         appliesTo: ['number'],
@@ -62,7 +62,7 @@ export const OPERATIONS = [
     {
         name: 'lessThanOrEq',
         operation: function (input) {
-            return input[0] <= parseInt(input[1]);
+            return input[0] <= input[1];
         },
         text: 'is less than or equal to',
         appliesTo: ['number'],
@@ -74,7 +74,7 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            return input[0] > parseInt(input[1]) && input[0] < parseInt(input[2]);
+            return input[0] > input[1] && input[0] < input[2];
         },
         text: 'is between',
         appliesTo: ['number'],
@@ -86,7 +86,7 @@ export const OPERATIONS = [
     {
         name: 'notBetween',
         operation: function (input) {
-            return input[0] < parseInt(input[1]) || input[0] > parseInt(input[2]);
+            return input[0] < input[1] || input[0] > input[2];
         },
         text: 'is not between',
         appliesTo: ['number'],
