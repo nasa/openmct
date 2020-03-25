@@ -229,6 +229,7 @@ section {
 
     &.is-expanded {
         flex: 1 1 100%;
+        max-height: max-content;
     }
 
     .c-section__header {
@@ -785,7 +786,25 @@ select {
     }
 }
 
-/***************************************************** SLIDERS */
+/******************************************************** STYLE EDITING */
+.c-style {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+
+    > * + * { margin-left: $interiorMargin; }
+}
+
+.c-style-thumb {
+    background-size: cover;
+    border: 1px solid transparent;
+    border-radius: $basicCr;
+    box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
+    flex: 0 0 auto;
+    padding: $interiorMargin $interiorMarginLg;
+}
+
+/******************************************************** SLIDERS */
 .c-slider {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }

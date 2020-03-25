@@ -100,8 +100,10 @@ $colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #c9d6ff;
 $colorStatusCompleteBg: #a4e4b4;
-$colorAlert: #ff3c00;
+$colorAlert: #ff8a0d;
 $colorAlertFg: #fff;
+$colorError: #ff3c00;
+$colorErrorFg: #fff;
 $colorWarningHi: #990000;
 $colorWarningHiFg: #FF9594;
 $colorWarningLo: #ff9900;
@@ -215,6 +217,7 @@ $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due 
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);
 $shdwSelect: none;
+$controlDisabledOpacity: 0.3;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -320,8 +323,8 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: pullForward($colorBodyBg, 10%);
-$colorTabHeaderFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: rgba($colorBodyFg, 0.2);
+$colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
 $colorTabGroupHeaderFg: pullForward($colorTabGroupHeaderBg, 40%);

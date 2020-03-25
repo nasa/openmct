@@ -15,6 +15,9 @@
 
     &--vertical {
         height: 100%;
+        > .l-pane .l-pane__contents {
+            padding-right: $interiorMarginSm; // Fend off scrollbar
+        }
     }
 }
 
@@ -89,9 +92,6 @@
         .l-pane__contents {
             // Don't pad all nested __contents
             padding: 0;
-        }
-
-        > [class*="__"] + [class*="__"] {
         }
     }
 
@@ -263,6 +263,8 @@
         }
 
         &[class*="--vertical"] {
+            // l-pane--vertical
+
             > .l-pane__handle {
                 cursor: row-resize;
                 left: 0;

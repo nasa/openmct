@@ -1,6 +1,7 @@
 .c-tree-and-search {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     padding-right: $interiorMarginSm;
     overflow: auto;
 
@@ -134,5 +135,13 @@
                 width: ceil($mobileTreeItemH * 0.5);
             }
         }
+    }
+}
+
+.c-selector {
+    .c-tree-and-search__tree.c-tree {
+        border: 1px solid $colorInteriorBorder;
+        border-radius: $controlCr;
+        padding: $interiorMargin;
     }
 }

@@ -11,6 +11,7 @@
 
 .c-condition {
     flex-direction: column;
+    min-width: 400px;
 
     > * + * {
         margin-top: $interiorMarginSm;
@@ -24,10 +25,13 @@
 
     /***************************** HEADER */
     &__header {
+        $h: 22px;
         display: flex;
-        align-items: flex-start;
+        align-items: start;
         align-content: stretch;
         overflow: hidden;
+        min-height: $h;
+        line-height: $h;
 
         > * {
             flex: 0 0 auto;
@@ -36,6 +40,11 @@
             }
         }
     }
+
+    &__drag-grippy {
+        transform: translateY(50%);
+    }
+
     &__name {
         font-weight: bold;
         align-self: baseline; // Fixes bold line-height offset problem

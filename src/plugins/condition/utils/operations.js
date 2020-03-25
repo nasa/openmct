@@ -8,7 +8,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + values[0];
+            return ' is ' + values.join(', ');
         }
     },
     {
@@ -20,7 +20,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + values[0];
+            return ' is not ' + values.join(', ');
         }
     },
     {
@@ -32,7 +32,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' > ' + values[0];
+            return ' > ' + values.join(', ');
         }
     },
     {
@@ -44,7 +44,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' < ' + values[0];
+            return ' < ' + values.join(', ');
         }
     },
     {
@@ -56,7 +56,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' >= ' + values[0];
+            return ' >= ' + values.join(', ');
         }
     },
     {
@@ -68,7 +68,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' <= ' + values[0];
+            return ' <= ' + values.join(', ');
         }
     },
     {
@@ -80,7 +80,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is between ' + values[0] + ' and ' + values[1];
+            return ' is between ' + values.join(', ') + ' and ' + values[1];
         }
     },
     {
@@ -92,7 +92,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is not between ' + values[0] + ' and ' + values[1];
+            return ' is not between ' + values.join(', ') + ' and ' + values[1];
         }
     },
     {
@@ -104,7 +104,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' contains ' + values[0];
+            return ' contains ' + values.join(', ');
         }
     },
     {
@@ -116,7 +116,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' does not contain ' + values[0];
+            return ' does not contain ' + values.join(', ');
         }
     },
     {
@@ -128,7 +128,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' starts with ' + values[0];
+            return ' starts with ' + values.join(', ');
         }
     },
     {
@@ -140,7 +140,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' ends with ' + values[0];
+            return ' ends with ' + values.join(', ');
         }
     },
     {
@@ -152,7 +152,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is exactly ' + values[0];
+            return ' is exactly ' + values.join(', ');
         }
     },
     {
@@ -188,7 +188,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + values[0];
+            return ' is ' + values.join(', ');
         }
     },
     {
@@ -200,7 +200,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + values[0];
+            return ' is not ' + values.join(', ');
         }
     },
     {
