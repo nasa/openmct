@@ -23,6 +23,7 @@
 <template>
 <div
     class="l-layout__frame c-frame no-frame"
+    :class="[styleClass]"
     :style="style"
 >
     <svg
@@ -60,7 +61,7 @@
 
 <script>
 
-import conditionalStylesMixin from "../mixins/conditionalStyles-mixin";
+import conditionalStylesMixin from "../mixins/objectlStyles-mixin";
 
 const START_HANDLE_QUADRANTS = {
     1: 'c-frame-edit__handle--sw',
@@ -144,6 +145,9 @@ export default {
                 width: `${width}px`,
                 height: `${height}px`
             };
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

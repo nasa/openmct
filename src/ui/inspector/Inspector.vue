@@ -1,44 +1,40 @@
 <template>
 <div class="c-inspector">
-    <div class="c-inspector__tabs">
-        <div v-if="showStyles"
-             class="c-inspector__tabs__holder"
+    <object-name />
+    <div v-if="showStyles"
+         class="c-inspector__tabs c-tabs"
+    >
+        <div v-for="tabbedView in tabbedViews"
+             :key="tabbedView.key"
+             class="c-inspector__tab c-tab"
+             :class="{'is-current': isCurrent(tabbedView)}"
+             @click="updateCurrentTab(tabbedView)"
         >
-            <div v-for="tabbedView in tabbedViews"
-                 :key="tabbedView.key"
-                 class="c-inspector__tabs__header"
-                 @click="updateCurrentTab(tabbedView)"
-            >
-                <span class="c-inspector__tabs__label c-tab"
-                      :class="{'is-current': isCurrent(tabbedView)}"
-                >{{ tabbedView.name }}</span>
-            </div>
+            {{ tabbedView.name }}
         </div>
-        <div class="c-inspector__tabs__contents">
-            <multipane v-if="currentTabbedView.key === '__properties'"
-                       class="c-inspector"
-                       type="vertical"
-            >
-                <pane class="c-inspector__properties">
-                    <properties />
-                    <location />
-                    <inspector-views />
-                </pane>
-                <pane
-                    v-if="isEditing && hasComposition"
-                    class="c-inspector__elements"
-                    handle="before"
-                    label="Elements"
-                >
-                    <elements />
-                </pane>
-            </multipane>
-            <pane v-else
-                  class="c-inspector__styles"
-            >
-                <styles-inspector-view />
+
+    </div>
+    <div class="c-inspector__content">
+        <multipane v-if="currentTabbedView.key === '__properties'"
+                   type="vertical"
+        >
+            <pane class="c-inspector__properties">
+                <properties />
+                <location />
+                <inspector-views />
             </pane>
-        </div>
+            <pane
+                v-if="isEditing && hasComposition"
+                class="c-inspector__elements"
+                handle="before"
+                label="Elements"
+            >
+                <elements />
+            </pane>
+        </multipane>
+        <template v-else>
+            <styles-inspector-view />
+        </template>
     </div>
 </div>
 </template>
@@ -49,6 +45,7 @@ import pane from '../layout/pane.vue';
 import Elements from './Elements.vue';
 import Location from './Location.vue';
 import Properties from './Properties.vue';
+import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import StylesInspectorView from "./StylesInspectorView.vue";
@@ -62,6 +59,7 @@ export default {
         pane,
         Elements,
         Properties,
+        ObjectName,
         Location,
         InspectorViews
     },
@@ -112,7 +110,10 @@ export default {
                     let type = this.openmct.types.get(object.type);
                     this.showStyles = (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
                 }
-                this.updateCurrentTab(this.tabbedViews[0]);
+                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key))
+                {
+                    this.updateCurrentTab(this.tabbedViews[0]);
+                }
             }
         },
         updateCurrentTab(view) {

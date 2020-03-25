@@ -29,6 +29,7 @@
 >
     <div
         class="c-box-view"
+        :class="[styleClass]"
         :style="style"
     ></div>
 </layout-frame>
@@ -36,7 +37,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
-import conditionalStylesMixin from '../mixins/conditionalStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectlStyles-mixin';
 
 export default {
     makeDefinition() {
@@ -73,14 +74,13 @@ export default {
     },
     computed: {
         style() {
-            if (this.itemStyle) {
-                return this.itemStyle;
-            } else {
-                return {
-                    backgroundColor: this.item.fill,
-                    border: '1px solid ' + this.item.stroke
-                };
-            }
+            return Object.assign({
+                backgroundColor: this.item.fill,
+                border: '1px solid ' + this.item.stroke
+            }, this.itemStyle);
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {

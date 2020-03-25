@@ -47,6 +47,8 @@ describe('ConditionManager', () => {
             ]
         }
     };
+    let mockComposition;
+    let loader;
 
     function mockAngularComponents() {
         let mockInjector = jasmine.createSpyObj('$injector', ['get']);
@@ -71,9 +73,33 @@ describe('ConditionManager', () => {
         openmct.$injector = mockInjector;
     }
 
-    beforeAll(function () {
+    beforeEach(function () {
 
         mockAngularComponents();
+        mockListener = jasmine.createSpy('mockListener');
+        loader = {};
+        loader.promise = new Promise(function (resolve, reject) {
+            loader.resolve = resolve;
+            loader.reject = reject;
+        });
+
+        mockComposition = jasmine.createSpyObj('compositionCollection', [
+            'load',
+            'on',
+            'off'
+        ]);
+        mockComposition.load.and.callFake(() => {
+            setTimeout(() => {
+                loader.resolve();
+            });
+            return loader.promise;
+        });
+        mockComposition.on('add', mockListener);
+        mockComposition.on('remove', mockListener);
+        openmct.composition = jasmine.createSpyObj('compositionAPI', [
+            'get'
+        ]);
+        openmct.composition.get.and.returnValue(mockComposition);
 
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString', 'observe', 'mutate']);
         openmct.objects.get.and.returnValues(new Promise(function (resolve, reject) {
@@ -84,10 +110,11 @@ describe('ConditionManager', () => {
         openmct.objects.makeKeyString.and.returnValue(conditionSetDomainObject.identifier.key);
         openmct.objects.observe.and.returnValue(function () {});
         openmct.objects.mutate.and.returnValue(function () {});
+
         conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
-        mockListener = jasmine.createSpy('mockListener');
 
         conditionMgr.on('conditionSetResultUpdated', mockListener);
+        conditionMgr.on('broadcastTelemetry', mockListener);
     });
 
     it('creates a conditionCollection with a default condition', function () {
