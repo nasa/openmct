@@ -58,7 +58,7 @@
         height: 0; // Chrome 73 overflow bug fix
         overflow: auto;
 
-        .c-object-view {
+        .u-angular-object-view-wrapper {
             .u-fills-container {
                 // Expand component types that fill a container
                 @include abs();
@@ -69,7 +69,15 @@
     .c-click-icon,
     .c-button {
         // Shrink buttons a bit when they appear in a frame
-        font-size: 0.85em;
+        font-size: 0.9em;
         padding: 3px 5px;
     }
+}
+
+.u-angular-object-view-wrapper {
+    @include test();
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
