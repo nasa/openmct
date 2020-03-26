@@ -77,8 +77,10 @@ export default class ConditionSetTelemetryProvider {
      * can be called manually for views that only request but do not subscribe to data
      */
     destroyConditionManager(id) {
-        this.conditionManagerPool[id].off('conditionSetResultUpdated');
-        this.conditionManagerPool[id].destroy();
-        delete this.conditionManagerPool[id];
+        if (this.conditionManagerPool[id]) {
+            this.conditionManagerPool[id].off('conditionSetResultUpdated');
+            this.conditionManagerPool[id].destroy();
+            delete this.conditionManagerPool[id];
+        }
     }
 }

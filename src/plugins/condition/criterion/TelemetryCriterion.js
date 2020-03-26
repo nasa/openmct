@@ -120,7 +120,10 @@ export default class TelemetryCriterion extends EventEmitter {
         );
 
         if (!this.isValid()) {
-            return this.formatData({});
+            return {
+                id: this.id,
+                data: this.formatData({})
+            };
         }
 
         return this.telemetryAPI.request(

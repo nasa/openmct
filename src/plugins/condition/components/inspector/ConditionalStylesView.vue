@@ -262,18 +262,22 @@ export default {
             if (!this.conditions) {
                 this.conditions = {};
             }
+            let conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
                     foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, foundStyle.style);
+                    conditionalStyles.push(foundStyle);
                 } else {
-                    this.conditionalStyles.splice(index, 0, {
+                    conditionalStyles.splice(index, 0, {
                         conditionId: conditionConfiguration.id,
                         style: Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles)
                     });
                 }
             });
+            //we're doing this so that we remove styles for any conditions that have been removed from the condition set
+            this.conditionalStyles = conditionalStyles;
             this.conditionsLoaded = true;
             this.persist(this.getDomainObjectConditionalStyle());
         },

@@ -114,6 +114,14 @@ export default {
             inputTypes: INPUT_TYPES
         }
     },
+    watch: {
+        telemetry: {
+            handler(newTelemetry, oldTelemetry) {
+                this.checkTelemetry();
+            },
+            deep: true
+        }
+    },
     computed: {
         setRowLabel: function () {
             let operator = this.trigger === 'all' ? 'and ': 'or ';
@@ -141,6 +149,17 @@ export default {
         this.updateMetadataOptions();
     },
     methods: {
+        checkTelemetry() {
+            if(this.criterion.telemetry &&
+                !this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
+                //telemetry being used was removed. So reset this criterion.
+                this.criterion.telemetry = '';
+                this.criterion.metadata = '';
+                this.criterion.input = [];
+                this.criterion.operation = '';
+                this.persist();
+            }
+        },
         getOperationFormat() {
             this.enumerations = [];
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
