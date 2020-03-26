@@ -4,7 +4,8 @@
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
-            <select v-model="criterion.telemetry"
+            <select ref="telemetrySelect"
+                    v-model="criterion.telemetry"
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
@@ -19,7 +20,8 @@
         <span v-if="criterion.telemetry"
               class="c-cdef__control"
         >
-            <select v-model="criterion.metadata"
+            <select ref="metadataSelect"
+                    v-model="criterion.metadata"
                     @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -162,29 +164,34 @@ export default {
             });
         },
         updateMetadataOptions(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.clearDependentFields(ev.target)
+            }
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                    this.updateOperations();
+                    this.updateOperations(ev);
                     this.updateOperationInputVisibility();
+                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
             }
         },
         updateOperations(ev) {
-            if (ev) {
-                this.clearInputs()
+            if (ev.target === this.$ref.telemetrySelect) {
+                this.clearDependentFields(ev.target);
+                this.persist();
             }
             this.getOperationFormat();
-            this.persist();
+
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
+                this.persist();
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
@@ -192,10 +199,14 @@ export default {
                     if (!this.inputCount) {this.criterion.input = []}
                 }
             }
-            this.persist();
         },
-        clearInputs() {
-            this.criterion.operation = '';
+        clearDependentFields(el) {
+            if (el === this.$ref.telemetrySelect) {
+                this.criterion.metadata = '';
+                this.criterion.operation = '';
+            } else if (el === this.$ref.metadataSelect) {
+                this.criterion.operation = '';
+            }
             this.criterion.input = [];
             this.inputCount = 0;
         },
