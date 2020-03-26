@@ -92,6 +92,7 @@ export default class ConditionClass extends EventEmitter {
         return {
             id: uuid(),
             telemetry: criterionConfiguration.telemetry || '',
+            telemetryObject: this.conditionManager.telemetryObjects[this.openmct.objects.makeKeyString(criterionConfiguration.telemetry)],
             operation: criterionConfiguration.operation || '',
             input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
             metadata: criterionConfiguration.metadata || ''
@@ -107,6 +108,12 @@ export default class ConditionClass extends EventEmitter {
     updateCriteria(criterionConfigurations) {
         this.destroyCriteria();
         this.createCriteria(criterionConfigurations);
+    }
+
+    updateTelemetry() {
+        this.criteria.forEach((criterion) => {
+            criterion.updateTelemetry(this.conditionManager.telemetryObjects);
+        });
     }
 
     /**
@@ -209,7 +216,7 @@ export default class ConditionClass extends EventEmitter {
 
     requestLADConditionResult() {
         const criteriaResults = this.criteria
-            .map(criterion => criterion.requestLAD());
+            .map(criterion => criterion.requestLAD({telemetryObjects: this.conditionManager.telemetryObjects}));
 
         return Promise.all(criteriaResults)
             .then(results => {
