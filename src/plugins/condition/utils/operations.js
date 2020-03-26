@@ -204,3 +204,8 @@ export const OPERATIONS = [
         }
     }
 ];
+
+export const INPUT_TYPES = {
+    'string': 'text',
+    'number': 'number'
+};

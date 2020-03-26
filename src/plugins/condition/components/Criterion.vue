@@ -45,7 +45,7 @@
                     {{ option.text }}
                 </option>
             </select>
-            <span v-if="!enumerations.length">
+            <template v-if="!enumerations.length">
                 <span v-for="(item, inputIndex) in inputCount"
                       :key="inputIndex"
                       class="c-cdef__control__inputs"
@@ -57,7 +57,7 @@
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
-            </span>
+            </template>
             <span v-else>
                 <span v-if="inputCount && criterion.operation"
                       class="c-cdef__control"
@@ -79,6 +79,7 @@
 
 <script>
 import { OPERATIONS } from '../utils/operations';
+import { INPUT_TYPES } from '../utils/operations';
 
 export default {
     inject: ['openmct'],
@@ -109,7 +110,8 @@ export default {
             inputCount: 0,
             rowLabel: '',
             operationFormat: '',
-            enumerations: []
+            enumerations: [],
+            inputTypes: INPUT_TYPES
         }
     },
     computed: {
@@ -125,9 +127,9 @@ export default {
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
                     if (this.filteredOps[i].appliesTo.length === 1) {
-                        type = this.filteredOps[i].appliesTo[0];
+                        type = this.inputTypes[this.filteredOps[i].appliesTo[0]];
                     } else {
-                        type = 'string'
+                        type = 'text'
                     }
                     break;
                 }

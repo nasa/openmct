@@ -94,6 +94,8 @@
 
     &.c-style-thumb {
         display: block !important;
+        background-color: transparent !important;
+        border-color: transparent !important;
         @include bgCheckerboard($size: 10px, $imp: true);
         opacity: 1;
     }
