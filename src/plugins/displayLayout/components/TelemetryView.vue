@@ -268,15 +268,17 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         },
         initObjectStyles() {
-            this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.objectStyles, this.openmct, this.updateStyle.bind(this));
+            if (this.domainObject.configuration) {
+                this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.objectStyles, this.openmct, this.updateStyle.bind(this));
 
-            if (this.unlistenStyles) {
-                this.unlistenStyles();
+                if (this.unlistenStyles) {
+                    this.unlistenStyles();
+                }
+                this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
+                    //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
+                    this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+                });
             }
-            this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
-                //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
-                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
-            });
         },
         updateStyle(styleObj) {
             let keys = Object.keys(styleObj);
