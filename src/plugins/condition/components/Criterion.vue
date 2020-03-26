@@ -194,14 +194,13 @@ export default {
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations(ev);
                     this.updateOperationInputVisibility();
-                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
             }
         },
         updateOperations(ev) {
-            if (ev.target === this.$ref.telemetrySelect) {
+            if (ev && ev.target === this.$refs.telemetrySelect) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
@@ -221,10 +220,10 @@ export default {
             }
         },
         clearDependentFields(el) {
-            if (el === this.$ref.telemetrySelect) {
+            if (el === this.$refs.telemetrySelect) {
                 this.criterion.metadata = '';
                 this.criterion.operation = '';
-            } else if (el === this.$ref.metadataSelect) {
+            } else if (el === this.$refs.metadataSelect) {
                 this.criterion.operation = '';
             }
             this.criterion.input = [];
