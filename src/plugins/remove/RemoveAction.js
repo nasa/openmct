@@ -19,9 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import { searchObjectInTree } from '../../ui/utils/tree';
-
 export default class RemoveAction {
     constructor(openmct) {
         this.name = 'Remove';
@@ -93,14 +90,12 @@ export default class RemoveAction {
             this.openmct.editor.save();
         }
 
-        setTimeout(async () => {
-            const foundInTree = await searchObjectInTree(this.openmct, child.identifier);
-            if (foundInTree) {
-                return;
-            }
+        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const isAlias = parentKeyString !== child.location;
 
-            this.openmct.objects.mutate(child, 'isRemovedFromTree', !foundInTree);
-        }, 0);
+        if (!isAlias) {
+            this.openmct.objects.mutate(child, 'location', null);
+        }
     }
 
     appliesTo(objectPath) {

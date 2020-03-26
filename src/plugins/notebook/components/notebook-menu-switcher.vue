@@ -29,7 +29,6 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getHistoricLinkInFixedMode } from '../utils/notebook-entries';
 import { clearDefaultNotebook, getDefaultNotebook } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
@@ -66,9 +65,10 @@ export default {
             const defaultNotebook = getDefaultNotebook();
 
             if (defaultNotebook) {
-                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier).then(d => d);
+                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier)
+                    .then(d => d);
 
-                if (domainObject.isRemovedFromTree) {
+                if (!domainObject.location) {
                     clearDefaultNotebook();
                 } else {
                     defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
