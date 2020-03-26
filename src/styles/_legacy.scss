@@ -32,6 +32,10 @@
     display: flex;
     align-items: center;
 
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
     &__label {
         display: inline-block;
         white-space: nowrap;
