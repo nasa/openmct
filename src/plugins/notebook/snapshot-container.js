@@ -64,7 +64,6 @@ export default class SnapshotContainer extends EventEmitter {
         } catch (e) {
             const message = 'Insufficient memory in localstorage to store snapshot, please delete some snapshots and try again!';
             this.openmct.notifications.error(message);
-            console.error(message, e);
 
             return false;
         }
