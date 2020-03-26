@@ -50,10 +50,18 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryDataCache = {};
     }
 
-    formatData(data, telemetryObjects) {
-        this.telemetryDataCache[data.id] = this.computeResult(data);
+    updateTelemetry(telemetryObjects) {
+        this.telemetryObjects = telemetryObjects;
+    }
 
-        telemetryObjects.forEach((telemetryObject) => {
+    formatData(data, telemetryObjects) {
+        if (data) {
+            this.telemetryDataCache[data.id] = this.computeResult(data);
+        }
+
+        let keys = Object.keys(telemetryObjects);
+        keys.forEach((key) => {
+            let telemetryObject = telemetryObjects[key];
             const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             if (this.telemetryDataCache[id] === undefined) {
                 this.telemetryDataCache[id] = false;
@@ -70,7 +78,6 @@ export default class TelemetryCriterion extends EventEmitter {
                 datum[timeSystem.key] = data[timeSystem.key]
             });
         }
-
         return datum;
     }
 
@@ -137,25 +144,21 @@ export default class TelemetryCriterion extends EventEmitter {
 
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
-                telemetryRequestsResults.forEach(results => {
+                telemetryRequestsResults.forEach((results, index) => {
                     const latestDatum = results.length ? results[results.length - 1] : {};
-                    return {
-                        id: this.id,
-                        data: this.formatData(latestDatum, options.telemetryObjects)
-                    };
+                    if (index === telemetryRequestsResults.length-1) {
+                        //when the last result is computed, we return the result
+                        return {
+                            id: this.id,
+                            data: this.formatData(latestDatum, options.telemetryObjects)
+                        };
+                    } else {
+                        if (latestDatum) {
+                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
+                        }
+                    }
                 });
             });
-
-        // return this.telemetryAPI.request(
-        //     this.telemetryObject,
-        //     options
-        // ).then(results => {
-        //     const latestDatum = results.length ? results[results.length - 1] : {};
-        //     return {
-        //         id: this.id,
-        //         data: this.formatData(latestDatum)
-        //     };
-        // });
     }
 
     destroy() {

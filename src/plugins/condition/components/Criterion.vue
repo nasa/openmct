@@ -9,6 +9,8 @@
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
+                <option value="all">All Telemetry</option>
+                <option value="any">Any Telemetry</option>
                 <option v-for="telemetryOption in telemetry"
                         :key="telemetryOption.identifier.key"
                         :value="telemetryOption.identifier"
@@ -109,7 +111,7 @@ export default {
     data() {
         return {
             telemetryMetadata: {},
-            telemetryMetadataOptions: {},
+            telemetryMetadataOptions: [],
             operations: OPERATIONS,
             inputCount: 0,
             rowLabel: '',
@@ -132,7 +134,11 @@ export default {
             return (this.index !== 0 ? operator : '') + 'when';
         },
         filteredOps: function () {
-            return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
+            if (this.operationFormat === 'all') {
+                return this.operations;
+            } else {
+                return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
+            }
         },
         setInputType: function () {
             let type = '';
@@ -154,54 +160,76 @@ export default {
     },
     methods: {
         checkTelemetry() {
-            if(this.criterion.telemetry &&
-                !this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
-                //telemetry being used was removed. So reset this criterion.
-                this.criterion.telemetry = '';
-                this.criterion.metadata = '';
-                this.criterion.input = [];
-                this.criterion.operation = '';
-                this.persist();
+            if(this.criterion.telemetry) {
+                if (this.criterion.telemetry === 'any' && this.criterion.telemetry === 'all') {
+                    this.updateMetadataOptions();
+                } else {
+                    if (!this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
+                        //telemetry being used was removed. So reset this criterion.
+                        this.criterion.telemetry = '';
+                        this.criterion.metadata = '';
+                        this.criterion.input = [];
+                        this.criterion.operation = '';
+                        this.persist();
+                    }
+                }
             }
         },
         getOperationFormat() {
             this.enumerations = [];
-            this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
-                if (value.key === this.criterion.metadata) {
-                    let valueMetadata = this.telemetryMetadataOptions[index];
-                    if (valueMetadata.enumerations !== undefined) {
-                        this.operationFormat = 'enum';
-                        this.enumerations = valueMetadata.enumerations;
-                    } else if (valueMetadata.hints.hasOwnProperty('range')) {
-                        this.operationFormat = 'number';
-                    } else if (valueMetadata.hints.hasOwnProperty('domain')) {
-                        this.operationFormat = 'number';
-                    } else if (valueMetadata.key === 'name') {
-                        this.operationFormat = 'string';
-                    } else {
-                        this.operationFormat = 'string';
+            if (this.criterion.telemetry && (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all')) {
+                this.operationFormat = 'all';
+            } else {
+                this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
+                    if (value.key === this.criterion.metadata) {
+                        let valueMetadata = this.telemetryMetadataOptions[index];
+                        if (valueMetadata.enumerations !== undefined) {
+                            this.operationFormat = 'enum';
+                            this.enumerations = valueMetadata.enumerations;
+                        } else if (valueMetadata.hints.hasOwnProperty('range')) {
+                            this.operationFormat = 'number';
+                        } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+                            this.operationFormat = 'number';
+                        } else if (valueMetadata.key === 'name') {
+                            this.operationFormat = 'string';
+                        } else {
+                            this.operationFormat = 'string';
+                        }
                     }
-                }
-            });
+                });
+            }
         },
         updateMetadataOptions(ev) {
             if (ev) {
-                this.clearDependentFields(ev.target)
+                this.clearDependentFields(ev.target);
+                this.updateOperations(ev);
             }
             if (this.criterion.telemetry) {
-                this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
-                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                    this.updateOperations(ev);
-                    this.updateOperationInputVisibility();
-                    this.$emit('setTelemetryName', telemetryObject.name)
-                });
+                if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
+                    let telemetryPromises = this.telemetry.map((telemetryObject) => this.openmct.objects.get(telemetryObject.identifier));
+                    Promise.all(telemetryPromises).then(telemetryObjects => {
+                        this.telemetryMetadataOptions = [];
+                        telemetryObjects.forEach(telemetryObject => {
+                            let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                            this.telemetryMetadataOptions = this.telemetryMetadataOptions.concat(telemetryMetadata.values());
+                            this.updateOperations();
+                            this.updateOperationInputVisibility();
+                        });
+                    });
+                } else {
+                    this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
+                        this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                        this.telemetryMetadataOptions = this.telemetryMetadata.values();
+                        this.updateOperations();
+                        this.updateOperationInputVisibility();
+                    });
+                }
             } else {
                 this.criterion.metadata = '';
             }
         },
         updateOperations(ev) {
-            if (ev.target === this.$ref.telemetrySelect) {
+            if (ev && (ev.target === this.$refs.telemetrySelect)) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
@@ -221,10 +249,10 @@ export default {
             }
         },
         clearDependentFields(el) {
-            if (el === this.$ref.telemetrySelect) {
+            if (el === this.$refs.telemetrySelect) {
                 this.criterion.metadata = '';
                 this.criterion.operation = '';
-            } else if (el === this.$ref.metadataSelect) {
+            } else if (el === this.$refs.metadataSelect) {
                 this.criterion.operation = '';
             }
             this.criterion.input = [];
