@@ -1,8 +1,10 @@
+import _ from 'lodash';
+
 export const OPERATIONS = [
     {
         name: 'equalTo',
         operation: function (input) {
-            return input[0] === parseInt(input[1]);
+            return input[0] === input[1];
         },
         text: 'is equal to',
         appliesTo: ['number'],
@@ -14,7 +16,7 @@ export const OPERATIONS = [
     {
         name: 'notEqualTo',
         operation: function (input) {
-            return input[0] !== parseInt(input[1]);
+            return input[0] !== input[1];
         },
         text: 'is not equal to',
         appliesTo: ['number'],
@@ -26,7 +28,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThan',
         operation: function (input) {
-            return input[0] > parseInt(input[1]);
+            return input[0] > input[1];
         },
         text: 'is greater than',
         appliesTo: ['number'],
@@ -38,7 +40,7 @@ export const OPERATIONS = [
     {
         name: 'lessThan',
         operation: function (input) {
-            return input[0] < parseInt(input[1]);
+            return input[0] < input[1];
         },
         text: 'is less than',
         appliesTo: ['number'],
@@ -50,7 +52,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThanOrEq',
         operation: function (input) {
-            return input[0] >= parseInt(input[1]);
+            return input[0] >= input[1];
         },
         text: 'is greater than or equal to',
         appliesTo: ['number'],
@@ -62,7 +64,7 @@ export const OPERATIONS = [
     {
         name: 'lessThanOrEq',
         operation: function (input) {
-            return input[0] <= parseInt(input[1]);
+            return input[0] <= input[1];
         },
         text: 'is less than or equal to',
         appliesTo: ['number'],
@@ -74,7 +76,7 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            return input[0] > parseInt(input[1]) && input[0] < parseInt(input[2]);
+            return input[0] > input[1] && input[0] < input[2];
         },
         text: 'is between',
         appliesTo: ['number'],
@@ -86,7 +88,7 @@ export const OPERATIONS = [
     {
         name: 'notBetween',
         operation: function (input) {
-            return input[0] < parseInt(input[1]) || input[0] > parseInt(input[2]);
+            return input[0] < input[1] || input[0] > input[2];
         },
         text: 'is not between',
         appliesTo: ['number'],
@@ -202,5 +204,43 @@ export const OPERATIONS = [
         getDescription: function (values) {
             return ' is not ' + values.join(', ');
         }
+    },
+    {
+        name: 'valueIs',
+        operation: function (input) {
+            if (input[1]) {
+                const values = input[1].split(',');
+                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+            }
+            return false;
+        },
+        text: 'is one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is one of ' + values[0];
+        }
+    },
+    {
+        name: 'valueIsNot',
+        operation: function (input) {
+            if (input[1]) {
+                const values = input[1].split(',');
+                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return !found;
+            }
+            return false;
+        },
+        text: 'is not one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is not one of ' + values[0];
+        }
     }
 ];
+
+export const INPUT_TYPES = {
+    'string': 'text',
+    'number': 'number'
+};
