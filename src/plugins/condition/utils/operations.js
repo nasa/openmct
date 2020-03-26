@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -201,6 +203,39 @@ export const OPERATIONS = [
         inputCount: 1,
         getDescription: function (values) {
             return ' is not ' + values.join(', ');
+        }
+    },
+    {
+        name: 'valueIs',
+        operation: function (input) {
+            if (input[1]) {
+                const values = input[1].split(',');
+                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+            }
+            return false;
+        },
+        text: 'is one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is one of ' + values[0];
+        }
+    },
+    {
+        name: 'valueIsNot',
+        operation: function (input) {
+            if (input[1]) {
+                const values = input[1].split(',');
+                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return !found;
+            }
+            return false;
+        },
+        text: 'is not one of',
+        appliesTo: ["string", "number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ' is not one of ' + values[0];
         }
     }
 ];
