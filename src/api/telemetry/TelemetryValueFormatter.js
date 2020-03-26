@@ -83,11 +83,20 @@ define([
         }
         if (valueMetadata.format === 'string') {
             this.formatter.parse = function (value) {
+                if (value === undefined) {
+                    return '';
+                }
                 if (typeof value === 'string') {
                     return value;
                 } else {
                     return value.toString();
                 }
+            };
+            this.formatter.format = function (value) {
+                return value;
+            };
+            this.formatter.validate = function (value) {
+                return typeof value === 'string';
             };
         }
     }
