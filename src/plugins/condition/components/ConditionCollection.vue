@@ -58,7 +58,7 @@
         >
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
-                 class="c-condition-h"
+                 class="c-condition-h js-condition-drag-wrapper"
                  @drop.prevent="dropCondition(index)"
                  @dragover.prevent
                  @dragenter="dragEnter(index)"
@@ -187,7 +187,9 @@ export default {
             }
         },
         dragLeave() {
-            event.target.classList.remove("dragging");
+            if (event.target.classList.contains('js-condition-drag-wrapper')) {
+                event.target.classList.remove("dragging");
+            }
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
