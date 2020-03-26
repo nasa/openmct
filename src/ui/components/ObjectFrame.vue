@@ -65,7 +65,7 @@ const SIMPLE_CONTENT_TYPES = [
     'timer',
     'summary-widget',
     'hyperlink',
-    'condition-widget'
+    'conditionWidget'
 ];
 
 export default {

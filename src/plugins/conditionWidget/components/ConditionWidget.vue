@@ -1,6 +1,8 @@
 <template>
 <div class="c-condition-widget">
-    {{ currentDomainObject.label }}
+    <div class="c-condition-widget__label">
+        {{ currentDomainObject.label }}
+    </div>
 </div>
 </template>
 

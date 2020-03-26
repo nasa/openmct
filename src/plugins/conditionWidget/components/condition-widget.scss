@@ -1,0 +1,15 @@
+.c-condition-widget {
+    @include userSelectNone();
+    border-radius: $basicCr;
+    border: 1px solid transparent;
+    display: inline-block;
+    padding: $interiorMarginLg $interiorMarginLg * 2;
+}
+
+.c-so-view--no-frame > .c-so-view__object-view > .c-condition-widget {
+    @include abs();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}

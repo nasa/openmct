@@ -28,7 +28,6 @@ export default function ConditionWidget(openmct) {
         key: 'conditionWidget',
         name: 'Condition Widget',
         cssClass: 'icon-asterisk',
-        objectClass: 'o-condition-widget',
         canView: function (domainObject) {
             return domainObject.type === 'conditionWidget';
         },
