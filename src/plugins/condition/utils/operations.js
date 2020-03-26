@@ -208,8 +208,11 @@ export const OPERATIONS = [
     {
         name: 'valueIs',
         operation: function (input) {
-            const values = input[1].split(',');
-            return values.find((value) => input[0].toString() === _.trim(value.toString()));
+            if (input[1]) {
+                const values = input[1].split(',');
+                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+            }
+            return false;
         },
         text: 'is one of',
         appliesTo: ["string", "number"],
@@ -221,9 +224,12 @@ export const OPERATIONS = [
     {
         name: 'valueIsNot',
         operation: function (input) {
-            const values = input[1].split(',');
-            const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
-            return !found;
+            if (input[1]) {
+                const values = input[1].split(',');
+                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return !found;
+            }
+            return false;
         },
         text: 'is not one of',
         appliesTo: ["string", "number"],
