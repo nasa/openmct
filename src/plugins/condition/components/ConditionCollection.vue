@@ -53,7 +53,9 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions-h ">
+        <div class="c-cs__conditions-h"
+             :class="{ 'all-dragging': isDragging }"
+        >
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
                  class="c-condition-h"
@@ -61,6 +63,7 @@
                  @dragover.prevent
                  @dragenter="dragEnter(index)"
                  @dragleave="dragLeave"
+                 @dragstop="dragStop"
             >
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
@@ -101,8 +104,7 @@ export default {
             conditions: [],
             telemetryObjs: [],
             moveIndex: Number,
-            isDragging: false,
-            dragCounter: 0
+            isDragging: false
         };
     },
     destroyed() {
@@ -139,6 +141,10 @@ export default {
             this.moveIndex = index;
             this.isDragging = true;
         },
+        dragStop() {
+            console.log('dragStop');
+            this.isDragging = false;
+        },
         dropCondition(index) {
             let isDefaultCondition = (index === this.conditionCollection.length - 1);
             if (isDefaultCondition) { return }
@@ -173,8 +179,8 @@ export default {
             this.isDragging = false;
         },
         dragEnter(index) {
-            if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            this.dragCounter++;
+            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
+            // this.dragCounter++;
 
             if (event.target.classList.contains('js-condition-drag-wrapper')) {
                 if (index === this.conditionCollection.length - 1) { return }
@@ -184,12 +190,12 @@ export default {
                 event.target.classList.add("dragging");
             }
         },
-        dragLeave(e) {
-            if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            this.dragCounter--;
-            if (!this.dragCounter) {
-                e.target.classList.remove("dragging"); 
-            }
+        dragLeave() {
+            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
+            // this.dragCounter--;
+            // if (!this.dragCounter) {
+            event.target.classList.remove("dragging"); 
+            // }
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);

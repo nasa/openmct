@@ -322,6 +322,8 @@ export default {
         },
         dragStop(e) {
             e.dataTransfer.clearData();
+            console.log('dragStop');
+            this.$emit('dragStop');
         },
         destroy() {
         },
