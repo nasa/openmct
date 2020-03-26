@@ -119,7 +119,7 @@
                 </select>
             </span>
 
-            <template v-if="telemetry.length">
+            <template v-if="telemetry.length || condition.configuration.criteria.length">
                 <div v-for="(criterion, index) in condition.configuration.criteria"
                      :key="index"
                      class="c-cdef__criteria"
