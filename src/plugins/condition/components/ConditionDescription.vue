@@ -98,14 +98,23 @@ export default {
                     this.criterionDescriptions.splice(index, 0, description);
                 } else {
                     let metadataValue = criterion.metadata;
+                    let inputValue = criterion.input;
                     if (criterion.metadata) {
                         this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+
                         const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
-                        if (metadataObj && metadataObj.name) {
-                            metadataValue = metadataObj.name;
+                        if (metadataObj) {
+                            if (metadataObj.name) {
+                                metadataValue = metadataObj.name;
+                            }
+                            if(metadataObj.enumerations && inputValue.length) {
+                                if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                                    inputValue = [metadataObj.enumerations[inputValue[0]].string];
+                                }
+                            }
                         }
                     }
-                    let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, criterion.input)}`;
+                    let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
                     if (this.criterionDescriptions[index]) {
                         this.criterionDescriptions[index] = description;
                     } else {
