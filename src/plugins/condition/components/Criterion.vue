@@ -5,6 +5,7 @@
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
             <select v-model="criterion.telemetry"
+                    class="js-telemetry-select"
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
@@ -20,6 +21,7 @@
               class="c-cdef__control"
         >
             <select v-model="criterion.metadata"
+                    class="js-metadata-select"
                     @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -162,29 +164,34 @@ export default {
             });
         },
         updateMetadataOptions(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.clearDependentFields(ev.target)
+            }
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                    this.updateOperations();
+                    this.updateOperations(ev);
                     this.updateOperationInputVisibility();
+                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
             }
         },
         updateOperations(ev) {
-            if (ev) {
-                this.clearInputs()
+            if (ev && ev.target.classList.contains('js-metadata-select')) {
+                this.clearDependentFields(ev.target);
+                this.persist();
             }
             this.getOperationFormat();
-            this.persist();
+
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
+                this.persist();
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
@@ -192,10 +199,14 @@ export default {
                     if (!this.inputCount) {this.criterion.input = []}
                 }
             }
-            this.persist();
         },
-        clearInputs() {
-            this.criterion.operation = '';
+        clearDependentFields(el) {
+            if (el.classList.contains('js-telemetry-select')) {
+                this.criterion.metadata = '';
+                this.criterion.operation = '';
+            } else if (el.classList.contains('js-metadata-select')) {
+                this.criterion.operation = '';
+            }
             this.criterion.input = [];
             this.inputCount = 0;
         },
