@@ -50,7 +50,6 @@ export default {
         }
     },
     mounted() {
-        console.log('NotebookMenuSwitcher');
         this.notebookSnapshot = new Snapshot(this.openmct);
 
         document.addEventListener('click', this.hideMenu);
