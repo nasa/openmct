@@ -64,7 +64,9 @@
                 <span v-if="inputCount && criterion.operation"
                       class="c-cdef__control"
                 >
-                    <select v-model="criterion.input[0]">
+                    <select v-model="criterion.input[0]"
+                            @change="persist"
+                    >
                         <option v-for="option in enumerations"
                                 :key="option.string"
                                 :value="option.value.toString()"
@@ -180,12 +182,11 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev && ev.target.classList.contains('js-metadata-select')) {
+            if (ev) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
             this.getOperationFormat();
-
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
@@ -209,9 +210,6 @@ export default {
             }
             this.criterion.input = [];
             this.inputCount = 0;
-        },
-        updateMetadataSelection() {
-            this.updateOperationInputVisibility();
         },
         persist() {
             this.$emit('persist', this.criterion);
