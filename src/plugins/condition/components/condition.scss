@@ -100,10 +100,25 @@
 }
 
 .dragging {
-    border: 2px solid blue;
+    border: 2px solid red;
+    .c-c__drag-ghost {
+        min-height: 50px;
+        height: 50px;
+        background: rgba(orange, 0.2);
+    }
+}
+
+.all-dragging {
+    .c-condition-h .c-condition {
+        > * {
+            background: rgba(orange, 0.1);
+            pointer-events: none;
+        }
+    }
 }
 
 .c-c__drag-ghost {
     width: 100%;
+    height: 0;
     min-height: $interiorMarginSm;
 }

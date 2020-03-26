@@ -53,10 +53,12 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions-h ">
+        <div class="c-cs__conditions-h"
+             :class="{ 'all-dragging': isDragging }"
+        >
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
-                 class="c-condition-h"
+                 class="c-condition-h js-condition-drag-wrapper"
                  @drop.prevent="dropCondition(index)"
                  @dragover.prevent
                  @dragenter="dragEnter(index)"
@@ -173,8 +175,9 @@ export default {
             this.isDragging = false;
         },
         dragEnter(index) {
-            if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            this.dragCounter++;
+            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
+            // this.dragCounter++;
+            console.log(event);
 
             if (event.target.classList.contains('js-condition-drag-wrapper')) {
                 if (index === this.conditionCollection.length - 1) { return }
@@ -184,12 +187,12 @@ export default {
                 event.target.classList.add("dragging");
             }
         },
-        dragLeave(e) {
-            if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            this.dragCounter--;
-            if (!this.dragCounter) {
-                e.target.classList.remove("dragging"); 
-            }
+        dragLeave() {
+            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
+            // this.dragCounter--;
+            // if (!this.dragCounter) {
+            event.target.classList.remove("dragging");
+            // }
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
