@@ -33,7 +33,7 @@
               :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
               :draggable="!condition.isDefault"
               @dragstart="dragStart"
-              @dragstop="dragStop"
+              @dragend="dragEnd"
         ></span>
 
         <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
@@ -270,9 +270,6 @@ export default {
         this.setOutputSelection();
     },
     methods: {
-        dragOver() {
-            // console.log('dragOver')
-        },
         getRule(criterion, index) {
             return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
         },
@@ -320,10 +317,8 @@ export default {
             e.dataTransfer.setDragImage(e.target.closest('.js-condition-drag-wrapper'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
-        dragStop(e) {
+        dragEnd(e) {
             e.dataTransfer.clearData();
-            console.log('dragStop');
-            this.$emit('dragStop');
         },
         destroy() {
         },

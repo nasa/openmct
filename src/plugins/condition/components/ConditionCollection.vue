@@ -63,7 +63,7 @@
                  @dragover.prevent
                  @dragenter="dragEnter(index)"
                  @dragleave="dragLeave"
-                 @dragstop="dragStop"
+                 @dragend="dragEnd"
             >
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
@@ -141,8 +141,7 @@ export default {
             this.moveIndex = index;
             this.isDragging = true;
         },
-        dragStop() {
-            console.log('dragStop');
+        dragEnd() {
             this.isDragging = false;
         },
         dropCondition(index) {
@@ -175,27 +174,20 @@ export default {
 
             this.reorder(reorderPlan);
 
-            event.target.classList.remove("dragging");
+            event.target.closest('.c-condition-h').classList.remove("dragging");
             this.isDragging = false;
         },
         dragEnter(index) {
-            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            // this.dragCounter++;
-
             if (event.target.classList.contains('js-condition-drag-wrapper')) {
                 if (index === this.conditionCollection.length - 1) { return }
                 if (index > this.moveIndex) { index-- } // for 'downward' move
                 if (this.moveIndex === index) { return }
                 this.isDragging = true;
-                event.target.classList.add("dragging");
+                event.target.closest('.c-condition-h').classList.add("dragging");
             }
         },
         dragLeave() {
-            // if (event.target.classList.contains('c-c__drag-ghost')) { return }
-            // this.dragCounter--;
-            // if (!this.dragCounter) {
-            event.target.classList.remove("dragging"); 
-            // }
+            event.target.classList.remove("dragging");
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
