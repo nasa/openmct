@@ -21,10 +21,6 @@
         vertical-align: middle; // This is crucial to hiding 4px height injected by browser by default
     }
 
-    td {
-        color: $colorTelemFresh;
-    }
-
     /******************************* WRAPPERS */
     &__headers-w {
         // Wraps __headers table

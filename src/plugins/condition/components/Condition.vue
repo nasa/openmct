@@ -97,23 +97,27 @@
 
         <span class="c-cdef__label">Output</span>
         <span class="c-cdef__controls">
-            <select v-model="selectedOutputSelection"
-                    @change="setOutputValue"
-            >
-                <option value="">- Select Output -</option>
-                <option v-for="option in outputOptions"
-                        :key="option"
-                        :value="option"
+            <span class="c-cdef__control">
+                <select v-model="selectedOutputSelection"
+                        @change="setOutputValue"
                 >
-                    {{ initCap(option) }}
-                </option>
-            </select>
-            <input v-if="selectedOutputSelection === outputOptions[2]"
-                   v-model="condition.configuration.output"
-                   class="t-condition-name-input"
-                   type="text"
-                   @blur="persist"
-            >
+                    <option value="">- Select Output -</option>
+                    <option v-for="option in outputOptions"
+                            :key="option"
+                            :value="option"
+                    >
+                        {{ initCap(option) }}
+                    </option>
+                </select>
+            </span>
+            <span class="c-cdef__control">
+                <input v-if="selectedOutputSelection === outputOptions[2]"
+                       v-model="condition.configuration.output"
+                       class="t-condition-name-input"
+                       type="text"
+                       @blur="persist"
+                >
+            </span>
         </span>
 
         <div v-if="!condition.isDefault"
@@ -130,7 +134,7 @@
                 </select>
             </span>
 
-            <template v-if="telemetry.length">
+            <template v-if="telemetry.length || condition.configuration.criteria.length">
                 <div v-for="(criterion, index) in condition.configuration.criteria"
                      :key="index"
                      class="c-cdef__criteria"
@@ -242,7 +246,9 @@ export default {
             trigger: 'all',
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
-            criterionIndex: 0
+            criterionIndex: 0,
+            selectedTelemetryName: '',
+            selectedFieldName: ''
         };
     },
     computed: {
@@ -339,10 +345,6 @@ export default {
             const clonedCriterion = {...this.condition.configuration.criteria[index]};
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
-        },
-        hasTelemetry(identifier) {
-            // TODO: check parent condition.composition.hasTelemetry
-            return this.currentCriteria && identifier;
         },
         persist() {
             this.$emit('updateCondition', {

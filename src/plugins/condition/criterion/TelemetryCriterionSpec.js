@@ -24,7 +24,6 @@ import TelemetryCriterion from "./TelemetryCriterion";
 
 let openmct = {},
     mockListener,
-    mockListener2,
     testCriterionDefinition,
     testTelemetryObject,
     telemetryCriterion;
@@ -60,9 +59,6 @@ describe("The telemetry criterion", function () {
             }
         };
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
-        openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
-            resolve(testTelemetryObject);
-        }));
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata"]);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
@@ -80,13 +76,11 @@ describe("The telemetry criterion", function () {
             id: 'test-criterion-id',
             telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier),
             operation: 'lessThan',
-            metadata: 'sin'
+            metadata: 'sin',
+            telemetryObject: testTelemetryObject
         };
 
         mockListener = jasmine.createSpy('listener');
-        mockListener2 = jasmine.createSpy('updatedListener', (data) => {
-            console.log(data);
-        });
 
         telemetryCriterion = new TelemetryCriterion(
             testCriterionDefinition,
@@ -94,18 +88,14 @@ describe("The telemetry criterion", function () {
         );
 
         telemetryCriterion.on('criterionResultUpdated', mockListener);
-        telemetryCriterion.on('criterionUpdated', mockListener2);
 
     });
 
     it("initializes with a telemetry objectId as string", function () {
-        telemetryCriterion.initialize(testTelemetryObject);
         expect(telemetryCriterion.telemetryObjectIdAsString).toEqual(testTelemetryObject.identifier.key);
-        expect(mockListener2).toHaveBeenCalled();
     });
 
     it("updates and emits event on new data from telemetry providers", function () {
-        telemetryCriterion.initialize(testTelemetryObject);
         spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
         telemetryCriterion.handleSubscription({
             value: 'Hello',

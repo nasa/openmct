@@ -44,28 +44,25 @@ export default class TelemetryCriterion extends EventEmitter {
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.telemetryObjectIdAsString = undefined;
-        this.objectAPI.get(this.objectAPI.makeKeyString(this.telemetry)).then((obj) => this.initialize(obj));
-    }
-
-    initialize(obj) {
-        this.telemetryObject = obj;
-        this.telemetryMetaData = this.openmct.telemetry.getMetadata(obj).valueMetadatas;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(this.telemetry);
+        this.telemetryObject = telemetryDomainObjectDefinition.telemetryObject;
+        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.telemetry);
         this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionUpdated', this);
     }
 
-    formatData(data) {
-        const normalizedDatum = this.createNormalizedDatum(data);
-        const datum = {
-            result: this.computeResult(normalizedDatum)
-        }
+    updateTelemetry(telemetryObjects) {
+        this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
+    }
 
-        if (normalizedDatum) {
+    formatData(data) {
+        const datum = {
+            result: this.computeResult(data)
+        };
+
+        if (data) {
             // TODO check back to see if we should format times here
             this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = normalizedDatum[timeSystem.key]
+                datum[timeSystem.key] = data[timeSystem.key]
             });
         }
         return datum;
@@ -75,13 +72,6 @@ export default class TelemetryCriterion extends EventEmitter {
         if(this.isValid()) {
             this.emitEvent('criterionResultUpdated', this.formatData(data));
         }
-    }
-
-    createNormalizedDatum(telemetryDatum) {
-        return Object.values(this.telemetryMetaData).reduce((normalizedDatum, metadatum) => {
-            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
-            return normalizedDatum;
-        }, {});
     }
 
     findOperation(operation) {
@@ -130,7 +120,10 @@ export default class TelemetryCriterion extends EventEmitter {
         );
 
         if (!this.isValid()) {
-            return this.formatData({});
+            return {
+                id: this.id,
+                data: this.formatData({})
+            };
         }
 
         return this.telemetryAPI.request(
