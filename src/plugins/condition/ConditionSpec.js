@@ -62,6 +62,9 @@ describe("The condition", function () {
                 }]
             }
         };
+        conditionManager.telemetryObjects = {
+            "test-object": testTelemetryObject
+        };
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
             resolve(testTelemetryObject);
