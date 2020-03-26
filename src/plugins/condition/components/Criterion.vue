@@ -171,18 +171,18 @@ export default {
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
                     this.updateOperations(ev);
                     this.updateOperationInputVisibility();
+                    this.$emit('setTelemetryName', telemetryObject.name)
                 });
             } else {
                 this.criterion.metadata = '';
             }
         },
         updateOperations(ev) {
-            if (ev && ev.target === this.$refs.metadataSelect) {
-                this.clearDependentFields(this.$refs.metadataSelect);
-                let selectedOptionText = this.$refs.metadataSelect.options[this.$refs.metadataSelect.selectedIndex].text;
+            if (ev && ev.target.classList.contains('js-metadata-select')) {
+                this.clearDependentFields(ev.target);
+                this.persist();
             }
             this.getOperationFormat();
-            this.persist();
 
         },
         updateOperationInputVisibility(ev) {
