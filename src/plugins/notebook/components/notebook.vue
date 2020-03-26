@@ -103,7 +103,6 @@ import NotebookEntry from './notebook-entry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
-import snapshotContainer from '../snapshot-container';
 import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';
@@ -111,7 +110,7 @@ import { throttle } from 'lodash';
 const DEFAULT_CLASS = 'is-notebook-default';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'snapshotContainer'],
     components: {
         NotebookEntry,
         Search,
@@ -227,9 +226,9 @@ export default {
 
             const snapshotId = event.dataTransfer.getData('snapshot/id');
             if (snapshotId.length) {
-                const snapshot = snapshotContainer.getSnapshot(snapshotId);
+                const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
                 this.newEntry(snapshot);
-                snapshotContainer.removeSnapshot(snapshotId);
+                this.snapshotContainer.removeSnapshot(snapshotId);
 
                 return;
             }

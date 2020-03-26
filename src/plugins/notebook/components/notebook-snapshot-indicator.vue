@@ -1,16 +1,16 @@
 <template>
 <div class="c-indicator c-indicator--clickable icon-notebook"
      :class="[
-     { 's-status-off': snapshotCount === 0 },
-     { 's-status-on': snapshotCount > 0 },
-     { 's-status-caution': snapshotCount === snapshotMaxCount },
-     { 'has-new-snapshot': flashIndicator }
+         { 's-status-off': snapshotCount === 0 },
+         { 's-status-on': snapshotCount > 0 },
+         { 's-status-caution': snapshotCount === snapshotMaxCount },
+         { 'has-new-snapshot': flashIndicator }
      ]"
 >
     <span class="label c-indicator__label">
         {{ indicatorTitle }}
         <button @click="toggleSnapshot">
-            {{ expanded? 'Hide' : 'Show' }}
+            {{ expanded ? 'Hide' : 'Show' }}
         </button>
     </span>
     <span class="c-indicator__count">{{ snapshotCount }}</span>
@@ -19,13 +19,12 @@
 
 <script>
 import SnapshotContainerComponent from './notebook-snapshot-container.vue';
-import snapshotContainer from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct','snapshotContainer'],
     data() {
         return {
             expanded: false,
@@ -36,7 +35,7 @@ export default {
         }
     },
     mounted() {
-        snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
+        this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
         this.updateSnapshotIndicatorTitle();
     },
     methods: {
@@ -48,7 +47,9 @@ export default {
             this.flashIndicator = false;
         },
         snapshotsUpdated() {
-            if (snapshotContainer.getSnapshots().length > this.snapshotCount) { this.notifyNewSnapshot(); }
+            if (this.snapshotContainer.getSnapshots().length > this.snapshotCount) {
+                this.notifyNewSnapshot();
+            }
             this.updateSnapshotIndicatorTitle();
         },
         toggleSnapshot() {
@@ -60,14 +61,17 @@ export default {
             this.updateSnapshotContainer();
         },
         updateSnapshotContainer() {
-            const openmct = this.openmct;
+            const { openmct, snapshotContainer } = this;
             const toggleSnapshot = this.toggleSnapshot.bind(this);
             const drawerElement = document.querySelector('.l-shell__drawer');
             drawerElement.innerHTML = '<div></div>';
             const divElement = document.querySelector('.l-shell__drawer div');
 
             this.component = new Vue({
-                provide: { openmct },
+                provide: {
+                    openmct,
+                    snapshotContainer
+                },
                 el: divElement,
                 components: {
                     SnapshotContainerComponent
@@ -81,7 +85,7 @@ export default {
             }).$mount();
         },
         updateSnapshotIndicatorTitle() {
-            const snapshotCount = snapshotContainer.getSnapshots().length;
+            const snapshotCount = this.snapshotContainer.getSnapshots().length;
             this.snapshotCount = snapshotCount;
             const snapshotTitleSuffix = snapshotCount === 1
                 ? 'Snapshot'

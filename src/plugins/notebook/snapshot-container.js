@@ -1,16 +1,18 @@
 import EventEmitter from 'EventEmitter';
 import { EVENT_SNAPSHOTS_UPDATED } from './notebook-constants';
-
 const NOTEBOOK_SNAPSHOT_STORAGE = 'notebook-snapshot-storage';
-export const NOTEBOOK_SNAPSHOT_MAX_COUNT = 10;
 
-class SnapshotContainer extends EventEmitter {
-    constructor() {
+export const NOTEBOOK_SNAPSHOT_MAX_COUNT = 5;
+
+export default class SnapshotContainer extends EventEmitter {
+    constructor(openmct) {
         super();
 
         if (!SnapshotContainer.instance) {
             SnapshotContainer.instance = this;
         }
+
+        this.openmct = openmct;
 
         return SnapshotContainer.instance;
     }
@@ -22,7 +24,8 @@ class SnapshotContainer extends EventEmitter {
         }
 
         snapshots.unshift(embedObject);
-        this.saveSnapshots(snapshots);
+
+        return this.saveSnapshots(snapshots);
     }
 
     getSnapshot(id) {
@@ -44,16 +47,27 @@ class SnapshotContainer extends EventEmitter {
 
         const snapshots = this.getSnapshots();
         const filteredsnapshots = snapshots.filter(snapshot => snapshot.id !== id);
-        this.saveSnapshots(filteredsnapshots);
+
+        return this.saveSnapshots(filteredsnapshots);
     }
 
     removeAllSnapshots() {
-        this.saveSnapshots([]);
+        return this.saveSnapshots([]);
     }
 
     saveSnapshots(snapshots) {
-        window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify(snapshots));
-        this.emit(EVENT_SNAPSHOTS_UPDATED, true);
+        try {
+            window.localStorage.setItem(NOTEBOOK_SNAPSHOT_STORAGE, JSON.stringify(snapshots));
+            this.emit(EVENT_SNAPSHOTS_UPDATED, true);
+
+            return true;
+        } catch (e) {
+            const message = 'Insufficient memory in localstorage to store snapshot, please delete some snapshots and try again!';
+            this.openmct.notifications.error(message);
+            console.error(message, e);
+
+            return false;
+        }
     }
 
     updateSnapshot(snapshot) {
@@ -63,10 +77,7 @@ class SnapshotContainer extends EventEmitter {
                 ? snapshot
                 : s;
         });
-        this.saveSnapshots(updatedSnapshots);
+
+        return this.saveSnapshots(updatedSnapshots);
     }
 }
-
-const snapshotContainer = new SnapshotContainer();
-
-export default snapshotContainer;

@@ -1,11 +1,12 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
-import SnapShotContainer from './snapshot-container';
+import SnapshotContainer from './snapshot-container';
 
 export default class Snapshot {
     constructor(openmct) {
         this.openmct = openmct;
+        this.snapshotContainer = new SnapshotContainer(openmct);
         this.exportImageService = openmct.$injector.get('exportImageService');
         this.dialogService = openmct.$injector.get('dialogService');
 
@@ -58,7 +59,10 @@ export default class Snapshot {
      * @private
      */
     _saveToNotebookSnapshots(embed) {
-        SnapShotContainer.addSnapshot(embed);
+        const saved = this.snapshotContainer.addSnapshot(embed);
+        if (!saved) {
+            return;
+        }
 
         const msg = 'Saved to Notebook Snapshots - click to view.';
         this._showNotification(msg);

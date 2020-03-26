@@ -57,12 +57,11 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
-import snapshotContainer from '../snapshot-container';
 import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'snapshotContainer'],
     components: {
         NotebookEmbed
     },
@@ -224,10 +223,10 @@ export default {
             return Moment(unixTime).format(timeFormat);
         },
         moveSnapshot(snapshotId) {
-            const snapshot = snapshotContainer.getSnapshot(snapshotId);
+            const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
             this.entry.embeds.push(snapshot);
             this.updateEntry(this.entry);
-            snapshotContainer.removeSnapshot(snapshotId);
+            this.snapshotContainer.removeSnapshot(snapshotId);
         },
         navigateToPage() {
             this.$emit('changeSectionPage', {

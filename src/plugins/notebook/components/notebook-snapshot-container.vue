@@ -62,12 +62,12 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
-import snapshotContainer, { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'snapshotContainer'],
     components: {
         NotebookEmbed
     },
@@ -82,11 +82,12 @@ export default {
     data() {
         return {
             actions: [this.removeAllSnapshotAction()],
-            snapshots: snapshotContainer.getSnapshots()
+            snapshots: []
         }
     },
     mounted() {
-        snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
+        this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
+        this.snapshots = this.snapshotContainer.getSnapshots();
     },
     beforeDestory() {
     },
@@ -128,13 +129,14 @@ export default {
             };
         },
         removeAllSnapshots() {
-            snapshotContainer.removeAllSnapshots();
+            this.snapshotContainer.removeAllSnapshots();
         },
         removeSnapshot(id) {
-            snapshotContainer.removeSnapshot(id);
+            this.snapshotContainer.removeSnapshot(id);
         },
         snapshotsUpdated() {
-            this.snapshots = snapshotContainer.getSnapshots();
+            console.log('snapshotsUpdated');
+            this.snapshots = this.snapshotContainer.getSnapshots();
         },
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);
@@ -144,7 +146,7 @@ export default {
             togglePopupMenu(event, this.openmct);
         },
         updateSnapshot(snapshot) {
-            snapshotContainer.updateSnapshot(snapshot);
+            this.snapshotContainer.updateSnapshot(snapshot);
         }
     }
 }
