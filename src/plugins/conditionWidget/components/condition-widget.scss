@@ -1,5 +1,7 @@
 .c-condition-widget {
+    $shdwSize: 3px;
     @include userSelectNone();
+    background-color: rgba($colorBodyFg, 0.1); // Give a little presence if the user hasn't defined a fill color
     border-radius: $basicCr;
     border: 1px solid transparent;
     display: inline-block;

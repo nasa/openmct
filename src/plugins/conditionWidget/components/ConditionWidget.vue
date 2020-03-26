@@ -1,9 +1,11 @@
 <template>
-<div class="c-condition-widget">
+<a class="c-condition-widget"
+   :href="internalDomainObject.url"
+>
     <div class="c-condition-widget__label">
-        {{ currentDomainObject.label }}
+        {{ internalDomainObject.label }}
     </div>
-</div>
+</a>
 </template>
 
 <script>
@@ -11,7 +13,20 @@ export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
-            currentDomainObject: this.domainObject
+            internalDomainObject: this.domainObject
+        }
+    },
+    mounted() {
+        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+    },
+    beforeDestroy() {
+        if (this.unlisten) {
+            this.unlisten();
+        }
+    },
+    methods: {
+        updateInternalDomainObject(domainObject) {
+            this.internalDomainObject = domainObject;
         }
     }
 }
