@@ -49,7 +49,11 @@ export default class StyleRuleManager extends EventEmitter {
         }
         this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
             this.openmct.telemetry.request(conditionSetDomainObject)
-                .then(output => this.handleConditionSetResultUpdated(output));
+                .then(output => {
+                    if (output && output.length) {
+                        this.handleConditionSetResultUpdated(output[0]);
+                    }
+                });
             this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, output => this.handleConditionSetResultUpdated(output));
         });
     }
@@ -60,7 +64,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.destroy();
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier ||
-                                    this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
+                                    !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
             this.initialize(styleConfiguration);
             //Only resubscribe if the conditionSet has changed.
             if (isNewConditionSet) {

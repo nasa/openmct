@@ -181,7 +181,7 @@ define([
         }
 
         refreshData(bounds, isTick) {
-            if (!isTick) {
+            if (!isTick && this.outstandingRequests === 0) {
                 this.filteredRows.clear();
                 this.boundedRows.clear();
                 this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
