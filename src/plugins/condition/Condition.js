@@ -72,7 +72,11 @@ export default class ConditionClass extends EventEmitter {
             return;
         }
         this.criteria.forEach(criterion => {
-            criterion.emit(`subscription:${datum.id}`, datum);
+            if (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any')) {
+                criterion.handleSubscription(datum, this.conditionManager.telemetryObjects);
+            } else {
+                criterion.emit(`subscription:${datum.id}`, datum);
+            }
         });
     }
 
