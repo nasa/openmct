@@ -274,8 +274,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     persistConditions() {
-        console.log('mutating');
-        console.log(this.conditionSetDomainObject);
         this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionCollection', this.conditionSetDomainObject.configuration.conditionCollection);
     }
 
