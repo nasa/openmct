@@ -283,8 +283,9 @@ export default class ConditionManager extends EventEmitter {
 
         this.composition.off('add', this.subscribeToTelemetry, this);
         this.composition.off('remove', this.unsubscribeFromTelemetry, this);
+
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
-        this.subscriptions = undefined;
+        delete this.subscriptions;
 
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
