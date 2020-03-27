@@ -40,6 +40,7 @@
     />
     <ConditionCollection
         :is-editing="isEditing"
+        :test-data="testData"
         @conditionSetResultUpdated="updateCurrentOutput"
         @telemetryUpdated="updateTelemetry"
     />
@@ -78,7 +79,7 @@ export default {
             this.telemetryObjs = telemetryObjs;
         },
         persistTestData(testData) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionTestData', testData)
+            this.testData = testData;
         }
     }
 };

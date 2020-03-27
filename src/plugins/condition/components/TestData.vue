@@ -37,18 +37,30 @@
     <div v-if="expanded"
          class="c-cs__content"
     >
-        <label class="c-toggle-switch">
-            <input
-                type="checkbox"
-                :checked="isApplied"
-                @change="applyTestData"
+        <div class="c-cdef__controls"
+             :disabled="!telemetry.length"
+        >
+            <button
+                v-show="isEditing"
+                id="addCondition"
+                class="c-button c-button--major icon-plus labeled"
+                @click="addTestInput"
             >
-            <span class="c-toggle-switch__slider"></span>
-            <span class="c-toggle-switch__label">Apply Test Data</span>
-        </label>
+                <span class="c-cs-button__label">Add Test Data</span>
+            </button>
+            <label class="c-toggle-switch">
+                <input
+                    type="checkbox"
+                    :checked="isApplied"
+                    @change="applyTestData"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Apply Test Data</span>
+            </label>
+        </div>
         <div class="c-cs-test-h c-cs-tests">
-            <span v-for="(testInput, tindex) in testInputs"
-                  :key="tindex"
+            <span v-for="(testInput, tIndex) in testInputs"
+                  :key="tIndex"
                   class="c-test-datum c-cs-test"
             >
                 <span class="c-cs-test__label">Set</span>
@@ -57,7 +69,7 @@
                         <select v-model="testInput.telemetry"
                                 @change="updateMetadata(testInput)"
                         >
-                            <option>- Select Telemetry -</option>
+                            <option value="">- Select Telemetry -</option>
                             <option v-for="(telemetryOption, index) in telemetry"
                                     :key="index"
                                     :value="telemetryOption.identifier"
@@ -66,9 +78,13 @@
                             </option>
                         </select>
                     </span>
-                    <span class="c-cdef__control">
-                        <select v-model="testInput.metadata">
-                            <option>- Select metadata -</option>
+                    <span v-if="testInput.telemetry"
+                          class="c-cdef__control"
+                    >
+                        <select v-model="testInput.metadata"
+                                @change="persist"
+                        >
+                            <option value="">- Select metadata -</option>
                             <option v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
                                     :key="index"
                                     :value="option.key"
@@ -77,8 +93,11 @@
                             </option>
                         </select>
                     </span>
-                    <span lass="c-cdef__control__inputs">
+                    <span v-if="testInput.metadata"
+                          lass="c-cdef__control__inputs"
+                    >
                         <input v-model="testInput.value"
+                               placeholder="Enter test input"
                                type="text"
                                class="c-cdef__control__input"
                                @blur="persist"
@@ -92,10 +111,11 @@
                     ></button>
                     <button class="c-click-icon c-test-data__delete-button icon-trash"
                             title="Delete this test data value"
+                            @click="removeTestInput(tIndex)"
                     ></button>
                 </div>
-            </span></div>
-    </div>
+            </span>
+        </div>
     </div>
 </section>
 </template>
@@ -178,7 +198,15 @@ export default {
             });
         },
         addTestInput(testInput) {
-            this.testInputs.push(Object.assign({}, testInput));
+            this.testInputs.push(Object.assign({
+                telemetry: '',
+                metadata: '',
+                input: ''
+            }, testInput));
+        },
+        removeTestInput(index) {
+            this.testInputs.splice(index, 1);
+            this.persist();
         },
         getId(identifier) {
             if (identifier) {

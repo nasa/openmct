@@ -90,7 +90,17 @@ export default {
         Condition
     },
     props: {
-        isEditing: Boolean
+        isEditing: Boolean,
+        testData: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {
+                    applied: false,
+                    conditionTestInputs: []
+                }
+            }
+        }
     },
     data() {
         return {
@@ -102,6 +112,14 @@ export default {
             moveIndex: Number,
             isDragging: false
         };
+    },
+    watch: {
+        testData: {
+            handler() {
+                this.updateTestData();
+            },
+            deep: true
+        }
     },
     destroyed() {
         this.composition.off('add', this.addTelemetryObject);
@@ -207,6 +225,9 @@ export default {
         },
         cloneCondition(data) {
             this.conditionManager.cloneCondition(data.condition, data.index);
+        },
+        updateTestData() {
+            this.conditionManager.updateTestData(this.testData);
         }
     }
 }
