@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { computeCondition, computeConditionByLimit } from "./evaluator";
+import { computeConditionByLimit } from "./evaluator";
 
 describe('evaluate results based on trigger', function () {
 
