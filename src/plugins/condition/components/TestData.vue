@@ -47,15 +47,43 @@
             <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
         <div class="c-cs-test-h">
-            <div v-for="n in 5"
-                 :key="n"
+            <div v-for="(testInput, tindex) in testInputs"
+                 :key="tindex"
                  class="c-test-datum"
             >
                 <span class="c-test-datum__label">Set</span>
                 <div class="c-test-datum__controls">
-                    <select>
-                        <option>- Select Input -</option>
-                    </select>
+                    <span class="c-cdef__control">
+                        <select v-model="testInput.telemetry"
+                                @change="updateMetadata(testInput)"
+                        >
+                            <option>- Select Input -</option>
+                            <option v-for="(telemetryOption, index) in telemetry"
+                                    :key="index"
+                                    :value="telemetryOption.identifier"
+                            >
+                                {{ telemetryOption.name }}
+                            </option>
+                        </select>
+                    </span>
+                    <span class="c-cdef__control" v-if="testInput.telemetry">
+                        <select v-model="testInput.metadata"
+                        >
+                            <option>- Select Input -</option>
+                            <option v-for="(option, index) in telemetryMetadataOptions[testInput.telemetry.key]"
+                                    :key="index"
+                                    :value="option.key"
+                            >
+                                {{ option.name }}
+                            </option>
+                        </select>
+                    </span>
+                    <span lass="c-cdef__control__inputs">
+                        <input v-model="testInput.value"
+                               class="c-cdef__control__input"
+                               @blur="persist"
+                        >
+                    </span>
                 </div>
                 <div class="c-test-datum__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
@@ -73,19 +101,75 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject'],
     props: {
-        isEditing: Boolean
+        isEditing: Boolean,
+        telemetry: {
+            type: Array,
+            required: true,
+            default: () => []
+        }
     },
     data() {
         return {
             expanded: true,
-            isApplied: true
+            isApplied: false,
+            testInputs: [],
+            telemetryMetadataOptions: {}
         };
+    },
+    mounted() {
+        this.testInputs = this.domainObject.configuration.conditionTestData ? this.domainObject.configuration.conditionTestData.conditionTestInputs : [];
+        if (!this.testInputs.length) {
+            this.addTestInput();
+        }
+        this.isApplied = this.domainObject.configuration.conditionTestData && this.domainObject.configuration.conditionTestData.applied;
+        this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
+            this.domainObject = newDomainObject;
+        })
     },
     methods: {
         applyTestData(ev) {
             this.$emit('change', ev.target.checked);
+        },
+        initialize() {
+            this.testInputs.forEach(testInput => {
+                const found = this.telemetry.find(telemetryObj => this.openmct.objects.areIdsEqual(testInput.telemetry,));
+                if (found) {
+                    this.openmct.objects.get(testInput.telemetry).then((telemetryObject) => {
+                        const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                        this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+                    });
+                }
+            });
+        },
+        addTestInput() {
+            this.testInputs.push({});
+        },
+        getId(identifier) {
+            if (identifier) {
+                return this.openmct.objects.makeKeyString(identifier);
+            }
+            return [];
+        },
+        updateMetadata(testInput) {
+            if (testInput.telemetry) {
+                const id = this.openmct.objects.makeKeyString(testInput.telemetry);
+                if(this.telemetryMetadataOptions[id]) {
+                    return;
+                }
+                this.openmct.objects.get(testInput.telemetry).then((telemetryObject) => {
+                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+                });
+            }
+        },
+        persist() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionTestData', {
+                applied: this.isApplied,
+                conditionTestInputs: this.testInputs
+            })
         }
     }
 }

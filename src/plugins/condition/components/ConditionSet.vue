@@ -33,10 +33,12 @@
             <template v-else>No output selected</template>
         </div>
     </section>
-    <TestData :is-editing="isEditing" />
+    <TestData :is-editing="isEditing"
+              :telemetry="telemetryObjs" />
     <ConditionCollection
         :is-editing="isEditing"
         @conditionSetResultUpdated="updateCurrentOutput"
+        @telemetryUpdated="updateTelemetry"
     />
 </div>
 </template>
@@ -56,7 +58,8 @@ export default {
     },
     data() {
         return {
-            currentConditionOutput: ''
+            currentConditionOutput: '',
+            telemetryObjs: []
         }
     },
     mounted() {
@@ -65,6 +68,9 @@ export default {
     methods: {
         updateCurrentOutput(currentConditionResult) {
             this.currentConditionOutput = currentConditionResult.output;
+        },
+        updateTelemetry(telemetryObjs) {
+            this.telemetryObjs = telemetryObjs;
         }
     }
 };

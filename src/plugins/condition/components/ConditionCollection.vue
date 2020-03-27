@@ -181,6 +181,7 @@ export default {
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
+            this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
             let index = _.findIndex(this.telemetryObjs, (obj) => {
