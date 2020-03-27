@@ -36,7 +36,8 @@
     <TestData :is-editing="isEditing"
               :test-data="testData"
               :telemetry="telemetryObjs"
-              @persistTestData="persistTestData"/>
+              @persistTestData="persistTestData"
+    />
     <ConditionCollection
         :is-editing="isEditing"
         @conditionSetResultUpdated="updateCurrentOutput"
