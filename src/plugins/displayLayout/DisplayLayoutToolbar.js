@@ -55,6 +55,22 @@ define(['lodash'], function (_) {
                                 ]
                             }
                         ]
+                    },
+                    'image': {
+                        name: "Image Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "url",
+                                        control: "textfield",
+                                        name: "Image URL",
+                                        "cssClass": "l-input-lg",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 };
 
