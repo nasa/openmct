@@ -377,8 +377,10 @@ define([
          * @public
          */
         updateFiltersAndRefresh: function (updatedFilters) {
-            if (this.filters && !_.isEqual(this.filters, updatedFilters)) {
-                this.filters = updatedFilters;
+            let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
+
+            if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
+                this.filters = deepCopiedFilters;
                 this.reset();
                 if (this.unsubscribe) {
                     this.unsubscribe();
@@ -386,7 +388,7 @@ define([
                 }
                 this.fetch();
             } else {
-                this.filters = updatedFilters;
+                this.filters = deepCopiedFilters;
             }
         }
     });

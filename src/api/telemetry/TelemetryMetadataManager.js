@@ -81,7 +81,7 @@ define([
     function TelemetryMetadataManager(metadata) {
         this.metadata = metadata;
 
-        this.valueMetadatas = this.metadata.values.map(applyReasonableDefaults);
+        this.valueMetadatas = this.metadata.values ? this.metadata.values.map(applyReasonableDefaults) : [];
     }
 
     /**
