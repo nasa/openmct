@@ -23,7 +23,6 @@
 import EventEmitter from 'EventEmitter';
 import {OPERATIONS} from '../utils/operations';
 import {computeCondition} from "@/plugins/condition/utils/evaluator";
-import {TRIGGER} from "@/plugins/condition/utils/constants";
 
 export default class TelemetryCriterion extends EventEmitter {
 
