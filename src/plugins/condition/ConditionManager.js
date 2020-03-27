@@ -23,6 +23,7 @@
 import Condition from "./Condition";
 import uuid from "uuid";
 import EventEmitter from 'EventEmitter';
+import _ from "lodash";
 
 export default class ConditionManager extends EventEmitter {
     constructor(conditionSetDomainObject, openmct) {
@@ -142,7 +143,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     createAndSaveCondition(index, conditionConfiguration) {
-        let newCondition = this.createCondition(conditionConfiguration);
+        const newCondition = _.cloneDeep(this.createCondition(conditionConfiguration));
         if (index !== undefined) {
             this.conditionSetDomainObject.configuration.conditionCollection.splice(index + 1, 0, newCondition);
         } else {
