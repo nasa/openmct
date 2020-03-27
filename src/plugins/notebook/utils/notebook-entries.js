@@ -23,13 +23,11 @@ export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
     const params = historicLink.split('&').map(param => {
         if (param.includes(TIME_BOUNDS.START_BOUND)
                 || param.includes(TIME_BOUNDS.START_DELTA)) {
-            console.log('start', param);
             param = `${TIME_BOUNDS.START_BOUND}=${bounds.start}`;
         }
 
         if (param.includes(TIME_BOUNDS.END_BOUND)
                 || param.includes(TIME_BOUNDS.END_DELTA)) {
-            console.log('end', param);
             param = `${TIME_BOUNDS.END_BOUND}=${bounds.end}`;
         }
 

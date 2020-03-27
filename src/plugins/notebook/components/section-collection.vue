@@ -84,15 +84,11 @@ export default {
                 });
             }
 
-            if (isSectionDefault) {
-                clearDefaultNotebook();
-            }
-
             if (sections.length && isSectionSelected && (!defaultSection || isSectionDefault)) {
                 sections[0].isSelected = true;
             }
 
-            this.$emit('updateSection', { sections });
+            this.$emit('updateSection', { sections, id });
         },
         selectSection(id, newSections) {
             const currentSections = newSections || this.sections;
@@ -105,11 +101,12 @@ export default {
             this.$emit('updateSection', { sections, id });
         },
         updateSection(newSection) {
+            const id = newSection.id;
             const sections = this.sections.map(section =>
-                section.id === newSection.id
+                section.id === id
                     ? newSection
                     : section);
-            this.$emit('updateSection', { sections });
+            this.$emit('updateSection', { sections, id });
         }
     }
 }

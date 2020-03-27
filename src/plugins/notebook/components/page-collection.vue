@@ -98,15 +98,11 @@ export default {
                 });
             }
 
-            if (isPageDefault) {
-                clearDefaultNotebook();
-            }
-
             if (pages.length && isPageSelected && (!defaultpage || isPageDefault)) {
                 pages[0].isSelected = true;
             }
 
-            this.$emit('updatePage', { pages });
+            this.$emit('updatePage', { pages, id });
         },
         selectPage(id) {
             const pages = this.pages.map(page => {
@@ -124,11 +120,12 @@ export default {
             }
         },
         updatePage(newPage) {
+            const id = newPage.id;
             const pages = this.pages.map(page =>
-                page.id === newPage.id
+                page.id === id
                     ? newPage
                     : page);
-            this.$emit('updatePage', { pages });
+            this.$emit('updatePage', { pages, id });
         }
     }
 }
