@@ -32,7 +32,9 @@
             class="c-so-view__header__icon"
             :class="cssClass"
         ></div>
-        <div class="c-so-view__header__name">
+        <div class="c-so-view__header__name"
+             :class="classList"
+        >
             {{ domainObject && domainObject.name }}
         </div>
         <context-menu-drop-down
@@ -96,6 +98,16 @@ export default {
         return {
             cssClass,
             complexContent
+        }
+    },
+    computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
         }
     },
     methods: {
