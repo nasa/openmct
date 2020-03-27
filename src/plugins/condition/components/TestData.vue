@@ -46,13 +46,13 @@
             <span class="c-toggle-switch__slider"></span>
             <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
-        <div class="c-cs-test-h">
-            <div v-for="(testInput, tindex) in testInputs"
-                 :key="tindex"
-                 class="c-test-datum"
+        <div class="c-cs-test-h c-cs-tests">
+            <span v-for="(testInput, tindex) in testInputs"
+                  :key="tindex"
+                  class="c-test-datum c-cs-test"
             >
-                <span class="c-test-datum__label">Set</span>
-                <div class="c-test-datum__controls">
+                <span class="c-cs-test__label">Set</span>
+                <span class="c-cs-test__controls">
                     <span class="c-cdef__control">
                         <select v-model="testInput.telemetry"
                                 @change="updateMetadata(testInput)"
@@ -79,11 +79,12 @@
                     </span>
                     <span lass="c-cdef__control__inputs">
                         <input v-model="testInput.value"
+                               type="text"
                                class="c-cdef__control__input"
                                @blur="persist"
                         >
                     </span>
-                </div>
+                </span>
                 <div class="c-test-datum__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
                             title="Duplicate this test data value"
@@ -93,8 +94,8 @@
                             title="Delete this test data value"
                     ></button>
                 </div>
-            </div>
-        </div>
+            </span></div>
+    </div>
     </div>
 </section>
 </template>
