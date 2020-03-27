@@ -144,8 +144,9 @@ export default {
     methods: {
         addPage() {
             const pageTitle = this.pageTitle;
+            const id = uuid();
             const page = {
-                id : uuid(),
+                id,
                 isDefault : false,
                 isSelected: true,
                 name : `Unnamed ${pageTitle}`,
@@ -155,7 +156,7 @@ export default {
             this.pages.forEach(p => p.isSelected = false);
             const pages = this.pages.concat(page);
 
-            this.updatePage({ pages });
+            this.updatePage({ pages, id });
         },
         addSection() {
             const sectionTitle = this.sectionTitle;
@@ -172,7 +173,7 @@ export default {
             this.sections.forEach(s => s.isSelected = false);
             const sections = this.sections.concat(section);
 
-            this.updateSection({ sections });
+            this.updateSection({ sections, id });
         },
         toggleNav() {
             this.$emit('toggleNav');

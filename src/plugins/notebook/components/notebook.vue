@@ -103,7 +103,7 @@ import NotebookEntry from './notebook-entry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
-import { getDefaultNotebook, setDefaultNotebook } from '../utils/notebook-storage';
+import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';
 
@@ -245,13 +245,6 @@ export default {
             const embed = createNewEmbed(snapshotMeta);
             this.newEntry(embed);
         },
-        updateDefaultNotebook(selectedSection, selectedPage) {
-            this.removeDefaultClass();
-            setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
-            this.addDefaultClass();
-            this.defaultSectionId = selectedSection.id;
-            this.defaultPageId = selectedPage.id;
-        },
         formatSidebar() {
             /*
                 Determine if the sidebar should slide over content, or compress it
@@ -267,6 +260,14 @@ export default {
             const isInLayout = !!this.$el.closest('.c-so-view');
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
+        },
+        getDefaultNotebookObject() {
+            const oldNotebookStorage = getDefaultNotebook();
+            if (!oldNotebookStorage) {
+                return null;
+            }
+
+            return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier).then(d => d);
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
@@ -371,24 +372,19 @@ export default {
         orientationChange() {
             this.formatSidebar();
         },
-        removeDefaultClass() {
-            const oldNotebookStorage = getDefaultNotebook();
-            if (!oldNotebookStorage
-                    || oldNotebookStorage.notebookMeta.identifier.key === this.internalDomainObject.identifier.key) {
+        removeDefaultClass(domainObject) {
+            if (!domainObject) {
                 return;
             }
 
-            this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier)
-                .then(domainObject => {
-                    const classList = domainObject.classList || [];
-                    const index = classList.indexOf(DEFAULT_CLASS);
-                    if (!classList.length || index < 0) {
-                        return;
-                    }
+            const classList = domainObject.classList || [];
+            const index = classList.indexOf(DEFAULT_CLASS);
+            if (!classList.length || index < 0) {
+                return;
+            }
 
-                    classList.splice(index, 1);
-                    this.openmct.objects.mutate(domainObject, 'classList', classList);
-                });
+            classList.splice(index, 1);
+            this.openmct.objects.mutate(domainObject, 'classList', classList);
         },
         searchItem(input) {
             this.search = input;
@@ -400,6 +396,70 @@ export default {
         },
         toggleNav() {
             this.showNav = !this.showNav;
+        },
+        async updateDefaultNotebook(selectedSection, selectedPage) {
+            const defaultNotebookObject = await this.getDefaultNotebookObject();
+            this.removeDefaultClass(defaultNotebookObject);
+            setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
+            this.addDefaultClass();
+            this.defaultSectionId = selectedSection.id;
+            this.defaultPageId = selectedPage.id;
+        },
+        updateDefaultNotebookPage(pages, id) {
+            if (!id) {
+                return;
+            }
+
+            const notebookStorage = getDefaultNotebook();
+            if (!notebookStorage
+                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+                return;
+            }
+
+            const defaultNotebookPage = notebookStorage.page;
+            const page = pages.find(p => p.id === id);
+            if (!page && defaultNotebookPage.id === id) {
+                this.defaultSectionId = null;
+                this.defaultPageId = null
+                this.removeDefaultClass(this.internalDomainObject);
+                clearDefaultNotebook();
+
+                return;
+            }
+
+            if (id !== defaultNotebookPage.id) {
+                return;
+            }
+
+            setDefaultNotebookPage(page);
+        },
+        updateDefaultNotebookSection(sections, id) {
+            if (!id) {
+                return;
+            }
+
+            const notebookStorage = getDefaultNotebook();
+            if (!notebookStorage
+                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+                return;
+            }
+
+            const defaultNotebookSection = notebookStorage.section;
+            const section = sections.find(s => s.id === id);
+            if (!section && defaultNotebookSection.id === id) {
+                this.defaultSectionId = null;
+                this.defaultPageId = null
+                this.removeDefaultClass(this.internalDomainObject);
+                clearDefaultNotebook();
+
+                return;
+            }
+
+            if (section.id !== defaultNotebookSection.id) {
+                return;
+            }
+
+            setDefaultNotebookSection(section);
         },
         updateEntries(entries) {
             const configuration = this.internalDomainObject.configuration;
@@ -427,6 +487,7 @@ export default {
             });
 
             this.updateSection({ sections });
+            this.updateDefaultNotebookPage(pages, id);
         },
         updateParams(sections) {
             const selectedSection = sections.find(s => s.isSelected);
@@ -455,6 +516,7 @@ export default {
             this.mutateObject('configuration.sections', sections);
 
             this.updateParams(sections);
+            this.updateDefaultNotebookSection(sections, id);
         }
     }
 }

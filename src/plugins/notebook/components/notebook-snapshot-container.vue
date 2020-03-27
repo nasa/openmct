@@ -135,7 +135,6 @@ export default {
             this.snapshotContainer.removeSnapshot(id);
         },
         snapshotsUpdated() {
-            console.log('snapshotsUpdated');
             this.snapshots = this.snapshotContainer.getSnapshots();
         },
         startEmbedDrag(snapshot, event) {
