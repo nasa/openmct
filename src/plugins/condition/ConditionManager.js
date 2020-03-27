@@ -280,7 +280,9 @@ export default class ConditionManager extends EventEmitter {
     }
 
     destroy() {
+        // band aid fix to ensure latest domainObject gets passed on view switch
         this.persistConditions();
+
         this.composition.off('add', this.subscribeToTelemetry, this);
         this.composition.off('remove', this.unsubscribeFromTelemetry, this);
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
