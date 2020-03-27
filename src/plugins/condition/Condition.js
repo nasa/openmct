@@ -24,12 +24,12 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import {computeCondition} from "./utils/evaluator";
+import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
 
 /*
 * conditionConfiguration = {
 *   id: uuid,
-*   trigger: 'any'/'all',
+*   trigger: 'any'/'all'/'not','xor',
 *   criteria: [
 *       {
 *           telemetry: '',
@@ -205,7 +205,8 @@ export default class ConditionClass extends EventEmitter {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
-            this.criteriaResults[id] = eventData.data.result;
+            // The !! here is important to convert undefined to false otherwise the criteriaResults won't get deleted when the criteria is destroyed
+            this.criteriaResults[id] = !!eventData.data.result;
         }
     }
 
@@ -259,7 +260,13 @@ export default class ConditionClass extends EventEmitter {
     }
 
     evaluate() {
-        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        if (this.trigger && this.trigger === TRIGGER.XOR) {
+            this.result = computeConditionByLimit(this.criteriaResults, 1);
+        } else if (this.trigger && this.trigger === TRIGGER.NOT) {
+            this.result = computeConditionByLimit(this.criteriaResults, 0);
+        } else {
+            this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        }
     }
 
     getLatestTimestamp(current, compare) {
