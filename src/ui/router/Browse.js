@@ -19,10 +19,13 @@ define([
 
         openmct.router.on('change:params', function (newParams, oldParams, changed) {
             if (changed.view && browseObject) {
-                let provider = openmct
-                    .objectViews
-                    .getByProviderKey(changed.view);
-                viewObject(browseObject, provider);
+                //get latest version of the browseObject
+                openmct.objects.get(browseObject.identifier).then((newBrowseObject) => {
+                    let provider = openmct
+                        .objectViews
+                        .getByProviderKey(changed.view);
+                    viewObject(newBrowseObject, provider);
+                });
             }
         });
 
