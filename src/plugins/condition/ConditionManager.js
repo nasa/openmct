@@ -270,14 +270,14 @@ export default class ConditionManager extends EventEmitter {
         this.emit(`broadcastTelemetry`, Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
     }
 
-    getTestData(key) {
-        const found = this.testData.conditionTestInputs.find((testInput) => testInput.metadata === key);
+    getTestData(metadatum) {
+        const found = this.testData.conditionTestInputs.find((testInput) => (testInput.metadata === metadatum.key) || (testInput.metadata === metadatum.source));
         return found ? found.value : false;
     }
 
     createNormalizedDatum(telemetryDatum, id) {
         return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
-            const value = this.testData.applied && this.getTestData(metadatum.key);
+            const value = this.testData.applied && this.getTestData(metadatum);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
             normalizedDatum[metadatum.key] = value ?  formatter.parse(value) : formatter.parse(telemetryDatum[metadatum.source]);
             return normalizedDatum;
