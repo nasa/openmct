@@ -24,31 +24,43 @@ import { computeCondition, computeConditionByLimit } from "./evaluator";
 
 describe('evaluate results based on trigger', function () {
 
-    it('should evaluate to true if trigger is ALL', () => {
-        const results = [{
-            result: true
-        },
-        {
-            result: true
-        },
-        {
-            result: true
-        }];
-        const result = computeCondition(results, true);
+    it('should evaluate to true if trigger is NOT', () => {
+        const results = {
+            result: false,
+            result1: false,
+            result2: false
+        };
+        const result = computeConditionByLimit(results, 0);
         expect(result).toBeTrue();
     });
 
-    it('should evaluate to false if trigger is ALL', () => {
-        const results = [{
-            result: false
-        },
-        {
-            result: true
-        },
-        {
-            result: true
-        }];
-        const result = computeCondition(results, true);
+    it('should evaluate to false if trigger is NOT', () => {
+        const results = {
+            result: true,
+            result1: false,
+            result2: false
+        };
+        const result = computeConditionByLimit(results, 0);
+        expect(result).toBeFalse();
+    });
+
+    it('should evaluate to true if trigger is XOR', () => {
+        const results = {
+            result: false,
+            result1: true,
+            result2: false
+        };
+        const result = computeConditionByLimit(results, 1);
         expect(result).toBeTrue();
+    });
+
+    it('should evaluate to false if trigger is XOR', () => {
+        const results = {
+            result: false,
+            result1: true,
+            result2: true
+        };
+        const result = computeConditionByLimit(results, 1);
+        expect(result).toBeFalse();
     });
 });
