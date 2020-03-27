@@ -43,14 +43,14 @@ export default class TelemetryCriterion extends EventEmitter {
         this.id = telemetryDomainObjectDefinition.id;
         this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
-        this.telemetryObjects = telemetryDomainObjectDefinition.telemetryObjects;
+        this.telemetryObjects = Object.assign(telemetryDomainObjectDefinition.telemetryObjects);
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.telemetryDataCache = {};
     }
 
     updateTelemetry(telemetryObjects) {
-        this.telemetryObjects = telemetryObjects;
+        this.telemetryObjects = Object.assign(telemetryObjects);
     }
 
     formatData(data, telemetryObjects) {
@@ -161,8 +161,9 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     destroy() {
-        this.off(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionRemoved');
+        delete this.telemetryObjects;
+        delete this.telemetryDataCache;
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
     }

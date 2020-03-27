@@ -80,11 +80,12 @@ export default {
         getTriggerDescription(trigger) {
             let description = '';
             switch(trigger) {
-            case TRIGGER.ANY: description = 'or';
+            case TRIGGER.ANY:
+            case TRIGGER.XOR:
+                description = 'or';
                 break;
             case TRIGGER.ALL:
-            case TRIGGER.NOT:
-            case TRIGGER.XOR: description = 'and';
+            case TRIGGER.NOT: description = 'and';
                 break;
             }
             return description;

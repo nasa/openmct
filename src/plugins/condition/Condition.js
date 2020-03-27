@@ -215,7 +215,8 @@ export default class ConditionClass extends EventEmitter {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
-            this.criteriaResults[id] = eventData.data.result;
+            // The !! here is important to convert undefined to false otherwise the criteriaResults won't get deleted when the criteria is destroyed
+            this.criteriaResults[id] = !!eventData.data.result;
         }
     }
 

@@ -114,8 +114,6 @@
                 <select v-model="condition.configuration.trigger"
                         @change="persist"
                 >
-                    <option value="all">when all criteria are met</option>
-                    <option value="any">when any criteria are met</option>
                     <option v-for="option in triggers"
                             :key="option.value"
                             :value="option.value"
@@ -230,8 +228,8 @@ export default {
             const triggerOptions = [];
             keys.forEach((trigger) => {
                 triggerOptions.push({
-                    value: trigger,
-                    label: TRIGGER_LABEL[trigger]
+                    value: TRIGGER[trigger],
+                    label: TRIGGER_LABEL[TRIGGER[trigger]]
                 });
             });
             return triggerOptions;
