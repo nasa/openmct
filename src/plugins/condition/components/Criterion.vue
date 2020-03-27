@@ -161,7 +161,7 @@ export default {
     methods: {
         checkTelemetry() {
             if(this.criterion.telemetry) {
-                if (this.criterion.telemetry === 'any' && this.criterion.telemetry === 'all') {
+                if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
                     this.updateMetadataOptions();
                 } else {
                     if (!this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
@@ -210,7 +210,7 @@ export default {
                         this.telemetryMetadataOptions = [];
                         telemetryObjects.forEach(telemetryObject => {
                             let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                            this.telemetryMetadataOptions = this.telemetryMetadataOptions.concat(telemetryMetadata.values());
+                            this.addMetaDataOptions(telemetryMetadata.values());
                             this.updateOperations(ev);
                             this.updateOperationInputVisibility();
                         });
@@ -226,6 +226,19 @@ export default {
             } else {
                 this.criterion.metadata = '';
             }
+        },
+        addMetaDataOptions(options) {
+            if (!this.telemetryMetadataOptions) {
+                this.telemetryMetadataOptions = options;
+            }
+            options.forEach((option) => {
+                const found = this.telemetryMetadataOptions.find((metadataOption) => {
+                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name))
+                });
+                if (!found) {
+                    this.telemetryMetadataOptions.push(option);
+                }
+            });
         },
         updateOperations(ev) {
             if (ev && ev.target === this.$refs.telemetrySelect) {

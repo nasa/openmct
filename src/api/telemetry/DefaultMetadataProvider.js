@@ -56,7 +56,8 @@ define([
 
         valueMetadatas.push({
             key: 'name',
-            name: 'Name'
+            name: 'Name',
+            format: 'string'
         });
 
         metadata.domains.forEach(function (domain, index) {
