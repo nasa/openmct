@@ -4,7 +4,8 @@
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
-            <select v-model="criterion.telemetry"
+            <select ref="telemetrySelect"
+                    v-model="criterion.telemetry"
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
@@ -19,7 +20,8 @@
         <span v-if="criterion.telemetry"
               class="c-cdef__control"
         >
-            <select v-model="criterion.metadata"
+            <select ref="metadataSelect"
+                    v-model="criterion.metadata"
                     @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -62,7 +64,9 @@
                 <span v-if="inputCount && criterion.operation"
                       class="c-cdef__control"
                 >
-                    <select v-model="criterion.input[0]">
+                    <select v-model="criterion.input[0]"
+                            @change="persist"
+                    >
                         <option v-for="option in enumerations"
                                 :key="option.string"
                                 :value="option.value.toString()"
@@ -114,6 +118,14 @@ export default {
             inputTypes: INPUT_TYPES
         }
     },
+    watch: {
+        telemetry: {
+            handler(newTelemetry, oldTelemetry) {
+                this.checkTelemetry();
+            },
+            deep: true
+        }
+    },
     computed: {
         setRowLabel: function () {
             let operator = this.trigger === 'all' ? 'and ': 'or ';
@@ -141,6 +153,17 @@ export default {
         this.updateMetadataOptions();
     },
     methods: {
+        checkTelemetry() {
+            if(this.criterion.telemetry &&
+                !this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
+                //telemetry being used was removed. So reset this criterion.
+                this.criterion.telemetry = '';
+                this.criterion.metadata = '';
+                this.criterion.input = [];
+                this.criterion.operation = '';
+                this.persist();
+            }
+        },
         getOperationFormat() {
             this.enumerations = [];
             this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
@@ -162,12 +185,14 @@ export default {
             });
         },
         updateMetadataOptions(ev) {
-            if (ev) {this.clearInputs()}
+            if (ev) {
+                this.clearDependentFields(ev.target)
+            }
             if (this.criterion.telemetry) {
                 this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                     this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                     this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                    this.updateOperations();
+                    this.updateOperations(ev);
                     this.updateOperationInputVisibility();
                 });
             } else {
@@ -175,16 +200,17 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev) {
-                this.clearInputs()
+            if (ev && ev.target === this.$refs.telemetrySelect) {
+                this.clearDependentFields(ev.target);
+                this.persist();
             }
             this.getOperationFormat();
-            this.persist();
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
                 this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
                 this.inputCount = 0;
+                this.persist();
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
@@ -192,15 +218,16 @@ export default {
                     if (!this.inputCount) {this.criterion.input = []}
                 }
             }
-            this.persist();
         },
-        clearInputs() {
-            this.criterion.operation = '';
+        clearDependentFields(el) {
+            if (el === this.$refs.telemetrySelect) {
+                this.criterion.metadata = '';
+                this.criterion.operation = '';
+            } else if (el === this.$refs.metadataSelect) {
+                this.criterion.operation = '';
+            }
             this.criterion.input = [];
             this.inputCount = 0;
-        },
-        updateMetadataSelection() {
-            this.updateOperationInputVisibility();
         },
         persist() {
             this.$emit('persist', this.criterion);

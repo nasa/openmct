@@ -119,7 +119,7 @@
                 </select>
             </span>
 
-            <template v-if="telemetry.length">
+            <template v-if="telemetry.length || condition.configuration.criteria.length">
                 <div v-for="(criterion, index) in condition.configuration.criteria"
                      :key="index"
                      class="c-cdef__criteria"
@@ -214,7 +214,9 @@ export default {
             trigger: 'all',
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
-            criterionIndex: 0
+            criterionIndex: 0,
+            selectedTelemetryName: '',
+            selectedFieldName: ''
         };
     },
     computed: {
@@ -295,10 +297,6 @@ export default {
             const clonedCriterion = {...this.condition.configuration.criteria[index]};
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist()
-        },
-        hasTelemetry(identifier) {
-            // TODO: check parent condition.composition.hasTelemetry
-            return this.currentCriteria && identifier;
         },
         persist() {
             this.$emit('updateCondition', {

@@ -102,17 +102,20 @@ export default {
             }
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
-                    if (this.$el.style[key]) {
-                        this.$el.style[key] = '';
+                let firstChild = this.$el.querySelector(':first-child');
+                if (firstChild) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
+                        if (firstChild.style[key]) {
+                            firstChild.style[key] = '';
+                        }
+                    } else {
+                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
+                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        }
+                        firstChild.style[key] = styleObj[key];
                     }
-                } else {
-                    if (!styleObj.isStyleInvisible && this.$el.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
-                        this.$el.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-                    } else if (styleObj.isStyleInvisible && !this.$el.classList.contains(styleObj.isStyleInvisible)) {
-                        this.$el.classList.add(styleObj.isStyleInvisible);
-                    }
-                    this.$el.style[key] = styleObj[key];
                 }
             });
         },
@@ -129,7 +132,7 @@ export default {
             }
 
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.viewContainer.classList.add('u-angular-object-view-wrapper');
             this.$el.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
@@ -192,9 +195,9 @@ export default {
 
             this.viewKey = viewKey;
 
-            this.initObjectStyles();
-
             this.updateView(immediatelySelect);
+
+            this.initObjectStyles();
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
