@@ -1,6 +1,15 @@
 export const TRIGGER = {
     ANY: 'any',
-    ALL: 'all'
+    ALL: 'all',
+    NOT: 'not',
+    XOR: 'xor'
+};
+
+export const TRIGGER_LABEL = {
+    'any': 'when any criteria are met',
+    'all': 'when all criteria are met',
+    'not': 'when no criteria are met',
+    'xor': 'when only one criteria is met'
 };
 
 export const STYLE_CONSTANTS = {

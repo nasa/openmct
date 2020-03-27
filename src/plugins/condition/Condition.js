@@ -24,13 +24,13 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import {computeCondition} from "./utils/evaluator";
+import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
 /*
 * conditionConfiguration = {
 *   id: uuid,
-*   trigger: 'any'/'all',
+*   trigger: 'any'/'all'/'not','xor',
 *   criteria: [
 *       {
 *           telemetry: '',
@@ -269,7 +269,13 @@ export default class ConditionClass extends EventEmitter {
     }
 
     evaluate() {
-        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        if (this.trigger && this.trigger === TRIGGER.XOR) {
+            this.result = computeConditionByLimit(this.criteriaResults, 1);
+        } else if (this.trigger && this.trigger === TRIGGER.NOT) {
+            this.result = computeConditionByLimit(this.criteriaResults, 0);
+        } else {
+            this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        }
     }
 
     getLatestTimestamp(current, compare) {

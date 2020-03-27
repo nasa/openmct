@@ -116,6 +116,10 @@
                 >
                     <option value="all">when all criteria are met</option>
                     <option value="any">when any criteria are met</option>
+                    <option v-for="option in triggers"
+                            :key="option.value"
+                            :value="option.value"
+                    > {{ option.label }}</option>
                 </select>
             </span>
 
@@ -181,6 +185,7 @@
 <script>
 import Criterion from './Criterion.vue';
 import ConditionDescription from "./ConditionDescription.vue";
+import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ['openmct'],
@@ -220,6 +225,17 @@ export default {
         };
     },
     computed: {
+        triggers() {
+            const keys = Object.keys(TRIGGER);
+            const triggerOptions = [];
+            keys.forEach((trigger) => {
+                triggerOptions.push({
+                    value: trigger,
+                    label: TRIGGER_LABEL[trigger]
+                });
+            });
+            return triggerOptions;
+        },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
             if (criteria.length) {
