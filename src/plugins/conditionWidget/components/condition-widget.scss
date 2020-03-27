@@ -22,3 +22,11 @@
 .c-fl .c-so-view--no-frame .c-condition-widget {
     @include abs(1px);
 }
+
+// When the widget is in the main view, center it in the space
+.l-shell__main-container > .c-condition-widget {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
