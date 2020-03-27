@@ -80,7 +80,6 @@ export const OPERATIONS = [
             input.forEach(inputValue => numberInputs.push(Number(inputValue)));
             let larger = Math.max(...numberInputs.slice(1,3));
             let smaller = Math.min(...numberInputs.slice(1,3));
-            console.log(larger, smaller);
             return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
         },
         text: 'is between',
