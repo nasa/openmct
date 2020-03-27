@@ -373,7 +373,8 @@ export default {
         },
         removeDefaultClass() {
             const oldNotebookStorage = getDefaultNotebook();
-            if (!oldNotebookStorage) {
+            if (!oldNotebookStorage
+                    || oldNotebookStorage.notebookMeta.identifier.key === this.internalDomainObject.identifier.key) {
                 return;
             }
 
