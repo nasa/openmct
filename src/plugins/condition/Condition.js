@@ -25,7 +25,7 @@ import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
 import {computeCondition} from "./utils/evaluator";
-import AllTelemetryCriterion from "@/plugins/condition/criterion/AllTelemetryCriterion";
+import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
 /*
 * conditionConfiguration = {
