@@ -201,8 +201,7 @@ export default {
         },
         updateMetadataOptions(ev) {
             if (ev) {
-                this.clearDependentFields(ev.target);
-                this.updateOperations(ev);
+                this.clearDependentFields(ev.target)
             }
             if (this.criterion.telemetry) {
                 if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
@@ -212,7 +211,7 @@ export default {
                         telemetryObjects.forEach(telemetryObject => {
                             let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                             this.telemetryMetadataOptions = this.telemetryMetadataOptions.concat(telemetryMetadata.values());
-                            this.updateOperations();
+                            this.updateOperations(ev);
                             this.updateOperationInputVisibility();
                         });
                     });
@@ -220,7 +219,7 @@ export default {
                     this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
                         this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
                         this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                        this.updateOperations();
+                        this.updateOperations(ev);
                         this.updateOperationInputVisibility();
                     });
                 }
@@ -229,7 +228,7 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev && (ev.target === this.$refs.telemetrySelect)) {
+            if (ev && ev.target === this.$refs.telemetrySelect) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
