@@ -23,6 +23,8 @@
 import { OPERATIONS } from "./operations";
 let isOneOfOperation = OPERATIONS.find((operation) => operation.name === 'valueIs');
 let isNotOneOfOperation = OPERATIONS.find((operation) => operation.name === 'valueIsNot');
+let isBetween = OPERATIONS.find((operation) => operation.name === 'between');
+let isNotBetween = OPERATIONS.find((operation) => operation.name === 'notBetween');
 
 describe('Is one of and is not one of operations', function () {
 
@@ -64,5 +66,25 @@ describe('Is one of and is not one of operations', function () {
     it('should evaluate isNotOneOf to false for string inputs', () => {
         const inputs = ["4", "5,46,4,8"];
         expect(!!isNotOneOfOperation.operation(inputs)).toBeFalse();
+    });
+
+    it('should evaluate isBetween to true', () => {
+        const inputs = ["4", "3", "89"];
+        expect(!!isBetween.operation(inputs)).toBeTrue();
+    });
+
+    it('should evaluate isNotBetween to true', () => {
+        const inputs = ["45", "100", "89"];
+        expect(!!isNotBetween.operation(inputs)).toBeTrue();
+    });
+
+    it('should evaluate isBetween to false', () => {
+        const inputs = ["4", "100", "89"];
+        expect(!!isBetween.operation(inputs)).toBeFalse();
+    });
+
+    it('should evaluate isNotBetween to false', () => {
+        const inputs = ["45", "30", "50"];
+        expect(!!isNotBetween.operation(inputs)).toBeFalse();
     });
 });

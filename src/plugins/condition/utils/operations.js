@@ -76,7 +76,12 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            return Number(input[0]) > Number(input[1]) && Number(input[0]) < Number(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            console.log(larger, smaller);
+            return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
         },
         text: 'is between',
         appliesTo: ['number'],
@@ -85,10 +90,14 @@ export const OPERATIONS = [
             return ' is between ' + values.join(', ') + ' and ' + values[1];
         }
     },
-    {
+    {//45 is not between 100 and 89
         name: 'notBetween',
         operation: function (input) {
-            return Number(input[0]) < Number(input[1]) || Number(input[0]) > Number(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
         },
         text: 'is not between',
         appliesTo: ['number'],
