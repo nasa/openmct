@@ -57,7 +57,7 @@
                         <select v-model="testInput.telemetry"
                                 @change="updateMetadata(testInput)"
                         >
-                            <option>- Select Input -</option>
+                            <option>- Select Telemetry -</option>
                             <option v-for="(telemetryOption, index) in telemetry"
                                     :key="index"
                                     :value="telemetryOption.identifier"
@@ -66,11 +66,10 @@
                             </option>
                         </select>
                     </span>
-                    <span class="c-cdef__control" v-if="testInput.telemetry">
-                        <select v-model="testInput.metadata"
-                        >
-                            <option>- Select Input -</option>
-                            <option v-for="(option, index) in telemetryMetadataOptions[testInput.telemetry.key]"
+                    <span class="c-cdef__control">
+                        <select v-model="testInput.metadata">
+                            <option>- Select metadata -</option>
+                            <option v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
                                     :key="index"
                                     :value="option.key"
                             >
@@ -88,6 +87,7 @@
                 <div class="c-test-datum__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
                             title="Duplicate this test data value"
+                            @click="addTestInput(testInput)"
                     ></button>
                     <button class="c-click-icon c-test-data__delete-button icon-trash"
                             title="Delete this test data value"
@@ -101,13 +101,23 @@
 
 <script>
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
         isEditing: Boolean,
         telemetry: {
             type: Array,
             required: true,
             default: () => []
+        },
+        testData: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {
+                    applied: false,
+                    conditionTestInputs: []
+                }
+            }
         }
     },
     data() {
@@ -118,34 +128,56 @@ export default {
             telemetryMetadataOptions: {}
         };
     },
-    mounted() {
-        this.testInputs = this.domainObject.configuration.conditionTestData ? this.domainObject.configuration.conditionTestData.conditionTestInputs : [];
-        if (!this.testInputs.length) {
-            this.addTestInput();
+    watch: {
+        isEditing(editing) {
+            if (!editing) {
+                this.resetApplied();
+            }
+        },
+        telemetry: {
+            handler() {
+                this.initializeMetadata();
+            },
+            deep: true
+        },
+        testData: {
+            handler() {
+                this.initialize();
+            },
+            deep: true
         }
-        this.isApplied = this.domainObject.configuration.conditionTestData && this.domainObject.configuration.conditionTestData.applied;
-        this.openmct.objects.observe(this.domainObject, '*', (newDomainObject) => {
-            this.domainObject = newDomainObject;
-        })
+    },
+    beforeDestroy() {
+        this.resetApplied();
+    },
+    mounted() {
+        this.initialize();
+        this.initializeMetadata();
     },
     methods: {
-        applyTestData(ev) {
-            this.$emit('change', ev.target.checked);
+        applyTestData() {
+            this.isApplied = !this.isApplied;
+            this.persist();
         },
         initialize() {
-            this.testInputs.forEach(testInput => {
-                const found = this.telemetry.find(telemetryObj => this.openmct.objects.areIdsEqual(testInput.telemetry,));
-                if (found) {
-                    this.openmct.objects.get(testInput.telemetry).then((telemetryObject) => {
-                        const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                        this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
-                    });
-                }
+            if (this.testData && this.testData.conditionTestInputs) {
+                this.testInputs = this.testData.conditionTestInputs;
+            }
+            if (!this.testInputs.length) {
+                this.addTestInput();
+            }
+        },
+        initializeMetadata() {
+            this.telemetry.forEach(telemetryObj => {
+                this.openmct.objects.get(telemetryObj.identifier).then((telemetryObject) => {
+                    const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+                });
             });
         },
-        addTestInput() {
-            this.testInputs.push({});
+        addTestInput(testInput) {
+            this.testInputs.push(Object.assign({}, testInput));
         },
         getId(identifier) {
             if (identifier) {
@@ -165,11 +197,15 @@ export default {
                 });
             }
         },
+        resetApplied() {
+            this.isApplied = false;
+            this.persist();
+        },
         persist() {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.conditionTestData', {
+            this.$emit('persistTestData', {
                 applied: this.isApplied,
                 conditionTestInputs: this.testInputs
-            })
+            });
         }
     }
 }

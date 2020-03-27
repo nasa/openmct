@@ -37,7 +37,7 @@ export default class ConditionManager extends EventEmitter {
         this.compositionLoad = this.composition.load();
         this.subscriptions = {};
         this.telemetryObjects = {};
-        this.testData = conditionSetDomainObject.configuration.conditionTestData;
+        this.testData = conditionSetDomainObject.configuration.conditionTestData || {conditionTestData: [], applied: false};
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
@@ -277,9 +277,9 @@ export default class ConditionManager extends EventEmitter {
 
     createNormalizedDatum(telemetryDatum, id) {
         return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
-            const value = this.getTestData(metadatum.key);
+            const value = this.testData.applied && this.getTestData(metadatum.key);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            normalizedDatum[metadatum.key] = value || formatter.parse(telemetryDatum[metadatum.source]);
+            normalizedDatum[metadatum.key] = value ?  formatter.parse(value) : formatter.parse(telemetryDatum[metadatum.source]);
             return normalizedDatum;
         }, {});
     }
