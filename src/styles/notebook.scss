@@ -405,6 +405,9 @@
     }
 
     &__image {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
         flex: 1 1 auto;
     }
 }
