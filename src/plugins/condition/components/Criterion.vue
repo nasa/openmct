@@ -118,14 +118,6 @@ export default {
             inputTypes: INPUT_TYPES
         }
     },
-    watch: {
-        telemetry: {
-            handler(newTelemetry, oldTelemetry) {
-                this.checkTelemetry();
-            },
-            deep: true
-        }
-    },
     computed: {
         setRowLabel: function () {
             let operator = this.trigger === 'all' ? 'and ': 'or ';
@@ -147,6 +139,14 @@ export default {
                 }
             }
             return type;
+        }
+    },
+    watch: {
+        telemetry: {
+            handler(newTelemetry, oldTelemetry) {
+                this.checkTelemetry();
+            },
+            deep: true
         }
     },
     mounted() {

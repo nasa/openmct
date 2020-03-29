@@ -58,7 +58,7 @@
         >
             <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
-                 class="c-condition-h js-condition-drag-wrapper"
+                 class="c-condition-h"
                  @drop.prevent="dropCondition(index)"
                  @dragover.prevent
                  @dragenter="dragEnter(index)"
@@ -104,7 +104,8 @@ export default {
             conditions: [],
             telemetryObjs: [],
             moveIndex: Number,
-            isDragging: false
+            isDragging: false,
+            dragCounter: 0
         };
     },
     destroyed() {
@@ -173,23 +174,27 @@ export default {
             }
 
             this.reorder(reorderPlan);
-
+            this.dragCounter = 0;
             event.target.closest('.c-condition-h').classList.remove("dragging");
             this.isDragging = false;
         },
         dragEnter(index) {
-            if (event.target.classList.contains('js-condition-drag-wrapper')) {
-                if (index === this.conditionCollection.length - 1) { return }
-                if (index > this.moveIndex) { index-- } // for 'downward' move
-                if (this.moveIndex === index) { return }
+            this.dragCounter++;
+            if (index > this.moveIndex) { index-- } // for 'downward' move
+            if (event.target.parentElement.classList.contains('c-condition-h') &&
+               index !== this.conditionCollection.length - 1 &&
+               this.moveIndex !== index &&
+               this.dragCounter === 1) {
                 this.isDragging = true;
-                event.target.closest('.c-condition-h').classList.add("dragging");
+                event.target.parentElement.classList.add("dragging");
             }
         },
         dragLeave() {
-            if (event.target.classList.contains('js-condition-drag-wrapper')) {
-                event.target.classList.remove("dragging");
+            this.dragCounter--;
+            if (this.dragCounter === 0) {
+                event.target.closest('.c-condition-h').classList.remove("dragging");
             }
+
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);

@@ -22,7 +22,7 @@
 
 <template>
 <div v-if="isEditing"
-     class="c-condition c-condition--edit js-condition-drag-wrapper"
+     class="c-condition c-condition--edit"
 >
     <!-- Edit view -->
     <div class="c-condition__header"
@@ -320,7 +320,7 @@ export default {
         dragStart(e) {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.js-condition-drag-wrapper'), 0, 0);
+            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
         dragEnd(e) {
