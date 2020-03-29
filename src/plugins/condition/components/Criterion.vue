@@ -200,7 +200,7 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev && ev.target === this.$refs.telemetrySelect) {
+            if (ev) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
