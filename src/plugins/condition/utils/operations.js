@@ -82,7 +82,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is between ' + values.join(', ') + ' and ' + values[1];
+            return ' is between ' + values[0] + ' and ' + values[1];
         }
     },
     {
@@ -94,7 +94,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is not between ' + values.join(', ') + ' and ' + values[1];
+            return ' is not between ' + values[0] + ' and ' + values[1];
         }
     },
     {
