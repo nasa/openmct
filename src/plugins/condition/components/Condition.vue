@@ -181,7 +181,6 @@
 <script>
 import Criterion from './Criterion.vue';
 import ConditionDescription from "./ConditionDescription.vue";
-import _ from "lodash";
 
 export default {
     inject: ['openmct'],
@@ -295,7 +294,7 @@ export default {
             this.persist();
         },
         cloneCriterion(index) {
-            const clonedCriterion = _.cloneDeep(this.condition.configuration.criteria[index]);
+            const clonedCriterion = JSON.parse(JSON.stringify(this.condition.configuration.criteria[index]));
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist();
         },
