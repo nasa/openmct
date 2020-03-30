@@ -129,6 +129,16 @@ export default {
             type: Array,
             required: true,
             default: () => []
+        },
+        testData: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {
+                    applied: false,
+                    conditionTestInputs: []
+                }
+            }
         }
     },
     data() {
@@ -142,7 +152,7 @@ export default {
     watch: {
         isEditing(editing) {
             if (!editing) {
-                this.resetTestData();
+                this.resetApplied();
             }
         },
         telemetry: {
@@ -150,19 +160,33 @@ export default {
                 this.initializeMetadata();
             },
             deep: true
+        },
+        testData: {
+            handler() {
+                this.initialize();
+            },
+            deep: true
         }
     },
     beforeDestroy() {
-        this.resetTestData();
+        this.resetApplied();
     },
     mounted() {
-        this.addTestInput();
+        this.initialize();
         this.initializeMetadata();
     },
     methods: {
         applyTestData() {
             this.isApplied = !this.isApplied;
             this.updateTestData();
+        },
+        initialize() {
+            if (this.testData && this.testData.conditionTestInputs) {
+                this.testInputs = this.testData.conditionTestInputs;
+            }
+            if (!this.testInputs.length) {
+                this.addTestInput();
+            }
         },
         initializeMetadata() {
             this.telemetry.forEach((telemetryObject) => {
@@ -198,9 +222,8 @@ export default {
                 this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
             }
         },
-        resetTestData() {
+        resetApplied() {
             this.isApplied = false;
-            this.testInputs = [];
             this.updateTestData();
         },
         updateTestData() {

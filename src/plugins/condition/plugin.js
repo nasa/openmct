@@ -38,10 +38,7 @@ export default function ConditionPlugin() {
             cssClass: 'icon-conditional',
             initialize: function (domainObject) {
                 domainObject.configuration = {
-                    conditionTestData: {
-                        conditionTestInputs: [],
-                        applied: false
-                    },
+                    conditionTestData: [],
                     conditionCollection: [{
                         isDefault: true,
                         id: uuid(),
