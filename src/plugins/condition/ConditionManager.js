@@ -103,16 +103,12 @@ export default class ConditionManager extends EventEmitter {
 
     createCondition(conditionConfiguration) {
         let conditionObj;
-        let newConfiguration;
-        if (conditionConfiguration) {
-            newConfiguration = JSON.parse(JSON.stringify(conditionConfiguration));
-        }
         if (conditionConfiguration) {
             conditionObj = {
-                ...newConfiguration,
+                ...conditionConfiguration,
                 id: uuid(),
                 configuration: {
-                    ...newConfiguration.configuration,
+                    ...JSON.parse(JSON.stringify(conditionConfiguration)).configuration,
                     name: `Copy of ${conditionConfiguration.configuration.name}`
                 }
             };
