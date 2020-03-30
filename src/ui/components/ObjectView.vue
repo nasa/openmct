@@ -219,7 +219,7 @@ export default {
             return this.composition.load();
         },
         getSelectionContext() {
-            if (this.currentView.getSelectionContext) {
+            if (this.currentView && this.currentView.getSelectionContext) {
                 return this.currentView.getSelectionContext();
             } else {
                 return { item: this.currentObject };

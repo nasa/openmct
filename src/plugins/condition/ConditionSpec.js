@@ -112,7 +112,6 @@ describe("The condition", function () {
     });
 
     it("initializes with an id", function () {
-        console.log(conditionObj);
         expect(conditionObj.id).toBeDefined();
     });
 

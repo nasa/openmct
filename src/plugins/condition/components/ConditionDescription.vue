@@ -77,9 +77,22 @@ export default {
         this.getConditionDescription();
     },
     methods: {
+        getTriggerDescription(trigger) {
+            let description = '';
+            switch(trigger) {
+            case TRIGGER.ANY:
+            case TRIGGER.XOR:
+                description = 'or';
+                break;
+            case TRIGGER.ALL:
+            case TRIGGER.NOT: description = 'and';
+                break;
+            }
+            return description;
+        },
         getConditionDescription() {
             if (this.condition) {
-                this.triggerDescription = this.condition.configuration.trigger === TRIGGER.ANY ? ' or ' : ' and ';
+                this.triggerDescription =  this.getTriggerDescription(this.condition.configuration.trigger);
                 this.criterionDescriptions = [];
                 this.condition.configuration.criteria.forEach((criterion, index) => {
                     this.getCriterionDescription(criterion, index);

@@ -20,8 +20,7 @@
         <span v-if="criterion.telemetry"
               class="c-cdef__control"
         >
-            <select ref="metadataSelect"
-                    v-model="criterion.metadata"
+            <select v-model="criterion.metadata"
                     @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -118,14 +117,6 @@ export default {
             inputTypes: INPUT_TYPES
         }
     },
-    watch: {
-        telemetry: {
-            handler(newTelemetry, oldTelemetry) {
-                this.checkTelemetry();
-            },
-            deep: true
-        }
-    },
     computed: {
         setRowLabel: function () {
             let operator = this.trigger === 'all' ? 'and ': 'or ';
@@ -147,6 +138,14 @@ export default {
                 }
             }
             return type;
+        }
+    },
+    watch: {
+        telemetry: {
+            handler(newTelemetry, oldTelemetry) {
+                this.checkTelemetry();
+            },
+            deep: true
         }
     },
     mounted() {
@@ -200,7 +199,7 @@ export default {
             }
         },
         updateOperations(ev) {
-            if (ev && ev.target === this.$refs.telemetrySelect) {
+            if (ev) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
@@ -208,8 +207,9 @@ export default {
         },
         updateOperationInputVisibility(ev) {
             if (ev) {
-                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
-                this.inputCount = 0;
+                if (this.enumerations.length) {
+                    this.criterion.input = [this.enumerations[0].value.toString()];
+                }
                 this.persist();
             }
             for (let i = 0; i < this.filteredOps.length; i++) {
@@ -222,10 +222,8 @@ export default {
         clearDependentFields(el) {
             if (el === this.$refs.telemetrySelect) {
                 this.criterion.metadata = '';
-                this.criterion.operation = '';
-            } else if (el === this.$refs.metadataSelect) {
-                this.criterion.operation = '';
             }
+            this.criterion.operation = '';
             this.criterion.input = [];
             this.inputCount = 0;
         },
