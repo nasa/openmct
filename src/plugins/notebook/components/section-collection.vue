@@ -18,7 +18,7 @@
 
 <script>
 import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook, clearDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook } from '../utils/notebook-storage';
 import sectionComponent from './section-component.vue';
 
 export default {
