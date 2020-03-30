@@ -7,11 +7,11 @@
             @click="goToParent"
         ></button>
         <div
-            class="l-browse-bar__object-name--w"
+            class="l-browse-bar__object-name--w c-object-label"
             :class="type.cssClass"
         >
             <span
-                class="l-browse-bar__object-name c-input-inline"
+                class="l-browse-bar__object-name c-object-label__name c-input-inline"
                 contenteditable
                 @blur="updateName"
                 @keydown.enter.prevent

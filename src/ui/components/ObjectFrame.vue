@@ -28,12 +28,12 @@
     }"
 >
     <div class="c-so-view__header">
-        <div
-            class="c-so-view__header__icon"
-            :class="cssClass"
-        ></div>
-        <div class="c-so-view__header__name">
-            {{ domainObject && domainObject.name }}
+        <div class="c-object-label"
+             :class="cssClass"
+        >
+            <div class="c-object-label__name">
+                {{ domainObject && domainObject.name }}
+            </div>
         </div>
         <context-menu-drop-down
             :object-path="objectPath"
