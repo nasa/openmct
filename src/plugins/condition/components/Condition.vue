@@ -291,12 +291,12 @@ export default {
         },
         removeCriterion(index) {
             this.condition.configuration.criteria.splice(index, 1);
-            this.persist()
+            this.persist();
         },
         cloneCriterion(index) {
-            const clonedCriterion = {...this.condition.configuration.criteria[index]};
+            const clonedCriterion = JSON.parse(JSON.stringify(this.condition.configuration.criteria[index]));
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
-            this.persist()
+            this.persist();
         },
         persist() {
             this.$emit('updateCondition', {

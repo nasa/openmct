@@ -138,11 +138,11 @@ export default class ConditionManager extends EventEmitter {
     }
 
     cloneCondition(conditionConfiguration, index) {
-        this.createAndSaveCondition(index, conditionConfiguration);
+        this.createAndSaveCondition(index, JSON.parse(JSON.stringify(conditionConfiguration)));
     }
 
     createAndSaveCondition(index, conditionConfiguration) {
-        let newCondition = this.createCondition(conditionConfiguration);
+        const newCondition = this.createCondition(conditionConfiguration);
         if (index !== undefined) {
             this.conditionSetDomainObject.configuration.conditionCollection.splice(index + 1, 0, newCondition);
         } else {
