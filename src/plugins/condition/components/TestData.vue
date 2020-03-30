@@ -40,14 +40,6 @@
         <div class="c-cdef__controls"
              :disabled="!telemetry.length"
         >
-            <button
-                v-show="isEditing"
-                id="addCondition"
-                class="c-button c-button--major icon-plus labeled"
-                @click="addTestInput"
-            >
-                <span class="c-cs-button__label">Add Test Data</span>
-            </button>
             <label class="c-toggle-switch">
                 <input
                     type="checkbox"
@@ -58,7 +50,7 @@
                 <span class="c-toggle-switch__label">Apply Test Data</span>
             </label>
         </div>
-        <div class="c-cs-test-h c-cs-tests">
+        <div class="c-cs-tests">
             <span v-for="(testInput, tIndex) in testInputs"
                   :key="tIndex"
                   class="c-test-datum c-cs-test"
@@ -84,7 +76,7 @@
                         <select v-model="testInput.metadata"
                                 @change="updateTestData"
                         >
-                            <option value="">- Select metadata -</option>
+                            <option value="">- Select Field -</option>
                             <option v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
                                     :key="index"
                                     :value="option.key"
@@ -94,7 +86,7 @@
                         </select>
                     </span>
                     <span v-if="testInput.metadata"
-                          lass="c-cdef__control__inputs"
+                          class="c-cdef__control__inputs"
                     >
                         <input v-model="testInput.value"
                                placeholder="Enter test input"
@@ -106,16 +98,24 @@
                 </span>
                 <div class="c-test-datum__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
-                            title="Duplicate this test data value"
+                            title="Duplicate this test datum"
                             @click="addTestInput(testInput)"
                     ></button>
                     <button class="c-click-icon c-test-data__delete-button icon-trash"
-                            title="Delete this test data value"
+                            title="Delete this test datum"
                             @click="removeTestInput(tIndex)"
                     ></button>
                 </div>
             </span>
         </div>
+        <button
+            v-show="isEditing"
+            id="addTestDatum"
+            class="c-button c-button--major icon-plus labeled"
+            @click="addTestInput"
+        >
+            <span class="c-cs-button__label">Add Test Datum</span>
+        </button>
     </div>
 </section>
 </template>
