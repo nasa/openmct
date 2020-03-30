@@ -8,7 +8,7 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="type.cssClass"
+            :class="[ type.cssClass, classList ]"
         >
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"

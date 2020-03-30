@@ -29,7 +29,7 @@
 >
     <div class="c-so-view__header">
         <div class="c-object-label"
-             :class="classList"
+             :class="[cssClass, classList]"
         >
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
