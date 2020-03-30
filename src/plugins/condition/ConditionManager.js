@@ -108,7 +108,7 @@ export default class ConditionManager extends EventEmitter {
                 ...conditionConfiguration,
                 id: uuid(),
                 configuration: {
-                    ...JSON.parse(JSON.stringify(conditionConfiguration)).configuration,
+                    ...conditionConfiguration.configuration,
                     name: `Copy of ${conditionConfiguration.configuration.name}`
                 }
             };
@@ -138,7 +138,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     cloneCondition(conditionConfiguration, index) {
-        this.createAndSaveCondition(index, conditionConfiguration);
+        this.createAndSaveCondition(index, JSON.parse(JSON.stringify(conditionConfiguration)));
     }
 
     createAndSaveCondition(index, conditionConfiguration) {
