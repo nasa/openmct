@@ -14,3 +14,19 @@ export const computeCondition = (resultMap, allMustBeTrue) => {
     }
     return result;
 };
+
+//Returns true only if limit number of results are satisfied
+export const computeConditionByLimit = (resultMap, limit) => {
+    let trueCount = 0;
+    for (let key in resultMap) {
+        if (resultMap.hasOwnProperty(key)) {
+            if (resultMap[key]) {
+                trueCount++;
+            }
+            if (trueCount > limit) {
+                break;
+            }
+        }
+    }
+    return trueCount === limit;
+};
