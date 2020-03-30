@@ -89,7 +89,7 @@ export const OPERATIONS = [
             return ' is between ' + values.join(', ') + ' and ' + values[1];
         }
     },
-    {//45 is not between 100 and 89
+    {
         name: 'notBetween',
         operation: function (input) {
             let numberInputs = [];
