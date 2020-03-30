@@ -19,13 +19,10 @@ define([
 
         openmct.router.on('change:params', function (newParams, oldParams, changed) {
             if (changed.view && browseObject) {
-                //get latest version of the browseObject
-                openmct.objects.get(browseObject.identifier).then((newBrowseObject) => {
-                    let provider = openmct
-                        .objectViews
-                        .getByProviderKey(changed.view);
-                    viewObject(newBrowseObject, provider);
-                });
+                let provider = openmct
+                    .objectViews
+                    .getByProviderKey(changed.view);
+                viewObject(browseObject, provider);
             }
         });
 
@@ -66,6 +63,7 @@ define([
 
                 unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
                     openmct.router.path[0] = newObject;
+                    browseObject = newObject;
                 });
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
