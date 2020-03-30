@@ -87,7 +87,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     findOperation(operation) {
-        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+        for (let i=0; i < OPERATIONS.length; i++) {
             if (operation === OPERATIONS[i].name) {
                 return OPERATIONS[i].operation;
             }

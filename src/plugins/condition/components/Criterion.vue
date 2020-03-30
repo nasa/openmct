@@ -39,7 +39,7 @@
               class="c-cdef__control"
         >
             <select v-model="criterion.operation"
-                    @change="updateOperationInputVisibility"
+                    @change="updateInputVisibilityAndValues"
             >
                 <option value="">- Select Comparison -</option>
                 <option v-for="option in filteredOps"
@@ -110,7 +110,6 @@ export default {
     },
     data() {
         return {
-            telemetryMetadata: {},
             telemetryMetadataOptions: [],
             operations: OPERATIONS,
             inputCount: 0,
@@ -126,17 +125,13 @@ export default {
             return (this.index !== 0 ? operator : '') + 'when';
         },
         filteredOps: function () {
-            if (this.operationFormat === 'all') {
-                return this.operations;
-            } else {
-                return [...this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1)];
-            }
+            return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
         },
         setInputType: function () {
             let type = '';
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
-                    if (this.filteredOps[i].appliesTo.length === 1) {
+                    if (this.filteredOps[i].appliesTo.length) {
                         type = this.inputTypes[this.filteredOps[i].appliesTo[0]];
                     } else {
                         type = 'text'
@@ -175,56 +170,46 @@ export default {
                 }
             }
         },
-        getOperationFormat() {
+        updateOperationFormat() {
             this.enumerations = [];
-            if (this.criterion.telemetry && (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all')) {
-                this.operationFormat = 'all';
-            } else {
-                this.telemetryMetadata.valueMetadatas.forEach((value, index) => {
-                    if (value.key === this.criterion.metadata) {
-                        let valueMetadata = this.telemetryMetadataOptions[index];
-                        if (valueMetadata.enumerations !== undefined) {
-                            this.operationFormat = 'enum';
-                            this.enumerations = valueMetadata.enumerations;
-                        } else if (valueMetadata.hints.hasOwnProperty('range')) {
-                            this.operationFormat = 'number';
-                        } else if (valueMetadata.hints.hasOwnProperty('domain')) {
-                            this.operationFormat = 'number';
-                        } else if (valueMetadata.key === 'name') {
-                            this.operationFormat = 'string';
-                        } else {
-                            this.operationFormat = 'string';
-                        }
-                    }
-                });
+            let foundMetadata = this.telemetryMetadataOptions.find((value) => {
+                return value.key === this.criterion.metadata;
+            });
+            if (foundMetadata) {
+                if (foundMetadata.enumerations !== undefined) {
+                    this.operationFormat = 'enum';
+                    this.enumerations = foundMetadata.enumerations;
+                } else if (foundMetadata.hints.hasOwnProperty('range')) {
+                    this.operationFormat = 'number';
+                } else if (foundMetadata.hints.hasOwnProperty('domain')) {
+                    this.operationFormat = 'number';
+                } else if (foundMetadata.key === 'name') {
+                    this.operationFormat = 'string';
+                } else {
+                    this.operationFormat = 'string';
+                }
             }
+            this.updateInputVisibilityAndValues();
         },
         updateMetadataOptions(ev) {
             if (ev) {
-                this.clearDependentFields(ev.target)
+                this.clearDependentFields(ev.target);
+                this.persist();
             }
             if (this.criterion.telemetry) {
-                if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
-                    let telemetryPromises = this.telemetry.map((telemetryObject) => this.openmct.objects.get(telemetryObject.identifier));
-                    Promise.all(telemetryPromises).then(telemetryObjects => {
-                        this.telemetryMetadataOptions = [];
-                        telemetryObjects.forEach(telemetryObject => {
-                            let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                            this.addMetaDataOptions(telemetryMetadata.values());
-                            this.updateOperations(ev);
-                            this.updateOperationInputVisibility();
-                        });
+                const telemetry = (this.criterion.telemetry === 'all' || this.criterion.telemetry === 'any') ? this.telemetry : [{
+                    identifier: this.criterion.telemetry
+                }];
+
+                let telemetryPromises = telemetry.map((telemetryObject) => this.openmct.objects.get(telemetryObject.identifier));
+                Promise.all(telemetryPromises).then(telemetryObjects => {
+                    this.telemetryMetadataOptions = [];
+                    telemetryObjects.forEach(telemetryObject => {
+                        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                        this.addMetaDataOptions(telemetryMetadata.values());
                     });
-                } else {
-                    this.openmct.objects.get(this.criterion.telemetry).then((telemetryObject) => {
-                        this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                        this.telemetryMetadataOptions = this.telemetryMetadata.values();
-                        this.updateOperations(ev);
-                        this.updateOperationInputVisibility();
-                    });
-                }
-            } else {
-                this.criterion.metadata = '';
+                    this.updateOperations();
+                });
             }
         },
         addMetaDataOptions(options) {
@@ -241,34 +226,45 @@ export default {
             });
         },
         updateOperations(ev) {
-            if (ev && ev.target === this.$refs.telemetrySelect) {
+            this.updateOperationFormat();
+            if (ev) {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
-            this.getOperationFormat();
         },
-        updateOperationInputVisibility(ev) {
+        updateInputVisibilityAndValues(ev) {
             if (ev) {
-                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
-                this.inputCount = 0;
+                this.clearDependentFields();
                 this.persist();
             }
+
             for (let i = 0; i < this.filteredOps.length; i++) {
                 if (this.criterion.operation === this.filteredOps[i].name) {
                     this.inputCount = this.filteredOps[i].inputCount;
-                    if (!this.inputCount) {this.criterion.input = []}
                 }
+            }
+            if (!this.inputCount) {
+                this.criterion.input = [];
             }
         },
         clearDependentFields(el) {
             if (el === this.$refs.telemetrySelect) {
                 this.criterion.metadata = '';
                 this.criterion.operation = '';
+                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
+                this.inputCount = 0;
             } else if (el === this.$refs.metadataSelect) {
-                this.criterion.operation = '';
+                if (!this.filteredOps.find(operation => operation.name === this.criterion.operation)) {
+                    this.criterion.operation = '';
+                    this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
+                    this.inputCount = 0;
+                }
+            } else {
+                if (this.enumerations.length && !this.criterion.input.length) {
+                    this.criterion.input = [this.enumerations[0].value.toString()];
+                }
+                this.inputCount = 0;
             }
-            this.criterion.input = [];
-            this.inputCount = 0;
         },
         persist() {
             this.$emit('persist', this.criterion);
