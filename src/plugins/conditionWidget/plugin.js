@@ -28,14 +28,20 @@ export default function plugin() {
 
         openmct.types.addType('conditionWidget', {
             name: "Condition Widget",
-            description: "Condition Widget description TBD",
+            description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
             creatable: true,
-            cssClass: 'icon-asterisk',
+            cssClass: 'icon-condition-widget',
+            initialize(domainObject) {
+                domainObject.label = 'Condition Widget';
+            },
             form: [
                 {
                     "key": "label",
                     "name": "Label",
                     "control": "textfield",
+                    property: [
+                        "label"
+                    ],
                     "required": true,
                     "cssClass": "l-input"
                 },
