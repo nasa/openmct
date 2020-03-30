@@ -82,7 +82,7 @@
                           class="c-cdef__control"
                     >
                         <select v-model="testInput.metadata"
-                                @change="persist"
+                                @change="updateTestData"
                         >
                             <option value="">- Select metadata -</option>
                             <option v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
@@ -100,7 +100,7 @@
                                placeholder="Enter test input"
                                type="text"
                                class="c-cdef__control__input"
-                               @blur="persist"
+                               @change="updateTestData"
                         >
                     </span>
                 </span>
@@ -129,16 +129,6 @@ export default {
             type: Array,
             required: true,
             default: () => []
-        },
-        testData: {
-            type: Object,
-            required: true,
-            default: () => {
-                return {
-                    applied: false,
-                    conditionTestInputs: []
-                }
-            }
         }
     },
     data() {
@@ -152,7 +142,7 @@ export default {
     watch: {
         isEditing(editing) {
             if (!editing) {
-                this.resetApplied();
+                this.resetTestData();
             }
         },
         telemetry: {
@@ -160,41 +150,25 @@ export default {
                 this.initializeMetadata();
             },
             deep: true
-        },
-        testData: {
-            handler() {
-                this.initialize();
-            },
-            deep: true
         }
     },
     beforeDestroy() {
-        this.resetApplied();
+        this.resetTestData();
     },
     mounted() {
-        this.initialize();
+        this.addTestInput();
         this.initializeMetadata();
     },
     methods: {
         applyTestData() {
             this.isApplied = !this.isApplied;
-            this.persist();
-        },
-        initialize() {
-            if (this.testData && this.testData.conditionTestInputs) {
-                this.testInputs = this.testData.conditionTestInputs;
-            }
-            if (!this.testInputs.length) {
-                this.addTestInput();
-            }
+            this.updateTestData();
         },
         initializeMetadata() {
-            this.telemetry.forEach(telemetryObj => {
-                this.openmct.objects.get(telemetryObj.identifier).then((telemetryObject) => {
-                    const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
-                });
+            this.telemetry.forEach((telemetryObject) => {
+                const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
             });
         },
         addTestInput(testInput) {
@@ -206,7 +180,7 @@ export default {
         },
         removeTestInput(index) {
             this.testInputs.splice(index, 1);
-            this.persist();
+            this.updateTestData();
         },
         getId(identifier) {
             if (identifier) {
@@ -220,18 +194,17 @@ export default {
                 if(this.telemetryMetadataOptions[id]) {
                     return;
                 }
-                this.openmct.objects.get(testInput.telemetry).then((telemetryObject) => {
-                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
-                });
+                let telemetryMetadata = this.openmct.telemetry.getMetadata(testInput);
+                this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
             }
         },
-        resetApplied() {
+        resetTestData() {
             this.isApplied = false;
-            this.persist();
+            this.testInputs = [];
+            this.updateTestData();
         },
-        persist() {
-            this.$emit('persistTestData', {
+        updateTestData() {
+            this.$emit('updateTestData', {
                 applied: this.isApplied,
                 conditionTestInputs: this.testInputs
             });

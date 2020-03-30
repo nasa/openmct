@@ -37,16 +37,13 @@ export default class ConditionManager extends EventEmitter {
         this.compositionLoad = this.composition.load();
         this.subscriptions = {};
         this.telemetryObjects = {};
-        this.testData = conditionSetDomainObject.configuration.conditionTestData || {conditionTestData: [], applied: false};
+        this.testData = {conditionTestData: [], applied: false};
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
             this.conditionSetDomainObject = newDomainObject;
         });
 
-        this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, 'configuration.conditionTestData', (newTestData) => {
-            this.testData = newTestData;
-        });
     }
 
     subscribeToTelemetry(endpoint) {
@@ -271,22 +268,27 @@ export default class ConditionManager extends EventEmitter {
     }
 
     getTestData(metadatum) {
-        const found = this.testData.conditionTestInputs.find((testInput) => (testInput.metadata === metadatum.key) || (testInput.metadata === metadatum.source));
-        return found ? found.value : false;
+        let data = undefined;
+        if (this.testData.applied) {
+            const found = this.testData.conditionTestInputs.find((testInput) => (testInput.metadata === metadatum.source));
+            if (found) {
+                data = found.value;
+            }
+        }
+        return data;
     }
 
     createNormalizedDatum(telemetryDatum, id) {
         return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
-            const value = this.testData.applied && this.getTestData(metadatum);
+            const testValue = this.getTestData(metadatum);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            normalizedDatum[metadatum.key] = value ?  formatter.parse(value) : formatter.parse(telemetryDatum[metadatum.source]);
+            normalizedDatum[metadatum.key] = testValue !== undefined ?  formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
             return normalizedDatum;
         }, {});
     }
 
     updateTestData(testData) {
         this.testData = testData;
-        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionTestData', this.testData);
     }
 
     persistConditions() {

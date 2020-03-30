@@ -34,9 +34,8 @@
         </div>
     </section>
     <TestData :is-editing="isEditing"
-              :test-data="testData"
               :telemetry="telemetryObjs"
-              @persistTestData="persistTestData"
+              @updateTestData="updateTestData"
     />
     <ConditionCollection
         :is-editing="isEditing"
@@ -69,7 +68,6 @@ export default {
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.testData = this.domainObject.configuration.conditionTestData;
     },
     methods: {
         updateCurrentOutput(currentConditionResult) {
@@ -78,7 +76,7 @@ export default {
         updateTelemetry(telemetryObjs) {
             this.telemetryObjs = telemetryObjs;
         },
-        persistTestData(testData) {
+        updateTestData(testData) {
             this.testData = testData;
         }
     }
