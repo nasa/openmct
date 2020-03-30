@@ -369,10 +369,6 @@ export default {
 
             this.$nextTick(() => {
                 const element = this.$el.querySelector(`#${id}`);
-                if (!element) {
-                    return;
-                }
-
                 element.focus();
             });
 
