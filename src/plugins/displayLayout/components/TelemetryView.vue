@@ -37,7 +37,7 @@
             v-if="showLabel"
             class="c-telemetry-view__label"
             :class="[styleClass]"
-            :style="objectStyle"
+            :style="telemetryObjectStyle"
         >
             <div class="c-telemetry-view__label-text">
                 {{ domainObject.name }}
@@ -49,7 +49,7 @@
             :title="fieldName"
             class="c-telemetry-view__value"
             :class="[telemetryClass, !telemetryClass && styleClass]"
-            :style="!telemetryClass && objectStyle"
+            :style="!telemetryClass && telemetryObjectStyle"
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
@@ -62,7 +62,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
-import StyleRuleManager from "../../condition/StyleRuleManager";
+import conditionalStylesMixin from "@/plugins/displayLayout/mixins/objectlStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],
@@ -91,6 +91,7 @@ export default {
     components: {
         LayoutFrame
     },
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -113,8 +114,7 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined,
-            objectStyle: ''
+            currentObjectPath: undefined
         }
     },
     computed: {
@@ -135,7 +135,19 @@ export default {
             }
         },
         styleClass() {
-            return this.objectStyle && this.objectStyle.isStyleInvisible;
+            return this.telemetryObjectStyle && this.telemetryObjectStyle.isStyleInvisible;
+        },
+        telemetryObjectStyle() {
+            let styleObj = Object.assign({}, this.itemStyle);
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
+                    if (styleObj[key]) {
+                        styleObj[key] = '';
+                    }
+                }
+            });
+            return styleObj;
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
@@ -190,15 +202,6 @@ export default {
             this.removeSelectable();
         }
 
-        if (this.unlistenStyles) {
-            this.unlistenStyles();
-        }
-
-        if (this.styleRuleManager) {
-            this.styleRuleManager.destroy();
-            delete this.styleRuleManager;
-        }
-
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
@@ -241,7 +244,6 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
-            this.initObjectStyles();
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -266,30 +268,6 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
-        },
-        initObjectStyles() {
-            if (this.domainObject.configuration) {
-                this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.objectStyles, this.openmct, this.updateStyle.bind(this));
-
-                if (this.unlistenStyles) {
-                    this.unlistenStyles();
-                }
-                this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
-                    //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
-                    this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
-                });
-            }
-        },
-        updateStyle(styleObj) {
-            let keys = Object.keys(styleObj);
-            keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
-                    if (styleObj[key]) {
-                        styleObj[key] = '';
-                    }
-                }
-            });
-            this.objectStyle = styleObj;
         }
     }
 }

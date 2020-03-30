@@ -43,12 +43,10 @@ export default {
                     isChildItem = true;
                     //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
                     //The second item in the selection[0] list is the container object (usually a layout)
-                    if (!domainObject) {
-                        styleProps = {};
-                        layoutItem = selection[0][0].context.layoutItem;
-                        styleProps = this.getStyleProperties(layoutItem);
-                        domainObject = selection[0][1].context.item;
-                    }
+                    styleProps = {};
+                    layoutItem = selection[0][0].context.layoutItem;
+                    styleProps = this.getStyleProperties(layoutItem);
+                    domainObject = selection[0][1].context.item;
                 }
 
                 if (this.component) {
