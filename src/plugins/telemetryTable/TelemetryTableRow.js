@@ -42,6 +42,11 @@ define([], function () {
             return column && column.getFormattedValue(this.datum[key]);
         }
 
+        getParsedValue(key) {
+            let column = this.columns[key];
+            return column && column.getParsedValue(this.datum[key]);
+        }
+
         getCellComponentName(key) {
             let column = this.columns[key];
             return column &&
