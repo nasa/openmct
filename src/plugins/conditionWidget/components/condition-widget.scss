@@ -8,10 +8,25 @@
     padding: $interiorMarginLg $interiorMarginLg * 2;
 }
 
+// Make Condition Widget expand when in a hidden frame Layout context
+// For both static and Flexible Layouts
 .c-so-view--no-frame > .c-so-view__object-view > .c-condition-widget {
     @include abs();
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+}
+
+// Add some margin when a Condition Widget is in a Flexible Layout
+.c-fl .c-so-view--no-frame .c-condition-widget {
+    @include abs(1px);
+}
+
+// When the widget is in the main view, center it in the space
+.l-shell__main-container > .c-condition-widget {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

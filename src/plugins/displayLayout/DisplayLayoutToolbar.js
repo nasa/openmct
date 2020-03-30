@@ -464,6 +464,10 @@ define(['lodash'], function (_) {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
+                    if (!layoutItem) {
+                        return;
+                    }
+
                     if (layoutItem.type === 'subobject-view') {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
                             toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];

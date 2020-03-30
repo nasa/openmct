@@ -28,7 +28,6 @@ describe('ConditionSetCompositionPolicy', () => {
     let testTelemetryObject;
     let openmct = {};
     let parentDomainObject;
-    let composition;
 
     beforeAll(function () {
         testTelemetryObject = {
@@ -57,7 +56,6 @@ describe('ConditionSetCompositionPolicy', () => {
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject']);
         policy = new ConditionSetCompositionPolicy(openmct);
         parentDomainObject = {};
-        composition = {};
     });
 
     it('returns true for object types that are not conditionSets', function () {

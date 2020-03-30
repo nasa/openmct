@@ -33,7 +33,7 @@ export default function ConditionPlugin() {
         openmct.types.addType('conditionSet', {
             name: 'Condition Set',
             key: 'conditionSet',
-            description: 'A set of one or more conditions based on user-specified criteria.',
+            description: 'Monitor and evaluate telemetry values in real-time with a wide variety of criteria. Use to control the styling of many objects in Open MCT.',
             creatable: true,
             cssClass: 'icon-conditional',
             initialize: function (domainObject) {

@@ -26,6 +26,7 @@ export default function ImageryViewProvider(openmct) {
             return {
                 show: function (element) {
                     component = new Vue({
+                        el: element,
                         components: {
                             ImageryViewLayout
                         },
@@ -33,7 +34,6 @@ export default function ImageryViewProvider(openmct) {
                             openmct,
                             domainObject
                         },
-                        el: element,
                         template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
                     });
                 },
