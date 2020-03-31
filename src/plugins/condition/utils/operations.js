@@ -4,7 +4,7 @@ export const OPERATIONS = [
     {
         name: 'equalTo',
         operation: function (input) {
-            return input[0] === parseInt(input[1]);
+            return Number(input[0]) === Number(input[1]);
         },
         text: 'is equal to',
         appliesTo: ['number'],
@@ -16,7 +16,7 @@ export const OPERATIONS = [
     {
         name: 'notEqualTo',
         operation: function (input) {
-            return input[0] !== parseInt(input[1]);
+            return Number(input[0]) !== Number(input[1]);
         },
         text: 'is not equal to',
         appliesTo: ['number'],
@@ -28,7 +28,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThan',
         operation: function (input) {
-            return input[0] > parseInt(input[1]);
+            return Number(input[0]) > Number(input[1]);
         },
         text: 'is greater than',
         appliesTo: ['number'],
@@ -40,7 +40,7 @@ export const OPERATIONS = [
     {
         name: 'lessThan',
         operation: function (input) {
-            return input[0] < parseInt(input[1]);
+            return Number(input[0]) < Number(input[1]);
         },
         text: 'is less than',
         appliesTo: ['number'],
@@ -52,7 +52,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThanOrEq',
         operation: function (input) {
-            return input[0] >= parseInt(input[1]);
+            return Number(input[0]) >= Number(input[1]);
         },
         text: 'is greater than or equal to',
         appliesTo: ['number'],
@@ -64,7 +64,7 @@ export const OPERATIONS = [
     {
         name: 'lessThanOrEq',
         operation: function (input) {
-            return input[0] <= parseInt(input[1]);
+            return Number(input[0]) <= Number(input[1]);
         },
         text: 'is less than or equal to',
         appliesTo: ['number'],
@@ -76,25 +76,33 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            return input[0] > parseInt(input[1]) && input[0] < parseInt(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
         },
         text: 'is between',
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is between ' + values.join(', ') + ' and ' + values[1];
+            return ' is between ' + values[0] + ' and ' + values[1];
         }
     },
     {
         name: 'notBetween',
         operation: function (input) {
-            return input[0] < parseInt(input[1]) || input[0] > parseInt(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
         },
         text: 'is not between',
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is not between ' + values.join(', ') + ' and ' + values[1];
+            return ' is not between ' + values[0] + ' and ' + values[1];
         }
     },
     {

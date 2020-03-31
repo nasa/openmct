@@ -225,6 +225,10 @@ section {
     overflow: hidden;
     + section {
         margin-top: $interiorMargin;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 3;
+        }
     }
 
     &.is-expanded {

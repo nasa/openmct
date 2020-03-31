@@ -250,9 +250,6 @@ export default {
         clearDependentFields(el) {
             if (el === this.$refs.telemetrySelect) {
                 this.criterion.metadata = '';
-                this.criterion.operation = '';
-                this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
-                this.inputCount = 0;
             } else if (el === this.$refs.metadataSelect) {
                 if (!this.filteredOps.find(operation => operation.name === this.criterion.operation)) {
                     this.criterion.operation = '';
