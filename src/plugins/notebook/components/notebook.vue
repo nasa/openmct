@@ -84,7 +84,7 @@
             >
                 <NotebookEntry v-for="entry in filteredAndSortedEntries"
                                ref="notebookEntry"
-                               :key="entry.key"
+                               :key="entry.id"
                                :entry="entry"
                                :domain-object="internalDomainObject"
                                :selected-page="getSelectedPage()"
@@ -366,6 +366,11 @@ export default {
             this.updateDefaultNotebook(selectedSection, selectedPage);
             const notebookStorage = getDefaultNotebook();
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
+
+            this.$nextTick(() => {
+                const element = this.$el.querySelector(`#${id}`);
+                element.focus();
+            });
 
             return id;
         },

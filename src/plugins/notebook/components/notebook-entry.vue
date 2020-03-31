@@ -10,7 +10,8 @@
             <span>{{ formatTime(entry.createdOn, 'HH:mm:ss') }}</span>
         </div>
         <div class="c-ne__content">
-            <div class="c-ne__text"
+            <div :id="entry.id"
+                 class="c-ne__text"
                  :class="{'c-input-inline' : !readOnly }"
                  :contenteditable="!readOnly"
                  :style="!entry.text.length ? defaultEntryStyle : ''"
