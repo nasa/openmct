@@ -22,6 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import {OPERATIONS} from '../utils/operations';
+import {computeCondition} from "@/plugins/condition/utils/evaluator";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -42,21 +43,32 @@ export default class TelemetryCriterion extends EventEmitter {
         this.id = telemetryDomainObjectDefinition.id;
         this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
+        this.telemetryObjects = Object.assign({}, telemetryDomainObjectDefinition.telemetryObjects);
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.telemetryObject = telemetryDomainObjectDefinition.telemetryObject;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.telemetry);
-        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
-        this.emitEvent('criterionUpdated', this);
+        this.telemetryDataCache = {};
     }
 
     updateTelemetry(telemetryObjects) {
-        this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
+        this.telemetryObjects = Object.assign({}, telemetryObjects);
     }
 
-    formatData(data) {
+    formatData(data, telemetryObjects) {
+        if (data) {
+            this.telemetryDataCache[data.id] = this.computeResult(data);
+        }
+
+        let keys = Object.keys(telemetryObjects);
+        keys.forEach((key) => {
+            let telemetryObject = telemetryObjects[key];
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (this.telemetryDataCache[id] === undefined) {
+                this.telemetryDataCache[id] = false;
+            }
+        });
+
         const datum = {
-            result: this.computeResult(data)
+            result: computeCondition(this.telemetryDataCache, this.telemetry === 'all')
         };
 
         if (data) {
@@ -68,16 +80,16 @@ export default class TelemetryCriterion extends EventEmitter {
         return datum;
     }
 
-    handleSubscription(data) {
+    handleSubscription(data, telemetryObjects) {
         if(this.isValid()) {
-            this.emitEvent('criterionResultUpdated', this.formatData(data));
+            this.emitEvent('criterionResultUpdated', this.formatData(data, telemetryObjects));
         } else {
-            this.emitEvent('criterionResultUpdated', this.formatData({}));
+            this.emitEvent('criterionResultUpdated', this.formatData({}, telemetryObjects));
         }
     }
 
     findOperation(operation) {
-        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+        for (let i=0; i < OPERATIONS.length; i++) {
             if (operation === OPERATIONS[i].name) {
                 return OPERATIONS[i].operation;
             }
@@ -109,7 +121,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     isValid() {
-        return this.telemetryObject && this.metadata && this.operation;
+        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
 
     requestLAD(options) {
@@ -122,27 +134,38 @@ export default class TelemetryCriterion extends EventEmitter {
         );
 
         if (!this.isValid()) {
-            return {
-                id: this.id,
-                data: this.formatData({})
-            };
+            return this.formatData({}, options.telemetryObjects);
         }
 
-        return this.telemetryAPI.request(
-            this.telemetryObject,
-            options
-        ).then(results => {
-            const latestDatum = results.length ? results[results.length - 1] : {};
-            return {
-                id: this.id,
-                data: this.formatData(latestDatum)
-            };
-        });
+        const telemetryRequests = options.telemetryObjects
+            .map(telemetryObject => this.telemetryAPI.request(
+                telemetryObject,
+                options
+            ));
+
+        return Promise.all(telemetryRequests)
+            .then(telemetryRequestsResults => {
+                telemetryRequestsResults.forEach((results, index) => {
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    if (index === telemetryRequestsResults.length-1) {
+                        //when the last result is computed, we return the result
+                        return {
+                            id: this.id,
+                            data: this.formatData(latestDatum, options.telemetryObjects)
+                        };
+                    } else {
+                        if (latestDatum) {
+                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
+                        }
+                    }
+                });
+            });
     }
 
     destroy() {
-        this.off(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
         this.emitEvent('criterionRemoved');
+        delete this.telemetryObjects;
+        delete this.telemetryDataCache;
         delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
     }

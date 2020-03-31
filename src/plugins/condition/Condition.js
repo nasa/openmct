@@ -25,6 +25,7 @@ import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
 import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
+import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
 /*
 * conditionConfiguration = {
@@ -72,7 +73,11 @@ export default class ConditionClass extends EventEmitter {
             return;
         }
         this.criteria.forEach(criterion => {
-            criterion.emit(`subscription:${datum.id}`, datum);
+            if (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any')) {
+                criterion.handleSubscription(datum, this.conditionManager.telemetryObjects);
+            } else {
+                criterion.emit(`subscription:${datum.id}`, datum);
+            }
         });
     }
 
@@ -120,8 +125,13 @@ export default class ConditionClass extends EventEmitter {
      *  adds criterion to the condition.
      */
     addCriterion(criterionConfiguration) {
+        let criterion;
         let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
-        let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        if (criterionConfiguration.telemetry && (criterionConfiguration.telemetry === 'any' || criterionConfiguration.telemetry === 'all')) {
+            criterion = new AllTelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        } else {
+            criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        }
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
         if (!this.criteria) {
