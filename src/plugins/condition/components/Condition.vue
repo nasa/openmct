@@ -257,7 +257,9 @@ export default {
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0,
             selectedTelemetryName: '',
-            selectedFieldName: ''
+            selectedFieldName: '',
+            moveIndex: 0,
+            targetIndex: 0
         };
     },
     computed: {
@@ -331,47 +333,61 @@ export default {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
+            this.moveIndex = this.conditionIndex;
             this.$emit('setMoveIndex', this.conditionIndex);
         },
         dragEnd(e) {
             e.dataTransfer.clearData();
         },
-        dropCondition(index) {
-            let isDefaultCondition = (index === this.conditionCollection.length - 1);
-            if (isDefaultCondition) { return }
-            if (index > this.moveIndex) { index-- } // for 'downward' move
-            const oldIndexArr = Object.keys(this.conditionCollection);
-            const move = function (arr, old_index, new_index) {
-                while (old_index < 0) {
-                    old_index += arr.length;
-                }
-                while (new_index < 0) {
-                    new_index += arr.length;
-                }
-                if (new_index >= arr.length) {
-                    var k = new_index - arr.length;
-                    while ((k--) + 1) {
-                        arr.push(undefined);
-                    }
-                }
-                arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-                return arr;
-            }
-            const newIndexArr = move(oldIndexArr, this.moveIndex, index);
-            const reorderPlan = [];
+        dropCondition() {
+            console.log('dropCondition');
+            // let targetIndex = 
+            // let isDefaultCondition = (this.conditionIndex === this.conditionCollection.length - 1);
+            // if (isDefaultCondition) { return }
+            // if (this.conditionIndex > this.moveIndex) { index-- } // for 'downward' move
+            // const oldIndexArr = Object.keys(this.conditionCollection);
+            // const move = function (arr, old_index, new_index) {
+            //     while (old_index < 0) {
+            //         old_index += arr.length;
+            //     }
+            //     while (new_index < 0) {
+            //         new_index += arr.length;
+            //     }
+            //     if (new_index >= arr.length) {
+            //         var k = new_index - arr.length;
+            //         while ((k--) + 1) {
+            //             arr.push(undefined);
+            //         }
+            //     }
+            //     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+            //     return arr;
+            // }
+            // const newIndexArr = move(oldIndexArr, this.moveIndex, index);
+            // const reorderPlan = [];
 
-            for (let i = 0; i < oldIndexArr.length; i++) {
-                reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
-            }
+            // for (let i = 0; i < oldIndexArr.length; i++) {
+            //     reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
+            // }
 
-            this.reorder(reorderPlan);
-            this.dragCounter = 0;
-            event.target.closest('.c-condition-h').classList.remove("dragging");
-            this.isDragging = false;
+            // this.reorder(reorderPlan);
+            // this.dragCounter = 0;
+            // event.target.closest('.c-condition-h').classList.remove("dragging");
+            // this.isDragging = false;
         },
-        dragEnter(index) {
+        dragEnter() {
             // event.preventDefault();
-            // // this.dragCounter++;
+            console.log('dragEnter');
+            let targetIndex = 0;
+            let conditionHolderArray = Array.from(document.querySelector('.c-condition-h'));
+            if (event.target.classList.contains('c-condition-h')) {
+                conditionHolderArray.forEach((ch, index) => {
+                    if (event.target === ch) {
+                        targetIndex = index;
+                        return;
+                    }
+                })
+                console.log('targetIndex', targetIndex);
+            }
             // if (index > this.moveIndex) { index-- } // for 'downward' move
             // if (event.target.parentElement.classList.contains('c-condition-h') &&
             //    index !== this.conditionCollection.length - 1 &&
