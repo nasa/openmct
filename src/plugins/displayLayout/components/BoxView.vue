@@ -37,7 +37,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
-import conditionalStylesMixin from '../mixins/objectlStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 
 export default {
     makeDefinition() {
