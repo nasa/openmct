@@ -48,7 +48,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.0",
     "location-bar": "^3.0.1",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.15",
     "markdown-toc": "^0.11.7",
     "marked": "^0.3.5",
     "mini-css-extract-plugin": "^0.4.1",
