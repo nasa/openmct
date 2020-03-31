@@ -47,6 +47,13 @@ export default {
             )
         }
     },
+    watch: {
+        value(inputValue) {
+            if (!inputValue.length) {
+                this.clearInput();
+            }
+        }
+    },
     methods: {
         clearInput() {
             // Clear the user's input and set 'active' to false

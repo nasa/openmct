@@ -29,7 +29,7 @@
 >
     <div class="c-so-view__header">
         <div class="c-object-label"
-             :class="cssClass"
+             :class="[cssClass, classList]"
         >
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
@@ -96,6 +96,16 @@ export default {
         return {
             cssClass,
             complexContent
+        }
+    },
+    computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
         }
     },
     methods: {
