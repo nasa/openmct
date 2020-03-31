@@ -44,7 +44,7 @@ export default function ConditionPlugin() {
                         id: uuid(),
                         configuration: {
                             name: 'Default',
-                            output: 'false',
+                            output: 'Default',
                             trigger: 'all',
                             criteria: []
                         },
