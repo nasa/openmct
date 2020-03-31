@@ -56,6 +56,10 @@ define(function () {
                 return formattedValue;
             }
         }
+
+        getParsedValue(telemetryDatum) {
+            return this.formatter.parse(telemetryDatum);
+        }
     }
 
     return TelemetryTableColumn;
