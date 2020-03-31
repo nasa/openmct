@@ -66,7 +66,7 @@ export default {
     data() {
         return {
             currentConditionOutput: '',
-            defaultConditionOutput: 'No output available',
+            defaultConditionOutput: '',
             telemetryObjs: [],
             testData: {}
         }
