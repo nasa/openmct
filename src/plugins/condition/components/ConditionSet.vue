@@ -30,13 +30,16 @@
             <template v-if="currentConditionOutput">
                 {{ currentConditionOutput }}
             </template>
-            <template v-else>No output selected</template>
+            <template v-else>
+                {{ defaultConditionOutput }}
+            </template>
         </div>
     </section>
     <TestData :is-editing="isEditing" />
     <ConditionCollection
         :is-editing="isEditing"
         @conditionSetResultUpdated="updateCurrentOutput"
+        @updateDefaultOutput="updateDefaultOutput"
     />
 </div>
 </template>
@@ -56,7 +59,8 @@ export default {
     },
     data() {
         return {
-            currentConditionOutput: ''
+            currentConditionOutput: '',
+            defaultConditionOutput: 'No output available'
         }
     },
     mounted() {
@@ -65,6 +69,9 @@ export default {
     methods: {
         updateCurrentOutput(currentConditionResult) {
             this.currentConditionOutput = currentConditionResult.output;
+        },
+        updateDefaultOutput(output) {
+            this.defaultConditionOutput = output;
         }
     }
 };
