@@ -86,11 +86,6 @@
                 <select v-model="selectedOutputSelection"
                         @change="setOutputValue"
                 >
-                    <option
-                        disabled
-                    >
-                        - Select Output -
-                    </option>
                     <option v-for="option in outputOptions"
                             :key="option"
                             :value="option"
