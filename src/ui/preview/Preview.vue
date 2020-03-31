@@ -121,7 +121,7 @@ export default {
 
             this.viewKey = view.key;
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.viewContainer.classList.add('u-angular-object-view-wrapper');
             this.$refs.objectView.append(this.viewContainer);
 
             this.view = this.currentView.view(this.domainObject, this.objectPath);

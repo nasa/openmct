@@ -26,17 +26,17 @@
     </div>
 
     <div v-if="expanded">
-        <ul class="c-properties">
+        <ul class="c-inspect-properties">
             <div
                 v-if="!isEditing && persistedFilters.useGlobal"
-                class="c-properties__label span-all"
+                class="c-inspect-properties__label span-all"
             >
                 Uses global filter
             </div>
 
             <div
                 v-if="isEditing"
-                class="c-properties__label span-all"
+                class="c-inspect-properties__label span-all"
             >
                 <toggle-switch
                     :id="keyString"

@@ -50,9 +50,15 @@
             display: flex;
             flex-flow: column nowrap;
             overflow-x: hidden;
+        }
+    }
 
+    &__pane-tree,
+    &__pane-main {
+        .l-pane__contents {
             > * {
                 flex: 0 0 auto;
+
                 + * {
                     margin-top: $interiorMarginLg;
                 }

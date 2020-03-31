@@ -40,7 +40,7 @@
         display: inline-block;
         font-family: symbolsfont;
         font-size: 0.8em;
-        margin-right: $interiorMargin;
+        margin-right: $interiorMarginSm;
         @if $glyph != null {
             content: $glyph $impStr;
         }
@@ -69,6 +69,30 @@
 @mixin andUprLwr {
     &.is-limit--upr:before { content: $glyph-icon-arrow-up !important; }
     &.is-limit--lwr:before { content: $glyph-icon-arrow-down !important; }
+}
+
+@mixin uIndicator($bg, $fg, $glyph) {
+    background: $bg;
+    color: $fg;
+
+    &[class*='--with-icon'] {
+        &:before {
+            color: $fg;
+            display: inline-block;
+            font-family: symbolsfont;
+            margin-right: $interiorMarginSm;
+            @if $glyph != null {
+                content: $glyph;
+            }
+        }
+    }
+
+    &[class*='--block'] {
+        border-radius: $controlCr;
+        display: inline-block;
+        padding: 2px $interiorMargin;
+    }
+
 }
 
 /*************************************************** STYLES */
@@ -108,8 +132,9 @@ tr {
 }
 
 /*************************************************** STATUS */
-[class*='s-status'] {
+[class*='s-status-icon'] {
     &:before {
+        font-family: symbolsfont;
         margin-right: $interiorMargin;
     }
 }
@@ -172,3 +197,5 @@ tr {
     }
 }
 
+.u-alert { @include uIndicator($colorAlert, $colorAlertFg, $glyph-icon-alert-triangle); }
+.u-error { @include uIndicator($colorError, $colorErrorFg, $glyph-icon-alert-triangle); }

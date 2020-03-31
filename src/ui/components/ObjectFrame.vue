@@ -64,7 +64,8 @@ const SIMPLE_CONTENT_TYPES = [
     'clock',
     'timer',
     'summary-widget',
-    'hyperlink'
+    'hyperlink',
+    'conditionWidget'
 ];
 
 export default {

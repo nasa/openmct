@@ -2,11 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-<<<<<<< Updated upstream
-    "created": 1581619121103
-=======
-    "created": 1585071193084
->>>>>>> Stashed changes
+    "created": 1585252107436
   },
   "iconSets": [
     {
@@ -15,7 +11,7 @@
           "order": 77,
           "id": 47,
           "name": "icon-alert-rect-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59648,
           "tempChar": ""
         },
@@ -23,7 +19,7 @@
           "order": 76,
           "id": 48,
           "name": "icon-alert-triangle-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59649,
           "tempChar": ""
         },
@@ -31,7 +27,7 @@
           "order": 20,
           "id": 112,
           "name": "icon-arrow-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59650,
           "tempChar": ""
         },
@@ -39,7 +35,7 @@
           "order": 36,
           "id": 94,
           "name": "icon-arrow-double-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59651,
           "tempChar": ""
         },
@@ -47,7 +43,7 @@
           "order": 143,
           "id": 96,
           "name": "icon-arrow-tall-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59652,
           "tempChar": ""
         },
@@ -55,7 +51,7 @@
           "order": 21,
           "id": 111,
           "name": "icon-arrow-right",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59653,
           "tempChar": ""
         },
@@ -63,7 +59,7 @@
           "order": 102,
           "id": 18,
           "name": "icon-arrow-right-equilateral",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59654,
           "tempChar": ""
         },
@@ -71,7 +67,7 @@
           "order": 19,
           "id": 113,
           "name": "icon-arrow-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59655,
           "tempChar": ""
         },
@@ -79,7 +75,7 @@
           "order": 37,
           "id": 93,
           "name": "icon-arrow-double-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59656,
           "tempChar": ""
         },
@@ -87,7 +83,7 @@
           "order": 35,
           "id": 95,
           "name": "icon-arrow-tall-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59657,
           "tempChar": ""
         },
@@ -95,7 +91,7 @@
           "order": 18,
           "id": 114,
           "name": "icon-arrow-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59658,
           "tempChar": ""
         },
@@ -103,7 +99,7 @@
           "order": 17,
           "id": 115,
           "name": "icon-asterisk",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59659,
           "tempChar": ""
         },
@@ -111,7 +107,7 @@
           "order": 128,
           "id": 59,
           "name": "icon-bell",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59660,
           "tempChar": ""
         },
@@ -119,7 +115,7 @@
           "order": 123,
           "id": 103,
           "name": "icon-box-round-corners",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59661,
           "tempChar": ""
         },
@@ -127,7 +123,7 @@
           "order": 129,
           "id": 58,
           "name": "icon-box-with-arrow-cursor",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59662,
           "tempChar": ""
         },
@@ -135,7 +131,7 @@
           "order": 142,
           "id": 120,
           "name": "icon-check",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59663,
           "tempChar": ""
         },
@@ -143,7 +139,7 @@
           "order": 25,
           "id": 107,
           "name": "icon-connectivity",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59664,
           "tempChar": ""
         },
@@ -151,7 +147,7 @@
           "order": 44,
           "id": 84,
           "name": "icon-database-in-brackets",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59665,
           "tempChar": ""
         },
@@ -159,7 +155,7 @@
           "order": 75,
           "id": 49,
           "name": "icon-eye-open",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59666,
           "tempChar": ""
         },
@@ -167,7 +163,7 @@
           "order": 5,
           "id": 129,
           "name": "icon-gear",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59667,
           "tempChar": ""
         },
@@ -175,7 +171,7 @@
           "order": 66,
           "id": 60,
           "name": "icon-hourglass",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59668,
           "tempChar": ""
         },
@@ -183,7 +179,7 @@
           "order": 65,
           "id": 61,
           "name": "icon-info",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59669,
           "tempChar": ""
         },
@@ -191,7 +187,7 @@
           "order": 53,
           "id": 75,
           "name": "icon-link",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59670,
           "tempChar": ""
         },
@@ -199,7 +195,7 @@
           "order": 42,
           "id": 86,
           "name": "icon-lock",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59671,
           "tempChar": ""
         },
@@ -207,7 +203,7 @@
           "order": 49,
           "id": 79,
           "name": "icon-minus",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59672,
           "tempChar": ""
         },
@@ -215,7 +211,7 @@
           "order": 22,
           "id": 110,
           "name": "icon-people",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59673,
           "tempChar": ""
         },
@@ -223,7 +219,7 @@
           "order": 46,
           "id": 82,
           "name": "icon-person",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59674,
           "tempChar": ""
         },
@@ -231,7 +227,7 @@
           "order": 38,
           "id": 92,
           "name": "icon-plus",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59675,
           "tempChar": ""
         },
@@ -239,7 +235,7 @@
           "order": 164,
           "id": 137,
           "name": "icon-plus-in-rect",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59676,
           "tempChar": ""
         },
@@ -247,7 +243,7 @@
           "order": 6,
           "id": 128,
           "name": "icon-trash",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59677,
           "tempChar": ""
         },
@@ -255,7 +251,7 @@
           "order": 140,
           "id": 122,
           "name": "icon-x-heavy",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59678,
           "tempChar": ""
         },
@@ -263,7 +259,7 @@
           "order": 78,
           "id": 46,
           "name": "icon-brackets",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59679,
           "tempChar": ""
         },
@@ -271,7 +267,7 @@
           "order": 93,
           "id": 27,
           "name": "icon-crosshair",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59680,
           "tempChar": ""
         },
@@ -279,7 +275,7 @@
           "order": 91,
           "id": 31,
           "name": "icon-grippy",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59681,
           "tempChar": ""
         },
@@ -287,7 +283,7 @@
           "order": 121,
           "id": 118,
           "name": "icon-grid",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59682,
           "tempChar": ""
         },
@@ -295,7 +291,7 @@
           "order": 154,
           "id": 136,
           "name": "icon-grippy-ew",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59683,
           "tempChar": ""
         },
@@ -303,7 +299,7 @@
           "order": 152,
           "id": 135,
           "name": "icon-columns",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59684,
           "tempChar": ""
         },
@@ -311,7 +307,7 @@
           "order": 153,
           "id": 134,
           "name": "icon-rows",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59685,
           "tempChar": ""
         },
@@ -319,7 +315,7 @@
           "order": 162,
           "id": 140,
           "name": "icon-filter",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59686,
           "tempChar": ""
         },
@@ -327,7 +323,7 @@
           "order": 161,
           "id": 139,
           "name": "icon-filter-outline",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59687,
           "tempChar": ""
         },
@@ -335,7 +331,7 @@
           "order": 155,
           "id": 142,
           "name": "icon-suitcase",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59688,
           "tempChar": ""
         },
@@ -343,7 +339,7 @@
           "order": 169,
           "id": 145,
           "name": "icon-cursor-locked",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59689,
           "tempChar": ""
         },
@@ -351,17 +347,15 @@
           "order": 176,
           "id": 150,
           "name": "icon-flag",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59690,
           "tempChar": ""
         },
         {
-<<<<<<< Updated upstream
-=======
           "order": 177,
           "id": 152,
           "name": "icon-eye-disabled",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59691,
           "tempChar": ""
         },
@@ -369,1090 +363,737 @@
           "order": 179,
           "id": 153,
           "name": "icon-notebook-page",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59692,
           "tempChar": ""
         },
         {
->>>>>>> Stashed changes
           "order": 27,
           "id": 105,
           "name": "icon-arrows-right-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59904,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 26,
           "id": 106,
           "name": "icon-arrows-up-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59905,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 68,
           "id": 56,
           "name": "icon-bullet",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59906,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 150,
           "id": 133,
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59907,
           "name": "icon-calendar",
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 45,
           "id": 83,
           "name": "icon-chain-links",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59908,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 73,
           "id": 51,
           "name": "icon-download",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59909,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 39,
           "id": 91,
           "name": "icon-duplicate",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59910,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 50,
           "id": 78,
           "name": "icon-folder-new",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59911,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 138,
           "id": 124,
           "name": "icon-fullscreen-collapse",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59912,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 139,
           "id": 123,
           "name": "icon-fullscreen-expand",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59913,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 122,
           "id": 104,
           "name": "icon-layers",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59914,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 151,
           "id": 102,
           "name": "icon-line-horz",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59915,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 100,
           "id": 20,
           "name": "icon-magnify",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59916,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 99,
           "id": 21,
           "name": "icon-magnify-in",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59917,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 101,
           "id": 19,
           "name": "icon-magnify-out-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59918,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 103,
           "id": 17,
           "name": "icon-menu",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59919,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 124,
           "id": 89,
           "name": "icon-move",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59920,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 7,
           "id": 127,
           "name": "icon-new-window",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59921,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 63,
           "id": 63,
           "name": "icon-paint-bucket-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59922,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 15,
           "id": 117,
           "name": "icon-pencil",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59923,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 54,
           "id": 72,
           "name": "icon-pencil-edit-in-place",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59924,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 40,
           "id": 90,
           "name": "icon-play",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59925,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 125,
           "id": 88,
           "name": "icon-pause",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59926,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 119,
           "id": 13,
           "name": "icon-plot-resource",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59927,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 48,
           "id": 80,
           "name": "icon-pointer-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59928,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 47,
           "id": 81,
           "name": "icon-pointer-right",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59929,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 85,
           "id": 37,
           "name": "icon-refresh",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59930,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 55,
           "id": 71,
           "name": "icon-save",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59931,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 56,
           "id": 70,
           "name": "icon-save-as",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59932,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 58,
           "id": 68,
           "name": "icon-sine",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59933,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 113,
           "id": 5,
           "name": "icon-font",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59934,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 41,
           "id": 87,
           "name": "icon-thumbs-strip",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59935,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 146,
           "id": 99,
           "name": "icon-two-parts-both",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59936,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 145,
           "id": 98,
           "name": "icon-two-parts-one-only",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59937,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 82,
           "id": 40,
           "name": "icon-resync",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59938,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 86,
           "id": 36,
           "name": "icon-reset",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59939,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 61,
           "id": 65,
           "name": "icon-x-in-circle",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59940,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 84,
           "id": 38,
           "name": "icon-brightness",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59941,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 83,
           "id": 39,
           "name": "icon-contrast",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59942,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 87,
           "id": 35,
           "name": "icon-expand",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59943,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 89,
           "id": 33,
           "name": "icon-list-view",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59944,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 133,
           "id": 28,
           "name": "icon-grid-snap-to",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59945,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 132,
           "id": 29,
           "name": "icon-grid-snap-no",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59946,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 94,
           "id": 26,
           "name": "icon-frame-show",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59947,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 95,
           "id": 25,
           "name": "icon-frame-hide",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59948,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 97,
           "id": 23,
           "name": "icon-import",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59949,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 96,
           "id": 24,
           "name": "icon-export",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59950,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 114,
           "id": 4,
           "name": "icon-font-size",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59951,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 163,
           "id": 141,
           "name": "icon-clear-data",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59952,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 173,
           "id": 149,
           "name": "icon-history",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59953,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60160,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 104,
           "id": 16,
           "name": "icon-activity-mode",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60161,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 137,
           "id": 125,
           "name": "icon-autoflow-tabular",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60162,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 115,
           "id": 3,
           "name": "icon-clock",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60163,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 2,
           "id": 132,
           "name": "icon-database",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60164,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 3,
           "id": 131,
           "name": "icon-database-query",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60165,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 67,
           "id": 57,
           "name": "icon-dataset",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60166,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 59,
           "id": 67,
           "name": "icon-datatable",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60167,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 136,
           "id": 126,
           "name": "icon-dictionary",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60168,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 51,
           "id": 77,
           "name": "icon-folder",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60169,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 147,
           "id": 100,
           "name": "icon-image",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60170,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 4,
           "id": 130,
           "name": "icon-layout",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60171,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 24,
           "id": 108,
           "name": "icon-object",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60172,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 52,
           "id": 76,
           "name": "icon-object-unknown",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60173,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 105,
           "id": 15,
           "name": "icon-packet",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60174,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 126,
           "id": 74,
           "name": "icon-page",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60175,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 130,
           "id": 44,
           "name": "icon-plot-overlay",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60176,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 80,
           "id": 42,
           "name": "icon-plot-stacked",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60177,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 134,
           "id": 14,
           "name": "icon-session",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60178,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 109,
           "id": 9,
           "name": "icon-tabular",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60179,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 107,
           "id": 11,
           "name": "icon-tabular-lad",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60180,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 106,
           "id": 12,
           "name": "icon-tabular-lad-set",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60181,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 70,
           "id": 54,
           "name": "icon-tabular-realtime",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60182,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 60,
           "id": 66,
           "name": "icon-tabular-scrolling",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60183,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 131,
           "id": 43,
           "name": "icon-telemetry",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60184,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 108,
           "id": 10,
           "name": "icon-timeline",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60185,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 81,
           "id": 41,
           "name": "icon-timer",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60186,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 69,
           "id": 55,
           "name": "icon-topic",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60187,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 79,
           "id": 45,
           "name": "icon-box-with-dashed-lines-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60188,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 90,
           "id": 32,
           "name": "icon-summary-widget",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60189,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 92,
           "id": 30,
           "name": "icon-notebook",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60190,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 168,
           "id": 0,
           "name": "icon-tabs-view",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60191,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 117,
           "id": 1,
           "name": "icon-flexible-layout",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60192,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 166,
           "id": 144,
           "name": "icon-generator-sine",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60193,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 167,
           "id": 143,
           "name": "icon-generator-event",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60194,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 165,
           "id": 138,
           "name": "icon-gauge-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60195,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 170,
           "id": 148,
           "name": "icon-spectra",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60196,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 171,
           "id": 147,
           "name": "icon-telemetry-spectra",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60197,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 172,
           "id": 146,
           "name": "icon-pushbutton",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60198,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
         },
         {
           "order": 174,
           "id": 151,
           "name": "icon-conditional",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60199,
-<<<<<<< Updated upstream
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> Stashed changes
+        },
+        {
+          "order": 178,
+          "id": 154,
+          "name": "icon-condition-widget",
+          "prevSize": 24,
+          "code": 60200,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -2028,8 +1669,6 @@
           "isMulticolor2": false
         },
         {
-<<<<<<< Updated upstream
-=======
           "id": 152,
           "paths": [
             "M209.46 608.68q-7.46-9.86-14.26-20.28c-14.737-21.984-27.741-47.184-37.759-73.847l-0.841-2.553c11.078-29.259 24.068-54.443 39.51-77.869l-0.91 1.469c23.221-34.963 50.705-64.8 82.207-89.793l0.793-0.607c57.663-45.719 130.179-75.053 209.311-79.947l1.069-0.053 114.48-140.88c-27.366-5.017-58.869-7.898-91.041-7.92l-0.019-0c-245.8 0-452.2 168-510.8 395.6 21.856 82.93 60.906 154.847 113.325 214.773l-0.525-0.613z",
@@ -2056,15 +1695,14 @@
           "attrs": [
             {}
           ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "grid": 16,
           "tags": [
             "icon-notebook-page"
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false
+          ]
         },
         {
->>>>>>> Stashed changes
           "id": 105,
           "paths": [
             "M1024 512l-448 512v-1024z",
@@ -3236,6 +2874,21 @@
           "grid": 16,
           "tags": [
             "icon-conditional"
+          ]
+        },
+        {
+          "id": 154,
+          "paths": [
+            "M832 0h-640c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192zM512 768l-384-256 384-256 384 256z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-condition-widget"
           ]
         }
       ],

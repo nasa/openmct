@@ -65,6 +65,11 @@ button {
         @include desktop() {
             font-size: 6px;
         }
+
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-size: 1.1em;
+        }
     }
 
     &.is-active {
@@ -81,6 +86,20 @@ button {
 /********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+
+    &--section-collapse {
+        color: inherit;
+        display: block;
+        transition: transform $transOutTime;
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+        }
+
+        &.is-collapsed {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .c-click-link {
@@ -212,6 +231,49 @@ button {
     }
 }
 
+/******************************************************** DRAG AFFORDANCES */
+.c-grippy {
+    $d: 10px;
+    @include grippy($c: $colorItemTreeVC, $dir: 'y');
+    width: $d; height: $d;
+
+    &--vertical-drag {
+        cursor: ns-resize;
+    }
+}
+
+/******************************************************** SECTION */
+section {
+    flex: 0 0 auto;
+    overflow: hidden;
+    + section {
+        margin-top: $interiorMargin;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 3;
+        }
+    }
+
+    &.is-expanded {
+        flex: 0 1 auto;
+    }
+
+    .c-section__header {
+        @include propertiesHeader();
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+    > [class*='__label'] {
+        flex: 1 1 auto;
+        text-transform: uppercase;
+    }
+}
+
 /******************************************************** FORM ELEMENTS */
 input, textarea {
     font-family: inherit;
@@ -324,7 +386,7 @@ select {
     background-position: right .4em top 80%, 0 0;
     border: none;
     border-radius: $controlCr;
-    padding: 1px 20px 1px $interiorMargin;
+    padding: 2px 20px 2px $interiorMargin;
 
     *,
     option {
@@ -645,6 +707,11 @@ select {
     height: 100%;
 }
 
+.c-row-separator {
+    border-top: 1px solid $colorInteriorBorder;
+    height: 1px;
+}
+
 .c-toolbar {
     > * + * {
         margin-left: 2px;
@@ -746,7 +813,25 @@ select {
     }
 }
 
-/***************************************************** SLIDERS */
+/******************************************************** STYLE EDITING */
+.c-style {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+
+    > * + * { margin-left: $interiorMargin; }
+}
+
+.c-style-thumb {
+    background-size: cover;
+    border: 1px solid transparent;
+    border-radius: $basicCr;
+    box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
+    flex: 0 0 auto;
+    padding: $interiorMargin $interiorMarginLg;
+}
+
+/******************************************************** SLIDERS */
 .c-slider {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }

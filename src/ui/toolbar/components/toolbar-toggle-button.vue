@@ -32,7 +32,9 @@ export default {
     },
     methods: {
         cycle() {
-            this.$emit('change', this.nextValue.value, this.options);
+            if (this.options.isEditing === undefined || this.options.isEditing) {
+                this.$emit('change', this.nextValue.value, this.options);
+            }
         }
     }
 };
