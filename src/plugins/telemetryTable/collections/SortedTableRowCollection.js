@@ -201,7 +201,7 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.rows = _.sortByOrder(this.rows, 'datum.' + sortOptions.key, sortOptions.direction);
+                    this.rows = _.sortByOrder(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
                     this.emit('sort');
                 }
                 // Return duplicate to avoid direct modification of underlying object
@@ -222,7 +222,7 @@ define(
             }
 
             getValueForSortColumn(row) {
-                return row.datum[this.sortOptions.key];
+                return row.getParsedValue(this.sortOptions.key);
             }
 
             remove(removedRows) {
