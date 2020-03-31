@@ -24,8 +24,8 @@
 <div class="c-condition-h"
      @drop.prevent="dropCondition"
      @dragover.prevent
-     @dragenter="dragEnter"
-     @dragleave="dragLeave"
+     @dragenter.prevent="dragEnter"
+     @dragleave.prevent="dragLeave"
      @dragend="dragEnd"
 >
     <div v-if="isEditing"
@@ -259,7 +259,8 @@ export default {
             selectedTelemetryName: '',
             selectedFieldName: '',
             moveIndex: 0,
-            targetIndex: 0
+            targetIndex: 0,
+            draggingOver: false
         };
     },
     computed: {
@@ -375,34 +376,25 @@ export default {
             // this.isDragging = false;
         },
         dragEnter() {
-            // event.preventDefault();
-            console.log('dragEnter');
-            let targetIndex = 0;
-            let conditionHolderArray = Array.from(document.querySelector('.c-condition-h'));
-            if (event.target.classList.contains('c-condition-h')) {
-                conditionHolderArray.forEach((ch, index) => {
-                    if (event.target === ch) {
-                        targetIndex = index;
+            let conditionDivArray = Array.from(document.querySelectorAll('.c-condition'));
+            if (event.target.classList.contains('c-condition')) {
+                conditionDivArray.forEach((cd, index) => {
+                    if (event.target === cd) {
+                        this.targetIndex = index;
                         return;
                     }
-                })
-                console.log('targetIndex', targetIndex);
+                });
+                if (this.targetIndex > this.moveIndex) { this.targetIndex-- } // for 'downward' move
+                if (this.moveIndex !== this.targetIndex && this.targetIndex !== conditionDivArray.length - 2) {
+                    this.draggingOver = true;
+                    event.target.parentElement.classList.add("dragging");
+                }
             }
-            // if (index > this.moveIndex) { index-- } // for 'downward' move
-            // if (event.target.parentElement.classList.contains('c-condition-h') &&
-            //    index !== this.conditionCollection.length - 1 &&
-            //    this.moveIndex !== index) {
-            //     this.isDraggingOver = true;
-            //     event.target.parentElement.classList.add("dragging");
-            // }
         },
         dragLeave() {
-            // console.log('dragLeave');
-            // this.isDraggingOver = true;
-            // // this.dragCounter--;
-            // if (this.dragCounter === 0) {
-            //     event.target.closest('.c-condition-h').classList.remove("dragging");
-            // }
+            if (event.target.classList.contains('c-condition-h')) {
+                event.target.classList.remove("dragging");
+            }
         },
         destroy() {
         },
