@@ -9,21 +9,21 @@ define([
         let browseObject;
         let unobserve = undefined;
         let currentObjectPath;
-        let routingInProgress;
+        let isRoutingInProgress = false;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
 
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
-            routingInProgress = true;
+            isRoutingInProgress = true;
             let navigatePath = results[1];
             navigateToPath(navigatePath, params.view);
-            navigateToObject(null, null, params);
+            onParamsChanged(null, null, params);
         });
 
-        openmct.router.on('change:params', navigateToObject);
+        openmct.router.on('change:params', onParamsChanged);
 
-        function navigateToObject(newParams, oldParams, changed) {
-            if (routingInProgress) {
+        function onParamsChanged(newParams, oldParams, changed) {
+            if (isRoutingInProgress) {
                 return;
             }
 
@@ -58,7 +58,7 @@ define([
             }
 
             return pathToObjects(path).then((objects)=>{
-                routingInProgress = false;
+                isRoutingInProgress = false;
 
                 if (currentNavigation !== navigateCall) {
                     return; // Prevent race.
