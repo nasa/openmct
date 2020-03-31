@@ -31,8 +31,8 @@
                     @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
-                <option value="all">All Telemetry</option>
-                <option value="any">Any Telemetry</option>
+                <option value="all">all telemetry</option>
+                <option value="any">any telemetry</option>
                 <option v-for="telemetryOption in telemetry"
                         :key="telemetryOption.identifier.key"
                         :value="telemetryOption.identifier"

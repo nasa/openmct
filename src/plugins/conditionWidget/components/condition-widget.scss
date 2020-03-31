@@ -28,6 +28,10 @@
     border: 1px solid transparent;
     display: inline-block;
     padding: $interiorMarginLg $interiorMarginLg * 2;
+    cursor: inherit !important;
+    &[href] {
+        cursor: pointer !important;
+    }
 }
 
 // Make Condition Widget expand when in a hidden frame Layout context

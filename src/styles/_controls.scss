@@ -255,13 +255,13 @@ section {
     }
 
     &.is-expanded {
-        flex: 1 1 100%;
-        max-height: max-content;
+        flex: 0 1 auto;
     }
 
     .c-section__header {
         @include propertiesHeader();
         display: flex;
+        flex: 0 0 auto;
         align-items: center;
         margin-bottom: $interiorMargin;
 
