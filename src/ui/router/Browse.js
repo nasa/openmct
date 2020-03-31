@@ -74,6 +74,7 @@ define([
 
                 unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
                     openmct.router.path[0] = newObject;
+                    browseObject = newObject;
                 });
 
                 openmct.layout.$refs.browseBar.domainObject = navigatedObject;
