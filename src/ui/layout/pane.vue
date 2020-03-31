@@ -16,11 +16,10 @@
         class="l-pane__handle"
         @mousedown="start"
     ></div>
-    <div
-        v-if="label"
-        class="l-pane__header"
-    >
-        <span class="l-pane__label">{{ label }}</span>
+    <div class="l-pane__header">
+        <span v-if="label"
+              class="l-pane__label"
+        >{{ label }}</span>
         <button
             v-if="collapsable"
             class="l-pane__collapse-button c-button"

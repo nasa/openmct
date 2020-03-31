@@ -2,6 +2,7 @@
 .l-multipane {
     display: flex;
     flex: 1 1 auto;
+    overflow: hidden;
 
     &--horizontal,
     > .l-pane {
@@ -38,7 +39,7 @@
     &__header {
         display: flex;
         align-items: center;
-        margin-bottom: $interiorMargin;
+        @include desktop() { margin-bottom: $interiorMargin; }
     }
 
     &--reacts {
@@ -232,8 +233,11 @@
             }
 
             /************************** Horizontal Splitter Before */
-            // Inspector pane
+            // Example: Inspector pane
             &[class*="-before"] {
+                margin-left: nth($shellPanePad, 2);
+                padding-left: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     left: 0;
                     transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
@@ -247,8 +251,11 @@
             }
 
             /************************** Horizontal Splitter After */
-            // Tree pane
+            // Example: Tree pane
             &[class*="-after"] {
+                margin-right: nth($shellPanePad, 2);
+                padding-right: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     right: 0;
                     transform: translateX(floor($splitterHandleD / 2));

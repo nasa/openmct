@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 export default class RemoveAction {
     constructor(openmct) {
         this.name = 'Remove';
@@ -89,6 +88,13 @@ export default class RemoveAction {
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
+        }
+
+        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const isAlias = parentKeyString !== child.location;
+
+        if (!isAlias) {
+            this.openmct.objects.mutate(child, 'location', null);
         }
     }
 

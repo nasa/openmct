@@ -54,13 +54,16 @@ button {
         background: $splitterBtnColorBg;
         color: $splitterBtnColorFg;
         border-radius: $smallCr;
-        font-size: 6px;
         line-height: 90%;
         padding: 3px 10px;
 
         @include hover() {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
+        }
+
+        @include desktop() {
+            font-size: 6px;
         }
 
         &:before {
@@ -155,6 +158,26 @@ button {
                 @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
             }
         }
+    }
+}
+
+.c-list-button {
+    @include cControl();
+    color: $colorBodyFg;
+    cursor: pointer;
+    justify-content: start;
+    padding: $interiorMargin;
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    @include hover() {
+        background: $colorItemTreeHoverBg;
+    }
+
+    .c-button {
+        flex: 0 0 auto;
     }
 }
 
@@ -709,7 +732,7 @@ select {
         $pTB: 2px;
         padding: $pTB $pLR;
 
-        &:hover {
+        @include hover() {
             background: $editUIBaseColorHov !important;
             color: $editUIBaseColorFg !important;
         }
@@ -724,7 +747,7 @@ select {
                 color: $colorBtnCautionBg;
             }
 
-            &:hover {
+            @include hover() {
                 background: rgba($colorBtnCautionBgHov, 0.2);
                 :before {
                     color: $colorBtnCautionBgHov;
