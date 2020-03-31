@@ -159,7 +159,7 @@ export default {
         },
         updateDefaultCondition() {
             const defaultCondition = this.domainObject.configuration.conditionCollection
-                .filter(conditionConfiguration => conditionConfiguration.isDefault)[0];
+                .find(conditionConfiguration => conditionConfiguration.isDefault);
             this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
