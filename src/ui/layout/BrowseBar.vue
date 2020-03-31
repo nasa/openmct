@@ -8,7 +8,7 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="type.cssClass"
+            :class="[ type.cssClass, classList ]"
         >
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"
@@ -33,13 +33,11 @@
             @setView="setView"
         />
         <!-- Action buttons -->
+        <NotebookMenuSwitcher v-if="notebookEnabled"
+                              :domain-object="domainObject"
+                              class="c-notebook-snapshot-menubutton"
+        />
         <div class="l-browse-bar__actions">
-            <button
-                v-if="notebookEnabled"
-                class="l-browse-bar__actions__notebook-entry c-button icon-notebook"
-                title="New Notebook entry"
-                @click="snapshot()"
-            ></button>
             <button
                 v-if="isViewEditable & !isEditing"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
@@ -91,26 +89,37 @@
 </template>
 
 <script>
-import NotebookSnapshot from '../utils/notebook-snapshot';
 import ViewSwitcher from './ViewSwitcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+
 const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
     components: {
+        NotebookMenuSwitcher,
         ViewSwitcher
     },
     data: function () {
         return {
+            notebookTypes: [],
             showViewMenu: false,
             showSaveMenu: false,
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: false
+            notebookEnabled: this.openmct.types.get('notebook')
         }
     },
     computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
+        },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
@@ -163,12 +172,6 @@ export default {
         }
     },
     mounted: function () {
-
-        if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-            this.notebookEnabled = true;
-        }
-
         document.addEventListener('click', this.closeViewAndSaveMenu);
         window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
 
@@ -265,10 +268,6 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
-        },
-        snapshot() {
-            let element = document.getElementsByClassName("l-shell__main-container")[0];
-            this.notebookSnapshot.capture(this.domainObject, element);
         },
         goToParent() {
             window.location.hash = this.parentUrl;
