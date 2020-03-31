@@ -90,7 +90,17 @@ export default {
         Condition
     },
     props: {
-        isEditing: Boolean
+        isEditing: Boolean,
+        testData: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {
+                    applied: false,
+                    conditionTestInputs: []
+                }
+            }
+        }
     },
     data() {
         return {
@@ -107,6 +117,12 @@ export default {
     watch: {
         defaultOutput(newOutput, oldOutput) {
             this.$emit('updateDefaultOutput', newOutput);
+        },
+        testData: {
+            handler() {
+                this.updateTestData();
+            },
+            deep: true
         }
     },
     destroyed() {
@@ -194,6 +210,7 @@ export default {
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
+            this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
             let index = _.findIndex(this.telemetryObjs, (obj) => {
@@ -219,6 +236,9 @@ export default {
         },
         cloneCondition(data) {
             this.conditionManager.cloneCondition(data.condition, data.index);
+        },
+        updateTestData() {
+            this.conditionManager.updateTestData(this.testData);
         }
     }
 }

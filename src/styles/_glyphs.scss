@@ -173,6 +173,7 @@
 .icon-spectra-telemetry {  @include glyphBefore($glyph-icon-spectra-telemetry); }
 .icon-command {  @include glyphBefore($glyph-icon-command); }
 .icon-conditional {  @include glyphBefore($glyph-icon-conditional); }
+.icon-condition-widget {  @include glyphBefore($glyph-icon-condition-widget); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -231,3 +232,4 @@
 .bg-icon-spectra-telemetry { @include glyphBg($bg-icon-spectra-telemetry); }
 .bg-icon-command { @include glyphBg($bg-icon-command); }
 .bg-icon-conditional { @include glyphBg($bg-icon-conditional); }
+.bg-icon-condition-widget { @include glyphBg($bg-icon-condition-widget); }

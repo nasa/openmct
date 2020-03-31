@@ -35,11 +35,17 @@
             </template>
         </div>
     </section>
-    <TestData :is-editing="isEditing" />
+    <TestData :is-editing="isEditing"
+              :test-data="testData"
+              :telemetry="telemetryObjs"
+              @updateTestData="updateTestData"
+    />
     <ConditionCollection
         :is-editing="isEditing"
+        :test-data="testData"
         @conditionSetResultUpdated="updateCurrentOutput"
         @updateDefaultOutput="updateDefaultOutput"
+        @telemetryUpdated="updateTelemetry"
     />
 </div>
 </template>
@@ -60,18 +66,30 @@ export default {
     data() {
         return {
             currentConditionOutput: '',
-            defaultConditionOutput: 'No output available'
+            defaultConditionOutput: 'No output available',
+            telemetryObjs: [],
+            testData: {}
         }
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.testData = {
+            applied: false,
+            conditionTestInputs: this.domainObject.configuration.conditionTestData || []
+        };
     },
     methods: {
         updateCurrentOutput(currentConditionResult) {
             this.currentConditionOutput = currentConditionResult.output;
         },
         updateDefaultOutput(output) {
-            this.defaultConditionOutput = output;
+            this.currentConditionOutput = currentConditionResult.output;
+        },
+        updateTelemetry(telemetryObjs) {
+            this.telemetryObjs = telemetryObjs;
+        },
+        updateTestData(testData) {
+            this.testData = testData;
         }
     }
 };

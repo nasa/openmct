@@ -64,7 +64,7 @@
 }
 
 /***************************** TEST DATA */
-.c-cs-test-h {
+.c-cs-tests {
     flex: 1 1 auto;
     overflow: auto;
     padding-right: $interiorMarginSm;
@@ -74,16 +74,21 @@
     }
 }
 
-.c-test-datum {
+.c-cs-test {
     > * {
         flex: 0 0 auto;
         + * {
             margin-left: $interiorMargin;
         }
     }
-    &__controls {
-        flex: 1 1 auto;
-    }
 
+    &__controls {
+        display: flex;
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
 }
 
