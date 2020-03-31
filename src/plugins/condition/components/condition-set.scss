@@ -29,7 +29,7 @@
     &__content {
         display: flex;
         flex-direction: column;
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         overflow: hidden;
 
         > * {
@@ -87,7 +87,7 @@
 
 /***************************** TEST DATA */
 .c-cs-tests {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     overflow: auto;
     padding-right: $interiorMarginSm;
 
