@@ -83,7 +83,7 @@ export default {
             this.currentConditionOutput = currentConditionResult.output;
         },
         updateDefaultOutput(output) {
-            this.currentConditionOutput = currentConditionResult.output;
+            this.currentConditionOutput = output;
         },
         updateTelemetry(telemetryObjs) {
             this.telemetryObjs = telemetryObjs;
