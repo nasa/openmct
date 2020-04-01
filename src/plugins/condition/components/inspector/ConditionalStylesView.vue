@@ -105,6 +105,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
+import { getStyleProp } from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -115,24 +116,8 @@ export default {
     },
     inject: [
         'openmct',
-        'domainObject'
+        'selection'
     ],
-    props: {
-        itemId: {
-            type: String,
-            default: ''
-        },
-        initialStyles: {
-            type: Object,
-            default() {
-                return undefined;
-            }
-        },
-        canHide: {
-            type: Boolean,
-            default: false
-        }
-    },
     data() {
         return {
             conditionalStyles: [],
@@ -144,10 +129,28 @@ export default {
             navigateToPath: ''
         }
     },
+    watch: {
+        domainObject: {
+            handler(newDomainObject) {
+                this.domainObject = newDomainObject;
+            },
+            deep: true
+        }
+    },
     destroyed() {
-        this.openmct.editor.off('isEditing', this.setEditState);
+        if (this.stopObserving) {
+            this.stopObserving();
+        }
     },
     mounted() {
+        this.canHide = false;
+        this.itemId = '';
+        this.initialStyles = this.getStyleProperties({
+            fill: 'transparent',
+            stroke: 'transparent',
+            color: 'transparent'
+        });
+        this.getDomainObjectFromSelection();
         this.previewAction = new PreviewAction(this.openmct);
         if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
             let objectStyles = this.itemId ? this.domainObject.configuration.objectStyles[this.itemId] : this.domainObject.configuration.objectStyles;
@@ -162,6 +165,46 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        getStyleProperties(item) {
+            let styleProps = {};
+            Object.keys(item).forEach((key) => {
+                Object.assign(styleProps, getStyleProp(key, item[key]));
+            });
+            return styleProps;
+        },
+        getDomainObjectFromSelection() {
+            let layoutItem = {};
+            let domainObject;
+
+            if (this.selection[0].length > 1) {
+                //If there are more than 1 items in the this.selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
+                //The second item in the this.selection[0] list is the container object (usually a layout)
+                const item = this.selection[0][0].context.item;
+                this.canHide = true;
+                if (item && item.composition) {
+                    domainObject = item;
+                } else {
+                    domainObject = this.selection[0][1].context.item;
+                    if (!item) {
+                        //if this isn't a sub-object
+                        this.initialStyles = {};
+                        layoutItem = this.selection[0][0].context.layoutItem;
+                        this.initialStyles = this.getStyleProperties(layoutItem);
+                        this.itemId = layoutItem.id;
+                    } else {
+                        layoutItem = Object.assign({}, { id: this.selection[0][0].context.layoutItem.id }, item);
+                        this.itemId = layoutItem.id;
+                    }
+                }
+            } else {
+                domainObject = this.selection[0][0].context.item;
+            }
+            this.domainObject = domainObject;
+            if (this.stopObserving) {
+                this.stopObserving();
+            }
+            this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+        },
         initialize(conditionSetDomainObject) {
             //If there are new conditions in the conditionSet we need to set those styles to default
             this.conditionSetDomainObject = conditionSetDomainObject;
