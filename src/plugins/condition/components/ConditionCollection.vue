@@ -56,7 +56,7 @@
         <div class="c-cs__conditions-h"
              :class="{ 'all-dragging': isDragging }"
         >
-            <!-- <div v-for="(condition, index) in conditionCollection"
+            <div v-for="(condition, index) in conditionCollection"
                  :key="condition.id"
                  class="c-condition-h"
                  @drop.prevent="dropCondition(index)"
@@ -68,20 +68,17 @@
                 <div v-if="isEditing"
                      class="c-c__drag-ghost"
                      @dragover.prevent
-                ></div> -->
-            <Condition v-for="(condition, index) in conditionCollection"
-                       :key="condition.id"
-                       :condition="condition"
-                       :condition-index="index"
-                       :telemetry="telemetryObjs"
-                       :is-editing="isEditing"
-                       @updateCondition="updateCondition"
-                       @removeCondition="removeCondition"
-                       @cloneCondition="cloneCondition"
-                       @setMoveIndex="setMoveIndex"
-                       @dragend="dragEnd"
-            />
-            <!-- </div> -->
+                ></div>
+                <Condition :condition="condition"
+                           :condition-index="index"
+                           :telemetry="telemetryObjs"
+                           :is-editing="isEditing"
+                           @updateCondition="updateCondition"
+                           @removeCondition="removeCondition"
+                           @cloneCondition="cloneCondition"
+                           @setMoveIndex="setMoveIndex"
+                />
+            </div>
         </div>
     </div>
 </section>
@@ -90,7 +87,6 @@
 <script>
 import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
-
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -107,7 +103,8 @@ export default {
             conditions: [],
             telemetryObjs: [],
             moveIndex: Number,
-            isDragging: false
+            isDragging: false,
+            dragCounter: 0
         };
     },
     destroyed() {
@@ -146,6 +143,54 @@ export default {
         },
         dragEnd() {
             this.isDragging = false;
+        },
+        dropCondition(index) {
+            let isDefaultCondition = (index === this.conditionCollection.length - 1);
+            if (isDefaultCondition) { return }
+            if (index > this.moveIndex) { index-- } // for 'downward' move
+            const oldIndexArr = Object.keys(this.conditionCollection);
+            const move = function (arr, old_index, new_index) {
+                while (old_index < 0) {
+                    old_index += arr.length;
+                }
+                while (new_index < 0) {
+                    new_index += arr.length;
+                }
+                if (new_index >= arr.length) {
+                    var k = new_index - arr.length;
+                    while ((k--) + 1) {
+                        arr.push(undefined);
+                    }
+                }
+                arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+                return arr;
+            }
+            const newIndexArr = move(oldIndexArr, this.moveIndex, index);
+            const reorderPlan = [];
+            for (let i = 0; i < oldIndexArr.length; i++) {
+                reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
+            }
+            this.reorder(reorderPlan);
+            this.dragCounter = 0;
+            event.target.closest('.c-condition-h').classList.remove("dragging");
+            this.isDragging = false;
+        },
+        dragEnter(index) {
+            this.dragCounter++;
+            if (index > this.moveIndex) { index-- } // for 'downward' move
+            if (event.target.parentElement.classList.contains('c-condition-h') &&
+               index !== this.conditionCollection.length - 1 &&
+               this.moveIndex !== index &&
+               this.dragCounter === 1) {
+                this.isDragging = true;
+                event.target.parentElement.classList.add("dragging");
+            }
+        },
+        dragLeave() {
+            this.dragCounter--;
+            if (this.dragCounter === 0) {
+                event.target.closest('.c-condition-h').classList.remove("dragging");
+            }
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
