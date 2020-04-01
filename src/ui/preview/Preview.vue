@@ -40,12 +40,6 @@
                     :current-view="currentView"
                     @setView="setView"
                 />
-                <button
-                    v-if="notebookEnabled"
-                    class="l-browse-bar__actions__edit c-button icon-notebook"
-                    title="New Notebook entry"
-                    @click="snapshot"
-                ></button>
             </div>
         </div>
     </div>
@@ -58,7 +52,6 @@
 <script>
 import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
-import NotebookSnapshot from '../utils/notebook-snapshot';
 
 export default {
     components: {
@@ -94,20 +87,11 @@ export default {
     mounted() {
         let view = this.openmct.objectViews.get(this.domainObject)[0];
         this.setView(view);
-
-        if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-            this.notebookEnabled = true;
-        }
     },
     destroyed() {
         this.view.destroy();
     },
     methods: {
-        snapshot() {
-            let element = document.getElementsByClassName("l-preview-window__object-view")[0];
-            this.notebookSnapshot.capture(this.domainObject, element);
-        },
         clear() {
             if (this.view) {
                 this.view.destroy();

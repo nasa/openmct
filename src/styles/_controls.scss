@@ -54,13 +54,16 @@ button {
         background: $splitterBtnColorBg;
         color: $splitterBtnColorFg;
         border-radius: $smallCr;
-        font-size: 6px;
         line-height: 90%;
         padding: 3px 10px;
 
         @include hover() {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
+        }
+
+        @include desktop() {
+            font-size: 6px;
         }
 
         &:before {
@@ -158,6 +161,26 @@ button {
     }
 }
 
+.c-list-button {
+    @include cControl();
+    color: $colorBodyFg;
+    cursor: pointer;
+    justify-content: start;
+    padding: $interiorMargin;
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    @include hover() {
+        background: $colorItemTreeHoverBg;
+    }
+
+    .c-button {
+        flex: 0 0 auto;
+    }
+}
+
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
 // Provides a downward arrow icon that when clicked displays additional options and/or info.
@@ -232,13 +255,13 @@ section {
     }
 
     &.is-expanded {
-        flex: 1 1 100%;
-        max-height: max-content;
+        flex: 0 1 auto;
     }
 
     .c-section__header {
         @include propertiesHeader();
         display: flex;
+        flex: 0 0 auto;
         align-items: center;
         margin-bottom: $interiorMargin;
 
@@ -709,7 +732,7 @@ select {
         $pTB: 2px;
         padding: $pTB $pLR;
 
-        &:hover {
+        @include hover() {
             background: $editUIBaseColorHov !important;
             color: $editUIBaseColorFg !important;
         }
@@ -724,7 +747,7 @@ select {
                 color: $colorBtnCautionBg;
             }
 
-            &:hover {
+            @include hover() {
                 background: rgba($colorBtnCautionBgHov, 0.2);
                 :before {
                     color: $colorBtnCautionBgHov;

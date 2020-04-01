@@ -3,10 +3,10 @@
     <div class="c-notebook-snapshot__header l-browse-bar">
         <div class="l-browse-bar__start">
             <div class="l-browse-bar__object-name--w">
-                <span class="l-browse-bar__object-name"
+                <span class="c-object-label l-browse-bar__object-name"
                     v-bind:class="embed.cssClass"
                 >
-                    {{embed.name}}
+                    <span class="c-object-label__name">{{ embed.name }}</span>
                 </span>
             </div>
         </div>
@@ -21,9 +21,8 @@
         </div>
     </div>
 
-    <div class="c-notebook-snapshot__image">
-        <div class="image-main s-image-main"
-            :style="{ backgroundImage: 'url(' + embed.snapshot.src + ')' }"
-        ></div>
+    <div class="c-notebook-snapshot__image"
+         :style="{ backgroundImage: 'url(' + embed.snapshot.src + ')' }"
+    >
     </div>
 </div>
