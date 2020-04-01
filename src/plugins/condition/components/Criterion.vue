@@ -172,7 +172,7 @@ export default {
                     }
                 }
             }
-            this.updateMetadataOptions();
+            // this.updateMetadataOptions();
             return inputCount;
         }
     },
