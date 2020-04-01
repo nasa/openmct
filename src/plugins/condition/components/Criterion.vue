@@ -172,7 +172,7 @@ export default {
                     }
                 }
             }
-            // this.updateMetadataOptions();
+            this.checkTelemetry();
             return inputCount;
         }
     },
@@ -287,7 +287,9 @@ export default {
             }
         },
         persist() {
-            this.$emit('persist', this.criterion);
+            if (this.criterion.telemetry && this.criterion.metadata !== '' && this.criterion.operation !== '') {
+                this.$emit('persist', this.criterion);
+            }
         }
     }
 };
