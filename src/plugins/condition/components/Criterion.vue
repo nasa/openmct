@@ -172,7 +172,6 @@ export default {
                     }
                 }
             }
-            this.checkTelemetry();
             return inputCount;
         }
     },
@@ -185,6 +184,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.criterion);
         this.updateMetadataOptions();
     },
     methods: {
@@ -287,9 +287,7 @@ export default {
             }
         },
         persist() {
-            if (this.criterion.telemetry && this.criterion.metadata !== '' && this.criterion.operation !== '') {
-                this.$emit('persist', this.criterion);
-            }
+            this.$emit('persist', this.criterion);
         }
     }
 };
