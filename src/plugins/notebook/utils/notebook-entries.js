@@ -96,7 +96,7 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
         name,
         snapshot,
         type,
-        objectPath
+        objectPath: JSON.stringify(objectPath)
     };
 }
 

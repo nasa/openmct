@@ -223,7 +223,7 @@ export default {
                     cssClass: action.cssClass,
                     name: action.name,
                     perform: () => {
-                        action.invoke(self.embed.objectPath);
+                        action.invoke(JSON.parse(self.embed.objectPath));
                     }
                 });
             });
