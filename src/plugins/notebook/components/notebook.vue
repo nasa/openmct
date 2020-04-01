@@ -80,10 +80,10 @@
                 </span>
             </div>
             <div v-if="selectedSection && selectedPage"
+                 ref="notebookEntries"
                  class="c-notebook__entries"
             >
                 <NotebookEntry v-for="entry in filteredAndSortedEntries"
-                               ref="notebookEntry"
                                :key="entry.id"
                                :entry="entry"
                                :domain-object="internalDomainObject"
@@ -122,6 +122,7 @@ export default {
             defaultPageId: getDefaultNotebook() ? getDefaultNotebook().page.id : '',
             defaultSectionId: getDefaultNotebook() ? getDefaultNotebook().section.id : '',
             defaultSort: this.domainObject.configuration.defaultSort,
+            focusEntryId: null,
             internalDomainObject: this.domainObject,
             search: '',
             showTime: 0,
@@ -173,6 +174,11 @@ export default {
         if (this.unlisten) {
             this.unlisten();
         }
+    },
+    updated: function () {
+        this.$nextTick(function () {
+            this.focusOnEntryId();
+        })
     },
     methods: {
         addDefaultClass() {
@@ -258,6 +264,20 @@ export default {
             };
             const embed = createNewEmbed(snapshotMeta);
             this.newEntry(embed);
+        },
+        focusOnEntryId() {
+            if (!this.focusEntryId) {
+                return;
+            }
+
+            const element = this.$refs.notebookEntries.querySelector(`#${this.focusEntryId}`);
+
+            if (!element) {
+                return;
+            }
+
+            element.focus();
+            this.focusEntryId = null;
         },
         formatSidebar() {
             /*
@@ -377,13 +397,8 @@ export default {
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
-
-            this.$nextTick(() => {
-                const element = this.$el.querySelector(`#${id}`);
-                element.focus();
-            });
-
-            return id;
+            this.focusEntryId = id;
+            this.search = '';
         },
         orientationChange() {
             this.formatSidebar();
