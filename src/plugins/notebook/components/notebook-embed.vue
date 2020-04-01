@@ -217,18 +217,16 @@ export default {
         populateActionMenu() {
             const self = this;
             const actions = [new PreviewAction(self.openmct)];
-            self.openmct.objects.get(self.embed.type)
-                .then((domainObject) => {
-                    actions.forEach((action) => {
-                        self.actions.push({
-                            cssClass: action.cssClass,
-                            name: action.name,
-                            perform: () => {
-                                action.invoke([domainObject].concat(self.openmct.router.path));
-                            }
-                        });
-                    });
+
+            actions.forEach((action) => {
+                self.actions.push({
+                    cssClass: action.cssClass,
+                    name: action.name,
+                    perform: () => {
+                        action.invoke(self.embed.objectPath);
+                    }
                 });
+            });
         },
         removeEmbed(id) {
             this.$emit('removeEmbed', id);
