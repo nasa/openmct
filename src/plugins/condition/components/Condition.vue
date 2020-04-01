@@ -41,7 +41,6 @@
         ></span>
 
         <span class="c-condition__name">{{ condition.configuration.name }}</span>
-        <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">
             <template v-if="!canEvaluateCriteria">
                 Define criteria
@@ -317,7 +316,7 @@ export default {
                 index: this.conditionIndex
             });
         },
-        initCap: function (str) {
+        initCap(str) {
             return str.charAt(0).toUpperCase() + str.slice(1)
         }
     }

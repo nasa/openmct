@@ -184,7 +184,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.criterion);
         this.updateMetadataOptions();
     },
     methods: {

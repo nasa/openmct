@@ -108,7 +108,7 @@ export default class ConditionManager extends EventEmitter {
         if (conditionConfiguration) {
             conditionObj = {
                 ...conditionConfiguration,
-                id: uuid(),
+                id: conditionConfiguration.id || uuid(),
                 configuration: {
                     ...conditionConfiguration.configuration,
                     name: `Copy of ${conditionConfiguration.configuration.name}`
