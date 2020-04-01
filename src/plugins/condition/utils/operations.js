@@ -1,10 +1,32 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 import _ from 'lodash';
 
 export const OPERATIONS = [
     {
         name: 'equalTo',
         operation: function (input) {
-            return input[0] === parseInt(input[1]);
+            return Number(input[0]) === Number(input[1]);
         },
         text: 'is equal to',
         appliesTo: ['number'],
@@ -16,7 +38,7 @@ export const OPERATIONS = [
     {
         name: 'notEqualTo',
         operation: function (input) {
-            return input[0] !== parseInt(input[1]);
+            return Number(input[0]) !== Number(input[1]);
         },
         text: 'is not equal to',
         appliesTo: ['number'],
@@ -28,7 +50,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThan',
         operation: function (input) {
-            return input[0] > parseInt(input[1]);
+            return Number(input[0]) > Number(input[1]);
         },
         text: 'is greater than',
         appliesTo: ['number'],
@@ -40,7 +62,7 @@ export const OPERATIONS = [
     {
         name: 'lessThan',
         operation: function (input) {
-            return input[0] < parseInt(input[1]);
+            return Number(input[0]) < Number(input[1]);
         },
         text: 'is less than',
         appliesTo: ['number'],
@@ -52,7 +74,7 @@ export const OPERATIONS = [
     {
         name: 'greaterThanOrEq',
         operation: function (input) {
-            return input[0] >= parseInt(input[1]);
+            return Number(input[0]) >= Number(input[1]);
         },
         text: 'is greater than or equal to',
         appliesTo: ['number'],
@@ -64,7 +86,7 @@ export const OPERATIONS = [
     {
         name: 'lessThanOrEq',
         operation: function (input) {
-            return input[0] <= parseInt(input[1]);
+            return Number(input[0]) <= Number(input[1]);
         },
         text: 'is less than or equal to',
         appliesTo: ['number'],
@@ -76,25 +98,33 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            return input[0] > parseInt(input[1]) && input[0] < parseInt(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
         },
         text: 'is between',
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is between ' + values.join(', ') + ' and ' + values[1];
+            return ' is between ' + values[0] + ' and ' + values[1];
         }
     },
     {
         name: 'notBetween',
         operation: function (input) {
-            return input[0] < parseInt(input[1]) || input[0] > parseInt(input[2]);
+            let numberInputs = [];
+            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let larger = Math.max(...numberInputs.slice(1,3));
+            let smaller = Math.min(...numberInputs.slice(1,3));
+            return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
         },
         text: 'is not between',
         appliesTo: ['number'],
         inputCount: 2,
         getDescription: function (values) {
-            return ' is not between ' + values.join(', ') + ' and ' + values[1];
+            return ' is not between ' + values[0] + ' and ' + values[1];
         }
     },
     {

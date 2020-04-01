@@ -101,7 +101,6 @@
                 <select v-model="selectedOutputSelection"
                         @change="setOutputValue"
                 >
-                    <option value="">- Select Output -</option>
                     <option v-for="option in outputOptions"
                             :key="option"
                             :value="option"
@@ -129,8 +128,10 @@
                 <select v-model="condition.configuration.trigger"
                         @change="persist"
                 >
-                    <option value="all">when all criteria are met</option>
-                    <option value="any">when any criteria are met</option>
+                    <option v-for="option in triggers"
+                            :key="option.value"
+                            :value="option.value"
+                    > {{ option.label }}</option>
                 </select>
             </span>
 
@@ -213,11 +214,14 @@
 
 <script>
 import Criterion from './Criterion.vue';
-import { OPERATIONS } from '../utils/operations';
+import ConditionDescription from "./ConditionDescription.vue";
+import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
+
 export default {
     inject: ['openmct'],
     components: {
-        Criterion
+        Criterion,
+        ConditionDescription
     },
     props: {
         condition: {
@@ -251,6 +255,17 @@ export default {
         };
     },
     computed: {
+        triggers() {
+            const keys = Object.keys(TRIGGER);
+            const triggerOptions = [];
+            keys.forEach((trigger) => {
+                triggerOptions.push({
+                    value: TRIGGER[trigger],
+                    label: TRIGGER_LABEL[TRIGGER[trigger]]
+                });
+            });
+            return triggerOptions;
+        },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
             let lastCriterion = criteria[criteria.length - 1];
@@ -263,9 +278,6 @@ export default {
             } else {
                 return false;
             }
-        },
-        getConjunction: function () {
-            return this.condition.configuration.trigger === 'all' ? 'and' : 'or';
         }
     },
     destroyed() {
@@ -275,20 +287,6 @@ export default {
         this.setOutputSelection();
     },
     methods: {
-        getRule(criterion, index) {
-            return `${criterion.telemetry.name} ${criterion.telemetry.fieldName} ${this.findDescription(criterion.operation, criterion.input)}`;
-        },
-        isLastCriterion(index) {
-            return index === this.condition.configuration.criteria.length - 1;
-        },
-        findDescription(operation, values) {
-            for (let i=0, ii= OPERATIONS.length; i < ii; i++) {
-                if (operation === OPERATIONS[i].name) {
-                    return OPERATIONS[i].getDescription(values);
-                }
-            }
-            return null;
-        },
         setOutputSelection() {
             let conditionOutput = this.condition.configuration.output;
             if (conditionOutput) {
@@ -338,12 +336,12 @@ export default {
         },
         removeCriterion(index) {
             this.condition.configuration.criteria.splice(index, 1);
-            this.persist()
+            this.persist();
         },
         cloneCriterion(index) {
-            const clonedCriterion = {...this.condition.configuration.criteria[index]};
+            const clonedCriterion = JSON.parse(JSON.stringify(this.condition.configuration.criteria[index]));
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
-            this.persist()
+            this.persist();
         },
         persist() {
             this.$emit('updateCondition', {

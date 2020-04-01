@@ -1,105 +1,126 @@
-.c-condition,
-.c-test-datum {
-    @include discreteItem();
-    display: flex;
-    padding: $interiorMargin;
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
-    &--edit {
-        line-height: 160%; // For layout when inputs wrap, like in criteria
-    }
-}
-
-.c-condition {
-    flex-direction: column;
-    min-width: 400px;
-
-    > * + * {
-        margin-top: $interiorMarginSm;
-    }
-    &--browse {
-        .c-condition__summary {
-            border-top: 1px solid $colorInteriorBorder;
-            padding-top: $interiorMargin;
-        }
-    }
-
-    /***************************** HEADER */
-    &__header {
-        $h: 22px;
-        display: flex;
-        align-items: start;
-        align-content: stretch;
-        overflow: hidden;
-        min-height: $h;
-        line-height: $h;
-
-        > * {
-            flex: 0 0 auto;
-            + * {
-                margin-left: $interiorMarginSm;
-            }
-        }
-    }
-
-    &__drag-grippy {
-        transform: translateY(50%);
-    }
-
-    &__name {
-        font-weight: bold;
-        align-self: baseline; // Fixes bold line-height offset problem
-    }
-
-    &__output,
-    &__summary {
-        flex: 1 1 auto;
-    }
-}
-
-/***************************** CONDITION DEFINITION, EDITING */
-.c-cdef {
-    display: grid;
-    grid-row-gap: $interiorMarginSm;
-    grid-column-gap: $interiorMargin;
-    grid-auto-columns: min-content 1fr max-content;
-    align-items: start;
-    min-width: 150px;
-    margin-left: 29px;
-    overflow: hidden;
-
-    &__criteria,
-    &__match-and-criteria {
-        display: contents;
-    }
-
-    &__label {
-        grid-column: 1;
-        text-align: right;
-        white-space: nowrap;
-    }
-
-    &__separator {
-        grid-column: 1 / span 3;
-    }
-
-    &__controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        //line-height: 200%;
-        grid-column: 2;
-
-        > * > * {
-            margin-right: $interiorMarginSm;
-        }
-    }
-
-    &__buttons {
-        grid-column: 3;
-    }
-}
-
-.dragging {
+ .c-condition,
+ .c-test-datum {
+     @include discreteItem();
+     display: flex;
+     padding: $interiorMargin;
+ 
+     &--edit {
+         line-height: 160%; // For layout when inputs wrap, like in criteria
+     }
+ }
+ 
+ .c-condition {
+     flex-direction: column;
+     min-width: 400px;
+ 
+     > * + * {
+         margin-top: $interiorMarginSm;
+     }
+     &--browse {
+         .c-condition__summary {
+             border-top: 1px solid $colorInteriorBorder;
+             padding-top: $interiorMargin;
+         }
+     }
+ 
+     /***************************** HEADER */
+     &__header {
+         $h: 22px;
+         display: flex;
+         align-items: start;
+         align-content: stretch;
+         overflow: hidden;
+         min-height: $h;
+         line-height: $h;
+ 
+         > * {
+             flex: 0 0 auto;
+             + * {
+                 margin-left: $interiorMarginSm;
+             }
+         }
+     }
+ 
+     &__drag-grippy {
+         transform: translateY(50%);
+     }
+ 
+     &__name {
+         font-weight: bold;
+         align-self: baseline; // Fixes bold line-height offset problem
+     }
+ 
+     &__output,
+     &__summary {
+         flex: 1 1 auto;
+     }
+ }
+ 
+ /***************************** CONDITION DEFINITION, EDITING */
+ .c-cdef {
+     display: grid;
+     grid-row-gap: $interiorMarginSm;
+     grid-column-gap: $interiorMargin;
+     grid-auto-columns: min-content 1fr max-content;
+     align-items: start;
+     min-width: 150px;
+     margin-left: 29px;
+     overflow: hidden;
+ 
+     &__criteria,
+     &__match-and-criteria {
+         display: contents;
+     }
+ 
+     &__label {
+         grid-column: 1;
+         text-align: right;
+         white-space: nowrap;
+     }
+ 
+     &__separator {
+         grid-column: 1 / span 3;
+     }
+ 
+     &__controls {
+         display: flex;
+         flex-wrap: wrap;
+         align-items: flex-start;
+         grid-column: 2;
+ 
+         > * > * {
+             margin-right: $interiorMarginSm;
+         }
+     }
+ 
+     &__buttons {
+         grid-column: 3;
+     }
+ }
+ 
+ .dragging {
     border: 2px solid red;
     .c-c__drag-ghost {
         min-height: 50px;
@@ -112,13 +133,14 @@
     .c-condition-h .c-condition {
         > * {
             background: rgba(orange, 0.1);
-            // pointer-events: none;
+            pointer-events: none;
         }
     }
 }
 
 .c-c__drag-ghost {
-    width: 100%;
-    height: 0;
-    min-height: $interiorMarginSm;
+     width: 100%;
+     min-height: $interiorMarginSm;
+
 }
+ 

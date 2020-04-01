@@ -1,99 +1,134 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
+import Notebook from './components/notebook.vue';
+import NotebookSnapshotIndicator from './components/notebook-snapshot-indicator.vue';
+import SnapshotContainer from './snapshot-container';
+import Vue from 'vue';
 
-define([
-    "./src/controllers/NotebookController"
-], function (
-    NotebookController
-) {
-    var installed  = false;
+let installed  = false;
 
-    function NotebookPlugin() {
-        return function install(openmct) {
-            if (installed) {
-                return;
-            }
+export default function NotebookPlugin() {
+    return function install(openmct) {
+        if (installed) {
+            return;
+        }
 
-            installed = true;
+        installed = true;
 
-            openmct.legacyRegistry.register('notebook', {
-                name: 'Notebook Plugin',
-                extensions: {
-                    types: [
+        const notebookType = {
+            name: 'Notebook',
+            description: 'Create and save timestamped notes with embedded object snapshots.',
+            creatable: true,
+            cssClass: 'icon-notebook',
+            initialize: domainObject => {
+                domainObject.configuration = {
+                    defaultSort: 'oldest',
+                    entries: {},
+                    pageTitle: 'Page',
+                    sections: [],
+                    sectionTitle: 'Section',
+                    type: 'General'
+                };
+            },
+            form: [
+                {
+                    key: 'defaultSort',
+                    name: 'Entry Sorting',
+                    control: 'select',
+                    options: [
                         {
-                            key: 'notebook',
-                            name: 'Notebook',
-                            cssClass: 'icon-notebook',
-                            description: 'Create and save timestamped notes with embedded object snapshots.',
-                            features: 'creation',
-                            model: {
-                                entries: [],
-                                entryTypes: [],
-                                defaultSort: 'oldest'
-                            },
-                            properties: [
-                                {
-                                    key: 'defaultSort',
-                                    name: 'Default Sort',
-                                    control: 'select',
-                                    options: [
-                                        {
-                                            name: 'Newest First',
-                                            value: "newest"
-                                        },
-                                        {
-                                            name: 'Oldest First',
-                                            value: "oldest"
-                                        }
-                                    ],
-                                    cssClass: 'l-inline'
-                                }
-                            ]
+                            name: 'Newest First',
+                            value: "newest"
+                        },
+                        {
+                            name: 'Oldest First',
+                            value: "oldest"
                         }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "defaultSort"
+                    ]
+                },
+                {
+                    key: 'type',
+                    name: 'Note book Type',
+                    control: 'textfield',
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "type"
+                    ]
+                },
+                {
+                    key: 'sectionTitle',
+                    name: 'Section Title',
+                    control: 'textfield',
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "sectionTitle"
+                    ]
+                },
+                {
+                    key: 'pageTitle',
+                    name: 'Page Title',
+                    control: 'textfield',
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "pageTitle"
                     ]
                 }
-            });
+            ]
+        };
+        openmct.types.addType('notebook', notebookType);
 
-            openmct.legacyRegistry.enable('notebook');
-
-            openmct.objectViews.addProvider({
-                key: 'notebook-vue',
-                name: 'Notebook View',
-                cssClass: 'icon-notebook',
-                canView: function (domainObject) {
-                    return domainObject.type === 'notebook';
-                },
-                view: function (domainObject) {
-                    var controller = new NotebookController (openmct, domainObject);
-
-                    return {
-                        show: controller.show,
-                        destroy: controller.destroy
-                    };
-                }
-            });
+        const snapshotContainer = new SnapshotContainer(openmct);
+        const notebookSnapshotIndicator = new Vue ({
+            provide: {
+                openmct,
+                snapshotContainer
+            },
+            components: {
+                NotebookSnapshotIndicator
+            },
+            template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
+        });
+        const indicator = {
+            element: notebookSnapshotIndicator.$mount().$el
         };
 
-    }
+        openmct.indicators.add(indicator);
 
-    return NotebookPlugin;
-});
+        openmct.objectViews.addProvider({
+            key: 'notebook-vue',
+            name: 'Notebook View',
+            cssClass: 'icon-notebook',
+            canView: function (domainObject) {
+                return domainObject.type === 'notebook';
+            },
+            view: function (domainObject) {
+                let component;
+                return {
+                    show(container) {
+                        component = new Vue({
+                            el: container,
+                            components: {
+                                Notebook
+                            },
+                            provide: {
+                                openmct,
+                                domainObject,
+                                snapshotContainer
+                            },
+                            template: '<Notebook></Notebook>'
+                        });
+                    },
+                    destroy() {
+                        component.$destroy();
+                    }
+                };
+            }
+        });
+    };
+}

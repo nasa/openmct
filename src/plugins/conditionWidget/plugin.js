@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,14 +28,20 @@ export default function plugin() {
 
         openmct.types.addType('conditionWidget', {
             name: "Condition Widget",
-            description: "Condition Widget description TBD",
+            description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
             creatable: true,
-            cssClass: 'icon-asterisk',
+            cssClass: 'icon-condition-widget',
+            initialize(domainObject) {
+                domainObject.label = 'Condition Widget';
+            },
             form: [
                 {
                     "key": "label",
                     "name": "Label",
                     "control": "textfield",
+                    property: [
+                        "label"
+                    ],
                     "required": true,
                     "cssClass": "l-input"
                 },

@@ -347,22 +347,6 @@ define(['lodash'], function (_) {
                     };
                 }
 
-                function getURLButton(selectedParent, selection) {
-                    return {
-                        control: "button",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'image-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath);
-                        },
-                        icon: "icon-image",
-                        title: "Edit image properties",
-                        dialog: DIALOG_FORM.image
-                    };
-                }
-
                 function getTextButton(selectedParent, selection) {
                     return {
                         control: "button",
@@ -464,6 +448,10 @@ define(['lodash'], function (_) {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
+                    if (!layoutItem) {
+                        return;
+                    }
+
                     if (layoutItem.type === 'subobject-view') {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
                             toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];
@@ -550,9 +538,6 @@ define(['lodash'], function (_) {
                                 getHeightInput(selectedParent, selectedObjects),
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
-                        }
-                        if (toolbar.url.length === 0) {
-                            toolbar.url = [getURLButton(selectedParent, selectedObjects)];
                         }
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ export default function ConditionWidget(openmct) {
     return {
         key: 'conditionWidget',
         name: 'Condition Widget',
-        cssClass: 'icon-asterisk',
+        cssClass: 'icon-condition-widget',
         canView: function (domainObject) {
             return domainObject.type === 'conditionWidget';
         },

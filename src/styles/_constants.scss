@@ -147,6 +147,7 @@ $glyph-icon-suitcase: '\e928';
 $glyph-icon-cursor-lock: '\e929';
 $glyph-icon-flag: '\e92a';
 $glyph-icon-eye-disabled: '\e92b';
+$glyph-icon-notebook-page: '\e92c';
 $glyph-icon-arrows-right-left: '\ea00';
 $glyph-icon-arrows-up-down: '\ea01';
 $glyph-icon-bullet: '\ea02';
@@ -237,6 +238,7 @@ $glyph-icon-spectra: '\eb24';
 $glyph-icon-spectra-telemetry: '\eb25';
 $glyph-icon-command: '\eb26';
 $glyph-icon-conditional: '\eb27';
+$glyph-icon-condition-widget: '\eb28';
 
 /************************** GLYPHS AS DATA URI */
 // Only objects have been converted, for use in Create menu and folder views
@@ -286,4 +288,5 @@ $bg-icon-gauge: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w
 $bg-icon-spectra: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M384 352H128l51.2-89.6L0 288v127c0 53.3 43.7 97 97 97h318c53.4 0 97-43.7 97-97v-31l-162.9-93.1zM415 0H97C43.7 0 0 43.6 0 97v159l200-30.1 56-97.9 54.9 96H512V97a97.2 97.2 0 00-97-97zM512 320v-32l-192-32 192 64z'/%3e%3c/svg%3e");
 $bg-icon-spectra-telemetry: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M256 128l54.9 96H510C494.3 97.7 386.5 0 256 0 114.6 0 0 114.6 0 256l200-30.1zM384 352H128l51.2-89.6L2 287.7C17.6 414.1 125.4 512 256 512c100.8 0 188-58.3 229.8-143l-136.7-78.1zM320 256l192 64v-32l-192-32z'/%3e%3c/svg%3e");
 $bg-icon-command: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M185.1 229.7a96.5 96.5 0 0015.8 11.7A68.5 68.5 0 01192 208c0-19.8 8.9-38.8 25.1-53.7 18.5-17 43.7-26.3 70.9-26.3 20.1 0 39.1 5.1 55.1 14.6a81.3 81.3 0 00-16.2-20.3C308.4 105.3 283.2 96 256 96s-52.4 9.3-70.9 26.3C168.9 137.2 160 156.2 160 176s8.9 38.8 25.1 53.7z'/%3e%3cpath d='M442.7 134.8C422.4 57.5 346.5 0 256 0S89.6 57.5 69.3 134.8C26.3 174.8 0 228.7 0 288c0 123.7 114.6 224 256 224s256-100.3 256-224c0-59.3-26.3-113.2-69.3-153.2zM256 64c70.6 0 128 50.2 128 112s-57.4 112-128 112-128-50.2-128-112S185.4 64 256 64zm0 352c-87.7 0-159.2-63.9-160-142.7 34.4 47.4 93.2 78.7 160 78.7s125.6-31.3 160-78.7c-.8 78.8-72.3 142.7-160 142.7z'/%3e%3c/svg%3e");
-$bg-icon-conditional: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M256 0C114.62 0 0 114.62 0 256s114.62 256 256 256 256-114.62 256-256S397.38 0 256 0zm0 384L64 256l192-128 192 128z' fill='%23000000'/%3e%3c/svg%3e");
+$bg-icon-conditional: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M256 0C114.62 0 0 114.62 0 256s114.62 256 256 256 256-114.62 256-256S397.38 0 256 0zm0 384L64 256l192-128 192 128z'/%3e%3c/svg%3e");
+$bg-icon-condition-widget: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M416 0H96C43.2 0 0 43.2 0 96v320c0 52.8 43.2 96 96 96h320c52.8 0 96-43.2 96-96V96c0-52.8-43.2-96-96-96zM256 384L64 256l192-128 192 128z'/%3e%3c/svg%3e");

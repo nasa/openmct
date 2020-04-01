@@ -87,13 +87,24 @@
 <script>
 import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
+
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
         Condition
     },
     props: {
-        isEditing: Boolean
+        isEditing: Boolean,
+        testData: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {
+                    applied: false,
+                    conditionTestInputs: []
+                }
+            }
+        }
     },
     data() {
         return {
@@ -104,8 +115,20 @@ export default {
             telemetryObjs: [],
             moveIndex: Number,
             isDragging: false,
+            defaultOutput: undefined,
             dragCounter: 0
         };
+    },
+    watch: {
+        defaultOutput(newOutput, oldOutput) {
+            this.$emit('updateDefaultOutput', newOutput);
+        },
+        testData: {
+            handler() {
+                this.updateTestData();
+            },
+            deep: true
+        }
     },
     destroyed() {
         this.composition.off('add', this.addTelemetryObject);
@@ -127,6 +150,7 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
+        this.updateDefaultCondition();
     },
     methods: {
         handleConditionSetResultUpdated(data) {
@@ -135,7 +159,13 @@ export default {
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 this.conditionCollection = newConditionCollection;
+                this.updateDefaultCondition();
             });
+        },
+        updateDefaultCondition() {
+            const defaultCondition = this.domainObject.configuration.conditionCollection
+                .find(conditionConfiguration => conditionConfiguration.isDefault);
+            this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
             this.moveIndex = index;
@@ -176,12 +206,14 @@ export default {
             this.isDragging = false;
         },
         dragEnter(index) {
+            console.log('dragEnter');
             this.dragCounter++;
             if (index > this.moveIndex) { index-- } // for 'downward' move
             if (event.target.parentElement.classList.contains('c-condition-h') &&
                index !== this.conditionCollection.length - 1 &&
                this.moveIndex !== index &&
                this.dragCounter === 1) {
+                   console.log('applying dragging');
                 this.isDragging = true;
                 event.target.parentElement.classList.add("dragging");
             }
@@ -194,6 +226,7 @@ export default {
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
+            this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
             let index = _.findIndex(this.telemetryObjs, (obj) => {
@@ -219,6 +252,9 @@ export default {
         },
         cloneCondition(data) {
             this.conditionManager.cloneCondition(data.condition, data.index);
+        },
+        updateTestData() {
+            this.conditionManager.updateTestData(this.testData);
         }
     }
 }

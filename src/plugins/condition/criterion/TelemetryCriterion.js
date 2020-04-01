@@ -71,6 +71,8 @@ export default class TelemetryCriterion extends EventEmitter {
     handleSubscription(data) {
         if(this.isValid()) {
             this.emitEvent('criterionResultUpdated', this.formatData(data));
+        } else {
+            this.emitEvent('criterionResultUpdated', this.formatData({}));
         }
     }
 

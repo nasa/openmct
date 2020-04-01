@@ -85,7 +85,13 @@ export default {
                 return;
             }
 
-            let format = selection[0][0].context.layoutItem.format;
+            let layoutItem = selection[0][0].context.layoutItem;
+
+            if (!layoutItem) {
+                return;
+            }
+
+            let format = layoutItem.format;
             this.nonMixedFormat = selection.every(selectionPath => {
                 return selectionPath[0].context.layoutItem.format === format;
             });

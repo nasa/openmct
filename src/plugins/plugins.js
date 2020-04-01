@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -175,7 +175,7 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook;
+    plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;

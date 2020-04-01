@@ -24,12 +24,13 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import {computeCondition} from "./utils/evaluator";
+import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
+import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
 /*
 * conditionConfiguration = {
 *   id: uuid,
-*   trigger: 'any'/'all',
+*   trigger: 'any'/'all'/'not','xor',
 *   criteria: [
 *       {
 *           telemetry: '',
@@ -72,7 +73,11 @@ export default class ConditionClass extends EventEmitter {
             return;
         }
         this.criteria.forEach(criterion => {
-            criterion.emit(`subscription:${datum.id}`, datum);
+            if (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any')) {
+                criterion.handleSubscription(datum, this.conditionManager.telemetryObjects);
+            } else {
+                criterion.emit(`subscription:${datum.id}`, datum);
+            }
         });
     }
 
@@ -120,8 +125,13 @@ export default class ConditionClass extends EventEmitter {
      *  adds criterion to the condition.
      */
     addCriterion(criterionConfiguration) {
+        let criterion;
         let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
-        let criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        if (criterionConfiguration.telemetry && (criterionConfiguration.telemetry === 'any' || criterionConfiguration.telemetry === 'all')) {
+            criterion = new AllTelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        } else {
+            criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        }
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
         if (!this.criteria) {
@@ -205,7 +215,8 @@ export default class ConditionClass extends EventEmitter {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
-            this.criteriaResults[id] = eventData.data.result;
+            // The !! here is important to convert undefined to false otherwise the criteriaResults won't get deleted when the criteria is destroyed
+            this.criteriaResults[id] = !!eventData.data.result;
         }
     }
 
@@ -259,7 +270,13 @@ export default class ConditionClass extends EventEmitter {
     }
 
     evaluate() {
-        this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        if (this.trigger && this.trigger === TRIGGER.XOR) {
+            this.result = computeConditionByLimit(this.criteriaResults, 1);
+        } else if (this.trigger && this.trigger === TRIGGER.NOT) {
+            this.result = computeConditionByLimit(this.criteriaResults, 0);
+        } else {
+            this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+        }
     }
 
     getLatestTimestamp(current, compare) {

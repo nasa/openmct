@@ -87,6 +87,11 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: $interiorMargin, 7px;
+$drawerBg: lighten($colorBodyBg, 5%);
+$drawerFg: lighten($colorBodyFg, 5%);
+$sideBarBg: $drawerBg;
+$sideBarHeaderBg: rgba($colorBodyFg, 0.2);
+$sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -333,7 +338,7 @@ $colorSummaryFg: rgba($colorBodyFg, 0.7);
 $colorSummaryFgEm: $colorBodyFg;
 
 // Plot
-$colorPlotBg: rgba(black, 0.05);
+$colorPlotBg: rgba(black, 0.1);
 $colorPlotFg: $colorBodyFg;
 $colorPlotHash: black;
 $opacityPlotHash: 0.2;
