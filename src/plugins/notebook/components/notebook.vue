@@ -210,6 +210,20 @@ export default {
             this.updateSection({ sections });
             this.throttledSearchItem('');
         },
+        createNotebookStorageObject() {
+            const notebookMeta = {
+                name: this.internalDomainObject.name,
+                identifier: this.internalDomainObject.identifier
+            };
+            const page = this.getSelectedPage();
+            const section = this.getSelectedSection();
+
+            return {
+                notebookMeta,
+                section,
+                page
+            }
+        },
         dragOver(event) {
             event.preventDefault();
             event.dataTransfer.dropEffect = "copy";
@@ -359,12 +373,9 @@ export default {
             this.updateSection({ sections });
         },
         newEntry(embed = null) {
-            const selectedSection = this.getSelectedSection();
-            const selectedPage = this.getSelectedPage();
             this.search = '';
-
-            this.updateDefaultNotebook(selectedSection, selectedPage);
-            const notebookStorage = getDefaultNotebook();
+            const notebookStorage = this.createNotebookStorageObject();
+            this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
 
             this.$nextTick(() => {
@@ -402,13 +413,13 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(selectedSection, selectedPage) {
+        async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             this.removeDefaultClass(defaultNotebookObject);
-            setDefaultNotebook(this.internalDomainObject, selectedSection, selectedPage);
+            setDefaultNotebook(notebookStorage);
             this.addDefaultClass();
-            this.defaultSectionId = selectedSection.id;
-            this.defaultPageId = selectedPage.id;
+            this.defaultSectionId = notebookStorage.section.id;
+            this.defaultPageId = notebookStorage.page.id;
         },
         updateDefaultNotebookPage(pages, id) {
             if (!id) {
