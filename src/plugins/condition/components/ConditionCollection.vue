@@ -110,10 +110,14 @@ export default {
             conditions: [],
             telemetryObjs: [],
             moveIndex: Number,
-            isDragging: false
+            isDragging: false,
+            defaultOutput: undefined
         };
     },
     watch: {
+        defaultOutput(newOutput, oldOutput) {
+            this.$emit('updateDefaultOutput', newOutput);
+        },
         testData: {
             handler() {
                 this.updateTestData();
@@ -141,6 +145,7 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
+        this.updateDefaultCondition();
     },
     methods: {
         handleConditionSetResultUpdated(data) {
@@ -149,7 +154,13 @@ export default {
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 this.conditionCollection = newConditionCollection;
+                this.updateDefaultCondition();
             });
+        },
+        updateDefaultCondition() {
+            const defaultCondition = this.domainObject.configuration.conditionCollection
+                .find(conditionConfiguration => conditionConfiguration.isDefault);
+            this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
             this.moveIndex = index;

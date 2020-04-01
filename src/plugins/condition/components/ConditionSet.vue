@@ -30,7 +30,9 @@
             <template v-if="currentConditionOutput">
                 {{ currentConditionOutput }}
             </template>
-            <template v-else>No output selected</template>
+            <template v-else>
+                {{ defaultConditionOutput }}
+            </template>
         </div>
     </section>
     <TestData :is-editing="isEditing"
@@ -42,6 +44,7 @@
         :is-editing="isEditing"
         :test-data="testData"
         @conditionSetResultUpdated="updateCurrentOutput"
+        @updateDefaultOutput="updateDefaultOutput"
         @telemetryUpdated="updateTelemetry"
     />
 </div>
@@ -63,6 +66,7 @@ export default {
     data() {
         return {
             currentConditionOutput: '',
+            defaultConditionOutput: '',
             telemetryObjs: [],
             testData: {}
         }
@@ -77,6 +81,9 @@ export default {
     methods: {
         updateCurrentOutput(currentConditionResult) {
             this.currentConditionOutput = currentConditionResult.output;
+        },
+        updateDefaultOutput(output) {
+            this.currentConditionOutput = output;
         },
         updateTelemetry(telemetryObjs) {
             this.telemetryObjs = telemetryObjs;

@@ -1,14 +1,12 @@
 .c-indicator {
     @include cControl();
     @include cClickIconButtonLayout();
-    button { text-transform: uppercase; }
-
-    background: none !important;
     border-radius: $controlCr;
     overflow: visible;
     position: relative;
     text-transform: uppercase;
 
+    button { text-transform: uppercase; }
 
     &.no-minify {
         // For items that cannot be minified
@@ -42,7 +40,7 @@
 
     a,
     button,
-    s-button,
+    .s-button,
     .c-button {
         // Make <a> in label look like buttons
         transition: $transIn;
