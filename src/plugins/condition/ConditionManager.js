@@ -238,7 +238,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     requestLADConditionSetOutput() {
-        if (!this.conditionClassCollection.length || this.conditionClassCollection.length === 1) {
+        if (!this.conditionClassCollection.length) {
             return Promise.resolve([]);
         }
 
