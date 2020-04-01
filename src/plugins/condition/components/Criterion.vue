@@ -63,7 +63,7 @@
                 </span>
             </template>
             <span v-else>
-                <span v-if="inputCount && criterion.operation"
+                <span v-if="inputCount"
                       class="c-cdef__control"
                 >
                     <select v-model="criterion.input[0]"
@@ -112,7 +112,6 @@ export default {
         return {
             telemetryMetadataOptions: [],
             operations: OPERATIONS,
-            inputCount: 0,
             rowLabel: '',
             operationFormat: '',
             enumerations: [],
@@ -140,6 +139,19 @@ export default {
                 }
             }
             return type;
+        },
+        inputCount: function () {
+            let inputCount = 0;
+            if (this.criterion.operation) {
+                for (let i = 0; i < this.filteredOps.length; i++) {
+                    if (this.criterion.operation === this.filteredOps[i].name) {
+                        inputCount = this.filteredOps[i].inputCount;
+                        break;
+                    }
+                }
+            }
+            this.updateMetadataOptions();
+            return inputCount;
         }
     },
     watch: {
@@ -237,15 +249,6 @@ export default {
                 this.clearDependentFields();
                 this.persist();
             }
-
-            for (let i = 0; i < this.filteredOps.length; i++) {
-                if (this.criterion.operation === this.filteredOps[i].name) {
-                    this.inputCount = this.filteredOps[i].inputCount;
-                }
-            }
-            if (!this.inputCount) {
-                this.criterion.input = [];
-            }
         },
         clearDependentFields(el) {
             if (el === this.$refs.telemetrySelect) {
@@ -254,13 +257,11 @@ export default {
                 if (!this.filteredOps.find(operation => operation.name === this.criterion.operation)) {
                     this.criterion.operation = '';
                     this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
-                    this.inputCount = 0;
                 }
             } else {
                 if (this.enumerations.length && !this.criterion.input.length) {
                     this.criterion.input = [this.enumerations[0].value.toString()];
                 }
-                this.inputCount = 0;
             }
         },
         persist() {
