@@ -21,185 +21,165 @@
 *****************************************************************************/
 
 <template>
-<div v-if="isEditing"
-     class="c-condition c-condition--edit"
+<div class="c-condition-h"
+     @drop.prevent="dropCondition"
 >
-    <!-- Edit view -->
-    <div class="c-condition__header"
-         @dragover.prevent
+    <div v-if="isEditing"
+         class="c-condition c-condition--edit"
+         :class="{ 'dragging': draggingOver }"
+         @dragenter.prevent="dragEnter($event, conditionIndex)"
+         @dragleave.prevent="dragLeave($event, conditionIndex)"
     >
-        <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
-              title="Drag to reorder conditions"
-              :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
-              :draggable="!condition.isDefault"
-              @dragstart="dragStart"
-              @dragend="dragEnd"
-        ></span>
+        <!-- Edit view -->
+        <div class="c-condition__header">
+            <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
+                  title="Drag to reorder conditions"
+                  :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
+                  :draggable="!condition.isDefault"
+                  @dragstart="dragStart"
+                  @dragend="dragEnd"
+            ></span>
 
-        <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
-              :class="{ 'c-disclosure-triangle--expanded': expanded }"
-              @click="expanded = !expanded"
-        ></span>
+            <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
+                  :class="{ 'c-disclosure-triangle--expanded': expanded }"
+                  @click="expanded = !expanded"
+            ></span>
 
-        <span class="c-condition__name">{{ condition.configuration.name }}</span>
-        <span class="c-condition__summary">
-            <template v-if="!canEvaluateCriteria">
-                Define criteria
-            </template>
-            <template v-else>
-                When
-                <span v-for="(criterion, index) in condition.configuration.criteria"
-                      :key="index"
-                >
-                    {{ getRule(criterion, index) }}
-                    <template v-if="!isLastCriterion">
-                        {{ getConjunction }}
-                    </template>
+            <span class="c-condition__name">{{ condition.configuration.name }}</span>
+            <span class="c-condition__summary">
+                <template v-if="!canEvaluateCriteria">
+                    Define criteria
+                </template>
+                <span v-else>
+                    <condition-description :show-label="false"
+                                           :condition="condition"
+                    />
                 </span>
-            </template>
-        </span>
-
-        <div class="c-condition__buttons">
-            <button v-if="!condition.isDefault"
-                    class="c-click-icon c-condition__duplicate-button icon-duplicate"
-                    title="Duplicate this condition"
-                    @click="cloneCondition"
-            ></button>
-
-            <button v-if="!condition.isDefault"
-                    class="c-click-icon c-condition__delete-button icon-trash"
-                    title="Delete this condition"
-                    @click="removeCondition"
-            ></button>
-        </div>
-    </div>
-    <div v-if="expanded"
-         class="c-condition__definition c-cdef"
-         @dragover.prevent
-    >
-        <span class="c-cdef__separator c-row-separator"></span>
-        <span class="c-cdef__label">Condition Name</span>
-        <span class="c-cdef__controls">
-            <input v-model="condition.configuration.name"
-                   class="t-condition-input__name"
-                   type="text"
-                   @blur="persist"
-            >
-        </span>
-
-        <span class="c-cdef__label">Output</span>
-        <span class="c-cdef__controls">
-            <span class="c-cdef__control">
-                <select v-model="selectedOutputSelection"
-                        @change="setOutputValue"
-                >
-                    <option v-for="option in outputOptions"
-                            :key="option"
-                            :value="option"
-                    >
-                        {{ initCap(option) }}
-                    </option>
-                </select>
             </span>
-            <span class="c-cdef__control">
-                <input v-if="selectedOutputSelection === outputOptions[2]"
-                       v-model="condition.configuration.output"
-                       class="t-condition-name-input"
+
+            <div class="c-condition__buttons">
+                <button v-if="!condition.isDefault"
+                        class="c-click-icon c-condition__duplicate-button icon-duplicate"
+                        title="Duplicate this condition"
+                        @click="cloneCondition"
+                ></button>
+
+                <button v-if="!condition.isDefault"
+                        class="c-click-icon c-condition__delete-button icon-trash"
+                        title="Delete this condition"
+                        @click="removeCondition"
+                ></button>
+            </div>
+        </div>
+        <div v-if="expanded"
+             class="c-condition__definition c-cdef"
+        >
+            <span class="c-cdef__separator c-row-separator"></span>
+            <span class="c-cdef__label">Condition Name</span>
+            <span class="c-cdef__controls">
+                <input v-model="condition.configuration.name"
+                       class="t-condition-input__name"
                        type="text"
                        @blur="persist"
                 >
             </span>
-        </span>
 
-        <div v-if="!condition.isDefault"
-             class="c-cdef__match-and-criteria"
-        >
-            <span class="c-cdef__separator c-row-separator"></span>
-            <span class="c-cdef__label">Match</span>
+            <span class="c-cdef__label">Output</span>
             <span class="c-cdef__controls">
-                <select v-model="condition.configuration.trigger"
-                        @change="persist"
-                >
-                    <option v-for="option in triggers"
-                            :key="option.value"
-                            :value="option.value"
-                    > {{ option.label }}</option>
-                </select>
+                <span class="c-cdef__control">
+                    <select v-model="selectedOutputSelection"
+                            @change="setOutputValue"
+                    >
+                        <option v-for="option in outputOptions"
+                                :key="option"
+                                :value="option"
+                        >
+                            {{ initCap(option) }}
+                        </option>
+                    </select>
+                </span>
+                <span class="c-cdef__control">
+                    <input v-if="selectedOutputSelection === outputOptions[2]"
+                           v-model="condition.configuration.output"
+                           class="t-condition-name-input"
+                           type="text"
+                           @blur="persist"
+                    >
+                </span>
             </span>
 
-            <template v-if="telemetry.length || condition.configuration.criteria.length">
-                <div v-for="(criterion, index) in condition.configuration.criteria"
-                     :key="criterion.id"
-                     class="c-cdef__criteria"
-                >
-                    <Criterion :telemetry="telemetry"
-                               :criterion="criterion"
-                               :index="index"
-                               :trigger="condition.configuration.trigger"
-                               :is-default="condition.configuration.criteria.length === 1"
-                               @persist="persist"
-                    />
-                    <div class="c-cdef__criteria__buttons">
-                        <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
-                                title="Duplicate this criteria"
-                                @click="cloneCriterion(index)"
-                        ></button>
-                        <button v-if="!(condition.configuration.criteria.length === 1)"
-                                class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
-                                title="Delete this criteria"
-                                @click="removeCriterion(index)"
-                        ></button>
-                    </div>
-                </div>
-            </template>
-            <div class="c-cdef__separator c-row-separator"></div>
-            <div class="c-cdef__controls"
-                 :disabled="!telemetry.length"
+            <div v-if="!condition.isDefault"
+                 class="c-cdef__match-and-criteria"
             >
-                <button
-                    class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
-                    @click="addCriteria"
+                <span class="c-cdef__separator c-row-separator"></span>
+                <span class="c-cdef__label">Match</span>
+                <span class="c-cdef__controls">
+                    <select v-model="condition.configuration.trigger"
+                            @change="persist"
+                    >
+                        <option v-for="option in triggers"
+                                :key="option.value"
+                                :value="option.value"
+                        > {{ option.label }}</option>
+                    </select>
+                </span>
+
+                <template v-if="telemetry.length || condition.configuration.criteria.length">
+                    <div v-for="(criterion, index) in condition.configuration.criteria"
+                         :key="criterion.id"
+                         class="c-cdef__criteria"
+                    >
+                        <Criterion :telemetry="telemetry"
+                                   :criterion="criterion"
+                                   :index="index"
+                                   :trigger="condition.configuration.trigger"
+                                   :is-default="condition.configuration.criteria.length === 1"
+                                   @persist="persist"
+                        />
+                        <div class="c-cdef__criteria__buttons">
+                            <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
+                                    title="Duplicate this criteria"
+                                    @click="cloneCriterion(index)"
+                            ></button>
+                            <button v-if="!(condition.configuration.criteria.length === 1)"
+                                    class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
+                                    title="Delete this criteria"
+                                    @click="removeCriterion(index)"
+                            ></button>
+                        </div>
+                    </div>
+                </template>
+                <div class="c-cdef__separator c-row-separator"></div>
+                <div class="c-cdef__controls"
+                     :disabled="!telemetry.length"
                 >
-                    <span class="c-button__label">Add Criteria</span>
-                </button>
+                    <button
+                        class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
+                        @click="addCriteria"
+                    >
+                        <span class="c-button__label">Add Criteria</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div v-else
-     class="c-condition c-condition--browse"
->
-    <!-- Browse view -->
-    <div class="c-condition__header">
-        <span class="c-condition__name">
-            {{ condition.configuration.name }}
-        </span>
-        <span class="c-condition__output">
-            Output: {{ condition.configuration.output }}
-        </span>
-    </div>
-    <div v-if="condition.isDefault"
-         class="c-condition__summary"
-    >
-        When all else fails
-    </div>
     <div v-else
-         class="c-condition__summary"
+         class="c-condition c-condition--browse"
     >
-        <template v-if="!canEvaluateCriteria">
-            Define criteria
-        </template>
-        <template v-else>
-            When
-            <span v-for="(criterion, index) in condition.configuration.criteria"
-                  :key="index"
-            >
-                {{ getRule(criterion, index) }}
-                <template v-if="!isLastCriterion">
-                    {{ getConjunction }}
-                </template>
+        <!-- Browse view -->
+        <div class="c-condition__header">
+            <span class="c-condition__name">
+                {{ condition.configuration.name }}
             </span>
-        </template>
+            <span class="c-condition__output">
+                Output: {{ condition.configuration.output }}
+            </span>
+        </div>
+        <div class="c-condition__summary">
+            <condition-description :show-label="false"
+                                   :condition="condition"
+            />
+        </div>
     </div>
 </div>
 </template>
@@ -233,7 +213,8 @@ export default {
             type: Array,
             required: true,
             default: () => []
-        }
+        },
+        conditionCollectionLength: Number
     },
     data() {
         return {
@@ -243,8 +224,8 @@ export default {
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0,
-            selectedTelemetryName: '',
-            selectedFieldName: ''
+            moveIndex: Number ,
+            draggingOver: false
         };
     },
     computed: {
@@ -261,22 +242,28 @@ export default {
         },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
-            let lastCriterion = criteria[criteria.length - 1];
-            if (lastCriterion.telemetry &&
-                lastCriterion.operation &&
-                (lastCriterion.input.length ||
-                lastCriterion.operation === 'isDefined' ||
-                lastCriterion.operation === 'isUndefined')) {
-                return true;
-            } else {
-                return false;
+            if (criteria.length) {
+                let lastCriterion = criteria[criteria.length - 1];
+                if (lastCriterion.telemetry &&
+                    lastCriterion.operation &&
+                    (lastCriterion.input.length ||
+                        lastCriterion.operation === 'isDefined' ||
+                        lastCriterion.operation === 'isUndefined')) {
+                    return true;
+                }
             }
+            return false;
         }
+        // isDraggingOver: function () {
+        //     console.log('isDraggingOver', this.draggingOver)
+        //     return this.draggingOver;
+        // }
     },
     destroyed() {
         this.destroy();
     },
     mounted() {
+        console.log('conditionCollectionLength',this.conditionCollectionLength);
         this.setOutputSelection();
     },
     methods: {
@@ -309,13 +296,69 @@ export default {
             this.condition.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
+            console.log('dragStart');
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
-            this.$emit('setMoveIndex', this.conditionIndex);
+            e.dataTransfer.setDragImage(e.target.closest('.c-condition'), 0, 0);
+            this.moveIndex = this.conditionIndex;
+            //this.$emit('setMoveIndex', this.conditionIndex);
         },
         dragEnd(e) {
             e.dataTransfer.clearData();
+        },
+        dropCondition() {
+            console.log('dropCondition');
+            // let targetIndex = 
+            // let isDefaultCondition = (this.conditionIndex === this.conditionCollection.length - 1);
+            // if (isDefaultCondition) { return }
+            // if (this.conditionIndex > this.moveIndex) { index-- } // for 'downward' move
+            // const oldIndexArr = Object.keys(this.conditionCollection);
+            // const move = function (arr, old_index, new_index) {
+            //     while (old_index < 0) {
+            //         old_index += arr.length;
+            //     }
+            //     while (new_index < 0) {
+            //         new_index += arr.length;
+            //     }
+            //     if (new_index >= arr.length) {
+            //         var k = new_index - arr.length;
+            //         while ((k--) + 1) {
+            //             arr.push(undefined);
+            //         }
+            //     }
+            //     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+            //     return arr;
+            // }
+            // const newIndexArr = move(oldIndexArr, this.moveIndex, index);
+            // const reorderPlan = [];
+
+            // for (let i = 0; i < oldIndexArr.length; i++) {
+            //     reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
+            // }
+
+            // this.reorder(reorderPlan);
+            // this.dragCounter = 0;
+            // event.target.closest('.c-condition-h').classList.remove("dragging");
+            // this.isDragging = false;
+        },
+        dragEnter(event, targetIndex) {
+            console.log('dragEnter');
+
+//            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            //if (this.moveIndex !== targetIndex && targetIndex !== this.conditionCollectionLength - 1) {
+            // console.log('turn on draggingOver')
+            this.draggingOver = true;
+            //}
+        },
+        dragLeave() {
+            console.log('dragLeave');
+            if (this.draggingOver) {
+                this.draggingOver = false;
+            }
+            // if (event.target.classList.contains('c-condition') &&
+            //     event.target.classList.contains('dragging')) {
+
+            // }
         },
         destroy() {
         },
