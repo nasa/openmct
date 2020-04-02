@@ -201,6 +201,8 @@ export default {
                 if (foundMetadata.enumerations !== undefined) {
                     this.operationFormat = 'enum';
                     this.enumerations = foundMetadata.enumerations;
+                } else if (foundMetadata.format === 'string' || foundMetadata.format === 'number') {
+                    this.operationFormat = foundMetadata.format;
                 } else if (foundMetadata.hints.hasOwnProperty('range')) {
                     this.operationFormat = 'number';
                 } else if (foundMetadata.hints.hasOwnProperty('domain')) {
@@ -208,7 +210,7 @@ export default {
                 } else if (foundMetadata.key === 'name') {
                     this.operationFormat = 'string';
                 } else {
-                    this.operationFormat = 'string';
+                    this.operationFormat = 'number';
                 }
             }
             this.updateInputVisibilityAndValues();
@@ -276,12 +278,14 @@ export default {
                 if (!this.filteredOps.find(operation => operation.name === this.criterion.operation)) {
                     this.criterion.operation = '';
                     this.criterion.input = this.enumerations.length ? [this.enumerations[0].value.toString()] : [];
-                    this.inputCount = 0;                }
+                    this.inputCount = 0;
+                }
             } else {
                 if (this.enumerations.length && !this.criterion.input.length) {
                     this.criterion.input = [this.enumerations[0].value.toString()];
                 }
-                this.inputCount = 0;            }
+                this.inputCount = 0;
+            }
         },
         persist() {
             this.$emit('persist', this.criterion);
