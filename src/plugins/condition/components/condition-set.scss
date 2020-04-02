@@ -26,6 +26,42 @@
     height: 100%;
     overflow: hidden;
 
+    /************************** CONDITION SET LAYOUT */
+    &__current-output {
+        flex: 0 0 auto;
+    }
+
+    &__test-data-and-conditions-w {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__test-data,
+    &__conditions {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    &__test-data {
+        flex: 0 0 auto;
+        max-height: 50%;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 4;
+        }
+    }
+
+    &__conditions {
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
     &__content {
         display: flex;
         flex-direction: column;
@@ -68,20 +104,29 @@
         }
     }
 
-    &__conditions {
-        > * + * {
-            margin-top: $interiorMarginSm;
-        }
-    }
-
     .hint {
         padding: $interiorMarginSm;
     }
 
     /************************** SPECIFIC ITEMS */
     &__current-output-value {
-        font-size: 1.25em;
-        padding: $interiorMargin;
+        flex-direction: row;
+        align-items: baseline;
+        padding: 0 $interiorMargin $interiorMarginLg $interiorMargin;
+
+        &__label {
+            color: $colorInspectorSectionHeaderFg;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        &__value {
+            font-size: 1.25em;
+            margin-left: $interiorMargin;
+            padding: $interiorMargin $interiorMargin * 3;
+            background: rgba(black, 0.2);
+            border-radius: 5px;
+        }
     }
 }
 

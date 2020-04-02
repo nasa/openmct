@@ -23,7 +23,6 @@
 <template>
 <section v-show="isEditing"
          id="test-data"
-         class="c-cs__test-data"
          :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
