@@ -21,12 +21,12 @@
 *****************************************************************************/
 
 <template>
-<component :is="internalDomainObject.url.length > 0? 'a' : 'span'"
+<component :is="cwHasUrl ? 'a' : 'span'"
            class="c-condition-widget"
-           :href="internalDomainObject.url.length > 0? internalDomainObject.url : null"
+           :href="cwHasUrl ? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.label }} {{ internalDomainObject.url.length }}
+        {{ internalDomainObject.label }}
     </div>
 </component>
 </template>
@@ -50,6 +50,9 @@ export default {
     methods: {
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
+        },
+        cwHasUrl() {
+            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
         }
     }
 }
