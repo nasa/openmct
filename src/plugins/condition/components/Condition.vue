@@ -308,7 +308,8 @@ export default {
             this.persist();
         },
         cloneCriterion(index) {
-            const clonedCriterion = Object.assign({}, this.condition.configuration.criteria[index], { id: uuid() });
+            const clonedCriterion = JSON.parse(JSON.stringify(this.condition.configuration.criteria[index]));
+            clonedCriterion.id = uuid();
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist();
         },

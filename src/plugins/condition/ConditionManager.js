@@ -141,7 +141,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     cloneCondition(conditionConfiguration, index) {
-        this.createAndSaveCondition(index, Object.assign({}, conditionConfiguration));
+        this.createAndSaveCondition(index, JSON.parse(JSON.stringify(conditionConfiguration)));
     }
 
     createAndSaveCondition(index, conditionConfiguration) {
