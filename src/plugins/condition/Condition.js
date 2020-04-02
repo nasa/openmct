@@ -185,11 +185,10 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(id);
         if (found) {
             let criterion = found.item;
-            criterion.destroy();
-            // TODO this is passing the wrong args
-            criterion.off('criterionUpdated', (result) => {
-                this.handleCriterionUpdated(id, result);
+            criterion.off('criterionUpdated', (obj) => {
+                this.handleCriterionUpdated(obj);
             });
+            criterion.destroy();
             this.criteria.splice(found.index, 1);
             if (this.criteriaResults[criterion.id] !== undefined) {
                 delete this.criteriaResults[criterion.id];
