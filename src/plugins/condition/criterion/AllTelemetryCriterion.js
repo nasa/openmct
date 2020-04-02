@@ -137,28 +137,28 @@ export default class TelemetryCriterion extends EventEmitter {
             return this.formatData({}, options.telemetryObjects);
         }
 
-        const telemetryRequests = options.telemetryObjects
-            .map(telemetryObject => this.telemetryAPI.request(
-                telemetryObject,
+        let keys = Object.keys(Object.assign({}, options.telemetryObjects));
+        const telemetryRequests = keys
+            .map(key => this.telemetryAPI.request(
+                options.telemetryObjects[key],
                 options
             ));
 
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
+                let latestDatum;
                 telemetryRequestsResults.forEach((results, index) => {
-                    const latestDatum = results.length ? results[results.length - 1] : {};
-                    if (index === telemetryRequestsResults.length-1) {
-                        //when the last result is computed, we return the result
-                        return {
-                            id: this.id,
-                            data: this.formatData(latestDatum, options.telemetryObjects)
-                        };
-                    } else {
+                    latestDatum = results.length ? results[results.length - 1] : {};
+                    if (index < telemetryRequestsResults.length-1) {
                         if (latestDatum) {
                             this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
                         }
                     }
                 });
+                return {
+                    id: this.id,
+                    data: this.formatData(latestDatum, options.telemetryObjects)
+                };
             });
     }
 

@@ -66,14 +66,23 @@ export default {
             }
         },
         getCriterionErrors(criterion, index) {
-            this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                if (telemetryObject.type === 'unknown') {
-                    this.conditionErrors.push({
-                        message: ERROR.TELEMETRY_NOT_FOUND,
-                        additionalInfo: criterion.telemetry ? `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}` : ''
+            if (!criterion.telemetry) {
+                this.conditionErrors.push({
+                    message: ERROR.TELEMETRY_NOT_FOUND,
+                    additionalInfo: ''
+                });
+            } else {
+                if (criterion.telemetry !== 'all' && criterion.telemetry !== 'any') {
+                    this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
+                        if (telemetryObject.type === 'unknown') {
+                            this.conditionErrors.push({
+                                message: ERROR.TELEMETRY_NOT_FOUND,
+                                additionalInfo: criterion.telemetry ? `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}` : ''
+                            });
+                        }
                     });
                 }
-            });
+            }
         }
     }
 }
