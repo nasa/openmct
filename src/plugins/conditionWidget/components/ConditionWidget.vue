@@ -21,13 +21,14 @@
 *****************************************************************************/
 
 <template>
-<a class="c-condition-widget"
-   :href="internalDomainObject.url"
+<component :is="internalDomainObject.url.length > 0? 'a' : 'span'"
+           class="c-condition-widget"
+           :href="internalDomainObject.url.length > 0? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.label }}
+        {{ internalDomainObject.label }} {{ internalDomainObject.url.length }}
     </div>
-</a>
+</component>
 </template>
 
 <script>
