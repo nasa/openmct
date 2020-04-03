@@ -11,6 +11,12 @@ import contextMenu from '../mixins/context-menu-gesture'
 export default {
     mixins: [contextMenu],
     props: {
+        actionsToBeSkipped: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         objectPath: {
             type: Array,
             required: true

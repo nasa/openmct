@@ -30,7 +30,10 @@
                 <span class="l-browse-bar__object-name">
                     {{ domainObject.name }}
                 </span>
-                <context-menu-drop-down :object-path="objectPath" />
+                <context-menu-drop-down
+                    :actions-to-be-skipped="actionsToBeSkipped"
+                    :object-path="objectPath"
+                />
             </div>
         </div>
         <div class="l-browse-bar__end">
@@ -67,6 +70,7 @@ export default {
         let type = this.openmct.types.get(domainObject.type);
 
         return {
+            actionsToBeSkipped: ['preview'],
             domainObject: domainObject,
             type: type,
             notebookEnabled: false,

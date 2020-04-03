@@ -1,6 +1,12 @@
 export default {
     inject: ['openmct'],
     props: {
+        'actionsToBeSkipped': {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         'objectPath': {
             type: Array,
             default() {
@@ -30,7 +36,7 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
+            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY, null, this.actionsToBeSkipped);
         }
     }
 };
