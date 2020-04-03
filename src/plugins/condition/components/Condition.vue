@@ -191,10 +191,8 @@ import ConditionDescription from "./ConditionDescription.vue";
 import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
 import uuid from 'uuid';
 
-let moveIndex = 0;
-
 export default {
-    inject: ['domainObject', 'openmct'],
+    inject: ['openmct'],
     components: {
         Criterion,
         ConditionDescription
@@ -216,6 +214,10 @@ export default {
             type: Array,
             required: true,
             default: () => []
+        },
+        isDragging: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -226,7 +228,8 @@ export default {
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0,
-            draggingOver: false
+            draggingOver: false,
+            isDefault: this.condition.isDefault
         };
     },
     computed: {
@@ -295,14 +298,16 @@ export default {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
-            moveIndex = this.conditionIndex;
-            this.$emit('setMoveIndex', moveIndex);
+            this.moveIndex = this.conditionIndex;
+            this.$emit('setMoveIndex', this.moveIndex);
         },
         dragEnd(event) {
+            this.dragStarted = false;
             event.dataTransfer.clearData();
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
+            if (!this.isDragging) { return }
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -310,6 +315,7 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
+            if (!this.isDragging) { return }
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -322,8 +328,7 @@ export default {
             }
         },
         isValidTarget(targetIndex) {
-            let targetElem = this.domainObject.configuration.conditionCollection[targetIndex];
-            return moveIndex !== targetIndex && !targetElem.isDefault;
+            return this.moveIndex !== targetIndex && !this.isDefault;
         },
         destroy() {
         },

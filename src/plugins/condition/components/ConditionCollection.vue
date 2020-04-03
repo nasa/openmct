@@ -62,6 +62,8 @@
                        :condition-index="index"
                        :telemetry="telemetryObjs"
                        :is-editing="isEditing"
+                       :move-index="moveIndex"
+                       :is-dragging="isDragging"
                        @updateCondition="updateCondition"
                        @removeCondition="removeCondition"
                        @cloneCondition="cloneCondition"
