@@ -77,7 +77,8 @@ $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brigh
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
 $uiColor: #0093ff; // Resize bars, splitter bars, etc.
-$colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$colorInteriorBorder: rgba($colorBodyFg, 0.3);
+$colorInteriorEdge: rgba(black, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
 $filterHov: brightness(1.3); // Tree, location items
@@ -86,7 +87,7 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Layout
 $shellMainPad: 4px 0;
-$shellPanePad: $interiorMargin, 7px;
+$shellPanePad: $interiorMargin, 10px;
 $drawerBg: lighten($colorBodyBg, 5%);
 $drawerFg: lighten($colorBodyFg, 5%);
 $sideBarBg: $drawerBg;
@@ -269,7 +270,7 @@ $formInputH: 22px;
 $formRowCtrlsH: 14px;
 
 // Inspector
-$colorInspectorBg: pullForward($colorBodyBg, 5%);
+$colorInspectorBg: pushBack($colorBodyBg, 3%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 20%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);

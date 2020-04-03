@@ -49,38 +49,50 @@
         >
             <mct-tree class="l-shell__tree" />
         </pane>
-        <pane class="l-shell__pane-main">
+        <pane class="l-shell__pane-main c-pane--holds-multipane">
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
             />
-            <toolbar
-                v-if="toolbar"
-                class="l-shell__toolbar"
-            />
-            <object-view
-                ref="browseObject"
-                class="l-shell__main-container"
-                :show-edit-view="true"
-                data-selectable
-            />
-            <component
-                :is="conductorComponent"
-                class="l-shell__time-conductor"
-            />
-        </pane>
-        <pane
-            class="l-shell__pane-inspector l-pane--holds-multipane"
-            handle="before"
-            label="Inspect"
-            collapsable
-        >
-            <Inspector
-                ref="inspector"
-                :is-editing="isEditing"
-            />
+
+            <multipane class="l-shell__main-view-and-inspector"
+                       type="horizontal"
+            >
+                <pane class="l-shell__pane-main-view">
+                    <toolbar
+                            v-if="toolbar"
+                            class="l-shell__toolbar"
+                    />
+                    <object-view
+                            ref="browseObject"
+                            class="l-shell__main-container"
+                            :show-edit-view="true"
+                            data-selectable
+                    />
+                </pane>
+                <pane
+                        class="l-shell__pane-inspector c-pane--holds-multipane"
+                        handle="before"
+                        label="Inspect"
+                        collapsable
+                >
+                    <Inspector
+                            ref="inspector"
+                            :is-editing="isEditing"
+                    />
+                </pane>
+            </multipane>
+
+
+
+
         </pane>
     </multipane>
+
+    <component
+            :is="conductorComponent"
+            class="l-shell__time-conductor"
+    />
 </div>
 </template>
 

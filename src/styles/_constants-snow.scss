@@ -78,6 +78,7 @@ $colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) br
 $colorKeySelectedBg: $colorKey;
 $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$colorInteriorEdge: rgba($colorBodyFg, 0.1);
 $colorA: #999;
 $colorAHov: $colorKey;
 $filterHov: brightness(1.3); // Tree, location items
