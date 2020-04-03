@@ -22,13 +22,10 @@
 
 <template>
 <div class="c-condition-h"
-     :draggable="!condition.isDefault"
      @dragover.prevent
      @drop.prevent="dropCondition($event, conditionIndex)"
      @dragenter.prevent="dragEnter($event, conditionIndex)"
      @dragleave.prevent="dragLeave($event, conditionIndex)"
-     @dragstart="dragStart"
-     @dragend="dragEnd"
 >
     <div v-if="isEditing"
          class="c-condition c-condition--edit"
@@ -39,6 +36,9 @@
             <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
                   title="Drag to reorder conditions"
                   :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
+                  :draggable="!condition.isDefault"
+                  @dragstart="dragStart"
+                  @dragend="dragEnd"
             ></span>
 
             <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
@@ -191,8 +191,10 @@ import ConditionDescription from "./ConditionDescription.vue";
 import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
 import uuid from 'uuid';
 
+let moveIndex = 0;
+
 export default {
-    inject: ['openmct'],
+    inject: ['domainObject', 'openmct'],
     components: {
         Criterion,
         ConditionDescription
@@ -214,10 +216,6 @@ export default {
             type: Array,
             required: true,
             default: () => []
-        },
-        conditionCollectionLength: {
-            type: Number,
-            required: true
         }
     },
     data() {
@@ -228,8 +226,6 @@ export default {
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0,
-            moveIndex: Number,
-            targetIndex: Number,
             draggingOver: false
         };
     },
@@ -298,18 +294,20 @@ export default {
         dragStart(e) {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target, 0, 0);
-            this.moveIndex = this.conditionIndex;
-            this.$emit('setMoveIndex', this.conditionIndex);
+            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
+            moveIndex = this.conditionIndex;
+            this.$emit('setMoveIndex', moveIndex);
         },
         dragEnd(event) {
             event.dataTransfer.clearData();
             this.$emit('dragComplete');
         },
-        dropCondition(event, index) {
-            this.dragElement = undefined;
-            this.draggingOver = false;
-            this.$emit('dropCondition', index);
+        dropCondition(event, targetIndex) {
+            if (this.isValidTarget(targetIndex)) {
+                this.dragElement = undefined;
+                this.draggingOver = false;
+                this.$emit('dropCondition', targetIndex);
+            }
         },
         dragEnter(event, targetIndex) {
             if (this.isValidTarget(targetIndex)) {
@@ -324,8 +322,8 @@ export default {
             }
         },
         isValidTarget(targetIndex) {
-            if (targetIndex > this.moveIndex) { targetIndex-- }
-            return this.moveIndex !== targetIndex && targetIndex !== this.conditionCollectionLength - 1;
+            let targetElem = this.domainObject.configuration.conditionCollection[targetIndex];
+            return moveIndex !== targetIndex && !targetElem.isDefault;
         },
         destroy() {
         },

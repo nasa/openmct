@@ -62,7 +62,6 @@
                        :condition-index="index"
                        :telemetry="telemetryObjs"
                        :is-editing="isEditing"
-                       :condition-collection-length="conditionCollection.length"
                        @updateCondition="updateCondition"
                        @removeCondition="removeCondition"
                        @cloneCondition="cloneCondition"
