@@ -182,9 +182,9 @@
 
         &[class*="--horizontal"] {
             > .c-pane__handle {
-                cursor: col-resize;
-                //top: 0;
-                //bottom: 0;
+                cursor: ew-resize;
+                top: $interiorMargin;
+                bottom: $interiorMargin;
                 width: $splitterHandleD;
 
                 &:before {
@@ -239,7 +239,7 @@
                 padding-left: nth($shellPanePad, 2);
 
                 > .c-pane__handle {
-                    left: 0;
+                    //left: 0;
                     transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
                 }
 

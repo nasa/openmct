@@ -189,7 +189,7 @@
     /******************************* MAIN AREA */
     &__main-view-browse-bar {
         flex: 0 0 auto;
-        padding: $interiorMarginSm $interiorMarginLg 0 0;
+        padding: $interiorMarginLg $interiorMarginLg 0 0;
     }
 
     &__pane-main-view {
@@ -249,14 +249,16 @@
 
         &__pane-inspector {
             $br: $basicCr;
+            $m: $interiorMargin;
             background: $colorInspectorBg;
             border-top-left-radius: $br;
             //border-bottom-left-radius: $br;
             width: 200px;
-            padding: $interiorMargin;
+            padding: $m $m $m $m * 2 !important;
 
-            .c-pane__handle {
+            > .c-pane__handle {
                 background: none;
+                left: 2px;
             }
         }
     }

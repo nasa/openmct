@@ -40,10 +40,12 @@
         <div class="l-browse-bar__actions">
             <button
                 v-if="isViewEditable & !isEditing"
-                class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
+                class="l-browse-bar__actions__edit c-button c-button--major icon-pencil labeled"
                 title="Edit"
                 @click="edit()"
-            ></button>
+            >
+                <span class="c-button__label">Edit</span>
+            </button>
 
             <div
                 v-if="isEditing"

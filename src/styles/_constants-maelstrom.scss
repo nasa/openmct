@@ -387,7 +387,7 @@ $splitterHandleD: 2px;
 $splitterD: $splitterHandleD;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: pullForward($colorBodyBg, 10%);
+$colorSplitterBg: rgba($colorBodyFg, 0.2);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
