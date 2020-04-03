@@ -22,22 +22,23 @@
 
 <template>
 <div class="c-condition-h"
-     @drop.prevent="dropCondition"
+     :draggable="!condition.isDefault"
+     @dragover.prevent
+     @drop.prevent="dropCondition($event, conditionIndex)"
+     @dragenter.prevent="dragEnter($event, conditionIndex)"
+     @dragleave.prevent="dragLeave($event, conditionIndex)"
+     @dragstart="dragStart"
+     @dragend="dragEnd"
 >
     <div v-if="isEditing"
          class="c-condition c-condition--edit"
          :class="{ 'dragging': draggingOver }"
-         @dragenter.prevent="dragEnter($event, conditionIndex)"
-         @dragleave.prevent="dragLeave($event, conditionIndex)"
     >
         <!-- Edit view -->
         <div class="c-condition__header">
             <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
                   title="Drag to reorder conditions"
                   :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
-                  :draggable="!condition.isDefault"
-                  @dragstart="dragStart"
-                  @dragend="dragEnd"
             ></span>
 
             <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
@@ -214,17 +215,21 @@ export default {
             required: true,
             default: () => []
         },
-        conditionCollectionLength: Number
+        conditionCollectionLength: {
+            type: Number,
+            required: true
+        }
     },
     data() {
         return {
             currentCriteria: this.currentCriteria,
-            expanded: false,
+            expanded: true,
             trigger: 'all',
             selectedOutputSelection: '',
             outputOptions: ['false', 'true', 'string'],
             criterionIndex: 0,
-            moveIndex: Number ,
+            moveIndex: Number,
+            targetIndex: Number,
             draggingOver: false
         };
     },
@@ -254,16 +259,11 @@ export default {
             }
             return false;
         }
-        // isDraggingOver: function () {
-        //     console.log('isDraggingOver', this.draggingOver)
-        //     return this.draggingOver;
-        // }
     },
     destroyed() {
         this.destroy();
     },
     mounted() {
-        console.log('conditionCollectionLength',this.conditionCollectionLength);
         this.setOutputSelection();
     },
     methods: {
@@ -296,69 +296,36 @@ export default {
             this.condition.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
-            console.log('dragStart');
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.c-condition'), 0, 0);
+            e.dataTransfer.setDragImage(e.target, 0, 0);
             this.moveIndex = this.conditionIndex;
-            //this.$emit('setMoveIndex', this.conditionIndex);
+            this.$emit('setMoveIndex', this.conditionIndex);
         },
-        dragEnd(e) {
-            e.dataTransfer.clearData();
+        dragEnd(event) {
+            event.dataTransfer.clearData();
+            this.$emit('dragComplete');
         },
-        dropCondition() {
-            console.log('dropCondition');
-            // let targetIndex = 
-            // let isDefaultCondition = (this.conditionIndex === this.conditionCollection.length - 1);
-            // if (isDefaultCondition) { return }
-            // if (this.conditionIndex > this.moveIndex) { index-- } // for 'downward' move
-            // const oldIndexArr = Object.keys(this.conditionCollection);
-            // const move = function (arr, old_index, new_index) {
-            //     while (old_index < 0) {
-            //         old_index += arr.length;
-            //     }
-            //     while (new_index < 0) {
-            //         new_index += arr.length;
-            //     }
-            //     if (new_index >= arr.length) {
-            //         var k = new_index - arr.length;
-            //         while ((k--) + 1) {
-            //             arr.push(undefined);
-            //         }
-            //     }
-            //     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-            //     return arr;
-            // }
-            // const newIndexArr = move(oldIndexArr, this.moveIndex, index);
-            // const reorderPlan = [];
-
-            // for (let i = 0; i < oldIndexArr.length; i++) {
-            //     reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
-            // }
-
-            // this.reorder(reorderPlan);
-            // this.dragCounter = 0;
-            // event.target.closest('.c-condition-h').classList.remove("dragging");
-            // this.isDragging = false;
+        dropCondition(event, index) {
+            this.dragElement = undefined;
+            this.draggingOver = false;
+            this.$emit('dropCondition', index);
         },
         dragEnter(event, targetIndex) {
-            console.log('dragEnter');
-
-//            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
-            //if (this.moveIndex !== targetIndex && targetIndex !== this.conditionCollectionLength - 1) {
-            // console.log('turn on draggingOver')
-            this.draggingOver = true;
-            //}
-        },
-        dragLeave() {
-            console.log('dragLeave');
-            if (this.draggingOver) {
-                this.draggingOver = false;
+            if (this.isValidTarget(targetIndex)) {
+                this.dragElement = event.target.parentElement;
+                this.draggingOver = true;
             }
-            // if (event.target.classList.contains('c-condition') &&
-            //     event.target.classList.contains('dragging')) {
-
-            // }
+        },
+        dragLeave(event) {
+            if (event.target.parentElement === this.dragElement) {
+                this.draggingOver = false;
+                this.dragElement = undefined;
+            }
+        },
+        isValidTarget(targetIndex) {
+            if (targetIndex > this.moveIndex) { targetIndex-- }
+            return this.moveIndex !== targetIndex && targetIndex !== this.conditionCollectionLength - 1;
         },
         destroy() {
         },

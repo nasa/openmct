@@ -56,19 +56,6 @@
         <div class="c-cs__conditions-h"
              :class="{ 'all-dragging': isDragging }"
         >
-            <!-- <div v-for="(condition, index) in conditionCollection"
-                 :key="condition.id"
-                 class="c-condition-h"
-                 @drop.prevent="dropCondition(index)"
-                 @dragover.prevent
-                 @dragenter="dragEnter(index)"
-                 @dragleave="dragLeave"
-                 @dragend="dragEnd"
-            >
-                <div v-if="isEditing"
-                     class="c-c__drag-ghost"
-                     @dragover.prevent
-                ></div> -->
             <Condition v-for="(condition, index) in conditionCollection"
                        :key="condition.id"
                        :condition="condition"
@@ -80,9 +67,9 @@
                        @removeCondition="removeCondition"
                        @cloneCondition="cloneCondition"
                        @setMoveIndex="setMoveIndex"
-                       @dragend="dragEnd"
+                       @dragComplete="dragComplete"
+                       @dropCondition="dropCondition"
             />
-            <!-- </div> -->
         </div>
     </div>
 </section>
@@ -175,7 +162,34 @@ export default {
             this.moveIndex = index;
             this.isDragging = true;
         },
-        dragEnd() {
+        dropCondition(targetIndex) {
+            const oldIndexArr = Object.keys(this.conditionCollection);
+            const move = function (arr, old_index, new_index) {
+                while (old_index < 0) {
+                    old_index += arr.length;
+                }
+                while (new_index < 0) {
+                    new_index += arr.length;
+                }
+                if (new_index >= arr.length) {
+                    var k = new_index - arr.length;
+                    while ((k--) + 1) {
+                        arr.push(undefined);
+                    }
+                }
+                arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+                return arr;
+            }
+            const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
+            const reorderPlan = [];
+
+            for (let i = 0; i < oldIndexArr.length; i++) {
+                reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
+            }
+
+            this.reorder(reorderPlan);
+        },
+        dragComplete() {
             this.isDragging = false;
         },
         addTelemetryObject(domainObject) {
