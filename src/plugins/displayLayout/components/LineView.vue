@@ -23,6 +23,7 @@
 <template>
 <div
     class="l-layout__frame c-frame no-frame"
+    :class="[styleClass]"
     :style="style"
 >
     <svg
@@ -31,7 +32,7 @@
     >
         <line
             v-bind="linePosition"
-            :stroke="item.stroke"
+            :stroke="stroke"
             stroke-width="2"
         />
     </svg>
@@ -60,6 +61,8 @@
 
 <script>
 
+import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+
 const START_HANDLE_QUADRANTS = {
     1: 'c-frame-edit__handle--sw',
     2: 'c-frame-edit__handle--se',
@@ -85,6 +88,7 @@ export default {
         };
     },
     inject: ['openmct'],
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -122,6 +126,13 @@ export default {
             }
             return {x, y, x2, y2};
         },
+        stroke() {
+            if (this.itemStyle && this.itemStyle.border) {
+                return this.itemStyle.border.replace('1px solid ', '');
+            } else {
+                return this.item.stroke;
+            }
+        },
         style() {
             let {x, y, x2, y2} = this.position;
             let width = Math.max(this.gridSize[0] * Math.abs(x - x2), 1);
@@ -134,6 +145,9 @@ export default {
                 width: `${width}px`,
                 height: `${height}px`
             };
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

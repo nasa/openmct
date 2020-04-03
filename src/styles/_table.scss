@@ -78,10 +78,14 @@ div.c-table {
 
 .c-table-wrapper {
     // Wraps .c-control-bar and .c-table
-    @include abs();
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+
+    // Using absolute here because sizing table can't calc width properly if padding is used
+    $p: $mainViewPad;
+    position: absolute;
+    top: $p; right: $p; bottom: $p; left: $p;
 
     > .c-table {
         height: auto;
@@ -156,6 +160,12 @@ div.c-table {
             cursor: pointer;
         }
     }
+}
+
+.c-lad-table-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: $mainViewPad;
 }
 
 .c-lad-table {

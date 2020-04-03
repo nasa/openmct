@@ -29,6 +29,7 @@
 >
     <div
         class="c-image-view"
+        :class="[styleClass]"
         :style="style"
     ></div>
 </layout-frame>
@@ -36,6 +37,7 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
+import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 export default {
     makeDefinition(openmct, gridSize, element) {
@@ -52,6 +54,7 @@ export default {
     components: {
         LayoutFrame
     },
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -72,9 +75,12 @@ export default {
     computed: {
         style() {
             return {
-                backgroundImage: 'url(' + this.item.url + ')',
-                border: '1px solid ' + this.item.stroke
-            }
+                backgroundImage: this.itemStyle ? ('url(' + this.itemStyle.imageUrl + ')') : 'url(' + this.item.url + ')',
+                border: (this.itemStyle && this.itemStyle.border) ? this.itemStyle.border : ('1px solid ' + this.item.stroke)
+            };
+        },
+        styleClass() {
+            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {

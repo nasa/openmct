@@ -23,20 +23,20 @@
 <template>
 <div
     v-if="isEditing"
-    class="c-properties"
+    class="c-inspect-properties"
 >
-    <div class="c-properties__header">
+    <div class="c-inspect-properties__header">
         Alphanumeric Format
     </div>
-    <ul class="c-properties__section">
-        <li class="c-properties__row">
+    <ul class="c-inspect-properties__section">
+        <li class="c-inspect-properties__row">
             <div
-                class="c-properties__label"
+                class="c-inspect-properties__label"
                 title="Printf formatting for the selected telemetry"
             >
                 <label for="telemetryPrintfFormat">Format</label>
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 <input
                     id="telemetryPrintfFormat"
                     type="text"
@@ -85,7 +85,13 @@ export default {
                 return;
             }
 
-            let format = selection[0][0].context.layoutItem.format;
+            let layoutItem = selection[0][0].context.layoutItem;
+
+            if (!layoutItem) {
+                return;
+            }
+
+            let format = layoutItem.format;
             this.nonMixedFormat = selection.every(selectionPath => {
                 return selectionPath[0].context.layoutItem.format === format;
             });

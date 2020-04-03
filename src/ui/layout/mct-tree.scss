@@ -1,7 +1,9 @@
 .c-tree-and-search {
     display: flex;
     flex-direction: column;
-    padding-right: $interiorMarginSm;
+    flex: 1 1 auto;
+    //TODO: Do we need this???
+    //padding-right: $interiorMarginSm;
     overflow: auto;
 
     > * + * { margin-top: $interiorMargin; }
@@ -22,22 +24,22 @@
     &__tree {
         flex: 1 1 auto;
         height: 0; // Chrome 73 overflow bug fix
+        padding-right: $interiorMarginSm;
     }
 }
 
-.c-tree {
+.c-tree,
+.c-list {
     @include userSelectNone();
     overflow-x: hidden;
     overflow-y: auto;
-    padding-right: $interiorMargin;
 
     li {
         position: relative;
-        &.c-tree__item-h { display: block; }
-    }
-
-    .c-tree {
-        margin-left: 15px;
+        &[class*="__item-h"] { display: block; }
+        + li {
+            margin-top: 1px;
+        }
     }
 
     &__item {
@@ -47,20 +49,13 @@
         align-items: center;
         cursor: pointer;
         line-height: 110%;
-        padding: $interiorMargin - $aPad;
+        padding: $interiorMarginSm $interiorMargin;
         transition: background 150ms ease;
-
-        > * + * {
-            margin-left: $interiorMarginSm;
-        }
 
         &:hover {
             background: $colorItemTreeHoverBg;
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
 
-            .c-tree__item__name {
+            [class*="__name"] {
                 color: $colorItemTreeHoverFg;
             }
         }
@@ -68,12 +63,34 @@
         &.is-navigated-object,
         &.is-selected {
             background: $colorItemTreeSelectedBg;
+
+            [class*="__name"] {
+                color: $colorItemTreeSelectedFg;
+            }
+        }
+    }
+}
+
+.c-tree {
+    .c-tree {
+        margin-left: 15px;
+    }
+
+    &__item {
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        &:hover {
             .c-tree__item__type-icon:before {
                 color: $colorItemTreeIconHover;
             }
+        }
 
-            .c-tree__item__name {
-                color: $colorItemTreeSelectedFg;
+        &.is-navigated-object,
+        &.is-selected {
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeIconHover;
             }
         }
 
@@ -91,32 +108,15 @@
 
         // Object labels in trees
         &__label {
-            // <a> tag that holds type icon and name.
-            // Draggable element.
-            /*border-radius: $controlCr;
-            display: flex;
-            align-items: center;
             flex: 1 1 auto;
-            overflow: hidden;
-            padding: $aPad;
-            white-space: nowrap;*/
         }
 
         &__name {
-           // @include ellipsize();
-           // display: inline;
             color: $colorItemTreeFg;
-          //  width: 100%;
         }
 
         &__type-icon {
-            // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
-           // display: block;
-         //   flex: 0 0 auto;
-          //  font-size: 1.3em;
-          //  margin-right: $interiorMarginSm;
             color: $colorItemTreeIcon;
-          //  width: $treeTypeIconW;
         }
 
         &.is-alias {
@@ -134,5 +134,26 @@
                 width: ceil($mobileTreeItemH * 0.5);
             }
         }
+    }
+}
+
+.c-list {
+    padding-right: $interiorMargin;
+
+    &__item {
+        &__name {
+            $p: $interiorMarginSm;
+            @include ellipsize();
+            padding-bottom: $p;
+            padding-top: $p;
+        }
+    }
+}
+
+.c-selector {
+    .c-tree-and-search__tree.c-tree {
+        border: 1px solid $colorInteriorBorder;
+        border-radius: $controlCr;
+        padding: $interiorMargin;
     }
 }

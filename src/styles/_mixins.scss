@@ -51,7 +51,7 @@
 
 /************************** EFFECTS */
 @mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
-    @keyframes pulse {
+    @keyframes #{$animName} {
         0%   { opacity: $opacity0; }
         100% { opacity: $opacity100; }
     }
@@ -59,6 +59,18 @@
     animation-duration: $dur;
     animation-direction: alternate;
     animation-iteration-count: $iteration;
+    animation-timing-function: ease-in-out;
+}
+
+@mixin pulseProp($animName: pulseProp, $dur: 500ms, $iter: 5, $prop: opacity, $valStart: 0, $valEnd: 1) {
+    @keyframes #{$animName} {
+        0%   { #{$prop}: $valStart; }
+        100% {  #{$prop}: $valEnd; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: alternate;
+    animation-iteration-count: $iter;
     animation-timing-function: ease-in-out;
 }
 
@@ -125,6 +137,24 @@
             $c2 75%, $c2 100%
     ) repeat;
     background-size: $bgSize;
+}
+
+@mixin bgCheckerboard($c: $colorBodyFg, $opacity: 0.3, $size: 32px, $imp: false) {
+    $color: rgba($c, $opacity);
+    $bgPos: floor($size / 2);
+
+    $impStr: null;
+    @if $imp {
+        $impStr: !important;
+    }
+
+    background-image:
+        linear-gradient(45deg, $color 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, $color 75%),
+        linear-gradient(45deg, transparent 75%, $color 75%),
+        linear-gradient(45deg, $color 25%, transparent 25%) $impStr;
+    background-size: $size $size;
+    background-position:0 0, 0 0, -1*$bgPos -1*$bgPos, $bgPos $bgPos;
 }
 
 @mixin disabled() {
@@ -403,14 +433,19 @@
     }
 }
 
-
 @mixin cClickIcon() {
     @include cControl();
+    color: $colorBodyFg;
     cursor: pointer;
     padding: 4px; // Bigger hit area
-    opacity: 0.6;
+    opacity: 0.7;
     transition: $transOut;
     transform-origin: center;
+
+    &[class*="--major"] {
+        color: $colorBtnMajorBg !important;
+        opacity: 0.8;
+    }
 
     @include hover() {
         transform: scale(1.1);

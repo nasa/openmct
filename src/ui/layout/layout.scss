@@ -6,6 +6,21 @@
     flex-flow: column nowrap;
     overflow: hidden;
 
+    &__drawer {
+        background: $drawerBg;
+        display: flex;
+        flex-direction: column;
+        height: 0;
+        min-height: 0;
+        max-height: 15%;
+        overflow: hidden;
+        transition: $transIn;
+
+        &.is-expanded {
+            height: max-content;
+        }
+    }
+
     &__pane-tree {
         width: 40%;
 
@@ -15,7 +30,7 @@
                 @include cClickIconButton();
                 color: $colorKey !important;
                 position: absolute;
-                right: -2 * nth($shellPanePad, 2); // Needs to be -1 * when pane is collapsed
+                right: -18px;
                 top: 0;
                 transform: translateX(100%);
                 width: $mobileMenuIconD;
@@ -35,9 +50,15 @@
             display: flex;
             flex-flow: column nowrap;
             overflow-x: hidden;
+        }
+    }
 
+    &__pane-tree,
+    &__pane-main {
+        .l-pane__contents {
             > * {
                 flex: 0 0 auto;
+
                 + * {
                     margin-top: $interiorMarginLg;
                 }
@@ -45,13 +66,22 @@
         }
     }
 
+    &__pane-main {
+        .l-pane__header { display: none; }
+    }
+
     body.mobile & {
+        &__pane-main,
+        &__pane-tree {
+            padding: $interiorMarginLg;
+        }
+
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
             &[class*="--collapsed"] {
                 [class*="collapse-button"] {
-                    right: -1 * nth($shellPanePad, 2);
+                    right: -8px;
                 }
             }
         }
@@ -184,14 +214,14 @@
 
     &__main {
         > .l-pane {
-            padding: nth($shellPanePad, 1) nth($shellPanePad, 2);
+            padding: nth($shellPanePad, 1) 0;
         }
     }
 
     body.desktop & {
         &__main {
             // Top and bottom padding in container that holds tree, __pane-main and Inspector
-            padding: $shellMainPad;
+            padding: nth($shellPanePad, 1) 0;
             min-height: 0;
 
             > .l-pane {
@@ -202,15 +232,17 @@
 
         &__pane-tree,
         &__pane-inspector {
-            max-width: 30%;
+            max-width: 70%;
         }
 
         &__pane-tree {
             width: 300px;
+            padding-left: nth($shellPanePad, 2);
         }
 
         &__pane-inspector {
             width: 200px;
+            padding-right: nth($shellPanePad, 2);
         }
     }
 
@@ -236,3 +268,68 @@
         }
     }
 }
+
+.c-drawer {
+    /* New sliding overlay or push element to contain things
+    * Designed for mobile and compact desktop scenarios
+    * Variations:
+    * --overlays: position absolute, overlays neighboring elements
+    * --push: position relative, pushs/collapses neighboring elements
+    * --align-left, align-top: opens from left or top respectively
+    * &.is-expanded: applied when expanded.
+     */
+
+    transition: $transOut;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+
+    &:not(.is-expanded) {
+        // When collapsed, hide internal elements
+        > * {
+            display: none;
+        }
+    }
+
+    &.c-drawer--align-left {
+        height: 100%;
+    }
+
+    &.c-drawer--align-top {
+        // Need anything here?
+    }
+
+    &.c-drawer--overlays {
+        position: absolute;
+        z-index: 3;
+
+        &.is-expanded {
+            // Height and width must be set per usage
+            &.c-drawer--align-left {
+                box-shadow: rgba(black, 0.7) 3px 0 20px;
+            }
+
+            &.c-drawer--align-top {
+                box-shadow: rgba(black, 0.7) 0 3px 20px;
+            }
+        }
+    }
+
+    &.c-drawer--push {
+        position: relative;
+
+        &.is-expanded {
+            // Height and width must be set per usage
+            &.c-drawer--align-left {
+                box-shadow: rgba(black, 0.2) 3px 0 20px;
+                margin-right: $interiorMarginLg;
+            }
+
+            &.c-drawer--align-top {
+                box-shadow: rgba(black, 0.2) 0 3px 20px;
+                margin-bottom: $interiorMarginLg; // Not sure this is desired here
+            }
+        }
+    }
+}
+

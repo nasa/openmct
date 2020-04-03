@@ -67,20 +67,21 @@
     }
 
     &__object-name--w {
-        align-items: center;
-        display: flex;
         flex: 0 1 auto;
         @include headerFont(1.4em);
         min-width: 0;
 
         &:before {
             // Icon
-            opacity: 0.5;
             margin-right: $interiorMargin;
         }
     }
 
     &__object-name {
         flex: 0 1 auto;
+    }
+
+    &__object-details {
+        opacity: 0.5;
     }
 }
