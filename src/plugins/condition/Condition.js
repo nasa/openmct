@@ -25,6 +25,7 @@ import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
 import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
+import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
 /*
@@ -59,7 +60,7 @@ export default class ConditionClass extends EventEmitter {
         this.criteriaResults = {};
         this.result = undefined;
         this.latestTimestamp = {};
-
+        this.timeSystems = this.openmct.time.getAllTimeSystems();
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
@@ -210,35 +211,39 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    updateCriteriaResults(eventData) {
+    updateCriteriaResults(criteriaResults, eventData) {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
             // The !! here is important to convert undefined to false otherwise the criteriaResults won't get deleted when the criteria is destroyed
-            this.criteriaResults[id] = !!eventData.data.result;
+            criteriaResults[id] = !!eventData.data.result;
         }
     }
 
     handleCriterionResult(eventData) {
-        this.updateCriteriaResults(eventData);
+        this.updateCriteriaResults(this.criteriaResults, eventData);
         this.handleConditionUpdated(eventData.data);
     }
 
     requestLADConditionResult() {
-        const criteriaResults = this.criteria
+        let latestTimestamp;
+        let criteriaResults = {};
+        const criteriaRequests = this.criteria
             .map(criterion => criterion.requestLAD({telemetryObjects: this.conditionManager.telemetryObjects}));
 
-        return Promise.all(criteriaResults)
+        return Promise.all(criteriaRequests)
             .then(results => {
                 results.forEach(result => {
-                    this.updateCriteriaResults(result);
-                    this.latestTimestamp = this.getLatestTimestamp(this.latestTimestamp, result.data)
+                    this.updateCriteriaResults(criteriaResults, result)
+                    latestTimestamp = getLatestTimestamp(
+                        latestTimestamp,
+                        result.data,
+                        this.timeSystems
+                    );
                 });
-                this.evaluate();
-
                 return {
                     id: this.id,
-                    data: Object.assign({}, this.latestTimestamp, { result: this.result })
+                    data: Object.assign({}, latestTimestamp, { result: this.evaluate(criteriaResults) })
                 }
             });
     }
@@ -248,8 +253,9 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleConditionUpdated(datum) {
+        console.log(datum);
         // trigger an updated event so that consumers can react accordingly
-        this.evaluate();
+        this.result = this.evaluate(this.criteriaResults);
         this.emitEvent('conditionResultUpdated',
             Object.assign({}, datum, { result: this.result })
         );
@@ -268,27 +274,14 @@ export default class ConditionClass extends EventEmitter {
         return success;
     }
 
-    evaluate() {
+    evaluate(results) {
         if (this.trigger && this.trigger === TRIGGER.XOR) {
-            this.result = computeConditionByLimit(this.criteriaResults, 1);
+            return computeConditionByLimit(results, 1);
         } else if (this.trigger && this.trigger === TRIGGER.NOT) {
-            this.result = computeConditionByLimit(this.criteriaResults, 0);
+            return computeConditionByLimit(results, 0);
         } else {
-            this.result = computeCondition(this.criteriaResults, this.trigger === TRIGGER.ALL);
+            return computeCondition(results, this.trigger === TRIGGER.ALL);
         }
-    }
-
-    getLatestTimestamp(current, compare) {
-        const timestamp = Object.assign({}, current);
-
-        this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
-            if (!timestamp[timeSystem.key]
-                || compare[timeSystem.key] > timestamp[timeSystem.key]
-            ) {
-                timestamp[timeSystem.key] = compare[timeSystem.key];
-            }
-        });
-        return timestamp;
     }
 
     emitEvent(eventName, data) {

@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Condition from "./Condition";
+import { getLatestTimestamp } from './utils/time';
 import uuid from "uuid";
 import EventEmitter from 'EventEmitter';
 
@@ -31,6 +32,7 @@ export default class ConditionManager extends EventEmitter {
         this.conditionSetDomainObject = conditionSetDomainObject;
         this.timeAPI = this.openmct.time;
         this.latestTimestamp = {};
+        this.timeSystems = this.openmct.time.getAllTimeSystems();
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.subscribeToTelemetry, this);
         this.composition.on('remove', this.unsubscribeFromTelemetry, this);
@@ -186,12 +188,12 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    getCurrentCondition() {
+    getCurrentCondition(conditionResults) {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
         let currentCondition = conditionCollection[conditionCollection.length-1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            if (this.conditionResults[conditionCollection[i].id]) {
+            if (conditionResults[conditionCollection[i].id]) {
                 //first condition to be true wins
                 currentCondition = conditionCollection[i];
                 break;
@@ -200,7 +202,8 @@ export default class ConditionManager extends EventEmitter {
         return currentCondition;
     }
 
-    updateConditionResults(resultObj) {
+    updateConditionResults(conditionResults, resultObj) {
+        console.log(resultObj.data);
         if (!resultObj) {
             return;
         }
@@ -208,16 +211,21 @@ export default class ConditionManager extends EventEmitter {
         const id = resultObj.id;
 
         if (this.findConditionById(id)) {
-            this.conditionResults[id] = resultObj.data.result;
+            conditionResults[id] = resultObj.data.result;
         }
 
-        this.updateTimestamp(resultObj.data);
+        this.latestTimestamp = getLatestTimestamp(
+            this.latestTimestamp,
+            resultObj.data,
+            this.timeSystems
+        );
     }
 
     handleConditionResult(resultObj) {
         // update conditions results and then calculate the current condition
-        this.updateConditionResults(resultObj);
-        const currentCondition = this.getCurrentCondition();
+        this.updateConditionResults(this.conditionResults, resultObj);
+        const currentCondition = this.getCurrentCondition(this.conditionResults);
+
         this.emit('conditionSetResultUpdated',
             Object.assign(
                 {
@@ -230,29 +238,27 @@ export default class ConditionManager extends EventEmitter {
         )
     }
 
-    updateTimestamp(timestamp) {
-        this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-            if (!this.latestTimestamp[timeSystem.key]
-                || timestamp[timeSystem.key] > this.latestTimestamp[timeSystem.key]
-            ) {
-                this.latestTimestamp[timeSystem.key] = timestamp[timeSystem.key];
-            }
-        });
-    }
-
     requestLADConditionSetOutput() {
         if (!this.conditionClassCollection.length) {
             return Promise.resolve([]);
         }
 
         return this.compositionLoad.then(() => {
-            const ladConditionResults = this.conditionClassCollection
+            let latestTimestamp;
+            let conditionResults = {};
+            const conditionRequests = this.conditionClassCollection
                 .map(condition => condition.requestLADConditionResult());
 
-            return Promise.all(ladConditionResults)
+            return Promise.all(conditionRequests)
                 .then((results) => {
-                    results.forEach(resultObj => { this.updateConditionResults(resultObj); });
-                    const currentCondition = this.getCurrentCondition();
+                    results.forEach(resultObj => {
+                        latestTimestamp = getLatestTimestamp(
+                            latestTimestamp,
+                            resultObj.data,
+                            this.timeSystems
+                        );
+                    });
+                    const currentCondition = this.getCurrentCondition(conditionResults);
 
                     return Object.assign(
                         {
@@ -260,7 +266,7 @@ export default class ConditionManager extends EventEmitter {
                             id: this.conditionSetDomainObject.identifier,
                             conditionId: currentCondition.id
                         },
-                        this.latestTimestamp
+                        latestTimestamp
                     );
                 });
         });
