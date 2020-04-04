@@ -17,7 +17,7 @@
         <div v-if="embed.snapshot"
              class="c-ne__embed__time"
         >
-            {{ formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss') }}
+            {{ createdOn }}
         </div>
     </div>
 </div>
@@ -56,7 +56,10 @@ export default {
             popupMenuItems: []
         };
     },
-    watch: {
+    computed: {
+        createdOn() {
+            return this.formatTime(this.embed.createdOn, 'YYYY-MM-DD HH:mm:ss');
+        }
     },
     mounted() {
         this.addPopupMenuItems();
@@ -164,9 +167,6 @@ export default {
         },
         changeLocation() {
             const link = this.embed.historicLink;
-            if (!link) {
-                return;
-            }
 
             const bounds = this.openmct.time.bounds();
             const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
