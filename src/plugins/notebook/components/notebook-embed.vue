@@ -34,7 +34,7 @@
         <div v-if="embed.snapshot"
              class="c-ne__embed__time"
         >
-            {{ formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss') }}
+            {{ createdOn }}
         </div>
     </div>
 </div>
@@ -68,12 +68,13 @@ export default {
     },
     data() {
         return {
-            actions: [this.removeEmbedAction()],
-            agentService: this.openmct.$injector.get('agentService'),
-            popupService: this.openmct.$injector.get('popupService')
+            actions: [this.removeEmbedAction()]
         }
     },
-    watch: {
+    computed: {
+        createdOn() {
+            return this.formatTime(this.embed.createdOn, 'YYYY-MM-DD HH:mm:ss');
+        }
     },
     beforeMount() {
         this.populateActionMenu();
@@ -172,9 +173,6 @@ export default {
             });
 
             const link = this.embed.historicLink;
-            if (!link) {
-                return;
-            }
 
             window.location.href = link;
             const message = 'Time bounds changed to fixed timespan mode';
