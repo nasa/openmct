@@ -43,7 +43,7 @@
 <script>
 import Moment from 'moment';
 import PreviewAction from '../../../ui/preview/PreviewAction';
-import Painterro from 'painterro';
+import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import { togglePopupMenu } from '../utils/popup-menu';
 import Vue from 'vue';
@@ -81,89 +81,42 @@ export default {
     },
     methods: {
         annotateSnapshot() {
-            const self = this;
-
-            let save = false;
-            let painterroInstance = {};
+            let painterroInstance = null;
             const annotateVue = new Vue({
                 template: '<div id="snap-annotation"></div>'
             });
 
-            let annotateOverlay = self.openmct.overlays.overlay({
+            const annotateOverlay = this.openmct.overlays.overlay({
                 element: annotateVue.$mount().$el,
                 size: 'large',
                 dismissable: false,
                 buttons: [
                     {
                         label: 'Cancel',
-                        callback: function () {
-                            save = false;
-                            painterroInstance.save();
+                        emphasis: true,
+                        callback: () => {
+                            painterroInstance.dismiss();
                             annotateOverlay.dismiss();
                         }
                     },
                     {
                         label: 'Save',
-                        callback: function () {
-
-                            save = true;
+                        callback: () => {
                             painterroInstance.save();
                             annotateOverlay.dismiss();
+                            this.snapshotOverlay.dismiss();
+                            this.openSnapshot();
                         }
                     }
                 ],
-                onDestroy: function () {
+                onDestroy: () => {
                     annotateVue.$destroy(true);
                 }
             });
 
-            painterroInstance = Painterro({
-                id: 'snap-annotation',
-                activeColor: '#ff0000',
-                activeColorAlpha: 1.0,
-                activeFillColor: '#fff',
-                activeFillColorAlpha: 0.0,
-                backgroundFillColor: '#000',
-                backgroundFillColorAlpha: 0.0,
-                defaultFontSize: 16,
-                defaultLineWidth: 2,
-                defaultTool: 'ellipse',
-                hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
-                translation: {
-                    name: 'en',
-                    strings: {
-                        lineColor: 'Line',
-                        fillColor: 'Fill',
-                        lineWidth: 'Size',
-                        textColor: 'Color',
-                        fontSize: 'Size',
-                        fontStyle: 'Style'
-                    }
-                },
-                saveHandler: function (image, done) {
-                    if (save) {
-                        const url = image.asBlob();
-                        const reader = new window.FileReader();
-                        reader.readAsDataURL(url);
-                        reader.onloadend = function () {
-                            const snapshot = reader.result;
-                            const snapshotObject = {
-                                src: snapshot,
-                                type: url.type,
-                                size: url.size,
-                                modified: Date.now()
-                            };
-
-                            self.embed.snapshot = snapshotObject;
-                            self.updateEmbed(self.embed);
-                        };
-                    } else {
-                        console.log('You cancelled the annotation!!!');
-                    }
-
-                    done(true);
-                }
-            }).show(this.embed.snapshot.src);
+            painterroInstance = new PainterroInstance();
+            painterroInstance.callback = this.updateSnapshot;
+            painterroInstance.show(this.embed.snapshot.src);
         },
         changeLocation() {
             this.openmct.time.stopClock();
@@ -182,22 +135,21 @@ export default {
             return Moment.utc(unixTime).format(timeFormat);
         },
         openSnapshot() {
-            const self = this;
             const snapshot = new Vue({
                 data: () => {
                     return {
-                        embed: self.embed
+                        createdOn: this.createdOn,
+                        embed: this.embed
                     };
                 },
                 methods: {
-                    formatTime: self.formatTime,
-                    annotateSnapshot: self.annotateSnapshot
+                    annotateSnapshot: this.annotateSnapshot.bind(this)
                 },
                 template: SnapshotTemplate
-            });
+            }).$mount();
 
-            const snapshotOverlay = this.openmct.overlays.overlay({
-                element: snapshot.$mount().$el,
+            this.snapshotOverlay = this.openmct.overlays.overlay({
+                element: snapshot.$el,
                 onDestroy: () => { snapshot.$destroy(true) },
                 size: 'large',
                 dismissable: true,
@@ -206,7 +158,7 @@ export default {
                         label: 'Done',
                         emphasis: true,
                         callback: () => {
-                            snapshotOverlay.dismiss();
+                            this.snapshotOverlay.dismiss();
                         }
                     }
                 ]
@@ -262,6 +214,10 @@ export default {
         },
         updateEmbed(embed) {
             this.$emit('updateEmbed', embed);
+        },
+        updateSnapshot(snapshotObject) {
+            this.embed.snapshot = snapshotObject;
+            this.updateEmbed(this.embed);
         }
     }
 }
