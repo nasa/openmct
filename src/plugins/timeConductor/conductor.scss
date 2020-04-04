@@ -16,8 +16,8 @@
 
         // Default: fixed mode, desktop
         grid-template-rows: 1fr;
-        grid-template-columns: 20px auto 1fr auto;
-        grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-end";
+        grid-template-columns: 20px auto auto 1fr auto;
+        grid-template-areas: "tc-mode-icon tc-controls tc-start tc-ticks tc-end";
     }
 
     &__mode-icon {
@@ -59,8 +59,8 @@
 
     &.is-realtime-mode {
         .c-conductor__time-bounds {
-            grid-template-columns: 20px auto 1fr auto auto;
-            grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-updated tc-end";
+            grid-template-columns: 20px auto auto 1fr auto auto;
+            grid-template-areas: "tc-mode-icon tc-controls tc-start tc-ticks tc-updated tc-end";
         }
 
         .c-conductor__end-fixed {
@@ -73,10 +73,6 @@
             grid-row-gap: $interiorMargin;
             grid-template-rows: auto auto;
             grid-template-columns: 20px auto auto;
-        }
-
-        .c-conductor__controls {
-            padding-left: 25px; // Line up visually with other controls
         }
 
         &__mode-icon {
@@ -105,6 +101,7 @@
                 grid-template-areas:
                     "tc-mode-icon tc-start tc-start"
                     "tc-mode-icon tc-end tc-end"
+                    "tc-mode-icon tc-controls tc-controls";
                 }
             }
 
@@ -112,7 +109,8 @@
             .c-conductor__time-bounds {
                 grid-template-areas:
                     "tc-mode-icon tc-start tc-updated"
-                    "tc-mode-icon tc-end tc-end";
+                    "tc-mode-icon tc-end tc-end"
+                    "tc-mode-icon tc-controls tc-controls";
             }
 
             .c-conductor__end-fixed {

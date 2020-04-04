@@ -118,6 +118,10 @@
     /******************************* HEAD */
     body.mobile & .l-shell__main-view-browse-bar {
         margin-left: $mobileMenuIconD; // Make room for the hamburger!
+
+        [class*='__actions__edit'] {
+            display: none;
+        }
     }
 
     &__head {
@@ -189,18 +193,12 @@
     /******************************* MAIN AREA */
     &__main-view-browse-bar {
         flex: 0 0 auto;
-        padding: $interiorMarginLg $interiorMarginLg 0 0;
-    }
-
-    &__pane-main-view {
-        padding-bottom: $interiorMarginLg;
     }
 
     &__main-container {
         // Wrapper for main views
         flex: 1 1 auto !important;
         height: 0; // Chrome 73 overflow bug fix
-        margin-bottom: 3px;
         overflow: auto;
     }
 
@@ -232,6 +230,14 @@
             //}
         }
 
+        &__pane-main-view {
+            padding-bottom: $interiorMarginLg;
+        }
+
+        &__main-view-browse-bar {
+            padding: $interiorMarginLg $interiorMarginLg 0 0;
+        }
+
         &__pane-tree,
         &__pane-inspector {
             max-width: 70%;
@@ -252,7 +258,6 @@
             $m: $interiorMargin;
             background: $colorInspectorBg;
             border-top-left-radius: $br;
-            //border-bottom-left-radius: $br;
             width: 200px;
             padding: $m $m $m $m * 2 !important;
 
@@ -274,10 +279,8 @@
 
 .is-editing {
     .l-shell__main-container {
-        $m: 3px;
         box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
-        margin-left: $m;
-        margin-right: $m;
+        margin: 3px;
 
         &[s-selected] {
             // Provide a clearer selection context articulation for the main edit area

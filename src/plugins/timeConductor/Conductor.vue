@@ -37,6 +37,12 @@
             ></button>
             <ConductorModeIcon class="c-conductor__mode-icon" />
 
+            <div class="c-conductor__controls">
+                <!-- Mode, time system menu buttons and duration slider -->
+                <ConductorMode class="c-conductor__mode-select" />
+                <ConductorTimeSystem class="c-conductor__time-system-select" />
+            </div>
+
             <div
                 v-if="isFixed"
                 class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
@@ -125,11 +131,6 @@
                 :bounds="rawBounds"
                 @panAxis="setViewFromBounds"
             />
-        </div>
-        <div class="c-conductor__controls">
-            <!-- Mode, time system menu buttons and duration slider -->
-            <ConductorMode class="c-conductor__mode-select" />
-            <ConductorTimeSystem class="c-conductor__time-system-select" />
         </div>
         <input
             type="submit"
