@@ -218,6 +218,10 @@ export default {
         isDragging: {
             type: Boolean,
             default: false
+        },
+        moveIndex: {
+            type: Number,
+            default: 0
         }
     },
     data() {
