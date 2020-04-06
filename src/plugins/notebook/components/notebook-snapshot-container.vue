@@ -62,6 +62,7 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
+import RemoveDialog from '../utils/removeDialog';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { togglePopupMenu } from '../utils/popup-menu';
@@ -81,11 +82,12 @@ export default {
     },
     data() {
         return {
-            actions: [this.removeAllSnapshotAction()],
+            actions: [],
             snapshots: []
         }
     },
     mounted() {
+        this.initRemoveDialog();
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
         this.snapshots = this.snapshotContainer.getSnapshots();
     },
@@ -98,35 +100,31 @@ export default {
         getNotebookSnapshotMaxCount() {
             return NOTEBOOK_SNAPSHOT_MAX_COUNT;
         },
-        removeAllSnapshotAction() {
-            const self = this;
-
-            return {
-                name: 'Delete All Snapshots',
-                cssClass: 'icon-trash',
-                perform: function (embed) {
-                    const dialog = self.openmct.overlays.dialog({
-                        iconClass: "error",
-                        message: 'This action will delete all notebook snapshots. Do you want to continue?',
-                        buttons: [
-                            {
-                                label: "No",
-                                callback: () => {
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: "Yes",
-                                emphasis: true,
-                                callback: () => {
-                                    self.removeAllSnapshots();
-                                    dialog.dismiss();
-                                }
-                            }
-                        ]
-                    });
+        initRemoveDialog() {
+            const buttons = [
+                { label: "No" },
+                {
+                    label: "Yes",
+                    emphasis: true,
+                    clicked: this.removeAllSnapshots.bind(this)
                 }
-            };
+            ];
+            const cssClass = 'icon-trash';
+            const iconClass = "error";
+            const message = 'This action will delete all notebook snapshots. Do you want to continue?';
+            const name = 'Delete All Snapshots';
+
+            const removeDialog = new RemoveDialog(this.openmct, {
+                buttons,
+                cssClass,
+                iconClass,
+                message,
+                name
+            });
+
+            const removeAction = removeDialog.getRemoveAction();
+
+            this.actions = this.actions.concat(removeAction);
         },
         removeAllSnapshots() {
             this.snapshotContainer.removeAllSnapshots();

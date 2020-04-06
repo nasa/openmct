@@ -32,6 +32,7 @@
 
 <script>
 import { togglePopupMenu } from '../utils/popup-menu';
+import RemoveDialog from '../utils/removeDialog';
 
 export default {
     inject: ['openmct'],
@@ -55,7 +56,7 @@ export default {
     },
     data() {
         return {
-            actions: [this.deletePage()]
+            actions: []
         }
     },
     watch: {
@@ -64,40 +65,40 @@ export default {
         }
     },
     mounted() {
+        this.initRemoveDialog();
         this.toggleContentEditable();
     },
     destroyed() {
     },
     methods: {
-        deletePage() {
-            const self = this;
-
-            return {
-                name: `Delete ${this.pageTitle}`,
-                cssClass: 'icon-trash',
-                perform: function (id) {
-                    const dialog = self.openmct.overlays.dialog({
-                        iconClass: "error",
-                        message: 'This action will delete this page and all of its entries. Do you want to continue?',
-                        buttons: [
-                            {
-                                label: "No",
-                                callback: () => {
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: "Yes",
-                                emphasis: true,
-                                callback: () => {
-                                    self.$emit('deletePage', id);
-                                    dialog.dismiss();
-                                }
-                            }
-                        ]
-                    });
+        deletePage(id) {
+            this.$emit('deletePage', id);
+        },
+        initRemoveDialog() {
+            const buttons = [
+                { label: "No" },
+                {
+                    label: "Yes",
+                    emphasis: true,
+                    clicked: this.deletePage.bind(this)
                 }
-            };
+            ];
+            const cssClass = 'icon-trash';
+            const iconClass = "error";
+            const message = 'This action will delete this page and all of its entries. Do you want to continue?';
+            const name = `Delete ${this.pageTitle}`;
+
+            const removeDialog = new RemoveDialog(this.openmct, {
+                buttons,
+                cssClass,
+                iconClass,
+                message,
+                name
+            });
+
+            const removeAction = removeDialog.getRemoveAction();
+
+            this.actions = this.actions.concat(removeAction);
         },
         selectPage(event) {
             const target = event.target;

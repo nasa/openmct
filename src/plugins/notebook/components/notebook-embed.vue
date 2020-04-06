@@ -44,6 +44,7 @@
 import Moment from 'moment';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import PainterroInstance from '../utils/painterroInstance';
+import RemoveDialog from '../utils/removeDialog';
 import SnapshotTemplate from './snapshot-template.html';
 import { togglePopupMenu } from '../utils/popup-menu';
 import Vue from 'vue';
@@ -68,7 +69,7 @@ export default {
     },
     data() {
         return {
-            actions: [this.removeEmbedAction()]
+            actions: []
         }
     },
     computed: {
@@ -78,6 +79,9 @@ export default {
     },
     beforeMount() {
         this.populateActionMenu();
+    },
+    mounted() {
+        this.initRemoveDialog();
     },
     methods: {
         annotateSnapshot() {
@@ -134,6 +138,32 @@ export default {
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
         },
+        initRemoveDialog() {
+            const buttons = [
+                { label: "No" },
+                {
+                    label: "Yes",
+                    emphasis: true,
+                    clicked: this.removeEmbed.bind(this)
+                }
+            ];
+            const cssClass = 'icon-trash';
+            const iconClass = "error";
+            const message = `This action will permanently ${this.removeActionString.toLowerCase()}. Do you wish to continue?`;
+            const name = this.removeActionString;
+
+            const removeDialog = new RemoveDialog(this.openmct, {
+                buttons,
+                cssClass,
+                iconClass,
+                message,
+                name
+            });
+
+            const removeAction = removeDialog.getRemoveAction();
+
+            this.actions = this.actions.concat(removeAction);
+        },
         openSnapshot() {
             const snapshot = new Vue({
                 data: () => {
@@ -178,36 +208,8 @@ export default {
                 });
             });
         },
-        removeEmbed(id) {
-            this.$emit('removeEmbed', id);
-        },
-        removeEmbedAction() {
-            const self = this;
-
-            return {
-                name: self.removeActionString,
-                cssClass: 'icon-trash',
-                perform: function (embed) {
-                    const dialog = self.openmct.overlays.dialog({
-                        iconClass: "error",
-                        message: `This action will permanently ${self.removeActionString.toLowerCase()}. Do you wish to continue?`,
-                        buttons: [{
-                            label: "No",
-                            callback: function () {
-                                dialog.dismiss();
-                            }
-                        },
-                        {
-                            label: "Yes",
-                            emphasis: true,
-                            callback: function () {
-                                dialog.dismiss();
-                                self.removeEmbed(embed.id);
-                            }
-                        }]
-                    });
-                }
-            };
+        removeEmbed(embed) {
+            this.$emit('removeEmbed', embed.id);
         },
         toggleActionMenu(event) {
             togglePopupMenu(event, this.openmct);
