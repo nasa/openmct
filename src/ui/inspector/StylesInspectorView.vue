@@ -61,13 +61,6 @@ export default {
                     components: {
                         ConditionalStylesView
                     },
-                    data() {
-                        return {
-                            // layoutItem,
-                            // styleProps,
-                            // isChildItem
-                        }
-                    },
                     template: '<conditional-styles-view></conditional-styles-view>'
                 });
             }
