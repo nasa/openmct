@@ -173,22 +173,21 @@ export default {
             return styleProps;
         },
         getDomainObjectFromSelection() {
-            let layoutItem = {};
             let domainObject;
 
             if (this.selection[0].length > 1) {
                 //If there are more than 1 items in the this.selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
                 //The second item in the this.selection[0] list is the container object (usually a layout)
+                let layoutItem = this.selection[0][0].context.layoutItem;
                 const item = this.selection[0][0].context.item;
                 this.canHide = true;
-                if (item && item.composition) {
+                if (layoutItem && (layoutItem.type === 'subobject-view')) {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
                     if (!item) {
                         //if this isn't a sub-object
                         this.initialStyles = {};
-                        layoutItem = this.selection[0][0].context.layoutItem;
                         this.initialStyles = this.getStyleProperties(layoutItem);
                         this.itemId = layoutItem.id;
                     } else {
