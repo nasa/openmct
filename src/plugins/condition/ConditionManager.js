@@ -31,7 +31,6 @@ export default class ConditionManager extends EventEmitter {
         this.openmct = openmct;
         this.conditionSetDomainObject = conditionSetDomainObject;
         this.timeAPI = this.openmct.time;
-        this.latestTimestamp = {};
         this.timeSystems = this.openmct.time.getAllTimeSystems();
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.subscribeToTelemetry, this);
@@ -203,7 +202,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     updateConditionResults(conditionResults, resultObj) {
-        console.log(resultObj.data);
         if (!resultObj) {
             return;
         }
@@ -213,18 +211,14 @@ export default class ConditionManager extends EventEmitter {
         if (this.findConditionById(id)) {
             conditionResults[id] = resultObj.data.result;
         }
-
-        this.latestTimestamp = getLatestTimestamp(
-            this.latestTimestamp,
-            resultObj.data,
-            this.timeSystems
-        );
     }
 
     handleConditionResult(resultObj) {
-        // update conditions results and then calculate the current condition
         this.updateConditionResults(this.conditionResults, resultObj);
+
         const currentCondition = this.getCurrentCondition(this.conditionResults);
+        const timestamp = JSON.parse(JSON.stringify(resultObj.data))
+        delete timestamp.result
 
         this.emit('conditionSetResultUpdated',
             Object.assign(
@@ -233,7 +227,7 @@ export default class ConditionManager extends EventEmitter {
                     id: this.conditionSetDomainObject.identifier,
                     conditionId: currentCondition.id
                 },
-                this.latestTimestamp
+                timestamp
             )
         )
     }
@@ -252,6 +246,7 @@ export default class ConditionManager extends EventEmitter {
             return Promise.all(conditionRequests)
                 .then((results) => {
                     results.forEach(resultObj => {
+                        this.updateConditionResults(conditionResults, resultObj);
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,
                             resultObj.data,
@@ -309,7 +304,7 @@ export default class ConditionManager extends EventEmitter {
         this.composition.off('add', this.subscribeToTelemetry, this);
         this.composition.off('remove', this.unsubscribeFromTelemetry, this);
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
-        this.subscriptions = undefined;
+        delete this.subscriptions;
 
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();

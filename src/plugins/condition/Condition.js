@@ -253,7 +253,6 @@ export default class ConditionClass extends EventEmitter {
     }
 
     handleConditionUpdated(datum) {
-        console.log(datum);
         // trigger an updated event so that consumers can react accordingly
         this.result = this.evaluate(this.criteriaResults);
         this.emitEvent('conditionResultUpdated',
