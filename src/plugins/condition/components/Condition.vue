@@ -41,7 +41,6 @@
         ></span>
 
         <span class="c-condition__name">{{ condition.configuration.name }}</span>
-        <!-- TODO: description should be derived from criteria -->
         <span class="c-condition__summary">
             <template v-if="!canEvaluateCriteria">
                 Define criteria
@@ -122,7 +121,7 @@
 
             <template v-if="telemetry.length || condition.configuration.criteria.length">
                 <div v-for="(criterion, index) in condition.configuration.criteria"
-                     :key="index"
+                     :key="criterion.id"
                      class="c-cdef__criteria"
                 >
                     <Criterion :telemetry="telemetry"
@@ -183,6 +182,7 @@
 import Criterion from './Criterion.vue';
 import ConditionDescription from "./ConditionDescription.vue";
 import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
+import uuid from 'uuid';
 
 export default {
     inject: ['openmct'],
@@ -275,6 +275,7 @@ export default {
         },
         addCriteria() {
             const criteriaObject = {
+                id: uuid(),
                 telemetry: '',
                 operation: '',
                 input: '',
@@ -308,6 +309,7 @@ export default {
         },
         cloneCriterion(index) {
             const clonedCriterion = JSON.parse(JSON.stringify(this.condition.configuration.criteria[index]));
+            clonedCriterion.id = uuid();
             this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
             this.persist();
         },
@@ -317,7 +319,7 @@ export default {
                 index: this.conditionIndex
             });
         },
-        initCap: function (str) {
+        initCap(str) {
             return str.charAt(0).toUpperCase() + str.slice(1)
         }
     }
