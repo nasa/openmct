@@ -72,7 +72,7 @@ export default {
             this.itemStyle = style;
             let keys = Object.keys(this.itemStyle);
             keys.forEach((key) => {
-                if ((typeof this.itemStyle[key] === 'string') && (this.itemStyle[key].indexOf('transparent') > -1)) {
+                if ((typeof this.itemStyle[key] === 'string') && (this.itemStyle[key].indexOf('__no_value') > -1)) {
                     delete this.itemStyle[key];
                 }
             });

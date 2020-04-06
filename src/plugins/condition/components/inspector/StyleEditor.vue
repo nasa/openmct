@@ -24,7 +24,7 @@
 <div class="c-style">
     <span class="c-style-thumb"
           :class="{ 'is-style-invisible': styleItem.style.isStyleInvisible }"
-          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
+          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
     >
         <span class="c-style-thumb__text"
               :class="{ 'hide-nice': !styleItem.style.color }"
@@ -89,34 +89,52 @@ export default {
         }
     },
     computed: {
+        itemStyle() {
+            let style = {};
+            const keys = Object.keys(this.styleItem.style);
+            keys.forEach(key => {
+                style[key] = this.normalizeValue(this.styleItem.style[key]);
+            });
+            return style;
+        },
         borderColorOption() {
+            let value = this.styleItem.style.border.replace('1px solid ', '');
+            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-line-horz',
                 title: STYLE_CONSTANTS.borderColorTitle,
-                value: this.styleItem.style.border.replace('1px solid ', ''),
+                value: this.normalizeValue(value),
                 property: 'border',
-                isEditing: this.isEditing
+                isEditing: this.isEditing,
+                nonSpecific: nonSpecific.indexOf('border') > -1
             }
         },
         backgroundColorOption() {
+            let value = this.styleItem.style.backgroundColor;
+            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
-                value: this.styleItem.style.backgroundColor,
+                value: this.normalizeValue(value),
                 property: 'backgroundColor',
-                isEditing: this.isEditing
+                isEditing: this.isEditing,
+                nonSpecific: nonSpecific.indexOf('backgroundColor') > -1
             }
         },
         colorOption() {
+            let value = this.styleItem.style.color;
+            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-font',
                 title: STYLE_CONSTANTS.textColorTitle,
-                value: this.styleItem.style.color,
+                value: this.normalizeValue(value),
                 property: 'color',
-                isEditing: this.isEditing
+                isEditing: this.isEditing,
+                nonSpecific: nonSpecific.indexOf('color') > -1
             }
         },
         imageUrlOption() {
+            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-image',
                 title: STYLE_CONSTANTS.imagePropertiesTitle,
@@ -138,7 +156,8 @@ export default {
                 property: 'imageUrl',
                 formKeys: ['url'],
                 value: {url: this.styleItem.style.imageUrl},
-                isEditing: this.isEditing
+                isEditing: this.isEditing,
+                nonSpecific: nonSpecific.indexOf('imageUrl') > -1
             }
         },
         isStyleInvisibleOption() {
@@ -163,7 +182,16 @@ export default {
         }
     },
     methods: {
+        normalizeValue(value) {
+            if (!value || value === '__no_value') {
+                return 'transparent';
+            }
+            return value;
+        },
         updateStyleValue(value, item) {
+            if (value && value === 'transparent') {
+                value = '__no_value';
+            }
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
@@ -172,7 +200,7 @@ export default {
             } else {
                 this.styleItem.style[item.property] = value;
             }
-            this.$emit('persist', this.styleItem);
+            this.$emit('persist', this.styleItem, item.property);
         }
     }
 }

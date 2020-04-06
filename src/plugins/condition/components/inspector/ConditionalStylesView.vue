@@ -105,7 +105,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import { getStyleProp } from "@/plugins/condition/utils/styleUtils";
+import { getInitialStyleForItem } from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -129,27 +129,12 @@ export default {
             navigateToPath: ''
         }
     },
-    watch: {
-        domainObject: {
-            handler(newDomainObject) {
-                this.domainObject = newDomainObject;
-            },
-            deep: true
-        }
-    },
     destroyed() {
-        if (this.stopObserving) {
-            this.stopObserving();
-        }
+        this.removeListeners();
     },
     mounted() {
         this.canHide = false;
         this.itemId = '';
-        this.initialStyles = this.getStyleProperties({
-            fill: 'transparent',
-            stroke: 'transparent',
-            color: 'transparent'
-        });
         this.getDomainObjectFromSelection();
         this.previewAction = new PreviewAction(this.openmct);
         if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
@@ -165,15 +150,8 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
-        getStyleProperties(item) {
-            let styleProps = {};
-            Object.keys(item).forEach((key) => {
-                Object.assign(styleProps, getStyleProp(key, item[key]));
-            });
-            return styleProps;
-        },
         getDomainObjectFromSelection() {
-            let layoutItem = {};
+            let layoutItem;
             let domainObject;
 
             if (this.selection[0].length > 1) {
@@ -185,25 +163,25 @@ export default {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
-                    if (!item) {
-                        //if this isn't a sub-object
-                        this.initialStyles = {};
-                        layoutItem = this.selection[0][0].context.layoutItem;
-                        this.initialStyles = this.getStyleProperties(layoutItem);
-                        this.itemId = layoutItem.id;
-                    } else {
-                        layoutItem = Object.assign({}, { id: this.selection[0][0].context.layoutItem.id }, item);
-                        this.itemId = layoutItem.id;
-                    }
+                    layoutItem = this.selection[0][0].context.layoutItem;
+                    this.itemId = layoutItem.id;
                 }
             } else {
                 domainObject = this.selection[0][0].context.item;
             }
             this.domainObject = domainObject;
+            this.initialStyles = getInitialStyleForItem(domainObject, layoutItem);
+            this.removeListeners();
+            this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+            this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+        },
+        removeListeners() {
             if (this.stopObserving) {
                 this.stopObserving();
             }
-            this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+            if (this.stopObservingItems) {
+                this.stopObservingItems();
+            }
         },
         initialize(conditionSetDomainObject) {
             //If there are new conditions in the conditionSet we need to set those styles to default
@@ -299,6 +277,36 @@ export default {
                 domainObjectStyles = undefined;
             }
 
+            this.persist(domainObjectStyles);
+        },
+        updateDomainObjectItemStyles(newItems) {
+            //check that all items that have been styles still exist. Otherwise delete those styles
+            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let itemsToRemove = [];
+            let keys = Object.keys(domainObjectStyles);
+            keys.forEach((key) => {
+                if ((key !== 'styles') &&
+                    (key !== 'staticStyle') &&
+                    (key !== 'conditionSetIdentifier')) {
+                    if (!(newItems.find(item => item.id === key))) {
+                        itemsToRemove.push(key);
+                    }
+                }
+            });
+            if (itemsToRemove.length) {
+                this.removeItemStyles(itemsToRemove, domainObjectStyles);
+            }
+        },
+        removeItemStyles(itemIds, domainObjectStyles) {
+            itemIds.forEach(itemId => {
+                if (domainObjectStyles[itemId]) {
+                    domainObjectStyles[itemId] = undefined;
+                    delete domainObjectStyles[this.itemId];
+                }
+            });
+            if (_.isEmpty(domainObjectStyles)) {
+                domainObjectStyles = undefined;
+            }
             this.persist(domainObjectStyles);
         },
         initializeConditionalStyles() {

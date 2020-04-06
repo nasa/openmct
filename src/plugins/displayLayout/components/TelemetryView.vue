@@ -40,7 +40,7 @@
             :style="telemetryObjectStyle"
         >
             <div class="c-telemetry-view__label-text">
-                {{ domainObject.name }}
+                {{ domainObject.name }}{{telemetryObjectStyle}}
             </div>
         </div>
 
@@ -141,7 +141,7 @@ export default {
             let styleObj = Object.assign({}, this.itemStyle);
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
+                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
                     if (styleObj[key]) {
                         styleObj[key] = '';
                     }
