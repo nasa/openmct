@@ -105,7 +105,7 @@ export default {
             conditionResults: {},
             conditions: [],
             telemetryObjs: [],
-            moveIndex: Number,
+            moveIndex: undefined,
             isDragging: false,
             defaultOutput: undefined,
             dragCounter: 0

@@ -302,8 +302,7 @@ export default {
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
-            this.moveIndex = this.conditionIndex;
-            this.$emit('setMoveIndex', this.moveIndex);
+            this.$emit('setMoveIndex', this.conditionIndex);
         },
         dragEnd(event) {
             this.dragStarted = false;
