@@ -54,7 +54,7 @@
         </button>
 
         <div class="c-cs__conditions-h"
-             :class="{ 'all-dragging': isDragging }"
+             :class="{ 'is-active-dragging': isDragging }"
         >
             <Condition v-for="(condition, index) in conditionCollection"
                        :key="condition.id"

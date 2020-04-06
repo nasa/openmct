@@ -22,14 +22,15 @@
 
 <template>
 <div class="c-condition-h"
+     :class="{ 'is-drag-target': draggingOver }"
      @dragover.prevent
      @drop.prevent="dropCondition($event, conditionIndex)"
      @dragenter.prevent="dragEnter($event, conditionIndex)"
      @dragleave.prevent="dragLeave($event, conditionIndex)"
 >
+    <div class="c-condition-h__drop-target"></div>
     <div v-if="isEditing"
          class="c-condition c-condition--edit"
-         :class="{ 'dragging': draggingOver }"
     >
         <!-- Edit view -->
         <div class="c-condition__header">
