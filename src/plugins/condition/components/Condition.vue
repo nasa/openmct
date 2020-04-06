@@ -312,6 +312,7 @@ export default {
         },
         dropCondition(event, targetIndex) {
             if (!this.isDragging) { return }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -320,6 +321,7 @@ export default {
         },
         dragEnter(event, targetIndex) {
             if (!this.isDragging) { return }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -332,7 +334,7 @@ export default {
             }
         },
         isValidTarget(targetIndex) {
-            return this.moveIndex !== targetIndex && !this.isDefault;
+            return this.moveIndex !== targetIndex;
         },
         destroy() {
         },
