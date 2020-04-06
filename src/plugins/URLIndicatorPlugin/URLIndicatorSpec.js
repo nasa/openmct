@@ -122,7 +122,7 @@ define(
                 it("indicates success if connection is nominal", function () {
                     jasmine.clock().tick(pluginOptions.interval + 1);
                     ajaxOptions.success();
-                    expect(indicatorElement.classList.contains('s-status-ok')).toBe(true);
+                    expect(indicatorElement.classList.contains('s-status-on')).toBe(true);
                 });
 
                 it("indicates an error when the server cannot be reached", function () {
