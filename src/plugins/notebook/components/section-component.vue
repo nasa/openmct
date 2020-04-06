@@ -58,8 +58,6 @@ export default {
         this.addPopupMenuItems();
         this.toggleContentEditable();
     },
-    destroyed() {
-    },
     methods: {
         addPopupMenuItems() {
             const removeSection = {
