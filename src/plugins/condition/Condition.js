@@ -95,7 +95,7 @@ export default class ConditionClass extends EventEmitter {
 
     generateCriterion(criterionConfiguration) {
         return {
-            id: uuid(),
+            id: criterionConfiguration.id || uuid(),
             telemetry: criterionConfiguration.telemetry || '',
             telemetryObject: this.conditionManager.telemetryObjects[this.openmct.objects.makeKeyString(criterionConfiguration.telemetry)],
             operation: criterionConfiguration.operation || '',
