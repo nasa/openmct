@@ -201,7 +201,7 @@ export default class ConditionManager extends EventEmitter {
         return currentCondition;
     }
 
-    updateConditionResults(conditionResults, resultObj) {
+    updateConditionResults(resultObj) {
         if (!resultObj) {
             return;
         }
@@ -209,13 +209,12 @@ export default class ConditionManager extends EventEmitter {
         const id = resultObj.id;
 
         if (this.findConditionById(id)) {
-            conditionResults[id] = resultObj.data.result;
+            this.conditionResults[id] = resultObj.data.result;
         }
     }
 
     handleConditionResult(resultObj) {
-        this.updateConditionResults(this.conditionResults, resultObj);
-
+        this.updateConditionResults(resultObj);
         const currentCondition = this.getCurrentCondition(this.conditionResults);
         const timestamp = JSON.parse(JSON.stringify(resultObj.data))
         delete timestamp.result
@@ -246,10 +245,13 @@ export default class ConditionManager extends EventEmitter {
             return Promise.all(conditionRequests)
                 .then((results) => {
                     results.forEach(resultObj => {
-                        this.updateConditionResults(conditionResults, resultObj);
+                        const { id, data, data: { result } } = resultObj;
+                        if (this.findConditionById(id)) {
+                            conditionResults[id] = result;
+                        }
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,
-                            resultObj.data,
+                            data,
                             this.timeSystems
                         );
                     });
