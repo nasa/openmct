@@ -154,8 +154,7 @@ export default {
                 property: 'imageUrl',
                 formKeys: ['url'],
                 value: {url: this.styleItem.style.imageUrl},
-                isEditing: this.isEditing,
-                preventNone: this.preventNone
+                isEditing: this.isEditing
             }
         },
         isStyleInvisibleOption() {
@@ -163,7 +162,6 @@ export default {
                 value: this.styleItem.style.isStyleInvisible,
                 property: 'isStyleInvisible',
                 isEditing: this.isEditing,
-                preventNone: this.preventNone,
                 options: [
                     {
                         value: '',

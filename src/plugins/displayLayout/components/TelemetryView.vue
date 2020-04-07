@@ -37,8 +37,6 @@
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
-            :class="[styleClass]"
-            :style="telemetryObjectStyle"
         >
             <div class="c-telemetry-view__label-text">
                 {{ domainObject.name }}
