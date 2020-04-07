@@ -159,8 +159,6 @@ export default {
             return this.sections.find(section => section.isSelected);
         }
     },
-    watch: {
-    },
     beforeMount() {
         this.throttledSearchItem = throttle(this.searchItem, 500);
     },

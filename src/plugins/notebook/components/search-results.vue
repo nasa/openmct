@@ -33,16 +33,6 @@ export default {
             }
         }
     },
-    data() {
-        return {}
-    },
-    watch: {
-        results(newResults) {}
-    },
-    destroyed() {
-    },
-    mounted() {
-    },
     methods: {
         changeSectionPage(data) {
             this.$emit('changeSectionPage', data);

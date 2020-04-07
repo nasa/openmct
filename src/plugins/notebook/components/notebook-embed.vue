@@ -51,8 +51,6 @@ import Vue from 'vue';
 
 export default {
     inject: ['openmct'],
-    components: {
-    },
     props: {
         embed: {
             type: Object,

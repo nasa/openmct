@@ -68,8 +68,6 @@ export default {
         this.initRemoveDialog();
         this.toggleContentEditable();
     },
-    destroyed() {
-    },
     methods: {
         deletePage(id) {
             this.$emit('deletePage', id);

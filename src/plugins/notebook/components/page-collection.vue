@@ -70,12 +70,6 @@ export default {
         return {
         }
     },
-    watch: {
-    },
-    mounted() {
-    },
-    destroyed() {
-    },
     methods: {
         deletePage(id) {
             const selectedSection = this.sections.find(s => s.isSelected);

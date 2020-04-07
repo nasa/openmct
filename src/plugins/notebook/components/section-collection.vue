@@ -57,12 +57,6 @@ export default {
         return {
         }
     },
-    watch: {
-    },
-    mounted() {
-    },
-    destroyed() {
-    },
     methods: {
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);
