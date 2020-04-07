@@ -11,6 +11,7 @@
                    ref="searchResults"
                    :results="getSearchResults()"
                    @changeSectionPage="changeSelectedSection"
+                   @updateEntries="updateEntries"
     />
 
     <div v-if="!search.length"

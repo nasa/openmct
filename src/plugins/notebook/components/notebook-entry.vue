@@ -169,9 +169,6 @@ export default {
         },
         dropOnEntry($event) {
             event.stopImmediatePropagation();
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
 
             const snapshotId = $event.dataTransfer.getData('openmect/snapshot/id');
             if (snapshotId.length) {
@@ -270,15 +267,14 @@ export default {
             this.updateEntry(this.entry);
         },
         updateEntry(newEntry) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            entries.forEach(entry => {
-                if (entry.id === newEntry.id) {
+            entries.some(entry => {
+                const found = (entry.id === newEntry.id);
+                if (found) {
                     entry = newEntry;
                 }
+
+                return found;
             });
 
             this.updateEntries(entries);
