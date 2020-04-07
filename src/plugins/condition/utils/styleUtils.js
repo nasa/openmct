@@ -82,25 +82,29 @@ const aggregateStyleValues = (accumulator, currentStyle) => {
 export const getConsolidatedStyleValues = (multipleItemStyles) => {
     let aggregatedStyleValues = multipleItemStyles.reduce(aggregateStyleValues, {});
 
-    let styleValues = { nonSpecific: [] };
+    let styleValues = {};
+    let nonSpecific = [];
     const properties = Object.keys(styleProps);
     properties.forEach((property) => {
         const values = aggregatedStyleValues[property];
         if (values.length) {
             if (values.length !== multipleItemStyles.length) {
                 styleValues[property] = styleProps[property].noneValue;
-                styleValues.nonSpecific.push(property);
+                nonSpecific.push(property);
             } else {
                 if (values.every(value => value === values[0])) {
                     styleValues[property] = values[0];
                 } else {
                     styleValues[property] = styleProps[property].noneValue;
-                    styleValues.nonSpecific.push(property);
+                    nonSpecific.push(property);
                 }
             }
         }
     });
-    return styleValues;
+    return {
+        styles: styleValues,
+        nonSpecific
+    };
 };
 
 const getStaticStyleForItem = (domainObject, id) => {

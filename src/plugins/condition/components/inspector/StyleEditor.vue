@@ -86,6 +86,12 @@ export default {
         preventNone: {
             type: Boolean
         },
+        nonSpecific: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         styleItem: {
             type: Object,
             required: true
@@ -102,44 +108,40 @@ export default {
         },
         borderColorOption() {
             let value = this.styleItem.style.border.replace('1px solid ', '');
-            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-line-horz',
                 title: STYLE_CONSTANTS.borderColorTitle,
                 value: this.normalizeValue(value),
                 property: 'border',
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('border') > -1,
+                nonSpecific: this.isNonSpecific('border'),
                 preventNone: this.preventNone
             }
         },
         backgroundColorOption() {
             let value = this.styleItem.style.backgroundColor;
-            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
                 value: this.normalizeValue(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('backgroundColor') > -1,
+                nonSpecific: this.isNonSpecific('backgroundColor'),
                 preventNone: this.preventNone
             }
         },
         colorOption() {
             let value = this.styleItem.style.color;
-            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-font',
                 title: STYLE_CONSTANTS.textColorTitle,
                 value: this.normalizeValue(value),
                 property: 'color',
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('color') > -1
+                nonSpecific: this.isNonSpecific('color')
             }
         },
         imageUrlOption() {
-            const nonSpecific = this.styleItem.style.nonSpecific || [];
             return {
                 icon: 'icon-image',
                 title: STYLE_CONSTANTS.imagePropertiesTitle,
@@ -162,7 +164,7 @@ export default {
                 formKeys: ['url'],
                 value: {url: this.styleItem.style.imageUrl},
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('imageUrl') > -1
+                nonSpecific: this.isNonSpecific('imageUrl')
             }
         },
         isStyleInvisibleOption() {
@@ -187,6 +189,9 @@ export default {
         }
     },
     methods: {
+        isNonSpecific(property) {
+            return this.nonSpecific.indexOf(property) > -1;
+        },
         hasProperty(property) {
             return property !== undefined;
         },

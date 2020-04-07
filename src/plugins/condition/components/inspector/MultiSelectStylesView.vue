@@ -32,6 +32,7 @@
             <style-editor class="c-inspect-styles__editor"
                           :style-item="staticStyle"
                           :is-editing="isEditing"
+                          :non-specific="nonSpecific"
                           @persist="updateStaticStyle"
             />
         </div>
@@ -57,7 +58,8 @@ export default {
     data() {
         return {
             staticStyle: undefined,
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            nonSpecific: []
         }
     },
     destroyed() {
@@ -97,7 +99,9 @@ export default {
                 }
                 itemInitialStyles.push(itemStyle);
             });
-            this.initialStyles = getConsolidatedStyleValues(itemInitialStyles);
+            const {styles, nonSpecific} = getConsolidatedStyleValues(itemInitialStyles);
+            this.initialStyles = styles;
+            this.nonSpecific = nonSpecific;
 
             this.domainObject = domainObject;
             this.removeListeners();
@@ -221,9 +225,6 @@ export default {
             }
 
             return domainObjectStyles;
-        },
-        getCondition(id) {
-            return this.conditions ? this.conditions[id] : {};
         },
 
         persist(domainObject, style) {
