@@ -21,9 +21,9 @@
 *****************************************************************************/
 
 <template>
-<component :is="cwHasUrl ? 'a' : 'span'"
+<component :is="urlDefined ? 'a' : 'span'"
            class="c-condition-widget"
-           :href="cwHasUrl ? internalDomainObject.url : null"
+           :href="urlDefined ? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">
         {{ internalDomainObject.label }}
@@ -39,6 +39,11 @@ export default {
             internalDomainObject: this.domainObject
         }
     },
+    computed: {
+        urlDefined() {
+            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
+        }
+    },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
     },
@@ -50,9 +55,6 @@ export default {
     methods: {
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
-        },
-        cwHasUrl() {
-            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
         }
     }
 }
