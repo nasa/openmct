@@ -24,6 +24,7 @@
     "d3-time": "1.0.x",
     "d3-time-format": "2.1.x",
     "eslint": "5.2.0",
+    "eslint-plugin-lodash": "^6.0.0",
     "eslint-plugin-vue": "^6.0.0",
     "eventemitter3": "^1.2.0",
     "exports-loader": "^0.7.0",

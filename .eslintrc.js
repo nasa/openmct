@@ -8,9 +8,11 @@ module.exports = {
     "globals": {
         "_": "readonly"
     },
+    "plugins": ["lodash"],
     "extends": [
         "eslint:recommended",
-        "plugin:vue/recommended"
+        "plugin:vue/recommended",
+        "plugin:lodash/recommended"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -22,6 +24,14 @@ module.exports = {
         }
     },
     "rules": {
+        "lodash/prefer-lodash-method": "off",
+        "lodash/prefer-lodash-typecheck": "off",
+        "lodash/prefer-constant": "off",
+        "lodash/prefer-noop": "off",
+        "lodash/prefer-matches": "off",
+        "lodash/prefer-includes": "off",
+        "lodash/prefer-startswith": "off",
+        "lodash/import-scope": "off",
         "no-bitwise": "error",
         "curly": "error",
         "eqeqeq": "error",
