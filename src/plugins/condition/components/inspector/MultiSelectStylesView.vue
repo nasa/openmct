@@ -26,6 +26,11 @@
         Object Style
     </div>
     <div class="c-inspect-styles__content">
+        <div v-if="mixedStaticAndConditionalStyles"
+             class="c-inspect-styles__mixed-static-and-conditional u-alert u-alert--block u-alert--with-icon"
+        >
+            Your selection includes one or more items that use Conditional Styling. Applying a static style below will replace any Conditional Styling with the new choice.
+        </div>
         <div v-if="staticStyle"
              class="c-inspect-styles__style"
         >
@@ -59,7 +64,8 @@ export default {
         return {
             staticStyle: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            nonSpecific: []
+            nonSpecific: [],
+            mixedStaticAndConditionalStyles: true
         }
     },
     destroyed() {

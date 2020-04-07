@@ -27,12 +27,6 @@
             Object Style
         </div>
         <div class="c-inspect-styles__content">
-            <div v-if="mixedStaticAndConditionalStyles"
-                 class="c-inspect-styles__mixed-static-and-conditional"
-            >
-                Your selection includes one or more items that use Conditional Styling. Applying a static style below, or using Conditional Styling will replace all currently applied styles with the new choice.
-            </div>
-
             <div v-if="staticStyle"
                  class="c-inspect-styles__style"
             >
@@ -134,8 +128,7 @@ export default {
             conditions: undefined,
             conditionsLoaded: false,
             navigateToPath: '',
-            preventNone: false,
-            mixedStaticAndConditionalStyles: true
+            preventNone: false
         }
     },
     destroyed() {
