@@ -147,6 +147,9 @@
 
     body.mobile & .l-shell__main-view-browse-bar {
         margin-left: $mobileMenuIconD; // Make room for the hamburger!
+        .c-button[class*='__actions__edit'] {
+            display: none; // Hide the main view edit button when in mobile context
+        }
     }
 
     &__head {
