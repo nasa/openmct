@@ -30,7 +30,7 @@ define(
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                statusClass: "s-status-ok"
+                statusClass: "s-status-on"
             },
             PENDING = {
                 statusClass: "s-status-warning-lo"
