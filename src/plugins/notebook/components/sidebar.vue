@@ -139,8 +139,6 @@ export default {
             this.addSection();
         }
     },
-    destroyed() {
-    },
     methods: {
         addPage() {
             const pageTitle = this.pageTitle;

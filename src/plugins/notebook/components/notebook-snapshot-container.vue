@@ -81,8 +81,6 @@ export default {
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
         this.snapshots = this.snapshotContainer.getSnapshots();
     },
-    beforeDestory() {
-    },
     methods: {
         addPopupMenuItems() {
             const removeSnapshot = {
