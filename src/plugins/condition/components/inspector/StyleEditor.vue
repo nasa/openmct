@@ -33,27 +33,27 @@
         </span>
     </span>
     <span class="c-toolbar">
-        <toolbar-color-picker v-if="styleItem.style.border"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.border)"
                               class="c-style__toolbar-button--border-color u-menu-to--center"
                               :options="borderColorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-color-picker v-if="styleItem.style.backgroundColor"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.backgroundColor)"
                               class="c-style__toolbar-button--background-color u-menu-to--center"
                               :options="backgroundColorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-color-picker v-if="styleItem.style.color"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.color)"
                               class="c-style__toolbar-button--color u-menu-to--center"
                               :options="colorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-button v-if="styleItem.style.imageUrl !== undefined"
+        <toolbar-button v-if="hasProperty(styleItem.style.imageUrl)"
                         class="c-style__toolbar-button--image-url"
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
-        <toolbar-toggle-button v-if="styleItem.style.isStyleInvisible !== undefined"
+        <toolbar-toggle-button v-if="hasProperty(styleItem.style.isStyleInvisible)"
                                class="c-style__toolbar-button--toggle-visible"
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
@@ -83,6 +83,9 @@ export default {
         isEditing: {
             type: Boolean
         },
+        preventNone: {
+            type: Boolean
+        },
         styleItem: {
             type: Object,
             required: true
@@ -106,7 +109,8 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'border',
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('border') > -1
+                nonSpecific: nonSpecific.indexOf('border') > -1,
+                preventNone: this.preventNone
             }
         },
         backgroundColorOption() {
@@ -118,7 +122,8 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
-                nonSpecific: nonSpecific.indexOf('backgroundColor') > -1
+                nonSpecific: nonSpecific.indexOf('backgroundColor') > -1,
+                preventNone: this.preventNone
             }
         },
         colorOption() {
@@ -182,6 +187,9 @@ export default {
         }
     },
     methods: {
+        hasProperty(property) {
+            return property !== undefined;
+        },
         normalizeValue(value) {
             if (!value || value === '__no_value') {
                 return 'transparent';

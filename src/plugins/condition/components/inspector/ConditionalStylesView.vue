@@ -33,6 +33,7 @@
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"
                               :is-editing="isEditing"
+                              :prevent-none="preventNone"
                               @persist="updateStaticStyle"
                 />
             </div>
@@ -105,7 +106,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import { getInitialStyleForItem } from "@/plugins/condition/utils/styleUtils";
+import {getInitialStyleForItem} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -126,14 +127,14 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
-            navigateToPath: ''
+            navigateToPath: '',
+            preventNone: false
         }
     },
     destroyed() {
         this.removeListeners();
     },
     mounted() {
-        this.canHide = false;
         this.itemId = '';
         this.getDomainObjectFromSelection();
         this.previewAction = new PreviewAction(this.openmct);
@@ -150,6 +151,12 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        isItemType(type, item) {
+            return item && (item.type === type);
+        },
+        isDrawingItem(item) {
+            return !this.isItemType('subobject-view', item) && !this.isItemType('telemetry-view', item);
+        },
         getDomainObjectFromSelection() {
             let layoutItem;
             let domainObject;
@@ -160,12 +167,12 @@ export default {
                 layoutItem = this.selection[0][0].context.layoutItem;
                 const item = this.selection[0][0].context.item;
                 this.canHide = true;
-                if (item && (layoutItem.type === 'subobject-view')) {
+                if (item && this.isItemType('subobject-view', layoutItem)) {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
-                    layoutItem = this.selection[0][0].context.layoutItem;
                     this.itemId = layoutItem.id;
+                    this.preventNone = this.isDrawingItem(layoutItem);
                 }
             } else {
                 domainObject = this.selection[0][0].context.item;
@@ -173,8 +180,10 @@ export default {
             this.domainObject = domainObject;
             this.initialStyles = getInitialStyleForItem(domainObject, layoutItem);
             this.removeListeners();
-            this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
-            this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+            if (this.domainObject) {
+                this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+                this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+            }
         },
         removeListeners() {
             if (this.stopObserving) {
