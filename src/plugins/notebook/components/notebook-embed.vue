@@ -175,7 +175,6 @@ export default {
                 && this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
-            this.openmct.time.stopClock();
             window.location.href = link;
 
             let message = '';
