@@ -9,7 +9,8 @@
     </div>
     <SearchResults v-if="search.length"
                    ref="searchResults"
-                   :results="getSearchResults()"
+                   :domain-object="internalDomainObject"
+                   :results="searchedEntries"
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
     />
@@ -153,6 +154,9 @@ export default {
         },
         pages() {
             return this.getPages() || [];
+        },
+        searchedEntries() {
+            return this.getSearchResults();
         },
         sections() {
             return this.internalDomainObject.configuration.sections || [];
