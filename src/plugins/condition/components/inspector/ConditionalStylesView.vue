@@ -127,7 +127,6 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
-            navigateToPath: '',
             preventNone: false
         }
     },

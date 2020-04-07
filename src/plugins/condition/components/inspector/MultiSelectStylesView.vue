@@ -57,8 +57,7 @@ export default {
     data() {
         return {
             staticStyle: undefined,
-            isEditing: this.openmct.editor.isEditing(),
-            navigateToPath: ''
+            isEditing: this.openmct.editor.isEditing()
         }
     },
     destroyed() {
@@ -72,6 +71,9 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        isItemType(type, item) {
+            return item && (item.type === type);
+        },
         getObjectsAndItemsFromSelection() {
             let domainObject;
             let subObjects = [];
@@ -82,7 +84,7 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
-                if (layoutItem && (layoutItem.type === 'subobject-view')) {
+                if (item && this.isItemType('subobject-view', layoutItem)) {
                     subObjects.push(item);
                     itemStyle = getInitialStyleForItem(item);
                 } else {
