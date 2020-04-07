@@ -36,7 +36,11 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY, null, this.actionsToBeSkipped);
+
+            const options = {
+                actionsToBeSkipped: this.actionsToBeSkipped
+            };
+            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY, options);
         }
     }
 };

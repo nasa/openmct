@@ -75,7 +75,12 @@ class ContextMenuAPI {
     /**
      * @private
      */
-    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded, actionsToBeSkipped = []) {
+    _showContextMenuForObjectPath(objectPath, x, y, options = {}) {
+        const {
+            actionsToBeIncluded = null,
+            actionsToBeSkipped = []
+        } = options;
+
         let applicableActions = this._allActions.filter(action => {
             if (actionsToBeSkipped.includes(action.key)) {
                 return false;
