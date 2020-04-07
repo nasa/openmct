@@ -4,12 +4,14 @@
     <div class="c-notebook__entries">
         <NotebookEntry v-for="(result, index) in results"
                        :key="index"
+                       :domain-object="domainObject"
                        :result="result"
                        :entry="result.entry"
                        :read-only="true"
-                       :selected-page="null"
-                       :selected-section="null"
+                       :selected-page="result.page"
+                       :selected-section="result.section"
                        @changeSectionPage="changeSectionPage"
+                       @updateEntries="updateEntries"
         />
     </div>
 </div>
@@ -44,6 +46,9 @@ export default {
     methods: {
         changeSectionPage(data) {
             this.$emit('changeSectionPage', data);
+        },
+        updateEntries(entries) {
+            this.$emit('updateEntries', entries);
         }
     }
 }
