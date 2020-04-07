@@ -54,7 +54,6 @@
 
 @mixin elementStatusColors($c) {
     // Sets bg and icon colors for elements
-    background: rgba($c, 0.5) !important;
     &:before {
         color: $c !important;
     }
