@@ -19,27 +19,81 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const NONE_VALUE = 'transparent';
 
-export const getStyleProp = (key, defaultValue) => {
-    let styleProp = undefined;
-    switch(key) {
-    case 'fill': styleProp = {
-        backgroundColor: defaultValue || 'transparent'
-    };
-        break;
-    case 'stroke': styleProp = {
-        border: '1px solid ' + (defaultValue || 'transparent')
-    };
-        break;
-    case 'color': styleProp = {
-        color: defaultValue || 'transparent'
-    };
-        break;
-    case 'url': styleProp = {
-        imageUrl: defaultValue || 'transparent'
-    };
-        break;
+const styleProps = {
+    backgroundColor: {
+        svgProperty: 'fill',
+        noneValue: NONE_VALUE,
+        applicableForType: type => {
+            return !type ? true : (type === 'text-view' ||
+                                      type === 'telemetry-view' ||
+                                      type === 'box-view' ||
+                                      type === 'subobject-view');
+        }
+    },
+    border: {
+        svgProperty: 'stroke',
+        noneValue: NONE_VALUE,
+        applicableForType: type => {
+            return !type ? true : (type === 'text-view' ||
+                                            type === 'telemetry-view' ||
+                                            type === 'box-view' ||
+                                            type === 'image-view' ||
+                                            type === 'line-view'||
+                                            type === 'subobject-view');
+        }
+    },
+    color: {
+        svgProperty: 'color',
+        noneValue: 'NONE_VALUE',
+        applicableForType: type => {
+            return !type ? true : (type === 'text-view' ||
+                                    type === 'telemetry-view'||
+                                    type === 'subobject-view');
+        }
+    },
+    imageUrl: {
+        svgProperty: 'url',
+        noneValue: '',
+        applicableForType: type => {
+            return !type ? false : type === 'image-view';
+        }
     }
+};
 
-    return styleProp;
+const getStaticStyleForItem = (domainObject, id) => {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id && domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
+            return domainObjectStyles[id].staticStyle.style;
+        } else if (domainObjectStyles.staticStyle) {
+            return domainObjectStyles.staticStyle.style;
+        }
+    }
+};
+
+//Returns either existing static styles or uses SVG defaults if available
+export const getInitialStyleForItem = (domainObject, item) => {
+    const type = item && item.type;
+    const id = item && item.id;
+    let style = {};
+
+    let staticStyle = getStaticStyleForItem(domainObject, id);
+
+    const properties = Object.keys(styleProps);
+    properties.forEach(property => {
+        const styleProp = styleProps[property];
+        if (styleProp.applicableForType(type)) {
+            let defaultValue;
+            if (staticStyle) {
+                defaultValue = staticStyle[property];
+            } else if (item) {
+                defaultValue = item[styleProp.svgProperty];
+            }
+            style[property] = defaultValue === undefined ? styleProp.noneValue : defaultValue;
+        }
+    });
+
+    return style;
 };

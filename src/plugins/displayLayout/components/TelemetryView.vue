@@ -30,7 +30,8 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :style="styleObject"
+        :class="styleClass"
+        :style="telemetryObjectStyle || styleObject"
         @contextmenu.prevent="showContextMenu"
     >
         <div
@@ -48,8 +49,7 @@
             v-if="showValue"
             :title="fieldName"
             class="c-telemetry-view__value"
-            :class="[telemetryClass, !telemetryClass && styleClass]"
-            :style="!telemetryClass && telemetryObjectStyle"
+            :class="[telemetryClass]"
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
@@ -135,7 +135,7 @@ export default {
             }
         },
         styleClass() {
-            return this.telemetryObjectStyle && !!this.telemetryObjectStyle.isStyleInvisible;
+            return this.telemetryObjectStyle && this.telemetryObjectStyle.isStyleInvisible;
         },
         telemetryObjectStyle() {
             let styleObj = Object.assign({}, this.itemStyle);
