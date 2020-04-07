@@ -32,6 +32,7 @@
             <style-editor class="c-inspect-styles__editor"
                           :style-item="staticStyle"
                           :is-editing="isEditing"
+                          :non-specific="nonSpecific"
                           @persist="updateStaticStyle"
             />
         </div>
@@ -58,7 +59,7 @@ export default {
         return {
             staticStyle: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            navigateToPath: ''
+            nonSpecific: []
         }
     },
     destroyed() {
@@ -72,6 +73,9 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        isItemType(type, item) {
+            return item && (item.type === type);
+        },
         getObjectsAndItemsFromSelection() {
             let domainObject;
             let subObjects = [];
@@ -82,7 +86,7 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
-                if (layoutItem && (layoutItem.type === 'subobject-view')) {
+                if (item && this.isItemType('subobject-view', layoutItem)) {
                     subObjects.push(item);
                     itemStyle = getInitialStyleForItem(item);
                 } else {
@@ -95,7 +99,9 @@ export default {
                 }
                 itemInitialStyles.push(itemStyle);
             });
-            this.initialStyles = getConsolidatedStyleValues(itemInitialStyles);
+            const {styles, nonSpecific} = getConsolidatedStyleValues(itemInitialStyles);
+            this.initialStyles = styles;
+            this.nonSpecific = nonSpecific;
 
             this.domainObject = domainObject;
             this.removeListeners();
@@ -219,9 +225,6 @@ export default {
             }
 
             return domainObjectStyles;
-        },
-        getCondition(id) {
-            return this.conditions ? this.conditions[id] : {};
         },
 
         persist(domainObject, style) {
