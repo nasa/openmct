@@ -170,7 +170,7 @@ export default {
         dropOnEntry($event) {
             event.stopImmediatePropagation();
 
-            const snapshotId = $event.dataTransfer.getData('openmect/snapshot/id');
+            const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
                 this.moveSnapshot(snapshotId);
 
