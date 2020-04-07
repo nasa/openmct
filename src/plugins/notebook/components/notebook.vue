@@ -244,7 +244,7 @@ export default {
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            const snapshotId = event.dataTransfer.getData('snapshot/id');
+            const snapshotId = event.dataTransfer.getData('openmect/snapshot/id');
             if (snapshotId.length) {
                 const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
                 this.newEntry(snapshot);

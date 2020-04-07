@@ -137,7 +137,7 @@ export default {
         },
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);
-            event.dataTransfer.setData('snapshot/id', snapshot.id);
+            event.dataTransfer.setData('openmect/snapshot/id', snapshot.id);
         },
         toggleActionMenu(event) {
             togglePopupMenu(event, this.openmct);

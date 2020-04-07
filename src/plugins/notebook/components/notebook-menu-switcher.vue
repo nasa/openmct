@@ -64,9 +64,7 @@ export default {
             const defaultNotebook = getDefaultNotebook();
 
             if (defaultNotebook) {
-                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier)
-                    .then(d => d);
-
+                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
                 if (!domainObject.location) {
                     clearDefaultNotebook();
                 } else {

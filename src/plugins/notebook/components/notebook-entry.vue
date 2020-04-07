@@ -1,13 +1,13 @@
 <template>
 <div class="c-notebook__entry c-ne has-local-controls"
-     @dragover="dragover"
-     @drop.capture="dropCapture"
-     @drop.prevent="dropOnEntry(entry.id, $event)"
+     @dragover="changeCursor"
+     @drop.capture="cancelEditMode"
+     @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
-            <span>{{ formatTime(entry.createdOn, 'YYYY-MM-DD') }}</span>
-            <span>{{ formatTime(entry.createdOn, 'HH:mm:ss') }}</span>
+            <span>{{ createdOnDate }}</span>
+            <span>{{ createdOnTime }}</span>
         </div>
         <div class="c-ne__content">
             <div :id="entry.id"
@@ -15,8 +15,8 @@
                  :class="{'c-input-inline' : !readOnly }"
                  :contenteditable="!readOnly"
                  :style="!entry.text.length ? defaultEntryStyle : ''"
-                 @blur="textBlur($event, entry.id)"
-                 @focus="textFocus($event, entry.id)"
+                 @blur="updateEntryValue($event, entry.id)"
+                 @focus="updateCurrentEntryValue($event, entry.id)"
             >{{ entry.text.length ? entry.text : defaultText }}</div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
@@ -114,29 +114,32 @@ export default {
             defaultText: 'add description'
         }
     },
-    watch: {
-        entry() {
+    computed : {
+        createdOnDate() {
+            return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
         },
-        readOnly(readOnly) {
-        },
-        selectedSection(selectedSection) {
-        },
-        selectedPage(selectedSection) {
+        createdOnTime() {
+            return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
         }
     },
     mounted() {
         this.updateEntries = this.updateEntries.bind(this);
-    },
-    beforeDestory() {
+        this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
+        cancelEditMode(event) {
+            const isEditing = this.openmct.editor.isEditing();
+            if (isEditing) {
+                this.openmct.editor.cancel();
+            }
+        },
+        changeCursor() {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        },
         deleteEntry() {
             const self = this;
-            if (!self.domainObject || !self.selectedSection || !self.selectedPage || !self.entry.id) {
-                return;
-            }
-
-            const entryPosById = this.entryPosById(this.entry.id);
+            const entryPosById = self.entryPosById(self.entry.id);
             if (entryPosById === -1) {
                 return;
             }
@@ -164,24 +167,13 @@ export default {
                 ]
             });
         },
-        dragover() {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
-        },
-        dropCapture(event) {
-            const isEditing = this.openmct.editor.isEditing();
-            if (isEditing) {
-                this.openmct.editor.cancel();
-            }
-        },
-        dropOnEntry(entryId, $event) {
+        dropOnEntry($event) {
             event.stopImmediatePropagation();
-
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
             }
 
-            const snapshotId = $event.dataTransfer.getData('snapshot/id');
+            const snapshotId = $event.dataTransfer.getData('openmect/snapshot/id');
             if (snapshotId.length) {
                 this.moveSnapshot(snapshotId);
 
@@ -190,7 +182,7 @@ export default {
 
             const data = $event.dataTransfer.getData('openmct/domain-object-path');
             const objectPath = JSON.parse(data);
-            const entryPos = this.entryPosById(entryId);
+            const entryPos = this.entryPosById(this.entry.id);
             const bounds = this.openmct.time.bounds();
             const snapshotMeta = {
                 bounds,
@@ -253,7 +245,45 @@ export default {
             selection.removeAllRanges();
             selection.addRange(range);
         },
-        textBlur($event, entryId) {
+        updateCurrentEntryValue($event) {
+            if (this.readOnly) {
+                return;
+            }
+
+            const target = $event.target
+            this.currentEntryValue = target ? target.innerText : '';
+
+            if (!this.entry.text.length) {
+                this.selectTextInsideElement(target);
+            }
+        },
+        updateEmbed(newEmbed) {
+            this.entry.embeds.some(e => {
+                const found = (e.id === newEmbed.id);
+                if (found) {
+                    e = newEmbed;
+                }
+
+                return found;
+            });
+
+            this.updateEntry(this.entry);
+        },
+        updateEntry(newEntry) {
+            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
+                return;
+            }
+
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            entries.forEach(entry => {
+                if (entry.id === newEntry.id) {
+                    entry = newEntry;
+                }
+            });
+
+            this.updateEntries(entries);
+        },
+        updateEntryValue($event, entryId) {
             if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
                 return;
             }
@@ -271,42 +301,6 @@ export default {
 
                 this.updateEntries(entries);
             }
-        },
-        textFocus($event) {
-            if (this.readOnly || !this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
-            const target = $event.target
-            this.currentEntryValue = target ? target.innerText : '';
-
-            if (!this.entry.text.length) {
-                this.selectTextInsideElement(target);
-            }
-        },
-        updateEmbed(newEmbed) {
-            let embed = this.entry.embeds.find(e => e.id === newEmbed.id);
-
-            if (!embed) {
-                return;
-            }
-
-            embed = newEmbed;
-            this.updateEntry(this.entry);
-        },
-        updateEntry(newEntry) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            entries.forEach(entry => {
-                if (entry.id === newEntry.id) {
-                    entry = newEntry;
-                }
-            });
-
-            this.updateEntries(entries);
         },
         updateEntries(entries) {
             this.$emit('updateEntries', entries);
