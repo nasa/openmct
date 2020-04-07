@@ -24,31 +24,38 @@ const NONE_VALUE = '__no_value';
 const styleProps = {
     backgroundColor: {
         svgProperty: 'fill',
+        noneValue: NONE_VALUE,
         applicableForType: type => {
             return !type ? true : (type === 'text-view' ||
                                       type === 'telemetry-view' ||
-                                      type === 'box-view');
+                                      type === 'box-view' ||
+                                      type === 'subobject-view');
         }
     },
     border: {
         svgProperty: 'stroke',
+        noneValue: NONE_VALUE,
         applicableForType: type => {
             return !type ? true : (type === 'text-view' ||
                                             type === 'telemetry-view' ||
                                             type === 'box-view' ||
                                             type === 'image-view' ||
-                                            type === 'line-view');
+                                            type === 'line-view'||
+                                            type === 'subobject-view');
         }
     },
     color: {
         svgProperty: 'color',
+        noneValue: 'NONE_VALUE',
         applicableForType: type => {
             return !type ? true : (type === 'text-view' ||
-                                    type === 'telemetry-view');
+                                    type === 'telemetry-view'||
+                                    type === 'subobject-view');
         }
     },
     imageUrl: {
         svgProperty: 'url',
+        noneValue: '',
         applicableForType: type => {
             return !type ? false : type === 'image-view';
         }
@@ -81,13 +88,13 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
         const values = aggregatedStyleValues[property];
         if (values.length) {
             if (values.length !== multipleItemStyles.length) {
-                styleValues[property] = NONE_VALUE;
+                styleValues[property] = styleProps[property].noneValue;
                 styleValues.nonSpecific.push(property);
             } else {
                 if (values.every(value => value === values[0])) {
                     styleValues[property] = values[0];
                 } else {
-                    styleValues[property] = NONE_VALUE;
+                    styleValues[property] = styleProps[property].noneValue;
                     styleValues.nonSpecific.push(property);
                 }
             }
@@ -101,7 +108,7 @@ const getStaticStyleForItem = (domainObject, id) => {
     if (domainObjectStyles) {
         if (id && domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
             return domainObjectStyles[id].staticStyle.style;
-        } else {
+        } else if (domainObjectStyles.staticStyle) {
             return domainObjectStyles.staticStyle.style;
         }
     }
@@ -125,7 +132,7 @@ export const getInitialStyleForItem = (domainObject, item) => {
             } else if (item) {
                 defaultValue = item[styleProp.svgProperty];
             }
-            style[property] = defaultValue === undefined ? NONE_VALUE : defaultValue;
+            style[property] = defaultValue === undefined ? styleProp.noneValue : defaultValue;
         }
     });
 

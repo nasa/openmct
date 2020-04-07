@@ -67,12 +67,12 @@ export default {
     mounted() {
         this.items = [];
         this.previewAction = new PreviewAction(this.openmct);
-        this.getDomainObjectFromSelection();
+        this.getObjectsAndItemsFromSelection();
         this.initializeStaticStyle();
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
-        getDomainObjectFromSelection() {
+        getObjectsAndItemsFromSelection() {
             let domainObject;
             let subObjects = [];
 
@@ -81,11 +81,11 @@ export default {
             let itemStyle;
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
-                if (item && item.composition) {
+                const layoutItem = selectionItem[0].context.layoutItem;
+                if (layoutItem && (layoutItem.type === 'subobject-view')) {
                     subObjects.push(item);
                     itemStyle = getInitialStyleForItem(item);
                 } else {
-                    const layoutItem = selectionItem[0].context.layoutItem;
                     domainObject = selectionItem[1].context.item;
                     itemStyle = getInitialStyleForItem(domainObject, layoutItem || item);
                     this.items.push({
@@ -99,8 +99,10 @@ export default {
 
             this.domainObject = domainObject;
             this.removeListeners();
-            this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
-            this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+            if (this.domainObject) {
+                this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+                this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+            }
 
             subObjects.forEach(this.registerListener);
         },
@@ -176,19 +178,19 @@ export default {
                 style: Object.assign({}, this.initialStyles)
             };
         },
-        updateStaticStyle(staticStyle) {
+        updateStaticStyle(staticStyle, property) {
             //update the static style for each of the layoutItems as well as each sub object item
             this.staticStyle = staticStyle;
-            this.persist(this.domainObject, this.getDomainObjectStyle(this.domainObject, this.items));
+            this.persist(this.domainObject, this.getDomainObjectStyle(this.domainObject, property, this.items));
             if (this.domainObjectsById) {
                 const keys = Object.keys(this.domainObjectsById);
                 keys.forEach(key => {
                     let domainObject = this.domainObjectsById[key];
-                    this.persist(domainObject, this.getDomainObjectStyle(domainObject));
+                    this.persist(domainObject, this.getDomainObjectStyle(domainObject, property));
                 });
             }
         },
-        getDomainObjectStyle(domainObject, items) {
+        getDomainObjectStyle(domainObject, property, items) {
             let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
 
             if (items) {
@@ -200,7 +202,7 @@ export default {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
                     }
                     Object.keys(item.staticStyle).forEach(key => {
-                        if (this.staticStyle.style[key]) {
+                        if (property === key) {
                             itemStaticStyle[key] = this.staticStyle.style[key];
                         }
                     });
@@ -208,11 +210,12 @@ export default {
                 });
             } else {
                 //we're deconstructing here to ensure that if an item within a domainObject already had a style we don't lose it
-                Object.keys(domainObjectStyles.staticStyle.style).forEach(key => {
-                    if (this.staticStyle.style[key]) {
-                        domainObjectStyles.staticStyle.style[key] = this.staticStyle.style[key];
+                if (!domainObjectStyles.staticStyle) {
+                    domainObjectStyles.staticStyle = {
+                        style: {}
                     }
-                });
+                }
+                domainObjectStyles.staticStyle.style[property] = this.staticStyle.style[property];
             }
 
             return domainObjectStyles;
