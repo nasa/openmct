@@ -170,9 +170,7 @@ export default class ConditionClass extends EventEmitter {
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             criterion.off('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
             this.criteria.splice(found.index, 1, newCriterion);
-            if (this.criteriaResults[criterion.id] !== undefined) {
-                delete this.criteriaResults[criterion.id];
-            }
+            delete this.criteriaResults[criterion.id];
         }
     }
 
@@ -191,9 +189,8 @@ export default class ConditionClass extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
-            if (this.criteriaResults[criterion.id] !== undefined) {
-                delete this.criteriaResults[criterion.id];
-            }
+            delete this.criteriaResults[criterion.id];
+
             return true;
         }
         return false;
@@ -211,17 +208,16 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    updateCriteriaResults(criteriaResults, eventData) {
+    updateCriteriaResults(eventData) {
         const id = eventData.id;
 
         if (this.findCriterion(id)) {
-            // The !! here is important to convert undefined to false otherwise the criteriaResults won't get deleted when the criteria is destroyed
-            criteriaResults[id] = !!eventData.data.result;
+            this.criteriaResults[id] = !!eventData.data.result;
         }
     }
 
     handleCriterionResult(eventData) {
-        this.updateCriteriaResults(this.criteriaResults, eventData);
+        this.updateCriteriaResults(eventData);
         this.handleConditionUpdated(eventData.data);
     }
 
@@ -233,11 +229,14 @@ export default class ConditionClass extends EventEmitter {
 
         return Promise.all(criteriaRequests)
             .then(results => {
-                results.forEach(result => {
-                    this.updateCriteriaResults(criteriaResults, result)
+                results.forEach(resultObj => {
+                    const { id, data, data: { result } } = resultObj;
+                    if (this.findCriterion(id)) {
+                        criteriaResults[id] = !!result;
+                    }
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
-                        result.data,
+                        data,
                         this.timeSystems
                     );
                 });

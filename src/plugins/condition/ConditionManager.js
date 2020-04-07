@@ -164,9 +164,7 @@ export default class ConditionManager extends EventEmitter {
         condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         this.conditionClassCollection.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
-        if (this.conditionResults[condition.id] !== undefined) {
-            delete this.conditionResults[condition.id];
-        }
+        delete this.conditionResults[condition.id];
         this.persistConditions();
         this.handleConditionResult();
     }
@@ -175,7 +173,6 @@ export default class ConditionManager extends EventEmitter {
         return this.conditionClassCollection.find(conditionClass => conditionClass.id === id);
     }
 
-    //this.$set(this.conditionClassCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
     reorderConditions(reorderPlan) {
         let oldConditions = Array.from(this.conditionSetDomainObject.configuration.conditionCollection);
         let newCollection = [];
@@ -247,7 +244,7 @@ export default class ConditionManager extends EventEmitter {
                     results.forEach(resultObj => {
                         const { id, data, data: { result } } = resultObj;
                         if (this.findConditionById(id)) {
-                            conditionResults[id] = result;
+                            conditionResults[id] = !!result;
                         }
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,
