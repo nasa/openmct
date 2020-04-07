@@ -21,11 +21,17 @@
 import NotebookEntry from './notebook-entry.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'snapshotContainer'],
     components: {
         NotebookEntry
     },
     props:{
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         results: {
             type: Array,
             default() {

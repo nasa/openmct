@@ -154,7 +154,7 @@ export default {
                         callback: () => {
                             const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
                             entries.splice(entryPosById, 1);
-                            this.updateEntries(entries);
+                            self.updateEntries(entries);
                             dialog.dismiss();
                         }
                     },
