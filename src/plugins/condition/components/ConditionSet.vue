@@ -23,30 +23,33 @@
 <template>
 <div class="c-cs">
     <section class="c-cs__current-output c-section">
-        <div class="c-cs__header c-section__header">
-            <span class="c-cs__header-label c-section__label">Current Output</span>
-        </div>
         <div class="c-cs__content c-cs__current-output-value">
-            <template v-if="currentConditionOutput">
-                {{ currentConditionOutput }}
-            </template>
-            <template v-else>
-                {{ defaultConditionOutput }}
-            </template>
+            <span class="c-cs__current-output-value__label">Current Output</span>
+            <span class="c-cs__current-output-value__value">
+                <template v-if="currentConditionOutput">
+                    {{ currentConditionOutput }}
+                </template>
+                <template v-else>
+                    {{ defaultConditionOutput }}
+                </template>
+            </span>
         </div>
     </section>
-    <TestData :is-editing="isEditing"
-              :test-data="testData"
-              :telemetry="telemetryObjs"
-              @updateTestData="updateTestData"
-    />
-    <ConditionCollection
-        :is-editing="isEditing"
-        :test-data="testData"
-        @conditionSetResultUpdated="updateCurrentOutput"
-        @updateDefaultOutput="updateDefaultOutput"
-        @telemetryUpdated="updateTelemetry"
-    />
+    <div class="c-cs__test-data-and-conditions-w">
+        <TestData class="c-cs__test-data"
+                  :is-editing="isEditing"
+                  :test-data="testData"
+                  :telemetry="telemetryObjs"
+                  @updateTestData="updateTestData"
+        />
+        <ConditionCollection class="c-cs__conditions"
+                             :is-editing="isEditing"
+                             :test-data="testData"
+                             @conditionSetResultUpdated="updateCurrentOutput"
+                             @updateDefaultOutput="updateDefaultOutput"
+                             @telemetryUpdated="updateTelemetry"
+        />
+    </div>
 </div>
 </template>
 

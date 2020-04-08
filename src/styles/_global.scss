@@ -88,6 +88,12 @@ body.desktop {
             background: $scrollbarThumbColorMenuHov;
         }
     }
+
+    div, span {
+        // Firefox
+        scrollbar-color: $scrollbarThumbColor $scrollbarTrackColorBg;
+        scrollbar-width: thin;
+    }
 }
 
 /******************************************************** HTML ENTITIES */
