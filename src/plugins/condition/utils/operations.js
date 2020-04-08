@@ -245,9 +245,7 @@ export const OPERATIONS = [
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                let stringValues = [];
-                values.forEach(inputValue => stringValues.push(inputValue !== undefined ? inputValue.toString() : ''));
-                return stringValues.find((value) => lhsValue === _.trim(value.toString()));
+                return values.find((value) => lhsValue === _.trim(value.toString()));
             }
             return false;
         },
@@ -264,9 +262,7 @@ export const OPERATIONS = [
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                let stringValues = [];
-                values.forEach(inputValue => stringValues.push(inputValue !== undefined ? inputValue.toString() : ''));
-                const found = stringValues.find((value) => lhsValue === _.trim(value.toString()));
+                const found = values.find((value) => lhsValue === _.trim(value.toString()));
                 return !found;
             }
             return false;
