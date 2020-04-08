@@ -49,7 +49,7 @@
 
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import { getInitialStyleForItem, getConsolidatedStyleValues } from "@/plugins/condition/utils/styleUtils";
+import { getInitialStyleForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'MultiSelectStylesView',
@@ -65,7 +65,7 @@ export default {
             staticStyle: undefined,
             isEditing: this.openmct.editor.isEditing(),
             nonSpecific: [],
-            mixedStaticAndConditionalStyles: true
+            mixedStaticAndConditionalStyles: false
         }
     },
     destroyed() {
@@ -82,6 +82,9 @@ export default {
         isItemType(type, item) {
             return item && (item.type === type);
         },
+        hasConditionalStyles(domainObject, id) {
+            return getConditionalStyleForItem(domainObject, id);
+        },
         getObjectsAndItemsFromSelection() {
             let domainObject;
             let subObjects = [];
@@ -95,6 +98,9 @@ export default {
                 if (item && this.isItemType('subobject-view', layoutItem)) {
                     subObjects.push(item);
                     itemStyle = getInitialStyleForItem(item);
+                    if (!this.mixedStaticAndConditionalStyles) {
+                        this.mixedStaticAndConditionalStyles = this.hasConditionalStyles(item);
+                    }
                 } else {
                     domainObject = selectionItem[1].context.item;
                     itemStyle = getInitialStyleForItem(domainObject, layoutItem || item);
@@ -102,6 +108,9 @@ export default {
                         id: layoutItem.id,
                         staticStyle: itemStyle
                     });
+                    if (!this.mixedStaticAndConditionalStyles) {
+                        this.mixedStaticAndConditionalStyles = this.hasConditionalStyles(domainObject, layoutItem.id);
+                    }
                 }
                 itemInitialStyles.push(itemStyle);
             });
@@ -175,15 +184,21 @@ export default {
                 this.persist(this.domainObject, domainObjectStyles);
             }
         },
+        removeConditionalStyles(domainObjectStyles, itemId) {
+            if (itemId) {
+                domainObjectStyles[itemId].conditionSetIdentifier = undefined;
+                delete domainObjectStyles[itemId].conditionSetIdentifier;
+                domainObjectStyles[itemId].styles = undefined;
+                delete domainObjectStyles[itemId].styles;
+            } else {
+                domainObjectStyles.conditionSetIdentifier = undefined;
+                delete domainObjectStyles.conditionSetIdentifier;
+                domainObjectStyles.styles = undefined;
+                delete domainObjectStyles.styles;
+            }
+        },
         setEditState(isEditing) {
             this.isEditing = isEditing;
-        },
-        navigateOrPreview(event) {
-            // If editing, display condition set in Preview overlay; otherwise nav to it while browsing
-            if (this.openmct.editor.isEditing()) {
-                event.preventDefault();
-                this.previewAction.invoke(this.objectPath);
-            }
         },
         initializeStaticStyle() {
             this.staticStyle = {
@@ -201,6 +216,11 @@ export default {
                     this.persist(domainObject, this.getDomainObjectStyle(domainObject, property));
                 });
             }
+            this.mixedStaticAndConditionalStyles = false;
+            let foundIndex = this.nonSpecific.indexOf(property);
+            if (foundIndex > -1) {
+                this.nonSpecific.splice(foundIndex, 1);
+            }
         },
         getDomainObjectStyle(domainObject, property, items) {
             let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
@@ -210,7 +230,9 @@ export default {
                     let itemStaticStyle = {};
                     if (!domainObjectStyles[item.id]) {
                         domainObjectStyles[item.id] = {};
-                        itemStaticStyle = this.staticStyle.style;
+                        Object.keys(item.staticStyle).forEach(key => {
+                            itemStaticStyle[key] = this.staticStyle.style[key];
+                        });
                     } else if (domainObjectStyles[item.id].staticStyle) {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
                         Object.keys(item.staticStyle).forEach(key => {
@@ -218,6 +240,9 @@ export default {
                                 itemStaticStyle[key] = this.staticStyle.style[key];
                             }
                         });
+                    }
+                    if (this.mixedStaticAndConditionalStyles) {
+                        this.removeConditionalStyles(domainObjectStyles, item.id);
                     }
                     Object.assign(domainObjectStyles[item.id], { staticStyle: { style: itemStaticStyle } });
                 });
@@ -227,6 +252,9 @@ export default {
                     domainObjectStyles.staticStyle = {
                         style: {}
                     }
+                }
+                if (this.mixedStaticAndConditionalStyles) {
+                    this.removeConditionalStyles(domainObjectStyles);
                 }
                 domainObjectStyles.staticStyle.style[property] = this.staticStyle.style[property];
             }

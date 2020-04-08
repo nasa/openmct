@@ -83,9 +83,6 @@ export default {
         isEditing: {
             type: Boolean
         },
-        preventNone: {
-            type: Boolean
-        },
         nonSpecific: {
             type: Array,
             default() {
@@ -102,7 +99,7 @@ export default {
             let style = {};
             const keys = Object.keys(this.styleItem.style);
             keys.forEach(key => {
-                style[key] = this.normalizeValue(this.styleItem.style[key]);
+                style[key] = this.styleItem.style[key] ? this.normalizeValue(this.styleItem.style[key]) : 'transparent';
             });
             return style;
         },
@@ -114,8 +111,7 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'border',
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('border') > -1,
-                preventNone: this.preventNone
+                nonSpecific: this.nonSpecific.indexOf('border') > -1
             }
         },
         backgroundColorOption() {
@@ -126,8 +122,7 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('backgroundColor') > -1,
-                preventNone: this.preventNone
+                nonSpecific: this.nonSpecific.indexOf('backgroundColor') > -1
             }
         },
         colorOption() {
@@ -193,7 +188,7 @@ export default {
             return property !== undefined;
         },
         normalizeValue(value) {
-            if (!value || value === '__no_value') {
+            if (value && value === '__no_value') {
                 return 'transparent';
             }
             return value;

@@ -78,7 +78,7 @@ const aggregateStyleValues = (accumulator, currentStyle) => {
 };
 
 // Returns a union of styles used by multiple items.
-// Styles that are not common to all items are added to the nonSpecific list
+// Styles that are common to all items but don't have the same value are added to the nonSpecific list
 export const getConsolidatedStyleValues = (multipleItemStyles) => {
     let aggregatedStyleValues = multipleItemStyles.reduce(aggregateStyleValues, {});
 
@@ -88,16 +88,11 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
     properties.forEach((property) => {
         const values = aggregatedStyleValues[property];
         if (values.length) {
-            if (values.length !== multipleItemStyles.length) {
-                styleValues[property] = styleProps[property].noneValue;
-                nonSpecific.push(property);
+            if (values.every(value => value === values[0])) {
+                styleValues[property] = values[0];
             } else {
-                if (values.every(value => value === values[0])) {
-                    styleValues[property] = values[0];
-                } else {
-                    styleValues[property] = styleProps[property].noneValue;
-                    nonSpecific.push(property);
-                }
+                styleValues[property] = '';
+                nonSpecific.push(property);
             }
         }
     });
@@ -114,6 +109,17 @@ const getStaticStyleForItem = (domainObject, id) => {
             return domainObjectStyles[id].staticStyle.style;
         } else if (domainObjectStyles.staticStyle) {
             return domainObjectStyles.staticStyle.style;
+        }
+    }
+};
+
+export const getConditionalStyleForItem = (domainObject, id) => {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id && domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
+            return domainObjectStyles[id].styles;
+        } else if (domainObjectStyles.staticStyle) {
+            return domainObjectStyles.styles;
         }
     }
 };
