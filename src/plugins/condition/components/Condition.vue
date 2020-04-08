@@ -25,8 +25,8 @@
      :class="{ 'is-drag-target': draggingOver }"
      @dragover.prevent
      @drop.prevent="dropCondition($event, conditionIndex)"
-     @dragenter.prevent="dragEnter($event, conditionIndex)"
-     @dragleave.prevent="dragLeave($event, conditionIndex)"
+     @dragenter="dragEnter($event, conditionIndex)"
+     @dragleave="dragLeave($event, conditionIndex)"
 >
     <div class="c-condition-h__drop-target"></div>
     <div v-if="isEditing"
@@ -82,7 +82,7 @@
                 <input v-model="condition.configuration.name"
                        class="t-condition-input__name"
                        type="text"
-                       @blur="persist"
+                       @change="persist"
                 >
             </span>
 
@@ -105,7 +105,7 @@
                            v-model="condition.configuration.output"
                            class="t-condition-name-input"
                            type="text"
-                           @blur="persist"
+                           @change="persist"
                     >
                 </span>
             </span>
@@ -358,6 +358,7 @@ export default {
             this.persist();
         },
         persist() {
+            console.log('persist');
             this.$emit('updateCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
