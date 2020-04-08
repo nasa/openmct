@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Condition from "./Condition";
+import { getLatestTimestamp } from './utils/time';
 import uuid from "uuid";
 import EventEmitter from 'EventEmitter';
 
@@ -30,7 +31,7 @@ export default class ConditionManager extends EventEmitter {
         this.openmct = openmct;
         this.conditionSetDomainObject = conditionSetDomainObject;
         this.timeAPI = this.openmct.time;
-        this.latestTimestamp = {};
+        this.timeSystems = this.openmct.time.getAllTimeSystems();
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.subscribeToTelemetry, this);
         this.composition.on('remove', this.unsubscribeFromTelemetry, this);
@@ -163,9 +164,7 @@ export default class ConditionManager extends EventEmitter {
         condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         this.conditionClassCollection.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
-        if (this.conditionResults[condition.id] !== undefined) {
-            delete this.conditionResults[condition.id];
-        }
+        delete this.conditionResults[condition.id];
         this.persistConditions();
         this.handleConditionResult();
     }
@@ -174,7 +173,6 @@ export default class ConditionManager extends EventEmitter {
         return this.conditionClassCollection.find(conditionClass => conditionClass.id === id);
     }
 
-    //this.$set(this.conditionClassCollection, reorderEvent.newIndex, oldConditions[reorderEvent.oldIndex]);
     reorderConditions(reorderPlan) {
         let oldConditions = Array.from(this.conditionSetDomainObject.configuration.conditionCollection);
         let newCollection = [];
@@ -186,12 +184,12 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    getCurrentCondition() {
+    getCurrentCondition(conditionResults) {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
         let currentCondition = conditionCollection[conditionCollection.length-1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            if (this.conditionResults[conditionCollection[i].id]) {
+            if (conditionResults[conditionCollection[i].id]) {
                 //first condition to be true wins
                 currentCondition = conditionCollection[i];
                 break;
@@ -210,14 +208,14 @@ export default class ConditionManager extends EventEmitter {
         if (this.findConditionById(id)) {
             this.conditionResults[id] = resultObj.data.result;
         }
-
-        this.updateTimestamp(resultObj.data);
     }
 
     handleConditionResult(resultObj) {
-        // update conditions results and then calculate the current condition
         this.updateConditionResults(resultObj);
-        const currentCondition = this.getCurrentCondition();
+        const currentCondition = this.getCurrentCondition(this.conditionResults);
+        const timestamp = JSON.parse(JSON.stringify(resultObj.data))
+        delete timestamp.result
+
         this.emit('conditionSetResultUpdated',
             Object.assign(
                 {
@@ -225,19 +223,9 @@ export default class ConditionManager extends EventEmitter {
                     id: this.conditionSetDomainObject.identifier,
                     conditionId: currentCondition.id
                 },
-                this.latestTimestamp
+                timestamp
             )
         )
-    }
-
-    updateTimestamp(timestamp) {
-        this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
-            if (!this.latestTimestamp[timeSystem.key]
-                || timestamp[timeSystem.key] > this.latestTimestamp[timeSystem.key]
-            ) {
-                this.latestTimestamp[timeSystem.key] = timestamp[timeSystem.key];
-            }
-        });
     }
 
     requestLADConditionSetOutput() {
@@ -246,13 +234,25 @@ export default class ConditionManager extends EventEmitter {
         }
 
         return this.compositionLoad.then(() => {
-            const ladConditionResults = this.conditionClassCollection
+            let latestTimestamp;
+            let conditionResults = {};
+            const conditionRequests = this.conditionClassCollection
                 .map(condition => condition.requestLADConditionResult());
 
-            return Promise.all(ladConditionResults)
+            return Promise.all(conditionRequests)
                 .then((results) => {
-                    results.forEach(resultObj => { this.updateConditionResults(resultObj); });
-                    const currentCondition = this.getCurrentCondition();
+                    results.forEach(resultObj => {
+                        const { id, data, data: { result } } = resultObj;
+                        if (this.findConditionById(id)) {
+                            conditionResults[id] = !!result;
+                        }
+                        latestTimestamp = getLatestTimestamp(
+                            latestTimestamp,
+                            data,
+                            this.timeSystems
+                        );
+                    });
+                    const currentCondition = this.getCurrentCondition(conditionResults);
 
                     return Object.assign(
                         {
@@ -260,7 +260,7 @@ export default class ConditionManager extends EventEmitter {
                             id: this.conditionSetDomainObject.identifier,
                             conditionId: currentCondition.id
                         },
-                        this.latestTimestamp
+                        latestTimestamp
                     );
                 });
         });
@@ -303,7 +303,7 @@ export default class ConditionManager extends EventEmitter {
         this.composition.off('add', this.subscribeToTelemetry, this);
         this.composition.off('remove', this.unsubscribeFromTelemetry, this);
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
-        this.subscriptions = undefined;
+        delete this.subscriptions;
 
         if(this.stopObservingForChanges) {
             this.stopObservingForChanges();
