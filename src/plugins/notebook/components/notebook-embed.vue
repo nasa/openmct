@@ -47,7 +47,7 @@ export default {
         removeActionString: {
             type: String,
             default() {
-                return 'Remove Embed';
+                return 'Remove This Embed';
             }
         }
     },

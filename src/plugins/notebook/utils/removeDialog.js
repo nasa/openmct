@@ -17,17 +17,16 @@ export default class RemoveDialog {
             message: this.message,
             buttons: [
                 {
-                    label: "No",
-                    emphasis: true,
+                    label: "Ok",
                     callback: () => {
-                        this.callback(false);
+                        this.callback(true);
                         dialog.dismiss();
                     }
                 },
                 {
-                    label: "Yes",
+                    label: "Cancel",
                     callback: () => {
-                        this.callback(true);
+                        this.callback(false);
                         dialog.dismiss();
                     }
                 }
