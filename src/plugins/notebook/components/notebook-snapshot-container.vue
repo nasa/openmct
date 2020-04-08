@@ -10,24 +10,9 @@
                     >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
                     </span>
                 </div>
-                <a class="l-browse-bar__context-actions c-disclosure-button"
-                   @click="toggleActionMenu"
-                ></a>
-                <div class="hide-menu hidden">
-                    <div class="menu-element context-menu-wrapper mobile-disable-select">
-                        <div class="c-menu">
-                            <ul>
-                                <li v-for="action in actions"
-                                    :key="action.name"
-                                    :class="action.cssClass"
-                                    @click="action.perform()"
-                                >
-                                    {{ action.name }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <PopupMenu v-if="snapshots.length > 0"
+                           :popup-menu-items="popupMenuItems"
+                />
             </div>
 
         </div>
@@ -62,15 +47,16 @@
 
 <script>
 import NotebookEmbed from './notebook-embed.vue';
+import PopupMenu from './popup-menu.vue';
 import RemoveDialog from '../utils/removeDialog';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
-import { togglePopupMenu } from '../utils/popup-menu';
 
 export default {
     inject: ['openmct', 'snapshotContainer'],
     components: {
-        NotebookEmbed
+        NotebookEmbed,
+        PopupMenu
     },
     props: {
         toggleSnapshot: {
@@ -82,49 +68,45 @@ export default {
     },
     data() {
         return {
-            actions: [],
+            popupMenuItems: [],
+            removeActionString: 'Delete all snapshots',
             snapshots: []
         }
     },
     mounted() {
-        this.initRemoveDialog();
+        this.addPopupMenuItems();
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
         this.snapshots = this.snapshotContainer.getSnapshots();
     },
     methods: {
+        addPopupMenuItems() {
+            const removeSnapshot = {
+                cssClass: 'icon-trash',
+                name: this.removeActionString,
+                callback: this.getRemoveDialog.bind(this)
+            }
+
+            this.popupMenuItems = [removeSnapshot];
+        },
         close() {
             this.toggleSnapshot();
         },
         getNotebookSnapshotMaxCount() {
             return NOTEBOOK_SNAPSHOT_MAX_COUNT;
         },
-        initRemoveDialog() {
-            const buttons = [
-                { label: "No" },
-                {
-                    label: "Yes",
-                    emphasis: true,
-                    clicked: this.removeAllSnapshots.bind(this)
-                }
-            ];
-            const cssClass = 'icon-trash';
-            const iconClass = "error";
-            const message = 'This action will delete all notebook snapshots. Do you want to continue?';
-            const name = 'Delete All Snapshots';
-
-            const removeDialog = new RemoveDialog(this.openmct, {
-                buttons,
-                cssClass,
-                iconClass,
-                message,
-                name
-            });
-
-            const removeAction = removeDialog.getRemoveAction();
-
-            this.actions = this.actions.concat(removeAction);
+        getRemoveDialog() {
+            const options = {
+                name: this.removeActionString,
+                callback: this.removeAllSnapshots.bind(this)
+            }
+            const removeDialog = new RemoveDialog(this.openmct, options);
+            removeDialog.show();
         },
-        removeAllSnapshots() {
+        removeAllSnapshots(success) {
+            if (!success) {
+                return;
+            }
+
             this.snapshotContainer.removeAllSnapshots();
         },
         removeSnapshot(id) {
@@ -136,9 +118,6 @@ export default {
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);
             event.dataTransfer.setData('openmct/snapshot/id', snapshot.id);
-        },
-        toggleActionMenu(event) {
-            togglePopupMenu(event, this.openmct);
         },
         updateSnapshot(snapshot) {
             this.snapshotContainer.updateSnapshot(snapshot);

@@ -9,33 +9,19 @@
           @keydown.enter="updateName"
           @blur="updateName"
     >{{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}</span>
-    <a class="c-list__item__menu-indicator icon-arrow-down"
-       @click="toggleActionMenu"
-    ></a>
-    <div class="hide-menu hidden">
-        <div class="menu-element context-menu-wrapper mobile-disable-select">
-            <div class="c-menu">
-                <ul>
-                    <li v-for="action in actions"
-                        :key="action.name"
-                        :class="action.cssClass"
-                        @click="action.perform(page.id)"
-                    >
-                        {{ action.name }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>
 </template>
 
 <script>
-import { togglePopupMenu } from '../utils/popup-menu';
+import PopupMenu from './popup-menu.vue';
 import RemoveDialog from '../utils/removeDialog';
 
 export default {
     inject: ['openmct'],
+    components: {
+        PopupMenu
+    },
     props: {
         defaultPageId: {
             type: String,
@@ -56,7 +42,8 @@ export default {
     },
     data() {
         return {
-            actions: []
+            popupMenuItems: [],
+            removeActionString: `Delete ${this.pageTitle}`
         }
     },
     watch: {
@@ -65,38 +52,35 @@ export default {
         }
     },
     mounted() {
-        this.initRemoveDialog();
+        this.addPopupMenuItems();
         this.toggleContentEditable();
     },
     methods: {
-        deletePage(id) {
-            this.$emit('deletePage', id);
+        addPopupMenuItems() {
+            const removePage = {
+                cssClass: 'icon-trash',
+                name: this.removeActionString,
+                callback: this.getRemoveDialog.bind(this)
+            }
+
+            this.popupMenuItems = [removePage];
         },
-        initRemoveDialog() {
-            const buttons = [
-                { label: "No" },
-                {
-                    label: "Yes",
-                    emphasis: true,
-                    clicked: this.deletePage.bind(this)
-                }
-            ];
-            const cssClass = 'icon-trash';
-            const iconClass = "error";
+        deletePage(success) {
+            if (!success) {
+                return;
+            }
+
+            this.$emit('deletePage', this.page.id);
+        },
+        getRemoveDialog() {
             const message = 'This action will delete this page and all of its entries. Do you want to continue?';
-            const name = `Delete ${this.pageTitle}`;
-
-            const removeDialog = new RemoveDialog(this.openmct, {
-                buttons,
-                cssClass,
-                iconClass,
-                message,
-                name
-            });
-
-            const removeAction = removeDialog.getRemoveAction();
-
-            this.actions = this.actions.concat(removeAction);
+            const options = {
+                name: this.removeActionString,
+                callback: this.deletePage.bind(this),
+                message
+            }
+            const removeDialog = new RemoveDialog(this.openmct, options);
+            removeDialog.show();
         },
         selectPage(event) {
             const target = event.target;
@@ -115,10 +99,6 @@ export default {
             }
 
             this.$emit('selectPage', id);
-        },
-        toggleActionMenu(event) {
-            event.preventDefault();
-            togglePopupMenu(event, this.openmct);
         },
         toggleContentEditable(page = this.page) {
             const pageTitle = this.$el.querySelector('span');

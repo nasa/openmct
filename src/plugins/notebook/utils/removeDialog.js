@@ -1,39 +1,37 @@
 export default class RemoveDialog {
-    constructor(openmct, properties) {
+    constructor(openmct, options) {
+        this.name = options.name;
         this.openmct = openmct;
-        this.properties = properties;
+
+        this.callback = options.callback;
+        this.cssClass = options.cssClass || 'icon-trash';
+        this.description = options.description || 'Remove action dialog';
+        this.iconClass = "error";
+        this.key = 'remove';
+        this.message = options.message || `This action will permanently ${this.name.toLowerCase()}. Do you wish to continue?`;
     }
 
-    getRemoveAction() {
-        const {
-            buttons,
-            cssClass,
-            iconClass,
-            message,
-            name
-        } = this.properties;
-
-        return {
-            name,
-            cssClass,
-            perform: (data) => {
-                const dialog = this.openmct.overlays.dialog({
-                    iconClass,
-                    message,
-                    buttons: buttons.map(button => {
-                        const { emphasis, label, clicked = () => {} } = button;
-
-                        return {
-                            label,
-                            emphasis,
-                            callback: () => {
-                                clicked(data);
-                                dialog.dismiss();
-                            }
-                        }
-                    })
-                });
-            }
-        }
+    show() {
+        const dialog = this.openmct.overlays.dialog({
+            iconClass: this.iconClass,
+            message: this.message,
+            buttons: [
+                {
+                    label: "No",
+                    emphasis: true,
+                    callback: () => {
+                        this.callback(false);
+                        dialog.dismiss();
+                    }
+                },
+                {
+                    label: "Yes",
+                    callback: () => {
+                        this.callback(true);
+                        dialog.dismiss();
+                    }
+                }
+            ]
+        });
     }
 }
