@@ -3,30 +3,16 @@
     <button
         class="l-browse-bar__context-actions c-disclosure-button"
         title="popup menu"
-        @click.stop="toggleMenu"
+        @click.stop="showMenuItems"
     >
         <span class="c-button__label"></span>
     </button>
-    <div
-        v-show="showMenu"
-        class="c-menu"
-    >
-        <ul>
-            <li
-                v-for="(item, index) in popupMenuItems"
-                :key="index"
-                :class="item.cssClass"
-                :title="item.name"
-                @click="item.callback"
-            >
-                {{ item.name }}
-            </li>
-        </ul>
-    </div>
 </div>
 </template>
 
 <script>
+import MenuItems from './menu-items.vue';
+import Vue from 'vue';
 
 export default {
     inject: ['openmct'],
@@ -46,21 +32,62 @@ export default {
     },
     data() {
         return {
-            showMenu: false
+            menuItems: null
         }
     },
     mounted() {
-        document.addEventListener('click', this.hideMenu);
-    },
-    destroyed() {
-        document.removeEventListener('click', this.hideMenu);
     },
     methods: {
-        toggleMenu() {
-            this.showMenu = !this.showMenu;
+        calculateMenuPosition(event, element) {
+            let eventPosX = event.clientX;
+            let eventPosY = event.clientY;
+
+            let menuDimensions = element.getBoundingClientRect();
+            let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
+            let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
+
+            if (overflowX > 0) {
+                eventPosX = eventPosX - overflowX;
+            }
+
+            if (overflowY > 0) {
+                eventPosY = eventPosY - overflowY;
+            }
+
+            return {
+                x: eventPosX,
+                y: eventPosY
+            }
         },
-        hideMenu() {
-            this.showMenu = false;
+        hideMenuItems() {
+            document.body.removeChild(this.menuItems.$el);
+            this.menuItems.$destroy();
+            this.menuItems = null;
+            document.removeEventListener('click', this.hideMenuItems);
+
+            return;
+        },
+        showMenuItems($event) {
+            const menuItems = new Vue({
+                components: {
+                    MenuItems
+                },
+                provide: {
+                    popupMenuItems: this.popupMenuItems
+                },
+                template: '<MenuItems />'
+            });
+
+            this.menuItems = menuItems;
+
+            menuItems.$mount();
+            const element = this.menuItems.$el;
+            document.body.appendChild(element);
+            const position = this.calculateMenuPosition($event, element);
+            element.style.left = `${position.x}px`;
+            element.style.top = `${position.y}px`;
+
+            document.addEventListener('click', this.hideMenuItems);
         }
     }
 }
