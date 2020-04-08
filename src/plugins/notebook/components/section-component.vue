@@ -79,7 +79,7 @@ export default {
             const message = 'This action will delete this section and all of its pages and entries. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
-                callback: this.deletePage.bind(this),
+                callback: this.deleteSection.bind(this),
                 message
             }
 
