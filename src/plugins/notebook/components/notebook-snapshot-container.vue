@@ -31,7 +31,7 @@
             <NotebookEmbed ref="notebookEmbed"
                            :key="snapshot.id"
                            :embed="snapshot"
-                           :remove-action-string="'Delete Snapshot'"
+                           :remove-action-string="'Delete This Snapshot'"
                            @updateEmbed="updateSnapshot"
                            @removeEmbed="removeSnapshot"
             />
@@ -69,7 +69,7 @@ export default {
     data() {
         return {
             popupMenuItems: [],
-            removeActionString: 'Delete all snapshots',
+            removeActionString: 'Delete All Snapshots',
             snapshots: []
         }
     },
