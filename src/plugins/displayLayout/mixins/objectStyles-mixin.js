@@ -30,9 +30,9 @@ export default {
         }
     },
     mounted() {
-        this.domainObject = this.$parent.domainObject;
+        this.parentDomainObject = this.$parent.domainObject;
         this.itemId = this.item.id;
-        this.objectStyle = this.getObjectStyleForItem(this.domainObject.configuration.objectStyles);
+        this.objectStyle = this.getObjectStyleForItem(this.parentDomainObject.configuration.objectStyles);
         this.initObjectStyles();
     },
     destroyed() {
@@ -59,7 +59,7 @@ export default {
                 this.stopListeningObjectStyles();
             }
 
-            this.stopListeningObjectStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
+            this.stopListeningObjectStyles = this.openmct.objects.observe(this.parentDomainObject, 'configuration.objectStyles', (newObjectStyle) => {
                 //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
                 let newItemObjectStyle = this.getObjectStyleForItem(newObjectStyle);
                 if (this.objectStyle !== newItemObjectStyle) {
