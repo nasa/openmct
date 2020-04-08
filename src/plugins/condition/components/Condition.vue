@@ -358,7 +358,6 @@ export default {
             this.persist();
         },
         persist() {
-            console.log('persist');
             this.$emit('updateCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
