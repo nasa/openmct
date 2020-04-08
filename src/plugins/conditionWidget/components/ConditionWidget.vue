@@ -21,13 +21,14 @@
 *****************************************************************************/
 
 <template>
-<a class="c-condition-widget"
-   :href="internalDomainObject.url"
+<component :is="urlDefined ? 'a' : 'span'"
+           class="c-condition-widget"
+           :href="urlDefined ? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">
         {{ internalDomainObject.label }}
     </div>
-</a>
+</component>
 </template>
 
 <script>
@@ -36,6 +37,11 @@ export default {
     data: function () {
         return {
             internalDomainObject: this.domainObject
+        }
+    },
+    computed: {
+        urlDefined() {
+            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
         }
     },
     mounted() {

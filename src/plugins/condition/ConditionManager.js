@@ -122,6 +122,7 @@ export default class ConditionManager extends EventEmitter {
                     output: 'false',
                     trigger: 'all',
                     criteria: [{
+                        id: uuid(),
                         telemetry: '',
                         operation: '',
                         input: [],
@@ -140,7 +141,9 @@ export default class ConditionManager extends EventEmitter {
     }
 
     cloneCondition(conditionConfiguration, index) {
-        this.createAndSaveCondition(index, JSON.parse(JSON.stringify(conditionConfiguration)));
+        let clonedConfig = JSON.parse(JSON.stringify(conditionConfiguration));
+        clonedConfig.configuration.criteria.forEach((criterion) => criterion.id = uuid());
+        this.createAndSaveCondition(index, clonedConfig);
     }
 
     createAndSaveCondition(index, conditionConfiguration) {
