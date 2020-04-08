@@ -3,7 +3,7 @@
     <button
         class="l-browse-bar__context-actions c-disclosure-button"
         title="popup menu"
-        @click.stop="showMenuItems"
+        @click="showMenuItems"
     >
         <span class="c-button__label"></span>
     </button>
@@ -77,17 +77,19 @@ export default {
                 },
                 template: '<MenuItems />'
             });
-
             this.menuItems = menuItems;
 
             menuItems.$mount();
             const element = this.menuItems.$el;
             document.body.appendChild(element);
+
             const position = this.calculateMenuPosition($event, element);
             element.style.left = `${position.x}px`;
             element.style.top = `${position.y}px`;
 
-            document.addEventListener('click', this.hideMenuItems);
+            setTimeout(() => {
+                document.addEventListener('click', this.hideMenuItems);
+            }, 0);
         }
     }
 }
