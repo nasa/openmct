@@ -93,7 +93,7 @@ define(
                     // same time stamp
                     let potentialDupes = this.rows.slice(startIx, endIx + 1);
                     // Search potential dupes for exact dupe
-                    isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, row)) > -1;
+                    isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, row));
                 }
 
                 if (!isDuplicate) {

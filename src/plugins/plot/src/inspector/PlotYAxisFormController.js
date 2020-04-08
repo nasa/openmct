@@ -55,10 +55,10 @@ define([
                         };
                     }
                     var newRange = {};
-                    if (typeof range.min !== 'undefined' && range.min !== null) {
+                    if (!_.isNil(range.min)) {
                         newRange.min = Number(range.min);
                     }
-                    if (typeof range.max !== 'undefined' && range.max !== null) {
+                    if (!_.isNil(range.max)) {
                         newRange.max = Number(range.max);
                     }
                     return newRange;
