@@ -188,8 +188,8 @@ export default {
             return property !== undefined;
         },
         normalizeValue(value) {
-            if (value && value === '__no_value') {
-                return 'transparent';
+            if (value && value.indexOf('__no_value') > -1) {
+                return value.replace('__no_value', 'transparent');
             }
             return value;
         },

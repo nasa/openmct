@@ -127,8 +127,12 @@ export default {
             return {x, y, x2, y2};
         },
         stroke() {
-            if (this.itemStyle && this.itemStyle.border) {
-                return this.itemStyle.border.replace('1px solid ', '');
+            if (this.itemStyle) {
+                if (this.itemStyle.border) {
+                    return this.itemStyle.border.replace('1px solid ', '');
+                } else {
+                    return 'transparent';
+                }
             } else {
                 return this.item.stroke;
             }

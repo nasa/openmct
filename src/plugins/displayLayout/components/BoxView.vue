@@ -74,10 +74,14 @@ export default {
     },
     computed: {
         style() {
-            return Object.assign({
-                backgroundColor: this.item.fill,
-                border: '1px solid ' + this.item.stroke
-            }, this.itemStyle);
+            if (this.itemStyle) {
+                return this.itemStyle;
+            } else {
+                return {
+                    backgroundColor: this.item.fill,
+                    border: '1px solid ' + this.item.stroke
+                }
+            }
         },
         styleClass() {
             return this.itemStyle && this.itemStyle.isStyleInvisible;
