@@ -83,9 +83,6 @@ export default {
         isEditing: {
             type: Boolean
         },
-        preventNone: {
-            type: Boolean
-        },
         styleItem: {
             type: Object,
             required: true
@@ -107,8 +104,7 @@ export default {
                 title: STYLE_CONSTANTS.borderColorTitle,
                 value: this.normalizeValue(value),
                 property: 'border',
-                isEditing: this.isEditing,
-                preventNone: this.preventNone
+                isEditing: this.isEditing
             }
         },
         backgroundColorOption() {
@@ -118,8 +114,7 @@ export default {
                 title: STYLE_CONSTANTS.backgroundColorTitle,
                 value: this.normalizeValue(value),
                 property: 'backgroundColor',
-                isEditing: this.isEditing,
-                preventNone: this.preventNone
+                isEditing: this.isEditing
             }
         },
         colorOption() {

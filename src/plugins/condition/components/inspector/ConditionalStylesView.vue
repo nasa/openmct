@@ -33,7 +33,6 @@
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"
                               :is-editing="isEditing"
-                              :prevent-none="preventNone"
                               @persist="updateStaticStyle"
                 />
             </div>
@@ -127,8 +126,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
-            navigateToPath: '',
-            preventNone: false
+            navigateToPath: ''
         }
     },
     destroyed() {
@@ -156,9 +154,6 @@ export default {
         isItemType(type, item) {
             return item && (item.type === type);
         },
-        isDrawingItem(item) {
-            return !this.isItemType('subobject-view', item) && !this.isItemType('telemetry-view', item);
-        },
         getDomainObjectFromSelection() {
             let layoutItem;
             let domainObject;
@@ -173,8 +168,9 @@ export default {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
-                    this.itemId = layoutItem.id;
-                    this.preventNone = this.isDrawingItem(layoutItem);
+                    if (layoutItem) {
+                        this.itemId = layoutItem.id;
+                    }
                 }
             } else {
                 domainObject = this.selection[0][0].context.item;
