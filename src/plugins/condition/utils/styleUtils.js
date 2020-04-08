@@ -46,7 +46,7 @@ const styleProps = {
     },
     color: {
         svgProperty: 'color',
-        noneValue: 'NONE_VALUE',
+        noneValue: NONE_VALUE,
         applicableForType: type => {
             return !type ? true : (type === 'text-view' ||
                                     type === 'telemetry-view'||

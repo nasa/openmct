@@ -114,7 +114,7 @@ export default {
         },
         updateDomainObjectItemStyles(newItems) {
             //check that all items that have been styles still exist. Otherwise delete those styles
-            let keys = Object.keys(this.domainObject.configuration.objectStyles);
+            let keys = Object.keys(this.domainObject.configuration.objectStyles || {});
             keys.forEach((key) => {
                 if ((key !== 'styles') &&
                     (key !== 'staticStyle') &&
@@ -204,14 +204,15 @@ export default {
                     let itemStaticStyle = {};
                     if (!domainObjectStyles[item.id]) {
                         domainObjectStyles[item.id] = {};
+                        itemStaticStyle = this.staticStyle.style;
                     } else if (domainObjectStyles[item.id].staticStyle) {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
+                        Object.keys(item.staticStyle).forEach(key => {
+                            if (property === key) {
+                                itemStaticStyle[key] = this.staticStyle.style[key];
+                            }
+                        });
                     }
-                    Object.keys(item.staticStyle).forEach(key => {
-                        if (property === key) {
-                            itemStaticStyle[key] = this.staticStyle.style[key];
-                        }
-                    });
                     Object.assign(domainObjectStyles[item.id], { staticStyle: { style: itemStaticStyle } });
                 });
             } else {

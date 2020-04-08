@@ -114,7 +114,7 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'border',
                 isEditing: this.isEditing,
-                nonSpecific: this.isNonSpecific('border'),
+                nonSpecific: this.nonSpecific.indexOf('border') > -1,
                 preventNone: this.preventNone
             }
         },
@@ -126,7 +126,7 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
-                nonSpecific: this.isNonSpecific('backgroundColor'),
+                nonSpecific: this.nonSpecific.indexOf('backgroundColor') > -1,
                 preventNone: this.preventNone
             }
         },
@@ -138,7 +138,7 @@ export default {
                 value: this.normalizeValue(value),
                 property: 'color',
                 isEditing: this.isEditing,
-                nonSpecific: this.isNonSpecific('color')
+                nonSpecific: this.nonSpecific.indexOf('color') > -1
             }
         },
         imageUrlOption() {
@@ -164,7 +164,7 @@ export default {
                 formKeys: ['url'],
                 value: {url: this.styleItem.style.imageUrl},
                 isEditing: this.isEditing,
-                nonSpecific: this.isNonSpecific('imageUrl')
+                nonSpecific: this.nonSpecific.indexOf('imageUrl') > -1
             }
         },
         isStyleInvisibleOption() {
@@ -189,9 +189,6 @@ export default {
         }
     },
     methods: {
-        isNonSpecific(property) {
-            return this.nonSpecific.indexOf(property) > -1;
-        },
         hasProperty(property) {
             return property !== undefined;
         },
