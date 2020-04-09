@@ -165,7 +165,8 @@ export default {
                 layoutItem = this.selection[0][0].context.layoutItem;
                 const item = this.selection[0][0].context.item;
                 this.canHide = true;
-                if (item && this.isItemType('subobject-view', layoutItem)) {
+                if (item &&
+                    (!layoutItem || (this.isItemType('subobject-view', layoutItem)))) {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
