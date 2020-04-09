@@ -29,7 +29,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { clearDefaultNotebook, getDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -60,26 +60,20 @@ export default {
     methods: {
         async setNotebookTypes() {
             const notebookTypes = [];
-            let defaultPath = '';
             const defaultNotebook = getDefaultNotebook();
 
             if (defaultNotebook) {
-                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier)
-                    .then(d => d);
+                const domainObject = defaultNotebook.domainObject;
 
-                if (!domainObject.location) {
-                    clearDefaultNotebook();
-                } else {
-                    defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                if (domainObject.location) {
+                    const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+
+                    notebookTypes.push({
+                        cssClass: 'icon-notebook',
+                        name: `Save to Notebook ${defaultPath}`,
+                        type: NOTEBOOK_DEFAULT
+                    });
                 }
-            }
-
-            if (defaultPath.length !== 0) {
-                notebookTypes.push({
-                    cssClass: 'icon-notebook',
-                    name: `Save to Notebook ${defaultPath}`,
-                    type: NOTEBOOK_DEFAULT
-                });
             }
 
             notebookTypes.push({
