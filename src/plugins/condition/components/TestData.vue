@@ -23,7 +23,6 @@
 <template>
 <section v-show="isEditing"
          id="test-data"
-         class="c-cs__test-data"
          :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
@@ -96,7 +95,7 @@
                         >
                     </span>
                 </span>
-                <div class="c-test-datum__buttons">
+                <div class="c-cs-test__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
                             title="Duplicate this test datum"
                             @click="addTestInput(testInput)"
