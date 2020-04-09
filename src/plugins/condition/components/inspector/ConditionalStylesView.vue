@@ -152,9 +152,6 @@ export default {
         isItemType(type, item) {
             return item && (item.type === type);
         },
-        isDrawingItem(item) {
-            return !this.isItemType('subobject-view', item) && !this.isItemType('telemetry-view', item);
-        },
         getDomainObjectFromSelection() {
             let layoutItem;
             let domainObject;

@@ -30,7 +30,8 @@ let openmct = {},
     testTelemetryObject,
     conditionObj,
     conditionManager,
-    mockBroadcastTelemetry;
+    mockBroadcastTelemetry,
+    mockTimeSystems;
 
 describe("The condition", function () {
 
@@ -73,6 +74,12 @@ describe("The condition", function () {
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
         openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
+
+        mockTimeSystems = {
+            key: 'utc'
+        };
+        openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems']);
+        openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
 
         testConditionDefinition = {
             id: '123-456',

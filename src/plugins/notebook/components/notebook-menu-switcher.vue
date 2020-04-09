@@ -1,8 +1,8 @@
 <template>
-<div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+<div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
         class="c-button--menu icon-notebook"
-        title="Switch view type"
+        title="Take a Notebook Snapshot"
         @click="setNotebookTypes"
         @click.stop="toggleMenu"
     >
