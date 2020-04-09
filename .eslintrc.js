@@ -31,6 +31,7 @@ module.exports = {
         "lodash/prefer-matches": "off",
         "lodash/prefer-includes": "off",
         "lodash/prefer-startswith": "off",
+        "lodash/prefer-get": "off",
         "lodash/import-scope": "off",
         "no-bitwise": "error",
         "curly": "error",
