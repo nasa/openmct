@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import _ from "lodash"
+import debounce from "lodash/debounce"
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
-import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import { STYLE_CONSTANTS } from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ["openmct"],
@@ -48,7 +48,7 @@ export default {
         }
     },
     created() {
-        this.debounceUpdateView = _.debounce(this.updateView, 10);
+        this.debounceUpdateView = debounce(this.updateView, 10);
     },
     mounted() {
         this.currentObject = this.object;

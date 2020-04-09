@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import sortedIndexBy from 'lodash/sortedIndexBy';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -219,8 +219,7 @@ export default {
             if (this.datumMatchesMostRecent(datum)) {
                 return;
             }
-
-            const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
+            const index = sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
         },
         updateValues(datum) {

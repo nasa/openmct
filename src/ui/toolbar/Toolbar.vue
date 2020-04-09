@@ -20,8 +20,8 @@ import toolbarMenu from './components/toolbar-menu.vue';
 import toolbarSelectMenu from './components/toolbar-select-menu.vue';
 import toolbarSeparator from './components/toolbar-separator.vue';
 import toolbarToggleButton from './components/toolbar-toggle-button.vue';
-
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
+import get from 'lodash/get';
 
 export default {
     inject: ['openmct'],
@@ -161,7 +161,7 @@ export default {
                 property = property + "." + formKey;
             }
 
-            return _.get(domainObject, property);
+            return get(domainObject, property);
         },
         getFormValue(domainObject, toolbarItem) {
             let value = {};
@@ -209,7 +209,7 @@ export default {
                 if (toolbarItem.domainObject) {
                     let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
 
-                    if (changedItemId === id && _.isEqual(toolbarItem, item)) {
+                    if (changedItemId === id && isEqual(toolbarItem, item)) {
                         toolbarItem.value = value;
                     }
                 }

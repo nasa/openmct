@@ -105,7 +105,7 @@ import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 const DEFAULT_CLASS = 'is-notebook-default';
 

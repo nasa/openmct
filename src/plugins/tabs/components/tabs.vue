@@ -57,7 +57,7 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 var unknownObjectType = {
     definition: {
@@ -155,7 +155,7 @@ export default {
             this.allowDrop = false;
         },
         isCurrent(tab) {
-            return _.isEqual(this.currentTab, tab)
+            return isEqual(this.currentTab, tab)
         }
     }
 }

@@ -260,7 +260,8 @@ import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 const VISIBLE_ROW_COUNT = 100;
@@ -378,13 +379,13 @@ export default {
         }
     },
     created() {
-        this.filterChanged = _.debounce(this.filterChanged, 500);
+        this.filterChanged = debounce(this.filterChanged, 500);
     },
     mounted() {
         this.csvExporter = new CSVExporter();
-        this.rowsAdded = _.throttle(this.rowsAdded, 200);
-        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
-        this.scroll = _.throttle(this.scroll, 100);
+        this.rowsAdded = throttle(this.rowsAdded, 200);
+        this.rowsRemoved = throttle(this.rowsRemoved, 200);
+        this.scroll = throttle(this.scroll, 100);
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);

@@ -49,9 +49,9 @@
 </template>
 
 <script>
-import _ from 'lodash';
 import Search from '../components/search.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
+import isEqual from 'lodash/isEqual';
 
 export default {
     inject: ['openmct'],
@@ -94,7 +94,7 @@ export default {
             this.showSelection(this.openmct.selection.get());
         },
         showSelection(selection) {
-            if (_.isEqual(this.selection, selection)) {
+            if (isEqual(this.selection, selection)) {
                 return;
             }
             this.selection = selection;

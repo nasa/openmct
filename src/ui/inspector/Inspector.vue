@@ -47,14 +47,13 @@ import Location from './Location.vue';
 import Properties from './Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
-import _ from "lodash";
-import StylesInspectorView from "./StylesInspectorView.vue";
+import StylesInspectorView from './StylesInspectorView.vue';
+import isEqual from 'lodash/isEqual';
 
 export default {
     inject: ['openmct'],
     components: {
         StylesInspectorView,
-        // StylesInspectorView,
         multipane,
         pane,
         Elements,
@@ -120,7 +119,7 @@ export default {
             this.currentTabbedView = view;
         },
         isCurrent(view) {
-            return _.isEqual(this.currentTabbedView, view)
+            return isEqual(this.currentTabbedView, view)
         }
     }
 }
