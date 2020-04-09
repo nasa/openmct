@@ -214,7 +214,9 @@ export const OPERATIONS = [
     {
         name: 'enumValueIs',
         operation: function (input) {
-            return input[0] === input[1];
+            let stringInputs = [];
+            input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+            return stringInputs[0] === stringInputs[1];
         },
         text: 'is',
         appliesTo: ['enum'],
@@ -226,7 +228,9 @@ export const OPERATIONS = [
     {
         name: 'enumValueIsNot',
         operation: function (input) {
-            return input[0] !== input[1];
+            let stringInputs = [];
+            input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+            return stringInputs[0] !== stringInputs[1];
         },
         text: 'is not',
         appliesTo: ['enum'],
@@ -238,9 +242,10 @@ export const OPERATIONS = [
     {
         name: 'valueIs',
         operation: function (input) {
+            const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return values.find((value) => lhsValue === _.trim(value.toString()));
             }
             return false;
         },
@@ -254,9 +259,10 @@ export const OPERATIONS = [
     {
         name: 'valueIsNot',
         operation: function (input) {
+            const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                const found = values.find((value) => lhsValue === _.trim(value.toString()));
                 return !found;
             }
             return false;
