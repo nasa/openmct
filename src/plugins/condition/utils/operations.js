@@ -22,6 +22,18 @@
 
 import _ from 'lodash';
 
+const convertToNumbers = (input) => {
+    let numberInputs = [];
+    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+    return numberInputs;
+};
+
+const convertToStrings = (input) => {
+    let stringInputs = [];
+    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+    return stringInputs;
+};
+
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -98,8 +110,7 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            let numberInputs = [];
-            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let numberInputs = convertToNumbers(input);
             let larger = Math.max(...numberInputs.slice(1,3));
             let smaller = Math.min(...numberInputs.slice(1,3));
             return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
@@ -114,8 +125,7 @@ export const OPERATIONS = [
     {
         name: 'notBetween',
         operation: function (input) {
-            let numberInputs = [];
-            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let numberInputs = convertToNumbers(input);
             let larger = Math.max(...numberInputs.slice(1,3));
             let smaller = Math.min(...numberInputs.slice(1,3));
             return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
@@ -214,8 +224,7 @@ export const OPERATIONS = [
     {
         name: 'enumValueIs',
         operation: function (input) {
-            let stringInputs = [];
-            input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+            let stringInputs = convertToStrings(input);
             return stringInputs[0] === stringInputs[1];
         },
         text: 'is',
@@ -228,8 +237,7 @@ export const OPERATIONS = [
     {
         name: 'enumValueIsNot',
         operation: function (input) {
-            let stringInputs = [];
-            input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+            let stringInputs = convertToStrings(input);
             return stringInputs[0] !== stringInputs[1];
         },
         text: 'is not',
