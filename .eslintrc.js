@@ -32,6 +32,7 @@ module.exports = {
         "lodash/prefer-includes": "off",
         "lodash/prefer-startswith": "off",
         "lodash/prefer-get": "off",
+        "lodash/prefer-is-nil": "off",
         "lodash/import-scope": "off",
         "no-bitwise": "error",
         "curly": "error",
