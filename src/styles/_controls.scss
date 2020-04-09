@@ -244,18 +244,10 @@ button {
 
 /******************************************************** SECTION */
 section {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     overflow: hidden;
     + section {
         margin-top: $interiorMargin;
-
-        &.is-expanded {
-            margin-bottom: $interiorMargin * 3;
-        }
-    }
-
-    &.is-expanded {
-        flex: 0 1 auto;
     }
 
     .c-section__header {
