@@ -80,7 +80,7 @@ export default {
         }
     },
     mounted() {
-        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet'];
+        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {

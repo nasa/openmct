@@ -20,41 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.c-condition-widget {
-    $shdwSize: 3px;
-    @include userSelectNone();
-    background-color: rgba($colorBodyFg, 0.1); // Give a little presence if the user hasn't defined a fill color
-    border-radius: $basicCr;
-    border: 1px solid transparent;
-    display: inline-block;
-    padding: $interiorMarginLg $interiorMarginLg * 2;
-}
+export const getLatestTimestamp = (current, compare, timeSystems) => {
+    const timestamp = Object.assign({}, current);
 
-a.c-condition-widget {
-    // Widget is conditionally made into a <a> when URL property has been defined
-    cursor: pointer !important;
-    pointer-events: inherit;
-}
-
-// Make Condition Widget expand when in a hidden frame Layout context
-// For both static and Flexible Layouts
-.c-so-view--no-frame > .c-so-view__object-view > .c-condition-widget {
-    @include abs();
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-// Add some margin when a Condition Widget is in a Flexible Layout
-.c-fl .c-so-view--no-frame .c-condition-widget {
-    @include abs(1px);
-}
-
-// When the widget is in the main view, center it in the space
-.l-shell__main-container > .c-condition-widget {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    timeSystems.forEach(timeSystem => {
+        if (!timestamp[timeSystem.key]
+            || compare[timeSystem.key] > timestamp[timeSystem.key]
+        ) {
+            timestamp[timeSystem.key] = compare[timeSystem.key];
+        }
+    });
+    return timestamp;
 }
