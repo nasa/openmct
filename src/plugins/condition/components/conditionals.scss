@@ -20,14 +20,145 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+.c-cs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    /************************** CONDITION SET LAYOUT */
+    &__current-output {
+        flex: 0 0 auto;
+    }
+
+    &__test-data-and-conditions-w {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__test-data,
+    &__conditions {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    &__test-data {
+        flex: 0 0 auto;
+        max-height: 50%;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 4;
+        }
+    }
+
+    &__conditions {
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 0 1 auto;
+        overflow: hidden;
+
+        > * {
+            flex: 0 0 auto;
+            overflow: hidden;
+            + * {
+                margin-top: $interiorMarginSm;
+            }
+        }
+
+        .c-button {
+            align-self: start;
+        }
+    }
+
+    .is-editing & {
+        // Add some space to kick away from blue editing border indication
+        padding: $interiorMargin;
+    }
+
+    section {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__conditions-h {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        overflow: auto;
+        padding-right: $interiorMarginSm;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    .hint {
+        padding: $interiorMarginSm;
+    }
+
+    /************************** SPECIFIC ITEMS */
+    &__current-output-value {
+        flex-direction: row;
+        align-items: baseline;
+        padding: 0 $interiorMargin $interiorMarginLg $interiorMargin;
+
+        > * {
+            padding: $interiorMargin 0; // Must do this to align label and value
+        }
+
+        &__label {
+            color: $colorInspectorSectionHeaderFg;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        &__value {
+            $p: $interiorMargin * 3;
+            font-size: 1.25em;
+            margin-left: $interiorMargin;
+            padding-left: $p;
+            padding-right: $p;
+            background: rgba(black, 0.2);
+            border-radius: 5px;
+        }
+    }
+}
+
+/***************************** CONDITIONS AND TEST DATUM ELEMENTS */
 .c-condition,
 .c-test-datum {
     @include discreteItem();
     display: flex;
     padding: $interiorMargin;
+    line-height: 170%; // Aligns text with controls like selects
+}
 
-    &--edit {
-        line-height: 160%; // For layout when inputs wrap, like in criteria
+.c-cdef,
+.c-cs-test {
+    &__controls {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &__buttons {
+        white-space: nowrap;
     }
 }
 
@@ -105,8 +236,6 @@
     }
 
     &__controls {
-        display: flex;
-        flex-wrap: wrap;
         align-items: flex-start;
         grid-column: 2;
 
@@ -129,5 +258,21 @@
         background-color: lightblue;
         border-radius: 2px;
     }
+}
 
+/***************************** TEST DATA */
+.c-cs-tests {
+    flex: 0 1 auto;
+    overflow: auto;
+    padding-right: $interiorMarginSm;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+}
+
+.c-cs-test {
+    > * + * {
+        margin-left: $interiorMargin;
+    }
 }

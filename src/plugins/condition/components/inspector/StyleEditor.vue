@@ -24,7 +24,7 @@
 <div class="c-style">
     <span class="c-style-thumb"
           :class="{ 'is-style-invisible': styleItem.style.isStyleInvisible }"
-          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : styleItem.style ]"
+          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
     >
         <span class="c-style-thumb__text"
               :class="{ 'hide-nice': !styleItem.style.color }"
@@ -33,27 +33,27 @@
         </span>
     </span>
     <span class="c-toolbar">
-        <toolbar-color-picker v-if="styleItem.style.border"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.border)"
                               class="c-style__toolbar-button--border-color u-menu-to--center"
                               :options="borderColorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-color-picker v-if="styleItem.style.backgroundColor"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.backgroundColor)"
                               class="c-style__toolbar-button--background-color u-menu-to--center"
                               :options="backgroundColorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-color-picker v-if="styleItem.style.color"
+        <toolbar-color-picker v-if="hasProperty(styleItem.style.color)"
                               class="c-style__toolbar-button--color u-menu-to--center"
                               :options="colorOption"
                               @change="updateStyleValue"
         />
-        <toolbar-button v-if="styleItem.style.imageUrl !== undefined"
+        <toolbar-button v-if="hasProperty(styleItem.style.imageUrl)"
                         class="c-style__toolbar-button--image-url"
                         :options="imageUrlOption"
                         @change="updateStyleValue"
         />
-        <toolbar-toggle-button v-if="styleItem.style.isStyleInvisible !== undefined"
+        <toolbar-toggle-button v-if="hasProperty(styleItem.style.isStyleInvisible)"
                                class="c-style__toolbar-button--toggle-visible"
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
@@ -89,29 +89,40 @@ export default {
         }
     },
     computed: {
+        itemStyle() {
+            let style = {};
+            const keys = Object.keys(this.styleItem.style);
+            keys.forEach(key => {
+                style[key] = this.normalizeValue(this.styleItem.style[key]);
+            });
+            return style;
+        },
         borderColorOption() {
+            let value = this.styleItem.style.border.replace('1px solid ', '');
             return {
                 icon: 'icon-line-horz',
                 title: STYLE_CONSTANTS.borderColorTitle,
-                value: this.styleItem.style.border.replace('1px solid ', ''),
+                value: this.normalizeValue(value),
                 property: 'border',
                 isEditing: this.isEditing
             }
         },
         backgroundColorOption() {
+            let value = this.styleItem.style.backgroundColor;
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
-                value: this.styleItem.style.backgroundColor,
+                value: this.normalizeValue(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing
             }
         },
         colorOption() {
+            let value = this.styleItem.style.color;
             return {
                 icon: 'icon-font',
                 title: STYLE_CONSTANTS.textColorTitle,
-                value: this.styleItem.style.color,
+                value: this.normalizeValue(value),
                 property: 'color',
                 isEditing: this.isEditing
             }
@@ -163,6 +174,15 @@ export default {
         }
     },
     methods: {
+        hasProperty(property) {
+            return property !== undefined;
+        },
+        normalizeValue(value) {
+            if (!value) {
+                return 'transparent';
+            }
+            return value;
+        },
         updateStyleValue(value, item) {
             if (item.property === 'border') {
                 value = '1px solid ' + value;
