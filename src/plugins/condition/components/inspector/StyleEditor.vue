@@ -22,12 +22,15 @@
 
 <template>
 <div class="c-style">
-    <span class="c-style-thumb"
-          :class="{ 'is-style-invisible': styleItem.style.isStyleInvisible }"
+    <span :class="[
+          { 'is-style-invisible': styleItem.style.isStyleInvisible },
+          { 'c-style-thumb--mixed': nonSpecific.indexOf('backgroundColor') > -1 }
+          ]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
+          class="c-style-thumb"
     >
         <span class="c-style-thumb__text"
-              :class="{ 'hide-nice': !styleItem.style.color }"
+              :class="{ 'hide-nice': !hasProperty(styleItem.style.color) }"
         >
             ABC
         </span>
@@ -116,6 +119,7 @@ export default {
         },
         backgroundColorOption() {
             let value = this.styleItem.style.backgroundColor;
+            // console.log('backgroundColorOption nonSpecific', this.nonSpecific.indexOf('backgroundColor') > -1);
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
