@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
+import eq from 'lodash/eq';
 const INSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "link", "locate", "move", "link"];
 const OUTSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
 
@@ -74,7 +74,7 @@ export default class LegacyContextMenuAction {
          * Is the object being edited, or a child of the object being edited?
          */
         function isInsideEditPath() {
-            return objectPath.some((object) => _.eq(object.identifier, navigatedObject.identifier));
+            return objectPath.some((object) => eq(object.identifier, navigatedObject.identifier));
         }
 
         if (isEditing) {

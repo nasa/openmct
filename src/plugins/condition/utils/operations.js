@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
-
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -240,7 +238,7 @@ export const OPERATIONS = [
         operation: function (input) {
             if (input[1]) {
                 const values = input[1].split(',');
-                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return values.find((value) => input[0].toString() === value.toString().trim());
             }
             return false;
         },
@@ -256,7 +254,7 @@ export const OPERATIONS = [
         operation: function (input) {
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                const found = values.find((value) => input[0].toString() === value.toString().trim());
                 return !found;
             }
             return false;
