@@ -105,6 +105,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
+import {getInitialStyleForItem} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -115,24 +116,8 @@ export default {
     },
     inject: [
         'openmct',
-        'domainObject'
+        'selection'
     ],
-    props: {
-        itemId: {
-            type: String,
-            default: ''
-        },
-        initialStyles: {
-            type: Object,
-            default() {
-                return undefined;
-            }
-        },
-        canHide: {
-            type: Boolean,
-            default: false
-        }
-    },
     data() {
         return {
             conditionalStyles: [],
@@ -145,9 +130,13 @@ export default {
         }
     },
     destroyed() {
-        this.openmct.editor.off('isEditing', this.setEditState);
+        if (this.stopObserving) {
+            this.stopObserving();
+        }
     },
     mounted() {
+        this.itemId = '';
+        this.getDomainObjectFromSelection();
         this.previewAction = new PreviewAction(this.openmct);
         if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
             let objectStyles = this.itemId ? this.domainObject.configuration.objectStyles[this.itemId] : this.domainObject.configuration.objectStyles;
@@ -162,6 +151,39 @@ export default {
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
+        isItemType(type, item) {
+            return item && (item.type === type);
+        },
+        getDomainObjectFromSelection() {
+            let layoutItem;
+            let domainObject;
+
+            if (this.selection[0].length > 1) {
+                //If there are more than 1 items in the this.selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
+                //The second item in the this.selection[0] list is the container object (usually a layout)
+                layoutItem = this.selection[0][0].context.layoutItem;
+                const item = this.selection[0][0].context.item;
+                this.canHide = true;
+                if (item && this.isItemType('subobject-view', layoutItem)) {
+                    domainObject = item;
+                } else {
+                    domainObject = this.selection[0][1].context.item;
+                    if (layoutItem) {
+                        this.itemId = layoutItem.id;
+                    }
+                }
+            } else {
+                domainObject = this.selection[0][0].context.item;
+            }
+            this.domainObject = domainObject;
+            this.initialStyles = getInitialStyleForItem(domainObject, layoutItem);
+            if (this.stopObserving) {
+                this.stopObserving();
+            }
+            if (this.domainObject) {
+                this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+            }
+        },
         initialize(conditionSetDomainObject) {
             //If there are new conditions in the conditionSet we need to set those styles to default
             this.conditionSetDomainObject = conditionSetDomainObject;
