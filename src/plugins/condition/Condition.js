@@ -65,20 +65,39 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.conditionManager.on('broadcastTelemetry', this.handleBroadcastTelemetry, this);
+        this.conditionManager.on('telemetryReceived', this.getConditionResultForTelemetry, this);
     }
 
-    handleBroadcastTelemetry(datum) {
+    getConditionResultForTelemetry(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
             return;
         }
+        if (!this.isTelemetryUsed(datum.id)) {
+            return;
+        }
         this.criteria.forEach(criterion => {
-            if (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any')) {
-                criterion.handleSubscription(datum, this.conditionManager.telemetryObjects);
+            let result;
+            if (this.isAnyOrAllTelemetry(criterion)) {
+                result = criterion.getResultForTelemetry(datum, this.conditionManager.telemetryObjects);
             } else {
-                criterion.emit(`subscription:${datum.id}`, datum);
+                result = criterion.getResultForTelemetry(datum);
             }
+            if (result !== undefined) {
+                //we only update the result if it's not undefined
+                this.updateCriteriaResults(result);
+            }
+        });
+        this.handleConditionUpdated(datum);
+    }
+
+    isAnyOrAllTelemetry(criterion) {
+        return (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any'));
+    }
+
+    isTelemetryUsed(id) {
+        return this.criteria.some(criterion => {
+            return this.isAnyOrAllTelemetry(criterion) || criterion.telemetryObjectIdAsString === id;
         });
     }
 
@@ -134,7 +153,6 @@ export default class ConditionClass extends EventEmitter {
             criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         }
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-        criterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
         if (!this.criteria) {
             this.criteria = [];
         }
@@ -163,12 +181,10 @@ export default class ConditionClass extends EventEmitter {
             const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
             let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            newCriterion.on('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
 
             let criterion = found.item;
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            criterion.off('criterionResultUpdated', (obj) => this.handleCriterionResult(obj));
             this.criteria.splice(found.index, 1, newCriterion);
             delete this.criteriaResults[criterion.id];
         }
@@ -200,11 +216,6 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            // TODO nothing is listening to this
-            this.emitEvent('conditionUpdated', {
-                trigger: this.trigger,
-                criteria: this.criteria
-            });
         }
     }
 
@@ -214,11 +225,6 @@ export default class ConditionClass extends EventEmitter {
         if (this.findCriterion(id)) {
             this.criteriaResults[id] = !!eventData.data.result;
         }
-    }
-
-    handleCriterionResult(eventData) {
-        this.updateCriteriaResults(eventData);
-        this.handleConditionUpdated(eventData.data);
     }
 
     requestLADConditionResult() {
@@ -247,13 +253,10 @@ export default class ConditionClass extends EventEmitter {
             });
     }
 
-    getTelemetrySubscriptions() {
-        return this.criteria.map(criterion => criterion.telemetryObjectIdAsString);
-    }
-
     handleConditionUpdated(datum) {
         // trigger an updated event so that consumers can react accordingly
         this.result = this.evaluate(this.criteriaResults);
+        this.evaluationPending = false;
         this.emitEvent('conditionResultUpdated',
             Object.assign({}, datum, { result: this.result })
         );
@@ -290,7 +293,7 @@ export default class ConditionClass extends EventEmitter {
     }
 
     destroy() {
-        this.conditionManager.off('broadcastTelemetry', this.handleBroadcastTelemetry, this);
+        this.conditionManager.off('telemetryReceived', this.getConditionResultForTelemetry, this);
         if (typeof this.stopObservingForChanges === 'function') {
             this.stopObservingForChanges();
         }

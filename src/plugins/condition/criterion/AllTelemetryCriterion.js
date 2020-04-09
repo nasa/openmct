@@ -47,6 +47,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.telemetryDataCache = {};
+        this.emitEvent('criterionUpdated', this);
     }
 
     updateTelemetry(telemetryObjects) {
@@ -80,11 +81,17 @@ export default class TelemetryCriterion extends EventEmitter {
         return datum;
     }
 
-    handleSubscription(data, telemetryObjects) {
+    getResultForTelemetry(data, telemetryObjects) {
         if(this.isValid()) {
-            this.emitEvent('criterionResultUpdated', this.formatData(data, telemetryObjects));
+            return {
+                id: this.id,
+                data: this.formatData(data, telemetryObjects)
+            };
         } else {
-            this.emitEvent('criterionResultUpdated', this.formatData({}, telemetryObjects));
+            return {
+                id: this.id,
+                data: this.formatData({}, telemetryObjects)
+            };
         }
     }
 
@@ -107,7 +114,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 this.input.forEach(input => params.push(input));
             }
             if (typeof comparator === 'function') {
-                result = comparator(params);
+                result = !!comparator(params);
             }
         }
         return result;
@@ -163,7 +170,6 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     destroy() {
-        this.emitEvent('criterionRemoved');
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
         delete this.telemetryObjectIdAsString;
