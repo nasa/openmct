@@ -105,8 +105,10 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
 const getStaticStyleForItem = (domainObject, id) => {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
-        if (id && domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
-            return domainObjectStyles[id].staticStyle.style;
+        if (id) {
+            if(domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
+                return domainObjectStyles[id].staticStyle.style;
+            }
         } else if (domainObjectStyles.staticStyle) {
             return domainObjectStyles.staticStyle.style;
         }
@@ -116,8 +118,10 @@ const getStaticStyleForItem = (domainObject, id) => {
 export const getConditionalStyleForItem = (domainObject, id) => {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
-        if (id && domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
-            return domainObjectStyles[id].styles;
+        if (id) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
+                return domainObjectStyles[id].styles;
+            }
         } else if (domainObjectStyles.staticStyle) {
             return domainObjectStyles.styles;
         }
