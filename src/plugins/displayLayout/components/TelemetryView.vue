@@ -136,7 +136,12 @@ export default {
             return this.telemetryObjectStyle && this.telemetryObjectStyle.isStyleInvisible;
         },
         telemetryObjectStyle() {
-            let styleObj = Object.assign({}, this.itemStyle);
+            let styleObj = Object.assign({}, {
+                backgroundColor: this.item.fill,
+                borderColor: this.item.stroke,
+                color: this.item.color,
+                fontSize: this.item.size
+            }, this.itemStyle);
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
                 if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
