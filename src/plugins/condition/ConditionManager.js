@@ -185,21 +185,11 @@ export default class ConditionManager extends EventEmitter {
     }
 
     getCurrentCondition(conditionResults) {
-        let keys = Object.keys(conditionResults);
-        if (keys.length) {
-            let timestamp = conditionResults[keys[0]].telemetryDataPointTimeStamp;
-            for (let i=1; i < keys.length; i++) {
-                if (timestamp !== conditionResults[keys[i]].telemetryDataPointTimeStamp) {
-                    return;
-                }
-            }
-        }
-
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
         let currentCondition = conditionCollection[conditionCollection.length-1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            if (conditionResults[conditionCollection[i].id] && conditionResults[conditionCollection[i].id].result) {
+            if (conditionResults[conditionCollection[i].id]) {
                 //first condition to be true wins
                 currentCondition = conditionCollection[i];
                 break;
@@ -216,28 +206,26 @@ export default class ConditionManager extends EventEmitter {
         const id = resultObj.id;
 
         if (this.findConditionById(id)) {
-            this.conditionResults[id] = resultObj.data;
+            this.conditionResults[id] = resultObj.data.result;
         }
     }
 
     handleConditionResult(resultObj) {
         this.updateConditionResults(resultObj);
-        const currentCondition = this.getCurrentCondition(Object.assign(this.conditionResults));
-        if (currentCondition) {
-            const timestamp = JSON.parse(JSON.stringify(resultObj.data));
-            delete timestamp.result;
+        const currentCondition = this.getCurrentCondition(this.conditionResults);
+        const timestamp = JSON.parse(JSON.stringify(resultObj.data))
+        delete timestamp.result
 
-            this.emit('conditionSetResultUpdated',
-                Object.assign(
-                    {
-                        output: currentCondition.configuration.output,
-                        id: this.conditionSetDomainObject.identifier,
-                        conditionId: currentCondition.id
-                    },
-                    timestamp
-                )
-            );
-        }
+        this.emit('conditionSetResultUpdated',
+            Object.assign(
+                {
+                    output: currentCondition.configuration.output,
+                    id: this.conditionSetDomainObject.identifier,
+                    conditionId: currentCondition.id
+                },
+                timestamp
+            )
+        )
     }
 
     requestLADConditionSetOutput() {
