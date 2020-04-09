@@ -267,8 +267,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     telemetryReceived(id, datum) {
-        const telemetryDataPointTimeStamp = new Date().getTime();
-        this.emit('telemetryReceived', Object.assign({}, this.createNormalizedDatum(datum, id), {id: id, telemetryDataPointTimeStamp}));
+        this.emit('telemetryReceived', Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
     }
 
     getTestData(metadatum) {
