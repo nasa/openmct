@@ -6,7 +6,7 @@
     <button
         class="c-button--menu"
         :class="currentView.cssClass"
-        title="Switch view type"
+        title="Change the current view"
         @click.stop="toggleViewMenu"
     >
         <span class="c-button__label">
