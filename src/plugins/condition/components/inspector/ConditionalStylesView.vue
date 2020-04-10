@@ -343,9 +343,15 @@ export default {
         },
         initializeStaticStyle(objectStyles) {
             let staticStyle = objectStyles && objectStyles.staticStyle;
-            this.staticStyle = staticStyle || {
-                style: Object.assign({}, this.initialStyles)
-            };
+            if (staticStyle) {
+                this.staticStyle = {
+                    style: Object.assign({}, this.initialStyles, staticStyle.style)
+                };
+            } else {
+                this.staticStyle = {
+                    style: Object.assign({}, this.initialStyles)
+                };
+            }
         },
         findStyleByConditionId(id) {
             return this.conditionalStyles.find(conditionalStyle => conditionalStyle.conditionId === id);

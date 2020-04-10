@@ -74,9 +74,17 @@ export default {
     },
     computed: {
         style() {
+            let backgroundImage = 'url(' + this.item.url + ')';
+            let border = '1px solid ' + this.item.stroke;
+            if (this.itemStyle) {
+                if (this.itemStyle.imageUrl !== undefined) {
+                    backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
+                }
+                border = this.itemStyle.border;
+            }
             return {
-                backgroundImage: this.itemStyle ? ('url(' + this.itemStyle.imageUrl + ')') : 'url(' + this.item.url + ')',
-                border: (this.itemStyle && this.itemStyle.border) ? this.itemStyle.border : ('1px solid ' + this.item.stroke)
+                backgroundImage,
+                border
             };
         }
     },
