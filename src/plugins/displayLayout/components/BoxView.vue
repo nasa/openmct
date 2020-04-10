@@ -43,7 +43,7 @@ export default {
     makeDefinition() {
         return {
             fill: '#717171',
-            stroke: 'transparent',
+            stroke: '',
             x: 1,
             y: 1,
             width: 10,
@@ -74,13 +74,14 @@ export default {
     },
     computed: {
         style() {
-            return Object.assign({
-                backgroundColor: this.item.fill,
-                border: '1px solid ' + this.item.stroke
-            }, this.itemStyle);
-        },
-        styleClass() {
-            return this.itemStyle && this.itemStyle.isStyleInvisible;
+            if (this.itemStyle) {
+                return this.itemStyle;
+            } else {
+                return {
+                    backgroundColor: this.item.fill,
+                    border: this.item.stroke ? '1px solid ' + this.item.stroke : ''
+                };
+            }
         }
     },
     watch: {
