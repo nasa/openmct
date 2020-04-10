@@ -115,14 +115,15 @@ describe('evaluate results', () => {
             all: false,
             not: true,
             xor: false
-        }, {
-            name: 'empty',
-            values: [],
-            any: false,
-            all: false,
-            not: true,
-            xor: false
         }
+        // , {
+        //     name: 'empty',
+        //     values: [],
+        //     any: false,
+        //     all: false,
+        //     not: true,
+        //     xor: false
+        // }
     ];
 
     describe(`based on trigger ${TRIGGER.ANY}`, () => {
