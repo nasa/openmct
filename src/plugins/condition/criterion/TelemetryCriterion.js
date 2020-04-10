@@ -50,6 +50,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
     initialize() {
         this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
+        this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
     }
 
     isValid() {
@@ -57,8 +58,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     updateTelemetry(telemetryObjects) {
-        const telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
-        this.telemetryObject = telemetryObjects[telemetryObjectIdAsString];
+        this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
     }
 
     formatData(data) {
@@ -142,5 +142,6 @@ export default class TelemetryCriterion extends EventEmitter {
 
     destroy() {
         delete this.telemetryObject;
+        delete this.telemetryObjectIdAsString;
     }
 }
