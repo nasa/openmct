@@ -57,7 +57,6 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, id)
         );
-        // TODO check if this is needed
         this.updateConditionTelemetry();
     }
 
@@ -71,6 +70,7 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions[id]();
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
+        this.updateConditionTelemetry();
     }
 
     initialize() {
