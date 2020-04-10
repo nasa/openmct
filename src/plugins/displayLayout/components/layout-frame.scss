@@ -51,7 +51,16 @@
         }
 
         + .c-frame-edit__move {
+            @include userSelectNone();
+            background: $editFrameMovebarColorBg;
+            box-shadow: rgba(black, 0.2) 0 1px;
+            bottom: auto;
             display: none;
+            height: 0; // Height is set on hover below
+            opacity: 0.8;
+            max-height: 100%;
+            overflow: hidden;
+            text-align: center;
         }
 
     }
@@ -59,7 +68,65 @@
     .l-layout {
         /******************* 0 - 1 ITEM SELECTED */
         &:not(.is-multi-selected) {
-            > .l-layout__frame[s-selected] {
+            > .l-layout__frame {
+                &:hover {
+                    > .c-so-view.has-complex-content {
+                        transition: $transIn;
+                        transition-delay: 0s;
+                        padding-top: $editFrameMovebarH + $interiorMarginSm;
+
+                        > .c-so-view__local-controls {
+                            transform: translateY($editFrameMovebarH);
+                            transition: transform $transInTime ease-in-out;
+                            transition-delay: 0s;
+                        }
+
+                        + .c-frame-edit__move {
+                            transition: $transIn;
+                            transition-delay: 0s;
+                            display: block;
+                            height: $editFrameMovebarH;
+                        }
+                    }
+                }
+
+                &[s-selected] {
+                    > .c-so-view.has-complex-content {
+                        > .c-so-view__local-controls {
+                            transition: transform $transOutTime ease-in-out;
+                            transition-delay: $moveBarOutDelay;
+                        }
+
+                        + .c-frame-edit__move {
+
+                            transition: $transOut;
+                            transition-delay: $moveBarOutDelay;
+
+
+                            &:before {
+                                // Grippy
+                                $h: 4px;
+                                $tbOffset: ($editFrameMovebarH - $h) / 2;
+                                $lrOffset: 25%;
+                                @include grippy($editFrameMovebarColorFg);
+                                content: '';
+                                display: block;
+                                position: absolute;
+                                top: $tbOffset;
+                                right: $lrOffset;
+                                bottom: $tbOffset;
+                                left: $lrOffset;
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+
+            /********************* __MOVE ONLY DISPLAYS FOR S-SELECTED */
+/*            > .l-layout__frame[s-selected] {
                 > .c-so-view.has-complex-content {
                     > .c-so-view__local-controls {
                         transition: transform $transOutTime ease-in-out;
@@ -116,7 +183,8 @@
                         }
                     }
                 }
-            }
+            }*/
+            /********************* __MOVE ONLY DISPLAYS FOR S-SELECTED END */
         }
 
         /******************* > 1 ITEMS SELECTED */
