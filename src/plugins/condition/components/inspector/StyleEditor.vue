@@ -23,8 +23,8 @@
 <template>
 <div class="c-style">
     <span :class="[
-          { 'is-style-invisible': styleItem.style.isStyleInvisible },
-          { 'c-style-thumb--mixed': nonSpecific.indexOf('backgroundColor') > -1 }
+              { 'is-style-invisible': styleItem.style.isStyleInvisible },
+              { 'c-style-thumb--mixed': nonSpecific.indexOf('backgroundColor') > -1 }
           ]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
           class="c-style-thumb"
@@ -71,6 +71,7 @@ import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 import ToolbarToggleButton from "@/ui/toolbar/components/toolbar-toggle-button.vue";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'StyleEditor',
@@ -99,21 +100,14 @@ export default {
     },
     computed: {
         itemStyle() {
-            let style = {};
-            const keys = Object.keys(this.styleItem.style);
-            keys.forEach(key => {
-                if (this.styleItem.style[key].indexOf('__no_value') === -1) {
-                    style[key] = this.normalizeValue(this.styleItem.style[key]);
-                }
-            });
-            return style;
+            return getStylesWithoutNoneValue(this.styleItem.style);
         },
         borderColorOption() {
             let value = this.styleItem.style.border.replace('1px solid ', '');
             return {
                 icon: 'icon-line-horz',
                 title: STYLE_CONSTANTS.borderColorTitle,
-                value: this.normalizeValue(value),
+                value: this.normalizeValueForSwatch(value),
                 property: 'border',
                 isEditing: this.isEditing,
                 nonSpecific: this.nonSpecific.indexOf('border') > -1
@@ -124,7 +118,7 @@ export default {
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
-                value: this.normalizeValue(value),
+                value: this.normalizeValueForSwatch(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
                 nonSpecific: this.nonSpecific.indexOf('backgroundColor') > -1
@@ -135,7 +129,7 @@ export default {
             return {
                 icon: 'icon-font',
                 title: STYLE_CONSTANTS.textColorTitle,
-                value: this.normalizeValue(value),
+                value: this.normalizeValueForSwatch(value),
                 property: 'color',
                 isEditing: this.isEditing,
                 nonSpecific: this.nonSpecific.indexOf('color') > -1
@@ -192,16 +186,20 @@ export default {
         hasProperty(property) {
             return property !== undefined;
         },
-        normalizeValue(value) {
+        normalizeValueForSwatch(value) {
             if (value && value.indexOf('__no_value') > -1) {
                 return value.replace('__no_value', 'transparent');
             }
             return value;
         },
-        updateStyleValue(value, item) {
+        normalizeValueForStyle(value) {
             if (value && value === 'transparent') {
-                value = '__no_value';
+                return '__no_value';
             }
+            return value;
+        },
+        updateStyleValue(value, item) {
+            value = this.normalizeValueForStyle(value);
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }

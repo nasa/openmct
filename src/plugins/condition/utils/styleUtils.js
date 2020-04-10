@@ -129,7 +129,7 @@ export const getConditionalStyleForItem = (domainObject, id) => {
 };
 
 //Returns either existing static styles or uses SVG defaults if available
-export const getInitialStyleForItem = (domainObject, item) => {
+export const getApplicableStylesForItem = (domainObject, item) => {
     const type = item && item.type;
     const id = item && item.id;
     let style = {};
@@ -151,4 +151,22 @@ export const getInitialStyleForItem = (domainObject, item) => {
     });
 
     return style;
+};
+
+export const getStylesWithoutNoneValue = (style) => {
+    if (_.isEmpty(style) || !style) {
+        return;
+    }
+    let styleObj = {};
+    const keys = Object.keys(style);
+    keys.forEach(key => {
+        if ((typeof style[key] === 'string')) {
+            if (style[key].indexOf('__no_value') > -1) {
+                style[key] = '';
+            } else {
+                styleObj[key] = style[key];
+            }
+        }
+    });
+    return styleObj;
 };

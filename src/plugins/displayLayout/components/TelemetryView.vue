@@ -61,7 +61,6 @@
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],

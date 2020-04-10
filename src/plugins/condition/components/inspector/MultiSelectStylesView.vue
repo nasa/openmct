@@ -49,7 +49,7 @@
 
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import { getInitialStyleForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
+import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'MultiSelectStylesView',
@@ -97,16 +97,16 @@ export default {
                 const layoutItem = selectionItem[0].context.layoutItem;
                 if (item && this.isItemType('subobject-view', layoutItem)) {
                     subObjects.push(item);
-                    itemStyle = getInitialStyleForItem(item);
+                    itemStyle = getApplicableStylesForItem(item);
                     if (!this.mixedStaticAndConditionalStyles) {
                         this.mixedStaticAndConditionalStyles = this.hasConditionalStyles(item);
                     }
                 } else {
                     domainObject = selectionItem[1].context.item;
-                    itemStyle = getInitialStyleForItem(domainObject, layoutItem || item);
+                    itemStyle = getApplicableStylesForItem(domainObject, layoutItem || item);
                     this.items.push({
                         id: layoutItem.id,
-                        staticStyle: itemStyle
+                        applicableStyles: itemStyle
                     });
                     if (!this.mixedStaticAndConditionalStyles) {
                         this.mixedStaticAndConditionalStyles = this.hasConditionalStyles(domainObject, layoutItem.id);
@@ -228,26 +228,25 @@ export default {
             if (items) {
                 items.forEach(item => {
                     let itemStaticStyle = {};
-                    if (!domainObjectStyles[item.id]) {
-                        domainObjectStyles[item.id] = {};
-                        Object.keys(item.staticStyle).forEach(key => {
-                            itemStaticStyle[key] = this.staticStyle.style[key];
-                        });
-                    } else if (domainObjectStyles[item.id].staticStyle) {
+                    if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
-                        Object.keys(item.staticStyle).forEach(key => {
-                            if (property === key) {
-                                itemStaticStyle[key] = this.staticStyle.style[key];
-                            }
-                        });
                     }
+                    Object.keys(item.applicableStyles).forEach(key => {
+                        if (property === key) {
+                            itemStaticStyle[key] = this.staticStyle.style[key];
+                        }
+                    });
                     if (this.mixedStaticAndConditionalStyles) {
                         this.removeConditionalStyles(domainObjectStyles, item.id);
                     }
-                    Object.assign(domainObjectStyles[item.id], { staticStyle: { style: itemStaticStyle } });
+                    if (_.isEmpty(itemStaticStyle)) {
+                        itemStaticStyle = undefined;
+                        domainObjectStyles[item.id] = undefined;
+                    } else {
+                        domainObjectStyles[item.id] = Object.assign({}, { staticStyle: { style: itemStaticStyle } });
+                    }
                 });
             } else {
-                //we're deconstructing here to ensure that if an item within a domainObject already had a style we don't lose it
                 if (!domainObjectStyles.staticStyle) {
                     domainObjectStyles.staticStyle = {
                         style: {}
