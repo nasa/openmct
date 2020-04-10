@@ -176,11 +176,13 @@ export default {
             }
             this.domainObject = domainObject;
             this.initialStyles = getApplicableStylesForItem(domainObject, layoutItem);
-            this.removeListeners();
-            if (this.domainObject) {
-                this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
-                this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
-            }
+            this.$nextTick(() => {
+                this.removeListeners();
+                if (this.domainObject) {
+                    this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+                    this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+                }
+            });
         },
         removeListeners() {
             if (this.stopObserving) {

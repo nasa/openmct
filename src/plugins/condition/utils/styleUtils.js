@@ -78,12 +78,12 @@ const aggregateStyleValues = (accumulator, currentStyle) => {
 };
 
 // Returns a union of styles used by multiple items.
-// Styles that are common to all items but don't have the same value are added to the nonSpecific list
+// Styles that are common to all items but don't have the same value are added to the mixedStyles list
 export const getConsolidatedStyleValues = (multipleItemStyles) => {
     let aggregatedStyleValues = multipleItemStyles.reduce(aggregateStyleValues, {});
 
     let styleValues = {};
-    let nonSpecific = [];
+    let mixedStyles = [];
     const properties = Object.keys(styleProps);
     properties.forEach((property) => {
         const values = aggregatedStyleValues[property];
@@ -92,13 +92,13 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
                 styleValues[property] = values[0];
             } else {
                 styleValues[property] = '';
-                nonSpecific.push(property);
+                mixedStyles.push(property);
             }
         }
     });
     return {
         styles: styleValues,
-        nonSpecific
+        mixedStyles
     };
 };
 
