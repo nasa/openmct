@@ -22,6 +22,18 @@
 
 import _ from 'lodash';
 
+const convertToNumbers = (input) => {
+    let numberInputs = [];
+    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+    return numberInputs;
+};
+
+const convertToStrings = (input) => {
+    let stringInputs = [];
+    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+    return stringInputs;
+};
+
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -98,8 +110,7 @@ export const OPERATIONS = [
     {
         name: 'between',
         operation: function (input) {
-            let numberInputs = [];
-            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let numberInputs = convertToNumbers(input);
             let larger = Math.max(...numberInputs.slice(1,3));
             let smaller = Math.min(...numberInputs.slice(1,3));
             return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
@@ -114,8 +125,7 @@ export const OPERATIONS = [
     {
         name: 'notBetween',
         operation: function (input) {
-            let numberInputs = [];
-            input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+            let numberInputs = convertToNumbers(input);
             let larger = Math.max(...numberInputs.slice(1,3));
             let smaller = Math.min(...numberInputs.slice(1,3));
             return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
@@ -214,7 +224,8 @@ export const OPERATIONS = [
     {
         name: 'enumValueIs',
         operation: function (input) {
-            return input[0] === input[1];
+            let stringInputs = convertToStrings(input);
+            return stringInputs[0] === stringInputs[1];
         },
         text: 'is',
         appliesTo: ['enum'],
@@ -226,7 +237,8 @@ export const OPERATIONS = [
     {
         name: 'enumValueIsNot',
         operation: function (input) {
-            return input[0] !== input[1];
+            let stringInputs = convertToStrings(input);
+            return stringInputs[0] !== stringInputs[1];
         },
         text: 'is not',
         appliesTo: ['enum'],
@@ -238,9 +250,10 @@ export const OPERATIONS = [
     {
         name: 'valueIs',
         operation: function (input) {
+            const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                return values.find((value) => input[0].toString() === _.trim(value.toString()));
+                return values.find((value) => lhsValue === _.trim(value.toString()));
             }
             return false;
         },
@@ -254,9 +267,10 @@ export const OPERATIONS = [
     {
         name: 'valueIsNot',
         operation: function (input) {
+            const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.find((value) => input[0].toString() === _.trim(value.toString()));
+                const found = values.find((value) => lhsValue === _.trim(value.toString()));
                 return !found;
             }
             return false;
