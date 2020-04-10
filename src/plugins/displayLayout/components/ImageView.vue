@@ -78,9 +78,6 @@ export default {
                 backgroundImage: this.itemStyle ? ('url(' + this.itemStyle.imageUrl + ')') : 'url(' + this.item.url + ')',
                 border: (this.itemStyle && this.itemStyle.border) ? this.itemStyle.border : ('1px solid ' + this.item.stroke)
             };
-        },
-        styleClass() {
-            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {

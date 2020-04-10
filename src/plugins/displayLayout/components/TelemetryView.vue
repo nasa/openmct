@@ -31,7 +31,7 @@
         v-if="domainObject"
         class="c-telemetry-view"
         :class="styleClass"
-        :style="telemetryObjectStyle || styleObject"
+        :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
         <div
@@ -61,6 +61,7 @@
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],
@@ -79,8 +80,8 @@ export default {
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
             value: metadata.getDefaultDisplayValue(),
-            stroke: "transparent",
-            fill: "transparent",
+            stroke: "",
+            fill: "",
             color: "",
             size: "13px"
         };
@@ -125,26 +126,10 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
-            return {
-                fontSize: this.item.size
-            }
-        },
-        styleClass() {
-            return this.telemetryObjectStyle && this.telemetryObjectStyle.isStyleInvisible;
-        },
-        telemetryObjectStyle() {
-            let styleObj = Object.assign({}, {
+            return Object.assign({}, {
                 fontSize: this.item.size
             }, this.itemStyle);
-            let keys = Object.keys(styleObj);
-            keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
-                    if (styleObj[key]) {
-                        styleObj[key] = '';
-                    }
-                }
-            });
-            return styleObj;
+
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;

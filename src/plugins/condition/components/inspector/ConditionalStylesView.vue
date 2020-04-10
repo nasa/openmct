@@ -105,7 +105,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import {getInitialStyleForItem} from "@/plugins/condition/utils/styleUtils";
+import {getApplicableStylesForItem} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -175,7 +175,7 @@ export default {
                 domainObject = this.selection[0][0].context.item;
             }
             this.domainObject = domainObject;
-            this.initialStyles = getInitialStyleForItem(domainObject, layoutItem);
+            this.initialStyles = getApplicableStylesForItem(domainObject, layoutItem);
             this.removeListeners();
             if (this.domainObject) {
                 this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);

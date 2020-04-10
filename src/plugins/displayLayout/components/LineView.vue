@@ -130,8 +130,6 @@ export default {
             if (this.itemStyle) {
                 if (this.itemStyle.border) {
                     return this.itemStyle.border.replace('1px solid ', '');
-                } else {
-                    return 'transparent';
                 }
             } else {
                 return this.item.stroke;
@@ -149,9 +147,6 @@ export default {
                 width: `${width}px`,
                 height: `${height}px`
             };
-        },
-        styleClass() {
-            return this.itemStyle && this.itemStyle.isStyleInvisible;
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];
