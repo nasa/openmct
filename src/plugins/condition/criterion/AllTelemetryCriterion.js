@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
-import { OPERATIONS } from '../utils/operations';
+import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
 
-export default class TelemetryCriterion extends EventEmitter {
+export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     /**
      * Subscribes/Unsubscribes to telemetry and emits the result
@@ -34,25 +33,20 @@ export default class TelemetryCriterion extends EventEmitter {
      * @param openmct
      */
     constructor(telemetryDomainObjectDefinition, openmct) {
-        super();
+        super(telemetryDomainObjectDefinition, openmct);
+    }
 
-        this.openmct = openmct;
-        this.objectAPI = this.openmct.objects;
-        this.telemetryAPI = this.openmct.telemetry;
-        this.timeAPI = this.openmct.time;
-        this.id = telemetryDomainObjectDefinition.id;
-        this.telemetry = telemetryDomainObjectDefinition.telemetry;
-        this.operation = telemetryDomainObjectDefinition.operation;
-        this.telemetryObjects = Object.assign({}, telemetryDomainObjectDefinition.telemetryObjects);
-        this.input = telemetryDomainObjectDefinition.input;
-        this.metadata = telemetryDomainObjectDefinition.metadata;
+    initialize() {
+        this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
         this.telemetryDataCache = {};
-        this.result = undefined;
-        this.emitEvent('criterionUpdated', this);
+    }
+
+    isValid() {
+        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
 
     updateTelemetry(telemetryObjects) {
-        this.telemetryObjects = Object.assign({}, telemetryObjects);
+        this.telemetryObjects = { ...telemetryObjects };
     }
 
     formatData(data, telemetryObjects) {
@@ -74,7 +68,7 @@ export default class TelemetryCriterion extends EventEmitter {
         };
 
         if (data) {
-            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+            this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
                 datum[timeSystem.key] = data[timeSystem.key]
             });
         }
@@ -98,42 +92,6 @@ export default class TelemetryCriterion extends EventEmitter {
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
-    findOperation(operation) {
-        for (let i=0; i < OPERATIONS.length; i++) {
-            if (operation === OPERATIONS[i].name) {
-                return OPERATIONS[i].operation;
-            }
-        }
-        return null;
-    }
-
-    computeResult(data) {
-        let result = false;
-        if (data) {
-            let comparator = this.findOperation(this.operation);
-            let params = [];
-            params.push(data[this.metadata]);
-            if (this.input instanceof Array && this.input.length) {
-                this.input.forEach(input => params.push(input));
-            }
-            if (typeof comparator === 'function') {
-                result = !!comparator(params);
-            }
-        }
-        return result;
-    }
-
-    emitEvent(eventName, data) {
-        this.emit(eventName, {
-            id: this.id,
-            data: data
-        });
-    }
-
-    isValid() {
-        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
-    }
-
     requestLAD(options) {
         options = Object.assign({},
             options,
@@ -149,7 +107,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
         let keys = Object.keys(Object.assign({}, options.telemetryObjects));
         const telemetryRequests = keys
-            .map(key => this.telemetryAPI.request(
+            .map(key => this.openmct.telemetry.request(
                 options.telemetryObjects[key],
                 options
             ));
@@ -175,7 +133,5 @@ export default class TelemetryCriterion extends EventEmitter {
     destroy() {
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
-        delete this.telemetryObjectIdAsString;
-        delete this.telemetryObject;
     }
 }
