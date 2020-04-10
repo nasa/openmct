@@ -230,7 +230,8 @@ export default class ConditionManager extends EventEmitter {
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,
                             data,
-                            this.timeSystems
+                            this.timeSystems,
+                            this.openmct.time.timeSystem()
                         );
                     });
                     const currentCondition = this.getCurrentConditionLAD(conditionResults);

@@ -218,7 +218,8 @@ export default class ConditionClass extends EventEmitter {
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
                         data,
-                        this.timeSystems
+                        this.timeSystems,
+                        this.openmct.time.timeSystem()
                     );
                 });
                 return {
