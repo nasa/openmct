@@ -24,7 +24,7 @@
 <div class="c-style">
     <span :class="[
               { 'is-style-invisible': styleItem.style.isStyleInvisible },
-              { 'c-style-thumb--mixed': nonSpecific.indexOf('backgroundColor') > -1 }
+              { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
           ]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
           class="c-style-thumb"
@@ -87,7 +87,7 @@ export default {
         isEditing: {
             type: Boolean
         },
-        nonSpecific: {
+        mixedStyles: {
             type: Array,
             default() {
                 return [];
@@ -110,7 +110,7 @@ export default {
                 value: this.normalizeValueForSwatch(value),
                 property: 'border',
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('border') > -1
+                nonSpecific: this.mixedStyles.indexOf('border') > -1
             }
         },
         backgroundColorOption() {
@@ -121,7 +121,7 @@ export default {
                 value: this.normalizeValueForSwatch(value),
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('backgroundColor') > -1
+                nonSpecific: this.mixedStyles.indexOf('backgroundColor') > -1
             }
         },
         colorOption() {
@@ -132,7 +132,7 @@ export default {
                 value: this.normalizeValueForSwatch(value),
                 property: 'color',
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('color') > -1
+                nonSpecific: this.mixedStyles.indexOf('color') > -1
             }
         },
         imageUrlOption() {
@@ -158,7 +158,7 @@ export default {
                 formKeys: ['url'],
                 value: {url: this.styleItem.style.imageUrl},
                 isEditing: this.isEditing,
-                nonSpecific: this.nonSpecific.indexOf('imageUrl') > -1
+                nonSpecific: this.mixedStyles.indexOf('imageUrl') > -1
             }
         },
         isStyleInvisibleOption() {
