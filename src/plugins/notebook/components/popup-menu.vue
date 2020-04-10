@@ -1,13 +1,10 @@
 <template>
-<div class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-    <button
-        class="l-browse-bar__context-actions c-disclosure-button"
-        title="popup menu"
-        @click="showMenuItems"
-    >
-        <span class="c-button__label"></span>
-    </button>
-</div>
+<button
+    class="c-popup-menu-button c-disclosure-button"
+    title="popup menu"
+    @click="showMenuItems"
+>
+</button>
 </template>
 
 <script>
