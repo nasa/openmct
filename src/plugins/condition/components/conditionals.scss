@@ -288,6 +288,12 @@
 }
 
 /***************************** TEST DATA */
+.c-cs__test-data {
+    &__controls {
+        flex: 0 0 auto;
+    }
+}
+
 .c-cs-tests {
     flex: 0 1 auto;
     overflow: auto;
