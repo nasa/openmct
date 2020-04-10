@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import {computeCondition, computeConditionByLimit} from "./utils/evaluator";
+import { computeCondition, computeConditionByLimit } from "./utils/evaluator";
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
