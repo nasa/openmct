@@ -27,13 +27,13 @@
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
- <div
-         class="c-text-view"
-         :class="[styleClass]"
-         :style="style"
- >
-  <div class="c-text-view__text">{{ item.text }}</div>
- </div>
+    <div
+        class="c-text-view"
+        :class="[styleClass]"
+        :style="style"
+    >
+        <div class="c-text-view__text">{{ item.text }}</div>
+    </div>
 </layout-frame>
 </template>
 
