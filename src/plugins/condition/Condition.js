@@ -23,9 +23,7 @@
 import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
-import { TRIGGER } from "./utils/constants";
 import { evaluateResults } from './utils/evaluator';
-import { computeConditionLAD, computeConditionByLimitLAD } from "./utils/evaluator";
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
@@ -58,7 +56,6 @@ export default class ConditionClass extends EventEmitter {
         this.conditionManager = conditionManager;
         this.id = conditionConfiguration.id;
         this.criteria = [];
-        this.criteriaResults = {};
         this.result = undefined;
         this.timeSystems = this.openmct.time.getAllTimeSystems();
         if (conditionConfiguration.configuration.criteria) {
@@ -180,7 +177,6 @@ export default class ConditionClass extends EventEmitter {
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             this.criteria.splice(found.index, 1, newCriterion);
-            delete this.criteriaResults[criterion.id];
         }
     }
 
@@ -193,7 +189,6 @@ export default class ConditionClass extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
-            delete this.criteriaResults[criterion.id];
 
             return true;
         }
@@ -204,14 +199,6 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-        }
-    }
-
-    updateCriteriaResults(eventData) {
-        const id = eventData.id;
-
-        if (this.findCriterion(id)) {
-            this.criteriaResults[id] = !!eventData.data.result;
         }
     }
 
@@ -236,8 +223,12 @@ export default class ConditionClass extends EventEmitter {
                 });
                 return {
                     id: this.id,
-                    data: Object.assign({}, latestTimestamp, { result: this.evaluateLAD(criteriaResults) })
-                }
+                    data: Object.assign(
+                        {},
+                        latestTimestamp,
+                        { result: evaluateResults(Object.values(criteriaResults), this.trigger) }
+                    )
+                };
             });
     }
 
@@ -252,16 +243,6 @@ export default class ConditionClass extends EventEmitter {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
         return success;
-    }
-
-    evaluateLAD(results) {
-        if (this.trigger && this.trigger === TRIGGER.XOR) {
-            return computeConditionByLimitLAD(results, 1);
-        } else if (this.trigger && this.trigger === TRIGGER.NOT) {
-            return computeConditionByLimitLAD(results, 0);
-        } else {
-            return computeConditionLAD(results, this.trigger === TRIGGER.ALL);
-        }
     }
 
     destroy() {

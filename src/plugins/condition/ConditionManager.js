@@ -158,7 +158,7 @@ export default class ConditionManager extends EventEmitter {
 
     removeCondition(index) {
         let condition = this.conditionClassCollection[index];
-        condition.destroyCriteria();
+        condition.destroy();
         this.conditionClassCollection.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
         this.persistConditions();

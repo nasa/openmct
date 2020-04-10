@@ -22,7 +22,6 @@
 
 import EventEmitter from 'EventEmitter';
 import { OPERATIONS } from '../utils/operations';
-import { computeConditionLAD } from "@/plugins/condition/utils/evaluator";
 import { evaluateResults } from "../utils/evaluator";
 
 export default class TelemetryCriterion extends EventEmitter {
@@ -48,7 +47,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.telemetryDataCache = {};
-        this.result = false;
+        this.result = undefined;
         this.emitEvent('criterionUpdated', this);
     }
 
@@ -71,7 +70,7 @@ export default class TelemetryCriterion extends EventEmitter {
         });
 
         const datum = {
-            result: computeConditionLAD(this.telemetryDataCache, this.telemetry === 'all')
+            result: evaluateResults(Object.values(this.telemetryDataCache), this.telemetry)
         };
 
         if (data) {
