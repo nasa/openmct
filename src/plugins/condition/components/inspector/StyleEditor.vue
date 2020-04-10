@@ -102,7 +102,9 @@ export default {
             let style = {};
             const keys = Object.keys(this.styleItem.style);
             keys.forEach(key => {
-                style[key] = this.styleItem.style[key] ? this.normalizeValue(this.styleItem.style[key]) : 'transparent';
+                if (this.styleItem.style[key].indexOf('__no_value') === -1) {
+                    style[key] = this.normalizeValue(this.styleItem.style[key]);
+                }
             });
             return style;
         },
@@ -119,7 +121,6 @@ export default {
         },
         backgroundColorOption() {
             let value = this.styleItem.style.backgroundColor;
-            // console.log('backgroundColorOption nonSpecific', this.nonSpecific.indexOf('backgroundColor') > -1);
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,

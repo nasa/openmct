@@ -126,9 +126,6 @@ export default {
         },
         styleObject() {
             return {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
                 fontSize: this.item.size
             }
         },
@@ -137,9 +134,6 @@ export default {
         },
         telemetryObjectStyle() {
             let styleObj = Object.assign({}, {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
                 fontSize: this.item.size
             }, this.itemStyle);
             let keys = Object.keys(styleObj);
