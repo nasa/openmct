@@ -21,21 +21,21 @@
  *****************************************************************************/
 import { TRIGGER } from "./constants";
 
-export const computeCondition = (criteria, trigger) => {
+export const evaluateResults = (results, trigger) => {
     if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(criteria, 1);
+        return matchExact(results, 1);
     } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(criteria, 0);
+        return matchExact(results, 0);
     } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(criteria);
+        return matchAll(results);
     } else {
-        return matchAny(criteria);
+        return matchAny(results);
     }
 }
 
-function matchAll(criteria) {
-    for (const criterion of criteria) {
-        if (!criterion.result) {
+function matchAll(results) {
+    for (const result of results) {
+        if (!result) {
             return false;
         }
     }
@@ -43,9 +43,9 @@ function matchAll(criteria) {
     return true;
 }
 
-function matchAny(criteria) {
-    for (const criterion of criteria) {
-        if (criterion.result) {
+function matchAny(results) {
+    for (const result of results) {
+        if (result) {
             return true;
         }
     }
@@ -53,10 +53,10 @@ function matchAny(criteria) {
     return false;
 }
 
-function matchExact(criteria, target) {
+function matchExact(results, target) {
     let matches = 0;
-    for (const criterion of criteria) {
-        if (criterion.result) {
+    for (const result of results) {
+        if (result) {
             matches++;
         }
         if (matches > target) {

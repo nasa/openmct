@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import { computeCondition } from './utils/evaluator';
+import { evaluateResults } from './utils/evaluator';
 import { computeConditionLAD, computeConditionByLimitLAD } from "./utils/evaluator";
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
@@ -83,7 +83,7 @@ export default class ConditionClass extends EventEmitter {
             }
         });
 
-        this.result = this.evaluate();
+        this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
     }
 
     isAnyOrAllTelemetry(criterion) {
@@ -252,10 +252,6 @@ export default class ConditionClass extends EventEmitter {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
         return success;
-    }
-
-    evaluate() {
-        return computeCondition(this.criteria, this.trigger);
     }
 
     evaluateLAD(results) {

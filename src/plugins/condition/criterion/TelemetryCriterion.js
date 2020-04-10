@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import {OPERATIONS} from '../utils/operations';
+import { OPERATIONS } from '../utils/operations';
 
 export default class TelemetryCriterion extends EventEmitter {
 

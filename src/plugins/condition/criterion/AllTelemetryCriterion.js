@@ -21,8 +21,9 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import {OPERATIONS} from '../utils/operations';
-import {computeCondition} from "@/plugins/condition/utils/evaluator";
+import { OPERATIONS } from '../utils/operations';
+import { computeConditionLAD } from "@/plugins/condition/utils/evaluator";
+import { evaluateResults } from "../utils/evaluator";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -47,6 +48,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.telemetryDataCache = {};
+        this.result = false;
         this.emitEvent('criterionUpdated', this);
     }
 
@@ -69,7 +71,7 @@ export default class TelemetryCriterion extends EventEmitter {
         });
 
         const datum = {
-            result: computeCondition(this.telemetryDataCache, this.telemetry === 'all')
+            result: computeConditionLAD(this.telemetryDataCache, this.telemetry === 'all')
         };
 
         if (data) {
@@ -81,17 +83,20 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     getResultForTelemetry(data, telemetryObjects) {
-        if(this.isValid()) {
-            return {
-                id: this.id,
-                data: this.formatData(data, telemetryObjects)
-            };
-        } else {
-            return {
-                id: this.id,
-                data: this.formatData({}, telemetryObjects)
-            };
+        const validatedData = this.isValid() ? data : {};
+
+        if (validatedData) {
+            this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
         }
+
+        Object.values(telemetryObjects).forEach(telemetryObject => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (this.telemetryDataCache[id] === undefined) {
+                this.telemetryDataCache[id] = false;
+            }
+        });
+
+        this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
     findOperation(operation) {
