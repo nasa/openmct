@@ -30,7 +30,6 @@ export default class ConditionManager extends EventEmitter {
         super();
         this.openmct = openmct;
         this.conditionSetDomainObject = conditionSetDomainObject;
-        this.timeAPI = this.openmct.time;
         this.timeSystems = this.openmct.time.getAllTimeSystems();
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.subscribeToTelemetry, this);
@@ -58,6 +57,7 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, id)
         );
+        // TODO check if this is needed
         this.updateConditionTelemetry();
     }
 
@@ -74,7 +74,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     initialize() {
-        this.conditionResults = {};
+        // this.conditionResults = {};
         this.conditionClassCollection = [];
         if (this.conditionSetDomainObject.configuration.conditionCollection.length) {
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
@@ -96,7 +96,7 @@ export default class ConditionManager extends EventEmitter {
 
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct, this);
-        condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
+        // condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
             this.conditionClassCollection.splice(index + 1, 0, condition);
         } else {
@@ -161,12 +161,12 @@ export default class ConditionManager extends EventEmitter {
     removeCondition(index) {
         let condition = this.conditionClassCollection[index];
         condition.destroyCriteria();
-        condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
+        // condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         this.conditionClassCollection.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
-        delete this.conditionResults[condition.id];
+        // delete this.conditionResults[condition.id];
         this.persistConditions();
-        this.handleConditionResult();
+        // this.handleConditionResult();
     }
 
     findConditionById(id) {
@@ -214,35 +214,35 @@ export default class ConditionManager extends EventEmitter {
         return currentCondition;
     }
 
-    updateConditionResults(resultObj) {
-        if (!resultObj) {
-            return;
-        }
+    // updateConditionResults(resultObj) {
+    //     if (!resultObj) {
+    //         return;
+    //     }
 
-        const id = resultObj.id;
+    //     const id = resultObj.id;
 
-        if (this.findConditionById(id)) {
-            this.conditionResults[id] = resultObj.data.result;
-        }
-    }
+    //     if (this.findConditionById(id)) {
+    //         this.conditionResults[id] = resultObj.data.result;
+    //     }
+    // }
 
-    handleConditionResult(resultObj) {
-        this.updateConditionResults(resultObj);
-        const currentCondition = this.getCurrentCondition(this.conditionResults);
-        const timestamp = JSON.parse(JSON.stringify(resultObj.data))
-        delete timestamp.result
+    // handleConditionResult(resultObj) {
+    //     this.updateConditionResults(resultObj);
+    //     const currentCondition = this.getCurrentCondition(this.conditionResults);
+    //     const timestamp = JSON.parse(JSON.stringify(resultObj.data))
+    //     delete timestamp.result
 
-        this.emit('conditionSetResultUpdated',
-            Object.assign(
-                {
-                    output: currentCondition.configuration.output,
-                    id: this.conditionSetDomainObject.identifier,
-                    conditionId: currentCondition.id
-                },
-                timestamp
-            )
-        )
-    }
+    //     this.emit('conditionSetResultUpdated',
+    //         Object.assign(
+    //             {
+    //                 output: currentCondition.configuration.output,
+    //                 id: this.conditionSetDomainObject.identifier,
+    //                 conditionId: currentCondition.id
+    //             },
+    //             timestamp
+    //         )
+    //     )
+    // }
 
     requestLADConditionSetOutput() {
         if (!this.conditionClassCollection.length) {
@@ -352,7 +352,7 @@ export default class ConditionManager extends EventEmitter {
         }
 
         this.conditionClassCollection.forEach((condition) => {
-            condition.off('conditionResultUpdated', this.handleConditionResult);
+            // condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
         })
     }
