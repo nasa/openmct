@@ -19,8 +19,55 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TRIGGER } from "./constants";
 
-export const computeCondition = (resultMap, allMustBeTrue) => {
+export const computeCondition = (criteria, trigger) => {
+    if (trigger && trigger === TRIGGER.XOR) {
+        return matchExact(criteria, 1);
+    } else if (trigger && trigger === TRIGGER.NOT) {
+        return matchExact(criteria, 0);
+    } else if (trigger && trigger === TRIGGER.ALL) {
+        return matchAll(criteria);
+    } else {
+        return matchAny(criteria);
+    }
+}
+
+function matchAll(criteria) {
+    for (const criterion of criteria) {
+        if (!criterion.result) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function matchAny(criteria) {
+    for (const criterion of criteria) {
+        if (criterion.result) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function matchExact(criteria, target) {
+    let matches = 0;
+    for (const criterion of criteria) {
+        if (criterion.result) {
+            matches++;
+        }
+        if (matches > target) {
+            return false;
+        }
+    }
+
+    return matches === target;
+}
+
+export const computeConditionLAD = (resultMap, allMustBeTrue) => {
     let result = false;
     for (let key in resultMap) {
         if (resultMap.hasOwnProperty(key)) {
@@ -38,7 +85,7 @@ export const computeCondition = (resultMap, allMustBeTrue) => {
 };
 
 //Returns true only if limit number of results are satisfied
-export const computeConditionByLimit = (resultMap, limit) => {
+export const computeConditionByLimitLAD = (resultMap, limit) => {
     let trueCount = 0;
     for (let key in resultMap) {
         if (resultMap.hasOwnProperty(key)) {

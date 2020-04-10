@@ -46,6 +46,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.telemetryObject = telemetryDomainObjectDefinition.telemetryObject;
         this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.telemetry);
+        this.result = false;
         this.emitEvent('criterionUpdated', this);
     }
 
@@ -67,23 +68,8 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     getResultForTelemetry(data) {
-        if (data && data.id &&
-            (data.id !== this.telemetryObjectIdAsString)) {
-            //We don't want to return any result if we don't care about this telemetry
-            //TODO: Should this return the last saved result instead?
-            return;
-        }
-        if (this.isValid()) {
-            return {
-                id: this.id,
-                data: this.formatData(data)
-            };
-        } else {
-            return {
-                id: this.id,
-                data: this.formatData({})
-            };
-        }
+        const validatedData = this.isValid() ? data : {};
+        this.result = this.computeResult(validatedData);
     }
 
     findOperation(operation) {

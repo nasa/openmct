@@ -24,7 +24,8 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { TRIGGER } from "./utils/constants";
-import { computeCondition, computeConditionByLimit } from "./utils/evaluator";
+import { computeCondition } from './utils/evaluator';
+import { computeConditionLAD, computeConditionByLimitLAD } from "./utils/evaluator";
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 
@@ -75,19 +76,14 @@ export default class ConditionClass extends EventEmitter {
             return;
         }
         this.criteria.forEach(criterion => {
-            let result;
             if (this.isAnyOrAllTelemetry(criterion)) {
-                result = criterion.getResultForTelemetry(datum, this.conditionManager.telemetryObjects);
+                criterion.getResultForTelemetry(datum, this.conditionManager.telemetryObjects);
             } else {
-                result = criterion.getResultForTelemetry(datum);
-            }
-            if (result !== undefined) {
-                //we only update the result if it's not undefined
-                this.updateCriteriaResults(result);
+                criterion.getResultForTelemetry(datum);
             }
         });
 
-        this.result = this.evaluate(this.criteriaResults);
+        this.result = this.evaluate();
     }
 
     isAnyOrAllTelemetry(criterion) {
@@ -240,7 +236,7 @@ export default class ConditionClass extends EventEmitter {
                 });
                 return {
                     id: this.id,
-                    data: Object.assign({}, latestTimestamp, { result: this.evaluate(criteriaResults) })
+                    data: Object.assign({}, latestTimestamp, { result: this.evaluateLAD(criteriaResults) })
                 }
             });
     }
@@ -258,13 +254,17 @@ export default class ConditionClass extends EventEmitter {
         return success;
     }
 
-    evaluate(results) {
+    evaluate() {
+        return computeCondition(this.criteria, this.trigger);
+    }
+
+    evaluateLAD(results) {
         if (this.trigger && this.trigger === TRIGGER.XOR) {
-            return computeConditionByLimit(results, 1);
+            return computeConditionByLimitLAD(results, 1);
         } else if (this.trigger && this.trigger === TRIGGER.NOT) {
-            return computeConditionByLimit(results, 0);
+            return computeConditionByLimitLAD(results, 0);
         } else {
-            return computeCondition(results, this.trigger === TRIGGER.ALL);
+            return computeConditionLAD(results, this.trigger === TRIGGER.ALL);
         }
     }
 
