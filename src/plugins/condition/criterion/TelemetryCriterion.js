@@ -67,7 +67,7 @@ export default class TelemetryCriterion extends EventEmitter {
         return datum;
     }
 
-    getResultForTelemetry(data) {
+    getResult(data) {
         const validatedData = this.isValid() ? data : {};
         this.result = this.computeResult(validatedData);
     }

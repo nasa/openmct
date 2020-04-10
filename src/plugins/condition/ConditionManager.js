@@ -255,7 +255,7 @@ export default class ConditionManager extends EventEmitter {
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
         this.conditionClassCollection.forEach(condition => {
-            condition.getConditionResultForTelemetry(normalizedDatum);
+            condition.getResult(normalizedDatum);
         });
 
         const currentCondition = this.getCurrentCondition();
