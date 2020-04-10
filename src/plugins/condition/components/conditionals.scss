@@ -19,129 +19,260 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/***************************** DRAGGING */
-.is-active-dragging {
-    .c-condition-h__drop-target {
-        height: 3px;
-        margin-bottom: $interiorMarginSm;
+
+.c-cs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    /************************** CONDITION SET LAYOUT */
+    &__current-output {
+        flex: 0 0 auto;
+    }
+
+    &__test-data-and-conditions-w {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__test-data,
+    &__conditions {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    &__test-data {
+        flex: 0 0 auto;
+        max-height: 50%;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 4;
+        }
+    }
+
+    &__conditions {
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 0 1 auto;
+        overflow: hidden;
+
+        > * {
+            flex: 0 0 auto;
+            overflow: hidden;
+            + * {
+                margin-top: $interiorMarginSm;
+            }
+        }
+
+        .c-button {
+            align-self: start;
+        }
+    }
+
+    .is-editing & {
+        // Add some space to kick away from blue editing border indication
+        padding: $interiorMargin;
+    }
+
+    section {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__conditions-h {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        overflow: auto;
+        padding-right: $interiorMarginSm;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    .hint {
+        padding: $interiorMarginSm;
+    }
+
+    /************************** SPECIFIC ITEMS */
+    &__current-output-value {
+        flex-direction: row;
+        align-items: baseline;
+        padding: 0 $interiorMargin $interiorMarginLg $interiorMargin;
+
+        > * {
+            padding: $interiorMargin 0; // Must do this to align label and value
+        }
+
+        &__label {
+            color: $colorInspectorSectionHeaderFg;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        &__value {
+            $p: $interiorMargin * 3;
+            font-size: 1.25em;
+            margin-left: $interiorMargin;
+            padding-left: $p;
+            padding-right: $p;
+            background: rgba(black, 0.2);
+            border-radius: 5px;
+        }
     }
 }
 
-.c-condition-h {
-    &__drop-target {
-        border-radius: $controlCr;
-        height: 0;
-        min-height: 0;
-        transition: background-color, height;
-        transition-duration: 150ms;
+/***************************** CONDITIONS AND TEST DATUM ELEMENTS */
+.c-condition,
+.c-test-datum {
+    @include discreteItem();
+    display: flex;
+    padding: $interiorMargin;
+    line-height: 170%; // Aligns text with controls like selects
+}
+
+.c-cdef,
+.c-cs-test {
+    &__controls {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
     }
 
-    &.is-drag-target {
-        .c-condition > * {
-            pointer-events: none; // Keeps the JS drop handler from being intercepted by internal elements
-        }
-
-        .c-condition-h__drop-target {
-            background-color: rgba($colorKey, 0.7);
-        }
+    &__buttons {
+        white-space: nowrap;
     }
 }
- .c-condition,
- .c-test-datum {
-     @include discreteItem();
-     display: flex;
-     padding: $interiorMargin;
 
-     &--edit {
-         line-height: 160%; // For layout when inputs wrap, like in criteria
-     }
- }
+.c-condition {
+    flex-direction: column;
+    min-width: 400px;
 
- .c-condition {
-     flex-direction: column;
-     min-width: 400px;
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+    &--browse {
+        .c-condition__summary {
+            border-top: 1px solid $colorInteriorBorder;
+            padding-top: $interiorMargin;
+        }
+    }
 
-     > * + * {
-         margin-top: $interiorMarginSm;
-     }
-     &--browse {
-         .c-condition__summary {
-             border-top: 1px solid $colorInteriorBorder;
-             padding-top: $interiorMargin;
-         }
-     }
+    /***************************** HEADER */
+    &__header {
+        $h: 22px;
+        display: flex;
+        align-items: start;
+        align-content: stretch;
+        overflow: hidden;
+        min-height: $h;
+        line-height: $h;
 
-     /***************************** HEADER */
-     &__header {
-         $h: 22px;
-         display: flex;
-         align-items: start;
-         align-content: stretch;
-         overflow: hidden;
-         min-height: $h;
-         line-height: $h;
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-left: $interiorMarginSm;
+            }
+        }
+    }
 
-         > * {
-             flex: 0 0 auto;
-             + * {
-                 margin-left: $interiorMarginSm;
-             }
-         }
-     }
+    &__drag-grippy {
+        transform: translateY(50%);
+    }
 
-     &__drag-grippy {
-         transform: translateY(50%);
-     }
+    &__name {
+        font-weight: bold;
+        align-self: baseline; // Fixes bold line-height offset problem
+    }
 
-     &__name {
-         font-weight: bold;
-         align-self: baseline; // Fixes bold line-height offset problem
-     }
+    &__output,
+    &__summary {
+        flex: 1 1 auto;
+    }
+}
 
-     &__output,
-     &__summary {
-         flex: 1 1 auto;
-     }
- }
+/***************************** CONDITION DEFINITION, EDITING */
+.c-cdef {
+    display: grid;
+    grid-row-gap: $interiorMarginSm;
+    grid-column-gap: $interiorMargin;
+    grid-auto-columns: min-content 1fr max-content;
+    align-items: start;
+    min-width: 150px;
+    margin-left: 29px;
+    overflow: hidden;
 
- /***************************** CONDITION DEFINITION, EDITING */
- .c-cdef {
-     display: grid;
-     grid-row-gap: $interiorMarginSm;
-     grid-column-gap: $interiorMargin;
-     grid-auto-columns: min-content 1fr max-content;
-     align-items: start;
-     min-width: 150px;
-     margin-left: 29px;
-     overflow: hidden;
+    &__criteria,
+    &__match-and-criteria {
+        display: contents;
+    }
 
-     &__criteria,
-     &__match-and-criteria {
-         display: contents;
-     }
+    &__label {
+        grid-column: 1;
+        text-align: right;
+        white-space: nowrap;
+    }
 
-     &__label {
-         grid-column: 1;
-         text-align: right;
-         white-space: nowrap;
-     }
+    &__separator {
+        grid-column: 1 / span 3;
+    }
 
-     &__separator {
-         grid-column: 1 / span 3;
-     }
+    &__controls {
+        align-items: flex-start;
+        grid-column: 2;
 
-     &__controls {
-         display: flex;
-         flex-wrap: wrap;
-         align-items: flex-start;
-         grid-column: 2;
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
+    }
 
-         > * > * {
-             margin-right: $interiorMarginSm;
-         }
-     }
+    &__buttons {
+        grid-column: 3;
+    }
+}
 
-     &__buttons {
-         grid-column: 3;
-     }
- }
+.c-c__drag-ghost {
+    width: 100%;
+    min-height: $interiorMarginSm;
+
+    &.dragging {
+        min-height: 5em;
+        background-color: lightblue;
+        border-radius: 2px;
+    }
+}
+
+/***************************** TEST DATA */
+.c-cs-tests {
+    flex: 0 1 auto;
+    overflow: auto;
+    padding-right: $interiorMarginSm;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+}
+
+.c-cs-test {
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+}
