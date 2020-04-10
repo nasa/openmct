@@ -131,6 +131,7 @@ export default {
                 if (this.itemStyle.border) {
                     return this.itemStyle.border.replace('1px solid ', '');
                 }
+                return '';
             } else {
                 return this.item.stroke;
             }
