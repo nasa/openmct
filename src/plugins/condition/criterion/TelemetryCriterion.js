@@ -59,7 +59,6 @@ export default class TelemetryCriterion extends EventEmitter {
         };
 
         if (data) {
-            // TODO check back to see if we should format times here
             this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
                 datum[timeSystem.key] = data[timeSystem.key]
             });

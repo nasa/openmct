@@ -74,7 +74,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     initialize() {
-        // this.conditionResults = {};
         this.conditionClassCollection = [];
         if (this.conditionSetDomainObject.configuration.conditionCollection.length) {
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
@@ -96,7 +95,6 @@ export default class ConditionManager extends EventEmitter {
 
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct, this);
-        // condition.on('conditionResultUpdated', this.handleConditionResult.bind(this));
         if (index !== undefined) {
             this.conditionClassCollection.splice(index + 1, 0, condition);
         } else {
@@ -161,12 +159,9 @@ export default class ConditionManager extends EventEmitter {
     removeCondition(index) {
         let condition = this.conditionClassCollection[index];
         condition.destroyCriteria();
-        // condition.off('conditionResultUpdated', this.handleConditionResult.bind(this));
         this.conditionClassCollection.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
-        // delete this.conditionResults[condition.id];
         this.persistConditions();
-        // this.handleConditionResult();
     }
 
     findConditionById(id) {
@@ -213,36 +208,6 @@ export default class ConditionManager extends EventEmitter {
         }
         return currentCondition;
     }
-
-    // updateConditionResults(resultObj) {
-    //     if (!resultObj) {
-    //         return;
-    //     }
-
-    //     const id = resultObj.id;
-
-    //     if (this.findConditionById(id)) {
-    //         this.conditionResults[id] = resultObj.data.result;
-    //     }
-    // }
-
-    // handleConditionResult(resultObj) {
-    //     this.updateConditionResults(resultObj);
-    //     const currentCondition = this.getCurrentCondition(this.conditionResults);
-    //     const timestamp = JSON.parse(JSON.stringify(resultObj.data))
-    //     delete timestamp.result
-
-    //     this.emit('conditionSetResultUpdated',
-    //         Object.assign(
-    //             {
-    //                 output: currentCondition.configuration.output,
-    //                 id: this.conditionSetDomainObject.identifier,
-    //                 conditionId: currentCondition.id
-    //             },
-    //             timestamp
-    //         )
-    //     )
-    // }
 
     requestLADConditionSetOutput() {
         if (!this.conditionClassCollection.length) {
@@ -304,8 +269,6 @@ export default class ConditionManager extends EventEmitter {
                 timestamp
             )
         )
-
-        // this.emit('telemetryReceived', Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
     }
 
     getTestData(metadatum) {
@@ -352,7 +315,6 @@ export default class ConditionManager extends EventEmitter {
         }
 
         this.conditionClassCollection.forEach((condition) => {
-            // condition.off('conditionResultUpdated', this.handleConditionResult);
             condition.destroy();
         })
     }

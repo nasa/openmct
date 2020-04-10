@@ -64,7 +64,6 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        // this.conditionManager.on('telemetryReceived', this.getConditionResultForTelemetry, this);
     }
 
     getConditionResultForTelemetry(datum) {
@@ -89,8 +88,6 @@ export default class ConditionClass extends EventEmitter {
         });
 
         this.result = this.evaluate(this.criteriaResults);
-
-        // this.handleConditionUpdated(datum);
     }
 
     isAnyOrAllTelemetry(criterion) {
@@ -111,7 +108,6 @@ export default class ConditionClass extends EventEmitter {
     updateTrigger(trigger) {
         if (this.trigger !== trigger) {
             this.trigger = trigger;
-            // this.handleConditionUpdated();
         }
     }
 
@@ -192,13 +188,6 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    removeCriterion(id) {
-        this.destroyCriterion(id)
-        // if (this.destroyCriterion(id)) {
-        //     this.handleConditionUpdated();
-        // }
-    }
-
     destroyCriterion(id) {
         let found = this.findCriterion(id);
         if (found) {
@@ -256,14 +245,6 @@ export default class ConditionClass extends EventEmitter {
             });
     }
 
-    // handleConditionUpdated(datum) {
-    // trigger an updated event so that consumers can react accordingly
-    // this.result = this.evaluate(this.criteriaResults);
-    //     this.emitEvent('conditionResultUpdated',
-    //         Object.assign({}, datum, { result: this.result })
-    //     );
-    // }
-
     getCriteria() {
         return this.criteria;
     }
@@ -287,18 +268,7 @@ export default class ConditionClass extends EventEmitter {
         }
     }
 
-    // emitEvent(eventName, data) {
-    //     this.emit(eventName, {
-    //         id: this.id,
-    //         data: data
-    //     });
-    // }
-
     destroy() {
-        // this.conditionManager.off('telemetryReceived', this.getConditionResultForTelemetry, this);
-        // if (typeof this.stopObservingForChanges === 'function') {
-        //     this.stopObservingForChanges();
-        // }
         this.destroyCriteria();
     }
 }
