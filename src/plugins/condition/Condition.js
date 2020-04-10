@@ -59,13 +59,12 @@ export default class ConditionClass extends EventEmitter {
         this.criteria = [];
         this.criteriaResults = {};
         this.result = undefined;
-        this.latestTimestamp = {};
         this.timeSystems = this.openmct.time.getAllTimeSystems();
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.conditionManager.on('telemetryReceived', this.getConditionResultForTelemetry, this);
+        // this.conditionManager.on('telemetryReceived', this.getConditionResultForTelemetry, this);
     }
 
     getConditionResultForTelemetry(datum) {
@@ -88,7 +87,10 @@ export default class ConditionClass extends EventEmitter {
                 this.updateCriteriaResults(result);
             }
         });
-        this.handleConditionUpdated(datum);
+
+        this.result = this.evaluate(this.criteriaResults);
+
+        // this.handleConditionUpdated(datum);
     }
 
     isAnyOrAllTelemetry(criterion) {

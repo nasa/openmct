@@ -184,7 +184,23 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    getCurrentCondition(conditionResults) {
+    getCurrentCondition() {
+        const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+        let currentCondition = conditionCollection[conditionCollection.length-1];
+
+        for (let i = 0; i < conditionCollection.length - 1; i++) {
+            const condition = this.findConditionById(conditionCollection[i].id)
+            if (condition.result) {
+                //first condition to be true wins
+                currentCondition = conditionCollection[i];
+                break;
+            }
+        }
+
+        return currentCondition;
+    }
+
+    getCurrentConditionLAD(conditionResults) {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
         let currentCondition = conditionCollection[conditionCollection.length-1];
 
@@ -252,7 +268,7 @@ export default class ConditionManager extends EventEmitter {
                             this.timeSystems
                         );
                     });
-                    const currentCondition = this.getCurrentCondition(conditionResults);
+                    const currentCondition = this.getCurrentConditionLAD(conditionResults);
 
                     return Object.assign(
                         {
@@ -267,7 +283,29 @@ export default class ConditionManager extends EventEmitter {
     }
 
     telemetryReceived(id, datum) {
-        this.emit('telemetryReceived', Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
+        const normalizedDatum = this.createNormalizedDatum(datum, id);
+        const timeSystemKey = this.openmct.time.timeSystem().key;
+        let timestamp = {};
+        timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
+
+        this.conditionClassCollection.forEach(condition => {
+            condition.getConditionResultForTelemetry(normalizedDatum);
+        });
+
+        const currentCondition = this.getCurrentCondition();
+
+        this.emit('conditionSetResultUpdated',
+            Object.assign(
+                {
+                    output: currentCondition.configuration.output,
+                    id: this.conditionSetDomainObject.identifier,
+                    conditionId: currentCondition.id
+                },
+                timestamp
+            )
+        )
+
+        // this.emit('telemetryReceived', Object.assign({}, this.createNormalizedDatum(datum, id), {id: id}));
     }
 
     getTestData(metadatum) {
@@ -282,12 +320,16 @@ export default class ConditionManager extends EventEmitter {
     }
 
     createNormalizedDatum(telemetryDatum, id) {
-        return Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((normalizedDatum, metadatum) => {
+        const normalizedDatum = Object.values(this.telemetryObjects[id].telemetryMetaData).reduce((datum, metadatum) => {
             const testValue = this.getTestData(metadatum);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            normalizedDatum[metadatum.key] = testValue !== undefined ?  formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
-            return normalizedDatum;
+            datum[metadatum.key] = testValue !== undefined ?  formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
+            return datum;
         }, {});
+
+        normalizedDatum.id = id;
+
+        return normalizedDatum;
     }
 
     updateTestData(testData) {
