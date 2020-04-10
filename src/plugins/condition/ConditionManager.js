@@ -248,7 +248,21 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
+    isTelemetryUsed(id) {
+        for(const condition of this.conditionClassCollection) {
+            if (condition.isTelemetryUsed(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     telemetryReceived(id, datum) {
+        if (!this.isTelemetryUsed(id)) {
+            return;
+        }
+
         const normalizedDatum = this.createNormalizedDatum(datum, id);
         const timeSystemKey = this.openmct.time.timeSystem().key;
         let timestamp = {};
@@ -257,7 +271,6 @@ export default class ConditionManager extends EventEmitter {
         this.conditionClassCollection.forEach(condition => {
             condition.getResult(normalizedDatum);
         });
-
         const currentCondition = this.getCurrentCondition();
 
         this.emit('conditionSetResultUpdated',

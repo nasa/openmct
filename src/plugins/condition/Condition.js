@@ -69,9 +69,6 @@ export default class ConditionClass extends EventEmitter {
             console.log('no data received');
             return;
         }
-        if (!this.isTelemetryUsed(datum.id)) {
-            return;
-        }
         this.criteria.forEach(criterion => {
             if (this.isAnyOrAllTelemetry(criterion)) {
                 criterion.getResult(datum, this.conditionManager.telemetryObjects);
