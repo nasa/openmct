@@ -79,7 +79,7 @@
             <div v-for="(conditionStyle, index) in conditionalStyles"
                  :key="index"
                  class="c-inspect-styles__condition"
-                 :class="{'highlighted': conditionStyle.conditionId === selectedConditionId}"
+                 :class="{'is-current': conditionStyle.conditionId === selectedConditionId}"
                  @click="applySelectedConditionStyle(conditionStyle.conditionId)"
             >
                 <condition-error :show-label="true"

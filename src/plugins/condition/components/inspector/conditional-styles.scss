@@ -60,13 +60,30 @@
 
     &__condition {
         @include discreteItem();
+        border: 1px solid transparent;
+        pointer-events: none; // Prevent selecting when the object isn't being edited
 
-        &.highlighted {
-            border: 1px solid #ffff;
+        &.is-current {
+            $c: $colorBodyFg;
+            border-color: rgba($c, 0.5);
+            background: rgba($c, 0.2);
         }
 
         .is-editing & {
             cursor: pointer;
+            pointer-events: initial;
+            transition: $transOut;
+
+            &:hover {
+                background: rgba($colorBodyFg, 0.1);
+                transition: $transIn;
+            }
+
+            &.is-current {
+                $c: $editUIColorBg;
+                border-color: $c;
+                background: rgba($c, 0.1);
+            }
         }
     }
 
