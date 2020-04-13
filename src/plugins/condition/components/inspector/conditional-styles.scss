@@ -60,6 +60,14 @@
 
     &__condition {
         @include discreteItem();
+
+        &.highlighted {
+            border: 1px solid #ffff;
+        }
+
+        .is-editing & {
+            cursor: pointer;
+        }
     }
 
     .c-style {

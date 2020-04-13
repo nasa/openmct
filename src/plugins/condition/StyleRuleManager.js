@@ -23,10 +23,13 @@
 import EventEmitter from 'EventEmitter';
 
 export default class StyleRuleManager extends EventEmitter {
-    constructor(styleConfiguration, openmct, callback) {
+    constructor(styleConfiguration, openmct, callback, suppressSubscriptionOnEdit) {
         super();
         this.openmct = openmct;
         this.callback = callback;
+        if (suppressSubscriptionOnEdit) {
+            this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
+        }
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
@@ -37,9 +40,25 @@ export default class StyleRuleManager extends EventEmitter {
         }
     }
 
+    toggleSubscription(isEditing) {
+        this.isEditing = isEditing;
+        if (this.isEditing) {
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+            }
+            if (this.conditionSetIdentifier) {
+                this.applySelectedConditionStyle();
+            }
+        } else if (this.conditionSetIdentifier) {
+            this.subscribeToConditionSet();
+        }
+    }
+
     initialize(styleConfiguration) {
         this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
         this.staticStyle = styleConfiguration.staticStyle;
+        this.selectedConditionId = styleConfiguration.selectedConditionId;
+        this.defaultConditionId = styleConfiguration.defaultConditionId;
         this.updateConditionStylesMap(styleConfiguration.styles || []);
     }
 
@@ -54,7 +73,7 @@ export default class StyleRuleManager extends EventEmitter {
                         this.handleConditionSetResultUpdated(output[0]);
                     }
                 });
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, output => this.handleConditionSetResultUpdated(output));
+            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
         });
     }
 
@@ -66,9 +85,13 @@ export default class StyleRuleManager extends EventEmitter {
             let isNewConditionSet = !this.conditionSetIdentifier ||
                                     !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
             this.initialize(styleConfiguration);
-            //Only resubscribe if the conditionSet has changed.
-            if (isNewConditionSet) {
-                this.subscribeToConditionSet();
+            if (this.isEditing) {
+                this.applySelectedConditionStyle();
+            } else {
+                //Only resubscribe if the conditionSet has changed.
+                if (isNewConditionSet) {
+                    this.subscribeToConditionSet();
+                }
             }
         }
     }
@@ -103,6 +126,21 @@ export default class StyleRuleManager extends EventEmitter {
         }
     }
 
+    applySelectedConditionStyle() {
+        const conditionId = this.selectedConditionId || this.defaultConditionId;
+        if (conditionId) {
+            let foundStyle = this.conditionalStyleMap[this.selectedConditionId];
+            if (foundStyle) {
+                if (foundStyle !== this.currentStyle) {
+                    this.currentStyle = foundStyle;
+                }
+                this.updateDomainObjectStyle();
+            }
+        } else {
+            this.applyStaticStyle();
+        }
+    }
+
     applyStaticStyle() {
         if (this.staticStyle) {
             this.currentStyle = this.staticStyle.style;
@@ -123,6 +161,8 @@ export default class StyleRuleManager extends EventEmitter {
         }
         delete this.stopProvidingTelemetry;
         this.conditionSetIdentifier = undefined;
+        this.isEditing = undefined;
+        this.callback = undefined;
     }
 
 }
