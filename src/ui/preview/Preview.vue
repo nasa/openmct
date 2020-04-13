@@ -21,28 +21,12 @@
  *****************************************************************************/
 <template>
 <div class="l-preview-window">
-    <div class="l-browse-bar">
-        <div class="l-browse-bar__start">
-            <div
-                class="l-browse-bar__object-name--w"
-                :class="type.cssClass"
-            >
-                <span class="l-browse-bar__object-name">
-                    {{ domainObject.name }}
-                </span>
-                <context-menu-drop-down :object-path="objectPath" />
-            </div>
-        </div>
-        <div class="l-browse-bar__end">
-            <div class="l-browse-bar__actions">
-                <view-switcher
-                    :views="views"
-                    :current-view="currentView"
-                    @setView="setView"
-                />
-            </div>
-        </div>
-    </div>
+    <PreviewHeader
+        :current-view="currentView"
+        :domain-object="domainObject"
+        :views="views"
+        @setView="setView"
+    />
     <div class="l-preview-window__object-view">
         <div ref="objectView"></div>
     </div>
@@ -50,26 +34,29 @@
 </template>
 
 <script>
-import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
-import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+import PreviewHeader from './preview-header.vue';
 
 export default {
     components: {
-        ContextMenuDropDown,
-        ViewSwitcher
+        PreviewHeader
     },
     inject: [
         'openmct',
         'objectPath'
     ],
+    props: {
+        notebookEnabled: {
+            type: Boolean,
+            default: () => {
+                return false;
+            }
+        }
+    },
     data() {
         let domainObject = this.objectPath[0];
-        let type = this.openmct.types.get(domainObject.type);
 
         return {
             domainObject: domainObject,
-            type: type,
-            notebookEnabled: false,
             viewKey: undefined
         };
     },
@@ -97,6 +84,7 @@ export default {
                 this.view.destroy();
                 this.$refs.objectView.innerHTML = '';
             }
+
             delete this.view;
             delete this.viewContainer;
         },

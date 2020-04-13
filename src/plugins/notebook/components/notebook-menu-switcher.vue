@@ -40,6 +40,12 @@ export default {
             default() {
                 return {};
             }
+        },
+        objectPath: {
+            type: Array,
+            default() {
+                return null;
+            }
         }
     },
     data() {
@@ -97,17 +103,23 @@ export default {
             this.showMenu = false;
         },
         snapshot(notebook) {
-            let element = document.getElementsByClassName("l-shell__main-container")[0];
-            const bounds = this.openmct.time.bounds();
-            const objectPath = this.openmct.router.path;
-            const snapshotMeta = {
-                bounds,
-                link: window.location.href,
-                objectPath,
-                openmct: this.openmct
-            };
+            this.hideMenu();
 
-            this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
+            this.$nextTick(() => {
+                const element = document.querySelector('.c-overlay__contents')
+                    || document.getElementsByClassName('l-shell__main-container')[0];
+
+                const bounds = this.openmct.time.bounds();
+                const objectPath = this.objectPath || this.openmct.router.path;
+                const snapshotMeta = {
+                    bounds,
+                    link: window.location.href,
+                    objectPath,
+                    openmct: this.openmct
+                };
+
+                this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
+            });
         }
     }
 }

@@ -36,6 +36,7 @@
         <!-- Action buttons -->
         <NotebookMenuSwitcher v-if="notebookEnabled"
                               :domain-object="domainObject"
+                              :object-path="openmct.router.path"
                               class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
