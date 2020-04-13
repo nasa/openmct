@@ -57,7 +57,6 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, id)
         );
-        // TODO check if this is needed
         this.updateConditionTelemetry();
     }
 
@@ -71,6 +70,7 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions[id]();
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
+        this.updateConditionTelemetry();
     }
 
     initialize() {
@@ -248,7 +248,21 @@ export default class ConditionManager extends EventEmitter {
         });
     }
 
+    isTelemetryUsed(id) {
+        for(const condition of this.conditionClassCollection) {
+            if (condition.isTelemetryUsed(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     telemetryReceived(id, datum) {
+        if (!this.isTelemetryUsed(id)) {
+            return;
+        }
+
         const normalizedDatum = this.createNormalizedDatum(datum, id);
         const timeSystemKey = this.openmct.time.timeSystem().key;
         let timestamp = {};

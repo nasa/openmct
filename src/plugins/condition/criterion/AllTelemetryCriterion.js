@@ -47,6 +47,21 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     updateTelemetry(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
+        this.removeTelemetryDataCache();
+    }
+
+    removeTelemetryDataCache() {
+        const telemetryCacheIds = Object.keys(this.telemetryDataCache);
+        Object.values(this.telemetryObjects).forEach(telemetryObject => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            const foundIndex = telemetryCacheIds.indexOf(id);
+            if (foundIndex > -1) {
+                telemetryCacheIds.splice(foundIndex, 1);
+            }
+        });
+        telemetryCacheIds.forEach(id => {
+            delete (this.telemetryDataCache[id]);
+        });
     }
 
     formatData(data, telemetryObjects) {
