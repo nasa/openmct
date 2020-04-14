@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div ref="axisHolder"
-     class="c-conductor-axis"
-     @mousedown="dragStart($event)"
->
-</div>
+<div
+    ref="axisHolder"
+    class="c-conductor-axis"
+    @mousedown="dragStart($event)"
+></div>
 </template>
 
 <script>
