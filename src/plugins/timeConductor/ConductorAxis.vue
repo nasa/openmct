@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div
-    ref="axisHolder"
-    class="c-conductor-axis"
-    @mousedown="dragStart($event)"
-></div>
+<div ref="axisHolder"
+     class="c-conductor-axis"
+     @mousedown="dragStart($event)"
+>
+</div>
 </template>
 
 <script>
@@ -32,6 +32,7 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
+import * as d3Brush from 'd3-brush';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -46,6 +47,15 @@ export default {
         bounds: {
             type: Object,
             required: true
+        },
+        isFixed: {
+            type: Boolean,
+            required: true
+        }
+    },
+    data() {
+        return {
+            altPressed: false
         }
     },
     watch: {
@@ -54,22 +64,40 @@ export default {
                 this.setScale();
             },
             deep: true
+        },
+        isFixed: function (value) {
+            value ? this.createBrush() : this.destroyBrush();
         }
+    },
+    created() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = true;
+                this.destroyBrush();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = false;
+                this.createBrush();
+            }
+        });
     },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
-        let height = axisHolder.offsetHeight;
+        this.height = axisHolder.offsetHeight;
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
             .attr("width", "100%")
-            .attr("height", height);
+            .attr("height", this.height);
 
         this.width = this.$refs.axisHolder.clientWidth;
         this.xAxis = d3Axis.axisTop();
         this.dragging = false;
 
         // draw x axis with labels. CSS is used to position them.
-        this.axisElement = vis.append("g");
+        this.axisElement = vis.append("g")
+            .attr("class", "axis");
 
         this.setViewFromTimeSystem(this.openmct.time.timeSystem());
         this.setScale();
@@ -77,6 +105,9 @@ export default {
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
+
+        this.initBrush();
+        this.createBrush();
     },
     destroyed() {
     },
@@ -120,9 +151,8 @@ export default {
         },
         getActiveFormatter() {
             let timeSystem = this.openmct.time.timeSystem();
-            let isFixed = this.openmct.time.clock() === undefined;
 
-            if (isFixed) {
+            if (this.isFixed) {
                 return this.getFormatter(timeSystem.timeFormat);
             } else {
                 return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -134,8 +164,7 @@ export default {
             }).formatter;
         },
         dragStart($event) {
-            let isFixed = this.openmct.time.clock() === undefined;
-            if (isFixed) {
+            if (this.isFixed) {
                 this.dragStartX = $event.clientX;
 
                 document.addEventListener('mousemove', this.drag);
@@ -147,18 +176,20 @@ export default {
         drag($event) {
             if (!this.dragging) {
                 this.dragging = true;
-                requestAnimationFrame(()=>{
-                    let deltaX = $event.clientX - this.dragStartX;
-                    let percX = deltaX / this.width;
-                    let bounds = this.openmct.time.bounds();
-                    let deltaTime = bounds.end - bounds.start;
-                    let newStart = bounds.start - percX * deltaTime;
-                    this.$emit('panAxis',{
-                        start: newStart,
-                        end: newStart + deltaTime
-                    });
-                    this.dragging = false;
-                })
+                if (this.altPressed) {
+                    requestAnimationFrame(()=>{
+                        let deltaX = $event.clientX - this.dragStartX;
+                        let percX = deltaX / this.width;
+                        let bounds = this.openmct.time.bounds();
+                        let deltaTime = bounds.end - bounds.start;
+                        let newStart = bounds.start - percX * deltaTime;
+                        this.$emit('panAxis',{
+                            start: newStart,
+                            end: newStart + deltaTime
+                        });
+                    })
+                }
+                this.dragging = false;
             } else {
                 console.log('Rejected drag due to RAF cap');
             }
@@ -174,6 +205,55 @@ export default {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
                 this.width = this.$refs.axisHolder.clientWidth;
                 this.setScale();
+                this.destroyBrush();
+                this.initBrush();
+                this.createBrush();
+            }
+        },
+        initBrush() {
+            // brush extent y coordinate starts at -1 to prevent underlying layer cursor to show
+            this.brush = d3Brush.brushX()
+                .extent([[0, -1], [this.width, this.height]])
+                .on("end", this.brushEnd);
+        },
+        createBrush() {
+            if (!this.isFixed) {
+                return;
+            }
+
+            this.svg = this.svg || d3Selection.select('svg');
+            if (!this.svg) {
+                return;
+            }
+
+            this.svg.append("g")
+                .attr("class", "brush")
+                .call(this.brush);
+        },
+        brushEnd() {
+            const selection = d3Selection.event.selection;
+            if (!d3Selection.event.sourceEvent || !selection) {
+                return;
+            }
+
+            // SMELL
+            const [x0, x1] = selection.map(d => this.xScale.invert(d).getTime());
+            this.openmct.time.bounds({
+                start: x0,
+                end: x1
+            });
+            this.$emit('zoomAxis', {
+                start: x0,
+                end: x1
+            });
+
+            // clear brush
+            d3Selection.select('g.brush').call(this.brush.move, null);
+        },
+        destroyBrush() {
+            const brush = d3Selection.select('g.brush')
+            if (brush) {
+                brush.remove();
             }
         }
     }
