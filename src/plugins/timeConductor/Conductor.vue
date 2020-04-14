@@ -42,7 +42,9 @@
                 class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
             >
                 <!-- Fixed start -->
-                <div class="c-conductor__start-fixed__label">Start</div>
+                <div class="c-conductor__start-fixed__label">
+                    Start
+                </div>
                 <input
                     ref="startDate"
                     v-model="formattedBounds.start"
