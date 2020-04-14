@@ -31,6 +31,7 @@ define([
         period: 10,
         offset: 0,
         dataRateInHz: 1,
+        randomness: 0,
         phase: 0
     };
 
@@ -53,6 +54,7 @@ define([
             'offset',
             'dataRateInHz',
             'phase',
+            'randomness'
         ];
 
         request = request || {};

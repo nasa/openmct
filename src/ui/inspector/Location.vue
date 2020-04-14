@@ -1,66 +1,41 @@
 <template>
-<div class="c-properties c-properties--location">
-    <div class="c-properties__header" title="The location of this linked object.">Original Location</div>
-    <ul class="c-properties__section" v-if="!multiSelect">
-        <li class="c-properties__row" v-if="originalPath.length">
-            <ul class="c-properties__value c-location">
-                <li v-for="pathObject in orderedOriginalPath"
+<div class="c-inspect-properties c-inspect-properties--location">
+    <div
+        class="c-inspect-properties__header"
+        title="The location of this linked object."
+    >
+        Original Location
+    </div>
+    <ul
+        v-if="!multiSelect"
+        class="c-inspect-properties__section"
+    >
+        <li
+            v-if="originalPath.length"
+            class="c-inspect-properties__row"
+        >
+            <ul class="c-inspect-properties__value c-location">
+                <li
+                    v-for="pathObject in orderedOriginalPath"
+                    :key="pathObject.key"
                     class="c-location__item"
-                    :key="pathObject.key">
+                >
                     <object-label
-                        :domainObject="pathObject.domainObject"
-                        :objectPath="pathObject.objectPath">
-                    </object-label>
+                        :domain-object="pathObject.domainObject"
+                        :object-path="pathObject.objectPath"
+                    />
                 </li>
             </ul>
         </li>
     </ul>
-    <div class="c-properties__row--span-all" v-if="multiSelect">No location to display for multiple items</div>
+    <div
+        v-if="multiSelect"
+        class="c-inspect-properties__row--span-all"
+    >
+        No location to display for multiple items
+    </div>
 </div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-location {
-        display: flex;
-        flex-wrap: wrap;
-
-        &__item {
-            $m: $interiorMarginSm;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin: 0 $m $m 0;
-
-            &:not(:last-child) {
-                &:after {
-                    color: $colorInspectorPropName;
-                    content: $glyph-icon-arrow-right;
-                    font-family: symbolsfont;
-                    font-size: 0.7em;
-                    margin-left: $m;
-                    opacity: 0.8;
-                }
-            }
-
-            .c-object-label {
-                padding: 0;
-                transition: $transOut;
-
-                &__type-icon {
-                    width: auto;
-                    font-size: 1em;
-                }
-
-                &:hover {
-                    transition: $transIn;
-                    filter: $filterHov;
-                }
-            }
-        }
-    }
-</style>
 
 <script>
 import ObjectLabel from '../components/ObjectLabel.vue';
@@ -76,6 +51,11 @@ export default {
             multiSelect: false,
             originalPath: [],
             keyString: ''
+        }
+    },
+    computed: {
+        orderedOriginalPath() {
+            return this.originalPath.slice().reverse();
         }
     },
     mounted() {
@@ -111,7 +91,7 @@ export default {
             if (!selection.length || !selection[0].length) {
                 this.clearData();
                 return;
-            }  
+            }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
@@ -119,7 +99,7 @@ export default {
             } else {
                 this.multiSelect = false;
             }
-            
+
             this.domainObject = selection[0][0].context.item;
             let parentObject = selection[0][1];
 
@@ -138,11 +118,6 @@ export default {
                 this.openmct.objects.getOriginalPath(this.keyString)
                     .then(this.setOriginalPath);
             }
-        }
-    },
-    computed: {
-        orderedOriginalPath() {
-            return this.originalPath.reverse();
         }
     }
 }

@@ -1,0 +1,42 @@
+.c-object-label {
+    // <a> tag and draggable element that holds type icon and name.
+    // Used mostly in trees and lists
+    display: flex;
+    align-items: center;
+    flex: 0 1 auto;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &__name {
+        @include ellipsize();
+        display: inline;
+    }
+
+    &__type-icon,
+    &:before {
+        // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
+        display: block;
+        flex: 0 0 auto;
+        font-size: 1.1em;
+        opacity: 0.6;
+        margin-right: $interiorMargin;
+    }
+}
+
+.c-tree .c-object-label {
+    border-radius: $controlCr;
+    padding: $interiorMarginSm 1px;
+
+    &__name {
+        display: inline;
+        width: 100%;
+    }
+
+    &__type-icon {
+        color: $colorItemTreeIcon;
+        font-size: 1.25em;
+        margin-right: $interiorMarginSm;
+        opacity: 1;
+        width: $treeTypeIconW;
+    }
+}

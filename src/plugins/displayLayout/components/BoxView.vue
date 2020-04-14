@@ -21,83 +21,90 @@
  *****************************************************************************/
 
 <template>
-    <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  @move="(gridDelta) => $emit('move', gridDelta)"
-                  @endMove="() => $emit('endMove')">
-        <div class="c-box-view"
-             :style="style">
-        </div>
-    </layout-frame>
- </template>
+<layout-frame
+    :item="item"
+    :grid-size="gridSize"
+    @move="(gridDelta) => $emit('move', gridDelta)"
+    @endMove="() => $emit('endMove')"
+>
+    <div
+        class="c-box-view"
+        :class="[styleClass]"
+        :style="style"
+    ></div>
+</layout-frame>
+</template>
 
-<style lang="scss">
-    @import '~styles/sass-base';
+<script>
+import LayoutFrame from './LayoutFrame.vue'
+import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 
-    .c-box-view {
-        display: flex;
-        align-items: stretch;
-
-        .c-frame & {
-            @include abs();
-        }
-    }
-</style>
-
- <script>
-    import LayoutFrame from './LayoutFrame.vue'
-
-    export default {
-        makeDefinition() {
-            return {
-                fill: '#717171',
-                stroke: 'transparent',
-                x: 1,
-                y: 1,
-                width: 10, 
-                height: 5
-            };
+export default {
+    makeDefinition() {
+        return {
+            fill: '#717171',
+            stroke: '',
+            x: 1,
+            y: 1,
+            width: 10,
+            height: 5
+        };
+    },
+    inject: ['openmct'],
+    components: {
+        LayoutFrame
+    },
+    mixins: [conditionalStylesMixin],
+    props: {
+        item: {
+            type: Object,
+            required: true
         },
-        inject: ['openmct'],
-        components: {
-            LayoutFrame
+        gridSize: {
+            type: Array,
+            required: true,
+            validator: (arr) => arr && arr.length === 2
+                && arr.every(el => typeof el === 'number')
         },
-        props: {
-            item: Object,
-            gridSize: Array,
-            index: Number,
-            initSelect: Boolean
+        index: {
+            type: Number,
+            required: true
         },
-        computed: {
-            style() {
+        initSelect: Boolean
+    },
+    computed: {
+        style() {
+            if (this.itemStyle) {
+                return this.itemStyle;
+            } else {
                 return {
                     backgroundColor: this.item.fill,
-                    border: '1px solid ' + this.item.stroke
+                    border: this.item.stroke ? '1px solid ' + this.item.stroke : ''
                 };
             }
-        },
-        watch: {
-            index(newIndex) {
-                if (!this.context) {
-                    return;
-                }
+        }
+    },
+    watch: {
+        index(newIndex) {
+            if (!this.context) {
+                return;
+            }
 
-                this.context.index = newIndex;
-            }
-        },
-        mounted() {
-            this.context = {
-                layoutItem: this.item,
-                index: this.index
-            };
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el, this.context, this.initSelect);
-        },
-        destroyed() {
-            if (this.removeSelectable) {
-                this.removeSelectable();
-            }
+            this.context.index = newIndex;
+        }
+    },
+    mounted() {
+        this.context = {
+            layoutItem: this.item,
+            index: this.index
+        };
+        this.removeSelectable = this.openmct.selection.selectable(
+            this.$el, this.context, this.initSelect);
+    },
+    destroyed() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
         }
     }
- </script>
- 
+}
+</script>

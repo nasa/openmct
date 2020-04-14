@@ -21,393 +21,70 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl">
-        <div 
-            id="js-fl-drag-ghost"
-            class="c-fl__drag-ghost">
-        </div>
+<div class="c-fl">
+    <div
+        id="js-fl-drag-ghost"
+        class="c-fl__drag-ghost"
+    ></div>
 
-        <div class="c-fl__empty"
-             v-if="areAllContainersEmpty()">
-            <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
-        </div>
-
-        <div class="c-fl__container-holder"
-            :class="{
-                'c-fl--rows': rowsLayout === true
-            }">
-
-            <template v-for="(container, index) in containers">
-
-                <drop-hint
-                    class="c-fl-frame__drop-hint"
-                    v-if="index === 0 && containers.length > 1"
-                    :key="index"
-                    :index="-1"
-                    :allow-drop="allowContainerDrop"
-                    @object-drop-to="moveContainer">
-                </drop-hint>
-
-                <container-component
-                    class="c-fl__container"
-                    :key="container.id"
-                    :index="index"
-                    :container="container"
-                    :rowsLayout="rowsLayout"
-                    :isEditing="isEditing"
-                    @move-frame="moveFrame"
-                    @new-frame="setFrameLocation"
-                    @persist="persist">
-                </container-component>
-
-                <resize-handle
-                    v-if="index !== (containers.length - 1)"
-                    :key="index"
-                    :index="index"
-                    :orientation="rowsLayout ? 'vertical' : 'horizontal'"
-                    :isEditing="isEditing"
-                    @init-move="startContainerResizing"
-                    @move="containerResizing"
-                    @end-move="endContainerResizing">
-                </resize-handle>
-
-                <drop-hint
-                    class="c-fl-frame__drop-hint"
-                    v-if="containers.length > 1"
-                    :key="index"
-                    :index="index"
-                    :allowDrop="allowContainerDrop"
-                    @object-drop-to="moveContainer">
-                </drop-hint>
-            </template>
-        </div>
+    <div
+        v-if="areAllContainersEmpty()"
+        class="c-fl__empty"
+    >
+        <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
     </div>
+
+    <div
+        class="c-fl__container-holder"
+        :class="{
+            'c-fl--rows': rowsLayout === true
+        }"
+    >
+        <template v-for="(container, index) in containers">
+            <drop-hint
+                v-if="index === 0 && containers.length > 1"
+                :key="index"
+                class="c-fl-frame__drop-hint"
+                :index="-1"
+                :allow-drop="allowContainerDrop"
+                @object-drop-to="moveContainer"
+            />
+
+            <container-component
+                :key="container.id"
+                class="c-fl__container"
+                :index="index"
+                :container="container"
+                :rows-layout="rowsLayout"
+                :is-editing="isEditing"
+                @move-frame="moveFrame"
+                @new-frame="setFrameLocation"
+                @persist="persist"
+            />
+
+            <resize-handle
+                v-if="index !== (containers.length - 1)"
+                :key="index"
+                :index="index"
+                :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+                :is-editing="isEditing"
+                @init-move="startContainerResizing"
+                @move="containerResizing"
+                @end-move="endContainerResizing"
+            />
+
+            <drop-hint
+                v-if="containers.length > 1"
+                :key="index"
+                class="c-fl-frame__drop-hint"
+                :index="index"
+                :allow-drop="allowContainerDrop"
+                @object-drop-to="moveContainer"
+            />
+        </template>
+    </div>
+</div>
 </template>
-
-<style lang="scss">
-    @import '~styles/sass-base';
-    
-    @mixin containerGrippy($headerSize, $dir) {
-        position: absolute;
-        $h: 6px;
-        $minorOffset: ($headerSize - $h) / 2;
-        $majorOffset: 35%;
-        content: '';
-        display: block;
-        position: absolute;
-        @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
-        @if $dir == 'x' {
-            top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
-        } @else {
-            top: $majorOffset; right: $minorOffset; bottom: $majorOffset; left: $minorOffset;
-        }
-    }
-
-    .c-fl {
-        @include abs();
-        display: flex;
-
-        .temp-toolbar {
-            flex: 0 0 auto;
-        }
-
-        &__container-holder {
-            display: flex;
-            flex: 1 1 100%; // Must be 100% to work
-            overflow: auto;
-
-            // Columns by default
-            flex-direction: row;
-            > * + * { margin-left: 1px; }
-
-            &[class*='--rows'] {
-                flex-direction: column;
-                > * + * {
-                    margin-left: 0;
-                    margin-top: 1px;
-                }
-            }
-        }
-
-        &__empty {
-            @include abs();
-            background: rgba($colorBodyFg, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-
-            > * {
-                font-style: italic;
-                opacity: 0.5;
-            }
-        }
-
-        &__drag-ghost{
-            background: $colorItemTreeHoverBg;
-            color: $colorItemTreeHoverFg;
-            border-radius: $basicCr;
-            display: flex;
-            align-items: center;
-            padding: $interiorMarginLg $interiorMarginLg * 2;
-            position: absolute;
-            top: -10000px;
-            z-index: 2;
-
-            &:before {
-                color: $colorKey;
-                margin-right: $interiorMarginSm;
-            }
-        }
-    }
-
-    .c-fl-container {
-        /***************************************************** CONTAINERS */
-        $headerSize: 16px;
-
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-
-        // flex-basis is set with inline style in code, controls size
-        flex-grow: 1;
-        flex-shrink: 1;
-
-        &__header {
-            // Only displayed when editing, controlled via JS
-            background: $editFrameMovebarColorBg;
-            color: $editFrameMovebarColorFg;
-            cursor: move;
-            display: flex;
-            align-items: center;
-            flex: 0 0 $headerSize;
-
-            &:before {
-                // Drag grippy
-                @include containerGrippy($headerSize, 'x');
-                opacity: 0.5;
-            }
-        }
-
-        &__size-indicator {
-            position: absolute;
-            display: inline-block;
-            right: $interiorMargin;
-        }
-
-        &__frames-holder {
-            display: flex;
-            flex: 1 1 100%; // Must be 100% to work
-            flex-direction: column; // Default
-            align-content: stretch;
-            align-items: stretch;
-            overflow: hidden; // This sucks, but doing in the short-term
-        }
-
-        .is-editing & {
-            &:hover {
-                .c-fl-container__header {
-                    background: $editFrameHovMovebarColorBg;
-                    color: $editFrameHovMovebarColorFg;
-
-                    &:before {
-                        opacity: .75;
-                    }
-                }
-            }
-
-            &[s-selected] {
-                border: $editFrameSelectedBorder;
-
-                .c-fl-container__header {
-                    background:$editFrameSelectedMovebarColorBg;
-                    color: $editFrameSelectedMovebarColorFg;
-                    &:before {
-                        // Grippy
-                        opacity: 1;
-                    }
-                }
-            }
-        }
-
-        /****** THEIR FRAMES */
-        // Frames get styled here because this is particular to their presence in this layout type
-        .c-fl-frame {
-            @include browserPrefix(margin-collapse, collapse);
-        }
-
-        /****** ROWS LAYOUT */
-        .c-fl--rows & {
-            // Layout is rows
-            flex-direction: row;
-
-            &__header {
-                flex-basis: $headerSize;
-                overflow: hidden;
-
-                &:before {
-                    // Grippy
-                    @include containerGrippy($headerSize, 'y');
-                }
-            }
-
-            &__size-indicator {
-                right: 0;
-                top: $interiorMargin;
-                transform-origin: top right;
-                transform: rotate(-90deg) translateY(-100%);
-            }
-
-            &__frames-holder {
-                flex-direction: row;
-            }
-        }
-    }
-
-    .c-fl-frame {
-        /***************************************************** CONTAINER FRAMES */
-        $sizeIndicatorM: 16px;
-        $dropHintSize: 15px;
-
-        display: flex;
-        flex: 1 1;
-        flex-direction: column;
-        overflow: hidden; // Needed to allow frames to collapse when sized down
-
-        &__drag-wrapper {
-            flex: 1 1 auto;
-            overflow: auto;
-
-            .is-editing & {
-                > * {
-                    pointer-events: none;
-                }
-            }
-        }
-
-        &__header {
-            flex: 0 0 auto;
-            margin-bottom: $interiorMargin;
-        }
-
-        &__size-indicator {
-            $size: 35px;
-
-            @include ellipsize();
-            background: $colorBtnBg;
-            border-top-left-radius: $controlCr;
-            color: $colorBtnFg;
-            display: inline-block;
-            padding: $interiorMarginSm 0;
-            position: absolute;
-            pointer-events: none;
-            text-align: center;
-            width: $size;
-
-            // Changed when layout is different, see below
-            border-top-right-radius: $controlCr;
-            bottom: 1px;
-            right: $sizeIndicatorM;
-        }
-
-        &__drop-hint {
-            flex: 0 0 $dropHintSize;
-            .c-drop-hint {
-                border-radius: $smallCr;
-            }
-        }
-
-        &__resize-handle {
-            $size: 2px;
-            $margin: 3px;
-            $marginHov: 0;
-            $grippyThickness: $size + 6;
-            $grippyLen: $grippyThickness * 2;
-
-            display: flex;
-            flex-direction: column;
-            flex: 0 0 ($margin * 2) + $size;
-            transition: $transOut;
-
-            &:before {
-                // The visible resize line
-                background: $editUIColor;
-                content: '';
-                display: block;
-                flex: 1 1 auto;
-                min-height: $size; min-width: $size;
-            }
-
-            &.vertical {
-                padding: $margin $size;
-                &:hover{
-                    cursor: row-resize;
-                }
-            }
-
-            &.horizontal {
-                padding: $size $margin;
-                &:hover{
-                    cursor: col-resize;
-                }
-            }
-
-            &:hover {
-                transition: $transOut;
-                &:before {
-                    // The visible resize line
-                    background: $editUIColorHov;
-                }
-            }
-        }
-
-        // Hide the resize-handles in first and last c-fl-frame elements
-        &:first-child,
-        &:last-child {
-            .c-fl-frame__resize-handle {
-                display: none;
-            }
-        }
-
-        .c-fl--rows & {
-            flex-direction: row;
-
-            &__size-indicator {
-                border-bottom-left-radius: $controlCr;
-                border-top-right-radius: 0;
-                bottom: $sizeIndicatorM;
-                right: 1px;
-            }
-        }
-
-        &--first-in-container {
-            border: none;
-            flex: 0 0 0;
-            .c-fl-frame__drag-wrapper {
-                display: none;
-            }
-
-            &.is-dragging {
-                flex-basis: $dropHintSize;
-            }
-        }
-
-        .is-empty & {
-            &.c-fl-frame--first-in-container {
-                flex: 1 1 auto;
-            }
-
-            &__drop-hint {
-                flex: 1 0 100%;
-                margin: 0;
-            }
-        }
-
-        .c-object-view {
-            display: contents;
-        }
-    }
-</style>
 
 <script>
 import ContainerComponent  from './container.vue';
@@ -465,14 +142,14 @@ export default {
         ResizeHandle,
         DropHint
     },
+    props: {
+        isEditing: Boolean
+    },
     data() {
         return {
             domainObject: this.layoutObject,
             newFrameLocation: []
         }
-    },
-    props: {
-        isEditing: Boolean
     },
     computed: {
         layoutDirectionStr() {
@@ -489,9 +166,24 @@ export default {
             return this.domainObject.configuration.rowsLayout;
         }
     },
+    mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('remove', this.removeChildObject);
+        this.composition.on('add', this.addFrame);
+
+        this.RemoveAction = new RemoveAction(this.openmct);
+
+        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+    },
+    beforeDestroy() {
+        this.composition.off('remove', this.removeChildObject);
+        this.composition.off('add', this.addFrame);
+
+        this.unobserve();
+    },
     methods: {
         areAllContainersEmpty() {
-            return !!!this.containers.filter(container => container.frames.length).length;
+            return !this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
             let container = new Container();
@@ -515,7 +207,7 @@ export default {
             /*
                 add a container when there are no containers in the FL,
                 to prevent user from not being able to add a frame via
-                drag and drop. 
+                drag and drop.
             */
             if (this.containers.length === 0) {
                 this.containers.push(new Container(100));
@@ -540,18 +232,16 @@ export default {
             this.newFrameLocation = [containerIndex, insertFrameIndex];
         },
         addFrame(domainObject) {
-            if (this.newFrameLocation.length) {
-                let containerIndex = this.newFrameLocation[0],
-                    frameIndex = this.newFrameLocation[1],
-                    frame = new Frame(domainObject.identifier),
-                    container = this.containers[containerIndex];
+            let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
+            let container = this.containers[containerIndex];
+            let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
+            let frame = new Frame(domainObject.identifier);
 
-                container.frames.splice(frameIndex + 1, 0, frame);
-                sizeItems(container.frames, frame);
+            container.frames.splice(frameIndex + 1, 0, frame);
+            sizeItems(container.frames, frame);
 
-                this.newFrameLocation = [];
-                this.persist(containerIndex);
-            }
+            this.newFrameLocation = [];
+            this.persist(containerIndex);
         },
         deleteFrame(frameId) {
             let container = this.containers
@@ -589,7 +279,7 @@ export default {
                 return containerPos !== index && (containerPos - 1) !== index
             }
         },
-        persist(index){
+        persist(index) {
             if (index) {
                 this.openmct.objects.mutate(this.domainObject, `configuration.containers[${index}]`, this.containers[index]);
             } else {
@@ -650,28 +340,13 @@ export default {
             this.containers.forEach(container => {
                 container.frames = container.frames.filter(frame => {
                     let frameIdentifier = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
-                    
+
                     return removeIdentifier !== frameIdentifier;
                 });
             });
 
             this.persist();
         }
-    },
-    mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('remove', this.removeChildObject);
-        this.composition.on('add', this.addFrame);
-
-        this.RemoveAction = new RemoveAction(this.openmct);
-
-        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
-    },
-    beforeDestroy() {
-        this.composition.off('remove', this.removeChildObject);
-        this.composition.off('add', this.addFrame);
-
-        this.unobserve();
     }
 }
 </script>

@@ -33,7 +33,7 @@ define([
     GeneratorMetadataProvider
 ) {
 
-    return function(openmct){
+    return function (openmct) {
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",
@@ -122,6 +122,17 @@ define([
                         "telemetry",
                         "phase"
                     ]
+                },
+                {
+                    name: "Randomness",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "randomness",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "randomness"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -130,7 +141,8 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    phase: 0
+                    phase: 0,
+                    randomness: 0
                 };
             }
         });

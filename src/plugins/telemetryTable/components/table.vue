@@ -21,315 +21,238 @@
  *****************************************************************************/
 <template>
 <div class="c-table-wrapper">
-    <div class="c-table-control-bar c-control-bar">
-        <button class="c-button icon-download labeled"
-                v-if="allowExport"
-                v-on:click="exportAllDataAsCSV()"
-                title="Export This View's Data">
+    <!-- main contolbar  start-->
+    <div v-if="!marking.useAlternateControlBar"
+         class="c-table-control-bar c-control-bar"
+    >
+        <button
+            v-if="allowExport"
+            class="c-button icon-download labeled"
+            title="Export this view's data"
+            @click="exportAllDataAsCSV()"
+        >
             <span class="c-button__label">Export Table Data</span>
         </button>
-        <button class="c-button icon-download labeled"
-                v-if="allowExport"
-                v-show="markedRows.length"
-                v-on:click="exportMarkedDataAsCSV()"
-                title="Export Marked Rows As CSV">
+        <button
+            v-if="allowExport"
+            v-show="markedRows.length"
+            class="c-button icon-download labeled"
+            title="Export marked rows as CSV"
+            @click="exportMarkedDataAsCSV()"
+        >
             <span class="c-button__label">Export Marked Rows</span>
         </button>
-        <button class="c-button icon-x labeled"
-                v-show="markedRows.length"
-                v-on:click="unmarkAllRows()"
-                title="Unmark All Rows">
+        <button
+            v-show="markedRows.length"
+            class="c-button icon-x labeled"
+            title="Unmark all rows"
+            @click="unmarkAllRows()"
+        >
             <span class="c-button__label">Unmark All Rows</span>
         </button>
-        <div v-if="enableMarking"
-            class="c-separator">
-        </div>
-        <button v-if="enableMarking"
-                class="c-button icon-pause pause-play labeled"
-                :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
-                v-on:click="togglePauseByButton()"
-                :title="paused ? 'Continue Data Flow' : 'Pause Data Flow'">
-                <span class="c-button__label">
-                    {{paused ? 'Play' : 'Pause'}}
-                </span>
+        <div
+            v-if="marking.enable"
+            class="c-separator"
+        ></div>
+        <button
+            v-if="marking.enable"
+            class="c-button icon-pause pause-play labeled"
+            :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
+            :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
+            @click="togglePauseByButton()"
+        >
+            <span class="c-button__label">
+                {{ paused ? 'Play' : 'Pause' }}
+            </span>
         </button>
+
+        <template v-if="!isEditing">
+            <div
+                class="c-separator"
+            >
+            </div>
+            <button
+                v-if="isAutosizeEnabled"
+                class="c-button icon-arrows-right-left labeled"
+                title="Increase column widths to fit currently available data."
+                @click="recalculateColumnWidths"
+            >
+                <span class="c-button__label">Expand Columns</span>
+            </button>
+            <button
+                v-else
+                class="c-button icon-expand labeled"
+                title="Automatically size columns to fit the table into the available space."
+                @click="autosizeColumns"
+            >
+                <span class="c-button__label">Autosize Columns</span>
+            </button>
+        </template>
+
         <slot name="buttons"></slot>
     </div>
+    <!-- main controlbar end -->
 
-    <div class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
-         :class="{
-         'loading': loading,
-         'paused' : paused
-        }">
+    <!-- alternate controlbar start -->
+    <div v-if="marking.useAlternateControlBar"
+         class="c-table-control-bar c-control-bar"
+    >
+        <div class="c-control-bar__label">
+            {{ markedRows.length > 1 ? `${markedRows.length} ${marking.rowNamePlural} selected`: `${markedRows.length} ${marking.rowName} selected` }}
+        </div>
 
-        <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}"><slot></slot></div>
+        <toggle-switch
+            id="show-filtered-rows-toggle"
+            label="Show selected items only"
+            :checked="isShowingMarkedRowsOnly"
+            @change="toggleMarkedRows"
+        />
 
-        <div v-if="isDropTargetActive" class="c-telemetry-table__drop-target" :style="dropTargetStyle"></div>
+        <button
+            :class="{'hide-nice': !markedRows.length}"
+            class="c-button icon-x labeled"
+            title="Deselect All"
+            @click="unmarkAllRows()"
+        >
+            <span class="c-button__label">Deselect All</span>
+        </button>
+
+        <slot name="buttons"></slot>
+    </div>
+    <!-- alternate controlbar end  -->
+
+    <div
+        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
+        :class="{
+            'loading': loading,
+            'paused' : paused
+        }"
+    >
+        <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">
+            <slot></slot>
+        </div>
+
+        <div
+            v-if="isDropTargetActive"
+            class="c-telemetry-table__drop-target"
+            :style="dropTargetStyle"
+        ></div>
         <!-- Headers table -->
-        <div class="c-telemetry-table__headers-w js-table__headers-w" ref="headersTable" :style="{ 'max-width': widthWithScroll}">
+        <div
+            ref="headersTable"
+            class="c-telemetry-table__headers-w js-table__headers-w"
+            :style="{ 'max-width': widthWithScroll}"
+        >
             <table class="c-table__headers c-telemetry-table__headers">
                 <thead>
                     <tr class="c-telemetry-table__headers__labels">
                         <table-column-header
                             v-for="(title, key, headerIndex) in headers"
                             :key="key"
-                            :headerKey="key"
-                            :headerIndex="headerIndex"
+                            :header-key="key"
+                            :header-index="headerIndex"
+                            :column-width="columnWidths[key]"
+                            :sort-options="sortOptions"
+                            :is-editing="isEditing"
                             @sort="allowSorting && sortBy(key)"
                             @resizeColumn="resizeColumn"
                             @dropTargetOffsetChanged="setDropTargetOffset"
                             @dropTargetActive="dropTargetActive"
                             @reorderColumn="reorderColumn"
                             @resizeColumnEnd="updateConfiguredColumnWidths"
-                            :columnWidth="columnWidths[key]"
-                            :sortOptions="sortOptions"
-                            :isEditing="isEditing"
-                        ><span class="c-telemetry-table__headers__label">{{title}}</span>
+                        >
+                            <span class="c-telemetry-table__headers__label">{{ title }}</span>
                         </table-column-header>
                     </tr>
-                    <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
+                    <tr
+                        v-if="allowFiltering"
+                        class="c-telemetry-table__headers__filter"
+                    >
                         <table-column-header
                             v-for="(title, key, headerIndex) in headers"
                             :key="key"
-                            :headerKey="key"
-                            :headerIndex="headerIndex"
+                            :header-key="key"
+                            :header-index="headerIndex"
+                            :column-width="columnWidths[key]"
+                            :is-editing="isEditing"
                             @resizeColumn="resizeColumn"
                             @dropTargetOffsetChanged="setDropTargetOffset"
                             @dropTargetActive="dropTargetActive"
                             @reorderColumn="reorderColumn"
                             @resizeColumnEnd="updateConfiguredColumnWidths"
-                            :columnWidth="columnWidths[key]"
-                            :isEditing="isEditing"
-                            >
-                            <search class="c-table__search"
+                        >
+                            <search
                                 v-model="filters[key]"
-                                v-on:input="filterChanged(key)"
-                                v-on:clear="clearFilter(key)" />
+                                class="c-table__search"
+                                @input="filterChanged(key)"
+                                @clear="clearFilter(key)"
+                            />
                         </table-column-header>
                     </tr>
                 </thead>
             </table>
         </div>
         <!-- Content table -->
-        <div class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w" @scroll="scroll" :style="{ 'max-width': widthWithScroll}">
-            <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
-            <table class="c-table__body c-telemetry-table__body js-telemetry-table__content"
-                   :style="{ height: totalHeight + 'px'}">
+        <div
+            class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w"
+            :style="{ 'max-width': widthWithScroll}"
+            @scroll="scroll"
+        >
+            <div
+                class="c-telemetry-table__scroll-forcer"
+                :style="{ width: totalWidth + 'px' }"
+            ></div>
+            <table
+                class="c-table__body c-telemetry-table__body js-telemetry-table__content"
+                :style="{ height: totalHeight + 'px'}"
+            >
                 <tbody>
-                    <telemetry-table-row v-for="(row, rowIndex) in visibleRows"
+                    <telemetry-table-row
+                        v-for="(row, rowIndex) in visibleRows"
+                        :key="rowIndex"
                         :headers="headers"
-                        :columnWidths="columnWidths"
-                        :rowIndex="rowIndex"
-                        :objectPath="objectPath"
-                        :rowOffset="rowOffset"
-                        :rowHeight="rowHeight"
+                        :column-widths="columnWidths"
+                        :row-index="rowIndex"
+                        :object-path="objectPath"
+                        :row-offset="rowOffset"
+                        :row-height="rowHeight"
                         :row="row"
                         :marked="row.marked"
                         @mark="markRow"
                         @unmark="unmarkRow"
-                        @markMultipleConcurrent="markMultipleConcurrentRows">
-                    </telemetry-table-row>
+                        @markMultipleConcurrent="markMultipleConcurrentRows"
+                    />
                 </tbody>
             </table>
         </div>
         <!-- Sizing table -->
-        <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
+        <table
+            class="c-telemetry-table__sizing js-telemetry-table__sizing"
+            :style="sizingTableWidth"
+        >
             <tr>
                 <template v-for="(title, key) in headers">
-                <th :key="key" :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}">{{title}}</th>
+                    <th
+                        :key="key"
+                        :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}"
+                    >
+                        {{ title }}
+                    </th>
                 </template>
             </tr>
-            <telemetry-table-row v-for="(sizingRowData, objectKeyString) in sizingRows"
+            <telemetry-table-row
+                v-for="(sizingRowData, objectKeyString) in sizingRows"
                 :key="objectKeyString"
                 :headers="headers"
-                :columnWidths="configuredColumnWidths"
-                :row="sizingRowData">
-            </telemetry-table-row>
+                :column-widths="configuredColumnWidths"
+                :row="sizingRowData"
+                :object-path="objectPath"
+            />
         </table>
-        <telemetry-filter-indicator></telemetry-filter-indicator>
+        <telemetry-filter-indicator />
     </div>
 </div><!-- closes c-table-wrapper -->
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-telemetry-table__drop-target {
-        position: absolute;
-        width: 2px;
-        background-color: $editUIColor;
-        box-shadow: rgba($editUIColor, 0.5) 0 0 10px;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    .c-telemetry-table {
-        // Table that displays telemetry in a scrolling body area
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: flex-start;
-        overflow: hidden;
-
-        th, td {
-            display: block;
-            flex: 1 0 auto;
-            width: 100px;
-            vertical-align: middle; // This is crucial to hiding 4px height injected by browser by default
-        }
-
-        td {
-            color: $colorTelemFresh;
-        }
-
-        /******************************* WRAPPERS */
-        &__headers-w {
-            // Wraps __headers table
-            flex: 0 0 auto;
-            overflow: hidden;
-            background: $colorTabHeaderBg;
-        }
-
-        /******************************* TABLES */
-        &__headers,
-        &__body {
-            tr {
-                display: flex;
-                align-items: stretch;
-            }
-        }
-
-        &__headers {
-            // A table
-            thead {
-                display: block;
-            }
-
-            &__labels {
-                // Top row, has labels
-                .c-telemetry-table__headers__content {
-                    // Holds __label, sort indicator and resize-hitarea
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                }
-            }
-        }
-
-        &__headers__label {
-            overflow: hidden;
-            flex: 0 1 auto;
-        }
-
-        &__resize-hitarea {
-            // In table-column-header.vue
-            @include abs();
-            display: none; // Set to display: block in .is-editing section below
-            left: auto; right: -1 * $tabularTdPadLR;
-            width: $tableResizeColHitareaD;
-            cursor: col-resize;
-            transform: translateX(50%); // Move so this element sits over border between columns
-        }
-
-        /******************************* ELEMENTS */
-        &__scroll-forcer {
-            // Force horz scroll when needed; width set via JS
-            font-size: 0;
-            height: 1px; // Height 0 won't force scroll properly
-            position: relative;
-        }
-
-        /******************************* WRAPPERS */
-        &__body-w {
-            // Wraps __body table provides scrolling
-            flex: 1 1 100%;
-            height: 0; // Fixes Chrome 73 overflow bug
-            overflow-x: auto;
-            overflow-y: scroll;
-        }
-
-        /******************************* TABLES */
-        &__body {
-            // A table
-            flex: 1 1 100%;
-            overflow-x: auto;
-
-            tr {
-                display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
-                align-items: stretch;
-                position: absolute;
-                height: 18px; // Needed when a row has empty values in its cells
-
-                &.is-selected {
-                    background-color: $colorSelectedBg !important;
-                    color: $colorSelectedFg !important;
-                    td {
-                        background: none !important;
-                        color: inherit !important;
-                    }
-                }
-            }
-
-            td {
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-
-        &__sizing {
-            // A table
-            display: table;
-            z-index: -1;
-            visibility: hidden;
-            pointer-events: none;
-            position: absolute;
-
-            //Add some padding to allow for decorations such as limits indicator
-            tr {
-                display: table-row;
-            }
-
-            th, td {
-                display: table-cell;
-                padding-right: 10px;
-                padding-left: 10px;
-                white-space: nowrap;
-            }
-        }
-    }
-
-    /******************************* EDITING */
-    .is-editing {
-        .c-telemetry-table__headers__labels {
-            th[draggable],
-            th[draggable] > * {
-                cursor: move;
-            }
-
-            th[draggable]:hover {
-                $b: $editFrameHovMovebarColorBg;
-                background: $b;
-                > * { background: $b; }
-            }
-        }
-
-        .c-telemetry-table__resize-hitarea {
-            display: block;
-        }
-    }
-
-    .paused {
-        border: 1px solid #ff9900;
-    }
-
-    /******************************* LEGACY */
-    .s-status-taking-snapshot,
-    .overlay.snapshot {
-        // Handle overflow-y issues with tables and html2canvas
-        // Replaces .l-sticky-headers .l-tabular-body { overflow: auto; }
-        .c-table__body-w { overflow: auto; }
-    }
-</style>
 
 <script>
 import TelemetryTableRow from './table-row.vue';
@@ -338,21 +261,20 @@ import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
-const RESIZE_HOT_ZONE = 10;
-const MOVE_TRIGGER_WAIT = 500;
-const VERTICAL_SCROLL_WIDTH = 30;
 
 export default {
     components: {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator
+        TelemetryFilterIndicator,
+        ToggleSwitch
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -372,9 +294,16 @@ export default {
             'type': Boolean,
             'default': true
         },
-        enableMarking: {
-            type: Boolean,
-            default: false
+        marking: {
+            type: Object,
+            default() {
+                return {
+                    enable: false,
+                    useAlternateControlBar: false,
+                    rowName: '',
+                    rowNamePlural: ""
+                }
+            }
         }
     },
     data() {
@@ -406,7 +335,8 @@ export default {
             scrollW: 0,
             markCounter: 0,
             paused: false,
-            markedRows: []
+            markedRows: [],
+            isShowingMarkedRowsOnly: false
         }
     },
     computed: {
@@ -439,6 +369,67 @@ export default {
             }
             return style;
         }
+    },
+    watch: {
+        markedRows: {
+            handler(newVal, oldVal) {
+                this.$emit('marked-rows-updated', newVal, oldVal);
+            }
+        }
+    },
+    created() {
+        this.filterChanged = _.debounce(this.filterChanged, 500);
+    },
+    mounted() {
+        this.csvExporter = new CSVExporter();
+        this.rowsAdded = _.throttle(this.rowsAdded, 200);
+        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
+        this.scroll = _.throttle(this.scroll, 100);
+
+        this.table.on('object-added', this.addObject);
+        this.table.on('object-removed', this.removeObject);
+        this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('refresh', this.clearRowsAndRerender);
+        this.table.on('historical-rows-processed', this.checkForMarkedRows);
+
+        this.table.filteredRows.on('add', this.rowsAdded);
+        this.table.filteredRows.on('remove', this.rowsRemoved);
+        this.table.filteredRows.on('sort', this.updateVisibleRows);
+        this.table.filteredRows.on('filter', this.updateVisibleRows);
+
+        //Default sort
+        this.sortOptions = this.table.filteredRows.sortBy();
+        this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
+        this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
+        this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
+        this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
+
+        this.table.configuration.on('change', this.updateConfiguration);
+
+        this.calculateTableSize();
+        this.pollForResize();
+        this.calculateScrollbarWidth();
+
+        this.table.initialize();
+    },
+    destroyed() {
+        this.table.off('object-added', this.addObject);
+        this.table.off('object-removed', this.removeObject);
+        this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('refresh', this.clearRowsAndRerender);
+
+        this.table.filteredRows.off('add', this.rowsAdded);
+        this.table.filteredRows.off('remove', this.rowsRemoved);
+        this.table.filteredRows.off('sort', this.updateVisibleRows);
+        this.table.filteredRows.off('filter', this.updateVisibleRows);
+
+        this.table.configuration.off('change', this.updateConfiguration);
+
+        clearInterval(this.resizePollHandle);
+
+        this.table.configuration.destroy();
+
+        this.table.destroy();
     },
     methods: {
         updateVisibleRows() {
@@ -493,17 +484,20 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {};
-            let totalWidth = 0;
-            let sizingRowEl = this.sizingTable.children[0];
-            let sizingCells = Array.from(sizingRowEl.children);
-            let headerKeys = Object.keys(this.headers);
+            let columnWidths = {},
+                totalWidth = 0,
+                headerKeys = Object.keys(this.headers),
+                sizingTableRow = this.sizingTable.children[0],
+                sizingCells = sizingTableRow.children;
 
-            headerKeys.forEach((headerKey, headerIndex)=>{
-                let cell = sizingCells[headerIndex];
-                let columnWidth = cell.offsetWidth;
-                columnWidths[headerKey] = columnWidth;
-                totalWidth += columnWidth;
+            headerKeys.forEach((headerKey, headerIndex, array)=>{
+                if (this.isAutosizeEnabled) {
+                    columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
+                } else {
+                    let cell = sizingCells[headerIndex];
+                    columnWidths[headerKey] = cell.offsetWidth;
+                }
+                totalWidth += columnWidths[headerKey];
             });
 
             this.columnWidths = columnWidths;
@@ -527,7 +521,7 @@ export default {
             }
             this.table.sortBy(this.sortOptions);
         },
-        scroll () {
+        scroll() {
             this.updateVisibleRows();
             this.synchronizeScrollX();
 
@@ -557,7 +551,7 @@ export default {
             this.table.filteredRows.setColumnFilter(columnKey, '');
             this.setHeight();
         },
-        rowsAdded (rows) {
+        rowsAdded(rows) {
             this.setHeight();
 
             let sizingRow;
@@ -578,7 +572,7 @@ export default {
 
             this.updateVisibleRows();
         },
-        rowsRemoved (rows) {
+        rowsRemoved(rows) {
             this.setHeight();
             this.updateVisibleRows();
         },
@@ -588,9 +582,9 @@ export default {
         setHeight() {
             let filteredRowsLength = this.table.filteredRows.getRows().length;
             this.totalHeight = this.rowHeight * filteredRowsLength - 1;
-            // Set element height directly to avoid having to wait for Vue to update DOM 
+            // Set element height directly to avoid having to wait for Vue to update DOM
             // which causes subsequent scroll to use an out of date height.
-            this.contentTable.style.height = this.totalHeight + 'px'; 
+            this.contentTable.style.height = this.totalHeight + 'px';
         },
         exportAsCSV(data) {
             const headerKeys = Object.keys(this.headers);
@@ -714,18 +708,19 @@ export default {
         },
         unpause(unpausedByButton) {
             if (unpausedByButton) {
-                this.paused = false;
+                this.undoMarkedRows();
                 this.table.unpause();
-                this.markedRows = [];
+                this.paused = false;
                 this.pausedByButton = false;
             } else {
                 if (!this.pausedByButton) {
-                    this.paused = false;
+                    this.undoMarkedRows();
                     this.table.unpause();
-                    this.markedRows = [];
+                    this.paused = false;
                 }
             }
-            
+
+            this.isShowingMarkedRowsOnly = false;
         },
         togglePauseByButton() {
             if (this.paused) {
@@ -738,24 +733,27 @@ export default {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
-        unmarkRow(rowIndex, ctrlKeyModifier) {
-            if (ctrlKeyModifier) {
+        unmarkRow(rowIndex) {
+            if (this.markedRows.length > 1) {
                 let row = this.visibleRows[rowIndex],
                     positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
-                this.markedRows.splice(positionInMarkedArray, 1); 
+                this.markedRows.splice(positionInMarkedArray, 1);
 
-                if (this.markedRows.length === 0) {
-                    this.unpause();
+                if (this.isShowingMarkedRowsOnly) {
+                    this.visibleRows.splice(rowIndex, 1);
                 }
-            } else if (this.markedRows.length) {
-                this.undoMarkedRows();
-                this.markRow(rowIndex);
+            } else if (this.markedRows.length === 1) {
+                this.unmarkAllRows();
+            }
+
+            if (this.markedRows.length === 0) {
+                this.unpause();
             }
         },
         markRow(rowIndex, keyModifier) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -774,12 +772,13 @@ export default {
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
-            this.markedRows.forEach(row => row.marked = false);
-            this.markedRows = [];
+            this.undoMarkedRows();
+            this.isShowingMarkedRowsOnly = false;
             this.unpause();
+            this.restorePreviousRows();
         },
         markMultipleConcurrentRows(rowIndex) {
-            if (!this.enableMarking) {
+            if (!this.marking.enable) {
                 return;
             }
 
@@ -804,72 +803,73 @@ export default {
                 if (lastRowIndex < firstRowIndex) {
                     [firstRowIndex, lastRowIndex] = [lastRowIndex, firstRowIndex];
                 }
-                
+
                 let baseRow = this.markedRows[0];
 
                 for (var i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
 
-                    if (row !== baseRow){
+                    if (row !== baseRow) {
                         this.markedRows.push(row);
                     }
                 }
             }
+        },
+        checkForMarkedRows() {
+            this.isShowingMarkedRowsOnly = false;
+            this.markedRows = this.table.filteredRows.getRows().filter(row => row.marked);
+        },
+        showRows(rows) {
+            this.table.filteredRows.rows = rows;
+            this.table.filteredRows.emit('filter');
+        },
+        toggleMarkedRows(flag) {
+            if (flag) {
+                this.isShowingMarkedRowsOnly = true;
+                this.userScroll = this.scrollable.scrollTop;
+                this.allRows = this.table.filteredRows.getRows();
+
+                this.showRows(this.markedRows);
+                this.setHeight();
+            } else {
+                this.isShowingMarkedRowsOnly = false;
+                this.restorePreviousRows();
+            }
+        },
+        restorePreviousRows() {
+            if (this.allRows && this.allRows.length) {
+                this.showRows(this.allRows);
+                this.allRows = [];
+                this.setHeight();
+                this.scrollable.scrollTop = this.userScroll;
+            }
+        },
+        updateWidthsAndClearSizingTable() {
+            this.calculateColumnWidths();
+            this.configuredColumnWidths = this.columnWidths;
+
+            this.visibleRows.forEach((row, i) => {
+                this.$set(this.sizingRows, i, undefined);
+                delete this.sizingRows[i];
+            });
+        },
+        recalculateColumnWidths() {
+            this.visibleRows.forEach((row,i) => {
+                this.$set(this.sizingRows, i, row);
+            });
+
+            this.configuredColumnWidths = {};
+            this.isAutosizeEnabled = false;
+
+            this.$nextTick()
+                .then(this.updateWidthsAndClearSizingTable);
+        },
+        autosizeColumns() {
+            this.isAutosizeEnabled = true;
+
+            this.$nextTick().then(this.calculateColumnWidths);
         }
-    },
-    created() {
-        this.filterChanged = _.debounce(this.filterChanged, 500);
-    },
-    mounted() {
-        this.csvExporter = new CSVExporter();
-        this.rowsAdded = _.throttle(this.rowsAdded, 200);
-        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
-        this.scroll = _.throttle(this.scroll, 100);
-
-        this.table.on('object-added', this.addObject);
-        this.table.on('object-removed', this.removeObject);
-        this.table.on('outstanding-requests', this.outstandingRequests);
-        this.table.on('refresh', this.clearRowsAndRerender);
-
-        this.table.filteredRows.on('add', this.rowsAdded);
-        this.table.filteredRows.on('remove', this.rowsRemoved);
-        this.table.filteredRows.on('sort', this.updateVisibleRows);
-        this.table.filteredRows.on('filter', this.updateVisibleRows);
-
-        //Default sort
-        this.sortOptions = this.table.filteredRows.sortBy();
-        this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
-        this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
-        this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
-        this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
-
-        this.table.configuration.on('change', this.updateConfiguration);
-
-        this.calculateTableSize();
-        this.pollForResize();
-        this.calculateScrollbarWidth();
-
-        this.table.initialize();
-    },
-    destroyed() {
-        this.table.off('object-added', this.addObject);
-        this.table.off('object-removed', this.removeObject);
-        this.table.off('outstanding-requests', this.outstandingRequests);
-        this.table.off('refresh', this.clearRowsAndRerender);
-
-        this.table.filteredRows.off('add', this.rowsAdded);
-        this.table.filteredRows.off('remove', this.rowsRemoved);
-        this.table.filteredRows.off('sort', this.updateVisibleRows);
-        this.table.filteredRows.off('filter', this.updateVisibleRows);
-
-        this.table.configuration.off('change', this.updateConfiguration);
-
-        clearInterval(this.resizePollHandle);
-
-        this.table.configuration.destroy();
-
-        this.table.destroy();
     }
 }
 </script>

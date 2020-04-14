@@ -38,11 +38,12 @@
         const THIRTY_MINUTES = 30 * 60 * 1000;
 
         [
-            'example/eventGenerator',
-            'example/styleguide'
+            'example/eventGenerator'
         ].forEach(
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
+
+        openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Generator());

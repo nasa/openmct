@@ -21,25 +21,26 @@
  *****************************************************************************/
 
 define([
-    "./src/PersistenceAggregator",
-    'legacyRegistry'
+    "./src/PersistenceAggregator"
 ], function (
-    PersistenceAggregator,
-    legacyRegistry
+    PersistenceAggregator
 ) {
 
-    legacyRegistry.register("platform/persistence/aggregator", {
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "aggregator",
-                    "depends": [
-                        "$q"
-                    ],
-                    "implementation": PersistenceAggregator
-                }
-            ]
+    return {
+        name:"platform/persistence/aggregator",
+        definition: {
+            "extensions": {
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "aggregator",
+                        "depends": [
+                            "$q"
+                        ],
+                        "implementation": PersistenceAggregator
+                    }
+                ]
+            }
         }
-    });
+    };
 });

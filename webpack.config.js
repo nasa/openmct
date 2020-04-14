@@ -1,5 +1,4 @@
 const path = require('path');
-const bourbon = require('node-bourbon');
 const packageDefinition = require('./package.json');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -20,6 +19,9 @@ const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        espressoTheme: './src/plugins/themes/espresso-theme.scss',
+        snowTheme: './src/plugins/themes/snow-theme.scss',
+        maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
         filename: '[name].js',
@@ -29,6 +31,7 @@ const webpackConfig = {
     },
     resolve: {
         alias: {
+            "@": path.join(__dirname, "src"),
             "legacyRegistry": path.join(__dirname, "src/legacyRegistry"),
             "saveAs": "file-saver",
             "csv": "comma-separated-values",
@@ -37,7 +40,9 @@ const webpackConfig = {
             "vue": path.join(__dirname, "node_modules/vue/dist/vue.js"),
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
-            "styles": path.join(__dirname, "src/styles")
+            "styles": path.join(__dirname, "src/styles"),
+            "MCT": path.join(__dirname, "src/MCT"),
+            "testTools": path.join(__dirname, "src/testTools.js")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
@@ -46,12 +51,13 @@ const webpackConfig = {
             __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
             __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
             __OPENMCT_REVISION__: `'${gitRevision}'`,
-            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+            __OPENMCT_ROOT_RELATIVE__: `'${devMode ? 'dist/' : ''}'`
         }),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
-            path: 'assets/styles/',
-            filename: '[name].css'
+            filename: '[name].css',
+            chunkFilename: '[name].css'
         }),
         new CopyWebpackPlugin([
             {
@@ -71,14 +77,9 @@ const webpackConfig = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    devMode ? 'style-loader': MiniCssExtractPlugin.loader,
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
-                    {
-                        loader: 'fast-sass-loader',
-                        options: {
-                            includePaths: bourbon.includePaths
-                        }
-                    }
+                    'fast-sass-loader'
                 ]
             },
             {

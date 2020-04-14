@@ -33,7 +33,7 @@ define(
         var CONNECTED = {
                 text: "Connected",
                 glyphClass: "ok",
-                statusClass: "s-status-ok",
+                statusClass: "s-status-on",
                 description: "Connected to the domain object database."
             },
             DISCONNECTED = {

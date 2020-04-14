@@ -81,6 +81,9 @@
 .icon-filter-outline {  @include glyphBefore($glyph-icon-filter-outline); }
 .icon-suitcase {  @include glyphBefore($glyph-icon-suitcase); }
 .icon-cursor-lock {  @include glyphBefore($glyph-icon-cursor-lock); }
+.icon-flag {  @include glyphBefore($glyph-icon-flag); }
+.icon-eye-disabled {  @include glyphBefore($glyph-icon-eye-disabled); }
+.icon-notebook-page {  @include glyphBefore($glyph-icon-notebook-page); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -170,6 +173,8 @@
 .icon-spectra {  @include glyphBefore($glyph-icon-spectra); }
 .icon-spectra-telemetry {  @include glyphBefore($glyph-icon-spectra-telemetry); }
 .icon-command {  @include glyphBefore($glyph-icon-command); }
+.icon-conditional {  @include glyphBefore($glyph-icon-conditional); }
+.icon-condition-widget {  @include glyphBefore($glyph-icon-condition-widget); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -227,3 +232,5 @@
 .bg-icon-spectra { @include glyphBg($bg-icon-spectra); }
 .bg-icon-spectra-telemetry { @include glyphBg($bg-icon-spectra-telemetry); }
 .bg-icon-command { @include glyphBg($bg-icon-command); }
+.bg-icon-conditional { @include glyphBg($bg-icon-conditional); }
+.bg-icon-condition-widget { @include glyphBg($bg-icon-condition-widget); }

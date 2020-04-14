@@ -23,33 +23,34 @@
 
 define([
     "./src/WatchIndicator",
-    "./src/DigestIndicator",
-    'legacyRegistry'
+    "./src/DigestIndicator"
 ], function (
     WatchIndicator,
-    DigestIndicator,
-    legacyRegistry
+    DigestIndicator
 ) {
     "use strict";
 
-    legacyRegistry.register("example/profiling", {
-        "extensions": {
-            "indicators": [
-                {
-                    "implementation": WatchIndicator,
-                    "depends": [
-                        "$interval",
-                        "$rootScope"
-                    ]
-                },
-                {
-                    "implementation": DigestIndicator,
-                    "depends": [
-                        "$interval",
-                        "$rootScope"
-                    ]
-                }
-            ]
+    return {
+        name:"example/profiling",
+        definition: {
+            "extensions": {
+                "indicators": [
+                    {
+                        "implementation": WatchIndicator,
+                        "depends": [
+                            "$interval",
+                            "$rootScope"
+                        ]
+                    },
+                    {
+                        "implementation": DigestIndicator,
+                        "depends": [
+                            "$interval",
+                            "$rootScope"
+                        ]
+                    }
+                ]
+            }
         }
-    });
+    };
 });

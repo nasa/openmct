@@ -1,0 +1,159 @@
+.c-tree-and-search {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    //TODO: Do we need this???
+    //padding-right: $interiorMarginSm;
+    overflow: auto;
+
+    > * + * { margin-top: $interiorMargin; }
+
+    &__search {
+        flex: 0 0 auto;
+    }
+
+    &__loading {
+        flex: 1 1 auto;
+    }
+
+    &__no-results {
+        font-style: italic;
+        opacity: 0.6;
+    }
+
+    &__tree {
+        flex: 1 1 auto;
+        height: 0; // Chrome 73 overflow bug fix
+        padding-right: $interiorMarginSm;
+    }
+}
+
+.c-tree,
+.c-list {
+    @include userSelectNone();
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    li {
+        position: relative;
+        &[class*="__item-h"] { display: block; }
+        + li {
+            margin-top: 1px;
+        }
+    }
+
+    &__item {
+        $aPad: $interiorMarginSm;
+        border-radius: $controlCr;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        line-height: 110%;
+        padding: $interiorMarginSm $interiorMargin;
+        transition: background 150ms ease;
+
+        &:hover {
+            background: $colorItemTreeHoverBg;
+
+            [class*="__name"] {
+                color: $colorItemTreeHoverFg;
+            }
+        }
+
+        &.is-navigated-object,
+        &.is-selected {
+            background: $colorItemTreeSelectedBg;
+
+            [class*="__name"] {
+                color: $colorItemTreeSelectedFg;
+            }
+        }
+    }
+}
+
+.c-tree {
+    .c-tree {
+        margin-left: 15px;
+    }
+
+    &__item {
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        &:hover {
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeIconHover;
+            }
+        }
+
+        &.is-navigated-object,
+        &.is-selected {
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeIconHover;
+            }
+        }
+
+        &.is-being-edited {
+            background: $colorItemTreeEditingBg;
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeEditingIcon;
+            }
+
+            .c-tree__item__name {
+                color: $colorItemTreeEditingFg;
+                font-style: italic;
+            }
+        }
+
+        // Object labels in trees
+        &__label {
+            flex: 1 1 auto;
+        }
+
+        &__name {
+            color: $colorItemTreeFg;
+        }
+
+        &__type-icon {
+            color: $colorItemTreeIcon;
+        }
+
+        &.is-alias {
+            // Object is an alias to an original.
+            [class*='__type-icon'] {
+                @include isAlias();
+            }
+        }
+
+        body.mobile & {
+            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+            height: $mobileTreeItemH;
+            margin-bottom: $interiorMarginSm;
+            [class*="view-control"] {
+                width: ceil($mobileTreeItemH * 0.5);
+            }
+        }
+    }
+}
+
+.c-list {
+    padding-right: $interiorMargin;
+
+    &__item {
+        &__name {
+            $p: $interiorMarginSm;
+            @include ellipsize();
+            padding-bottom: $p;
+            padding-top: $p;
+        }
+    }
+}
+
+.c-selector {
+    .c-tree-and-search__tree.c-tree {
+        border: 1px solid $colorInteriorBorder;
+        border-radius: $controlCr;
+        padding: $interiorMargin;
+    }
+}

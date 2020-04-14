@@ -1,0 +1,171 @@
+.c-telemetry-table__drop-target {
+    position: absolute;
+    width: 2px;
+    background-color: $editUIColor;
+    box-shadow: rgba($editUIColor, 0.5) 0 0 10px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.c-telemetry-table {
+    // Table that displays telemetry in a scrolling body area
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    overflow: hidden;
+
+    th, td {
+        display: block;
+        flex: 1 0 auto;
+        width: 100px;
+        vertical-align: middle; // This is crucial to hiding 4px height injected by browser by default
+    }
+
+    /******************************* WRAPPERS */
+    &__headers-w {
+        // Wraps __headers table
+        flex: 0 0 auto;
+        overflow: hidden;
+        background: $colorTabHeaderBg;
+    }
+
+    /******************************* TABLES */
+    &__headers,
+    &__body {
+        tr {
+            display: flex;
+            align-items: stretch;
+        }
+    }
+
+    &__headers {
+        // A table
+        thead {
+            display: block;
+        }
+
+        &__labels {
+            // Top row, has labels
+            .c-telemetry-table__headers__content {
+                // Holds __label, sort indicator and resize-hitarea
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    }
+
+    &__headers__label {
+        overflow: hidden;
+        flex: 0 1 auto;
+    }
+
+    &__resize-hitarea {
+        // In table-column-header.vue
+        @include abs();
+        display: none; // Set to display: block in .is-editing section below
+        left: auto; right: -1 * $tabularTdPadLR;
+        width: $tableResizeColHitareaD;
+        cursor: col-resize;
+        transform: translateX(50%); // Move so this element sits over border between columns
+    }
+
+    /******************************* ELEMENTS */
+    &__scroll-forcer {
+        // Force horz scroll when needed; width set via JS
+        font-size: 0;
+        height: 1px; // Height 0 won't force scroll properly
+        position: relative;
+    }
+
+    /******************************* WRAPPERS */
+    &__body-w {
+        // Wraps __body table provides scrolling
+        flex: 1 1 100%;
+        height: 0; // Fixes Chrome 73 overflow bug
+        overflow-x: auto;
+        overflow-y: scroll;
+    }
+
+    /******************************* TABLES */
+    &__body {
+        // A table
+        flex: 1 1 100%;
+        overflow-x: auto;
+
+        tr {
+            display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
+            align-items: stretch;
+            position: absolute;
+            height: 18px; // Needed when a row has empty values in its cells
+
+            &.is-selected {
+                background-color: $colorSelectedBg !important;
+                color: $colorSelectedFg !important;
+                td {
+                    background: none !important;
+                    color: inherit !important;
+                }
+            }
+        }
+
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    &__sizing {
+        // A table
+        display: table;
+        z-index: -1;
+        visibility: hidden;
+        pointer-events: none;
+        position: absolute;
+
+        //Add some padding to allow for decorations such as limits indicator
+        tr {
+            display: table-row;
+        }
+
+        th, td {
+            display: table-cell;
+            padding-right: 10px;
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+    }
+}
+
+/******************************* EDITING */
+.is-editing {
+    .c-telemetry-table__headers__labels {
+        th[draggable],
+        th[draggable] > * {
+            cursor: move;
+        }
+
+        th[draggable]:hover {
+            $b: $editFrameHovMovebarColorBg;
+            background: $b;
+            > * { background: $b; }
+        }
+    }
+
+    .c-telemetry-table__resize-hitarea {
+        display: block;
+    }
+}
+
+.paused {
+    border: 1px solid #ff9900;
+}
+
+/******************************* LEGACY */
+.s-status-taking-snapshot,
+.overlay.snapshot {
+    // Handle overflow-y issues with tables and html2canvas
+    // Replaces .l-sticky-headers .l-tabular-body { overflow: auto; }
+    .c-table__body-w { overflow: auto; }
+}

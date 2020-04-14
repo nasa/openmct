@@ -32,8 +32,7 @@ define([
     "./res/templates/menu-arrow.html",
     "./res/templates/back-arrow.html",
     "./res/templates/browse/object-properties.html",
-    "./res/templates/browse/inspector-region.html",
-    'legacyRegistry'
+    "./res/templates/browse/inspector-region.html"
 ], function (
     NavigationService,
     NavigateAction,
@@ -46,131 +45,133 @@ define([
     menuArrowTemplate,
     backArrowTemplate,
     objectPropertiesTemplate,
-    inspectorRegionTemplate,
-    legacyRegistry
+    inspectorRegionTemplate
 ) {
 
-    legacyRegistry.register("platform/commonUI/browse", {
-        "extensions": {
-            "routes": [
-            ],
-            "constants": [
-                {
-                    "key": "DEFAULT_PATH",
-                    "value": "mine",
-                    "priority": "fallback"
-                }
-            ],
-            "representations": [
-                {
-                    "key": "browse-object",
-                    "template": browseObjectTemplate,
-                    "gestures": [
-                        "drop"
-                    ],
-                    "uses": [
-                        "view"
-                    ]
-                },
-                {
-                    "key": "object-header",
-                    "template": objectHeaderTemplate,
-                    "uses": [
-                        "type"
-                    ]
-                },
-                {
-                    "key": "object-header-frame",
-                    "template": objectHeaderFrameTemplate,
-                    "uses": [
-                        "type"
-                    ]
-                },
-                {
-                    "key": "menu-arrow",
-                    "template": menuArrowTemplate,
-                    "uses": [
-                        "action"
-                    ],
-                    "gestures": [
-                        "menu"
-                    ]
-                },
-                {
-                    "key": "back-arrow",
-                    "uses": [
-                        "context"
-                    ],
-                    "template": backArrowTemplate
-                },
-                {
-                    "key": "object-properties",
-                    "template": objectPropertiesTemplate
-                },
-                {
-                    "key": "inspector-region",
-                    "template": inspectorRegionTemplate
-                }
-            ],
-            "services": [
-                {
-                    "key": "navigationService",
-                    "implementation": NavigationService,
-                    "depends": [
-                        "$window"
-                    ]
-                }
-            ],
-            "actions": [
-                {
-                    "key": "navigate",
-                    "implementation": NavigateAction,
-                    "depends": [
-                        "navigationService"
-                    ]
-                },
-                {
-                    "key": "window",
-                    "name": "Open In New Tab",
-                    "implementation": NewTabAction,
-                    "description": "Open in a new browser tab",
-                    "category": [
-                        "view-control",
-                        "contextual"
-                    ],
-                    "depends": [
-                        "urlService",
-                        "$window"
-                    ],
-                    "group": "windowing",
-                    "cssClass": "icon-new-window",
-                    "priority": "preferred"
-                }
-            ],
-            "runs": [
-                {
-                    "implementation": OrphanNavigationHandler,
-                    "depends": [
-                        "throttle",
-                        "topic",
-                        "navigationService"
-                    ]
-                }
-            ],
-            "templates": [
-                {
-                    key: "browseRoot",
-                    template: browseTemplate
-                },
-                {
-                    key: "browseObject",
-                    template: browseObjectTemplate
-                },
-                {
-                    key: "inspectorRegion",
-                    template: inspectorRegionTemplate
-                }
-            ]
+    return {
+        name:"platform/commonUI/browse",
+        definition: {
+            "extensions": {
+                "routes": [
+                ],
+                "constants": [
+                    {
+                        "key": "DEFAULT_PATH",
+                        "value": "mine",
+                        "priority": "fallback"
+                    }
+                ],
+                "representations": [
+                    {
+                        "key": "browse-object",
+                        "template": browseObjectTemplate,
+                        "gestures": [
+                            "drop"
+                        ],
+                        "uses": [
+                            "view"
+                        ]
+                    },
+                    {
+                        "key": "object-header",
+                        "template": objectHeaderTemplate,
+                        "uses": [
+                            "type"
+                        ]
+                    },
+                    {
+                        "key": "object-header-frame",
+                        "template": objectHeaderFrameTemplate,
+                        "uses": [
+                            "type"
+                        ]
+                    },
+                    {
+                        "key": "menu-arrow",
+                        "template": menuArrowTemplate,
+                        "uses": [
+                            "action"
+                        ],
+                        "gestures": [
+                            "menu"
+                        ]
+                    },
+                    {
+                        "key": "back-arrow",
+                        "uses": [
+                            "context"
+                        ],
+                        "template": backArrowTemplate
+                    },
+                    {
+                        "key": "object-properties",
+                        "template": objectPropertiesTemplate
+                    },
+                    {
+                        "key": "inspector-region",
+                        "template": inspectorRegionTemplate
+                    }
+                ],
+                "services": [
+                    {
+                        "key": "navigationService",
+                        "implementation": NavigationService,
+                        "depends": [
+                            "$window"
+                        ]
+                    }
+                ],
+                "actions": [
+                    {
+                        "key": "navigate",
+                        "implementation": NavigateAction,
+                        "depends": [
+                            "navigationService"
+                        ]
+                    },
+                    {
+                        "key": "window",
+                        "name": "Open In New Tab",
+                        "implementation": NewTabAction,
+                        "description": "Open in a new browser tab",
+                        "category": [
+                            "view-control",
+                            "contextual"
+                        ],
+                        "depends": [
+                            "urlService",
+                            "$window"
+                        ],
+                        "group": "windowing",
+                        "cssClass": "icon-new-window",
+                        "priority": "preferred"
+                    }
+                ],
+                "runs": [
+                    {
+                        "implementation": OrphanNavigationHandler,
+                        "depends": [
+                            "throttle",
+                            "topic",
+                            "navigationService"
+                        ]
+                    }
+                ],
+                "templates": [
+                    {
+                        key: "browseRoot",
+                        template: browseTemplate
+                    },
+                    {
+                        key: "browseObject",
+                        template: browseObjectTemplate
+                    },
+                    {
+                        key: "inspectorRegion",
+                        template: inspectorRegionTemplate
+                    }
+                ]
+            }
         }
-    });
+    };
 });

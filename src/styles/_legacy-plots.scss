@@ -25,32 +25,6 @@ mct-plot {
 }
 
 /*********************** STACKED PLOT LAYOUT */
-.t-plot-stacked {
-    .l-view-section {
-        //  Make this a flex container
-        display: flex;
-        flex-flow: column nowrap;
-        .gl-plot.child-frame {
-            mct-plot {
-                display: flex;
-                flex: 1 1 auto;
-                height: 100%;
-                position: relative;
-            }
-            flex: 1 1 auto;
-            &:not(:first-child) {
-                margin-top: $interiorMargin;
-            }
-        }
-    }
-
-    .s-status-timeconductor-unsynced .holder-plot {
-        .t-object-alert.t-alert-unsynced {
-            display: block;
-        }
-    }
-}
-
 .is-editing {
     .gl-plot.child-frame {
         &:hover {
@@ -66,11 +40,42 @@ mct-plot {
         }
     }
 }
+.c-plot {
+    $p: $mainViewPad;
+    position: absolute;
+    top: $p; right: $p; bottom: $p; left: $p;
+
+    &--stacked {
+        .l-view-section {
+            //  Make this a flex container
+            display: flex;
+            flex-flow: column nowrap;
+            .gl-plot.child-frame {
+                mct-plot {
+                    display: flex;
+                    flex: 1 1 auto;
+                    height: 100%;
+                    position: relative;
+                }
+                flex: 1 1 auto;
+                &:not(:first-child) {
+                    margin-top: $interiorMargin;
+                }
+            }
+        }
+
+        .s-status-timeconductor-unsynced .holder-plot {
+            .t-object-alert.t-alert-unsynced {
+                display: block;
+            }
+        }
+    }
+
+}
+
 
 .gl-plot {
-    color: $colorPlotFg;
     display: flex;
-    //font-size: 0.7rem;
     position: relative;
     width: 100%;
     height: 100%;
@@ -146,10 +151,10 @@ mct-plot {
     }
 
     .gl-plot-coords {
+        // This does not appear to be in use in Open MCT
         box-sizing: border-box;
         border-radius: $controlCr;
         background: black;
-        color: lighten($colorBodyFg, 30%);
         padding: 2px 5px;
         position: absolute;
         top: nth($plotDisplayArea,1) + $interiorMarginLg;
@@ -164,7 +169,6 @@ mct-plot {
 
     .gl-plot-label,
     .l-plot-label {
-        color: $colorPlotLabelFg;
         position: absolute;
         text-align: center;
 

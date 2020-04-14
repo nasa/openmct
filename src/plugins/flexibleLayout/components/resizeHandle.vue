@@ -21,21 +21,45 @@
  *****************************************************************************/
 
 <template>
-    <div class="c-fl-frame__resize-handle"
-         :class="[orientation]"
-         v-show="isEditing && !isDragging"
-         @mousedown="mousedown">
-    </div>
+<div
+    v-show="isEditing && !isDragging"
+    class="c-fl-frame__resize-handle"
+    :class="[orientation]"
+    @mousedown="mousedown"
+></div>
 </template>
 
 <script>
 export default {
-    props: ['orientation', 'index', 'isEditing'],
+    props: {
+        orientation: {
+            type: String,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             initialPos: 0,
-            isDragging: false,
+            isDragging: false
         }
+    },
+    mounted() {
+        document.addEventListener('dragstart', this.setDragging);
+        document.addEventListener('dragend', this.unsetDragging);
+        document.addEventListener('drop', this.unsetDragging);
+    },
+    destroyed() {
+        document.removeEventListener('dragstart', this.setDragging);
+        document.removeEventListener('dragend', this.unsetDragging);
+        document.removeEventListener('drop', this.unsetDragging);
     },
     methods: {
         mousedown(event) {
@@ -75,16 +99,6 @@ export default {
         unsetDragging(event) {
             this.isDragging = false;
         }
-    },
-    mounted() {
-        document.addEventListener('dragstart', this.setDragging);
-        document.addEventListener('dragend', this.unsetDragging);
-        document.addEventListener('drop', this.unsetDragging);
-    },
-    destroyed() {
-        document.removeEventListener('dragstart', this.setDragging);
-        document.removeEventListener('dragend', this.unsetDragging);
-        document.removeEventListener('drop', this.unsetDragging);
     }
 }
 </script>

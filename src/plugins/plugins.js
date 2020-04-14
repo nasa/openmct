@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    './imagery/plugin',
     '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -44,7 +45,13 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
-    './clearData/plugin'
+    './clearData/plugin',
+    './webPage/plugin',
+    './condition/plugin',
+    './conditionWidget/plugin',
+    './themes/espresso',
+    './themes/maelstrom',
+    './themes/snow'
 ], function (
     _,
     UTCTimeSystem,
@@ -53,6 +60,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ImageryPlugin,
     ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -69,7 +77,13 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
-    ClearData
+    ClearData,
+    WebPagePlugin,
+    ConditionPlugin,
+    ConditionWidgetPlugin,
+    Espresso,
+    Maelstrom,
+    Snow
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -154,13 +168,14 @@ define([
     };
 
     plugins.ExampleImagery = ExampleImagery;
+    plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook;
+    plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
@@ -170,6 +185,12 @@ define([
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
     plugins.ClearData = ClearData;
+    plugins.WebPage = WebPagePlugin.default;
+    plugins.Espresso = Espresso.default;
+    plugins.Maelstrom = Maelstrom.default;
+    plugins.Snow = Snow.default;
+    plugins.Condition = ConditionPlugin.default;
+    plugins.ConditionWidget = ConditionWidgetPlugin.default;
 
     return plugins;
 });

@@ -20,56 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<tr :style="{ top: rowTop }"
+<tr
+    :style="{ top: rowTop }"
     class="noselect"
     :class="[
         rowClass,
         {'is-selected': marked}
     ]"
-    v-on="listeners">
-    <component v-for="(title, key) in headers" 
-        :key="key"
+    v-on="listeners"
+>
+    <component
         :is="componentList[key]"
-        :columnKey="key"
+        v-for="(title, key) in headers"
+        :key="key"
+        :column-key="key"
         :style="columnWidths[key] === undefined ? {} : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px'}"
         :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
-        :objectPath="objectPath"
-        :row="row">
-    </component>
+        :object-path="objectPath"
+        :row="row"
+    />
 </tr>
 </template>
-
-<style>
-    .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none; /* Safari */
-        -khtml-user-select: none; /* Konqueror HTML */
-        -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-                user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome and Opera */
-    }
-</style>
 
 <script>
 import TableCell from './table-cell.vue';
 
 export default {
-    inject: ['openmct', 'objectPath'],
-    data: function () {
-        return {
-            rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
-            rowClass: this.row.getRowClass(),
-            cellLimitClasses: this.row.getCellLimitClasses(),
-            componentList: Object.keys(this.headers).reduce((components, header) => {
-                components[header] = this.row.getCellComponentName(header) || 'table-cell';
-                return components
-            }, {}),
-            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
-                selectable[columnKeys] = this.row.columns[columnKeys].selectable;
-                return selectable;
-            }, {})
-        }
+    inject: ['openmct'],
+    components: {
+        TableCell
     },
     props: {
         headers: {
@@ -86,7 +65,7 @@ export default {
         },
         objectPath: {
             type: Array,
-            required: false
+            required: true
         },
         rowIndex: {
             type: Number,
@@ -107,6 +86,42 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        }
+    },
+    data: function () {
+        return {
+            rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
+            rowClass: this.row.getRowClass(),
+            cellLimitClasses: this.row.getCellLimitClasses(),
+            componentList: Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+                return components
+            }, {}),
+            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+                selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+                return selectable;
+            }, {})
+        }
+    },
+    computed: {
+        listeners() {
+            let listenersObject = {
+                click: this.markRow
+            }
+
+            if (this.row.getContextMenuActions().length) {
+                listenersObject.contextmenu = this.showContextMenu;
+            }
+
+            return listenersObject;
+        }
+    },
+    // TODO: use computed properties
+    watch: {
+        rowOffset: 'calculateRowTop',
+        row: {
+            handler: 'formatRow',
+            deep: true
         }
     },
     methods: {
@@ -136,7 +151,7 @@ export default {
         },
         selectCell(element, columnKey) {
             if (this.selectableColumns[columnKey]) {
-                 //TODO: This is a hack. Cannot get parent this way.
+                //TODO: This is a hack. Cannot get parent this way.
                 this.openmct.selection.select([{
                     element: element,
                     context: {
@@ -153,7 +168,7 @@ export default {
                 event.stopPropagation();
             }
         },
-         showContextMenu: function (event) {
+        showContextMenu: function (event) {
             event.preventDefault();
 
             this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
@@ -162,30 +177,6 @@ export default {
 
                 this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
             });
-        }
-    },
-    // TODO: use computed properties
-    watch: {
-        rowOffset: 'calculateRowTop',
-        row: {
-            handler: 'formatRow',
-            deep: true
-        }
-    },
-    components: {
-        TableCell
-    },
-    computed: {
-        listeners() {
-            let listenersObject = {
-                click: this.markRow
-            }
-
-            if (this.row.getContextMenuActions().length) {
-                listenersObject.contextmenu = this.showContextMenu;
-            }
-            
-            return listenersObject;
         }
     }
 }

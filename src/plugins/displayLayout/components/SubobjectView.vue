@@ -20,106 +20,120 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <layout-frame :item="item"
-                  :grid-size="gridSize"
-                  :title="domainObject && domainObject.name"
-                  @move="(gridDelta) => $emit('move', gridDelta)"
-                  @endMove="() => $emit('endMove')">
-        <object-frame v-if="domainObject"
-                      :domain-object="domainObject"
-                      :object-path="currentObjectPath"
-                      :has-frame="item.hasFrame"
-                      :show-edit-view="false"
-                      ref="objectFrame">
-        </object-frame>
-    </layout-frame>
+<layout-frame
+    :item="item"
+    :grid-size="gridSize"
+    :title="domainObject && domainObject.name"
+    @move="(gridDelta) => $emit('move', gridDelta)"
+    @endMove="() => $emit('endMove')"
+>
+    <object-frame
+        v-if="domainObject"
+        ref="objectFrame"
+        :domain-object="domainObject"
+        :object-path="currentObjectPath"
+        :has-frame="item.hasFrame"
+        :show-edit-view="false"
+    />
+</layout-frame>
 </template>
 
 <script>
-    import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
-    import LayoutFrame from './LayoutFrame.vue'
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
+import LayoutFrame from './LayoutFrame.vue'
 
-    const MINIMUM_FRAME_SIZE = [320, 180],
-          DEFAULT_DIMENSIONS = [10, 10],
-          DEFAULT_POSITION = [1, 1],
-          DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+const MINIMUM_FRAME_SIZE = [320, 180],
+    DEFAULT_DIMENSIONS = [10, 10],
+    DEFAULT_POSITION = [1, 1],
+    DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
 
-    function getDefaultDimensions(gridSize) {
-        return MINIMUM_FRAME_SIZE.map((min, index) => {
-            return Math.max(
-                Math.ceil(min / gridSize[index]),
-                DEFAULT_DIMENSIONS[index]
-            );
-        });
-    }
+function getDefaultDimensions(gridSize) {
+    return MINIMUM_FRAME_SIZE.map((min, index) => {
+        return Math.max(
+            Math.ceil(min / gridSize[index]),
+            DEFAULT_DIMENSIONS[index]
+        );
+    });
+}
 
-    function hasFrameByDefault(type) {
-        return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
-    }
+function hasFrameByDefault(type) {
+    return DEFAULT_HIDDEN_FRAME_TYPES.indexOf(type) === -1;
+}
 
-    export default {
-        makeDefinition(openmct, gridSize, domainObject, position) {
-            let defaultDimensions = getDefaultDimensions(gridSize);
-            position = position || DEFAULT_POSITION;
+export default {
+    makeDefinition(openmct, gridSize, domainObject, position) {
+        let defaultDimensions = getDefaultDimensions(gridSize);
+        position = position || DEFAULT_POSITION;
 
-            return {
-                width: defaultDimensions[0],
-                height: defaultDimensions[1],
-                x: position[0],
-                y: position[1],
-                identifier: domainObject.identifier,
-                hasFrame: hasFrameByDefault(domainObject.type)
-            };
+        return {
+            width: defaultDimensions[0],
+            height: defaultDimensions[1],
+            x: position[0],
+            y: position[1],
+            identifier: domainObject.identifier,
+            hasFrame: hasFrameByDefault(domainObject.type)
+        };
+    },
+    inject: ['openmct', 'objectPath'],
+    components: {
+        ObjectFrame,
+        LayoutFrame
+    },
+    props: {
+        item: {
+            type: Object,
+            required: true
         },
-        inject: ['openmct', 'objectPath'],
-        props: {
-            item: Object,
-            gridSize: Array,
-            initSelect: Boolean,
-            index: Number
+        gridSize: {
+            type: Array,
+            required: true,
+            validator: (arr) => arr && arr.length === 2
+                && arr.every(el => typeof el === 'number')
         },
-        data() {
-            return {
-                domainObject: undefined,
-                currentObjectPath: []
+        initSelect: Boolean,
+        index: {
+            type: Number,
+            required: true
+        }
+    },
+    data() {
+        return {
+            domainObject: undefined,
+            currentObjectPath: []
+        }
+    },
+    watch: {
+        index(newIndex) {
+            if (!this.context) {
+                return;
             }
-        },
-        components: {
-            ObjectFrame,
-            LayoutFrame
-        },
-        watch: {
-            index(newIndex) {
-                if (!this.context) {
-                    return;
-                }
 
-                this.context.index = newIndex;
-            }
-        },
-        methods: {
-            setObject(domainObject) {
-                this.domainObject = domainObject;
-                this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
-                this.$nextTick(function () {
-                    let childContext = this.$refs.objectFrame.getSelectionContext();
-                    childContext.item = domainObject;
-                    childContext.layoutItem = this.item;
-                    childContext.index = this.index;
-                    this.context = childContext;
-                    this.removeSelectable = this.openmct.selection.selectable(
-                        this.$el, this.context, this.initSelect);
-                });
-            }
-        },
-        mounted() {
-            this.openmct.objects.get(this.item.identifier)
-                .then(this.setObject);
-        },
-        destroyed() {
-            if (this.removeSelectable) {
-                this.removeSelectable();
-            }
+            this.context.index = newIndex;
+        }
+    },
+    mounted() {
+        this.openmct.objects.get(this.item.identifier)
+            .then(this.setObject);
+    },
+    destroyed() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+    },
+    methods: {
+        setObject(domainObject) {
+            this.domainObject = domainObject;
+            this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
+            this.$nextTick(function () {
+                let childContext = this.$refs.objectFrame.getSelectionContext();
+                childContext.item = domainObject;
+                childContext.layoutItem = this.item;
+                childContext.index = this.index;
+                this.context = childContext;
+                this.removeSelectable = this.openmct.selection.selectable(
+                    this.$el, this.context, this.initSelect);
+            });
         }
     }
+}
 </script>

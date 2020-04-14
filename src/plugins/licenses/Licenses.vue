@@ -20,21 +20,30 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-    <div class="c-about c-about--licenses">
-        <h1>Open MCT Third Party Licenses</h1>
-        <p>This software includes components released under the following licenses:</p>
-        <div v-for="(pkg, key) in packages" :key="key" class="c-license">
-            <h2 class="c-license__name">{{key}}</h2>
-            <div class="c-license__details">
-                <span class="c-license__author"><em>Author</em> {{pkg.publisher}}</span> |
-                <span class="c-license__license"><em>License(s)</em> {{pkg.licenses}}</span> |
-                <span class="c-license__repo"><em>Repository</em> <a :href="pkg.repository" target="_blank">{{pkg.repository}}</a></span>
-            </div>
-            <div class="c-license__text">
-                <p>{{pkg.licenseText}}</p>
-            </div>
+<div class="c-about c-about--licenses">
+    <h1>Open MCT Third Party Licenses</h1>
+    <p>This software includes components released under the following licenses:</p>
+    <div
+        v-for="(pkg, key) in packages"
+        :key="key"
+        class="c-license"
+    >
+        <h2 class="c-license__name">
+            {{ key }}
+        </h2>
+        <div class="c-license__details">
+            <span class="c-license__author"><em>Author</em> {{ pkg.publisher }}</span> |
+            <span class="c-license__license"><em>License(s)</em> {{ pkg.licenses }}</span> |
+            <span class="c-license__repo"><em>Repository</em> <a
+                :href="pkg.repository"
+                target="_blank"
+            >{{ pkg.repository }}</a></span>
+        </div>
+        <div class="c-license__text">
+            <p>{{ pkg.licenseText }}</p>
         </div>
     </div>
+</div>
 </template>
 <style lang="sass">
 </style>
@@ -49,4 +58,3 @@ export default {
     }
 }
 </script>
- 

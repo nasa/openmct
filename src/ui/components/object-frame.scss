@@ -1,0 +1,82 @@
+.c-so-view {
+    display: flex;
+    flex-direction: column;
+
+    /*************************** HEADER */
+    &__header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        &__icon {
+            flex: 0 0 auto;
+            margin-right: $interiorMarginSm;
+            opacity: 0.5;
+        }
+
+        &__name {
+            @include headerFont(1em);
+            @include ellipsize();
+            flex: 0 1 auto;
+        }
+    }
+
+    &:not(.c-so-view--no-frame) {
+        background: $colorBodyBg;
+        border: $browseFrameBorder;
+        padding: $interiorMargin;
+    }
+
+    &--no-frame {
+        > .c-so-view__header {
+            display: none;
+        }
+
+        > .c-so-view__local-controls {
+            top: $interiorMarginSm; right: $interiorMarginSm;
+        }
+    }
+
+    &__local-controls {
+        position: absolute;
+        top: $interiorMargin; right: $interiorMargin;
+        z-index: 2;
+    }
+
+    &__view-large {
+        display: none;
+    }
+
+    &.has-complex-content {
+        > .c-so-view__view-large { display: block; }
+    }
+
+    /*************************** OBJECT VIEW */
+    &__object-view {
+        flex: 1 1 auto;
+        height: 0; // Chrome 73 overflow bug fix
+        overflow: auto;
+
+        .u-angular-object-view-wrapper {
+            .u-fills-container {
+                // Expand component types that fill a container
+                @include abs();
+            }
+        }
+    }
+
+    .c-click-icon,
+    .c-button {
+        // Shrink buttons a bit when they appear in a frame
+        font-size: 0.9em;
+        padding: 3px 5px;
+    }
+}
+
+.u-angular-object-view-wrapper {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}

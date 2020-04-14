@@ -20,53 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
-        <button class="c-button--menu c-mode-button"
-             @click.prevent="toggle">
-            <span class="c-button__label">{{selectedMode.name}}</span>
-        </button>
-        <div class="c-menu c-super-menu c-conductor__mode-menu"
-             v-if="open">
-            <div class="c-super-menu__menu">
-                <ul>
-                    <li v-for="mode in modes"
-                        :key="mode.key"
-                        @click="setOption(mode)"
-                        @mouseover="hoveredMode = mode"
-                        @mouseleave="hoveredMode = {}"
-                        class="menu-item-a"
-                        :class="mode.cssClass">
-                        {{mode.name}}
-                    </li>
-                </ul>
+<div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
+    <button
+        class="c-button--menu c-mode-button"
+        @click.prevent="toggle"
+    >
+        <span class="c-button__label">{{ selectedMode.name }}</span>
+    </button>
+    <div
+        v-if="open"
+        class="c-menu c-super-menu c-conductor__mode-menu"
+    >
+        <div class="c-super-menu__menu">
+            <ul>
+                <li
+                    v-for="mode in modes"
+                    :key="mode.key"
+                    class="menu-item-a"
+                    :class="mode.cssClass"
+                    @click="setOption(mode)"
+                    @mouseover="hoveredMode = mode"
+                    @mouseleave="hoveredMode = {}"
+                >
+                    {{ mode.name }}
+                </li>
+            </ul>
+        </div>
+        <div class="c-super-menu__item-description">
+            <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]"></div>
+            <div class="l-item-description__name">
+                {{ hoveredMode.name }}
             </div>
-            <div class="c-super-menu__item-description">
-                <div :class="['l-item-description__icon', 'bg-' + hoveredMode.cssClass]"></div>
-                <div class="l-item-description__name">{{hoveredMode.name}}</div>
-                <div class="l-item-description__description">{{hoveredMode.description}}</div>
+            <div class="l-item-description__description">
+                {{ hoveredMode.description }}
             </div>
         </div>
     </div>
+</div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-conductor__mode-menu {
-        max-height: 80vh;
-        max-width: 500px;
-        min-height: 250px;
-        z-index: 70;
-
-        [class*="__icon"] {
-            filter: $colorKeyFilter;
-        }
-
-        [class*="__item-description"] {
-            min-width: 200px;
-        }
-    }
-</style>
 
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
@@ -86,6 +77,14 @@ export default {
             modes: [],
             hoveredMode: {}
         };
+    },
+    mounted: function () {
+        this.loadClocksFromConfiguration();
+
+        this.openmct.time.on('clock', this.setViewFromClock);
+    },
+    destroyed: function () {
+        this.openmct.time.off('clock', this.setViewFromClock);
     },
     methods: {
         loadClocksFromConfiguration() {
@@ -139,7 +138,7 @@ export default {
             }
 
             let configuration = this.getMatchingConfig({
-                clock: clockKey, 
+                clock: clockKey,
                 timeSystem: this.openmct.time.timeSystem().key
             });
 
@@ -147,10 +146,10 @@ export default {
                 configuration = this.getMatchingConfig({
                     clock: clockKey
                 });
-                
+
                 this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
             }
-            
+
             if (clockKey === undefined) {
                 this.openmct.time.stopClock();
             } else {
@@ -180,14 +179,6 @@ export default {
         setViewFromClock(clock) {
             this.selectedMode = this.getModeOptionForClock(clock);
         }
-    },
-    mounted: function () {
-        this.loadClocksFromConfiguration();
-
-        this.openmct.time.on('clock', this.setViewFromClock);
-    },
-    destroyed: function () {
-        this.openmct.time.off('clock', this.setViewFromClock);
     }
 
 }

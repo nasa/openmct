@@ -72,10 +72,10 @@ define (
          * This data source does not support real-time subscriptions
          */
         RemsTelemetryProvider.prototype.subscribe = function (callback, requests) {
-            return function() {};
+            return function () {};
         };
         RemsTelemetryProvider.prototype.unsubscribe = function (callback, requests) {
-            return function() {};
+            return function () {};
         };
 
         return RemsTelemetryProvider;

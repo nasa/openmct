@@ -20,16 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="l-shell__app-logo" @click="launchAbout" ref="aboutLogo"></div>
+<div
+    ref="aboutLogo"
+    class="l-shell__app-logo"
+    @click="launchAbout"
+></div>
 </template>
-<style lang="scss">
-.l-shell__app-logo {
-    cursor: pointer;
-    width: 70px;
-    height: 20px;
-    background: url('assets/images/logo-openmct.svg') center no-repeat;
-}
-</style>
+
 <script>
 import AboutDialog from './AboutDialog.vue';
 import Vue from 'vue';
@@ -38,12 +35,12 @@ export default {
     inject: ['openmct'],
     mounted() {
         let branding = this.openmct.branding();
-        if (branding.smallLogoImage){
+        if (branding.smallLogoImage) {
             this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`
         }
     },
     methods: {
-        launchAbout(){
+        launchAbout() {
             let vm = new Vue({
                 provide: {
                     openmct: this.openmct

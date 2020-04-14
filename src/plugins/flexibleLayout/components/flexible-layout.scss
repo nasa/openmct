@@ -1,0 +1,316 @@
+@mixin containerGrippy($headerSize, $dir) {
+    position: absolute;
+    $h: 6px;
+    $minorOffset: ($headerSize - $h) / 2;
+    $majorOffset: 35%;
+    content: '';
+    display: block;
+    position: absolute;
+    @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
+    @if $dir == 'x' {
+        top: $minorOffset; right: $majorOffset; bottom: $minorOffset; left: $majorOffset;
+    } @else {
+        top: $majorOffset; right: $minorOffset; bottom: $majorOffset; left: $minorOffset;
+    }
+}
+
+.c-fl {
+    @include abs();
+    display: flex;
+
+    .temp-toolbar {
+        flex: 0 0 auto;
+    }
+
+    &__container-holder {
+        display: flex;
+        flex: 1 1 100%; // Must be 100% to work
+        overflow: auto;
+
+        // Columns by default
+        flex-direction: row;
+        > * + * { margin-left: 1px; }
+
+        &[class*='--rows'] {
+            flex-direction: column;
+            > * + * {
+                margin-left: 0;
+                margin-top: 1px;
+            }
+        }
+    }
+
+    &__empty {
+        @include abs();
+        background: rgba($colorBodyFg, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        > * {
+            font-style: italic;
+            opacity: 0.5;
+        }
+    }
+
+    &__drag-ghost{
+        background: $colorItemTreeHoverBg;
+        color: $colorItemTreeHoverFg;
+        border-radius: $basicCr;
+        display: flex;
+        align-items: center;
+        padding: $interiorMarginLg $interiorMarginLg * 2;
+        position: absolute;
+        top: -10000px;
+        z-index: 2;
+
+        &:before {
+            color: $colorKey;
+            margin-right: $interiorMarginSm;
+        }
+    }
+}
+
+.c-fl-container {
+    /***************************************************** CONTAINERS */
+    $headerSize: 16px;
+
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    // flex-basis is set with inline style in code, controls size
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    &__header {
+        // Only displayed when editing, controlled via JS
+        background: $editFrameMovebarColorBg;
+        color: $editFrameMovebarColorFg;
+        cursor: move;
+        display: flex;
+        align-items: center;
+        flex: 0 0 $headerSize;
+
+        &:before {
+            // Drag grippy
+            @include containerGrippy($headerSize, 'x');
+            opacity: 0.5;
+        }
+    }
+
+    &__size-indicator {
+        position: absolute;
+        display: inline-block;
+        right: $interiorMargin;
+    }
+
+    &__frames-holder {
+        display: flex;
+        flex: 1 1 100%; // Must be 100% to work
+        flex-direction: column; // Default
+        align-content: stretch;
+        align-items: stretch;
+        overflow: hidden; // This sucks, but doing in the short-term
+    }
+
+    .is-editing & {
+        &:hover {
+            .c-fl-container__header {
+                background: $editFrameHovMovebarColorBg;
+                color: $editFrameHovMovebarColorFg;
+
+                &:before {
+                    opacity: .75;
+                }
+            }
+        }
+
+        &[s-selected] {
+            border: $editFrameSelectedBorder;
+
+            .c-fl-container__header {
+                background:$editFrameSelectedMovebarColorBg;
+                color: $editFrameSelectedMovebarColorFg;
+                &:before {
+                    // Grippy
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    /****** THEIR FRAMES */
+    // Frames get styled here because this is particular to their presence in this layout type
+    .c-fl-frame {
+        @include browserPrefix(margin-collapse, collapse);
+    }
+
+    /****** ROWS LAYOUT */
+    .c-fl--rows & {
+        // Layout is rows
+        flex-direction: row;
+
+        &__header {
+            flex-basis: $headerSize;
+            overflow: hidden;
+
+            &:before {
+                // Grippy
+                @include containerGrippy($headerSize, 'y');
+            }
+        }
+
+        &__size-indicator {
+            right: 0;
+            top: $interiorMargin;
+            transform-origin: top right;
+            transform: rotate(-90deg) translateY(-100%);
+        }
+
+        &__frames-holder {
+            flex-direction: row;
+        }
+    }
+}
+
+.c-fl-frame {
+    /***************************************************** CONTAINER FRAMES */
+    $sizeIndicatorM: 16px;
+    $dropHintSize: 15px;
+
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    overflow: hidden; // Needed to allow frames to collapse when sized down
+
+    &__drag-wrapper {
+        flex: 1 1 auto;
+        overflow: auto;
+
+        .is-editing & {
+            > * {
+                pointer-events: none;
+            }
+        }
+    }
+
+    &__header {
+        flex: 0 0 auto;
+        margin-bottom: $interiorMargin;
+    }
+
+    &__size-indicator {
+        $size: 35px;
+
+        @include ellipsize();
+        background: $colorBtnBg;
+        border-top-left-radius: $controlCr;
+        color: $colorBtnFg;
+        display: inline-block;
+        padding: $interiorMarginSm 0;
+        position: absolute;
+        pointer-events: none;
+        text-align: center;
+        width: $size;
+
+        // Changed when layout is different, see below
+        border-top-right-radius: $controlCr;
+        bottom: 1px;
+        right: $sizeIndicatorM;
+    }
+
+    &__drop-hint {
+        flex: 0 0 $dropHintSize;
+        .c-drop-hint {
+            border-radius: $smallCr;
+        }
+    }
+
+    &__resize-handle {
+        $size: 2px;
+        $margin: 3px;
+        $marginHov: 0;
+        $grippyThickness: $size + 6;
+        $grippyLen: $grippyThickness * 2;
+
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 ($margin * 2) + $size;
+        transition: $transOut;
+
+        &:before {
+            // The visible resize line
+            background: $editUIColor;
+            content: '';
+            display: block;
+            flex: 1 1 auto;
+            min-height: $size; min-width: $size;
+        }
+
+        &.vertical {
+            padding: $margin $size;
+            &:hover{
+                cursor: row-resize;
+            }
+        }
+
+        &.horizontal {
+            padding: $size $margin;
+            &:hover{
+                cursor: col-resize;
+            }
+        }
+
+        &:hover {
+            transition: $transOut;
+            &:before {
+                // The visible resize line
+                background: $editUIColorHov;
+            }
+        }
+    }
+
+    // Hide the resize-handles in first and last c-fl-frame elements
+    &:first-child,
+    &:last-child {
+        .c-fl-frame__resize-handle {
+            display: none;
+        }
+    }
+
+    .c-fl--rows & {
+        flex-direction: row;
+
+        &__size-indicator {
+            border-bottom-left-radius: $controlCr;
+            border-top-right-radius: 0;
+            bottom: $sizeIndicatorM;
+            right: 1px;
+        }
+    }
+
+    &--first-in-container {
+        border: none;
+        flex: 0 0 0;
+        .c-fl-frame__drag-wrapper {
+            display: none;
+        }
+
+        &.is-dragging {
+            flex-basis: $dropHintSize;
+        }
+    }
+
+    .is-empty & {
+        &.c-fl-frame--first-in-container {
+            flex: 1 1 auto;
+        }
+
+        &__drop-hint {
+            flex: 1 0 100%;
+            margin: 0;
+        }
+    }
+}

@@ -1,18 +1,20 @@
 <template>
-    <div class="c-ctrl-wrapper">
-        <div class="c-icon-button"
-             :title="nextValue.title"
-             :class="[nextValue.icon, {'c-icon-button--mixed': nonSpecific}]"
-             @click="cycle">
-        </div>
-    </div>
+<div class="c-ctrl-wrapper">
+    <div
+        class="c-icon-button"
+        :title="nextValue.title"
+        :class="[nextValue.icon, {'c-icon-button--mixed': nonSpecific}]"
+        @click="cycle"
+    ></div>
+</div>
 </template>
 
 <script>
 export default {
     props: {
         options: {
-            type: Object
+            type: Object,
+            required: true
         }
     },
     computed: {
@@ -30,7 +32,9 @@ export default {
     },
     methods: {
         cycle() {
-            this.$emit('change', this.nextValue.value, this.options);
+            if (this.options.isEditing === undefined || this.options.isEditing) {
+                this.$emit('change', this.nextValue.value, this.options);
+            }
         }
     }
 };

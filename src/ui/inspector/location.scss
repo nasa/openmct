@@ -1,0 +1,47 @@
+.c-path,
+.c-location {
+    // Path is two or more items, not clickable
+    // Location used in Inspector, is clickable
+    display: flex;
+
+    &__item {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+
+        &:not(:last-child) {
+            &:after {
+                color: $colorInspectorPropName;
+                content: $glyph-icon-arrow-right;
+                font-family: symbolsfont;
+                font-size: 0.7em;
+                margin-left: $interiorMarginSm;
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+.c-location {
+    flex-wrap: wrap;
+
+    &__item {
+        cursor: pointer;
+        margin: 0 $interiorMarginSm $interiorMarginSm 0;
+
+        .c-object-label {
+            padding: 0;
+            transition: $transOut;
+
+            &__type-icon {
+                width: auto;
+                font-size: 1em;
+            }
+
+            &:hover {
+                transition: $transIn;
+                filter: $filterHov;
+            }
+        }
+    }
+}

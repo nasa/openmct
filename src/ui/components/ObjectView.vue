@@ -1,31 +1,50 @@
 <template>
+<div></div>
 </template>
 
 <script>
 import _ from "lodash"
+import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ["openmct"],
     props: {
-        view: String,
-        object: Object,
+        object: {
+            type: Object,
+            default: undefined
+        },
         showEditView: Boolean,
-        objectPath: Array
+        objectPath: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
+    },
+    watch: {
+        object(newObject, oldObject) {
+            this.currentObject = newObject;
+            this.debounceUpdateView();
+        }
     },
     destroyed() {
         this.clear();
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
         }
-    },
-    watch: {
-        view(newView, oldView) {
-            this.viewKey = newView;
-            this.debounceUpdateView();
-        },
-        object(newObject, oldObject) {
-            this.currentObject = newObject;
-            this.debounceUpdateView();
+
+        if (this.unlisten) {
+            this.unlisten();
+        }
+
+        if (this.stopListeningStyles) {
+            this.stopListeningStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            delete this.styleRuleManager;
         }
     },
     created() {
@@ -39,6 +58,11 @@ export default {
             capture: true
         });
         this.$el.addEventListener('drop', this.addObjectToParent);
+        if (this.currentObject) {
+            //This is to apply styles to subobjects in a layout
+            this.initObjectStyles();
+        }
+
     },
     methods: {
         clear() {
@@ -72,6 +96,29 @@ export default {
             this.clear();
             this.updateView(true);
         },
+        updateStyle(styleObj) {
+            if (!styleObj) {
+                return;
+            }
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                let firstChild = this.$el.querySelector(':first-child');
+                if (firstChild) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
+                        if (firstChild.style[key]) {
+                            firstChild.style[key] = '';
+                        }
+                    } else {
+                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
+                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        }
+                        firstChild.style[key] = styleObj[key];
+                    }
+                }
+            });
+        },
         updateView(immediatelySelect) {
             this.clear();
             if (!this.currentObject) {
@@ -85,7 +132,7 @@ export default {
             }
 
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.viewContainer.classList.add('u-angular-object-view-wrapper');
             this.$el.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
@@ -114,13 +161,15 @@ export default {
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
-                this.removeSelectable = openmct.selection.selectable(
+                this.removeSelectable = this.openmct.selection.selectable(
                     this.$el, this.getSelectionContext(), true);
             }
 
             this.openmct.objectViews.on('clearData', this.clearData);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
+            this.updateStyle();
+
             if (this.unlisten) {
                 this.unlisten();
             }
@@ -145,13 +194,32 @@ export default {
             });
 
             this.viewKey = viewKey;
+
             this.updateView(immediatelySelect);
+
+            this.initObjectStyles();
+        },
+        initObjectStyles() {
+            if (!this.styleRuleManager) {
+                this.styleRuleManager = new StyleRuleManager((this.currentObject.configuration && this.currentObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this));
+            } else {
+                this.styleRuleManager.updateObjectStyleConfig(this.currentObject.configuration && this.currentObject.configuration.objectStyles);
+            }
+
+            if (this.stopListeningStyles) {
+                this.stopListeningStyles();
+            }
+
+            this.stopListeningStyles = this.openmct.objects.observe(this.currentObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+            });
         },
         loadComposition() {
             return this.composition.load();
         },
         getSelectionContext() {
-            if (this.currentView.getSelectionContext) {
+            if (this.currentView && this.currentView.getSelectionContext) {
                 return this.currentView.getSelectionContext();
             } else {
                 return { item: this.currentObject };
@@ -190,7 +258,7 @@ export default {
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
                 !this.openmct.editor.isEditing()) {
-                    this.openmct.editor.edit();
+                this.openmct.editor.edit();
             }
         },
         hasComposableDomainObject(event) {

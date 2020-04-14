@@ -20,153 +20,79 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper" ref="calendarHolder">
-        <a class="c-icon-button icon-calendar"
-           @click="toggle"></a>
-        <div class="c-menu c-menu--mobile-modal c-datetime-picker"
-             v-if="open">
-            <div class="c-datetime-picker__close-button">
-                <button class="c-click-icon icon-x-in-circle"
-                        @click="toggle"></button>
+<div
+    ref="calendarHolder"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up c-datetime-picker__wrapper"
+>
+    <a
+        class="c-icon-button icon-calendar"
+        @click="toggle"
+    ></a>
+    <div
+        v-if="open"
+        class="c-menu c-menu--mobile-modal c-datetime-picker"
+    >
+        <div class="c-datetime-picker__close-button">
+            <button
+                class="c-click-icon icon-x-in-circle"
+                @click="toggle"
+            ></button>
+        </div>
+        <div class="c-datetime-picker__pager c-pager l-month-year-pager">
+            <div
+                class="c-pager__prev c-icon-button icon-arrow-left"
+                @click.stop="changeMonth(-1)"
+            ></div>
+            <div class="c-pager__month-year">
+                {{ model.month }} {{ model.year }}
             </div>
-            <div class="c-datetime-picker__pager c-pager l-month-year-pager">
-                <div class="c-pager__prev c-icon-button icon-arrow-left"
-                   @click.stop="changeMonth(-1)"></div>
-                <div class="c-pager__month-year">{{model.month}} {{model.year}}</div>
-                <div class="c-pager__next c-icon-button icon-arrow-right"
-                   @click.stop="changeMonth(1)"></div>
-            </div>
-            <div class="c-datetime-picker__calendar c-calendar">
-                <ul class="c-calendar__row--header l-cal-row">
-                    <li v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']"
-                        :key="day">{{day}}</li>
-                </ul>
-                <ul class="c-calendar__row--body"
-                    v-for="(row, index) in table"
-                    :key="index">
-                    <li v-for="(cell, index) in row"
-                        :key="index"
-                        @click="select(cell)"
-                        :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }">
-                        <div class="c-calendar__day--prime">{{cell.day}}</div>
-                        <div class="c-calendar__day--sub">{{cell.dayOfYear}}</div>
-                    </li>
-                </ul>
-            </div>
+            <div
+                class="c-pager__next c-icon-button icon-arrow-right"
+                @click.stop="changeMonth(1)"
+            ></div>
+        </div>
+        <div class="c-datetime-picker__calendar c-calendar">
+            <ul class="c-calendar__row--header l-cal-row">
+                <li
+                    v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']"
+                    :key="day"
+                >
+                    {{ day }}
+                </li>
+            </ul>
+            <ul
+                v-for="(row, tableIndex) in table"
+                :key="tableIndex"
+                class="c-calendar__row--body"
+            >
+                <li
+                    v-for="(cell, rowIndex) in row"
+                    :key="rowIndex"
+                    :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }"
+                    @click="select(cell)"
+                >
+                    <div class="c-calendar__day--prime">
+                        {{ cell.day }}
+                    </div>
+                    <div class="c-calendar__day--sub">
+                        {{ cell.dayOfYear }}
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
+</div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    /******************************************************** PICKER */
-    .c-datetime-picker {
-        @include userSelectNone();
-        padding: $interiorMarginLg !important;
-        display: flex !important; // Override .c-menu display: block;
-        flex-direction: column;
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__close-button {
-            display: none; // Only show when body.phone, see below.
-        }
-
-        &__pager {
-            flex: 0 0 auto;
-        }
-
-        &__calendar {
-            border-top: 1px solid $colorInteriorBorder;
-            flex: 1 1 auto;
-        }
-    }
-
-    .c-pager {
-        display: grid;
-        grid-column-gap: $interiorMargin;
-        grid-template-rows: 1fr;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-
-        .c-icon-button {
-            font-size: 0.8em;
-        }
-
-        &__month-year {
-            text-align: center;
-        }
-    }
-
-    /******************************************************** CALENDAR */
-    .c-calendar {
-        display: grid;
-        grid-template-columns: repeat(7, min-content);
-        grid-template-rows: auto;
-        grid-gap: 1px;
-        height: 100%;
-
-        $mutedOpacity: 0.5;
-
-        ul {
-            display: contents;
-            &[class*='--header'] {
-                pointer-events: none;
-                li {
-                    opacity: $mutedOpacity;
-                }
-            }
-        }
-
-        li {
-            display: flex;
-            flex-direction: column;
-            justify-content: center !important;
-            padding: $interiorMargin;
-
-            &.is-in-month {
-                background: $colorMenuElementHilite;
-            }
-        }
-
-        &__day {
-            &--sub {
-                opacity: $mutedOpacity;
-                font-size: 0.8em;
-            }
-        }
-    }
-
-    /******************************************************** MOBILE */
-    body.phone {
-        .c-datetime-picker {
-            &.c-menu {
-                @include modalFullScreen();
-            }
-
-            &__close-button {
-                display: flex;
-                justify-content: flex-end;
-            }
-        }
-
-        .c-calendar {
-            grid-template-columns: repeat(7, auto);
-        }
-    }
-</style>
 
 <script>
 import moment from 'moment';
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
 const TIME_NAMES = {
-        'hours': "Hour",
-        'minutes': "Minute",
-        'seconds': "Second"
-    };
+    'hours': "Hour",
+    'minutes': "Minute",
+    'seconds': "Second"
+};
 const MONTHS = moment.months();
 const TIME_OPTIONS = (function makeRanges() {
     let arr = [];
@@ -184,8 +110,14 @@ export default {
     inject: ['openmct'],
     mixins: [toggleMixin],
     props: {
-        defaultDateTime: String,
-        formatter: Object
+        defaultDateTime: {
+            type: String,
+            default: undefined
+        },
+        formatter: {
+            type: Object,
+            required: true
+        }
     },
     data: function () {
         return {
@@ -196,12 +128,16 @@ export default {
             },
             model: {
                 year: undefined,
-                month: undefined,
+                month: undefined
             },
             table: undefined,
             date: undefined,
             time: undefined
         }
+    },
+    mounted: function () {
+        this.updateFromModel(this.defaultDateTime);
+        this.updateViewForMonth();
     },
     methods: {
         generateTable() {
@@ -233,9 +169,7 @@ export default {
         },
 
         updateFromModel(defaultDateTime) {
-            let m;
-
-            m = moment.utc(defaultDateTime);
+            let m = moment.utc(defaultDateTime);
 
             this.date = {
                 year: m.year(),
@@ -314,11 +248,7 @@ export default {
 
         optionsFor(key) {
             return TIME_OPTIONS[key];
-        },
-    },
-    mounted: function () {
-        this.updateFromModel(this.defaultDateTime);
-        this.updateViewForMonth();
+        }
     }
 }
 </script>

@@ -46,7 +46,7 @@ define([
             },
             {
                 modelProp: 'range',
-                objectPath: 'form.yAxis.range',
+                objectPath: 'configuration.yAxis.range',
                 coerce: function coerceRange(range) {
                     if (!range) {
                         return {

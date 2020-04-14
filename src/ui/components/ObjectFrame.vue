@@ -20,169 +20,112 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-so-view has-local-controls"
-        :class="{
-            'c-so-view--no-frame': !hasFrame,
-            'has-complex-content': complexContent
-        }">
-        <div class="c-so-view__header">
-            <div class="c-so-view__header__icon" :class="cssClass"></div>
-            <div class="c-so-view__header__name">
+<div
+    class="c-so-view has-local-controls"
+    :class="{
+        'c-so-view--no-frame': !hasFrame,
+        'has-complex-content': complexContent
+    }"
+>
+    <div class="c-so-view__header">
+        <div class="c-object-label"
+             :class="[cssClass, classList]"
+        >
+            <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
             </div>
-            <context-menu-drop-down
-                    :object-path="objectPath">
-            </context-menu-drop-down>
         </div>
-        <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
-            <button class="c-button icon-expand"
-                 title="View Large"
-                 @click="expand">
-            </button>
-        </div>
-        <object-view 
-            class="c-so-view__object-view"
-            ref="objectView"
-            :object="domainObject"
-            :show-edit-view="showEditView"
-            :object-path="objectPath">
-        </object-view>
+        <context-menu-drop-down
+            :object-path="objectPath"
+        />
     </div>
+    <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
+        <button
+            class="c-button icon-expand"
+            title="View Large"
+            @click="expand"
+        ></button>
+    </div>
+    <object-view
+        ref="objectView"
+        class="c-so-view__object-view"
+        :object="domainObject"
+        :show-edit-view="showEditView"
+        :object-path="objectPath"
+    />
+</div>
 </template>
 
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-so-view {
-        display: flex;
-        flex-direction: column;
-
-        /*************************** HEADER */
-        &__header {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            margin-bottom: $interiorMargin;
-
-            &__icon {
-                flex: 0 0 auto;
-                margin-right: $interiorMarginSm;
-                opacity: 0.5;
-            }
-
-            &__name {
-                @include headerFont(1em);
-                @include ellipsize();
-                flex: 0 1 auto;
-            }
-        }
-
-        &:not(.c-so-view--no-frame) {
-            background: $colorBodyBg;
-            border: $browseFrameBorder;
-            padding: $interiorMargin;
-        }
-
-        &--no-frame {
-            > .c-so-view__header {
-                display: none;
-            }
-
-            > .c-so-view__local-controls {
-                top: $interiorMarginSm; right: $interiorMarginSm;
-            }
-        }
-
-        &__local-controls {
-            position: absolute;
-            top: $interiorMargin; right: $interiorMargin;
-            z-index: 2;
-        }
-
-        &__view-large {
-            display: none;
-        }
-
-        &.has-complex-content {
-            > .c-so-view__view-large { display: block; }
-        }
-
-        /*************************** OBJECT VIEW */
-        &__object-view {
-            flex: 1 1 auto;
-            height: 0; // Chrome 73 overflow bug fix
-            overflow: auto;
-
-            .c-object-view {
-                .u-fills-container {
-                    // Expand component types that fill a container
-                    @include abs();
-                }
-            }
-        }
-
-        .c-click-icon,
-        .c-button {
-            // Shrink buttons a bit when they appear in a frame
-            font-size: 0.85em;
-            padding: 3px 5px;
-        }
-    }
-</style>
-
 <script>
-    import ObjectView from './ObjectView.vue'
-    import ContextMenuDropDown from './contextMenuDropDown.vue';
+import ObjectView from './ObjectView.vue'
+import ContextMenuDropDown from './contextMenuDropDown.vue';
 
-    const SIMPLE_CONTENT_TYPES = [
-        'clock',
-        'timer',
-        'summary-widget',
-        'hyperlink'
-    ];
+const SIMPLE_CONTENT_TYPES = [
+    'clock',
+    'timer',
+    'summary-widget',
+    'hyperlink',
+    'conditionWidget'
+];
 
-    export default {
-        inject: ['openmct'],
-        props: {
-            domainObject: Object,
-            objectPath: Array,
-            hasFrame: Boolean,
-            showEditView: {
-                type: Boolean,
-                default: () => true
-            }
+export default {
+    inject: ['openmct'],
+    components: {
+        ObjectView,
+        ContextMenuDropDown
+    },
+    props: {
+        domainObject: {
+            type: Object,
+            required: true
         },
-        components: {
-            ObjectView,
-            ContextMenuDropDown,
+        objectPath: {
+            type: Array,
+            required: true
         },
-        methods: {
-            expand() {
-                let objectView = this.$refs.objectView,
-                    parentElement = objectView.$el,
-                    childElement = parentElement.children[0];
+        hasFrame: Boolean,
+        showEditView: {
+            type: Boolean,
+            default: true
+        }
+    },
+    data() {
+        let objectType = this.openmct.types.get(this.domainObject.type),
+            cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
+            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
 
-                this.openmct.overlays.overlay({
-                    element: childElement,
-                    size: 'large',
-                    onDestroy() {
-                        parentElement.append(childElement);
-                    }
-                });
-            },
-            getSelectionContext() {
-                return this.$refs.objectView.getSelectionContext();
+        return {
+            cssClass,
+            complexContent
+        }
+    },
+    computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
             }
+
+            return classList.join(' ');
+        }
+    },
+    methods: {
+        expand() {
+            let objectView = this.$refs.objectView,
+                parentElement = objectView.$el,
+                childElement = parentElement.children[0];
+
+            this.openmct.overlays.overlay({
+                element: childElement,
+                size: 'large',
+                onDestroy() {
+                    parentElement.append(childElement);
+                }
+            });
         },
-        data() {
-            let objectType = this.openmct.types.get(this.domainObject.type),
-                cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
-                complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
-
-            return {
-                cssClass,
-                complexContent    
-            }
+        getSelectionContext() {
+            return this.$refs.objectView.getSelectionContext();
         }
     }
+}
 </script>

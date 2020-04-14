@@ -48,11 +48,11 @@ define(
                         (domain !== 'delta' ? firstObservedTime : 0);
             };
 
-	        generatorData.getRangeValue = function (i, range) {
-		        var domainDelta = this.getDomainValue(i) - firstObservedTime,
+            generatorData.getRangeValue = function (i, range) {
+                var domainDelta = this.getDomainValue(i) - firstObservedTime,
                     ind = i % messages.length;
                 return messages[ind] + " - [" + domainDelta.toString() + "]";
-	        };
+            };
 
             return generatorData;
         }

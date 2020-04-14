@@ -1,32 +1,75 @@
 <template>
-<div class="c-properties c-properties--properties">
-    <div class="c-properties__header">Properties</div>
-    <ul class="c-properties__section" v-if="!multiSelect && !singleSelectNonObject">
-        <li class="c-properties__row">
-            <div class="c-properties__label">Title</div>
-            <div class="c-properties__value">{{ item.name }}</div>
+<div class="c-inspector__properties c-inspect-properties">
+    <div class="c-inspect-properties__header">
+        Details
+    </div>
+    <ul
+        v-if="!multiSelect && !singleSelectNonObject"
+        class="c-inspect-properties__section"
+    >
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
+                Title
+            </div>
+            <div class="c-inspect-properties__value">
+                {{ item.name }}
+            </div>
         </li>
-        <li class="c-properties__row">
-            <div class="c-properties__label">Type</div>
-            <div class="c-properties__value">{{ typeName }}</div>
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
+                Type
+            </div>
+            <div class="c-inspect-properties__value">
+                {{ typeName }}
+            </div>
         </li>
-        <li class="c-properties__row" v-if="item.created">
-            <div class="c-properties__label">Created</div>
-            <div class="c-properties__value c-ne__text">{{ formatTime(item.created) }}</div>
+        <li
+            v-if="item.created"
+            class="c-inspect-properties__row"
+        >
+            <div class="c-inspect-properties__label">
+                Created
+            </div>
+            <div class="c-inspect-properties__value">
+                {{ formatTime(item.created) }}
+            </div>
         </li>
-        <li class="c-properties__row" v-if="item.modified">
-            <div class="c-properties__label">Modified</div>
-            <div class="c-properties__value c-ne__text">{{ formatTime(item.modified) }}</div>
+        <li
+            v-if="item.modified"
+            class="c-inspect-properties__row"
+        >
+            <div class="c-inspect-properties__label">
+                Modified
+            </div>
+            <div class="c-inspect-properties__value">
+                {{ formatTime(item.modified) }}
+            </div>
         </li>
-        <li class="c-properties__row"
+        <li
             v-for="prop in typeProperties"
-            :key="prop.name">
-            <div class="c-properties__label">{{ prop.name }}</div>
-            <div class="c-properties__value">{{ prop.value }}</div>
+            :key="prop.name"
+            class="c-inspect-properties__row"
+        >
+            <div class="c-inspect-properties__label">
+                {{ prop.name }}
+            </div>
+            <div class="c-inspect-properties__value">
+                {{ prop.value }}
+            </div>
         </li>
     </ul>
-    <div class="c-properties__row--span-all" v-if="multiSelect">No properties to display for multiple items</div>
-    <div class="c-properties__row--span-all" v-if="singleSelectNonObject">No properties to display for this item</div>
+    <div
+        v-if="multiSelect"
+        class="c-inspect-properties__row--span-all"
+    >
+        No properties to display for multiple items
+    </div>
+    <div
+        v-if="singleSelectNonObject"
+        class="c-inspect-properties__row--span-all"
+    >
+        No properties to display for this item
+    </div>
 </div>
 </template>
 
@@ -77,8 +120,8 @@ export default {
                 .map((field) => {
                     return {
                         name: field.name,
-                        value: field.path.reduce((object, field) => {
-                            return object[field];
+                        value: field.path.reduce((object, key) => {
+                            return object[key];
                         }, this.item)
                     };
                 });
@@ -108,7 +151,7 @@ export default {
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
-            }            
+            }
         },
         formatTime(unixTime) {
             return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';

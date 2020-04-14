@@ -1,50 +1,62 @@
 <template>
-    <li class="c-tree__item-h">
-        <div class="c-tree__item menus-to-left"
-             @click="toggleExpanded">
-            <div class="c-filter-tree-item__filter-indicator"
-                :class="{'icon-filter': hasActiveFilters }"></div>
-            <span class="c-disclosure-triangle is-enabled flex-elem"
-              :class="{'c-disclosure-triangle--expanded': expanded}"></span>
-            <div class="c-tree__item__label c-object-label">
-                <div class="c-object-label">
-                    <div class="c-object-label__type-icon"
-                         :class="objectCssClass">
-                    </div>
-                    <div class="c-object-label__name flex-elem grows">{{ filterObject.name }}</div>
+<li class="c-tree__item-h">
+    <div
+        class="c-tree__item menus-to-left"
+        @click="toggleExpanded"
+    >
+        <div
+            class="c-filter-tree-item__filter-indicator"
+            :class="{'icon-filter': hasActiveFilters }"
+        ></div>
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="{'c-disclosure-triangle--expanded': expanded}"
+        ></span>
+        <div class="c-tree__item__label c-object-label">
+            <div class="c-object-label">
+                <div
+                    class="c-object-label__type-icon"
+                    :class="objectCssClass"
+                ></div>
+                <div class="c-object-label__name flex-elem grows">
+                    {{ filterObject.name }}
                 </div>
             </div>
         </div>
+    </div>
 
-        <div v-if="expanded">
-            <ul class="c-properties">
-                <div class="c-properties__label span-all"
-                     v-if="!isEditing && persistedFilters.useGlobal">
-                    Uses global filter
-                </div>
+    <div v-if="expanded">
+        <ul class="c-inspect-properties">
+            <div
+                v-if="!isEditing && persistedFilters.useGlobal"
+                class="c-inspect-properties__label span-all"
+            >
+                Uses global filter
+            </div>
 
-                <div class="c-properties__label span-all"
-                     v-if="isEditing">
-                    <toggle-switch
-                            :id="keyString"
-                            @change="useGlobalFilter"
-                            :checked="persistedFilters.useGlobal">
-                    </toggle-switch>
-                    Use global filter
-                </div>
-                <filter-field
-                        v-if="(!persistedFilters.useGlobal && !isEditing) || isEditing"
-                        v-for="metadatum in filterObject.metadataWithFilters"
-                        :key="metadatum.key"
-                        :filterField="metadatum"
-                        :useGlobal="persistedFilters.useGlobal"
-                        :persistedFilters="updatedFilters[metadatum.key]"
-                        @filterSelected="updateFiltersWithSelectedValue"
-                        @filterTextValueChanged="updateFiltersWithTextValue">
-                </filter-field>
-            </ul>
-        </div>
-    </li>
+            <div
+                v-if="isEditing"
+                class="c-inspect-properties__label span-all"
+            >
+                <toggle-switch
+                    :id="keyString"
+                    :checked="persistedFilters.useGlobal"
+                    @change="useGlobalFilter"
+                />
+                Use global filter
+            </div>
+            <filter-field
+                v-for="metadatum in activeFilters"
+                :key="metadatum.key"
+                :filter-field="metadatum"
+                :use-global="persistedFilters.useGlobal"
+                :persisted-filters="updatedFilters[metadatum.key]"
+                @filterSelected="updateFiltersWithSelectedValue"
+                @filterTextValueChanged="updateFiltersWithTextValue"
+            />
+        </ul>
+    </div>
+</li>
 </template>
 
 <script>
@@ -58,7 +70,10 @@ export default {
         ToggleSwitch
     },
     props: {
-        filterObject: Object, 
+        filterObject: {
+            type: Object,
+            required: true
+        },
         persistedFilters: {
             type: Object,
             default: () => {
@@ -74,6 +89,23 @@ export default {
             isEditing: this.openmct.editor.isEditing()
         }
     },
+    computed: {
+        // do not show filter fields if using global filter
+        // if editing however, show all filter fields
+        activeFilters() {
+            if (!this.isEditing && this.persistedFilters.useGlobal) {
+                return []
+            }
+
+            return this.filterObject.metadataWithFilters
+        },
+        hasActiveFilters() {
+            // Should be true when the user has entered any filter values.
+            return Object.values(this.persistedFilters).some(comparator => {
+                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
+            });
+        }
+    },
     watch: {
         persistedFilters: {
             handler: function checkFilters(newpersistedFilters) {
@@ -82,13 +114,14 @@ export default {
             deep: true
         }
     },
-    computed: {
-        hasActiveFilters() {
-            // Should be true when the user has entered any filter values.
-            return Object.values(this.persistedFilters).some(comparator => {
-                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
-            });
-        }
+    mounted() {
+        let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
+        this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
+        this.objectCssClass = type.definition.cssClass;
+        this.openmct.editor.on('isEditing', this.toggleIsEditing);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.toggleIsEditing);
     },
     methods: {
         toggleExpanded() {
@@ -128,16 +161,7 @@ export default {
         },
         toggleIsEditing(isEditing) {
             this.isEditing = isEditing;
-        },
-    },
-    mounted() {
-        let type = this.openmct.types.get(this.filterObject.domainObject.type) || {};
-        this.keyString = this.openmct.objects.makeKeyString(this.filterObject.domainObject.identifier);
-        this.objectCssClass = type.definition.cssClass;
-        this.openmct.editor.on('isEditing', this.toggleIsEditing);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.toggleIsEditing);
+        }
     }
 }
 </script>

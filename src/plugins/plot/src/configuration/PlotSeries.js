@@ -140,8 +140,14 @@ define([
          * @returns {Promise}
          */
         fetch: function (options) {
-            const strategy = options.shouldUseMinMax ? 'minMax' : undefined;
+            let strategy;
+
+            if (this.model.interpolate !== 'none') {
+                strategy = 'minmax';
+            }
+
             options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
                     .telemetry
@@ -371,26 +377,19 @@ define([
          * @public
          */
         updateFiltersAndRefresh: function (updatedFilters) {
-            this.filters = updatedFilters;
-            this.reset();
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                delete this.unsubscribe;
-            }
-            this.fetch();
-        },
+            let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
 
-        /**
-         * Clears the plot series, unsubscribes and resubscribes
-         * @public
-         */
-        refresh: function () {
-            this.reset();
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                delete this.unsubscribe;
+            if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
+                this.filters = deepCopiedFilters;
+                this.reset();
+                if (this.unsubscribe) {
+                    this.unsubscribe();
+                    delete this.unsubscribe;
+                }
+                this.fetch();
+            } else {
+                this.filters = deepCopiedFilters;
             }
-            this.fetch();
         }
     });
 
