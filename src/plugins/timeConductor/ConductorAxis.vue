@@ -20,97 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-conductor-axis"
-         ref="axisHolder"
-         @mousedown="dragStart($event)"
-    >
-    </div>
+<div ref="axisHolder"
+     class="c-conductor-axis"
+     @mousedown="dragStart($event)"
+>
+</div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-
-    .c-conductor-axis {
-        $h: 18px;
-        $tickYPos: ($h / 2) + 12px;
-
-        @include userSelectNone();
-        @include bgTicks($c: rgba($colorBodyFg, 0.4));
-        background-position: 0 50%;
-        background-size: 5px 2px;
-        border-radius: $controlCr;
-        height: $h;
-
-        svg {
-            text-rendering: geometricPrecision;
-            width: 100%;
-            height: 100%;
-            > g.axis {
-                // Overall Tick holder
-                transform: translateY($tickYPos);
-                path {
-                    // Domain line
-                    display: none;
-                }
-
-                g {
-                    // Each tick. These move on drag.
-                    line {
-                        // Line beneath ticks
-                        display: none;
-                    }
-                }
-            }
-
-            text {
-                // Tick labels
-                fill: $colorBodyFg;
-                font-size: 1em;
-                paint-order: stroke;
-                font-weight: bold;
-                stroke: $colorBodyBg;
-                stroke-linecap: butt;
-                stroke-linejoin: bevel;
-                stroke-width: 6px;
-            }
-        }
-
-        body.desktop .is-fixed-mode & {
-            @include cursorGrab();
-            background-size: 3px 30%;
-            background-color: $colorBodyBgSubtle;
-            box-shadow: inset rgba(black, 0.4) 0 1px 1px;
-            transition: $transOut;
-
-            svg text {
-                fill: $colorBodyFg;
-                stroke: $colorBodyBgSubtle;
-                transition: $transOut;
-            }
-
-            &:hover,
-            &:active {
-                $c: $colorKeySubtle;
-                background-color: $c;
-                transition: $transIn;
-                svg text {
-                    stroke: $c;
-                    transition: $transIn;
-                }
-            }
-
-        }
-
-        .is-realtime-mode & {
-            $c: 1px solid rgba($colorTime, 0.7);
-            border-left: $c;
-            border-right: $c;
-            svg text {
-                fill: $colorTime;
-            }
-        }
-    }
-</style>
 
 <script>
 
@@ -129,13 +44,72 @@ const PIXELS_PER_TICK_WIDE = 200;
 export default {
     inject: ['openmct'],
     props: {
-        bounds: Object,
-        isFixed: Boolean
+        bounds: {
+            type: Object,
+            required: true
+        },
+        isFixed: {
+            type: Boolean,
+            required: true
+        }
     },
     data() {
         return {
             altPressed: false
         }
+    },
+    watch: {
+        bounds: {
+            handler(bounds) {
+                this.setScale();
+            },
+            deep: true
+        },
+        isFixed: function (value) {
+            value ? this.createBrush() : this.destroyBrush();
+        }
+    },
+    created() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = true;
+                this.destroyBrush();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = false;
+                this.createBrush();
+            }
+        });
+    },
+    mounted() {
+        let axisHolder = this.$refs.axisHolder;
+        this.height = axisHolder.offsetHeight;
+        let vis = d3Selection.select(axisHolder)
+            .append("svg:svg")
+            .attr("width", "100%")
+            .attr("height", this.height);
+
+        this.width = this.$refs.axisHolder.clientWidth;
+        this.xAxis = d3Axis.axisTop();
+        this.dragging = false;
+
+        // draw x axis with labels. CSS is used to position them.
+        this.axisElement = vis.append("g")
+            .attr("class", "axis");
+
+        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
+        this.setScale();
+
+        //Respond to changes in conductor
+        this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
+        setInterval(this.resize, RESIZE_POLL_INTERVAL);
+
+        this.initBrush();
+        this.createBrush();
+    },
+    destroyed() {
     },
     methods: {
         setScale() {
@@ -162,9 +136,6 @@ export default {
             this.msPerPixel = (bounds.end - bounds.start) / this.width;
         },
         setViewFromTimeSystem(timeSystem) {
-            let format = this.getActiveFormatter();
-            let bounds = this.openmct.time.bounds();
-
             //The D3 scale used depends on the type of time system as d3
             // supports UTC out of the box.
             if (timeSystem.isUTCBased) {
@@ -192,8 +163,8 @@ export default {
                 format: key
             }).formatter;
         },
-        dragStart($event){
-            if (this.isFixed){
+        dragStart($event) {
+            if (this.isFixed) {
                 this.dragStartX = $event.clientX;
 
                 document.addEventListener('mousemove', this.drag);
@@ -203,7 +174,7 @@ export default {
             }
         },
         drag($event) {
-            if (!this.dragging){
+            if (!this.dragging) {
                 this.dragging = true;
                 if (this.altPressed) {
                     requestAnimationFrame(()=>{
@@ -259,7 +230,7 @@ export default {
                 .attr("class", "brush")
                 .call(this.brush);
         },
-        brushEnd () {
+        brushEnd() {
             const selection = d3Selection.event.selection;
             if (!d3Selection.event.sourceEvent || !selection) {
                 return;
@@ -281,63 +252,10 @@ export default {
         },
         destroyBrush() {
             const brush = d3Selection.select('g.brush')
-            if (brush){
+            if (brush) {
                 brush.remove();
             }
         }
-    },
-    watch: {
-        bounds: {
-            handler(bounds) {
-                this.setScale();
-            },
-            deep: true
-        },
-        isFixed: function(value) {
-            value ? this.createBrush() : this.destroyBrush();
-        }
-    },
-    created() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = true;
-                this.destroyBrush();
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = false;
-                this.createBrush();
-            }
-        });
-    },
-    mounted() {
-        let axisHolder = this.$refs.axisHolder;
-        this.height = axisHolder.offsetHeight;
-        let vis = d3Selection.select(axisHolder)
-            .append("svg:svg")
-            .attr("width", "100%")
-            .attr("height", this.height);
-
-        this.width = this.$refs.axisHolder.clientWidth;
-        this.xAxis = d3Axis.axisTop();
-        this.dragging = false;
-
-        // draw x axis with labels. CSS is used to position them.
-        this.axisElement = vis.append("g")
-            .attr("class", "axis");
-
-        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
-        this.setScale();
-
-        //Respond to changes in conductor
-        this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
-        setInterval(this.resize, RESIZE_POLL_INTERVAL);
-
-        this.initBrush();
-        this.createBrush();
-    },
-    destroyed() {
     }
 
 }

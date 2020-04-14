@@ -20,39 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-    <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
-        <button class="c-button--menu c-history-button icon-history"
-             @click.prevent="toggle">
-            <span class="c-button__label">History</span>
-        </button>
-        <div class="c-menu" v-if="open">
-            <ul
-                v-if="isUTCBased"
+<div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
+    <button class="c-button--menu c-history-button icon-history"
+            @click.prevent="toggle"
+    >
+        <span class="c-button__label">History</span>
+    </button>
+    <div v-if="open"
+         class="c-menu"
+    >
+        <ul
+            v-if="isUTCBased"
+        >
+            <li @click="selectHours(24)">Last 24 hours</li>
+            <li @click="selectHours(2)">Last 2 hours</li>
+            <li @click="selectHours(1)">Last hour</li>
+        </ul>
+        <ul>
+            <li
+                v-for="(timespan, index) in historyForCurrentTimeSystem"
+                :key="index"
+                @click="selectTimespan(timespan)"
             >
-                <li @click="selectHours(24)">Last 24 hours</li>
-                <li @click="selectHours(2)">Last 2 hours</li>
-                <li @click="selectHours(1)">Last hour</li>
-            </ul>
-            <ul>
-                <li
-                    v-for="(timespan, index) in historyForCurrentTimeSystem"
-                    :key="index"
-                    @click="selectTimespan(timespan)"
-                >
-                    {{ formatTime(timespan.start) }} - {{ formatTime(timespan.end) }}
-                </li>
-            </ul>
-        </div>    
+                {{ formatTime(timespan.start) }} - {{ formatTime(timespan.end) }}
+            </li>
+        </ul>
     </div>
+</div>
 </template>
-
-<style lang="scss">
-    @import "~styles/sass-base";
-</style>
 
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
-import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 import _ from 'lodash'
 
 const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 20;
@@ -84,6 +82,29 @@ export default {
             return this.history[this.timeSystem.key]
         }
     },
+    watch: {
+        bounds: {
+            handler() {
+                this.addTimespan();
+            },
+            deep: true
+        },
+        timeSystem: {
+            handler() {
+                this.addTimespan();
+            },
+            deep: true
+        },
+        history: {
+            handler() {
+                this.persistHistoryToLocalStorage();
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.getHistoryFromLocalStorage();
+    },
     methods: {
         getHistoryFromLocalStorage() {
             if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
@@ -101,7 +122,7 @@ export default {
             let [...currentHistory] = this.history[key] || [];
             const timespan = {
                 start: this.bounds.start,
-                end: this.bounds.end,
+                end: this.bounds.end
             };
 
             // when choosing an existing entry, remove it and add it back as latest entry
@@ -133,29 +154,6 @@ export default {
 
             return formatter.format(time);
         }
-    },
-    watch: {
-        bounds: {
-            handler() {
-                this.addTimespan();
-            },
-            deep: true
-        },
-        timeSystem: {
-            handler() {
-                this.addTimespan();
-            },
-            deep: true
-        },
-        history: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
-        }
-    },
-    mounted() {
-        this.getHistoryFromLocalStorage();
     }
 }
 </script>
