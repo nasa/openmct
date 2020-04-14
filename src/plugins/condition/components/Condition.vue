@@ -167,6 +167,7 @@
     </div>
     <div v-else
          class="c-condition c-condition--browse"
+         :class="{'is-current': condition.id === currentConditionId}"
     >
         <!-- Browse view -->
         <div class="c-condition__header">
@@ -199,6 +200,10 @@ export default {
         ConditionDescription
     },
     props: {
+        currentConditionId: {
+            type: String,
+            default: ''
+        },
         condition: {
             type: Object,
             required: true

@@ -234,6 +234,12 @@
     &__summary {
         flex: 1 1 auto;
     }
+
+    &.is-current {
+        $c: $colorBodyFg;
+        border-color: rgba($c, 0.5);
+        background: rgba($c, 0.2);
+    }
 }
 
 /***************************** CONDITION DEFINITION, EDITING */
