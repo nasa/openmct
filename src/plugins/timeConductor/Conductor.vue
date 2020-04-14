@@ -20,32 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-conductor"
-     :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
+<div
+    class="c-conductor"
+    :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
 >
-    <form ref="conductorForm"
-          class="u-contents"
-          @submit.prevent="updateTimeFromConductor"
+    <form
+        ref="conductorForm"
+        class="u-contents"
+        @submit.prevent="updateTimeFromConductor"
     >
         <div class="c-conductor__time-bounds">
-            <button ref="submitButton"
-                    class="c-input--submit"
-                    type="submit"
+            <button
+                ref="submitButton"
+                class="c-input--submit"
+                type="submit"
             ></button>
             <ConductorModeIcon class="c-conductor__mode-icon" />
 
-            <div v-if="isFixed"
-                 class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+            <div
+                v-if="isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
             >
                 <!-- Fixed start -->
                 <div class="c-conductor__start-fixed__label">Start</div>
-                <input ref="startDate"
-                       v-model="formattedBounds.start"
-                       class="c-input--datetime"
-                       type="text"
-                       autocorrect="off"
-                       spellcheck="false"
-                       @change="validateAllBounds(); submitForm()"
+                <input
+                    ref="startDate"
+                    v-model="formattedBounds.start"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllBounds(); submitForm()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
@@ -55,18 +60,20 @@
                 />
             </div>
 
-            <div v-if="!isFixed"
-                 class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+            <div
+                v-if="!isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
             >
                 <!-- RT start -->
                 <div class="c-direction-indicator icon-minus"></div>
-                <input ref="startOffset"
-                       v-model="offsets.start"
-                       class="c-input--hrs-min-sec"
-                       type="text"
-                       autocorrect="off"
-                       spellcheck="false"
-                       @change="validateAllOffsets(); submitForm()"
+                <input
+                    ref="startOffset"
+                    v-model="offsets.start"
+                    class="c-input--hrs-min-sec"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllOffsets(); submitForm()"
                 >
             </div>
 
@@ -75,14 +82,15 @@
                 <div class="c-conductor__end-fixed__label">
                     {{ isFixed ? 'End' : 'Updated' }}
                 </div>
-                <input ref="endDate"
-                       v-model="formattedBounds.end"
-                       class="c-input--datetime"
-                       type="text"
-                       autocorrect="off"
-                       spellcheck="false"
-                       :disabled="!isFixed"
-                       @change="validateAllBounds(); submitForm()"
+                <input
+                    ref="endDate"
+                    v-model="formattedBounds.end"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    :disabled="!isFixed"
+                    @change="validateAllBounds(); submitForm()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
@@ -93,18 +101,20 @@
                 />
             </div>
 
-            <div v-if="!isFixed"
-                 class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
+            <div
+                v-if="!isFixed"
+                class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
             >
                 <!-- RT end -->
                 <div class="c-direction-indicator icon-plus"></div>
-                <input ref="endOffset"
-                       v-model="offsets.end"
-                       class="c-input--hrs-min-sec"
-                       type="text"
-                       autocorrect="off"
-                       spellcheck="false"
-                       @change="validateAllOffsets(); submitForm()"
+                <input
+                    ref="endOffset"
+                    v-model="offsets.end"
+                    class="c-input--hrs-min-sec"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllOffsets(); submitForm()"
                 >
             </div>
 
@@ -128,8 +138,9 @@
                 @select-timespan="setViewFromBounds"
             />
         </div>
-        <input type="submit"
-               class="invisible"
+        <input
+            type="submit"
+            class="invisible"
         >
     </form>
 </div>
