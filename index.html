@@ -34,8 +34,8 @@
     <body>
     </body>
     <script>
-        const FIVE_MINUTES = 5 * 60 * 1000;
-        const THIRTY_MINUTES = 30 * 60 * 1000;
+        const THIRTY_SECONDS = 30 * 1000;
+        const THIRTY_MINUTES = THIRTY_SECONDS * 60;
 
         [
             'example/eventGenerator'
@@ -49,6 +49,7 @@
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.LocalTimeSystem());
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.panel"
         }));
@@ -71,9 +72,26 @@
                     clock: 'local',
                     clockOffsets: {
                         start: - THIRTY_MINUTES,
-                        end: FIVE_MINUTES
+                        end: THIRTY_SECONDS
                     }
-                }
+                },
+                {
+                    name: "Fixed",
+                    timeSystem: 'local',
+                    bounds: {
+                        start: Date.now() - THIRTY_MINUTES,
+                        end: Date.now()
+                    }
+                },
+                {
+                    name: "Realtime",
+                    timeSystem: 'local',
+                    clock: 'local',
+                    clockOffsets: {
+                        start: - THIRTY_MINUTES,
+                        end: THIRTY_SECONDS
+                    }
+                },
             ]
         }));
         openmct.install(openmct.plugins.SummaryWidget());
