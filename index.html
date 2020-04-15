@@ -34,8 +34,8 @@
     <body>
     </body>
     <script>
-        const FIVE_MINUTES = 5 * 60 * 1000;
-        const THIRTY_MINUTES = 30 * 60 * 1000;
+        const THIRTY_SECONDS = 30 * 1000;
+        const THIRTY_MINUTES = THIRTY_SECONDS * 60;
 
         [
             'example/eventGenerator'
@@ -72,7 +72,7 @@
                     clock: 'local',
                     clockOffsets: {
                         start: - THIRTY_MINUTES,
-                        end: FIVE_MINUTES
+                        end: THIRTY_SECONDS
                     }
                 },
                 {
@@ -89,7 +89,7 @@
                     clock: 'local',
                     clockOffsets: {
                         start: - THIRTY_MINUTES,
-                        end: FIVE_MINUTES
+                        end: THIRTY_SECONDS
                     }
                 },
             ]
