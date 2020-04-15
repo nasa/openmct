@@ -30,6 +30,7 @@
 >
     <div class="c-condition-h__drop-target"></div>
     <div v-if="isEditing"
+         :class="{'is-current': condition.id === currentConditionId}"
          class="c-condition c-condition--edit"
     >
         <!-- Edit view -->

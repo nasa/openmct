@@ -190,6 +190,7 @@
 }
 
 .c-condition {
+    border: 1px solid transparent;
     flex-direction: column;
     min-width: 400px;
 
@@ -237,7 +238,7 @@
 
     &.is-current {
         $c: $colorBodyFg;
-        border-color: rgba($c, 0.5);
+        border-color: rgba($c, 0.2);
         background: rgba($c, 0.2);
     }
 }
