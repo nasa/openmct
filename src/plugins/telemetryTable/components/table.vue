@@ -87,6 +87,25 @@
             >
                 <span class="c-button__label">Autosize Columns</span>
             </button>
+
+            <div class="c-separator"></div>
+
+            <button
+                v-if="areHeadersHidden"
+                class="c-button icon-eye-open labeled"
+                title="Show column headers."
+                @click="toggleHeadersHidden"
+            >
+                <span class="c-button__label">Show Headers</span>
+            </button>
+            <button
+                v-else
+                class="c-button icon-eye-disabled labeled"
+                title="Hide column headers."
+                @click="toggleHeadersHidden"
+            >
+                <span class="c-button__label">Hide Headers</span>
+            </button>
         </template>
 
         <slot name="buttons"></slot>
@@ -139,6 +158,7 @@
         ></div>
         <!-- Headers table -->
         <div
+            v-show="!areHeadersHidden"
             ref="headersTable"
             class="c-telemetry-table__headers-w js-table__headers-w"
             :style="{ 'max-width': widthWithScroll}"
@@ -332,6 +352,7 @@ export default {
             dropOffsetLeft: undefined,
             isDropTargetActive: false,
             isAutosizeEnabled: configuration.autosize,
+            areHeadersHidden: false,
             scrollW: 0,
             markCounter: 0,
             paused: false,
@@ -869,6 +890,9 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        toggleHeadersHidden() {
+            this.areHeadersHidden = !this.areHeadersHidden
         }
     }
 }
