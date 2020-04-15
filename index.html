@@ -43,9 +43,9 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
+        openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'));
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
