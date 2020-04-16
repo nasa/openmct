@@ -16,6 +16,8 @@
 .is-editing {
     /******************* STYLES FOR C-FRAME WHILE EDITING */
     .c-frame {
+        border: 1px solid rgba($editFrameColorHov, 0.3);
+
         &:not([s-selected]) {
             &:hover {
                 border: $editFrameBorderHov;

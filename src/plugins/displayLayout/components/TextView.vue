@@ -32,7 +32,7 @@
         :class="[styleClass]"
         :style="style"
     >
-        {{ item.text }}
+        <div class="c-text-view__text">{{ item.text }}</div>
     </div>
 </layout-frame>
 </template>
@@ -44,8 +44,8 @@ import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 export default {
     makeDefinition(openmct, gridSize, element) {
         return {
-            fill: 'transparent',
-            stroke: 'transparent',
+            fill: '',
+            stroke: '',
             size: '13px',
             color: '',
             x: 1,
@@ -80,14 +80,8 @@ export default {
     computed: {
         style() {
             return Object.assign({
-                backgroundColor: this.item.fill,
-                border: '1px solid ' + this.item.stroke,
-                color: this.item.color,
                 fontSize: this.item.size
             }, this.itemStyle);
-        },
-        styleClass() {
-            return this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     },
     watch: {
