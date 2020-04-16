@@ -462,9 +462,17 @@ select {
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
     box-shadow: $shdwMenu;
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+        //+ * {
+        //    margin-top: $interiorMarginSm;
+        //}
+    }
 }
 
 @mixin menuInner() {
@@ -497,16 +505,25 @@ select {
              content: ''; // Add this element so that menu items without an icon still indent properly
         }
     }
-    ul {
-        &:not(:last-child) {
-            border-bottom: 1px solid $colorInteriorBorder;
-        }
-    }
 }
 
 .c-menu {
     @include menuOuter();
     @include menuInner();
+
+    &__section-hint {
+        opacity: 0.6;
+        font-size: 0.9em;
+        font-style: italic;
+        //text-align: center;
+    }
+
+    &__section-separator {
+        $m: $interiorMargin;
+        border-top: 1px solid $colorInteriorBorder;
+        margin: $m 0;
+        padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+    }
 }
 
 .c-super-menu {
