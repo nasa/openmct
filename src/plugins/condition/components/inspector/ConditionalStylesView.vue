@@ -315,11 +315,12 @@ export default {
             let keys = Object.keys(domainObjectStyles);
             //TODO: Need an easier way to find which properties are itemIds
             keys.forEach((key) => {
-                if ((key !== 'styles') &&
+                const keyIsItemId = (key !== 'styles') &&
                     (key !== 'staticStyle') &&
                     (key !== 'defaultConditionId') &&
                     (key !== 'selectedConditionId') &&
-                    (key !== 'conditionSetIdentifier')) {
+                    (key !== 'conditionSetIdentifier');
+                if (keyIsItemId) {
                     if (!(newItems.find(item => item.id === key))) {
                         itemsToRemove.push(key);
                     }

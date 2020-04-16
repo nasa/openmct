@@ -128,16 +128,11 @@ export default class StyleRuleManager extends EventEmitter {
 
     applySelectedConditionStyle() {
         const conditionId = this.selectedConditionId || this.defaultConditionId;
-        if (conditionId) {
-            let foundStyle = this.conditionalStyleMap[this.selectedConditionId];
-            if (foundStyle) {
-                if (foundStyle !== this.currentStyle) {
-                    this.currentStyle = foundStyle;
-                }
-                this.updateDomainObjectStyle();
-            }
-        } else {
+        if (!conditionId) {
             this.applyStaticStyle();
+        } else if (this.conditionalStyleMap[conditionId]) {
+            this.currentStyle = this.conditionalStyleMap[conditionId];
+            this.updateDomainObjectStyle();
         }
     }
 
