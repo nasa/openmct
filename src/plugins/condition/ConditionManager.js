@@ -57,7 +57,7 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, id)
         );
-        this.updateConditionTelemetry();
+        this.updateConditionTelemetryObjects();
     }
 
     unsubscribeFromTelemetry(endpointIdentifier) {
@@ -70,7 +70,7 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions[id]();
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
-        this.updateConditionTelemetry();
+        this.updateConditionTelemetryObjects();
     }
 
     initialize() {
@@ -82,8 +82,8 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    updateConditionTelemetry() {
-        this.conditionClassCollection.forEach((condition) => condition.updateTelemetry());
+    updateConditionTelemetryObjects() {
+        this.conditionClassCollection.forEach((condition) => condition.updateTelemetryObjects());
     }
 
     updateCondition(conditionConfiguration, index) {

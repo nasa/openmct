@@ -124,9 +124,9 @@ export default class ConditionClass extends EventEmitter {
         this.createCriteria(criterionConfigurations);
     }
 
-    updateTelemetry() {
+    updateTelemetryObjects() {
         this.criteria.forEach((criterion) => {
-            criterion.updateTelemetry(this.conditionManager.telemetryObjects);
+            criterion.updateTelemetryObjects(this.conditionManager.telemetryObjects);
         });
     }
 

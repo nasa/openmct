@@ -57,7 +57,7 @@ export default class TelemetryCriterion extends EventEmitter {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
     }
 

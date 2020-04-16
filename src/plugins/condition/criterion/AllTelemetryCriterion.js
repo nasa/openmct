@@ -45,7 +45,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
         this.removeTelemetryDataCache();
     }
