@@ -248,12 +248,12 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'valueIs',
+        name: 'isOneOf',
         operation: function (input) {
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                return values.find((value) => lhsValue === _.trim(value.toString()));
+                return values.some((value) => lhsValue === value.toString().trim());
             }
             return false;
         },
@@ -265,12 +265,12 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'valueIsNot',
+        name: 'isNotOneOf',
         operation: function (input) {
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.find((value) => lhsValue === _.trim(value.toString()));
+                const found = values.some((value) => lhsValue === value.toString().trim());
                 return !found;
             }
             return false;
