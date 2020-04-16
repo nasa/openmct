@@ -31,7 +31,7 @@ export const TRIGGER_LABEL = {
     'any': 'when any criteria are met',
     'all': 'when all criteria are met',
     'not': 'when no criteria are met',
-    'xor': 'when only one criteria is met'
+    'xor': 'when only one criterion is met'
 };
 
 export const STYLE_CONSTANTS = {
