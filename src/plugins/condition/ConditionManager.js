@@ -70,7 +70,7 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions[id]();
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
-        this.updateConditionTelemetry();
+        this.removeConditionTelemetry();
     }
 
     initialize() {
@@ -84,6 +84,27 @@ export default class ConditionManager extends EventEmitter {
 
     updateConditionTelemetry() {
         this.conditionClassCollection.forEach((condition) => condition.updateTelemetry());
+    }
+
+    removeConditionTelemetry() {
+        let conditionsChanged = false;
+        this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration) => {
+            conditionConfiguration.configuration.criteria.forEach((criterion, index) => {
+                const found = Object.values(this.telemetryObjects).find((telemetryObject) => {
+                    return this.openmct.objects.areIdsEqual(telemetryObject.identifier, criterion.telemetry);
+                });
+                if (!found) {
+                    criterion.telemetry = '';
+                    criterion.metadata = '';
+                    criterion.input = [];
+                    criterion.operation = '';
+                    conditionsChanged = true;
+                }
+            });
+        });
+        if (conditionsChanged) {
+            this.persistConditions();
+        }
     }
 
     updateCondition(conditionConfiguration, index) {
