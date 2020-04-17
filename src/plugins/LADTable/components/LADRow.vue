@@ -84,10 +84,12 @@ export default {
         this.valueMetadata = this
             .metadata
             .valuesForHints(['range'])[0];
-        
+
+        // if no range hint, then we use the next available that isn't domain or name
         if(!this.valueMetadata) {
+            console.log(this.metadata.values());
             this.valueMetadata = this.metadata.values().find(
-                (metadatum) => metadatum.hints.domain === undefined
+                (metadatum) => metadatum.hints.domain === undefined && metadatum.key !== 'name'
             );
         }
 
