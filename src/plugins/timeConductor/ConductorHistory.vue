@@ -27,18 +27,30 @@
         <span class="c-button__label">History</span>
     </button>
     <div v-if="open"
-         class="c-menu"
+         class="c-menu c-conductor__history-menu"
     >
         <ul
             v-if="isUTCBased"
         >
-            <li @click="selectHours(24)">Last 24 hours</li>
-            <li @click="selectHours(2)">Last 2 hours</li>
-            <li @click="selectHours(1)">Last hour</li>
+            <li class="icon-clock"
+                @click="selectHours(24)">Last 24 hours
+            </li>
+            <li class="icon-clock"
+                @click="selectHours(2)">Last 2 hours
+            </li>
+            <li class="icon-clock"
+                @click="selectHours(1)">Last hour
+            </li>
         </ul>
+
+        <div class="c-menu__section-separator c-menu__section-hint">
+            Past timeframes, ordered by latest first
+        </div>
+
         <ul>
             <li
                 v-for="(timespan, index) in historyForCurrentTimeSystem"
+                class="icon-history"
                 :key="index"
                 @click="selectTimespan(timespan)"
             >
@@ -79,7 +91,8 @@ export default {
             return this.timeSystem.isUTCBased;
         },
         historyForCurrentTimeSystem() {
-            return this.history[this.timeSystem.key]
+            // Return a reversed array so that timeframes are ordered latest first
+            return this.history[this.timeSystem.key].reverse();
         }
     },
     watch: {
