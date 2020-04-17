@@ -9,6 +9,12 @@
     border-radius: $controlCr;
     height: $h;
 
+    .c-conductor__zooming {
+        position: absolute;
+        background-color: blue;
+        height: $h;
+    }
+
     svg {
         text-rendering: geometricPrecision;
         width: 100%;
@@ -44,7 +50,7 @@
     }
 
     body.desktop .is-fixed-mode & {
-        @include cursorGrab();
+        // @include cursorGrab();
         background-size: 3px 30%;
         background-color: $colorBodyBgSubtle;
         box-shadow: inset rgba(black, 0.4) 0 1px 1px;
@@ -65,6 +71,11 @@
                 stroke: $c;
                 transition: $transIn;
             }
+        }
+
+        .alt-pressed {
+            @include cursorGrab();
+            background-color: blue;
         }
     }
 
