@@ -28,12 +28,12 @@
     }"
 >
     <div class="c-so-view__header">
-        <div
-            class="c-so-view__header__icon"
-            :class="cssClass"
-        ></div>
-        <div class="c-so-view__header__name">
-            {{ domainObject && domainObject.name }}
+        <div class="c-object-label"
+             :class="[cssClass, classList]"
+        >
+            <div class="c-object-label__name">
+                {{ domainObject && domainObject.name }}
+            </div>
         </div>
         <context-menu-drop-down
             :object-path="objectPath"
@@ -64,7 +64,8 @@ const SIMPLE_CONTENT_TYPES = [
     'clock',
     'timer',
     'summary-widget',
-    'hyperlink'
+    'hyperlink',
+    'conditionWidget'
 ];
 
 export default {
@@ -96,6 +97,16 @@ export default {
         return {
             cssClass,
             complexContent
+        }
+    },
+    computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
         }
     },
     methods: {

@@ -1,18 +1,18 @@
 <template>
-<div class="c-properties">
+<div class="c-inspect-properties">
     <template v-if="isEditing">
-        <div class="c-properties__header">
+        <div class="c-inspect-properties__header">
             Table Column Size
         </div>
-        <ul class="c-properties__section">
-            <li class="c-properties__row">
+        <ul class="c-inspect-properties__section">
+            <li class="c-inspect-properties__row">
                 <div
-                    class="c-properties__label"
+                    class="c-inspect-properties__label"
                     title="Auto-size table"
                 >
                     <label for="AutoSizeControl">Auto-size</label>
                 </div>
-                <div class="c-properties__value">
+                <div class="c-inspect-properties__value">
                     <input
                         id="AutoSizeControl"
                         type="checkbox"
@@ -22,22 +22,22 @@
                 </div>
             </li>
         </ul>
-        <div class="c-properties__header">
+        <div class="c-inspect-properties__header">
             Table Column Visibility
         </div>
-        <ul class="c-properties__section">
+        <ul class="c-inspect-properties__section">
             <li
                 v-for="(title, key) in headers"
                 :key="key"
-                class="c-properties__row"
+                class="c-inspect-properties__row"
             >
                 <div
-                    class="c-properties__label"
+                    class="c-inspect-properties__label"
                     title="Show or hide column"
                 >
                     <label :for="key + 'ColumnControl'">{{ title }}</label>
                 </div>
-                <div class="c-properties__value">
+                <div class="c-inspect-properties__value">
                     <input
                         :id="key + 'ColumnControl'"
                         type="checkbox"

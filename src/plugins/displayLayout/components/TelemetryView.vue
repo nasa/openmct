@@ -30,6 +30,7 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
+        :class="styleClass"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
@@ -59,6 +60,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
+import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],
@@ -77,8 +79,8 @@ export default {
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
             value: metadata.getDefaultDisplayValue(),
-            stroke: "transparent",
-            fill: "transparent",
+            stroke: "",
+            fill: "",
             color: "",
             size: "13px"
         };
@@ -87,6 +89,7 @@ export default {
     components: {
         LayoutFrame
     },
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -122,12 +125,10 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
-            return {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
+            return Object.assign({}, {
                 fontSize: this.item.size
-            }
+            }, this.itemStyle);
+
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;

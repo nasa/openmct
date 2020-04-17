@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -264,6 +264,8 @@ define([
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
+        this.install(this.plugins.Condition());
+        this.install(this.plugins.ConditionWidget());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

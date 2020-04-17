@@ -87,6 +87,11 @@ $colorSelectedFg: pullForward($colorBodyFg, 10%);
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: $interiorMargin, 7px;
+$drawerBg: darken($colorBodyBg, 5%);
+$drawerFg: darken($colorBodyFg, 5%);
+$sideBarBg: $drawerBg;
+$sideBarHeaderBg: rgba(black, 0.25);
+$sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #999;
@@ -100,8 +105,10 @@ $colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #c9d6ff;
 $colorStatusCompleteBg: #a4e4b4;
-$colorAlert: #ff3c00;
+$colorAlert: #ff8a0d;
 $colorAlertFg: #fff;
+$colorError: #ff3c00;
+$colorErrorFg: #fff;
 $colorWarningHi: #990000;
 $colorWarningHiFg: #FF9594;
 $colorWarningLo: #ff9900;
@@ -121,7 +128,6 @@ $colorFilter: $colorFilterBg; // Standalone against $colorBodyBg
 // States
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
-$colorOk: #33cc33;
 
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
@@ -216,6 +222,7 @@ $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due 
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);
 $shdwSelect: none;
+$controlDisabledOpacity: 0.3;
 
 // Menus
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -321,8 +328,8 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: pullForward($colorBodyBg, 10%);
-$colorTabHeaderFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: rgba($colorBodyFg, 0.2);
+$colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
 $colorTabGroupHeaderFg: pullForward($colorTabGroupHeaderBg, 40%);
@@ -411,11 +418,17 @@ $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
+$colorDiscreteItemBg: rgba($colorBodyFg,0.1);
+$colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
 
 @mixin discreteItem() {
-    background: rgba($colorBodyFg,0.1);
+    background: $colorDiscreteItemBg;
     border: 1px solid $colorInteriorBorder;
     border-radius: $controlCr;
+
+    &--current-match {
+        background: $colorDiscreteItemCurrentBg;
+    }
 
     .c-input-inline:hover {
         background: $colorBodyBg;
