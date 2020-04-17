@@ -251,7 +251,9 @@ define(
                 // Restrict to attributes
                 restrict: "E",
                 // Expose its controller
-                controller: ['$scope', '$element', '$attrs', controller]
+                controller: function() {
+                    this.$onInit = ['$scope', '$element', '$attrs', controller];
+                }
             };
         }
         return MCTSplitPane;

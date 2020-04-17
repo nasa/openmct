@@ -33,7 +33,9 @@ define([
         return {
             restrict: "E",
             template: PlotTemplate,
-            controller: MCTPlotController,
+            controller: function() {
+                this.$onInit;
+            },
             controllerAs: 'mctPlotController',
             bindToController: {
                 config: "="
