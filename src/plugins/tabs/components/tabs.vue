@@ -40,10 +40,10 @@
     >
         <div
             v-if="currentTab"
-            class="c-tabs-view__object-name l-browse-bar__object-name--w"
+            class="c-tabs-view__object-name c-object-label l-browse-bar__object-name--w"
             :class="currentTab.type.definition.cssClass"
         >
-            <div class="l-browse-bar__object-name">
+            <div class="l-browse-bar__object-name c-object-label__name">
                 {{ currentTab.domainObject.name }}
             </div>
         </div>

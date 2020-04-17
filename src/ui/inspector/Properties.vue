@@ -1,72 +1,72 @@
 <template>
-<div class="c-properties c-properties--properties">
-    <div class="c-properties__header">
-        Properties
+<div class="c-inspector__properties c-inspect-properties">
+    <div class="c-inspect-properties__header">
+        Details
     </div>
     <ul
         v-if="!multiSelect && !singleSelectNonObject"
-        class="c-properties__section"
+        class="c-inspect-properties__section"
     >
-        <li class="c-properties__row">
-            <div class="c-properties__label">
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
                 Title
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ item.name }}
             </div>
         </li>
-        <li class="c-properties__row">
-            <div class="c-properties__label">
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
                 Type
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ typeName }}
             </div>
         </li>
         <li
             v-if="item.created"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 Created
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ formatTime(item.created) }}
             </div>
         </li>
         <li
             v-if="item.modified"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 Modified
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ formatTime(item.modified) }}
             </div>
         </li>
         <li
             v-for="prop in typeProperties"
             :key="prop.name"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 {{ prop.name }}
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ prop.value }}
             </div>
         </li>
     </ul>
     <div
         v-if="multiSelect"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No properties to display for multiple items
     </div>
     <div
         v-if="singleSelectNonObject"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No properties to display for this item
     </div>

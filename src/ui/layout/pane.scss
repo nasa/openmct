@@ -2,6 +2,7 @@
 .l-multipane {
     display: flex;
     flex: 1 1 auto;
+    overflow: hidden;
 
     &--horizontal,
     > .l-pane {
@@ -15,6 +16,9 @@
 
     &--vertical {
         height: 100%;
+        > .l-pane .l-pane__contents {
+            padding-right: $interiorMarginSm; // Fend off scrollbar
+        }
     }
 }
 
@@ -35,7 +39,7 @@
     &__header {
         display: flex;
         align-items: center;
-        margin-bottom: $interiorMargin;
+        @include desktop() { margin-bottom: $interiorMargin; }
     }
 
     &--reacts {
@@ -89,9 +93,6 @@
         .l-pane__contents {
             // Don't pad all nested __contents
             padding: 0;
-        }
-
-        > [class*="__"] + [class*="__"] {
         }
     }
 
@@ -232,8 +233,11 @@
             }
 
             /************************** Horizontal Splitter Before */
-            // Inspector pane
+            // Example: Inspector pane
             &[class*="-before"] {
+                margin-left: nth($shellPanePad, 2);
+                padding-left: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     left: 0;
                     transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
@@ -247,8 +251,11 @@
             }
 
             /************************** Horizontal Splitter After */
-            // Tree pane
+            // Example: Tree pane
             &[class*="-after"] {
+                margin-right: nth($shellPanePad, 2);
+                padding-right: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     right: 0;
                     transform: translateX(floor($splitterHandleD / 2));
@@ -263,6 +270,8 @@
         }
 
         &[class*="--vertical"] {
+            // l-pane--vertical
+
             > .l-pane__handle {
                 cursor: row-resize;
                 left: 0;

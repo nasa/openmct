@@ -29,21 +29,23 @@
 >
     <div
         class="c-text-view"
+        :class="[styleClass]"
         :style="style"
     >
-        {{ item.text }}
+        <div class="c-text-view__text">{{ item.text }}</div>
     </div>
 </layout-frame>
 </template>
 
 <script>
 import LayoutFrame from './LayoutFrame.vue'
+import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 export default {
     makeDefinition(openmct, gridSize, element) {
         return {
-            fill: 'transparent',
-            stroke: 'transparent',
+            fill: '',
+            stroke: '',
             size: '13px',
             color: '',
             x: 1,
@@ -57,6 +59,7 @@ export default {
     components: {
         LayoutFrame
     },
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -76,12 +79,9 @@ export default {
     },
     computed: {
         style() {
-            return {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
+            return Object.assign({
                 fontSize: this.item.size
-            };
+            }, this.itemStyle);
         }
     },
     watch: {

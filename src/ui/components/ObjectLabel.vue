@@ -1,6 +1,7 @@
 <template>
 <a
     class="c-tree__item__label c-object-label"
+    :class="classList"
     draggable="true"
     :href="objectLink"
     @dragstart="dragStart"
@@ -43,6 +44,14 @@ export default {
         };
     },
     computed: {
+        classList() {
+            const classList = this.observedObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
+        },
         typeClass() {
             let type = this.openmct.types.get(this.observedObject.type);
             if (!type) {
