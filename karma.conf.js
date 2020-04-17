@@ -24,21 +24,29 @@
 
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
+const coverageEnabled = process.env.COVERAGE === 'true';
+const reporters = ['progress', 'html'];
+
+if (coverageEnabled) {
+    reporters.push('coverage-istanbul');
+}
 
 module.exports = (config) => {
     const webpackConfig = require('./webpack.config.js');
     delete webpackConfig.output;
 
-    webpackConfig.module.rules.push({
-        test: /\.js$/,
-        exclude: /node_modules|example|lib|dist/,
-        use: {
-            loader: 'istanbul-instrumenter-loader',
-            options: {
-                esModules: true
+    if (!devMode || coverageEnabled) {
+        webpackConfig.module.rules.push({
+            test: /\.js$/,
+            exclude: /node_modules|example|lib|dist/,
+            use: {
+                loader: 'istanbul-instrumenter-loader',
+                options: {
+                    esModules: true
+                }
             }
-        }
-    });
+        });
+    }
 
     config.set({
         basePath: '',
@@ -48,12 +56,7 @@ module.exports = (config) => {
             'src/**/*Spec.js'
         ],
         port: 9876,
-        reporters: [
-            'progress',
-            'spec',
-            'coverage-istanbul',
-            'html'
-        ],
+        reporters: reporters,
         browsers: browsers,
         customLaunchers: {
             ChromeDebugging: {

@@ -5,6 +5,7 @@ jobs:
         - image: circleci/node:8-browsers
           environment:
             CHROME_BIN: "/usr/bin/google-chrome"
+            NODE_OPTIONS: --max_old_space_size=4096
     steps:
         - checkout
         - run:
