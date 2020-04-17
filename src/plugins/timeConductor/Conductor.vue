@@ -125,7 +125,7 @@
                 :bounds="rawBounds"
                 :is-fixed="isFixed"
                 @panAxis="setViewFromBounds"
-                @zoomAxis="setViewFromBounds"
+                @zoomAxis="setZoomBounds"
             />
 
         </div>
@@ -258,6 +258,10 @@ export default {
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
+        },
+        setZoomBounds(bounds) {
+            this.formattedBounds.start = this.timeFormatter.format(bounds.start);
+            this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
         updateTimeFromConductor() {
             if (this.isFixed) {

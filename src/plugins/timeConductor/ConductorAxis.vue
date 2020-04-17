@@ -23,8 +23,15 @@
 <div
     ref="axisHolder"
     class="c-conductor-axis"
+    :class="{ 'alt-pressed': altPressed }"
     @mousedown="dragStart($event)"
-></div>
+>
+    <div
+        ref="zoom"
+        class="c-conductor__zooming"
+        :style="zoomStyle"
+    ></div>
+</div>
 </template>
 
 <script>
@@ -32,7 +39,6 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import * as d3Brush from 'd3-brush';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -55,7 +61,9 @@ export default {
     },
     data() {
         return {
-            altPressed: false
+            altPressed: false,
+            isZooming: false,
+            zoomStyle: { left: 0, width: 0 }
         }
     },
     watch: {
@@ -64,34 +72,33 @@ export default {
                 this.setScale();
             },
             deep: true
-        },
-        isFixed: function (value) {
-            value ? this.createBrush() : this.destroyBrush();
         }
     },
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
                 this.altPressed = true;
-                this.destroyBrush();
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
                 this.altPressed = false;
-                this.createBrush();
             }
         });
     },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
+        const rect = axisHolder.getBoundingClientRect();
         this.height = axisHolder.offsetHeight;
+        this.left = Math.round(rect.left);
+        this.width = axisHolder.clientWidth;
+
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
             .attr("width", "100%")
             .attr("height", this.height);
 
-        this.width = this.$refs.axisHolder.clientWidth;
+
         this.xAxis = d3Axis.axisTop();
         this.dragging = false;
 
@@ -105,9 +112,6 @@ export default {
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
-
-        this.initBrush();
-        this.createBrush();
     },
     destroyed() {
     },
@@ -166,12 +170,19 @@ export default {
         dragStart($event) {
             if (this.isFixed) {
                 this.dragStartX = $event.clientX;
+                if (!this.altPressed) {
+                    this.zoomStart();
+                }
 
                 document.addEventListener('mousemove', this.drag);
                 document.addEventListener('mouseup', this.dragEnd, {
                     once: true
                 });
             }
+        },
+        zoomStart() {
+            this.dragX = this.dragStartX;
+            this.isZooming = true;
         },
         drag($event) {
             if (!this.dragging) {
@@ -188,6 +199,30 @@ export default {
                             end: newStart + deltaTime
                         });
                     })
+                } else {
+                    requestAnimationFrame(() => {
+                        const leftBound = this.left;
+                        const rightBound = this.left + this.width;
+                        const dragCurrent = $event.clientX;
+
+                        const start = dragCurrent < leftBound
+                            ? leftBound
+                            : Math.min(dragCurrent, this.dragStartX);
+
+                        const end = dragCurrent > rightBound
+                            ? rightBound
+                            : Math.max(dragCurrent, this.dragStartX);
+
+                        this.zoomStyle = {
+                            left: `${start - leftBound}px`,
+                            width: `${end - start}px`
+                        };
+
+                        this.$emit('zoomAxis', {
+                            start: start - leftBound,
+                            end: end - leftBound
+                        })
+                    });
                 }
                 this.dragging = false;
             } else {
@@ -205,55 +240,6 @@ export default {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
                 this.width = this.$refs.axisHolder.clientWidth;
                 this.setScale();
-                this.destroyBrush();
-                this.initBrush();
-                this.createBrush();
-            }
-        },
-        initBrush() {
-            // brush extent y coordinate starts at -1 to prevent underlying layer cursor to show
-            this.brush = d3Brush.brushX()
-                .extent([[0, -1], [this.width, this.height]])
-                .on("end", this.brushEnd);
-        },
-        createBrush() {
-            if (!this.isFixed) {
-                return;
-            }
-
-            this.svg = this.svg || d3Selection.select('svg');
-            if (!this.svg) {
-                return;
-            }
-
-            this.svg.append("g")
-                .attr("class", "brush")
-                .call(this.brush);
-        },
-        brushEnd() {
-            const selection = d3Selection.event.selection;
-            if (!d3Selection.event.sourceEvent || !selection) {
-                return;
-            }
-
-            // SMELL
-            const [x0, x1] = selection.map(d => this.xScale.invert(d).getTime());
-            this.openmct.time.bounds({
-                start: x0,
-                end: x1
-            });
-            this.$emit('zoomAxis', {
-                start: x0,
-                end: x1
-            });
-
-            // clear brush
-            d3Selection.select('g.brush').call(this.brush.move, null);
-        },
-        destroyBrush() {
-            const brush = d3Selection.select('g.brush')
-            if (brush) {
-                brush.remove();
             }
         }
     }
