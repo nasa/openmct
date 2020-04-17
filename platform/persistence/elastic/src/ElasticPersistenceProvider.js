@@ -103,6 +103,7 @@ define(
 
         // Get a domain object model out of ElasticSearch's response
         ElasticPersistenceProvider.prototype.getModel = function (response) {
+            // console.log('response', response);
             if (response && response[SRC]) {
                 this.revs[response[ID]] = response[REV];
                 return response[SRC];
@@ -139,6 +140,7 @@ define(
         };
 
         ElasticPersistenceProvider.prototype.readObject = function (space, key) {
+            // console.log('space, key', space, key)
             return this.get(key).then(this.getModel.bind(this));
         };
 
@@ -147,7 +149,9 @@ define(
             function checkUpdate(response) {
                 return self.checkResponse(response, key);
             }
-            return this.put(key, value, { version: this.revs[key] })
+            // return this.put(key, value, { version: this.revs[key] })
+            //     .then(checkUpdate);
+            return this.put(key, value)
                 .then(checkUpdate);
         };
 
