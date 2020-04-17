@@ -54,7 +54,7 @@ describe("The telemetry criterion", function () {
                     key: "testSource",
                     source: "value",
                     name: "Test",
-                    format: "enum"
+                    format: "string"
                 }]
             }
         };
@@ -80,8 +80,9 @@ describe("The telemetry criterion", function () {
         testCriterionDefinition = {
             id: 'test-criterion-id',
             telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier),
-            operation: 'lessThan',
-            metadata: 'sin',
+            operation: 'textContains',
+            metadata: 'value',
+            input: ['Hell'],
             telemetryObject: testTelemetryObject
         };
 
@@ -100,12 +101,21 @@ describe("The telemetry criterion", function () {
         expect(telemetryCriterion.telemetryObjectIdAsString).toEqual(testTelemetryObject.identifier.key);
     });
 
-    it("updates and emits event on new data from telemetry providers", function () {
-        spyOn(telemetryCriterion, 'emitEvent').and.callThrough();
-        telemetryCriterion.handleSubscription({
+    it("returns a result on new data from relevant telemetry providers", function () {
+        telemetryCriterion.getResult({
             value: 'Hello',
-            utc: 'Hi'
+            utc: 'Hi',
+            id: testTelemetryObject.identifier.key
         });
-        expect(telemetryCriterion.emitEvent).toHaveBeenCalled();
+        expect(telemetryCriterion.result).toBeTrue();
     });
+
+    // it("does not return a result on new data from irrelavant telemetry providers", function () {
+    //     telemetryCriterion.getResult({
+    //         value: 'Hello',
+    //         utc: 'Hi',
+    //         id: '1234'
+    //     });
+    //     expect(telemetryCriterion.result).toBeFalse();
+    // });
 });

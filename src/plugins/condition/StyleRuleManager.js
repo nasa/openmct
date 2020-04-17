@@ -109,7 +109,7 @@ export default class StyleRuleManager extends EventEmitter {
         } else {
             if (this.currentStyle) {
                 Object.keys(this.currentStyle).forEach(key => {
-                    this.currentStyle[key] = 'transparent';
+                    this.currentStyle[key] = '__no_value';
                 });
             }
         }

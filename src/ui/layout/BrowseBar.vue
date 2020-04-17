@@ -28,6 +28,7 @@
 
     <div class="l-browse-bar__end">
         <view-switcher
+            v-if="!isEditing"
             :current-view="currentView"
             :views="views"
             @setView="setView"

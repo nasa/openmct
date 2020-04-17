@@ -23,7 +23,6 @@
 <template>
 <section v-show="isEditing"
          id="test-data"
-         class="c-cs__test-data"
          :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
@@ -37,7 +36,7 @@
     <div v-if="expanded"
          class="c-cs__content"
     >
-        <div class="c-cdef__controls"
+        <div class="c-cs__test-data__controls c-cdef__controls"
              :disabled="!telemetry.length"
         >
             <label class="c-toggle-switch">
@@ -96,7 +95,7 @@
                         >
                     </span>
                 </span>
-                <div class="c-test-datum__buttons">
+                <div class="c-cs-test__buttons">
                     <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
                             title="Duplicate this test datum"
                             @click="addTestInput(testInput)"

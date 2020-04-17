@@ -122,13 +122,8 @@ button {
         margin-left: $interiorMargin;
     }
 
-    $c1: nth($mixedSettingBg, 1);
-    $c2: nth($mixedSettingBg, 2);
-    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
-
     &--mixed {
-        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
-        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+        @include mixedBg();
     }
 
     &--swatched {
@@ -150,13 +145,6 @@ button {
             // Reduce size of icon to make a bit of room
             flex: 1 1 auto;
             font-size: 1.1em;
-        }
-
-        &--mixed {
-            // Styling for swatched buttons when settings are mixed
-            > [class*='swatch'] {
-                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
-            }
         }
     }
 }
@@ -244,18 +232,10 @@ button {
 
 /******************************************************** SECTION */
 section {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     overflow: hidden;
     + section {
         margin-top: $interiorMargin;
-
-        &.is-expanded {
-            margin-bottom: $interiorMargin * 3;
-        }
-    }
-
-    &.is-expanded {
-        flex: 0 1 auto;
     }
 
     .c-section__header {
@@ -829,6 +809,10 @@ select {
     box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
     flex: 0 0 auto;
     padding: $interiorMargin $interiorMarginLg;
+
+    &--mixed {
+        @include mixedBg();
+    }
 }
 
 /******************************************************** SLIDERS */
