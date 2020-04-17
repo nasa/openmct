@@ -50,6 +50,14 @@
 }
 
 /************************** EFFECTS */
+@mixin mixedBg() {
+    $c1: nth($mixedSettingBg, 1);
+    $c2: nth($mixedSettingBg, 2);
+    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
+    @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+}
+
+
 @mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
     @keyframes #{$animName} {
         0%   { opacity: $opacity0; }
