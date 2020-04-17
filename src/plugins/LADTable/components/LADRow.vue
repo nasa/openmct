@@ -84,8 +84,14 @@ export default {
         this.valueMetadata = this
             .metadata
             .valuesForHints(['range'])[0];
+        
+        if(!this.valueMetadata) {
+            this.valueMetadata = this.metadata.values().find(
+                (metadatum) => metadatum.hints.domain === undefined
+            );
+        }
 
-        this.valueKey = this.valueMetadata.key
+        this.valueKey = this.valueMetadata.key;
 
         this.unsubscribe = this.openmct
             .telemetry
