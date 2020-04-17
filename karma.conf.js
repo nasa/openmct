@@ -24,16 +24,27 @@
 
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
+const coverageEnabled = process.env.COVERAGE === 'true';
+const reporters = ['progress', 'html'];
+
+if (coverageEnabled) {
+    reporters.push('coverage-istanbul');
+}
 
 module.exports = (config) => {
     const webpackConfig = require('./webpack.config.js');
     delete webpackConfig.output;
 
-    if (!devMode) {
+    if (!devMode || coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
-            exclude: /node_modules|example/,
-            use: 'istanbul-instrumenter-loader'
+            exclude: /node_modules|example|lib|dist/,
+            use: {
+                loader: 'istanbul-instrumenter-loader',
+                options: {
+                    esModules: true
+                }
+            }
         });
     }
 
@@ -45,11 +56,7 @@ module.exports = (config) => {
             'src/**/*Spec.js'
         ],
         port: 9876,
-        reporters: [
-            'progress',
-            'coverage',
-            'html'
-        ],
+        reporters: reporters,
         browsers: browsers,
         customLaunchers: {
             ChromeDebugging: {
@@ -70,7 +77,12 @@ module.exports = (config) => {
                     lines: 80,
                     excludes: ['src/plugins/plot/**/*.js']
                 }
-            }
+            },
+            reporters: [
+                'spec',
+                'coverage-istanbul',
+                'html'
+            ]
         },
         // HTML test reporting.
         htmlReporter: {
@@ -78,10 +90,24 @@ module.exports = (config) => {
             preserveDescribeNesting: true,
             foldAll: false
         },
+        coverageIstanbulReporter: {
+            fixWebpackSourcePaths: true,
+            dir: process.env.CIRCLE_ARTIFACTS ?
+                process.env.CIRCLE_ARTIFACTS + '/coverage' :
+                "dist/reports/coverage",
+            reports: ['html', 'lcovonly', 'text-summary'],
+            thresholds: {
+                global: {
+                    statements: 50,
+                    lines: 80,
+                    branches: 50,
+                    functions: 50
+                }
+            }
+        },
         preprocessors: {
-            // add webpack as preprocessor
-            'platform/**/*Spec.js': [ 'webpack', 'sourcemap' ],
-            'src/**/*Spec.js': [ 'webpack', 'sourcemap' ]
+            'platform/**/*Spec.js': ['webpack', 'sourcemap'],
+            'src/**/*Spec.js': ['webpack', 'sourcemap']
         },
         webpack: webpackConfig,
         webpackMiddleware: {
