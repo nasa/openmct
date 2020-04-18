@@ -23,10 +23,11 @@
 <div
     ref="axisHolder"
     class="c-conductor-axis"
-    :class="[{ 'is-alt-key-down': altPressed }, { 'is-zooming': isZooming }]"
+    :class="[ isPanMode ? 'is-alt-key-down' : 'is-zooming' ]"
     @mousedown="dragStart($event)"
 >
     <div
+        v-show="isZooming"
         ref="zoom"
         class="c-conductor-axis__zoom-indicator"
         :style="zoomStyle"
@@ -61,9 +62,16 @@ export default {
     },
     data() {
         return {
-            altPressed: false,
+            isPanMode: false,
             isZooming: false,
-            zoomStyle: { left: 0, width: 0 }
+            dragStartX: undefined,
+            dragX: undefined,
+            zoomStyle: {}
+        }
+    },
+    computed: {
+        isZoomMode() {
+            return !this.isPanMode;
         }
     },
     watch: {
@@ -77,12 +85,12 @@ export default {
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
-                this.altPressed = true;
+                this.isPanMode = true;
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
-                this.altPressed = false;
+                this.isPanMode = false;
             }
         });
     },
@@ -170,8 +178,9 @@ export default {
         dragStart($event) {
             if (this.isFixed) {
                 this.dragStartX = $event.clientX;
-                if (!this.altPressed) {
-                    this.zoomStart();
+
+                if (this.isZoomMode) {
+                    this.startZoom($event);
                 }
 
                 document.addEventListener('mousemove', this.drag);
@@ -180,14 +189,31 @@ export default {
                 });
             }
         },
-        zoomStart() {
+        startZoom() {
+            const bounds = this.openmct.time.bounds();
             this.dragX = this.dragStartX;
+
+            this.zoomStyle = {
+                left: `${this.dragStartX - this.left}px`
+            };
+
+            this.$emit('zoomAxis', {
+                start: this.scaleToBounds(this.dragStartX),
+                end: bounds.end
+            });
             this.isZooming = true;
+        },
+        scaleToBounds(value) {
+            const bounds = this.openmct.time.bounds();
+            const timeDelta = bounds.end - bounds.start;
+            const valueDelta = value - this.left;
+            const offset = valueDelta / this.width * timeDelta;
+            return bounds.start + offset;
         },
         drag($event) {
             if (!this.dragging) {
                 this.dragging = true;
-                if (this.altPressed) {
+                if (this.isPanMode) {
                     requestAnimationFrame(()=>{
                         let deltaX = $event.clientX - this.dragStartX;
                         let percX = deltaX / this.width;
@@ -206,12 +232,14 @@ export default {
                         const dragCurrent = $event.clientX;
 
                         const start = dragCurrent < leftBound
-                            ? leftBound
+                            ? 0
                             : Math.min(dragCurrent, this.dragStartX);
 
                         const end = dragCurrent > rightBound
-                            ? rightBound
+                            ? this.width
                             : Math.max(dragCurrent, this.dragStartX);
+
+
 
                         this.zoomStyle = {
                             left: `${start - leftBound}px`,
@@ -219,9 +247,9 @@ export default {
                         };
 
                         this.$emit('zoomAxis', {
-                            start: start - leftBound,
-                            end: end - leftBound
-                        })
+                            start: this.scaleToBounds(start),
+                            end: this.scaleToBounds(end)
+                        });
                     });
                 }
                 this.dragging = false;
@@ -230,6 +258,11 @@ export default {
             }
         },
         dragEnd() {
+            this.isZooming = false;
+            this.dragStartX = undefined;
+            this.dragX = undefined;
+            this.zoomStyle = {};
+
             document.removeEventListener('mousemove', this.drag);
             this.openmct.time.bounds({
                 start: this.bounds.start,
