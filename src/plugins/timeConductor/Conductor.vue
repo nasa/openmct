@@ -22,7 +22,11 @@
 <template>
 <div
     class="c-conductor"
-    :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
+    :class="[
+        { 'is-zooming': true },
+        { 'is-panning': true },
+        isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
+    ]"
 >
     <form
         ref="conductorForm"

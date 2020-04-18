@@ -57,6 +57,58 @@
         }
     }
 
+    &.is-fixed-mode {
+        .c-conductor-axis {
+            &__zoom-indicator {
+                border: 1px solid transparent;
+                display: none; // Hidden by default
+            }
+        }
+
+        &:not(.is-panning),
+        &:not(.is-zooming) {
+            .c-conductor-axis {
+                &:hover,
+                &:active {
+                    cursor: col-resize;
+                    filter: $timeConductorAxisHoverFilter;
+                }
+            }
+        }
+
+        &.is-panning,
+        &.is-zooming {
+            .c-conductor-input input {
+                // Styles for inputs while zooming or panning
+                background: rgba($timeConductorActiveBg, 0.4);
+            }
+        }
+
+        &.is-panning {
+            .c-conductor-axis {
+                @include cursorGrab();
+                background-color: $timeConductorActivePanBg;
+                transition: $transIn;
+
+                svg text {
+                    stroke: $timeConductorActivePanBg;
+                    transition: $transIn;
+                }
+            }
+        }
+
+        &.is-zooming {
+            .c-conductor-axis__zoom-indicator {
+                display: block;
+                position: absolute;
+                background: rgba($timeConductorActiveBg, 0.4);
+                border-left-color: $timeConductorActiveBg;
+                border-right-color: $timeConductorActiveBg;
+                top: 0; bottom: 0;
+            }
+        }
+    }
+
     &.is-realtime-mode {
         .c-conductor__time-bounds {
             grid-template-columns: 20px auto 1fr auto auto;

@@ -23,7 +23,6 @@
 <div
     ref="axisHolder"
     class="c-conductor-axis"
-    :class="[{ 'is-alt-key-down': altPressed }, { 'is-zooming': isZooming }]"
     @mousedown="dragStart($event)"
 >
     <div
