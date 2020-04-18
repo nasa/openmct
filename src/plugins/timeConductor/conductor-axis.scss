@@ -1,8 +1,6 @@
 .c-conductor-axis {
     $h: 18px;
     $tickYPos: ($h / 2) + 12px;
-    $axisZoomBg: $colorKey;
-    $axisActiveBg: $colorKeySubtle;
 
     @include userSelectNone();
     @include bgTicks($c: rgba($colorBodyFg, 0.4));
@@ -56,46 +54,6 @@
             fill: $colorBodyFg;
             stroke: $colorBodyBgSubtle;
             transition: $transOut;
-        }
-
-        &:hover,
-        &:active {
-            cursor: col-resize;
-
-            &:not(.is-alt-key-down),
-            &:not(.is-zooming) {
-                filter: brightness(1.25);
-            }
-        }
-
-        &__zoom-indicator {
-            border: 1px solid transparent;
-            display: none;
-        }
-
-        &.is-alt-key-down {
-            @include cursorGrab();
-            background-color: $axisActiveBg;
-            transition: $transIn;
-            svg text {
-                stroke: $axisActiveBg;
-                transition: $transIn;
-            }
-        }
-
-        &.is-zooming {
-            .c-conductor-axis__zoom-indicator {
-                $gEndsOpacity: 0.5;
-                $gEdgeOffsetPercent: 20%;
-                $gMidOpacity: 0.4;
-
-                display: block;
-                position: absolute;
-                background: rgba($axisZoomBg, $gMidOpacity);
-                border-left-color: $axisZoomBg;
-                border-right-color: $axisZoomBg;
-                top: 0; bottom: 0;
-            }
         }
     }
 
