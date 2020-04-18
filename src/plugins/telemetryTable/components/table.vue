@@ -185,8 +185,14 @@
                                 v-model="filters[key]"
                                 class="c-table__search"
                                 @input="filterChanged(key)"
-                                @clear="clearFilter(key)"
-                            />
+                                @clear="clearFilter(key)">
+
+                                <a class="icon-asterisk"
+                                   title="Use Regular Expression"
+                                   :style="enableRegexSearch[key] ? 'color: white; background: #007399; padding: 2px' : 'padding: 2px'"
+                                   @click="toggleRegex(key)">
+                                </a>
+                            </search>
                         </table-column-header>
                     </tr>
                 </thead>
@@ -336,7 +342,8 @@ export default {
             markCounter: 0,
             paused: false,
             markedRows: [],
-            isShowingMarkedRowsOnly: false
+            isShowingMarkedRowsOnly: false,
+            enableRegexSearch: {}
         }
     },
     computed: {
@@ -543,7 +550,16 @@ export default {
             this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
         },
         filterChanged(columnKey) {
-            this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+            if (this.enableRegexSearch[columnKey]) {
+                if (this.isCompleteRegex(this.filters[columnKey])) {
+                    this.table.filteredRows.setColumnRegexFilter(columnKey, this.filters[columnKey].slice(1,-1));
+                } else {
+                    return;
+                }
+            } else {
+                this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+            }
+        
             this.setHeight();
         },
         clearFilter(columnKey) {
@@ -869,6 +885,20 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        toggleRegex(key) {
+            if (this.filters[key]) {
+                this.filters[key] = ''
+            }
+
+            if (this.enableRegexSearch[key] === undefined) {
+                this.$set(this.enableRegexSearch, key, true) 
+            } else {
+                this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]); 
+            }
+        },
+        isCompleteRegex(string) {
+            return (string.length > 3 && string[0] === '/' && string[string.length - 1] === '/')
         }
     }
 }
