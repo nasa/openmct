@@ -23,10 +23,6 @@
 <div
     ref="axisHolder"
     class="c-conductor-axis"
-<<<<<<< HEAD
-    :class="[ isPanMode ? 'is-alt-key-down' : 'is-zooming' ]"
-=======
->>>>>>> time-conductor-merge
     @mousedown="dragStart($event)"
 >
     <div
