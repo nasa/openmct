@@ -251,8 +251,10 @@ define(
                 // Restrict to attributes
                 restrict: "E",
                 // Expose its controller
-                controller: function() {
-                    this.$onInit = ['$scope', '$element', '$attrs', controller];
+                controller: function () {
+                    this.$onInit = function () {
+                        return ['$scope', '$element', '$attrs', controller]
+                    }
                 }
             };
         }

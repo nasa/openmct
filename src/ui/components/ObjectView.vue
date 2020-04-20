@@ -51,7 +51,6 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
-        console.log('this.object', this.object)
         this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver);
