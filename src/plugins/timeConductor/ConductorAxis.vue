@@ -26,7 +26,6 @@
     @mousedown="dragStart($event)"
 >
     <div
-        v-show="isZooming"
         ref="zoom"
         class="c-conductor-axis__zoom-indicator"
         :style="zoomStyle"
@@ -62,7 +61,6 @@ export default {
     data() {
         return {
             isPanMode: false,
-            isZooming: false,
             dragStartX: undefined,
             dragX: undefined,
             zoomStyle: {}
@@ -176,10 +174,10 @@ export default {
         },
         dragStart($event) {
             if (this.isFixed) {
-                this.dragStartX = $event.clientX;
-
                 if (this.isZoomMode) {
                     this.startZoom($event);
+                } else {
+                    this.startPan($event)
                 }
 
                 document.addEventListener('mousemove', this.drag);
@@ -188,9 +186,14 @@ export default {
                 });
             }
         },
-        startZoom() {
-            const bounds = this.openmct.time.bounds();
+        startPan($event) {
+            this.dragStartX = $event.clientX;
+        },
+        startZoom($event) {
+            this.dragStartX = $event.clientX;
             this.dragX = this.dragStartX;
+
+            const bounds = this.openmct.time.bounds();
 
             this.zoomStyle = {
                 left: `${this.dragStartX - this.left}px`
@@ -200,7 +203,6 @@ export default {
                 start: this.scaleToBounds(this.dragStartX),
                 end: bounds.end
             });
-            this.isZooming = true;
         },
         scaleToBounds(value) {
             const bounds = this.openmct.time.bounds();
@@ -257,7 +259,8 @@ export default {
             }
         },
         dragEnd() {
-            this.isZooming = false;
+            this.$emit('stopZooming');
+            this.$emit('stopPanning');
             this.dragStartX = undefined;
             this.dragX = undefined;
             this.zoomStyle = {};
