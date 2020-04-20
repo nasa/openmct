@@ -92,10 +92,6 @@ define([
             $locationProvider.hashPrefix('');
         }]);
 
-        app.config(['$compileProvider', function ($compileProvider) {
-            $compileProvider.preAssignBindingsEnabled(true);
-        }]);
-
         // Apply logging levels; this must be done now, before the
         // first log statement.
         new LogLevel(logLevel).configure(app, $log);
