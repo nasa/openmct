@@ -9,24 +9,7 @@
           @keydown.enter="updateName"
           @blur="updateName"
     >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
-    <a class="c-list__item__menu-indicator icon-arrow-down"
-       @click="toggleActionMenu"
-    ></a>
-    <div class="hide-menu hidden">
-        <div class="menu-element context-menu-wrapper mobile-disable-select">
-            <div class="c-menu">
-                <ul>
-                    <li v-for="action in actions"
-                        :key="action.name"
-                        :class="action.cssClass"
-                        @click="action.perform(section.id)"
-                    >
-                        {{ action.name }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>
 </template>
 
@@ -34,10 +17,14 @@
 </style>
 
 <script>
-import { togglePopupMenu } from '../utils/popup-menu';
+import PopupMenu from './popup-menu.vue';
+import RemoveDialog from '../utils/removeDialog';
 
 export default {
     inject: ['openmct'],
+    components: {
+        PopupMenu
+    },
     props: {
         defaultSectionId: {
             type: String,
@@ -58,7 +45,8 @@ export default {
     },
     data() {
         return {
-            actions: [this.deleteSectionAction()]
+            popupMenuItems: [],
+            removeActionString: `Delete ${this.sectionTitle}`
         }
     },
     watch: {
@@ -67,40 +55,38 @@ export default {
         }
     },
     mounted() {
+        this.addPopupMenuItems();
         this.toggleContentEditable();
     },
     destroyed() {
     },
     methods: {
-        deleteSectionAction() {
-            const self = this;
-
-            return {
-                name: `Delete ${this.sectionTitle}`,
+        addPopupMenuItems() {
+            const removeSection = {
                 cssClass: 'icon-trash',
-                perform: function (id) {
-                    const dialog = self.openmct.overlays.dialog({
-                        iconClass: "error",
-                        message: 'This action will delete this section and all of its pages and entries. Do you want to continue?',
-                        buttons: [
-                            {
-                                label: "No",
-                                callback: () => {
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: "Yes",
-                                emphasis: true,
-                                callback: () => {
-                                    self.$emit('deleteSection', id);
-                                    dialog.dismiss();
-                                }
-                            }
-                        ]
-                    });
-                }
-            };
+                name: this.removeActionString,
+                callback: this.getRemoveDialog.bind(this)
+            }
+
+            this.popupMenuItems = [removeSection];
+        },
+        deleteSection(success) {
+            if (!success) {
+                return;
+            }
+
+            this.$emit('deleteSection', this.section.id);
+        },
+        getRemoveDialog() {
+            const message = 'This action will delete this section and all of its pages and entries. Do you want to continue?';
+            const options = {
+                name: this.removeActionString,
+                callback: this.deleteSection.bind(this),
+                message
+            }
+
+            const removeDialog = new RemoveDialog(this.openmct, options);
+            removeDialog.show();
         },
         selectSection(event) {
             const target = event.target;
@@ -120,9 +106,6 @@ export default {
             }
 
             this.$emit('selectSection', id);
-        },
-        toggleActionMenu(event) {
-            togglePopupMenu(event, this.openmct);
         },
         toggleContentEditable(section = this.section) {
             const sectionTitle = this.$el.querySelector('span');
