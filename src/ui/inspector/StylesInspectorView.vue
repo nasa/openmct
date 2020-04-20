@@ -26,8 +26,8 @@
 
 <script>
 import ConditionalStylesView from '../../plugins/condition/components/inspector/ConditionalStylesView.vue';
+import MultiSelectStylesView from '../../plugins/condition/components/inspector/MultiSelectStylesView.vue';
 import Vue from 'vue';
-import { getStyleProp } from "../../plugins/condition/utils/styleUtils";
 
 export default {
     inject: ['openmct'],
@@ -44,35 +44,9 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        getStyleProperties(item) {
-            let styleProps = {};
-            Object.keys(item).forEach((key) => {
-                Object.assign(styleProps, getStyleProp(key, item[key]));
-            });
-            return styleProps;
-        },
         updateSelection(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let isChildItem = false;
-                let domainObject = selection[0][0].context.item;
-                let layoutItem = {};
-                let styleProps = this.getStyleProperties({
-                    fill: 'transparent',
-                    stroke: 'transparent',
-                    color: 'transparent'
-                });
-                if (selection[0].length > 1) {
-                    isChildItem = true;
-                    //If there are more than 1 items in the selection[0] list, the first one could either be a sub domain object OR a layout drawing control.
-                    //The second item in the selection[0] list is the container object (usually a layout)
-                    if (!domainObject) {
-                        styleProps = {};
-                        layoutItem = selection[0][0].context.layoutItem;
-                        styleProps = this.getStyleProperties(layoutItem);
-                        domainObject = selection[0][1].context.item;
-                    }
-                }
-
+                let template = selection.length > 1 ? '<multi-select-styles-view></multi-select-styles-view>' : '<conditional-styles-view></conditional-styles-view>';
                 if (this.component) {
                     this.component.$destroy();
                     this.component = undefined;
@@ -83,20 +57,14 @@ export default {
                 this.component = new Vue({
                     provide: {
                         openmct: this.openmct,
-                        domainObject: domainObject
+                        selection: selection
                     },
                     el: viewContainer,
                     components: {
-                        ConditionalStylesView
+                        ConditionalStylesView,
+                        MultiSelectStylesView
                     },
-                    data() {
-                        return {
-                            layoutItem,
-                            styleProps,
-                            isChildItem
-                        }
-                    },
-                    template: '<conditional-styles-view :can-hide="isChildItem" :item-id="layoutItem.id" :initial-styles="styleProps"></conditional-styles-view>'
+                    template: template
                 });
             }
         }

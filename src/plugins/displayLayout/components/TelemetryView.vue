@@ -30,14 +30,13 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
+        :class="styleClass"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
-            :class="[styleClass]"
-            :style="objectStyle"
         >
             <div class="c-telemetry-view__label-text">
                 {{ domainObject.name }}
@@ -48,8 +47,7 @@
             v-if="showValue"
             :title="fieldName"
             class="c-telemetry-view__value"
-            :class="[telemetryClass, !telemetryClass && styleClass]"
-            :style="!telemetryClass && objectStyle"
+            :class="[telemetryClass]"
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
@@ -62,7 +60,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue'
 import printj from 'printj'
-import StyleRuleManager from "../../condition/StyleRuleManager";
+import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
     DEFAULT_POSITION = [1, 1],
@@ -81,8 +79,8 @@ export default {
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
             value: metadata.getDefaultDisplayValue(),
-            stroke: "transparent",
-            fill: "transparent",
+            stroke: "",
+            fill: "",
             color: "",
             size: "13px"
         };
@@ -91,6 +89,7 @@ export default {
     components: {
         LayoutFrame
     },
+    mixins: [conditionalStylesMixin],
     props: {
         item: {
             type: Object,
@@ -113,8 +112,7 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined,
-            objectStyle: ''
+            currentObjectPath: undefined
         }
     },
     computed: {
@@ -127,15 +125,10 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
-            return {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
+            return Object.assign({}, {
                 fontSize: this.item.size
-            }
-        },
-        styleClass() {
-            return this.objectStyle && this.objectStyle.isStyleInvisible;
+            }, this.itemStyle);
+
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
@@ -190,15 +183,6 @@ export default {
             this.removeSelectable();
         }
 
-        if (this.unlistenStyles) {
-            this.unlistenStyles();
-        }
-
-        if (this.styleRuleManager) {
-            this.styleRuleManager.destroy();
-            delete this.styleRuleManager;
-        }
-
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
@@ -241,7 +225,6 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
-            this.initObjectStyles();
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -266,30 +249,6 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
-        },
-        initObjectStyles() {
-            if (this.domainObject.configuration) {
-                this.styleRuleManager = new StyleRuleManager(this.domainObject.configuration.objectStyles, this.openmct, this.updateStyle.bind(this));
-
-                if (this.unlistenStyles) {
-                    this.unlistenStyles();
-                }
-                this.unlistenStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
-                    //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
-                    this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
-                });
-            }
-        },
-        updateStyle(styleObj) {
-            let keys = Object.keys(styleObj);
-            keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
-                    if (styleObj[key]) {
-                        styleObj[key] = '';
-                    }
-                }
-            });
-            this.objectStyle = styleObj;
         }
     }
 }

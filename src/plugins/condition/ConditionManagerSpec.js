@@ -49,6 +49,7 @@ describe('ConditionManager', () => {
     };
     let mockComposition;
     let loader;
+    let mockTimeSystems;
 
     function mockAngularComponents() {
         let mockInjector = jasmine.createSpyObj('$injector', ['get']);
@@ -111,10 +112,16 @@ describe('ConditionManager', () => {
         openmct.objects.observe.and.returnValue(function () {});
         openmct.objects.mutate.and.returnValue(function () {});
 
+        mockTimeSystems = {
+            key: 'utc'
+        };
+        openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems']);
+        openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
+
         conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
 
         conditionMgr.on('conditionSetResultUpdated', mockListener);
-        conditionMgr.on('broadcastTelemetry', mockListener);
+        conditionMgr.on('telemetryReceived', mockListener);
     });
 
     it('creates a conditionCollection with a default condition', function () {
