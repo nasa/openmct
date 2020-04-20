@@ -47,17 +47,11 @@ define([
                 var mainCanvas = $element.find("canvas")[1];
                 var overlayCanvas = $element.find("canvas")[0];
 
-                this.$onInit = function () {
-                    if (ctrl.initializeCanvas(mainCanvas, overlayCanvas)) {
-                        ctrl.draw();
-                    }
+                if (ctrl.initializeCanvas(mainCanvas, overlayCanvas)) {
+                    ctrl.draw();
                 }
             },
-            controller: function () {
-                this.$onInit = function () {
-                    return MCTChartController;
-                }
-            },
+            controller: MCTChartController,
             scope: {
                 config: "=",
                 draw: "=",

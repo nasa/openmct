@@ -58,11 +58,7 @@ define(
                 template: formTemplate,
 
                 // Use FormController to populate/respond to changes in scope
-                controller: function () {
-                    this.$onInit = function () {
-                        return ['$scope', FormController];
-                    }
-                },
+                controller: ['$scope', FormController],
 
                 // Initial an isolate scope
                 scope: {

@@ -32,11 +32,7 @@ define([
             restrict: "E",
             scope: true,
             controllerAs: 'ticksController',
-            controller: function () {
-                this.$onInit = function() {
-                    return MCTTicksController;
-                }
-            },
+            controller: MCTTicksController,
             bindToController: {
                 axis: '='
             }
