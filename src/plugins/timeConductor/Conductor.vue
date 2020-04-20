@@ -22,7 +22,15 @@
 <template>
 <div
     class="c-conductor"
+<<<<<<< HEAD
     :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
+=======
+    :class="[
+        { 'is-zooming': isZooming },
+        { 'is-panning': isPanning },
+        isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
+    ]"
+>>>>>>> acc0abc90... move zoom/pan styling up to conductor
 >
     <form
         ref="conductorForm"
@@ -124,8 +132,10 @@
                 class="c-conductor__ticks"
                 :bounds="rawBounds"
                 :is-fixed="isFixed"
-                @panAxis="setViewFromBounds"
-                @zoomAxis="setZoomBounds"
+                @stopPanning="stopPanning"
+                @stopZooming="stopZooming"
+                @panAxis="pan"
+                @zoomAxis="zoom"
             />
 
         </div>
@@ -197,7 +207,9 @@ export default {
             },
             isFixed: this.openmct.time.clock() === undefined,
             isUTCBased: timeSystem.isUTCBased,
-            showDatePicker: false
+            showDatePicker: false,
+            isPanning: false,
+            isZooming: false
         }
     },
     mounted() {
@@ -208,6 +220,21 @@ export default {
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
     },
     methods: {
+        pan(bounds) {
+            this.isPanning = true;
+            this.setViewFromBounds(bounds);
+        },
+        stopPanning() {
+            this.isPanning = false;
+        },
+        zoom(bounds) {
+            this.isZooming = true;
+            this.formattedBounds.start = this.timeFormatter.format(bounds.start);
+            this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+        },
+        stopZooming() {
+            this.isZooming = false;
+        },
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
@@ -258,10 +285,6 @@ export default {
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
-        },
-        setZoomBounds(bounds) {
-            this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-            this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
         updateTimeFromConductor() {
             if (this.isFixed) {
