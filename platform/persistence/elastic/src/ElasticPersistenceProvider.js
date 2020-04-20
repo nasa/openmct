@@ -32,9 +32,9 @@ define(
         // JSLint doesn't like underscore-prefixed properties,
         // so hide them here.
         var SRC = "_source",
-            REV = "_version",
-            ID = "_id",
-            CONFLICT = 409;
+            CONFLICT = 409,
+            SEQ_NO = "_seq_no",
+            PRIMARY_TERM = "_primary_term";
 
         /**
          * The ElasticPersistenceProvider reads and writes JSON documents
@@ -104,7 +104,8 @@ define(
         // Get a domain object model out of ElasticSearch's response
         ElasticPersistenceProvider.prototype.getModel = function (response) {
             if (response && response[SRC]) {
-                this.revs[response[ID]] = response[REV];
+                this.revs[response[SEQ_NO]] = response[SEQ_NO];
+                this.revs[response[PRIMARY_TERM]] = response[PRIMARY_TERM];
                 return response[SRC];
             } else {
                 return undefined;
@@ -116,7 +117,9 @@ define(
         // indicate that the request failed.
         ElasticPersistenceProvider.prototype.checkResponse = function (response, key) {
             if (response && !response.error) {
-                this.revs[key] = response[REV];
+                console.log('response, key', response, key)
+                this.revs[SEQ_NO] = response[SEQ_NO];
+                this.revs[PRIMARY_TERM] = response[PRIMARY_TERM];
                 return response;
             } else {
                 return this.handleError(response, key);
