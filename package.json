@@ -5,7 +5,7 @@
   "dependencies": {},
   "devDependencies": {
     "acorn": "6.2.0",
-    "angular": "1.4.14",
+    "angular": "1.7.9",
     "angular-route": "1.4.14",
     "babel-eslint": "8.2.6",
     "comma-separated-values": "^3.6.4",
