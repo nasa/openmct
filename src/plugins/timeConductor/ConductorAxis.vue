@@ -26,7 +26,6 @@
     @mousedown="dragStart($event)"
 >
     <div
-        ref="zoom"
         class="c-conductor-axis__zoom-indicator"
         :style="zoomStyle"
     ></div>
@@ -49,7 +48,7 @@ const PIXELS_PER_TICK_WIDE = 200;
 export default {
     inject: ['openmct'],
     props: {
-        bounds: {
+        viewBounds: {
             type: Object,
             required: true
         },
@@ -72,8 +71,8 @@ export default {
         }
     },
     watch: {
-        bounds: {
-            handler(bounds) {
+        viewBounds: {
+            handler() {
                 this.setScale();
             },
             deep: true
@@ -82,21 +81,21 @@ export default {
     created() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Alt') {
-                this.isPanMode = true;
+                this.altPressed = true;
             }
         });
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Alt') {
-                this.isPanMode = false;
+                this.altPressed = false;
             }
         });
     },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
-        const rect = axisHolder.getBoundingClientRect();
         this.height = axisHolder.offsetHeight;
-        this.left = Math.round(rect.left);
         this.width = axisHolder.clientWidth;
+        const rect = axisHolder.getBoundingClientRect();
+        this.left = Math.round(rect.left);
 
         let vis = d3Selection.select(axisHolder)
             .append("svg:svg")
@@ -123,12 +122,15 @@ export default {
     methods: {
         setScale() {
             let timeSystem = this.openmct.time.timeSystem();
-            let bounds = this.bounds;
 
             if (timeSystem.isUTCBased) {
-                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
+                this.xScale.domain(
+                    [new Date(this.viewBounds.start), new Date(this.viewBounds.end)]
+                );
             } else {
-                this.xScale.domain([bounds.start, bounds.end]);
+                this.xScale.domain(
+                    [this.viewBounds.start, this.viewBounds.end]
+                );
             }
 
             this.xAxis.scale(this.xScale);
@@ -142,7 +144,7 @@ export default {
                 this.xAxis.ticks(this.width / PIXELS_PER_TICK);
             }
 
-            this.msPerPixel = (bounds.end - bounds.start) / this.width;
+            this.msPerPixel = (this.viewBounds.end - this.viewBounds.start) / this.width;
         },
         setViewFromTimeSystem(timeSystem) {
             //The D3 scale used depends on the type of time system as d3
@@ -174,102 +176,127 @@ export default {
         },
         dragStart($event) {
             if (this.isFixed) {
-                if (this.isZoomMode) {
-                    this.startZoom($event);
-                } else {
-                    this.startPan($event)
+                this.dragStartX = $event.clientX;
+
+                if (this.altPressed) {
+                    this.isPanMode = true;
                 }
 
                 document.addEventListener('mousemove', this.drag);
                 document.addEventListener('mouseup', this.dragEnd, {
                     once: true
                 });
+
+                if (this.isZoomMode) {
+                    this.startZoom();
+                }
             }
         },
-        startPan($event) {
-            this.dragStartX = $event.clientX;
-        },
-        startZoom($event) {
-            this.dragStartX = $event.clientX;
-            this.dragX = this.dragStartX;
+        drag($event) {
+            if (this.dragging) {
+                console.log('Rejected drag due to RAF cap');
+                return;
+            }
 
+            this.dragging = true;
+
+            requestAnimationFrame(() => {
+                this.dragX = $event.clientX;
+                this.isPanMode ? this.pan() : this.zoom();
+            });
+
+            this.dragging = false;
+        },
+        dragEnd() {
+            this.isPanMode ? this.endPan() : this.endZoom();
+
+            document.removeEventListener('mousemove', this.drag);
+            this.dragStartX = undefined;
+            this.dragX = undefined;
+            // this.openmct.time.bounds({
+            //     start: this.bounds.start,
+            //     end: this.bounds.end
+            // });
+        },
+        pan() {
+            const panBounds = this.getPanBounds();
+            this.$emit('panAxis', panBounds);
+        },
+        endPan() {
+            const panBounds = this.getPanBounds();
+            this.$emit('endPan', panBounds);
+            this.isPanMode = false;
+        },
+        getPanBounds() {
             const bounds = this.openmct.time.bounds();
+            const deltaTime = bounds.end - bounds.start;
+            const deltaX = this.dragX - this.dragStartX;
+            const percX = deltaX / this.width;
+            const panStart = bounds.start - percX * deltaTime;
+
+            return {
+                start: panStart,
+                end: panStart + deltaTime
+            };
+        },
+        startZoom() {
+            const x = this.scaleToBounds(this.dragStartX);
 
             this.zoomStyle = {
                 left: `${this.dragStartX - this.left}px`
             };
 
             this.$emit('zoomAxis', {
-                start: this.scaleToBounds(this.dragStartX),
-                end: bounds.end
+                start: x,
+                end: x
             });
         },
+        zoom() {
+            const zoomBounds = this.getZoomBounds();
+
+            this.zoomStyle = {
+                left: `${zoomBounds.start}px`,
+                width: `${zoomBounds.end - zoomBounds.start}px`
+            };
+
+            this.$emit('zoomAxis', {
+                start: this.scaleToBounds(zoomBounds.start),
+                end: this.scaleToBounds(zoomBounds.end)
+            });
+        },
+        endZoom() {
+            const zoomBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
+                ? this.getZoomBounds()
+                : undefined;
+
+            this.zoomStyle = {};
+            this.$emit('endZoom', zoomBounds);
+        },
+        getZoomBounds() {
+            const leftBound = this.left;
+            const rightBound = this.left + this.width;
+
+            const zoomStart = this.dragX < leftBound
+                ? leftBound
+                : Math.min(this.dragX, this.dragStartX);
+
+            const zoomEnd = this.dragX > rightBound
+                ? rightBound
+                : Math.max(this.dragX, this.dragStartX);
+
+            return {
+                start: zoomStart - leftBound,
+                end: zoomEnd - leftBound
+            };
+        },
         scaleToBounds(value) {
+
+
             const bounds = this.openmct.time.bounds();
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
             return bounds.start + offset;
-        },
-        drag($event) {
-            if (!this.dragging) {
-                this.dragging = true;
-                if (this.isPanMode) {
-                    requestAnimationFrame(()=>{
-                        let deltaX = $event.clientX - this.dragStartX;
-                        let percX = deltaX / this.width;
-                        let bounds = this.openmct.time.bounds();
-                        let deltaTime = bounds.end - bounds.start;
-                        let newStart = bounds.start - percX * deltaTime;
-                        this.$emit('panAxis',{
-                            start: newStart,
-                            end: newStart + deltaTime
-                        });
-                    })
-                } else {
-                    requestAnimationFrame(() => {
-                        const leftBound = this.left;
-                        const rightBound = this.left + this.width;
-                        const dragCurrent = $event.clientX;
-
-                        const start = dragCurrent < leftBound
-                            ? 0
-                            : Math.min(dragCurrent, this.dragStartX);
-
-                        const end = dragCurrent > rightBound
-                            ? this.width
-                            : Math.max(dragCurrent, this.dragStartX);
-
-
-
-                        this.zoomStyle = {
-                            left: `${start - leftBound}px`,
-                            width: `${end - start}px`
-                        };
-
-                        this.$emit('zoomAxis', {
-                            start: this.scaleToBounds(start),
-                            end: this.scaleToBounds(end)
-                        });
-                    });
-                }
-                this.dragging = false;
-            } else {
-                console.log('Rejected drag due to RAF cap');
-            }
-        },
-        dragEnd() {
-            this.$emit('stopZooming');
-            this.$emit('stopPanning');
-            this.dragStartX = undefined;
-            this.dragX = undefined;
-            this.zoomStyle = {};
-
-            document.removeEventListener('mousemove', this.drag);
-            this.openmct.time.bounds({
-                start: this.bounds.start,
-                end: this.bounds.end
-            });
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
