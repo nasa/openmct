@@ -1,6 +1,8 @@
 import MCT from 'MCT';
 
 export function createOpenMct() {
+    delete require.cache[require.resolve('openmct')];
+
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
