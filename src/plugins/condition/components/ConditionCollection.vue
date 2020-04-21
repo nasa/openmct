@@ -52,28 +52,24 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions-h">
-            <div v-for="(condition, index) in conditionCollection"
-                 :key="condition.id"
-                 class="c-condition-h"
-            >
-                <div v-if="isEditing"
-                     class="c-c__drag-ghost"
-                     @drop.prevent="dropCondition"
-                     @dragenter="dragEnter"
-                     @dragleave="dragLeave"
-                     @dragover.prevent
-                ></div>
-                <Condition :condition="condition"
-                           :condition-index="index"
-                           :telemetry="telemetryObjs"
-                           :is-editing="isEditing"
-                           @updateCondition="updateCondition"
-                           @removeCondition="removeCondition"
-                           @cloneCondition="cloneCondition"
-                           @setMoveIndex="setMoveIndex"
-                />
-            </div>
+        <div class="c-cs__conditions-h"
+             :class="{ 'is-active-dragging': isDragging }"
+        >
+            <Condition v-for="(condition, index) in conditionCollection"
+                       :key="condition.id"
+                       :condition="condition"
+                       :condition-index="index"
+                       :telemetry="telemetryObjs"
+                       :is-editing="isEditing"
+                       :move-index="moveIndex"
+                       :is-dragging="isDragging"
+                       @updateCondition="updateCondition"
+                       @removeCondition="removeCondition"
+                       @cloneCondition="cloneCondition"
+                       @setMoveIndex="setMoveIndex"
+                       @dragComplete="dragComplete"
+                       @dropCondition="dropCondition"
+            />
         </div>
     </div>
 </section>
@@ -108,9 +104,10 @@ export default {
             conditionResults: {},
             conditions: [],
             telemetryObjs: [],
-            moveIndex: Number,
+            moveIndex: undefined,
             isDragging: false,
-            defaultOutput: undefined
+            defaultOutput: undefined,
+            dragCounter: 0
         };
     },
     watch: {
@@ -165,9 +162,7 @@ export default {
             this.moveIndex = index;
             this.isDragging = true;
         },
-        dropCondition(e) {
-            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+        dropCondition(targetIndex) {
             const oldIndexArr = Object.keys(this.conditionCollection);
             const move = function (arr, old_index, new_index) {
                 while (old_index < 0) {
@@ -193,19 +188,9 @@ export default {
             }
 
             this.reorder(reorderPlan);
-
-            e.target.classList.remove("dragging");
+        },
+        dragComplete() {
             this.isDragging = false;
-        },
-        dragEnter(e) {
-            if (!this.isDragging) { return }
-            let targetIndex = Array.from(document.querySelectorAll('.c-c__drag-ghost')).indexOf(e.target);
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
-            if (this.moveIndex === targetIndex) { return }
-            e.target.classList.add("dragging");
-        },
-        dragLeave(e) {
-            e.target.classList.remove("dragging");
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
