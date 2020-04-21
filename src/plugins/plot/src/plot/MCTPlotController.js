@@ -34,25 +34,27 @@ define([
      * values near the cursor.
      */
     function MCTPlotController($scope, $element, $window) {
-        this.$scope = $scope;
-        this.$scope.config = this.config;
-        this.$scope.plot = this;
-        this.$element = $element;
-        this.$window = $window;
+        this.$onInit = () => {
+            this.$scope = $scope;
+            this.$scope.config = this.config;
+            this.$scope.plot = this;
+            this.$element = $element;
+            this.$window = $window;
 
-        this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
-        this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
+            this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
+            this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
 
-        this.pan = undefined;
-        this.marquee = undefined;
+            this.pan = undefined;
+            this.marquee = undefined;
 
-        this.chartElementBounds = undefined;
-        this.tickUpdate = false;
+            this.chartElementBounds = undefined;
+            this.tickUpdate = false;
 
-        this.$scope.plotHistory = this.plotHistory = [];
-        this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
+            this.$scope.plotHistory = this.plotHistory = [];
+            this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
-        this.initialize();
+            this.initialize();
+        }
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
