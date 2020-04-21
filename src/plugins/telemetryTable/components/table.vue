@@ -887,10 +887,6 @@ export default {
             this.$nextTick().then(this.calculateColumnWidths);
         },
         toggleRegex(key) {
-            if (this.filters[key]) {
-                this.filters[key] = ''
-            }
-
             if (this.enableRegexSearch[key] === undefined) {
                 this.$set(this.enableRegexSearch, key, true)
             } else {
