@@ -4,7 +4,6 @@
   "description": "The Open MCT core platform",
   "dependencies": {},
   "devDependencies": {
-    "acorn": "6.2.0",
     "angular": "1.7.9",
     "angular-route": "1.4.14",
     "babel-eslint": "8.2.6",
