@@ -91,7 +91,7 @@ export default {
         // initialize
         this.bounds = this.openmct.time.bounds();
         this.timeKey = this.openmct.time.timeSystem().key;
-        this.timeFormat = this.getTimeFormat();
+        this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -111,7 +111,7 @@ export default {
         this.openmct.time.off('timeSystem', this.timeSystemChange);
     },
     methods: {
-        datumMatchesMostRecent(datum) {
+        datumIsNotValid(datum) {
             if (this.imageHistory.length === 0) {
                 return false;
             }
@@ -121,7 +121,14 @@ export default {
             const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
             const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
 
-            return (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
+            // datum is not valid if it matches the last datum in history,
+            // or it is before the last datum in the history
+            const datumTimeCheck = datum[this.timeKey];
+            const historyTimeCheck = this.imageHistory.slice(-1)[0][this.timeKey];
+            const matchesLast = (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
+            const isStale = datumTimeCheck < historyTimeCheck;
+
+            return matchesLast || isStale;
         },
         getImageUrl(datum) {
             return datum ?
@@ -132,15 +139,6 @@ export default {
             return datum ?
                 this.timeFormat.format(datum) :
                 this.time;
-        },
-        getTimeFormat() {
-            let tf = false;
-            try {
-                tf = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
-            } catch(e) {
-                alert('Issue receiving time format.');
-            }
-            return tf;
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper
@@ -215,41 +213,41 @@ export default {
                         if (this.requestCount > requestId) {
                             return Promise.resolve('Stale request');
                         }
-
-                        if(this.timeFormat) {
-                            values.forEach(this.updateHistory);
-                            this.updateValues(values[values.length - 1]);
-                        }
+                        
+                        values.forEach(this.updateHistory, false);
+                        this.updateValues(values[values.length - 1]);
                     });
             }
         },
         timeSystemChange(system) {
             // reset timesystem dependent variables
             this.timeKey = system.key;
-            this.timeFormat = this.getTimeFormat();
+            this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         },
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    if(this.timeFormat) {
-                        let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]);
-                        if(parsedTimestamp >= this.bounds.start && parsedTimestamp <= this.bounds.end) {
-                            this.updateHistory(datum);
-                            this.updateValues(datum);
-                        }
+                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]);
+                    if(parsedTimestamp >= this.bounds.start && parsedTimestamp <= this.bounds.end) {
+                        this.updateHistory(datum);
+                        this.updateValues(datum);
                     }
                 });
         },
         unselectAllImages() {
             this.imageHistory.forEach(image => image.selected = false);
         },
-        updateHistory(datum) {
-            if (this.datumMatchesMostRecent(datum)) {
+        updateHistory(datum, updateValues = true) {
+            if (this.datumIsNotValid(datum)) {
                 return;
             }
 
             const index = _.sortedIndex(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
+
+            if(updateValues) {
+                this.updateValues(datum);
+            }
         },
         updateValues(datum) {
             if (this.isPaused) {

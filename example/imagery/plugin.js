@@ -52,6 +52,7 @@ define([
             return {
                 name: name,
                 utc: Math.floor(timestamp / 5000) * 5000,
+                local: Math.floor(timestamp / 5000) * 5000,
                 url: IMAGE_SAMPLES[Math.floor(timestamp / 5000) % IMAGE_SAMPLES.length]
             };
         }
@@ -78,7 +79,7 @@ define([
             },
             request: function (domainObject, options) {
                 var start = options.start;
-                var end = options.end;
+                var end = Math.min(options.end, Date.now());
                 var data = [];
                 while (start <= end && data.length < 5000) {
                     data.push(pointForTimestamp(start, domainObject.name));
@@ -118,6 +119,14 @@ define([
                                 name: 'Time',
                                 key: 'utc',
                                 format: 'utc',
+                                hints: {
+                                    domain: 1
+                                }
+                            },
+                            {
+                                name: 'Local Time',
+                                key: 'local',
+                                format: 'local-format',
                                 hints: {
                                     domain: 1
                                 }
