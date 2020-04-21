@@ -36,7 +36,7 @@
     <div v-if="expanded"
          class="c-cs__content"
     >
-        <div class="c-cdef__controls"
+        <div class="c-cs__test-data__controls c-cdef__controls"
              :disabled="!telemetry.length"
         >
             <label class="c-toggle-switch">
