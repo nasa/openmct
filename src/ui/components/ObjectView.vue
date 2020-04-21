@@ -104,7 +104,7 @@ export default {
             keys.forEach(key => {
                 let firstChild = this.$el.querySelector(':first-child');
                 if (firstChild) {
-                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
                         if (firstChild.style[key]) {
                             firstChild.style[key] = '';
                         }

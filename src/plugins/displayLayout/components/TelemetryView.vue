@@ -31,7 +31,7 @@
         v-if="domainObject"
         class="c-telemetry-view"
         :class="styleClass"
-        :style="telemetryObjectStyle || styleObject"
+        :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
         <div
@@ -79,8 +79,8 @@ export default {
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
             value: metadata.getDefaultDisplayValue(),
-            stroke: "transparent",
-            fill: "transparent",
+            stroke: "",
+            fill: "",
             color: "",
             size: "13px"
         };
@@ -125,27 +125,10 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
-            return {
-                backgroundColor: this.item.fill,
-                borderColor: this.item.stroke,
-                color: this.item.color,
+            return Object.assign({}, {
                 fontSize: this.item.size
-            }
-        },
-        styleClass() {
-            return this.telemetryObjectStyle && this.telemetryObjectStyle.isStyleInvisible;
-        },
-        telemetryObjectStyle() {
-            let styleObj = Object.assign({}, this.itemStyle);
-            let keys = Object.keys(styleObj);
-            keys.forEach(key => {
-                if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('transparent') > -1)) {
-                    if (styleObj[key]) {
-                        styleObj[key] = '';
-                    }
-                }
-            });
-            return styleObj;
+            }, this.itemStyle);
+
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
