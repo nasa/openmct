@@ -33,7 +33,6 @@ define(
 
                 this.masterCollection = masterCollection;
                 this.columnFilters = {};
-                this.regexFilters = {};
 
                 //Synchronize with master collection
                 this.masterCollection.on('add', this.add);
