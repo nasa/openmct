@@ -33,13 +33,19 @@
             v-if="isUTCBased"
         >
             <li class="icon-clock"
-                @click="selectHours(24)">Last 24 hours
+                @click="selectHours(24)"
+            >
+                Last 24 hours
             </li>
             <li class="icon-clock"
-                @click="selectHours(2)">Last 2 hours
+                @click="selectHours(2)"
+            >
+                Last 2 hours
             </li>
             <li class="icon-clock"
-                @click="selectHours(1)">Last hour
+                @click="selectHours(1)"
+            >
+                Last hour
             </li>
         </ul>
 
@@ -65,7 +71,7 @@
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 import _ from 'lodash'
 
-const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 20;
+const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 10;
 const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
 
 export default {
@@ -91,8 +97,10 @@ export default {
             return this.timeSystem.isUTCBased;
         },
         historyForCurrentTimeSystem() {
+            const history = this.history[this.timeSystem.key];
             // Return a reversed array so that timeframes are ordered latest first
-            return this.history[this.timeSystem.key].reverse();
+            // return history.reverse();
+            return history;
         }
     },
     watch: {
@@ -143,7 +151,7 @@ export default {
                 return !_.isEqual(timespan, entry);
             });
 
-            if (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
+            while (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
                 currentHistory.shift();
             }
 

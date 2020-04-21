@@ -126,10 +126,10 @@
 
             <conductor-axis
                 class="c-conductor__ticks"
-                :bounds="rawBounds"
+                :view-bounds="viewBounds"
                 :is-fixed="isFixed"
-                @stopPanning="stopPanning"
-                @stopZooming="stopZooming"
+                @endPan="endPan"
+                @endZoom="endZoom"
                 @panAxis="pan"
                 @zoomAxis="zoom"
             />
@@ -197,7 +197,7 @@ export default {
                 start: bounds.start,
                 end: bounds.end
             },
-            rawBounds: {
+            viewBounds: {
                 start: bounds.start,
                 end: bounds.end
             },
@@ -210,7 +210,7 @@ export default {
     },
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', this.setNewBounds);
+        this.openmct.time.on('bounds', this.setViewFromBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
@@ -220,16 +220,21 @@ export default {
             this.isPanning = true;
             this.setViewFromBounds(bounds);
         },
-        stopPanning() {
+        endPan(bounds) {
             this.isPanning = false;
+            this.openmct.time.bounds(bounds);
+            // this.setViewFromBounds(bounds);
         },
         zoom(bounds) {
             this.isZooming = true;
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
-        stopZooming() {
+        endZoom(bounds) {
+            const _bounds = bounds ? bounds : this.openmct.time.bounds();
             this.isZooming = false;
+
+            this.openmct.time.bounds(_bounds);
         },
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem
@@ -275,8 +280,8 @@ export default {
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
-            this.rawBounds.start = bounds.start;
-            this.rawBounds.end = bounds.end;
+            this.viewBounds.start = bounds.start;
+            this.viewBounds.end = bounds.end;
         },
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
