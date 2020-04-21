@@ -185,12 +185,16 @@
                                 v-model="filters[key]"
                                 class="c-table__search"
                                 @input="filterChanged(key)"
-                                @clear="clearFilter(key)">
+                                @clear="clearFilter(key)"
+                            >
 
-                                <button class="c-search__use-regex"
-                                   :class="{ 'is-active': enableRegexSearch[key] }"
-                                   title="Use regular expression for search"
-                                   @click="toggleRegex(key)">/R/
+                                <button
+                                    class="c-search__use-regex"
+                                    :class="{ 'is-active': enableRegexSearch[key] }"
+                                    title="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
+                                    @click="toggleRegex(key)"
+                                >
+                                    /R/
                                 </button>
                             </search>
                         </table-column-header>
@@ -887,6 +891,8 @@ export default {
             this.$nextTick().then(this.calculateColumnWidths);
         },
         toggleRegex(key) {
+            this.filters[key] = '';
+
             if (this.enableRegexSearch[key] === undefined) {
                 this.$set(this.enableRegexSearch, key, true)
             } else {
@@ -894,7 +900,7 @@ export default {
             }
         },
         isCompleteRegex(string) {
-            return (string.length > 3 && string[0] === '/' && string[string.length - 1] === '/')
+            return (string.length > 2 && string[0] === '/' && string[string.length - 1] === '/')
         }
     }
 }
