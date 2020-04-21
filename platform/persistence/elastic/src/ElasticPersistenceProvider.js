@@ -117,7 +117,6 @@ define(
         // indicate that the request failed.
         ElasticPersistenceProvider.prototype.checkResponse = function (response, key) {
             if (response && !response.error) {
-                console.log('response, key', response, key)
                 this.revs[SEQ_NO] = response[SEQ_NO];
                 this.revs[PRIMARY_TERM] = response[PRIMARY_TERM];
                 return response;
