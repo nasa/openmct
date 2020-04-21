@@ -187,11 +187,11 @@
                                 @input="filterChanged(key)"
                                 @clear="clearFilter(key)">
 
-                                <a class="icon-asterisk"
-                                   title="Use Regular Expression"
-                                   :style="enableRegexSearch[key] ? 'color: white; background: #007399; padding: 2px' : 'padding: 2px'"
-                                   @click="toggleRegex(key)">
-                                </a>
+                                <button class="c-search__use-regex"
+                                   :class="{ 'is-active': enableRegexSearch[key] }"
+                                   title="Use regular expression for search"
+                                   @click="toggleRegex(key)">/R/
+                                </button>
                             </search>
                         </table-column-header>
                     </tr>
@@ -559,7 +559,7 @@ export default {
             } else {
                 this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
             }
-        
+
             this.setHeight();
         },
         clearFilter(columnKey) {
@@ -892,9 +892,9 @@ export default {
             }
 
             if (this.enableRegexSearch[key] === undefined) {
-                this.$set(this.enableRegexSearch, key, true) 
+                this.$set(this.enableRegexSearch, key, true)
             } else {
-                this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]); 
+                this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]);
             }
         },
         isCompleteRegex(string) {
