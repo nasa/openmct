@@ -213,7 +213,7 @@ export default {
                         if (this.requestCount > requestId) {
                             return Promise.resolve('Stale request');
                         }
-                        
+
                         values.forEach(this.updateHistory, false);
                         this.updateValues(values[values.length - 1]);
                     });
