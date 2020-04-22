@@ -63,15 +63,15 @@ export default {
     },
     data() {
         return {
-            isPanMode: false,
+            inPanMode: false,
             dragStartX: undefined,
             dragX: undefined,
             zoomStyle: {}
         }
     },
     computed: {
-        isZoomMode() {
-            return !this.isPanMode;
+        inZoomMode() {
+            return !this.inPanMode;
         }
     },
     watch: {
@@ -171,7 +171,7 @@ export default {
                 this.dragStartX = $event.clientX;
 
                 if (this.altPressed) {
-                    this.isPanMode = true;
+                    this.inPanMode = true;
                 }
 
                 document.addEventListener('mousemove', this.drag);
@@ -179,7 +179,7 @@ export default {
                     once: true
                 });
 
-                if (this.isZoomMode) {
+                if (this.inZoomMode) {
                     this.startZoom();
                 }
             }
@@ -194,21 +194,17 @@ export default {
 
             requestAnimationFrame(() => {
                 this.dragX = $event.clientX;
-                this.isPanMode ? this.pan() : this.zoom();
+                this.inPanMode ? this.pan() : this.zoom();
             });
 
             this.dragging = false;
         },
         dragEnd() {
-            this.isPanMode ? this.endPan() : this.endZoom();
+            this.inPanMode ? this.endPan() : this.endZoom();
 
             document.removeEventListener('mousemove', this.drag);
             this.dragStartX = undefined;
             this.dragX = undefined;
-            // this.openmct.time.bounds({
-            //     start: this.bounds.start,
-            //     end: this.bounds.end
-            // });
         },
         pan() {
             const panBounds = this.getPanBounds();
@@ -219,7 +215,7 @@ export default {
                 ? this.getPanBounds()
                 : undefined;
             this.$emit('endPan', panBounds);
-            this.isPanMode = false;
+            this.inPanMode = false;
         },
         getPanBounds() {
             const bounds = this.openmct.time.bounds();
