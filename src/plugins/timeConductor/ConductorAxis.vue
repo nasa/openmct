@@ -252,27 +252,34 @@ export default {
             });
         },
         zoom() {
-            const zoomBounds = this.getZoomBounds();
+            const zoomRange = this.getZoomRange();
 
             this.zoomStyle = {
-                left: `${zoomBounds.start}px`,
-                width: `${zoomBounds.end - zoomBounds.start}px`
+                left: `${zoomRange.start - this.left}px`,
+                width: `${zoomRange.end - zoomRange.start}px`
             };
 
             this.$emit('zoomAxis', {
-                start: this.scaleToBounds(zoomBounds.start),
-                end: this.scaleToBounds(zoomBounds.end)
+                start: this.scaleToBounds(zoomRange.start),
+                end: this.scaleToBounds(zoomRange.end)
             });
         },
         endZoom() {
-            const zoomBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
-                ? this.getZoomBounds()
+            const zoomRange = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
+                ? this.getZoomRange()
                 : undefined;
+
+            const zoomBounds = zoomRange
+                ? {
+                    start: this.scaleToBounds(zoomRange.start),
+                    end: this.scaleToBounds(zoomRange.end)
+                }
+                : this.openmct.time.bounds();
 
             this.zoomStyle = {};
             this.$emit('endZoom', zoomBounds);
         },
-        getZoomBounds() {
+        getZoomRange() {
             const leftBound = this.left;
             const rightBound = this.left + this.width;
 
@@ -285,13 +292,11 @@ export default {
                 : Math.max(this.dragX, this.dragStartX);
 
             return {
-                start: zoomStart - leftBound,
-                end: zoomEnd - leftBound
+                start: zoomStart,
+                end: zoomEnd
             };
         },
         scaleToBounds(value) {
-
-
             const bounds = this.openmct.time.bounds();
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
