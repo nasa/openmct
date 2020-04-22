@@ -241,8 +241,9 @@ export default {
         },
         endPan(bounds) {
             this.isPanning = false;
-            this.openmct.time.bounds(bounds);
-            // this.setViewFromBounds(bounds);
+            if (bounds) {
+                this.openmct.time.bounds(bounds);
+            }
         },
         zoom(bounds) {
             this.isZooming = true;

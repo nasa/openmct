@@ -215,7 +215,9 @@ export default {
             this.$emit('panAxis', panBounds);
         },
         endPan() {
-            const panBounds = this.getPanBounds();
+            const panBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
+                ? this.getPanBounds()
+                : undefined;
             this.$emit('endPan', panBounds);
             this.isPanMode = false;
         },
