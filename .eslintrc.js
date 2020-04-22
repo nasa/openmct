@@ -12,7 +12,8 @@ module.exports = {
     "extends": [
         "eslint:recommended",
         "plugin:vue/recommended",
-        "plugin:lodash/recommended"
+        "plugin:lodash/recommended",
+        "plugin:you-dont-need-lodash-underscore/compatible"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {

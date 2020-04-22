@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['lodash'], function (_) {
+define([], function (_) {
 
     /**
      * The ExportAsJSONAction is available from context menus and allows a user
@@ -121,8 +121,8 @@ define(['lodash'], function (_) {
      */
     ExportAsJSONAction.prototype.rewriteLink = function (child, parent) {
         this.externalIdentifiers.push(this.getId(child));
-        var index = _.findIndex(parent.composition, function (id) {
-            return _.isEqual(child.identifier, id);
+        var index = parent.composition.findIndex(function (id) {
+            return JSON.stringify(child.identifier) === JSON.stringify(id);
         });
         var copyOfChild = this.copyObject(child);
         copyOfChild.identifier.key = this.identifierService.generate();
