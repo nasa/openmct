@@ -310,6 +310,14 @@ export default {
                 this.setOffsetsFromView();
             }
         },
+        getBoundsLimit() {
+            const limit = this.configuration.menuOptions
+                .filter(option => option.timeSystem ===  this.timeSystem.key)
+                .find(option => option.limit)
+                .limit;
+
+            return limit;
+        },
         clearAllValidation() {
             if (this.isFixed) {
                 [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
@@ -339,7 +347,18 @@ export default {
                         start: this.timeFormatter.parse(this.formattedBounds.start),
                         end: this.timeFormatter.parse(this.formattedBounds.end)
                     };
-                    validationResult = this.openmct.time.validateBounds(boundsValues);
+                    const limit = this.getBoundsLimit();
+
+                    if (
+                        this.timeSystem.isUTCBased
+                        && limit
+                        && boundsValues.end - boundsValues.start > limit
+                    ) {
+                        validationResult = "Start and end difference exceeds allowable limit";
+                    } else {
+                        validationResult = this.openmct.time.validateBounds(boundsValues);
+                    }
+
                 }
 
                 if (validationResult !== true) {

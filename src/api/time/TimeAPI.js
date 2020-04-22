@@ -156,12 +156,6 @@ define(['EventEmitter'], function (EventEmitter) {
             return "Start and end must be specified as integer values";
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
-        } else if (
-            this.system
-            && this.system.isUTCBased
-            && bounds.end - bounds.start > this.system.maxDuration
-        ) {
-            return "Start and end difference exceeds allowable limit";
         }
 
         return true;
