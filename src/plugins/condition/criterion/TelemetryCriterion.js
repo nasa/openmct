@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import {OPERATIONS} from '../utils/operations';
+import { OPERATIONS } from '../utils/operations';
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -36,18 +36,25 @@ export default class TelemetryCriterion extends EventEmitter {
         super();
 
         this.openmct = openmct;
-        this.objectAPI = this.openmct.objects;
-        this.telemetryAPI = this.openmct.telemetry;
-        this.timeAPI = this.openmct.time;
+        this.telemetryDomainObjectDefinition = telemetryDomainObjectDefinition;
         this.id = telemetryDomainObjectDefinition.id;
         this.telemetry = telemetryDomainObjectDefinition.telemetry;
         this.operation = telemetryDomainObjectDefinition.operation;
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
-        this.telemetryObject = telemetryDomainObjectDefinition.telemetryObject;
-        this.telemetryObjectIdAsString = this.objectAPI.makeKeyString(telemetryDomainObjectDefinition.telemetry);
-        this.on(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
+        this.result = undefined;
+
+        this.initialize();
         this.emitEvent('criterionUpdated', this);
+    }
+
+    initialize() {
+        this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
+        this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
+    }
+
+    isValid() {
+        return this.telemetryObject && this.metadata && this.operation;
     }
 
     updateTelemetry(telemetryObjects) {
@@ -60,20 +67,44 @@ export default class TelemetryCriterion extends EventEmitter {
         };
 
         if (data) {
-            // TODO check back to see if we should format times here
-            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+            this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
                 datum[timeSystem.key] = data[timeSystem.key]
             });
         }
         return datum;
     }
 
-    handleSubscription(data) {
-        if(this.isValid()) {
-            this.emitEvent('criterionResultUpdated', this.formatData(data));
-        } else {
-            this.emitEvent('criterionResultUpdated', this.formatData({}));
+    getResult(data) {
+        const validatedData = this.isValid() ? data : {};
+        this.result = this.computeResult(validatedData);
+    }
+
+    requestLAD(options) {
+        options = Object.assign({},
+            options,
+            {
+                strategy: 'latest',
+                size: 1
+            }
+        );
+
+        if (!this.isValid()) {
+            return {
+                id: this.id,
+                data: this.formatData({})
+            };
         }
+
+        return this.openmct.telemetry.request(
+            this.telemetryObject,
+            options
+        ).then(results => {
+            const latestDatum = results.length ? results[results.length - 1] : {};
+            return {
+                id: this.id,
+                data: this.formatData(latestDatum)
+            };
+        });
     }
 
     findOperation(operation) {
@@ -95,7 +126,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 this.input.forEach(input => params.push(input));
             }
             if (typeof comparator === 'function') {
-                result = comparator(params);
+                result = !!comparator(params);
             }
         }
         return result;
@@ -108,42 +139,9 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
-    isValid() {
-        return this.telemetryObject && this.metadata && this.operation;
-    }
-
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
-
-        if (!this.isValid()) {
-            return {
-                id: this.id,
-                data: this.formatData({})
-            };
-        }
-
-        return this.telemetryAPI.request(
-            this.telemetryObject,
-            options
-        ).then(results => {
-            const latestDatum = results.length ? results[results.length - 1] : {};
-            return {
-                id: this.id,
-                data: this.formatData(latestDatum)
-            };
-        });
-    }
 
     destroy() {
-        this.off(`subscription:${this.telemetryObjectIdAsString}`, this.handleSubscription);
-        this.emitEvent('criterionRemoved');
-        delete this.telemetryObjectIdAsString;
         delete this.telemetryObject;
+        delete this.telemetryObjectIdAsString;
     }
 }

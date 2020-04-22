@@ -121,7 +121,7 @@ describe('ConditionManager', () => {
         conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
 
         conditionMgr.on('conditionSetResultUpdated', mockListener);
-        conditionMgr.on('broadcastTelemetry', mockListener);
+        conditionMgr.on('telemetryReceived', mockListener);
     });
 
     it('creates a conditionCollection with a default condition', function () {
