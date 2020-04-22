@@ -1,7 +1,7 @@
 @mixin visibleRegexButton {
     opacity: 1;
     padding: 1px 3px;
-    width: 30px;
+    width: 24px;
 }
 
 .c-search {
@@ -23,7 +23,7 @@
         border-radius: $controlCr;
         font-weight: bold;
         letter-spacing: 1px;
-        font-size: 0.9em;
+        font-size: 0.8em;
         margin-left: $interiorMarginSm;
         min-width: 0;
         opacity: 0;
