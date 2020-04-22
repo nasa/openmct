@@ -57,13 +57,13 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = _.map(valueMetadata.enumerations, 'value');
+                valueMetadata.values = Object.entries(valueMetadata.enumerations).reduce((a, [key, {value}]) => {a [key] = value; return a}, []);
             }
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = _.max(valueMetadata.values) + 1;
+                valueMetadata.max = Math.max(...valueMetadata.values) + 1;
             }
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = _.min(valueMetadata.values) - 1;
+                valueMetadata.min = Math.min(...valueMetadata.values) - 1;
             }
         }
 

@@ -85,9 +85,9 @@ define([
                             value: +e.value
                         };
                     }), 'e.value');
-                valueMetadata.values = _.map(valueMetadata.enumerations, 'value');
-                valueMetadata.max = _.max(valueMetadata.values);
-                valueMetadata.min = _.min(valueMetadata.values);
+                valueMetadata.values = Object.entries(valueMetadata.enumerations).reduce((a, [key, {value}]) => {a [key] = value; return a}, []);
+                valueMetadata.max = Math.max(...valueMetadata.values);
+                valueMetadata.min = Math.min(...valueMetadata.values);
             }
 
             valueMetadatas.push(valueMetadata);

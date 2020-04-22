@@ -76,7 +76,7 @@ define([
                 if (childObj) {
                     var index = telemetryObjects.indexOf(childObj);
                     telemetryObjects.splice(index, 1);
-                    $scope.$broadcast('plot:tickWidth', _.max(Object.values(tickWidthMap)));
+                    $scope.$broadcast('plot:tickWidth', Math.max(...Object.values(tickWidthMap)));
                 }
             }
 
@@ -131,6 +131,7 @@ define([
             }
             tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
             var newTickWidth = _.max(tickWidthMap);
+
             if (newTickWidth !== tickWidth || width !== tickWidth) {
                 tickWidth = newTickWidth;
                 $scope.$broadcast('plot:tickWidth', tickWidth);
