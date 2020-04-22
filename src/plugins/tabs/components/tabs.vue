@@ -99,7 +99,7 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
-        
+
         this.unsubscribe();
 
         document.removeEventListener('dragstart', this.dragstart);
