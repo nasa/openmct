@@ -25,6 +25,7 @@
     :class="[
         { 'is-zooming': isZooming },
         { 'is-panning': isPanning },
+        { 'alt-pressed': altPressed },
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
 >
@@ -128,6 +129,7 @@
                 class="c-conductor__ticks"
                 :view-bounds="viewBounds"
                 :is-fixed="isFixed"
+                :alt-pressed="altPressed"
                 @endPan="endPan"
                 @endZoom="endZoom"
                 @panAxis="pan"
@@ -204,9 +206,22 @@ export default {
             isFixed: this.openmct.time.clock() === undefined,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false,
+            altPressed: false,
             isPanning: false,
             isZooming: false
         }
+    },
+    created() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = true;
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt') {
+                this.altPressed = false;
+            }
+        });
     },
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));

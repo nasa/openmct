@@ -84,6 +84,12 @@
             }
         }
 
+        &.alt-pressed {
+            .c-conductor-axis {
+                @include cursorGrab();
+            }
+        }
+
         &.is-panning {
             .c-conductor-axis {
                 @include cursorGrab();

@@ -44,7 +44,6 @@
     }
 
     body.desktop .is-fixed-mode & {
-        // @include cursorGrab();
         background-size: 3px 30%;
         background-color: $colorBodyBgSubtle;
         box-shadow: inset rgba(black, 0.4) 0 1px 1px;

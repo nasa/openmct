@@ -55,6 +55,10 @@ export default {
         isFixed: {
             type: Boolean,
             required: true
+        },
+        altPressed: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -77,18 +81,6 @@ export default {
             },
             deep: true
         }
-    },
-    created() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = true;
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = false;
-            }
-        });
     },
     mounted() {
         let axisHolder = this.$refs.axisHolder;
