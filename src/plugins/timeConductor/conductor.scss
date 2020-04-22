@@ -87,7 +87,8 @@
         }
 
         &.alt-pressed {
-            .c-conductor-axis {
+            .c-conductor-axis:hover {
+                // When alt is being pressed and user is hovering over the axis, set the cursor
                 @include cursorGrab();
             }
         }
