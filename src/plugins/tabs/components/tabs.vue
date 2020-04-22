@@ -48,6 +48,7 @@
             </div>
         </div>
         <object-view
+            v-if="internalDomainObject.keep_alive ? currentTab : isCurrent(tab)"
             class="c-tabs-view__object"
             :object="tab.domainObject"
         />
@@ -73,6 +74,7 @@ export default {
     },
     data: function () {
         return {
+            internalDomainObject: this.domainObject,
             currentTab: {},
             tabsList: [],
             setCurrentTab: true,
@@ -87,6 +89,8 @@ export default {
             this.composition.on('reorder', this.onReorder);
             this.composition.load();
         }
+
+        this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
@@ -156,6 +160,9 @@ export default {
         },
         isCurrent(tab) {
             return _.isEqual(this.currentTab, tab)
+        },
+        updateInternalDomainObject(domainObject) {
+            this.internalDomainObject = domainObject;
         }
     }
 }
