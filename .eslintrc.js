@@ -25,6 +25,7 @@ module.exports = {
         }
     },
     "rules": {
+        "you-dont-need-lodash-underscore/omit": "off",
         "lodash/prefer-lodash-method": "off",
         "lodash/prefer-lodash-typecheck": "off",
         "lodash/prefer-constant": "off",

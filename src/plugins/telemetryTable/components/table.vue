@@ -260,7 +260,6 @@ import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
-import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 
 const VISIBLE_ROW_COUNT = 100;
@@ -378,13 +377,13 @@ export default {
         }
     },
     created() {
-        this.filterChanged = _.debounce(this.filterChanged, 500);
+        this.filterChanged = this.debounce(this.filterChanged, 500);
     },
     mounted() {
         this.csvExporter = new CSVExporter();
-        this.rowsAdded = _.throttle(this.rowsAdded, 200);
-        this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
-        this.scroll = _.throttle(this.scroll, 100);
+        this.rowsAdded = this.throttle(this.rowsAdded, 200);
+        this.rowsRemoved = this.throttle(this.rowsRemoved, 200);
+        this.scroll = this.throttle(this.scroll, 100);
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
@@ -432,6 +431,28 @@ export default {
         this.table.destroy();
     },
     methods: {
+        debounce(func, wait, immediate) {
+            let timeout;
+            return function () {
+                let context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    timeout = null;
+                    if (!immediate) { func.apply(context, args) }
+                }, wait);
+                if (immediate && !timeout) { func.apply(context, args) }
+            };
+        },
+        throttle(func, timeFrame) {
+            let lastTime = 0;
+            return function () {
+                let now = new Date();
+                if (now - lastTime >= timeFrame) {
+                    func();
+                    lastTime = now;
+                }
+            };
+        },
         updateVisibleRows() {
             if (!this.updatingView) {
                 this.updatingView = true;

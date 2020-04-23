@@ -77,7 +77,7 @@ export default {
                     }
                 });
 
-                names = _.flatten(names);
+                names.reduce((a, b) => a.concat(b), []);
                 this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
             });
         },
@@ -99,7 +99,7 @@ export default {
                 }
             });
 
-            return _.flatten(filterNames);
+            return filterNames.reduce((a, b) => a.concat(b), []);
         },
         getFilterLabels(filterObject, metadatum,) {
             let filterLabels = [];

@@ -111,7 +111,6 @@ import SearchResults from './search-results.vue';
 import Sidebar from './sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
-import { throttle } from 'lodash';
 
 const DEFAULT_CLASS = 'is-notebook-default';
 
@@ -175,7 +174,7 @@ export default {
     watch: {
     },
     beforeMount() {
-        this.throttledSearchItem = throttle(this.searchItem, 500);
+        this.throttledSearchItem = this.throttle(this.searchItem, 500);
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
@@ -195,6 +194,16 @@ export default {
         })
     },
     methods: {
+        throttle(func, timeFrame) {
+            let lastTime = 0;
+            return function () {
+                let now = new Date();
+                if (now - lastTime >= timeFrame) {
+                    func();
+                    lastTime = now;
+                }
+            };
+        },
         addDefaultClass() {
             const classList = this.internalDomainObject.classList || [];
             if (classList.includes(DEFAULT_CLASS)) {
