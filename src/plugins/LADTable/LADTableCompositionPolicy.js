@@ -24,9 +24,10 @@ define([], function () {
     return function LADTableCompositionPolicy(openmct) {
         return {
             allow: function (parent, child) {
-                console.log('lad comp allow', parent, child);
-                if (!openmct.telemetry.isTelemetryObject(child)) {
-                    return false;
+                if(parent.type === 'LadTable') {
+                    return openmct.telemetry.isTelemetryObject(child);
+                } else if(parent.type === 'LadTableSet') {
+                    return child.type === 'LadTable';
                 }
 
                 return true;
