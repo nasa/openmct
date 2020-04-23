@@ -87,6 +87,11 @@ define([
                 bootstrapper
             );
 
+        // Override of angular1.6 ! hashPrefix
+        app.config(['$locationProvider', function ($locationProvider) {
+            $locationProvider.hashPrefix('');
+        }]);
+
         // Apply logging levels; this must be done now, before the
         // first log statement.
         new LogLevel(logLevel).configure(app, $log);
