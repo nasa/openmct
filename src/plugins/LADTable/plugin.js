@@ -22,13 +22,16 @@
 
 define([
     './LADTableViewProvider',
-    './LADTableSetViewProvider'
+    './LADTableSetViewProvider',
+    './LADTableCompositionPolicy'
 ], function (
     LADTableViewProvider,
-    LADTableSetViewProvider
+    LADTableSetViewProvider,
+    LADTableCompositionPolicy
 ) {
     return function plugin() {
         return function install(openmct) {
+
             openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
             openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
@@ -51,6 +54,7 @@ define([
                     domainObject.composition = [];
                 }
             });
+            openmct.composition.addPolicy(new LADTableCompositionPolicy(openmct).allow);
         };
     };
 });
