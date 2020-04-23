@@ -55,6 +55,7 @@ export default {
     },
     computed: {
         hasActiveFilters() {
+            console.log('hasActiveFilters');
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(filters => {
                 return Object.values(filters).some(comparator => {
@@ -63,6 +64,7 @@ export default {
             });
         },
         hasMixedFilters() {
+            console.log('hasMixedFilters')
             // Should be true when filter values are mixed.
             let filtersToCompare = _.omit(this.persistedFilters[Object.keys(this.persistedFilters)[0]], [USE_GLOBAL]);
             return Object.values(this.persistedFilters).some(filters => {
@@ -70,6 +72,7 @@ export default {
             });
         },
         label() {
+            console.log('label');
             if (this.hasActiveFilters) {
                 if (this.hasMixedFilters) {
                     return FILTER_VIEW_TITLE_MIXED;

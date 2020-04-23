@@ -68,7 +68,6 @@
 
 <script>
 import uuid from 'uuid';
-
 import SubobjectView from './SubobjectView.vue'
 import TelemetryView from './TelemetryView.vue'
 import BoxView from './BoxView.vue'
@@ -375,7 +374,9 @@ export default {
                 indices.push(selectedItem[0].context.index);
                 this.untrackItem(selectedItem[0].context.layoutItem);
             });
-            _.pullAt(this.layoutItems, indices);
+            while(indices.length) {
+                this.layoutItems.splice(indices.pop(), 1);
+            }
             this.mutate("configuration.items", this.layoutItems);
             this.$el.click();
         },
@@ -512,7 +513,7 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = _.findIndex(this.layoutItems, item);
+            let index = this.layoutItems.findIndex(item);
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         }
