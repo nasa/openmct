@@ -57,13 +57,13 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = Object.entries(valueMetadata.enumerations).reduce((a, [key, {value}]) => {a [key] = value; return a}, []);
+                valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
             }
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = Math.max(...valueMetadata.values) + 1;
+                valueMetadata.max = _.max(valueMetadata.values) + 1;
             }
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = Math.min(...valueMetadata.values) - 1;
+                valueMetadata.min = _.min(valueMetadata.values) - 1;
             }
         }
 
@@ -121,7 +121,7 @@ define([
                 return metadata.hints[hint];
             }
         });
-        return _.sortBy(matchingMetadata, ...iteratees);
+        return _.sortByAll(matchingMetadata, ...iteratees);
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {

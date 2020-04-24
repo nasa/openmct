@@ -370,7 +370,7 @@ define([
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         var options = metadatas.map(function (metadata) {
             var values = metadata.valuesForHints(hints);
-            return _.keyBy(values, 'key');
+            return _.indexBy(values, 'key');
         }).reduce(function (a, b) {
             var results = {};
             Object.keys(a).forEach(function (key) {
@@ -383,7 +383,7 @@ define([
         var sortKeys = hints.map(function (h) {
             return 'hints.' + h;
         });
-        return _.sortBy(options, sortKeys);
+        return _.sortByAll(options, sortKeys);
     };
 
     /**
