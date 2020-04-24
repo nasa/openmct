@@ -20,7 +20,6 @@ import toolbarMenu from './components/toolbar-menu.vue';
 import toolbarSelectMenu from './components/toolbar-select-menu.vue';
 import toolbarSeparator from './components/toolbar-separator.vue';
 import toolbarToggleButton from './components/toolbar-toggle-button.vue';
-
 import _ from 'lodash';
 
 export default {

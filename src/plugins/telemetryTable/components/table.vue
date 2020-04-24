@@ -260,8 +260,8 @@ import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
 import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
-import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import _ from 'lodash';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;

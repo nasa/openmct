@@ -146,7 +146,7 @@ define([
                 strategy = 'minmax';
             }
 
-            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -270,7 +270,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getXVal);
+            return _.sortedIndexBy(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for the series.

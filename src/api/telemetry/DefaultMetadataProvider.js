@@ -103,7 +103,7 @@ define([
         var metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
             var typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
-            _.extend(metadata, typeMetadata);
+            Object.assign(metadata, typeMetadata);
             if (!metadata.values) {
                 metadata.values = valueMetadatasFromOldFormat(metadata);
             }

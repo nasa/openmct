@@ -50,6 +50,7 @@
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
+import _ from 'lodash';
 
 export default {
     name: 'MultiSelectStylesView',

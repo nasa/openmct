@@ -99,7 +99,8 @@ define([
         }
 
         hasColumnWithKey(columnKey) {
-            return _.flatten(Object.values(this.columns))
+            const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+            return flatten(Object.values(this.columns))
                 .some(column => column.getKey() === columnKey);
         }
 
@@ -108,7 +109,8 @@ define([
         }
 
         getAllHeaders() {
-            let flattenedColumns = _.flatten(Object.values(this.columns));
+            const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+            let flattenedColumns = flatten(Object.values(this.columns));
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
 

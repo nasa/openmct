@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
+define([], function (
     _
 ) {
     /**
@@ -122,7 +120,7 @@ define([
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        var index = _.findIndex(this.listeners[event], function (l) {
+        var index = this.listeners[event].findIndex(function (l) {
             return l.callback === callback && l.context === context;
         });
 

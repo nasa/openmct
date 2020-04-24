@@ -24,7 +24,7 @@
  * Module defining ActionCapability. Created by vwoeltje on 11/10/14.
  */
 define(
-    ['lodash'],
+    [],
     function (_) {
 
         /**
@@ -81,7 +81,7 @@ define(
                 baseContext = context || {};
             }
 
-            var actionContext = _.extend({}, baseContext);
+            var actionContext = Object.assign({}, baseContext);
             actionContext.domainObject = this.domainObject;
 
             return this.actionService.getActions(actionContext);

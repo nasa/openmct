@@ -25,6 +25,13 @@ module.exports = {
         }
     },
     "rules": {
+        "you-dont-need-lodash-underscore/omit": "off",
+        "you-dont-need-lodash-underscore/concat": "off",
+        "you-dont-need-lodash-underscore/values": "off",
+        "you-dont-need-lodash-underscore/map": "off",
+        "you-dont-need-lodash-underscore/throttle": "off",
+        "lodash/prefer-immutable-method": "off",
+        "lodash/prefer-lodash-chain": "off",
         "lodash/prefer-lodash-method": "off",
         "lodash/prefer-lodash-typecheck": "off",
         "lodash/prefer-constant": "off",

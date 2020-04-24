@@ -1,6 +1,4 @@
-define([
-    'lodash'
-], function (
+define([], function (
     _
 ) {
 
@@ -99,7 +97,7 @@ define([
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {
-        return _.extend(
+        return Object.assign(
             {},
             domainObject.telemetry,
             METADATA_BY_TYPE[domainObject.type]

@@ -182,7 +182,7 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
-        options = _.extend({}, options, {
+        options = Object.assign({}, options, {
             strategy: 'latest',
             size: 1
         });

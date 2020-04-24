@@ -25,8 +25,7 @@
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
 define([
-    '../../../../src/api/objects/object-utils',
-    'lodash'
+    '../../../../src/api/objects/object-utils'
 ], function (
     objectUtils,
     _
@@ -191,9 +190,7 @@ define([
         }
 
         var domainObject = objectUtils.toNewFormat(model, id);
-        var composition = _.find(this.openmct.composition.registry, function (p) {
-            return p.appliesTo(domainObject);
-        });
+        var composition = this.openmct.composition.registry.find(p => p.appliesTo(domainObject));
 
         if (!composition) {
             return;

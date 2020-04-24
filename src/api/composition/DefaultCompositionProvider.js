@@ -143,7 +143,7 @@ define([
         var keyString = objectUtils.makeKeyString(domainObject.identifier);
         var objectListeners = this.listeningTo[keyString];
 
-        var index = _.findIndex(objectListeners[event], function (l) {
+        var index = objectListeners[event].findIndex(function (l) {
             return l.callback === callback && l.context === context;
         });
 

@@ -62,6 +62,7 @@
 <script>
 import FilterField from './FilterField.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import _ from 'lodash';
 
 export default {
     inject: ['openmct'],

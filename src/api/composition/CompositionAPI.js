@@ -21,12 +21,10 @@
  *****************************************************************************/
 
 define([
-    'lodash',
     'EventEmitter',
     './DefaultCompositionProvider',
     './CompositionCollection'
 ], function (
-    _,
     EventEmitter,
     DefaultCompositionProvider,
     CompositionCollection
@@ -70,9 +68,7 @@ define([
      * @memberof module:openmct.CompositionAPI#
      */
     CompositionAPI.prototype.get = function (domainObject) {
-        var provider = _.find(this.registry, function (p) {
-            return p.appliesTo(domainObject);
-        });
+        var provider = this.registry.find(p => p.appliesTo(domainObject));
 
         if (!provider) {
             return;

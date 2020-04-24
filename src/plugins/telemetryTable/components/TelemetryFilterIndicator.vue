@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 const FILTER_INDICATOR_LABEL = 'Filters:';
 const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
 const FILTER_INDICATOR_TITLE = 'Data filters are being applied to this view.';
@@ -77,7 +79,8 @@ export default {
                     }
                 });
 
-                names = _.flatten(names);
+                const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+                names = flatten(names);
                 this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
             });
         },
@@ -99,7 +102,8 @@ export default {
                 }
             });
 
-            return _.flatten(filterNames);
+            const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+            return flatten(filterNames);
         },
         getFilterLabels(filterObject, metadatum,) {
             let filterLabels = [];

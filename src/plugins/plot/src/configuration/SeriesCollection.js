@@ -101,13 +101,10 @@ define([
             var plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {
 
-                var persistedIndex = _.findIndex(plotObject.configuration.series, function (s) {
-                    return _.isEqual(identifier, s.identifier);
-                });
+                var persistedIndex = plotObject.configuration.series.findIndex(s => _.isEqual(identifier, s.identifier));
 
-                var configIndex = _.findIndex(this.models, function (m) {
-                    return _.isEqual(m.domainObject.identifier, identifier);
-                });
+
+                var configIndex = this.models.findIndex(m => _.isEqual(m.domainObject.identifier, identifier));
 
                 /*
                     when cancelling out of edit mode, the config store and domain object are out of sync

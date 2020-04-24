@@ -5,6 +5,8 @@ Application router -- must
 */
 /*global _,module*/
 
+// import _ from 'lodash';
+
 const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
 

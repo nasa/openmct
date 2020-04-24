@@ -370,7 +370,8 @@ define([
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         var options = metadatas.map(function (metadata) {
             var values = metadata.valuesForHints(hints);
-            return _.keyBy(values, 'key');
+            const keyBy = (array, key) => (array || []).reduce((r, x) => ({ ...r, [key ? x[key] : x]: x }), {});
+            return keyBy(values, 'key');
         }).reduce(function (a, b) {
             var results = {};
             Object.keys(a).forEach(function (key) {
