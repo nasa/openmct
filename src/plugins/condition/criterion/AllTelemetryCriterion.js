@@ -22,6 +22,7 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
+import { getOperatorText } from "@/plugins/condition/utils/operations";
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
 
@@ -143,6 +144,34 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                     data: this.formatData(latestDatum, options.telemetryObjects)
                 };
             });
+    }
+
+    getDescription() {
+        const telemetryDescription = this.telemetry === 'all' ? 'All telemetry' : 'Any telemetry';
+        let metadataValue = this.metadata;
+        let inputValue = this.input;
+        if (this.metadata) {
+            const telemetryObjects = Object.values(this.telemetryObjects);
+            for (let i=0; i < telemetryObjects.length; i++) {
+                const telemetryObject = telemetryObjects[i];
+                const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+
+                const metadataObj = telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === this.metadata);
+                if (metadataObj) {
+
+                    if (metadataObj.name) {
+                        metadataValue = metadataObj.name;
+                    }
+                    if(metadataObj.enumerations && inputValue.length) {
+                        if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                            inputValue = [metadataObj.enumerations[inputValue[0]].string];
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return `${telemetryDescription} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
     }
 
     destroy() {

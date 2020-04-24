@@ -26,6 +26,7 @@ import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
+import {TRIGGER} from "@/plugins/condition/utils/constants";
 
 /*
 * conditionConfiguration = {
@@ -41,13 +42,14 @@ import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 *   ]
 * }
 */
-export default class ConditionClass extends EventEmitter {
+export default class Condition extends EventEmitter {
 
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
      * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
+     * @param conditionManager
      */
     constructor(conditionConfiguration, openmct, conditionManager) {
         super();
@@ -62,6 +64,7 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
+        this.description = '';
     }
 
     getResult(datum) {
@@ -117,6 +120,7 @@ export default class ConditionClass extends EventEmitter {
         criterionConfigurations.forEach((criterionConfiguration) => {
             this.addCriterion(criterionConfiguration);
         });
+        this.updateDescription();
     }
 
     updateCriteria(criterionConfigurations) {
@@ -128,6 +132,7 @@ export default class ConditionClass extends EventEmitter {
         this.criteria.forEach((criterion) => {
             criterion.updateTelemetryObjects(this.conditionManager.telemetryObjects);
         });
+        this.updateDescription();
     }
 
     /**
@@ -175,6 +180,7 @@ export default class ConditionClass extends EventEmitter {
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             this.criteria.splice(found.index, 1, newCriterion);
+            this.updateDescription();
         }
     }
 
@@ -187,6 +193,7 @@ export default class ConditionClass extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
+            this.updateDescription();
 
             return true;
         }
@@ -197,7 +204,35 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
+            this.updateDescription();
         }
+    }
+
+    updateDescription() {
+        const triggerDescription = this.getTriggerDescription();
+        let description = '';
+        this.criteria.forEach((criterion, index) => {
+            if (!index) {
+                description = 'When';
+            }
+            description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription : ''}`;
+        });
+        this.description = description;
+        this.conditionManager.updateConditionDescription(this);
+    }
+
+    getTriggerDescription() {
+        let description = '';
+        switch(this.trigger) {
+        case TRIGGER.ANY:
+        case TRIGGER.XOR:
+            description = 'or';
+            break;
+        case TRIGGER.ALL:
+        case TRIGGER.NOT: description = 'and';
+            break;
+        }
+        return description;
     }
 
     requestLADConditionResult() {

@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
-
 const convertToNumbers = (input) => {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));
@@ -287,4 +285,9 @@ export const OPERATIONS = [
 export const INPUT_TYPES = {
     'string': 'text',
     'number': 'number'
+};
+
+export const getOperatorText = (operationName, values) => {
+    const found = OPERATIONS.find((operation) => operation.name === operationName);
+    return found ? found.getDescription(values) : '';
 };

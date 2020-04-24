@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { OPERATIONS } from '../utils/operations';
+import { OPERATIONS, getOperatorText } from '../utils/operations';
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -139,6 +139,33 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
+    getDescription(criterion, index) {
+        let description;
+        if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
+            description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
+        } else {
+            let metadataValue = this.metadata;
+            let inputValue = this.input;
+            if (this.metadata) {
+                const telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject);
+
+                const metadataObj = telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === this.metadata);
+                if (metadataObj) {
+                    if (metadataObj.name) {
+                        metadataValue = metadataObj.name;
+                    }
+                    if(metadataObj.enumerations && inputValue.length) {
+                        if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                            inputValue = [metadataObj.enumerations[inputValue[0]].string];
+                        }
+                    }
+                }
+            }
+            description = `${this.telemetryObject.name} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+        }
+
+        return description;
+    }
 
     destroy() {
         delete this.telemetryObject;

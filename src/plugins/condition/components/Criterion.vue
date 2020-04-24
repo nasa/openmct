@@ -79,7 +79,7 @@
                     <input v-model="criterion.input[inputIndex]"
                            class="c-cdef__control__input"
                            :type="setInputType"
-                           @blur="persist"
+                           @change="persist"
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
@@ -178,17 +178,17 @@ export default {
     methods: {
         checkTelemetry() {
             if(this.criterion.telemetry) {
-                if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
-                    this.updateMetadataOptions();
+                const isAnyAllTelemetry = this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all';
+                if (!isAnyAllTelemetry &&
+                    !this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
+                    //telemetry being used was removed. So reset this criterion.
+                    this.criterion.telemetry = '';
+                    this.criterion.metadata = '';
+                    this.criterion.input = [];
+                    this.criterion.operation = '';
+                    this.persist();
                 } else {
-                    if (!this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
-                        //telemetry being used was removed. So reset this criterion.
-                        this.criterion.telemetry = '';
-                        this.criterion.metadata = '';
-                        this.criterion.input = [];
-                        this.criterion.operation = '';
-                        this.persist();
-                    }
+                    this.updateMetadataOptions();
                 }
             }
         },
@@ -221,19 +221,17 @@ export default {
                 this.persist();
             }
             if (this.criterion.telemetry) {
-                const telemetry = (this.criterion.telemetry === 'all' || this.criterion.telemetry === 'any') ? this.telemetry : [{
-                    identifier: this.criterion.telemetry
-                }];
-
-                let telemetryPromises = telemetry.map((telemetryObject) => this.openmct.objects.get(telemetryObject.identifier));
-                Promise.all(telemetryPromises).then(telemetryObjects => {
-                    this.telemetryMetadataOptions = [];
-                    telemetryObjects.forEach(telemetryObject => {
-                        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                        this.addMetaDataOptions(telemetryMetadata.values());
-                    });
-                    this.updateOperations();
+                let telemetryObjects = this.telemetry;
+                if (this.criterion.telemetry !== 'all' && this.criterion.telemetry !== 'any') {
+                    const found = this.telemetry.find(telemetryObj => (this.openmct.objects.areIdsEqual(telemetryObj.identifier, this.criterion.telemetry)));
+                    telemetryObjects = found ? [found] : [];
+                }
+                this.telemetryMetadataOptions = [];
+                telemetryObjects.forEach(telemetryObject => {
+                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    this.addMetaDataOptions(telemetryMetadata.values());
                 });
+                this.updateOperations();
             }
         },
         addMetaDataOptions(options) {
