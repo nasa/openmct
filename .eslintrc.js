@@ -25,6 +25,7 @@ module.exports = {
         }
     },
     "rules": {
+        "you-dont-need-lodash-underscore/uniq": "off",
         "you-dont-need-lodash-underscore/omit": "off",
         "you-dont-need-lodash-underscore/concat": "off",
         "you-dont-need-lodash-underscore/values": "off",

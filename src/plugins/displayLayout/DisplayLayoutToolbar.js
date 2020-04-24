@@ -559,7 +559,7 @@ define([], function (_) {
                 });
 
                 let toolbarArray = Object.values(toolbar);
-                const flatten = arr => arr.reduce( (a, b) => a.concat(b), []);
+                const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
                 return flatten(toolbarArray.reduce((accumulator, group, index) => {
                     group = group.filter(control => control !== undefined);
 
