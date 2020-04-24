@@ -64,7 +64,32 @@
                     bounds: {
                         start: Date.now() - THIRTY_MINUTES,
                         end: Date.now()
-                    }
+                    },
+                    presets: [
+                        {
+                            label: 'Last Day',
+                            bounds: {
+                                start: Date.now() - 1000 * 60 * 60 * 24,
+                                end: Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 2 hours',
+                            bounds: {
+                                start: Date.now() - 1000 * 60 * 60 * 2,
+                                end: Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last hour',
+                            bounds: {
+                                start: Date.now() - 1000 * 60 * 60,
+                                end: Date.now()
+                            }
+                        }
+                    ],
+                    // maximum entries to retain in conductor history
+                    records: 10
                 },
                 {
                     name: "Realtime",
@@ -74,24 +99,7 @@
                         start: - THIRTY_MINUTES,
                         end: THIRTY_SECONDS
                     }
-                },
-                {
-                    name: "Fixed",
-                    timeSystem: 'local',
-                    bounds: {
-                        start: Date.now() - THIRTY_MINUTES,
-                        end: Date.now()
-                    }
-                },
-                {
-                    name: "Realtime",
-                    timeSystem: 'local',
-                    clock: 'local',
-                    clockOffsets: {
-                        start: - THIRTY_MINUTES,
-                        end: THIRTY_SECONDS
-                    }
-                },
+                }
             ]
         }));
         openmct.install(openmct.plugins.SummaryWidget());
