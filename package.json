@@ -85,7 +85,7 @@
     "build:watch": "webpack --watch",
     "test": "karma start --single-run",
     "test-debug": "cross-env NODE_ENV=debug karma start --no-single-run",
-    "test-coverage": "cross-env COVERAGE=true karma start --single-run",
+    "test-coverage": "./scripts/test-coverage.sh",
     "test:watch": "karma start --no-single-run",
     "verify": "concurrently 'npm:test' 'npm:lint'",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",

@@ -68,22 +68,6 @@ module.exports = (config) => {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        coverageReporter: {
-            dir: process.env.CIRCLE_ARTIFACTS ?
-                process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/reports/coverage",
-            check: {
-                global: {
-                    lines: 80,
-                    excludes: ['src/plugins/plot/**/*.js']
-                }
-            },
-            reporters: [
-                'spec',
-                'coverage-istanbul',
-                'html'
-            ]
-        },
         // HTML test reporting.
         htmlReporter: {
             outputDir: "dist/reports/tests",
@@ -98,10 +82,7 @@ module.exports = (config) => {
             reports: ['html', 'lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    statements: 50,
-                    lines: 80,
-                    branches: 50,
-                    functions: 50
+                    lines: 80
                 }
             }
         },
