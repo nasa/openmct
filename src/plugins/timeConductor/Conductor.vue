@@ -230,6 +230,7 @@ export default {
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', this.setViewFromBounds);
+        this.openmct.time.on('bounds', this.setNewBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
@@ -315,10 +316,11 @@ export default {
             }
         },
         getBoundsLimit() {
-            const limit = this.configuration.menuOptions
+            const configuration = this.configuration.menuOptions
                 .filter(option => option.timeSystem ===  this.timeSystem.key)
-                .find(option => option.limit)
-                .limit;
+                .find(option => option.limit);
+
+            const limit = configuration ? configuration.limit : undefined;
 
             return limit;
         },

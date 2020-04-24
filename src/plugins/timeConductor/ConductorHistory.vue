@@ -30,22 +30,15 @@
          class="c-menu c-conductor__history-menu"
     >
         <ul
-            v-if="isUTCBased"
+            v-if="hasHistoryPresets"
         >
-            <li class="icon-clock"
-                @click="selectHours(24)"
+            <li
+                v-for="preset in presets"
+                :key="preset.label"
+                class="icon-clock"
+                @click="selectTimespan(preset.bounds)"
             >
-                Last 24 hours
-            </li>
-            <li class="icon-clock"
-                @click="selectHours(2)"
-            >
-                Last 2 hours
-            </li>
-            <li class="icon-clock"
-                @click="selectHours(1)"
-            >
-                Last hour
+                {{ preset.label }}
             </li>
         </ul>
 
@@ -71,11 +64,34 @@
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 import _ from 'lodash'
 
-const LOCAL_STORAGE_HISTORY_MAX_RECORDS = 10;
 const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
+const DEFAULT_RECORDS = 10;
+const DEFAULT_UTC_PRESETS = [
+    {
+        label: 'XLast Day',
+        bounds: {
+            start: Date.now() - 1000 * 60 * 60 * 24,
+            end: Date.now()
+        }
+    },
+    {
+        label: 'Last 2 hours',
+        bounds: {
+            start: Date.now() - 1000 * 60 * 60 * 2,
+            end: Date.now()
+        }
+    },
+    {
+        label: 'Last hour',
+        bounds: {
+            start: Date.now() - 1000 * 60 * 60,
+            end: Date.now()
+        }
+    }
+];
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'configuration'],
     mixins: [toggleMixin],
     props: {
         bounds: {
@@ -89,12 +105,15 @@ export default {
     },
     data() {
         return {
-            history: {} // contains arrays of timespans {start, end}, array key is time system key
+            history: {}, // contains arrays of timespans {start, end}, array key is time system key
+            presets: []
         }
     },
     computed: {
-        isUTCBased() {
-            return this.timeSystem.isUTCBased;
+        hasHistoryPresets() {
+            const isUTCBased = this.timeSystem.isUTCBased;
+
+            return isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
             const history = this.history[this.timeSystem.key];
@@ -112,6 +131,7 @@ export default {
         },
         timeSystem: {
             handler() {
+                this.loadConfiguration();
                 this.addTimespan();
             },
             deep: true
@@ -151,11 +171,11 @@ export default {
                 return !_.isEqual(timespan, entry);
             });
 
-            while (currentHistory.length >= LOCAL_STORAGE_HISTORY_MAX_RECORDS) {
-                currentHistory.shift();
+            while (currentHistory.length >= this.records) {
+                currentHistory.pop();
             }
 
-            currentHistory.push(timespan);
+            currentHistory.unshift(timespan);
             this.history[key] = currentHistory;
         },
         selectTimespan(timespan) {
@@ -167,6 +187,25 @@ export default {
                 start: now - hours * 60 * 60 * 1000,
                 end: now
             });
+        },
+        loadConfiguration() {
+            const configurations = this.configuration.menuOptions
+                .filter(option => option.timeSystem ===  this.timeSystem.key);
+
+            this.presets = this.loadPresets(configurations);
+            this.records = this.loadRecords(configurations);
+        },
+        loadPresets(configurations) {
+            const configuration = configurations.find(option => option.presets);
+            const preset = configuration ? configuration.presets : DEFAULT_UTC_PRESETS;
+
+            return preset;
+        },
+        loadRecords(configurations) {
+            const configuration = configurations.find(option => option.records);
+            const records = configuration ? configuration.records : DEFAULT_RECORDS;
+
+            return records;
         },
         formatTime(time) {
             const formatter = this.openmct.telemetry.getValueFormatter({
