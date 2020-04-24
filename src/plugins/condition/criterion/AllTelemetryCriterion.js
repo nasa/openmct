@@ -22,6 +22,7 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
+import { getLatestTimestamp } from '../utils/time';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
 
@@ -127,19 +128,37 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 options
             ));
 
+        let telemetryDataCache = {};
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
                 let latestDatum;
+                let latestTimestamp;
+                const timeSystems = this.openmct.time.getAllTimeSystems();
+                const timeSystem = this.openmct.time.timeSystem();
+
                 telemetryRequestsResults.forEach((results, index) => {
                     latestDatum = results.length ? results[results.length - 1] : {};
                     if (latestDatum) {
                         latestDatum.id = keys[index];
-                        this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
+                        telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
+
+                        latestTimestamp = getLatestTimestamp(
+                            latestTimestamp,
+                            latestDatum,
+                            timeSystems,
+                            timeSystem
+                        );
                     }
                 });
+
+                const datum = {
+                    result: evaluateResults(Object.values(telemetryDataCache), this.telemetry),
+                    ...latestTimestamp
+                };
+
                 return {
                     id: this.id,
-                    data: this.formatData(latestDatum, options.telemetryObjects)
+                    data: datum
                 };
             });
     }
