@@ -228,7 +228,6 @@ define([
 
     PlotController.prototype.stopLoading = function () {
         this.$scope.pending -= 1;
-        this.$scope.$digest();
     };
 
     /**
