@@ -154,7 +154,7 @@ define([
                 return _(this.baseState)
                     .values()
                     .map(_.clone)
-                    .keyBy('id')
+                    .indexBy('id')
                     .value();
             }.bind(this));
     };

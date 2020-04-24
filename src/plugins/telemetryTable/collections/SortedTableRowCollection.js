@@ -93,7 +93,7 @@ define(
                     // same time stamp
                     let potentialDupes = this.rows.slice(startIx, endIx + 1);
                     // Search potential dupes for exact dupe
-                    isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, row));
+                    isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, row)) > -1;
                 }
 
                 if (!isDuplicate) {
@@ -201,7 +201,7 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
+                    this.rows = _.sortByOrder(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
                     this.emit('sort');
                 }
                 // Return duplicate to avoid direct modification of underlying object

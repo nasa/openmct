@@ -196,8 +196,8 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.includes = function (parent, childId) {
-        return parent.composition.some(composee =>
-            this.publicAPI.objects.areIdsEqual(composee, childId));
+        return parent.composition.findIndex(composee =>
+            this.publicAPI.objects.areIdsEqual(composee, childId)) !== -1;
     };
 
     DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
