@@ -91,12 +91,7 @@ export default {
             .telemetry
             .subscribe(this.domainObject, this.updateValues);
 
-        this.requestHistory(false);
-
-        // this.openmct
-        //     .telemetry
-        //     .request(this.domainObject, {strategy: 'latest'})
-        //     .then((array) => this.updateValues(array[array.length - 1]));
+        this.requestHistory();
     },
     destroyed() {
         this.stopWatchingMutation();
@@ -106,56 +101,61 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            let newTimestamp = datum[this.timestampKey];
+            let newTimestamp = this.formats[this.timestampKey].parse(datum),
+                update = false, limit;
 
             if(this.inBounds(newTimestamp)) {
 
-                // if current datum, else assign new current
-                if(this.currentDatum) {
-                    let existingTimestamp = this.currentDatum[this.timestampKey];
-                    // if existing is in bounds, if not assign new current
+                // if timestamp is set, need tocheck, else update
+                if(this.timestamp !== '---') {
+                    let existingTimestamp = this.formats[this.timestampKey].parse(this.timestamp);
+
+                    // if existing is in bounds, need to check, if not update
                     if(this.inBounds(existingTimestamp)) {
+
                         // race condition check
                         if(newTimestamp >= existingTimestamp) {
-                            this.currentDatum = datum;
+                            update = true;
                         }
                     } else {
-                        this.currentDatum = datum;
+                        update = true;
                     }
                 } else {
-                    this.currentDatum = datum;
+                    update = true;
                 }
 
-                this.timestamp = this.formats[this.timestampKey].format(this.currentDatum);
-                this.value = this.formats[this.valueKey].format(this.currentDatum);
+                if(update) {
+                    this.timestamp = this.formats[this.timestampKey].format(datum);
+                    this.value = this.formats[this.valueKey].format(datum);
+                    limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
 
-                var limit = this.limitEvaluator.evaluate(this.currentDatum, this.valueMetadata);
-
-                if (limit) {
-                    this.valueClass = limit.cssClass;
-                } else {
-                    this.valueClass = '';
+                    if (limit) {
+                        this.valueClass = limit.cssClass;
+                    } else {
+                        this.valueClass = '';
+                    }
                 }
+
             }
         },
-        requestHistory(isTick) {
-            if(!isTick) {
-                this.openmct
-                    .telemetry
-                    .request(this.domainObject, {
-                        start: this.bounds.start,
-                        end: this.bounds.end,
-                        strategy: 'latest'
-                    })
-                    .then((array) => this.updateValues(array[array.length - 1]));
-            }
+        requestHistory() {
+            this.openmct
+                .telemetry
+                .request(this.domainObject, {
+                    start: this.bounds.start,
+                    end: this.bounds.end,
+                    strategy: 'latest'
+                })
+                .then((array) => this.updateValues(array[array.length - 1]));
         },
         updateName(name) {
             this.name = name;
         },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
-            this.requestHistory(isTick);
+            if(!isTick) {
+                this.requestHistory();
+            }
         },
         inBounds(timestamp) {
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
