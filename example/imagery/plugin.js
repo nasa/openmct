@@ -120,7 +120,7 @@ define([
                                 key: 'utc',
                                 format: 'utc',
                                 hints: {
-                                    domain: 1
+                                    domain: 2
                                 }
                             },
                             {

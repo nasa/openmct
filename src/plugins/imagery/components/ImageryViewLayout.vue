@@ -66,7 +66,6 @@ export default {
     data() {
         return {
             autoScroll: true,
-            bounds: {},
             filters : {
                 brightness: 100,
                 contrast: 100
@@ -89,7 +88,6 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.imageFormat = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
         // initialize
-        this.bounds = this.openmct.time.bounds();
         this.timeKey = this.openmct.time.timeSystem().key;
         this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         // listen
@@ -97,7 +95,7 @@ export default {
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         // kickoff
         this.subscribe();
-        this.requestHistory(false);
+        this.requestHistory();
     },
     updated() {
         this.scrollToRight();
@@ -123,8 +121,8 @@ export default {
 
             // datum is not valid if it matches the last datum in history,
             // or it is before the last datum in the history
-            const datumTimeCheck = datum[this.timeKey];
-            const historyTimeCheck = this.imageHistory.slice(-1)[0][this.timeKey];
+            const datumTimeCheck = this.timeFormat.parse(datum);
+            const historyTimeCheck = this.timeFormat.parse(this.imageHistory.slice(-1)[0]);
             const matchesLast = (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
             const isStale = datumTimeCheck < historyTimeCheck;
 
@@ -199,25 +197,25 @@ export default {
             }
         },
         boundsChange(bounds, isTick) {
-            this.bounds = bounds;
-            this.requestHistory(isTick);
-        },
-        requestHistory(isTick) {
             if(!isTick) {
-                this.requestCount++;
-                const requestId = this.requestCount;
-                this.imageHistory = [];
-                this.openmct.telemetry
-                    .request(this.domainObject, this.bounds)
-                    .then((values = []) => {
-                        if (this.requestCount > requestId) {
-                            return Promise.resolve('Stale request');
-                        }
-
-                        values.forEach(this.updateHistory, false);
-                        this.updateValues(values[values.length - 1]);
-                    });
+                this.requestHistory();
             }
+        },
+        requestHistory() {
+            let bounds = this.openmct.time.bounds();
+            this.requestCount++;
+            const requestId = this.requestCount;
+            this.imageHistory = [];
+            this.openmct.telemetry
+                .request(this.domainObject, bounds)
+                .then((values = []) => {
+                    if (this.requestCount > requestId) {
+                        return 'Stale request';
+                    }
+
+                    values.forEach(this.updateHistory, false);
+                    this.updateValues(values[values.length - 1]);
+                });
         },
         timeSystemChange(system) {
             // reset timesystem dependent variables
@@ -227,8 +225,10 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]);
-                    if(parsedTimestamp >= this.bounds.start && parsedTimestamp <= this.bounds.end) {
+                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
+                        bounds = this.openmct.time.bounds();
+
+                    if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);
                         this.updateValues(datum);
                     }
