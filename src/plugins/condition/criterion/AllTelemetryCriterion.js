@@ -132,10 +132,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 let latestDatum;
                 telemetryRequestsResults.forEach((results, index) => {
                     latestDatum = results.length ? results[results.length - 1] : {};
-                    if (index < telemetryRequestsResults.length-1) {
-                        if (latestDatum) {
-                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
-                        }
+                    if (latestDatum) {
+                        latestDatum.id = keys[index];
+                        this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
                     }
                 });
                 return {
