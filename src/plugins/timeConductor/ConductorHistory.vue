@@ -62,7 +62,6 @@
 
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
-import _ from 'lodash'
 
 const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
 const DEFAULT_RECORDS = 10;
