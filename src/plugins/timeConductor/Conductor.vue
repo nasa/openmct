@@ -149,7 +149,6 @@
                 class="c-conductor__history-select"
                 :bounds="bounds"
                 :time-system="timeSystem"
-                @select-timespan="setViewFromBounds"
             />
         </div>
         <input

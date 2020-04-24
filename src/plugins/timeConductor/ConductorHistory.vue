@@ -49,8 +49,8 @@
         <ul>
             <li
                 v-for="(timespan, index) in historyForCurrentTimeSystem"
-                class="icon-history"
                 :key="index"
+                class="icon-history"
                 @click="selectTimespan(timespan)"
             >
                 {{ formatTime(timespan.start) }} - {{ formatTime(timespan.end) }}
@@ -68,7 +68,7 @@ const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
 const DEFAULT_RECORDS = 10;
 const DEFAULT_UTC_PRESETS = [
     {
-        label: 'XLast Day',
+        label: 'Last Day',
         bounds: {
             start: Date.now() - 1000 * 60 * 60 * 24,
             end: Date.now()
@@ -111,14 +111,11 @@ export default {
     },
     computed: {
         hasHistoryPresets() {
-            const isUTCBased = this.timeSystem.isUTCBased;
-
-            return isUTCBased && this.presets.length;
+            return this.timeSystem.isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
             const history = this.history[this.timeSystem.key];
-            // Return a reversed array so that timeframes are ordered latest first
-            // return history.reverse();
+
             return history;
         }
     },
@@ -167,9 +164,14 @@ export default {
             };
 
             // when choosing an existing entry, remove it and add it back as latest entry
-            currentHistory = currentHistory.filter((entry) => {
-                return !_.isEqual(timespan, entry);
-            });
+            // const isNotEqual = (entry) => entry.start !== this.start || entry.end !== this.end;
+            const isNotEqual = function (entry) {
+                const start = entry.start !== this.start;
+                const end = entry.end !== this.end;
+
+                return start || end;
+            };
+            currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {
                 currentHistory.pop();
@@ -179,7 +181,7 @@ export default {
             this.history[key] = currentHistory;
         },
         selectTimespan(timespan) {
-            this.$emit('select-timespan', timespan);
+            this.openmct.time.bounds(timespan);
         },
         selectHours(hours) {
             const now = Date.now();
