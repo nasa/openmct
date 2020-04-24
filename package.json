@@ -83,7 +83,7 @@
     "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
     "build:watch": "webpack --watch",
-    "test": "karma start --single-run",
+    "test": "./scripts/test-coverage.sh",
     "test-debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test-coverage": "cross-env COVERAGE=true karma start --single-run",
     "test:watch": "karma start --no-single-run",
