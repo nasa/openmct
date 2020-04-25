@@ -131,24 +131,22 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         let telemetryDataCache = {};
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
-                let latestDatum;
                 let latestTimestamp;
                 const timeSystems = this.openmct.time.getAllTimeSystems();
                 const timeSystem = this.openmct.time.timeSystem();
 
                 telemetryRequestsResults.forEach((results, index) => {
-                    latestDatum = results.length ? results[results.length - 1] : {};
-                    if (latestDatum) {
-                        latestDatum.id = keys[index];
-                        telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    const datumId = keys[index];
 
-                        latestTimestamp = getLatestTimestamp(
-                            latestTimestamp,
-                            latestDatum,
-                            timeSystems,
-                            timeSystem
-                        );
-                    }
+                    telemetryDataCache[datumId] = this.computeResult(latestDatum);
+
+                    latestTimestamp = getLatestTimestamp(
+                        latestTimestamp,
+                        latestDatum,
+                        timeSystems,
+                        timeSystem
+                    );
                 });
 
                 const datum = {
