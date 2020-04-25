@@ -157,7 +157,6 @@ define(['EventEmitter'], function (EventEmitter) {
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
         }
-
         return true;
     };
 

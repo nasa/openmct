@@ -147,7 +147,7 @@
             <ConductorHistory
                 v-if="isFixed"
                 class="c-conductor__history-select"
-                :bounds="bounds"
+                :bounds="openmct.time.bounds()"
                 :time-system="timeSystem"
             />
         </div>
@@ -198,10 +198,6 @@ export default {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
-            bounds: {
-                start: bounds.start,
-                end: bounds.end
-            },
             viewBounds: {
                 start: bounds.start,
                 end: bounds.end
@@ -229,7 +225,6 @@ export default {
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', this.setViewFromBounds);
-        this.openmct.time.on('bounds', this.setNewBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
@@ -428,10 +423,6 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds();
             this.submitForm();
-        },
-        setNewBounds(bounds) {
-            this.bounds.start = bounds.start;
-            this.bounds.end = bounds.end;
         }
     }
 }
