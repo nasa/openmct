@@ -201,7 +201,7 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.rows = _.sortBy(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
+                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
                     this.emit('sort');
                 }
                 // Return duplicate to avoid direct modification of underlying object
