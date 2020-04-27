@@ -22,11 +22,9 @@
 
 
 define([
-    'lodash',
     'EventEmitter',
     '../lib/eventHelpers'
 ], function (
-    _,
     EventEmitter,
     eventHelpers
 ) {
@@ -78,7 +76,7 @@ define([
         this.listenTo(this.canvas, "webglcontextlost", this.onContextLost, this);
     }
 
-    _.extend(DrawWebGL.prototype, EventEmitter.prototype);
+    Object.assign(DrawWebGL.prototype, EventEmitter.prototype);
     eventHelpers.extend(DrawWebGL.prototype);
 
     DrawWebGL.prototype.onContextLost = function (event) {

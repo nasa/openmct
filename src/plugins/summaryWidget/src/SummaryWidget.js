@@ -6,7 +6,6 @@ define([
     './WidgetDnD',
     './eventHelpers',
     '../../../api/objects/object-utils',
-    'lodash',
     'zepto'
 ], function (
     widgetTemplate,
@@ -16,7 +15,6 @@ define([
     WidgetDnD,
     eventHelpers,
     objectUtils,
-    _,
     $
 ) {
 

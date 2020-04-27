@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define([
-    './SimpleIndicator',
-    'lodash'
+    './SimpleIndicator'
 ], function (
-    SimpleIndicator,
-    _
+    SimpleIndicator
 ) {
     function IndicatorAPI(openmct) {
         this.openmct = openmct;

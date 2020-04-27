@@ -22,11 +22,9 @@
 
 define(
     [
-        'lodash',
         './SortedTableRowCollection'
     ],
     function (
-        _,
         SortedTableRowCollection
     ) {
 

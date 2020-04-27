@@ -21,14 +21,12 @@
  *****************************************************************************/
 
 define([
-    'lodash',
     './object-utils',
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
     'EventEmitter'
 ], function (
-    _,
     utils,
     MutableObject,
     RootRegistry,
