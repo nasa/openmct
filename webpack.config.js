@@ -42,7 +42,9 @@ const webpackConfig = {
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
-            "testTools": path.join(__dirname, "src/testTools.js")
+            "testTools": path.join(__dirname, "src/testTools.js"),
+            "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js"),
+            "arrayUtils": path.join(__dirname, "src/api/utils/array-utils.js")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',

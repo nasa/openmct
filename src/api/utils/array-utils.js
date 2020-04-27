@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,17 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['objectUtils'], function (objectUtils) {
-    function AdapterCapability(domainObject) {
-        this.domainObject = domainObject;
-    }
+export const keyBy = (array, k) => (array || []).reduce((r, x) => ({ ...r, [k ? x[k] : x]: x }), {});
 
-    AdapterCapability.prototype.invoke = function () {
-        return objectUtils.toNewFormat(
-            this.domainObject.getModel(),
-            this.domainObject.getId()
-        );
-    };
-
-    return AdapterCapability;
-});
+export const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+export const isEmpty = obj => [Object, Array].includes((obj || {}).constructor) && !Object.entries((obj || {})).length;

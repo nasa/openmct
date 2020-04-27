@@ -23,7 +23,7 @@
 define([
     './SummaryWidgetRule',
     '../eventHelpers',
-    '../../../../api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     SummaryWidgetRule,

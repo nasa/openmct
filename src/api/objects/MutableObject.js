@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 define([
-    './object-utils.js',
+    'objectUtils',
     'lodash'
 ], function (
-    utils,
+    objectUtils,
     _
 ) {
     var ANY_OBJECT_EVENT = "mutation";
@@ -43,7 +43,7 @@ define([
     }
 
     function qualifiedEventName(object, eventName) {
-        var keystring = utils.makeKeyString(object.identifier);
+        var keystring = objectUtils.makeKeyString(object.identifier);
 
         return [keystring, eventName].join(':');
     }

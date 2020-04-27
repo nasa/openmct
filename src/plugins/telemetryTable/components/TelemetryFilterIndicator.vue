@@ -18,6 +18,7 @@
 
 <script>
 import _ from 'lodash';
+import { flatten, isEmpty } from 'arrayUtils';
 
 const FILTER_INDICATOR_LABEL = 'Filters:';
 const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
@@ -79,7 +80,6 @@ export default {
                     }
                 });
 
-                const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
                 names = flatten(names);
                 this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
             });
@@ -89,7 +89,7 @@ export default {
             filters = _.omit(filters, [USE_GLOBAL]);
 
             Object.keys(filters).forEach(key => {
-                if (!_.isEmpty(filters[key])) {
+                if (!isEmpty(filters[key])) {
                     metadataValues.forEach(metadatum => {
                         if (key === metadatum.key) {
                             if (typeof metadatum.filters[0] === "object") {
@@ -102,7 +102,6 @@ export default {
                 }
             });
 
-            const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
             return flatten(filterNames);
         },
         getFilterLabels(filterObject, metadatum,) {

@@ -22,12 +22,10 @@
 
 define([
     '../configuration/configStore',
-    '../lib/eventHelpers',
-    '../../../../api/objects/object-utils'
+    '../lib/eventHelpers'
 ], function (
     configStore,
-    eventHelpers,
-    objectUtils
+    eventHelpers
 ) {
 
     function PlotOptionsController($scope, openmct, $timeout) {

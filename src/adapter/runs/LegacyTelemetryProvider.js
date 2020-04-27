@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (
-    utils
+    objectUtils
 ) {
     /**
      * @implements module:openmct.TelemetryAPI~TelemetryProvider
@@ -41,8 +41,8 @@ define([
      * @see module:openmct.TelemetryAPI~TelemetryProvider#canProvideTelemetry
      */
     LegacyTelemetryProvider.prototype.canProvideTelemetry = function (domainObject) {
-        return this.instantiate(utils.toOldFormat(domainObject),
-            utils.makeKeyString(domainObject.identifier)).hasCapability("telemetry");
+        return this.instantiate(objectUtils.toOldFormat(domainObject),
+            objectUtils.makeKeyString(domainObject.identifier)).hasCapability("telemetry");
     };
 
     LegacyTelemetryProvider.prototype.supportsRequest =
@@ -105,7 +105,7 @@ define([
      */
     LegacyTelemetryProvider.prototype.request = function (domainObject, request) {
         var metadata = this.telemetryApi.getMetadata(domainObject);
-        var oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
+        var oldObject = this.instantiate(objectUtils.toOldFormat(domainObject), objectUtils.makeKeyString(domainObject.identifier));
         var capability = oldObject.getCapability("telemetry");
 
         return capability.requestData(request).then(function (telemetrySeries) {
@@ -131,7 +131,7 @@ define([
      */
     LegacyTelemetryProvider.prototype.subscribe = function (domainObject, callback, request) {
         var metadata = this.telemetryApi.getMetadata(domainObject);
-        var oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
+        var oldObject = this.instantiate(objectUtils.toOldFormat(domainObject), objectUtils.makeKeyString(domainObject.identifier));
         var capability = oldObject.getCapability("telemetry");
 
         function callbackWrapper(series) {
@@ -142,16 +142,16 @@ define([
 
     LegacyTelemetryProvider.prototype.supportsLimits = function (domainObject) {
         var oldObject = this.instantiate(
-            utils.toOldFormat(domainObject),
-            utils.makeKeyString(domainObject.identifier)
+            objectUtils.toOldFormat(domainObject),
+            objectUtils.makeKeyString(domainObject.identifier)
         );
         return oldObject.hasCapability("limit");
     };
 
     LegacyTelemetryProvider.prototype.getLimitEvaluator = function (domainObject) {
         var oldObject = this.instantiate(
-            utils.toOldFormat(domainObject),
-            utils.makeKeyString(domainObject.identifier)
+            objectUtils.toOldFormat(domainObject),
+            objectUtils.makeKeyString(domainObject.identifier)
         );
         var limitEvaluator = oldObject.getCapability("limit");
 

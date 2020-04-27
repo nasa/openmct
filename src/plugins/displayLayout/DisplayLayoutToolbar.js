@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function (_) {
+define([
+    'arrayUtils'
+], function (
+    arrayUtils
+) {
     function DisplayLayoutToolbar(openmct) {
         return {
             name: "Display Layout Toolbar",
@@ -559,8 +563,7 @@ define([], function (_) {
                 });
 
                 let toolbarArray = Object.values(toolbar);
-                const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
-                return flatten(toolbarArray.reduce((accumulator, group, index) => {
+                return arrayUtils.flatten(toolbarArray.reduce((accumulator, group, index) => {
                     group = group.filter(control => control !== undefined);
 
                     if (group.length > 0) {

@@ -22,7 +22,7 @@
 
 define([
     'lodash',
-    '../objects/object-utils'
+    'objectUtils'
 ], function (
     _,
     objectUtils

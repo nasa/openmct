@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 define([
-    './object-utils',
+    'objectUtils',
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
     'EventEmitter'
 ], function (
-    utils,
+    objectUtils,
     MutableObject,
     RootRegistry,
     RootObjectProvider,
@@ -141,7 +141,7 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
     ObjectAPI.prototype.get = function (identifier) {
-        identifier = utils.parseKeyString(identifier);
+        identifier = objectUtils.parseKeyString(identifier);
         var provider = this.getProvider(identifier);
 
         if (!provider) {
@@ -210,7 +210,7 @@ define([
      * @returns {string} A string representation of the given identifier, including namespace and key
      */
     ObjectAPI.prototype.makeKeyString = function (identifier) {
-        return utils.makeKeyString(identifier);
+        return objectUtils.makeKeyString(identifier);
     };
 
     /**
@@ -218,7 +218,7 @@ define([
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     ObjectAPI.prototype.areIdsEqual = function (...identifiers) {
-        return identifiers.map(utils.parseKeyString)
+        return identifiers.map(objectUtils.parseKeyString)
             .every(identifier => {
                 return identifier === identifiers[0] ||
                     (identifier.namespace === identifiers[0].namespace &&
@@ -232,7 +232,7 @@ define([
             let location = domainObject.location;
 
             if (location) {
-                return this.getOriginalPath(utils.parseKeyString(location), path);
+                return this.getOriginalPath(objectUtils.parseKeyString(location), path);
             } else {
                 return path;
             }

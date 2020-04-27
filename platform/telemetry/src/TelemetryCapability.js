@@ -25,11 +25,12 @@
  */
 define(
     [
-        '../../../src/api/objects/object-utils'
+        'objectUtils',
+        'arrayUtils'
     ],
     function (
         objectUtils,
-        _
+        arrayUtils
     ) {
 
         var ZERO = function () {
@@ -234,8 +235,7 @@ define(
             var defaultRange = metadata.valuesForHints(['range'])[0];
             defaultRange = defaultRange ? defaultRange.key : undefined;
 
-            const keyBy = (array, k) => (array || []).reduce((r, x) => ({ ...r, [k ? x[k] : x]: x }), {});
-            var sourceMap = keyBy(metadata.values(), 'key');
+            const sourceMap = arrayUtils.keyBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -300,8 +300,7 @@ define(
             var defaultRange = metadata.valuesForHints(['range'])[0];
             defaultRange = defaultRange ? defaultRange.key : undefined;
 
-            const keyBy = (array, k) => (array || []).reduce((r, x) => ({ ...r, [k ? x[k] : x]: x }), {});
-            var sourceMap = keyBy(metadata.values(), 'key');
+            const sourceMap = arrayUtils.keyBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;

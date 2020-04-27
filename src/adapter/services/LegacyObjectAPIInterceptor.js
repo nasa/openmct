@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (
-    utils
+    objectUtils
 ) {
     function ObjectServiceProvider(eventEmitter, objectService, instantiate, topic) {
         this.eventEmitter = eventEmitter;
@@ -43,22 +43,22 @@ define([
         var handleLegacyMutation;
 
         var handleMutation = function (newStyleObject) {
-            var keyString = utils.makeKeyString(newStyleObject.identifier);
-            var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
+            var keyString = objectUtils.makeKeyString(newStyleObject.identifier);
+            var oldStyleObject = this.instantiate(objectUtils.toOldFormat(newStyleObject), keyString);
 
             // Don't trigger self
             removeGeneralTopicListener();
 
             oldStyleObject.getCapability('mutation').mutate(function () {
-                return utils.toOldFormat(newStyleObject);
+                return objectUtils.toOldFormat(newStyleObject);
             });
 
             removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
         }.bind(this);
 
         handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
-                keystring = utils.makeKeyString(newStyleObject.identifier);
+            var newStyleObject = objectUtils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
+                keystring = objectUtils.makeKeyString(newStyleObject.identifier);
 
             this.eventEmitter.emit(keystring + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
@@ -74,7 +74,7 @@ define([
         return object.getCapability('persistence')
             .persist()
             .then(function () {
-                return utils.toNewFormat(object, key);
+                return objectUtils.toNewFormat(object, key);
             });
     };
 
@@ -83,11 +83,11 @@ define([
     };
 
     ObjectServiceProvider.prototype.get = function (key) {
-        var keyString = utils.makeKeyString(key);
+        var keyString = objectUtils.makeKeyString(key);
         return this.objectService.getObjects([keyString])
             .then(function (results) {
                 var model = results[keyString].getModel();
-                return utils.toNewFormat(model, key);
+                return objectUtils.toNewFormat(model, key);
             });
     };
 
@@ -99,10 +99,10 @@ define([
         this.getObjects = function (keys) {
             var results = {},
                 promises = keys.map(function (keyString) {
-                    var key = utils.parseKeyString(keyString);
+                    var key = objectUtils.parseKeyString(keyString);
                     return openmct.objects.get(key)
                         .then(function (object) {
-                            object = utils.toOldFormat(object);
+                            object = objectUtils.toOldFormat(object);
                             results[keyString] = instantiate(object, keyString);
                         });
                 });
@@ -123,7 +123,7 @@ define([
         );
 
         ROOTS.forEach(function (r) {
-            openmct.objects.addRoot(utils.parseKeyString(r.id));
+            openmct.objects.addRoot(objectUtils.parseKeyString(r.id));
         });
 
         return this;

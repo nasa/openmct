@@ -1,12 +1,14 @@
 define ([
     './ConditionEvaluator',
-    '../../../api/objects/object-utils',
+    'objectUtils',
+    'arrayUtils',
     'EventEmitter',
     'zepto',
     'lodash'
 ], function (
     ConditionEvaluator,
     objectUtils,
+    arrayUtils,
     EventEmitter,
     $,
     _
@@ -250,7 +252,7 @@ define ([
         delete this.subscriptions[objectId];
         this.eventEmitter.emit('remove', identifier);
 
-        if (_.isEmpty(this.compositionObjs)) {
+        if (arrayUtils.isEmpty(this.compositionObjs)) {
             $('.w-summary-widget').addClass('s-status-no-data');
         }
     };

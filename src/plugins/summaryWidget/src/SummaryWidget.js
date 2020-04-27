@@ -5,7 +5,7 @@ define([
     './TestDataManager',
     './WidgetDnD',
     './eventHelpers',
-    '../../../api/objects/object-utils',
+    'objectUtils',
     'zepto'
 ], function (
     widgetTemplate,
