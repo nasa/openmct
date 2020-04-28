@@ -125,7 +125,6 @@ export default class ConditionManager extends EventEmitter {
     updateConditionDescription(condition) {
         const found = this.conditionSetDomainObject.configuration.conditionCollection.find(conditionConfiguration => (conditionConfiguration.id === condition.id));
         found.summary = condition.description;
-        console.log('persisting description');
         this.persistConditions();
     }
 
