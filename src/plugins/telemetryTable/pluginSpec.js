@@ -26,6 +26,7 @@ import {
     createMouseEvent
 } from 'testTools';
 
+const wrappedRaf = window.requestAnimationFrame;
 let openmct;
 let tablePlugin;
 let element;
@@ -46,10 +47,20 @@ describe("the plugin", () => {
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
+        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.time.timeSystem('utc', {start: 0, end: 3});
+
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        spyOn(window, 'requestAnimationFrame').and.callFake((callBack) => {
+            callBack();
+        });
 
         openmct.on('start', done);
         openmct.start(appHolder);
+    });
+
+    afterEach(() => {
+        window.requestAnimationFrame = wrappedRaf;
     });
 
     it("provides a table view for objects with telemetry", () => {
@@ -81,26 +92,57 @@ describe("the plugin", () => {
                 name: "Test Object",
                 telemetry: {
                     values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    },{
                         key: "some-key",
                         name: "Some attribute",
                         hints: {
-                            domain: 1
+                            range: 1
                         }
                     }, {
                         key: "some-other-key",
                         name: "Another attribute",
                         hints: {
-                            range: 1
+                            range: 2
                         }
                     }]
                 }
             };
+            const testTelemetry = [
+                {
+                    'utc': 1,
+                    'some-key': 'some-value 1',
+                    'some-other-key' : 'some-other-value 1'
+                },
+                {
+                    'utc': 2,
+                    'some-key': 'some-value 2',
+                    'some-other-key' : 'some-other-value 2'
+                }
+            ];
+            let telemetryRequestPromise = Promise.resolve(testTelemetry);
+            openmct.telemetry.request.and.returnValue(telemetryRequestPromise);
+
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-            tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
+            tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
-            return Vue.nextTick();
+            return Promise.all([
+                telemetryRequestPromise,
+                Vue.nextTick()
+            ]);
         });
+
+        it("Renders a row for every telemetry datum returned",() => {
+            let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+            expect(rows.length).toBe(2);
+        });
+
 
         it("Renders a column for every item in telemetry metadata",() => {
             let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
