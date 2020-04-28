@@ -23,10 +23,11 @@ import TablePlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    createMouseEvent
+    createMouseEvent,
+    spyOnBuiltins,
+    clearBuiltinSpies
 } from 'testTools';
 
-const wrappedRaf = window.requestAnimationFrame;
 let openmct;
 let tablePlugin;
 let element;
@@ -51,7 +52,9 @@ describe("the plugin", () => {
         openmct.time.timeSystem('utc', {start: 0, end: 3});
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(window, 'requestAnimationFrame').and.callFake((callBack) => {
+
+        spyOnBuiltins(['requestAnimationFrame']);
+        window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
 
@@ -60,7 +63,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        window.requestAnimationFrame = wrappedRaf;
+        clearBuiltinSpies();
     });
 
     it("provides a table view for objects with telemetry", () => {
@@ -146,9 +149,10 @@ describe("the plugin", () => {
 
         it("Renders a column for every item in telemetry metadata",() => {
             let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(2);
-            expect(headers[0].innerText).toBe('Some attribute');
-            expect(headers[1].innerText).toBe('Another attribute');
+            expect(headers.length).toBe(3);
+            expect(headers[0].innerText).toBe('Time');
+            expect(headers[1].innerText).toBe('Some attribute');
+            expect(headers[2].innerText).toBe('Another attribute');
         });
 
         it("Supports column reordering via drag and drop",() => {

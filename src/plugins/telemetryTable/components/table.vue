@@ -461,6 +461,7 @@ export default {
                             start = end - VISIBLE_ROW_COUNT + 1;
                         }
                     }
+
                     this.rowOffset = start;
                     this.visibleRows = filteredRows.slice(start, end);
 
