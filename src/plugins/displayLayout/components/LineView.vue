@@ -127,8 +127,11 @@ export default {
             return {x, y, x2, y2};
         },
         stroke() {
-            if (this.itemStyle && this.itemStyle.border) {
-                return this.itemStyle.border.replace('1px solid ', '');
+            if (this.itemStyle) {
+                if (this.itemStyle.border) {
+                    return this.itemStyle.border.replace('1px solid ', '');
+                }
+                return '';
             } else {
                 return this.item.stroke;
             }
@@ -145,9 +148,6 @@ export default {
                 width: `${width}px`,
                 height: `${height}px`
             };
-        },
-        styleClass() {
-            return this.itemStyle && this.itemStyle.isStyleInvisible;
         },
         startHandleClass() {
             return START_HANDLE_QUADRANTS[this.vectorQuadrant];

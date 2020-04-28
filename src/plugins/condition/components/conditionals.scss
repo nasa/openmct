@@ -19,6 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/***************************** DRAGGING */
+.is-active-dragging {
+    .c-condition-h__drop-target {
+        height: 3px;
+        margin-bottom: $interiorMarginSm;
+    }
+}
+
+.c-condition-h {
+    &__drop-target {
+        border-radius: $controlCr;
+        height: 0;
+        min-height: 0;
+        transition: background-color, height;
+        transition-duration: 150ms;
+    }
+
+    &.is-drag-target {
+        .c-condition > * {
+            pointer-events: none; // Keeps the JS drop handler from being intercepted by internal elements
+        }
+
+        .c-condition-h__drop-target {
+            background-color: rgba($colorKey, 0.7);
+        }
+    }
+}
 
 .c-cs {
     display: flex;
@@ -261,6 +288,12 @@
 }
 
 /***************************** TEST DATA */
+.c-cs__test-data {
+    &__controls {
+        flex: 0 0 auto;
+    }
+}
+
 .c-cs-tests {
     flex: 0 1 auto;
     overflow: auto;
