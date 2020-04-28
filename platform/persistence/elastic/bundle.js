@@ -71,7 +71,7 @@ define([
                     },
                     {
                         "key": "ELASTIC_PATH",
-                        "value": "mct/domain_object",
+                        "value": "mct/_doc",
                         "priority": "fallback"
                     },
                     {

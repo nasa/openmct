@@ -114,15 +114,17 @@ define([
     }
 
     function MCTTicksController($scope, $element) {
-        this.$scope = $scope;
-        this.$element = $element;
+        this.$onInit = () => {
+            this.$scope = $scope;
+            this.$element = $element;
 
-        this.tickCount = 4;
-        this.tickUpdate = false;
-        this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
-        this.listenTo(this.axis, 'change:format', this.updateTicks, this);
-        this.listenTo(this.$scope, '$destroy', this.stopListening, this);
-        this.updateTicks();
+            this.tickCount = 4;
+            this.tickUpdate = false;
+            this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
+            this.listenTo(this.axis, 'change:format', this.updateTicks, this);
+            this.listenTo(this.$scope, '$destroy', this.stopListening, this);
+            this.updateTicks();
+        }
     }
 
     MCTTicksController.$inject = ['$scope', '$element'];
