@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2017, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -43,9 +43,9 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
+        openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
         openmct.install(openmct.plugins.UTCTimeSystem());
