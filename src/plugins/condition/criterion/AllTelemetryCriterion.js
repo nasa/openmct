@@ -22,6 +22,7 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
+import { getLatestTimestamp } from '../utils/time';
 import { getOperatorText } from "@/plugins/condition/utils/operations";
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
@@ -128,20 +129,35 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 options
             ));
 
+        let telemetryDataCache = {};
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
-                let latestDatum;
+                let latestTimestamp;
+                const timeSystems = this.openmct.time.getAllTimeSystems();
+                const timeSystem = this.openmct.time.timeSystem();
+
                 telemetryRequestsResults.forEach((results, index) => {
-                    latestDatum = results.length ? results[results.length - 1] : {};
-                    if (index < telemetryRequestsResults.length-1) {
-                        if (latestDatum) {
-                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
-                        }
-                    }
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    const datumId = keys[index];
+
+                    telemetryDataCache[datumId] = this.computeResult(latestDatum);
+
+                    latestTimestamp = getLatestTimestamp(
+                        latestTimestamp,
+                        latestDatum,
+                        timeSystems,
+                        timeSystem
+                    );
                 });
+
+                const datum = {
+                    result: evaluateResults(Object.values(telemetryDataCache), this.telemetry),
+                    ...latestTimestamp
+                };
+
                 return {
                     id: this.id,
-                    data: this.formatData(latestDatum, options.telemetryObjects)
+                    data: datum
                 };
             });
     }
