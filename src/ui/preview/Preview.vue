@@ -44,14 +44,6 @@ export default {
         'openmct',
         'objectPath'
     ],
-    props: {
-        notebookEnabled: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
-        }
-    },
     data() {
         let domainObject = this.objectPath[0];
 
