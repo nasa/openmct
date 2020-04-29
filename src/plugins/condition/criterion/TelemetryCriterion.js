@@ -79,14 +79,11 @@ export default class TelemetryCriterion extends EventEmitter {
         this.result = this.computeResult(validatedData);
     }
 
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
+    requestLAD() {
+        const options = {
+            strategy: 'latest',
+            size: 1
+        };
 
         if (!this.isValid()) {
             return {
