@@ -20,7 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/* Retired lodash methods */
+
+// keyBy for array only
 export const keyBy = (array, k) => (array || []).reduce((r, x) => ({ ...r, [k ? x[k] : x]: x }), {});
 
+// flattens array a single level deep.
 export const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
+
+// checks if value is an empty object or collection - does not support evaluating a Set or a Map
 export const isEmpty = obj => [Object, Array].includes((obj || {}).constructor) && !Object.entries((obj || {})).length;
