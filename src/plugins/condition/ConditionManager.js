@@ -258,9 +258,13 @@ export default class ConditionManager extends EventEmitter {
                             this.openmct.time.timeSystem()
                         );
                     });
-                    const currentCondition = this.getCurrentConditionLAD(conditionResults);
 
-                    return Object.assign(
+                    if (!Object.values(latestTimestamp).some(timeSystem => timeSystem)) {
+                        return [];
+                    }
+
+                    const currentCondition = this.getCurrentConditionLAD(conditionResults);
+                    const currentOutput = Object.assign(
                         {
                             output: currentCondition.configuration.output,
                             id: this.conditionSetDomainObject.identifier,
@@ -268,6 +272,8 @@ export default class ConditionManager extends EventEmitter {
                         },
                         latestTimestamp
                     );
+
+                    return [currentOutput];
                 });
         });
     }
