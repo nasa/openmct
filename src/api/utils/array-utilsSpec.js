@@ -20,7 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { keyBy, flatten, isEmpty } from 'arrayUtils';
+import { keyBy, flatten, flattenDeep, isEmpty } from 'arrayUtils';
+const getArrayDepth = (obj => {
+    if (Array.isArray(obj)) {
+        return 1 + Math.max(...obj.map(t => getArrayDepth(t)));
+    } else {
+        return 0;
+    }
+});
 
 describe("The keyBy method", function () {
 
@@ -78,14 +85,6 @@ describe("The keyBy method", function () {
 });
 describe("The flatten method", function () {
 
-    const getArrayDepth = (obj => {
-        if (Array.isArray(obj)) { 
-            return 1 + Math.max(...obj.map(t => getArrayDepth(t)));
-        } else {
-            return 0;
-        }
-    });
-
     it('returns a flat array', () => {
         expect(getArrayDepth(flatten([[1,2,3]]))).toEqual(1);
     });
@@ -96,7 +95,15 @@ describe("The flatten method", function () {
 
 
 });
-fdescribe("The isEmpty method", function () {
+describe("The flattenDeep method", function () {
+
+    it('returns a flat array when passed an array deeper than two levels', () => {
+        expect(getArrayDepth(flattenDeep([[[1,[2,3]]]]))).toEqual(1);
+    });
+
+
+});
+describe("The isEmpty method", function () {
 
     it('returns true when passed an empty array', () => {
         expect(isEmpty([])).toBeTrue();

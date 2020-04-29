@@ -57,13 +57,13 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values.map(x => x.name);
+                valueMetadata.enumerations.map(enumeration => enumeration.value);
             }
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = Math.max(...valueMetadata.values) + 1;
+                valueMetadata.max = _.max(valueMetadata.values) + 1;
             }
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = Math.min(...valueMetadata.values) - 1;
+                valueMetadata.min = _.max(valueMetadata.values) + 1;
             }
         }
 

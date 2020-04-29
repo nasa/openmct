@@ -86,7 +86,7 @@ define([
                         };
                     }), 'e.value');
                 valueMetadata.values = Object.entries(valueMetadata.enumerations)
-                    .reduce((accumulator, [key, {value}]) => { 
+                    .reduce((accumulator, [key, {value}]) => {
                         accumulator[key] = value;
                         return accumulator
                     }, []);
