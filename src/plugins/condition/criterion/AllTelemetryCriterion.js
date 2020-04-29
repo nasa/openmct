@@ -135,12 +135,13 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 telemetryRequestsResults.forEach((results, index) => {
                     const latestDatum = results.length ? results[results.length - 1] : {};
                     const datumId = keys[index];
+                    const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObjects[datumId]);
 
-                    telemetryDataCache[datumId] = this.computeResult(latestDatum);
+                    telemetryDataCache[datumId] = this.computeResult(normalizedDatum);
 
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
-                        latestDatum,
+                        normalizedDatum,
                         timeSystems,
                         timeSystem
                     );
