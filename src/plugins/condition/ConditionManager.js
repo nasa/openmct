@@ -90,15 +90,18 @@ export default class ConditionManager extends EventEmitter {
         let conditionsChanged = false;
         this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration) => {
             conditionConfiguration.configuration.criteria.forEach((criterion, index) => {
-                const found = Object.values(this.telemetryObjects).find((telemetryObject) => {
-                    return this.openmct.objects.areIdsEqual(telemetryObject.identifier, criterion.telemetry);
-                });
-                if (!found) {
-                    criterion.telemetry = '';
-                    criterion.metadata = '';
-                    criterion.input = [];
-                    criterion.operation = '';
-                    conditionsChanged = true;
+                const isAnyAllTelemetry = criterion.telemetry && (criterion.telemetry === 'any' || criterion.telemetry === 'all');
+                if (!isAnyAllTelemetry) {
+                    const found = Object.values(this.telemetryObjects).find((telemetryObject) => {
+                        return this.openmct.objects.areIdsEqual(telemetryObject.identifier, criterion.telemetry);
+                    });
+                    if (!found) {
+                        criterion.telemetry = '';
+                        criterion.metadata = '';
+                        criterion.input = [];
+                        criterion.operation = '';
+                        conditionsChanged = true;
+                    }
                 }
             });
         });
