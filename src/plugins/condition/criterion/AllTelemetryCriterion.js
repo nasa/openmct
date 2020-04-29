@@ -108,23 +108,20 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
+    requestLAD(telemetryObjects) {
+        const options = {
+            strategy: 'latest',
+            size: 1
+        };
 
         if (!this.isValid()) {
-            return this.formatData({}, options.telemetryObjects);
+            return this.formatData({}, telemetryObjects);
         }
 
-        let keys = Object.keys(Object.assign({}, options.telemetryObjects));
+        let keys = Object.keys(Object.assign({}, telemetryObjects));
         const telemetryRequests = keys
             .map(key => this.openmct.telemetry.request(
-                options.telemetryObjects[key],
+                telemetryObjects[key],
                 options
             ));
 
