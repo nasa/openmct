@@ -41,6 +41,12 @@ export default {
                 return {};
             }
         },
+        ignoreLink: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
         objectPath: {
             type: Array,
             default() {
@@ -110,10 +116,14 @@ export default {
                     || document.getElementsByClassName('l-shell__main-container')[0];
 
                 const bounds = this.openmct.time.bounds();
+                const link = !this.ignoreLink
+                    ? window.location.href
+                    : null;
+
                 const objectPath = this.objectPath || this.openmct.router.path;
                 const snapshotMeta = {
                     bounds,
-                    link: window.location.href,
+                    link,
                     objectPath,
                     openmct: this.openmct
                 };

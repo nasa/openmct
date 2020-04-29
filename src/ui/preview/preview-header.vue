@@ -21,6 +21,7 @@
             />
             <NotebookMenuSwitcher v-if="showNotebookMenuSwitcher"
                                   :domain-object="domainObject"
+                                  :ignore-link="true"
                                   :object-path="objectPath"
                                   class="c-notebook-snapshot-menubutton"
             />
