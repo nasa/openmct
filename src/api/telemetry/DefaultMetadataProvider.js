@@ -85,7 +85,11 @@ define([
                             value: +e.value
                         };
                     }), 'e.value');
-                valueMetadata.values = Object.entries(valueMetadata.enumerations).reduce((a, [key, {value}]) => {a [key] = value; return a}, []);
+                valueMetadata.values = Object.entries(valueMetadata.enumerations)
+                    .reduce((accumulator, [key, {value}]) => { 
+                        accumulator[key] = value;
+                        return accumulator
+                    }, []);
                 valueMetadata.max = Math.max(...valueMetadata.values);
                 valueMetadata.min = Math.min(...valueMetadata.values);
             }

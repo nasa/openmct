@@ -308,7 +308,6 @@ export default {
             }
         },
         removeItemStyles(itemIds, domainObjectStyles) {
-            console.log('removeItemStyles');
             itemIds.forEach(itemId => {
                 if (domainObjectStyles[itemId]) {
                     domainObjectStyles[itemId] = undefined;

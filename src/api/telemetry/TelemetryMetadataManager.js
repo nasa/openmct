@@ -57,7 +57,7 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = Object.entries(valueMetadata.enumerations).reduce((a, [key, {value}]) => {a [key] = value; return a}, []);
+                valueMetadata.values.map(x => x.name);
             }
             if (!valueMetadata.hasOwnProperty('max')) {
                 valueMetadata.max = Math.max(...valueMetadata.values) + 1;

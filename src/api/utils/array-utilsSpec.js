@@ -79,8 +79,11 @@ describe("The keyBy method", function () {
 describe("The flatten method", function () {
 
     const getArrayDepth = (obj => {
-        if (Array.isArray(obj)) { return 1 + Math.max(...obj.map(t => getArrayDepth(t))) }
-        else { return 0 }
+        if (Array.isArray(obj)) { 
+            return 1 + Math.max(...obj.map(t => getArrayDepth(t)));
+        } else {
+            return 0;
+        }
     });
 
     it('returns a flat array', () => {
@@ -93,7 +96,7 @@ describe("The flatten method", function () {
 
 
 });
-describe("The isEmpty method", function () {
+fdescribe("The isEmpty method", function () {
 
     it('returns true when passed an empty array', () => {
         expect(isEmpty([])).toBeTrue();
