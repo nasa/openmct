@@ -10,7 +10,9 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue/recommended"
+        "plugin:vue/recommended",
+        "plugin:lodash/recommended",
+        "plugin:you-dont-need-lodash-underscore/compatible"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -22,6 +24,24 @@ module.exports = {
         }
     },
     "rules": {
+        "you-dont-need-lodash-underscore/uniq": "off",
+        "you-dont-need-lodash-underscore/omit": "off",
+        "you-dont-need-lodash-underscore/concat": "off",
+        "you-dont-need-lodash-underscore/values": "off",
+        "you-dont-need-lodash-underscore/map": "off",
+        "you-dont-need-lodash-underscore/throttle": "off",
+        "lodash/prefer-immutable-method": "off",
+        "lodash/prefer-lodash-chain": "off",
+        "lodash/prefer-lodash-method": "off",
+        "lodash/prefer-lodash-typecheck": "off",
+        "lodash/prefer-constant": "off",
+        "lodash/prefer-noop": "off",
+        "lodash/prefer-matches": "off",
+        "lodash/prefer-includes": "off",
+        "lodash/prefer-startswith": "off",
+        "lodash/prefer-get": "off",
+        "lodash/prefer-is-nil": "off",
+        "lodash/import-scope": "off",
         "no-bitwise": "error",
         "curly": "error",
         "eqeqeq": "error",

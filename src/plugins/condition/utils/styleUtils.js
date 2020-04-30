@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { isEmpty } from 'arrayUtils';
 
- const NONE_VALUE = '__no_value';
+const NONE_VALUE = '__no_value';
 
 const styleProps = {
     backgroundColor: {

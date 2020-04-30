@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
-
 const convertToNumbers = (input) => {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));

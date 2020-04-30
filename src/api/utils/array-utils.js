@@ -28,9 +28,16 @@ export const keyBy = (array, key) => (array || []).reduce((acc, curr) => {
 }, {});
 
 // flattens array a single level deep.
-export const flatten = (array) => array.reduce((acc, curr) => {
+export const flatten = array => array.reduce((acc, curr) => {
     return acc.concat(curr);
 }, []);
+
+// recursively flatten deeper arrays
+export const flattenDeep = array => {
+    return array.reduce((acc, curr) => {
+        return Array.isArray(curr) ? acc.concat(flattenDeep(curr)) : acc.concat(curr);
+    }, []);
+};
 
 // checks if value is an empty object or collection - does not support evaluating a Set or a Map
 export const isEmpty = (obj => {

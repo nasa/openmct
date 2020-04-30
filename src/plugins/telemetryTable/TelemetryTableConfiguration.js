@@ -101,7 +101,7 @@ define([
 
         hasColumnWithKey(columnKey) {
             return arrayUtils.flatten(Object.values(this.columns))
-                .findIndex(column => column.getKey() === columnKey) !== -1;
+                .some(column => column.getKey() === columnKey);
         }
 
         getColumns() {

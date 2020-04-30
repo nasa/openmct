@@ -11,7 +11,8 @@ define ([
     arrayUtils,
     EventEmitter,
     $,
-    _
+    _,
+
 ) {
 
     /**
@@ -252,7 +253,7 @@ define ([
         delete this.subscriptions[objectId];
         this.eventEmitter.emit('remove', identifier);
 
-        if (isEmpty(this.compositionObjs)) {
+        if (arrayUtils.isEmpty(this.compositionObjs)) {
             $('.w-summary-widget').addClass('s-status-no-data');
         }
     };
