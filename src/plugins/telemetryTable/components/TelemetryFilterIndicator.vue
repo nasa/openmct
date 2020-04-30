@@ -18,6 +18,7 @@
 
 <script>
 import { flatten, isEmpty } from 'arrayUtils';
+import _ from 'lodash';
 
 const FILTER_INDICATOR_LABEL = 'Filters:';
 const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
