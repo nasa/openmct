@@ -60,10 +60,10 @@ define([
                 valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
             }
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = _.max(valueMetadata.values) + 1;
+                valueMetadata.max = Math.max(valueMetadata.values) + 1;
             }
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = _.min(valueMetadata.values) - 1;
+                valueMetadata.min = Math.min(valueMetadata.values) - 1;
             }
         }
 

@@ -152,7 +152,7 @@ function (
     MCTChartController.prototype.destroy = function () {
         this.isDestroyed = true;
         this.stopListening();
-        _.invoke(this.lines, 'destroy');
+        this.lines.forEach(line => line.destroy());
         DrawLoader.releaseDrawAPI(this.drawAPI);
     };
 

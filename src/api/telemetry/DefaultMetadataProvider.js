@@ -86,8 +86,8 @@ define([
                         };
                     }), 'e.value');
                 valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
-                valueMetadata.max = _.max(valueMetadata.values);
-                valueMetadata.min = _.min(valueMetadata.values);
+                valueMetadata.max = Math.max(valueMetadata.values);
+                valueMetadata.min = Math.min(valueMetadata.values);
             }
 
             valueMetadatas.push(valueMetadata);
