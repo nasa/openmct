@@ -248,11 +248,7 @@ export default {
             this.$emit('formatChanged', this.item, format);
         },
         showContextMenu(event) {
-            const options = {
-                actionsToBeIncluded: CONTEXT_MENU_ACTIONS
-            };
-
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, options);
+            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
 }
