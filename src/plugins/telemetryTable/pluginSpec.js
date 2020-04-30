@@ -24,7 +24,7 @@ import Vue from 'vue';
 import {
     createOpenMct,
     createMouseEvent
-} from 'testTools';
+} from 'testUtils';
 
 let openmct;
 let tablePlugin;

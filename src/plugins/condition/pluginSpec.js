@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct } from "testTools";
+import { createOpenMct } from "testUtils";
 import ConditionPlugin from "./plugin";
 
 let openmct = createOpenMct();
