@@ -25,7 +25,7 @@
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
 define([
-    '../../../../src/api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     objectUtils,

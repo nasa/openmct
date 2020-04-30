@@ -25,7 +25,7 @@
  */
 define(
     [
-        '../../../src/api/objects/object-utils',
+        'objectUtils',
         'lodash'
     ],
     function (

@@ -24,7 +24,7 @@ define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
-    '../objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     TelemetryMetadataManager,
