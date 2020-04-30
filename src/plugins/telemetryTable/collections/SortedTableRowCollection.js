@@ -120,7 +120,7 @@ define(
                 const firstValue = this.getValueForSortColumn(this.rows[0]);
                 const lastValue = this.getValueForSortColumn(this.rows[this.rows.length - 1]);
 
-                lodashFunction = lodashFunction || _.sortedIndex;
+                lodashFunction = lodashFunction || _.sortedIndexBy;
 
                 if (this.sortOptions.direction === 'asc') {
                     if (testRowValue > lastValue) {
@@ -201,7 +201,7 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.rows = _.sortByOrder(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
+                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
                     this.emit('sort');
                 }
                 // Return duplicate to avoid direct modification of underlying object

@@ -57,7 +57,7 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
+                valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
             }
             if (!valueMetadata.hasOwnProperty('max')) {
                 valueMetadata.max = _.max(valueMetadata.values) + 1;
@@ -121,7 +121,7 @@ define([
                 return metadata.hints[hint];
             }
         });
-        return _.sortByAll(matchingMetadata, ...iteratees);
+        return _.sortBy(matchingMetadata, ...iteratees);
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {

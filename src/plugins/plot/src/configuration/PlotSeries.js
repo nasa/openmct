@@ -270,7 +270,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getXVal);
+            return _.sortedIndexBy(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for the series.
