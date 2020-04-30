@@ -61,6 +61,21 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
     }
 
+    createNormalizedDatum(telemetryDatum, endpoint) {
+        const id = this.openmct.objects.makeKeyString(endpoint.identifier);
+        const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
+
+        const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
+            const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
+            datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
+            return datum;
+        }, {});
+
+        normalizedDatum.id = id;
+
+        return normalizedDatum;
+    }
+
     formatData(data) {
         const datum = {
             result: this.computeResult(data)
@@ -79,14 +94,11 @@ export default class TelemetryCriterion extends EventEmitter {
         this.result = this.computeResult(validatedData);
     }
 
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
+    requestLAD() {
+        const options = {
+            strategy: 'latest',
+            size: 1
+        };
 
         if (!this.isValid()) {
             return {
@@ -100,9 +112,11 @@ export default class TelemetryCriterion extends EventEmitter {
             options
         ).then(results => {
             const latestDatum = results.length ? results[results.length - 1] : {};
+            const normalizedDatum = this.createNormalizedDatum(latestDatum, this.telemetryObject);
+
             return {
                 id: this.id,
-                data: this.formatData(latestDatum)
+                data: this.formatData(normalizedDatum)
             };
         });
     }
