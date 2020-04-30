@@ -135,10 +135,8 @@ describe("the plugin", () => {
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
-            return Promise.all([
-                telemetryRequestPromise,
-                Vue.nextTick()
-            ]);
+
+            return telemetryRequestPromise.then(() => Vue.nextTick());
         });
 
         it("Renders a row for every telemetry datum returned",() => {
