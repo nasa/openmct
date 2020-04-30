@@ -4,8 +4,7 @@
   "description": "The Open MCT core platform",
   "dependencies": {},
   "devDependencies": {
-    "acorn": "6.2.0",
-    "angular": "1.4.14",
+    "angular": "1.7.9",
     "angular-route": "1.4.14",
     "babel-eslint": "8.2.6",
     "comma-separated-values": "^3.6.4",
@@ -77,8 +76,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "eslint platform example src/**/*.{js,vue} openmct.js",
-    "lint:fix": "eslint platform example src/**/*.{js,vue} openmct.js --fix",
+    "lint": "eslint platform example src --ext .js,.vue openmct.js",
+    "lint:fix": "eslint platform example src --ext .js,.vue openmct.js --fix",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
     "build:watch": "webpack --watch",
