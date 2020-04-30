@@ -99,7 +99,7 @@ define([
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {
-        return _.extend(
+        return Object.assign(
             {},
             domainObject.telemetry,
             METADATA_BY_TYPE[domainObject.type]

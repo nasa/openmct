@@ -146,7 +146,7 @@ define([
                 strategy = 'minmax';
             }
 
-            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct

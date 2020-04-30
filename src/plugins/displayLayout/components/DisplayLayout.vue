@@ -512,7 +512,7 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = _.findIndex(this.layoutItems, item);
+            let index = this.layoutItems.findIndex(item);
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         }
