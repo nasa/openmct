@@ -45,7 +45,7 @@ export default class ConditionSetTelemetryProvider {
 
         return conditionManager.requestLADConditionSetOutput()
             .then(latestOutput => {
-                return latestOutput ? [latestOutput] : [];
+                return latestOutput;
             });
     }
 
