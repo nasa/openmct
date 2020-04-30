@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['lodash'], function (_) {
+define(['lodash', 'arrayUtils'], function (_, arrayUtils) {
     function DisplayLayoutToolbar(openmct) {
         return {
             name: "Display Layout Toolbar",
@@ -559,7 +559,7 @@ define(['lodash'], function (_) {
                 });
 
                 let toolbarArray = Object.values(toolbar);
-                return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
+                return arrayUtils.flatten(toolbarArray.reduce((accumulator, group, index) => {
                     group = group.filter(control => control !== undefined);
 
                     if (group.length > 0) {

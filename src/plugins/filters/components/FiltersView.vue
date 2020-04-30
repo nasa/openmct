@@ -27,7 +27,8 @@
 
 <script>
 import FilterObject from './FilterObject.vue';
-import GlobalFilters from './GlobalFilters.vue'
+import GlobalFilters from './GlobalFilters.vue';
+import { isEmpty } from 'arrayUtils';
 
 const FILTER_VIEW_TITLE = 'Filters applied';
 const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';
@@ -58,7 +59,7 @@ export default {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(filters => {
                 return Object.values(filters).some(comparator => {
-                    return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
+                    return (typeof(comparator) === 'object' && !isEmpty(comparator));
                 });
             });
         },

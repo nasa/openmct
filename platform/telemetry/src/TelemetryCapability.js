@@ -26,10 +26,12 @@
 define(
     [
         'objectUtils',
+        'arrayUtils',
         'lodash'
     ],
     function (
         objectUtils,
+        arrayUtils,
         _
     ) {
 
@@ -235,7 +237,7 @@ define(
             var defaultRange = metadata.valuesForHints(['range'])[0];
             defaultRange = defaultRange ? defaultRange.key : undefined;
 
-            var sourceMap = _.keyBy(metadata.values(), 'key');
+            var sourceMap = arrayUtils.keyBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -300,7 +302,7 @@ define(
             var defaultRange = metadata.valuesForHints(['range'])[0];
             defaultRange = defaultRange ? defaultRange.key : undefined;
 
-            var sourceMap = _.keyBy(metadata.values(), 'key');
+            var sourceMap = arrayUtils.keyBy(metadata.values(), 'key');
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
