@@ -22,8 +22,8 @@
 import LadPlugin from './plugin.js';
 import Vue from 'vue';
 import {
-    createOpenMct,
-    createMouseEvent
+    createOpenMct
+    // createMouseEvent
 } from 'testTools';
 
 let openmct,
@@ -32,6 +32,36 @@ let openmct,
     child;
 
 fdescribe("The LAD Table", () => {
+
+    const ladTableKey = 'LadTable',
+        mockObj = {
+            ladTable: {
+                id:"test-object",
+                type: ladTableKey
+            },
+            telemetry: {
+                identifier:{ namespace: "", key: "test-object"},
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        utc: 0,
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        utc: 1,
+                        name: "Some other attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            }
+        };
 
     beforeEach((done) => {
         const appHolder = document.createElement('div');
@@ -53,99 +83,73 @@ fdescribe("The LAD Table", () => {
         openmct.start(appHolder);
     });
 
-    it("should accept ONLY telemetry producing objects", () => {
-        const testTelemetryObject = {
-            id:"test-object",
-            type: "test-object",
-            telemetry: {
-                values: [{
-                    key: "some-key"
-                }]
-            }
-        };
-
-        const applicableViews = openmct.objectViews.get(testTelemetryObject);
-        let tableView = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-        expect(tableView).toBeDefined();
+    it("provides a lad table view for only lad table objects", () => {
+        let applicableViews = openmct.objectViews.get(mockObj.ladTable),
+            ladTableView = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
+        expect(applicableViews.length).toEqual(1);
+        expect(ladTableView).toBeDefined();
     });
 
     describe("The table view", () => {
-        let testTelemetryObject;
-        let applicableViews;
-        let tableViewProvider;
-        let tableView;
+        let applicableViews,
+            ladTableViewProvider,
+            ladTableView;
 
         beforeEach(() => {
-            testTelemetryObject = {
-                identifier:{ namespace: "", key: "test-object"},
-                type: "test-object",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }]
-                }
-            };
-            applicableViews = openmct.objectViews.get(testTelemetryObject);
-            tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-            tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
-            tableView.show(child, true);
+            applicableViews = openmct.objectViews.get(mockObj.ladTable);
+            ladTableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
+            ladTableView = ladTableViewProvider.view(mockObj.ladTable, true, [mockObj.ladTable]);
+            ladTableView.show(child, true);
             return Vue.nextTick();
         });
 
-        it("Renders a column for every item in telemetry metadata",() => {
-            let headers = parent.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(2);
-            expect(headers[0].innerText).toBe('Some attribute');
-            expect(headers[1].innerText).toBe('Another attribute');
+        it("should accept ONLY telemetry producing objects", () => {
+            console.log(ladTableView);
+            expect(true).toBe(false);
         });
 
-        it("Supports column reordering via drag and drop",() => {
-            let columns = parent.querySelectorAll('tr.c-telemetry-table__headers__labels th');
-            let fromColumn = columns[0];
-            let toColumn = columns[1];
-            let fromColumnText = fromColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-            let toColumnText = toColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-
-            let dragStartEvent = createMouseEvent('dragstart');
-            let dragOverEvent = createMouseEvent('dragover');
-            let dropEvent = createMouseEvent('drop');
-
-            dragStartEvent.dataTransfer =
-                dragOverEvent.dataTransfer =
-                    dropEvent.dataTransfer = new DataTransfer();
-
-            fromColumn.dispatchEvent(dragStartEvent);
-            toColumn.dispatchEvent(dragOverEvent);
-            toColumn.dispatchEvent(dropEvent);
-
-            return Vue.nextTick().then(() => {
-                columns = parent.querySelectorAll('tr.c-telemetry-table__headers__labels th');
-                let firstColumn = columns[0];
-                let secondColumn = columns[1];
-                let firstColumnText = firstColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-                let secondColumnText = secondColumn.querySelector('span.c-telemetry-table__headers__label').innerText;
-
-                expect(fromColumnText).not.toEqual(firstColumnText);
-                expect(fromColumnText).toEqual(secondColumnText);
-                expect(toColumnText).not.toEqual(secondColumnText);
-                expect(toColumnText).toEqual(firstColumnText);
-            });
-        });
     });
+
+    it("when an item is removed, it should no longer be in the table", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should, if not in edit mode, droping telemtry object into lad table should add object and switch to edit mode", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should reject non-telemtry producing objects", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should show one row per oject in the composition", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should show the most recent datum from the telemetry producing object", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should show the name provided for the datum", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should show the correct value for the datum dependent on hints", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+    it("should only add telemetry within set bounds", () => {
+        expect(true).toBe(false);
+        pending();
+    });
+
+    
 });
 
 
 describe("The LAD Table Set", () => {
-
+    it("lad table tests", () => {
+        expect(true).toBe(false);
+        pending();
+    });
 });
