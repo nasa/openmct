@@ -36,7 +36,12 @@ export default class PreviewAction {
          * Dependencies
          */
         this._openmct = openmct;
+
+        if (PreviewAction.isVisible === undefined) {
+            PreviewAction.isVisible = false;
+        }
     }
+
     invoke(objectPath) {
         let preview = new Vue({
             components: {
@@ -59,12 +64,19 @@ export default class PreviewAction {
                     callback: () => overlay.dismiss()
                 }
             ],
-            onDestroy: () => preview.$destroy()
+            onDestroy: () => {
+                PreviewAction.isVisible = false;
+                preview.$destroy()
+            }
         });
+
+        PreviewAction.isVisible = true;
     }
+
     appliesTo(objectPath) {
-        return !this._isNavigatedObject(objectPath)
+        return !PreviewAction.isVisible && !this._isNavigatedObject(objectPath);
     }
+
     _isNavigatedObject(objectPath) {
         let targetObject = objectPath[0];
         let navigatedObject = this._openmct.router.path[0];
