@@ -191,7 +191,7 @@ define([
         }
 
         var domainObject = objectUtils.toNewFormat(model, id);
-        var composition = _.find(this.openmct.composition.registry, function (p) {
+        var composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
         });
 
