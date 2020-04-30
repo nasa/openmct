@@ -83,4 +83,8 @@ export default class PreviewAction {
         return targetObject.identifier.namespace === navigatedObject.identifier.namespace &&
             targetObject.identifier.key === navigatedObject.identifier.key;
     }
+    _preventPreview(objectPath) {
+        const noPreviewTypes = ['folder'];
+        return noPreviewTypes.includes(objectPath[0].type);
+    }
 }
