@@ -55,7 +55,6 @@ export function setDefaultNotebook(openmct, notebookStorage, domainObject) {
 
 export function setDefaultNotebookSection(section) {
     const notebookStorage = getDefaultNotebook();
-
     notebookStorage.section = section;
     saveDefaultNotebook(notebookStorage);
 }

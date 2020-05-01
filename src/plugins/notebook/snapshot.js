@@ -48,9 +48,10 @@ export default class Snapshot {
             .then(domainObject => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
+                const link = notebookStorage.notebookMeta.link;
                 const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
-                this._showNotification(msg);
+                this._showNotification(msg, link);
             });
     }
 
@@ -61,7 +62,26 @@ export default class Snapshot {
         this.snapshotContainer.addSnapshot(embed);
     }
 
-    _showNotification(msg) {
+    _showNotification(msg, url) {
+        const options = {
+            link : {
+                callback: this._navigateToNotebook(url),
+                cssClass: '',
+                label: 'Go to Notebook',
+                msg: 'click to view'
+            }
+        }
+        console.log('TODO: pass options to notifications', options);
         this.openmct.notifications.info(msg);
+    }
+
+    _navigateToNotebook(url = null) {
+        if (!url) {
+            return () => {};
+        }
+
+        return () => {
+            window.location.href = window.location.origin + url;
+        }
     }
 }
