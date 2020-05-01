@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
-import {OPERATIONS} from '../utils/operations';
-import {computeCondition} from "@/plugins/condition/utils/evaluator";
+import TelemetryCriterion from './TelemetryCriterion';
+import { evaluateResults } from "../utils/evaluator";
+import { getLatestTimestamp } from '../utils/time';
 
-export default class TelemetryCriterion extends EventEmitter {
+export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     /**
      * Subscribes/Unsubscribes to telemetry and emits the result
@@ -34,23 +34,35 @@ export default class TelemetryCriterion extends EventEmitter {
      * @param openmct
      */
     constructor(telemetryDomainObjectDefinition, openmct) {
-        super();
+        super(telemetryDomainObjectDefinition, openmct);
+    }
 
-        this.openmct = openmct;
-        this.objectAPI = this.openmct.objects;
-        this.telemetryAPI = this.openmct.telemetry;
-        this.timeAPI = this.openmct.time;
-        this.id = telemetryDomainObjectDefinition.id;
-        this.telemetry = telemetryDomainObjectDefinition.telemetry;
-        this.operation = telemetryDomainObjectDefinition.operation;
-        this.telemetryObjects = Object.assign({}, telemetryDomainObjectDefinition.telemetryObjects);
-        this.input = telemetryDomainObjectDefinition.input;
-        this.metadata = telemetryDomainObjectDefinition.metadata;
+    initialize() {
+        this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
         this.telemetryDataCache = {};
     }
 
+    isValid() {
+        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
+    }
+
     updateTelemetry(telemetryObjects) {
-        this.telemetryObjects = Object.assign({}, telemetryObjects);
+        this.telemetryObjects = { ...telemetryObjects };
+        this.removeTelemetryDataCache();
+    }
+
+    removeTelemetryDataCache() {
+        const telemetryCacheIds = Object.keys(this.telemetryDataCache);
+        Object.values(this.telemetryObjects).forEach(telemetryObject => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            const foundIndex = telemetryCacheIds.indexOf(id);
+            if (foundIndex > -1) {
+                telemetryCacheIds.splice(foundIndex, 1);
+            }
+        });
+        telemetryCacheIds.forEach(id => {
+            delete (this.telemetryDataCache[id]);
+        });
     }
 
     formatData(data, telemetryObjects) {
@@ -68,105 +80,87 @@ export default class TelemetryCriterion extends EventEmitter {
         });
 
         const datum = {
-            result: computeCondition(this.telemetryDataCache, this.telemetry === 'all')
+            result: evaluateResults(Object.values(this.telemetryDataCache), this.telemetry)
         };
 
         if (data) {
-            // TODO check back to see if we should format times here
-            this.timeAPI.getAllTimeSystems().forEach(timeSystem => {
+            this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
                 datum[timeSystem.key] = data[timeSystem.key]
             });
         }
         return datum;
     }
 
-    handleSubscription(data, telemetryObjects) {
-        if(this.isValid()) {
-            this.emitEvent('criterionResultUpdated', this.formatData(data, telemetryObjects));
-        } else {
-            this.emitEvent('criterionResultUpdated', this.formatData({}, telemetryObjects));
-        }
-    }
+    getResult(data, telemetryObjects) {
+        const validatedData = this.isValid() ? data : {};
 
-    findOperation(operation) {
-        for (let i=0; i < OPERATIONS.length; i++) {
-            if (operation === OPERATIONS[i].name) {
-                return OPERATIONS[i].operation;
-            }
+        if (validatedData) {
+            this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
         }
-        return null;
-    }
 
-    computeResult(data) {
-        let result = false;
-        if (data) {
-            let comparator = this.findOperation(this.operation);
-            let params = [];
-            params.push(data[this.metadata]);
-            if (this.input instanceof Array && this.input.length) {
-                this.input.forEach(input => params.push(input));
+        Object.values(telemetryObjects).forEach(telemetryObject => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (this.telemetryDataCache[id] === undefined) {
+                this.telemetryDataCache[id] = false;
             }
-            if (typeof comparator === 'function') {
-                result = comparator(params);
-            }
-        }
-        return result;
-    }
-
-    emitEvent(eventName, data) {
-        this.emit(eventName, {
-            id: this.id,
-            data: data
         });
+
+        this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
-    isValid() {
-        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
-    }
-
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
+    requestLAD(telemetryObjects) {
+        const options = {
+            strategy: 'latest',
+            size: 1
+        };
 
         if (!this.isValid()) {
-            return this.formatData({}, options.telemetryObjects);
+            return this.formatData({}, telemetryObjects);
         }
 
-        let keys = Object.keys(Object.assign({}, options.telemetryObjects));
+        let keys = Object.keys(Object.assign({}, telemetryObjects));
         const telemetryRequests = keys
-            .map(key => this.telemetryAPI.request(
-                options.telemetryObjects[key],
+            .map(key => this.openmct.telemetry.request(
+                telemetryObjects[key],
                 options
             ));
 
+        let telemetryDataCache = {};
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
-                let latestDatum;
+                let latestTimestamp;
+                const timeSystems = this.openmct.time.getAllTimeSystems();
+                const timeSystem = this.openmct.time.timeSystem();
+
                 telemetryRequestsResults.forEach((results, index) => {
-                    latestDatum = results.length ? results[results.length - 1] : {};
-                    if (index < telemetryRequestsResults.length-1) {
-                        if (latestDatum) {
-                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
-                        }
-                    }
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    const datumId = keys[index];
+                    const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObjects[datumId]);
+
+                    telemetryDataCache[datumId] = this.computeResult(normalizedDatum);
+
+                    latestTimestamp = getLatestTimestamp(
+                        latestTimestamp,
+                        normalizedDatum,
+                        timeSystems,
+                        timeSystem
+                    );
                 });
+
+                const datum = {
+                    result: evaluateResults(Object.values(telemetryDataCache), this.telemetry),
+                    ...latestTimestamp
+                };
+
                 return {
                     id: this.id,
-                    data: this.formatData(latestDatum, options.telemetryObjects)
+                    data: datum
                 };
             });
     }
 
     destroy() {
-        this.emitEvent('criterionRemoved');
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
-        delete this.telemetryObjectIdAsString;
-        delete this.telemetryObject;
     }
 }

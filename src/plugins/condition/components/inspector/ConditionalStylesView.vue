@@ -79,6 +79,8 @@
             <div v-for="(conditionStyle, index) in conditionalStyles"
                  :key="index"
                  class="c-inspect-styles__condition"
+                 :class="{'is-current': conditionStyle.conditionId === selectedConditionId}"
+                 @click="applySelectedConditionStyle(conditionStyle.conditionId)"
             >
                 <condition-error :show-label="true"
                                  :condition="getCondition(conditionStyle.conditionId)"
@@ -105,7 +107,7 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import {getInitialStyleForItem} from "@/plugins/condition/utils/styleUtils";
+import {getApplicableStylesForItem} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     name: 'ConditionalStylesView',
@@ -126,13 +128,12 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             conditions: undefined,
             conditionsLoaded: false,
-            navigateToPath: ''
+            navigateToPath: '',
+            selectedConditionId: ''
         }
     },
     destroyed() {
-        if (this.stopObserving) {
-            this.stopObserving();
-        }
+        this.removeListeners();
     },
     mounted() {
         this.itemId = '';
@@ -164,7 +165,8 @@ export default {
                 layoutItem = this.selection[0][0].context.layoutItem;
                 const item = this.selection[0][0].context.item;
                 this.canHide = true;
-                if (item && this.isItemType('subobject-view', layoutItem)) {
+                if (item &&
+                    (!layoutItem || (this.isItemType('subobject-view', layoutItem)))) {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
@@ -176,12 +178,24 @@ export default {
                 domainObject = this.selection[0][0].context.item;
             }
             this.domainObject = domainObject;
-            this.initialStyles = getInitialStyleForItem(domainObject, layoutItem);
+            this.initialStyles = getApplicableStylesForItem(domainObject, layoutItem);
+            this.$nextTick(() => {
+                this.removeListeners();
+                if (this.domainObject) {
+                    this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+                    this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration.items', this.updateDomainObjectItemStyles);
+                }
+            });
+        },
+        removeListeners() {
             if (this.stopObserving) {
                 this.stopObserving();
             }
-            if (this.domainObject) {
-                this.stopObserving = this.openmct.objects.observe(this.domainObject, '*', newDomainObject => this.domainObject = newDomainObject);
+            if (this.stopObservingItems) {
+                this.stopObservingItems();
+            }
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
             }
         },
         initialize(conditionSetDomainObject) {
@@ -192,6 +206,13 @@ export default {
         },
         setEditState(isEditing) {
             this.isEditing = isEditing;
+            if (this.isEditing) {
+                if (this.stopProvidingTelemetry) {
+                    this.stopProvidingTelemetry();
+                }
+            } else {
+                this.subscribeToConditionSet();
+            }
         },
         addConditionSet() {
             let conditionSetDomainObject;
@@ -262,6 +283,8 @@ export default {
             let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (this.itemId) {
                 domainObjectStyles[this.itemId].conditionSetIdentifier = undefined;
+                domainObjectStyles[this.itemId].selectedConditionId = undefined;
+                domainObjectStyles[this.itemId].defaultConditionId = undefined;
                 delete domainObjectStyles[this.itemId].conditionSetIdentifier;
                 domainObjectStyles[this.itemId].styles = undefined;
                 delete domainObjectStyles[this.itemId].styles;
@@ -270,6 +293,8 @@ export default {
                 }
             } else {
                 domainObjectStyles.conditionSetIdentifier = undefined;
+                domainObjectStyles.selectedConditionId = undefined;
+                domainObjectStyles.defaultConditionId = undefined;
                 delete domainObjectStyles.conditionSetIdentifier;
                 domainObjectStyles.styles = undefined;
                 delete domainObjectStyles.styles;
@@ -279,6 +304,43 @@ export default {
             }
 
             this.persist(domainObjectStyles);
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+            }
+        },
+        updateDomainObjectItemStyles(newItems) {
+            //check that all items that have been styles still exist. Otherwise delete those styles
+            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let itemsToRemove = [];
+            let keys = Object.keys(domainObjectStyles);
+            //TODO: Need an easier way to find which properties are itemIds
+            keys.forEach((key) => {
+                const keyIsItemId = (key !== 'styles') &&
+                    (key !== 'staticStyle') &&
+                    (key !== 'defaultConditionId') &&
+                    (key !== 'selectedConditionId') &&
+                    (key !== 'conditionSetIdentifier');
+                if (keyIsItemId) {
+                    if (!(newItems.find(item => item.id === key))) {
+                        itemsToRemove.push(key);
+                    }
+                }
+            });
+            if (itemsToRemove.length) {
+                this.removeItemStyles(itemsToRemove, domainObjectStyles);
+            }
+        },
+        removeItemStyles(itemIds, domainObjectStyles) {
+            itemIds.forEach(itemId => {
+                if (domainObjectStyles[itemId]) {
+                    domainObjectStyles[itemId] = undefined;
+                    delete domainObjectStyles[this.itemId];
+                }
+            });
+            if (_.isEmpty(domainObjectStyles)) {
+                domainObjectStyles = undefined;
+            }
+            this.persist(domainObjectStyles);
         },
         initializeConditionalStyles() {
             if (!this.conditions) {
@@ -286,6 +348,9 @@ export default {
             }
             let conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
+                if (conditionConfiguration.isDefault) {
+                    this.selectedConditionId = conditionConfiguration.id;
+                }
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
@@ -301,13 +366,39 @@ export default {
             //we're doing this so that we remove styles for any conditions that have been removed from the condition set
             this.conditionalStyles = conditionalStyles;
             this.conditionsLoaded = true;
-            this.persist(this.getDomainObjectConditionalStyle());
+            this.persist(this.getDomainObjectConditionalStyle(this.selectedConditionId));
+            if (!this.isEditing) {
+                this.subscribeToConditionSet();
+            }
+        },
+        subscribeToConditionSet() {
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+            }
+            if (this.conditionSetDomainObject) {
+                this.openmct.telemetry.request(this.conditionSetDomainObject)
+                    .then(output => {
+                        if (output && output.length) {
+                            this.handleConditionSetResultUpdated(output[0]);
+                        }
+                    });
+                this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
+            }
+        },
+        handleConditionSetResultUpdated(resultData) {
+            this.selectedConditionId = resultData ? resultData.conditionId : '';
         },
         initializeStaticStyle(objectStyles) {
             let staticStyle = objectStyles && objectStyles.staticStyle;
-            this.staticStyle = staticStyle || {
-                style: Object.assign({}, this.initialStyles)
-            };
+            if (staticStyle) {
+                this.staticStyle = {
+                    style: Object.assign({}, this.initialStyles, staticStyle.style)
+                };
+            } else {
+                this.staticStyle = {
+                    style: Object.assign({}, this.initialStyles)
+                };
+            }
         },
         findStyleByConditionId(id) {
             return this.conditionalStyles.find(conditionalStyle => conditionalStyle.conditionId === id);
@@ -320,14 +411,19 @@ export default {
             let found = this.findStyleByConditionId(conditionStyle.conditionId);
             if (found) {
                 found.style = conditionStyle.style;
+                this.selectedConditionId = found.conditionId;
                 this.persist(this.getDomainObjectConditionalStyle());
             }
         },
-        getDomainObjectConditionalStyle() {
+        getDomainObjectConditionalStyle(defaultConditionId) {
             let objectStyle = {
                 styles: this.conditionalStyles,
-                staticStyle: this.staticStyle
+                staticStyle: this.staticStyle,
+                selectedConditionId: this.selectedConditionId
             };
+            if (defaultConditionId) {
+                objectStyle.defaultConditionId = defaultConditionId;
+            }
             if (this.conditionSetDomainObject) {
                 objectStyle.conditionSetIdentifier = this.conditionSetDomainObject.identifier;
             }
@@ -348,6 +444,10 @@ export default {
         },
         getCondition(id) {
             return this.conditions ? this.conditions[id] : {};
+        },
+        applySelectedConditionStyle(conditionId) {
+            this.selectedConditionId = conditionId;
+            this.persist(this.getDomainObjectConditionalStyle());
         },
         persist(style) {
             this.openmct.objects.mutate(this.domainObject, 'configuration.objectStyles', style);

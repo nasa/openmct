@@ -19,36 +19,50 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TRIGGER } from "./constants";
 
-export const computeCondition = (resultMap, allMustBeTrue) => {
-    let result = false;
-    for (let key in resultMap) {
-        if (resultMap.hasOwnProperty(key)) {
-            result = resultMap[key];
-            if (allMustBeTrue && !result) {
-                //If we want all conditions to be true, then even one negative result should break.
-                break;
-            } else if (!allMustBeTrue && result) {
-                //If we want at least one condition to be true, then even one positive result should break.
-                break;
-            }
+export const evaluateResults = (results, trigger) => {
+    if (trigger && trigger === TRIGGER.XOR) {
+        return matchExact(results, 1);
+    } else if (trigger && trigger === TRIGGER.NOT) {
+        return matchExact(results, 0);
+    } else if (trigger && trigger === TRIGGER.ALL) {
+        return matchAll(results);
+    } else {
+        return matchAny(results);
+    }
+}
+
+function matchAll(results) {
+    for (const result of results) {
+        if (!result) {
+            return false;
         }
     }
-    return result;
-};
 
-//Returns true only if limit number of results are satisfied
-export const computeConditionByLimit = (resultMap, limit) => {
-    let trueCount = 0;
-    for (let key in resultMap) {
-        if (resultMap.hasOwnProperty(key)) {
-            if (resultMap[key]) {
-                trueCount++;
-            }
-            if (trueCount > limit) {
-                break;
-            }
+    return true;
+}
+
+function matchAny(results) {
+    for (const result of results) {
+        if (result) {
+            return true;
         }
     }
-    return trueCount === limit;
-};
+
+    return false;
+}
+
+function matchExact(results, target) {
+    let matches = 0;
+    for (const result of results) {
+        if (result) {
+            matches++;
+        }
+        if (matches > target) {
+            return false;
+        }
+    }
+
+    return matches === target;
+}

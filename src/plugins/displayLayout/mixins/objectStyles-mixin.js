@@ -21,12 +21,14 @@
  *****************************************************************************/
 
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
+import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
 
 export default {
     inject: ['openmct'],
     data() {
         return {
-            itemStyle: this.itemStyle
+            itemStyle: undefined,
+            styleClass: ''
         }
     },
     mounted() {
@@ -50,7 +52,7 @@ export default {
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleRuleManager = new StyleRuleManager(this.objectStyle, this.openmct, this.updateStyle.bind(this));
+                this.styleRuleManager = new StyleRuleManager(this.objectStyle, this.openmct, this.updateStyle.bind(this), true);
             } else {
                 this.styleRuleManager.updateObjectStyleConfig(this.objectStyle);
             }
@@ -69,13 +71,8 @@ export default {
             });
         },
         updateStyle(style) {
-            this.itemStyle = style;
-            let keys = Object.keys(this.itemStyle);
-            keys.forEach((key) => {
-                if ((typeof this.itemStyle[key] === 'string') && (this.itemStyle[key].indexOf('transparent') > -1)) {
-                    delete this.itemStyle[key];
-                }
-            });
+            this.itemStyle = getStylesWithoutNoneValue(style);
+            this.styleClass = this.itemStyle && this.itemStyle.isStyleInvisible;
         }
     }
 };
