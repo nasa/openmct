@@ -34,15 +34,28 @@ let openmct,
 fdescribe("The LAD Table", () => {
 
     const ladTableKey = 'LadTable',
+        // mockTelemetry = [
+        //     {
+        //         'utc': 1,
+        //         'some-key': 'some-value 1',
+        //         'some-other-key' : 'some-other-value 1'
+        //     },
+        //     {
+        //         'utc': 2,
+        //         'some-key': 'some-value 2',
+        //         'some-other-key' : 'some-other-value 2'
+        //     }
+        // ],
         mockObj = {
             ladTable: {
-                id:"test-object",
-                type: ladTableKey
+                identifier: { namespace: "", key: "lad-object"},
+                type: ladTableKey,
+                composition: []
             },
             telemetry: {
-                identifier:{ namespace: "", key: "test-object"},
-                type: "test-object",
-                name: "Test Object",
+                identifier: { namespace: "", key: "telemetry-object"},
+                type: "test-telemetry-object",
+                name: "Test Telemetry Object",
                 telemetry: {
                     values: [{
                         key: "some-key",
@@ -63,6 +76,7 @@ fdescribe("The LAD Table", () => {
             }
         };
 
+    // this setups up the app
     beforeEach((done) => {
         const appHolder = document.createElement('div');
         appHolder.style.width = '640px';
@@ -78,16 +92,41 @@ fdescribe("The LAD Table", () => {
         openmct.install(ladPlugin);
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        spyOn(openmct.objects, 'mutate').and.returnValue(true);
 
         openmct.on('start', done);
         openmct.start(appHolder);
     });
 
-    it("provides a lad table view for only lad table objects", () => {
+    it("should provide a table view only for lad table objects", () => {
         let applicableViews = openmct.objectViews.get(mockObj.ladTable),
-            ladTableView = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
+            ladTableView = applicableViews.find(
+                (viewProvider) => viewProvider.key === ladTableKey
+            );
+
         expect(applicableViews.length).toEqual(1);
         expect(ladTableView).toBeDefined();
+    });
+
+    describe('composition', () => {
+        let ladTableCompositionCollection;
+
+        beforeEach(() => {
+            ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
+            ladTableCompositionCollection.load();
+        });
+
+        it("should accept telemetry producing objects", () => {
+            expect(() => {
+                ladTableCompositionCollection.add(mockObj.telemetry);
+            }).not.toThrow();
+        });
+
+        it("should reject non-telemtry producing objects", () => {
+            expect(()=> {
+                ladTableCompositionCollection.add(mockObj.ladTable);
+            }).toThrow();
+        });
     });
 
     describe("The table view", () => {
@@ -103,46 +142,42 @@ fdescribe("The LAD Table", () => {
             return Vue.nextTick();
         });
 
-        it("should accept ONLY telemetry producing objects", () => {
-            console.log(ladTableView);
+        it("should show one row per oject in the composition", () => {
             expect(true).toBe(false);
+            pending();
+        });
+
+        it("when an item is removed, it should no longer be in the table", () => {
+            expect(true).toBe(false);
+            pending();
         });
 
     });
 
-    it("when an item is removed, it should no longer be in the table", () => {
-        expect(true).toBe(false);
-        pending();
-    });
-    it("should, if not in edit mode, droping telemtry object into lad table should add object and switch to edit mode", () => {
-        expect(true).toBe(false);
-        pending();
-    });
-    it("should reject non-telemtry producing objects", () => {
-        expect(true).toBe(false);
-        pending();
-    });
-    it("should show one row per oject in the composition", () => {
-        expect(true).toBe(false);
-        pending();
-    });
     it("should show the most recent datum from the telemetry producing object", () => {
         expect(true).toBe(false);
         pending();
     });
+
     it("should show the name provided for the datum", () => {
         expect(true).toBe(false);
         pending();
     });
+
     it("should show the correct value for the datum dependent on hints", () => {
         expect(true).toBe(false);
         pending();
     });
-    it("should only add telemetry within set bounds", () => {
+
+    it("should show the correct formatting for the datum for domain and range values", () => {
         expect(true).toBe(false);
         pending();
     });
 
+    it("should only add telemetry within set bounds", () => {
+        expect(true).toBe(false);
+        pending();
+    });
     
 });
 
