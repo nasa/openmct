@@ -98,7 +98,7 @@ export default {
                     this.getCriterionDescription(criterion, index);
                 });
                 if (this.condition.isDefault) {
-                    this.criterionDescriptions.splice(0, 0, 'all else fails');
+                    this.criterionDescriptions.splice(0, 0, 'no other condition is matched');
                 }
             } else {
                 this.criterionDescriptions = [];
