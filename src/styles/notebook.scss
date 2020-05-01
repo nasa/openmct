@@ -388,7 +388,21 @@
 .s-status-taking-snapshot,
 .overlay.snapshot {
     // Handle overflow-y issues with tables and html2canvas
+    background: $colorBodyBg; // Prevent html2canvas from using white background
+    color: $colorBodyFg;
+    padding: $interiorMarginSm !important; // Prevents items from going right to the edge of the image
+
     .l-sticky-headers .l-tabular-body { overflow: auto; }
+    .l-browse-bar {
+        display: none; // Suppress browse-bar when snapshotting from view-large overlay
+        + * {
+            margin-top: 0 !important; // Remove margin from any following elements
+        }
+    }
+
+    * {
+        box-shadow: none !important; // Prevent html2canvas problems with box-shadow
+    }
 }
 
 .c-notebook-snapshot {
