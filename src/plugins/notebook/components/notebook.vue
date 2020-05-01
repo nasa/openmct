@@ -495,7 +495,7 @@ export default {
                 return;
             }
 
-            if (section.id !== defaultNotebookSection.id) {
+            if (id !== defaultNotebookSection.id) {
                 return;
             }
 
