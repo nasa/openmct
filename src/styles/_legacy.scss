@@ -19,53 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************************* VIEWS */
-// From _views.scss
-// Legacy overlay and stacked plots depend on this for now
-// Styles for sub-dividing views generically
-.l-control-bar {
-    // Element that can be placed above l-view-section, holds controls, buttons, etc.
-    height: $controlBarH;
-}
-
-.c-control-bar {
-    display: flex;
-    align-items: center;
-
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
-
-    &__label {
-        display: inline-block;
-        white-space: nowrap;
-    }
-}
-
-.l-view-section {
-    @include abs();
-    overflow: auto;
-}
-
-.has-control-bar {
-    .l-view-section {
-        top: $controlBarH + $interiorMargin;
-    }
-}
-
-.child-frame {
-    .has-control-bar {
-        .l-control-bar,
-        .c-control-bar {
-            // Hides buttons per plot element in a stacked plot
-            display: none;
-        }
-        .l-view-section {
-            top: 0;
-        }
-    }
-}
-
 /*********************************************************************** CLOCKS AND TIMERS */
 .c-clock,
 .c-timer {
