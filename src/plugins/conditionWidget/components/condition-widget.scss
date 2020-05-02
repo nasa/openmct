@@ -28,10 +28,12 @@
     border: 1px solid transparent;
     display: inline-block;
     padding: $interiorMarginLg $interiorMarginLg * 2;
-    cursor: inherit !important;
-    &[href] {
-        cursor: pointer !important;
-    }
+}
+
+a.c-condition-widget {
+    // Widget is conditionally made into a <a> when URL property has been defined
+    cursor: pointer !important;
+    pointer-events: inherit;
 }
 
 // Make Condition Widget expand when in a hidden frame Layout context

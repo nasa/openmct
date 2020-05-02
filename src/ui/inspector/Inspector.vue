@@ -81,7 +81,7 @@ export default {
         }
     },
     mounted() {
-        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet'];
+        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {
@@ -108,13 +108,21 @@ export default {
                 let object = selection[0][0].context.item;
                 if (object) {
                     let type = this.openmct.types.get(object.type);
-                    this.showStyles = (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
+                    this.showStyles = this.isLayoutObject(selection[0], object.type) || this.isCreatableObject(object, type);
                 }
                 if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key))
                 {
                     this.updateCurrentTab(this.tabbedViews[0]);
                 }
             }
+        },
+        isLayoutObject(selection, objectType) {
+            //we allow conditionSets to be styled if they're part of a layout
+            return selection.length > 1 &&
+                ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
+        },
+        isCreatableObject(object, type) {
+            return (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
         },
         updateCurrentTab(view) {
             this.currentTabbedView = view;

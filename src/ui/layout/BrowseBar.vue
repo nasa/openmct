@@ -28,6 +28,7 @@
 
     <div class="l-browse-bar__end">
         <view-switcher
+            v-if="!isEditing"
             :current-view="currentView"
             :views="views"
             @setView="setView"
@@ -35,6 +36,7 @@
         <!-- Action buttons -->
         <NotebookMenuSwitcher v-if="notebookEnabled"
                               :domain-object="domainObject"
+                              :object-path="openmct.router.path"
                               class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
@@ -197,8 +199,6 @@ export default {
         updateName(event) {
             if (event.target.innerText !== this.domainObject.name && event.target.innerText.match(/\S/)) {
                 this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
-            } else {
-                event.target.innerText = this.domainObject.name;
             }
         },
         updateNameOnEnterKeyPress(event) {

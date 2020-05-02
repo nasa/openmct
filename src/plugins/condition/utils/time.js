@@ -19,50 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
 
-export const evaluateResults = (results, trigger) => {
-    if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(results, 1);
-    } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(results, 0);
-    } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(results);
-    } else {
-        return matchAny(results);
+export const getLatestTimestamp = (
+    currentTimestamp,
+    compareTimestamp,
+    timeSystems,
+    currentTimeSystem
+) => {
+    let latest = { ...currentTimestamp };
+    const compare = { ...compareTimestamp };
+    const key = currentTimeSystem.key;
+
+    if (!latest || !latest[key]) {
+        latest = updateLatestTimeStamp(compare, timeSystems)
     }
+
+    if (compare[key] > latest[key]) {
+        latest = updateLatestTimeStamp(compare, timeSystems)
+    }
+
+    return latest;
 }
 
-function matchAll(results) {
-    for (const result of results) {
-        if (!result) {
-            return false;
-        }
-    }
+function updateLatestTimeStamp(timestamp, timeSystems) {
+    let latest = {};
 
-    return true;
-}
+    timeSystems.forEach(timeSystem => {
+        latest[timeSystem.key] = timestamp[timeSystem.key];
+    });
 
-function matchAny(results) {
-    for (const result of results) {
-        if (result) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function matchExact(results, target) {
-    let matches = 0;
-    for (const result of results) {
-        if (result) {
-            matches++;
-        }
-        if (matches > target) {
-            return false;
-        }
-    }
-
-    return matches === target;
+    return latest;
 }

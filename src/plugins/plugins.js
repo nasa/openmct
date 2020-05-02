@@ -90,7 +90,8 @@ define([
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {

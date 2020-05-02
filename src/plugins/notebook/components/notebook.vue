@@ -49,13 +49,19 @@
                             class="c-notebook__controls__time"
                     >
                         <option value="0"
-                                selected="selected"
+                                :selected="showTime === 0"
                         >
                             Show all
                         </option>
-                        <option value="1">Last hour</option>
-                        <option value="8">Last 8 hours</option>
-                        <option value="24">Last 24 hours</option>
+                        <option value="1"
+                                :selected="showTime === 1"
+                        >Last hour</option>
+                        <option value="8"
+                                :selected="showTime === 8"
+                        >Last 8 hours</option>
+                        <option value="24"
+                                :selected="showTime === 24"
+                        >Last 24 hours</option>
                     </select>
                     <select v-model="defaultSort"
                             class="c-notebook__controls__time"
@@ -132,9 +138,17 @@ export default {
     },
     computed: {
         filteredAndSortedEntries() {
+            const filterTime = Date.now();
             const pageEntries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
 
-            return pageEntries.sort(this.sortEntries);
+            const hours = parseInt(this.showTime, 10);
+            const filteredPageEntriesByTime = hours
+                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
+                : pageEntries;
+
+            return this.defaultSort === 'oldest'
+                ? filteredPageEntriesByTime
+                : [...filteredPageEntriesByTime].reverse();
         },
         pages() {
             return this.getPages() || [];
@@ -420,11 +434,6 @@ export default {
         searchItem(input) {
             this.search = input;
         },
-        sortEntries(right, left) {
-            return this.defaultSort === 'newest'
-                ? left.createdOn - right.createdOn
-                : right.createdOn - left.createdOn;
-        },
         toggleNav() {
             this.showNav = !this.showNav;
         },
@@ -486,7 +495,7 @@ export default {
                 return;
             }
 
-            if (section.id !== defaultNotebookSection.id) {
+            if (id !== defaultNotebookSection.id) {
                 return;
             }
 
