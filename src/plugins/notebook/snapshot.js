@@ -71,8 +71,8 @@ export default class Snapshot {
                 msg: 'click to view'
             }
         }
-        console.log('TODO: pass options to notifications', options);
-        this.openmct.notifications.info(msg);
+
+        this.openmct.notifications.info(msg, options);
     }
 
     _navigateToNotebook(url = null) {
