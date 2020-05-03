@@ -13,6 +13,7 @@
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigateToPath"
+            :sequence-number="sequenceNumber"
         />
     </div>
     <ul
@@ -28,9 +29,10 @@
             </div>
         </li>
         <tree-item
-            v-for="child in children"
+            v-for="(child, index) in children"
             :key="child.id"
             :node="child"
+            :sequence-number="index"
         />
     </ul>
 </li>
@@ -52,6 +54,10 @@ export default {
     props: {
         node: {
             type: Object,
+            required: true
+        },
+        sequenceNumber: {
+            type: Number,
             required: true
         }
     },

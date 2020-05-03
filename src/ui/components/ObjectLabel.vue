@@ -36,6 +36,10 @@ export default {
         navigateToPath: {
             type: String,
             default: undefined
+        },
+        sequenceNumber: {
+            type: Number,
+            default: undefined
         }
     },
     data() {

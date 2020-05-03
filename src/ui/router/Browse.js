@@ -27,6 +27,13 @@ define([
                 return;
             }
 
+            if (newParams.sequenceNumber) {
+                openmct.layout.$refs.browseBar.sequenceNumber = parseInt(newParams.sequenceNumber);
+            } else {
+                openmct.layout.$refs.browseBar.sequenceNumber = undefined;
+            }
+
+
             if (changed.view && browseObject) {
                 let provider = openmct
                     .objectViews

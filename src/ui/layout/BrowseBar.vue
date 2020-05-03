@@ -110,7 +110,8 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: this.openmct.types.get('notebook')
+            notebookEnabled: this.openmct.types.get('notebook'),
+            sequenceNumber: undefined
         }
     },
     computed: {
@@ -267,7 +268,14 @@ export default {
             });
         },
         showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
+            this.openmct.contextMenu._showContextMenuForObjectPath(
+                this.openmct.router.path,
+                event.clientX,
+                event.clientY,
+                undefined,
+                {
+                    sequenceNumber: this.sequenceNumber
+                });
         },
         goToParent() {
             window.location.hash = this.parentUrl;

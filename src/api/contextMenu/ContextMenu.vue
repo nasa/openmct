@@ -6,7 +6,7 @@
             :key="action.name"
             :class="action.cssClass"
             :title="action.description"
-            @click="action.invoke(objectPath)"
+            @click="action.invoke(objectPath, context)"
         >
             {{ action.name }}
         </li>
@@ -19,6 +19,6 @@
 
 <script>
 export default {
-    inject: ['actions', 'objectPath']
+    inject: ['actions', 'objectPath', 'context']
 }
 </script>

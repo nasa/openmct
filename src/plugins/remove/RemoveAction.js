@@ -29,11 +29,11 @@ export default class RemoveAction {
         this.openmct = openmct;
     }
 
-    invoke(objectPath) {
+    invoke(objectPath, context) {
         let object = objectPath[0];
         let parent = objectPath[1];
         this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object);
+            this.removeFromComposition(parent, object, context.sequenceNumber);
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
@@ -79,23 +79,21 @@ export default class RemoveAction {
         window.location.href = '#/browse/' + urlPath;
     }
 
-    removeFromComposition(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
-
-        this.openmct.objects.mutate(parent, 'composition', composition);
+    removeFromComposition(parent, child, sequenceNumber) {
+        this.openmct.composition.get(parent).then(compositionCollection => {
+            compositionCollection.remove(child, sequenceNumber);
+        })
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const isAlias = parentKeyString !== child.location;
-
-        if (!isAlias) {
-            this.openmct.objects.mutate(child, 'location', null);
-        }
+        // Find another way of doing this with notebooks
+        // const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        // const isAlias = parentKeyString !== child.location;
+        // if (!isAlias) {
+        //     this.openmct.objects.mutate(child, 'location', null);
+        // }
     }
 
     appliesTo(objectPath) {

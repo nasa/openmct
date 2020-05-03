@@ -34,6 +34,7 @@
             v-for="treeItem in allTreeItems"
             :key="treeItem.id"
             :node="treeItem"
+            :sequence-number="0"
         />
     </ul>
     <!-- end main tree -->
@@ -47,6 +48,7 @@
             v-for="treeItem in filteredTreeItems"
             :key="treeItem.id"
             :node="treeItem"
+            :sequence-number="0"
         />
     </ul>
     <!-- end search tree -->

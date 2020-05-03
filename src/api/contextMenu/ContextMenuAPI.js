@@ -75,7 +75,7 @@ class ContextMenuAPI {
     /**
      * @private
      */
-    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
+    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded, context) {
 
         let applicableActions = this._allActions.filter((action) => {
 
@@ -96,7 +96,7 @@ class ContextMenuAPI {
             this._hideActiveContextMenu();
         }
 
-        this._activeContextMenu = this._createContextMenuForObject(objectPath, applicableActions);
+        this._activeContextMenu = this._createContextMenuForObject(objectPath, applicableActions, context);
         this._activeContextMenu.$mount();
         document.body.appendChild(this._activeContextMenu.$el);
 
@@ -141,14 +141,15 @@ class ContextMenuAPI {
     /**
      * @private
      */
-    _createContextMenuForObject(objectPath, actions) {
+    _createContextMenuForObject(objectPath, actions, context) {
         return new Vue({
             components: {
                 ContextMenu: ContextMenuComponent
             },
             provide: {
                 actions: actions,
-                objectPath: objectPath
+                objectPath: objectPath,
+                context
             },
             template: '<ContextMenu></ContextMenu>'
         });
