@@ -57,6 +57,7 @@
                 <span v-else>
                     <condition-description :show-label="false"
                                            :condition="condition"
+                                           :telemetry-list="telemetry"
                     />
                 </span>
             </span>
@@ -182,6 +183,7 @@
         <div class="c-condition__summary">
             <condition-description :show-label="false"
                                    :condition="condition"
+                                   :telemetry-list="telemetry"
             />
         </div>
     </div>

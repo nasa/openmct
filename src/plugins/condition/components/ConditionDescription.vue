@@ -57,6 +57,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        telemetryList: {
+            type: Array,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -108,42 +114,48 @@ export default {
             if (!criterion.telemetry) {
                 let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
                 this.criterionDescriptions.splice(index, 0, description);
-            } else if (criterion.telemetry === 'all' || criterion.telemetry === 'any') {
-                const telemetryDescription = criterion.telemetry === 'all' ? 'All telemetry' : 'Any telemetry';
-                let description = `${telemetryDescription} ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
-                this.criterionDescriptions.splice(index, 0, description);
             } else {
-                this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                    if (telemetryObject.type === 'unknown') {
-                        let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
-                        this.criterionDescriptions.splice(index, 0, description);
-                    } else {
-                        let metadataValue = criterion.metadata;
-                        let inputValue = criterion.input;
-                        if (criterion.metadata) {
-                            this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                this.getDescriptionComponents(criterion, index);
+            }
+        },
+        getTelemetryName(criterion, telemetryObject) {
+            if (criterion.telemetry === 'all' || criterion.telemetry === 'any') {
+                return criterion.telemetry === 'all' ? 'All telemetry' : 'Any telemetry';
+            } else {
+                return telemetryObject.name;
+            }
+        },
+        getDescriptionComponents(criterion, index) {
+            this.telemetryList.forEach(telemetry => {
+                this.openmct.objects.get(telemetry.identifier).then((telemetryObject) => {
+                    let metadataValue = criterion.metadata;
+                    let inputValue = criterion.input;
+                    if (criterion.metadata) {
+                        this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
 
-                            const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
-                            if (metadataObj) {
-                                if (metadataObj.name) {
-                                    metadataValue = metadataObj.name;
-                                }
-                                if(metadataObj.enumerations && inputValue.length) {
-                                    if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
-                                        inputValue = [metadataObj.enumerations[inputValue[0]].string];
-                                    }
+                        const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
+                        if (metadataObj) {
+                            if (metadataObj.name) {
+                                metadataValue = metadataObj.name;
+                            }
+                            if(metadataObj.enumerations && inputValue.length) {
+                                if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                                    inputValue = [metadataObj.enumerations[inputValue[0]].string];
                                 }
                             }
                         }
-                        let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
-                        if (this.criterionDescriptions[index]) {
-                            this.criterionDescriptions[index] = description;
-                        } else {
-                            this.criterionDescriptions.splice(index, 0, description);
-                        }
+                    }
+                    let description = 'Define criterion';
+                    if (!!this.getTelemetryName(criterion, telemetryObject) && !!metadataValue && !!this.getOperatorText(criterion.operation, inputValue)) {
+                        description = `${this.getTelemetryName(criterion, telemetryObject)} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
+                    }
+                    if (this.criterionDescriptions[index]) {
+                        this.criterionDescriptions[index] = description;
+                    } else {
+                        this.criterionDescriptions.splice(index, 0, description);
                     }
                 });
-            }
+            });
         },
         getOperatorText(operationName, values) {
             const found = OPERATIONS.find((operation) => operation.name === operationName);
