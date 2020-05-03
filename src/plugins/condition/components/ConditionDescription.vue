@@ -115,7 +115,13 @@ export default {
                 let description = `Unknown ${criterion.metadata} ${this.getOperatorText(criterion.operation, criterion.input)}`;
                 this.criterionDescriptions.splice(index, 0, description);
             } else {
-                this.getDescriptionComponents(criterion, index);
+                if (criterion.telemetry === 'all' || criterion.telemetry === 'any') {
+                    this.telemetryList.forEach(telemetry => {
+                        this.getDescriptionComponents(criterion, index, telemetry);
+                    });
+                } else {
+                    this.getDescriptionComponents(criterion, index);
+                }
             }
         },
         getTelemetryName(criterion, telemetryObject) {
@@ -125,36 +131,35 @@ export default {
                 return telemetryObject.name;
             }
         },
-        getDescriptionComponents(criterion, index) {
-            this.telemetryList.forEach(telemetry => {
-                this.openmct.objects.get(telemetry.identifier).then((telemetryObject) => {
-                    let metadataValue = criterion.metadata;
-                    let inputValue = criterion.input;
-                    if (criterion.metadata) {
-                        this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+        getDescriptionComponents(criterion, index, telemetry) {
+            telemetry = telemetry ? telemetry.identifier : criterion.telemetry;
+            this.openmct.objects.get(telemetry).then((telemetryObject) => {
+                let metadataValue = criterion.metadata;
+                let inputValue = criterion.input;
+                if (criterion.metadata) {
+                    this.telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
 
-                        const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
-                        if (metadataObj) {
-                            if (metadataObj.name) {
-                                metadataValue = metadataObj.name;
-                            }
-                            if(metadataObj.enumerations && inputValue.length) {
-                                if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
-                                    inputValue = [metadataObj.enumerations[inputValue[0]].string];
-                                }
+                    const metadataObj = this.telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === criterion.metadata);
+                    if (metadataObj) {
+                        if (metadataObj.name) {
+                            metadataValue = metadataObj.name;
+                        }
+                        if(metadataObj.enumerations && inputValue.length) {
+                            if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                                inputValue = [metadataObj.enumerations[inputValue[0]].string];
                             }
                         }
                     }
-                    let description = 'Define criterion';
-                    if (!!this.getTelemetryName(criterion, telemetryObject) && !!metadataValue && !!this.getOperatorText(criterion.operation, inputValue)) {
-                        description = `${this.getTelemetryName(criterion, telemetryObject)} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
-                    }
-                    if (this.criterionDescriptions[index]) {
-                        this.criterionDescriptions[index] = description;
-                    } else {
-                        this.criterionDescriptions.splice(index, 0, description);
-                    }
-                });
+                }
+                let description = 'Define criterion';
+                if (!!this.getTelemetryName(criterion, telemetryObject) && !!metadataValue && !!this.getOperatorText(criterion.operation, inputValue)) {
+                    description = `${this.getTelemetryName(criterion, telemetryObject)} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
+                }
+                if (this.criterionDescriptions[index]) {
+                    this.criterionDescriptions[index] = description;
+                } else {
+                    this.criterionDescriptions.splice(index, 0, description);
+                }
             });
         },
         getOperatorText(operationName, values) {
