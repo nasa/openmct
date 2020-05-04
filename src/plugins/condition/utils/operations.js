@@ -32,6 +32,10 @@ const convertToStrings = (input) => {
     return stringInputs;
 };
 
+const joinValues = (values, length) => {
+    return values.slice(0, length).join(', ');
+};
+
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -42,7 +46,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + values.join(', ');
+            return ' is ' + joinValues(values, 1);
         }
     },
     {
@@ -54,7 +58,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + values.join(', ');
+            return ' is not ' + joinValues(values, 1);
         }
     },
     {
@@ -66,7 +70,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' > ' + values.join(', ');
+            return ' > ' + joinValues(values, 1);
         }
     },
     {
@@ -78,7 +82,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' < ' + values.join(', ');
+            return ' < ' + joinValues(values, 1);
         }
     },
     {
@@ -90,7 +94,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' >= ' + values.join(', ');
+            return ' >= ' + joinValues(values, 1);
         }
     },
     {
@@ -102,7 +106,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' <= ' + values.join(', ');
+            return ' <= ' + joinValues(values, 1);
         }
     },
     {
@@ -144,7 +148,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' contains ' + values.join(', ');
+            return ' contains ' + joinValues(values, 1);
         }
     },
     {
@@ -156,7 +160,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' does not contain ' + values.join(', ');
+            return ' does not contain ' + joinValues(values, 1);
         }
     },
     {
@@ -168,7 +172,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' starts with ' + values.join(', ');
+            return ' starts with ' + joinValues(values, 1);
         }
     },
     {
@@ -180,7 +184,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' ends with ' + values.join(', ');
+            return ' ends with ' + joinValues(values, 1);
         }
     },
     {
@@ -192,7 +196,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is exactly ' + values.join(', ');
+            return ' is exactly ' + joinValues(values, 1);
         }
     },
     {
@@ -229,7 +233,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + values.join(', ');
+            return ' is ' + joinValues(values, 1);
         }
     },
     {
@@ -242,7 +246,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + values.join(', ');
+            return ' is not ' + joinValues(values, 1);
         }
     },
     {
