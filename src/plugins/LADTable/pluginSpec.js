@@ -31,21 +31,25 @@ let openmct,
     parent,
     child;
 
+let selectors = {}
+selectors.ladTableClass = 'c-table.c-lad-table';
+selectors.ladTableRow = selectors.ladTableClass + ' tr';
+
 fdescribe("The LAD Table", () => {
 
     const ladTableKey = 'LadTable',
-        // mockTelemetry = [
-        //     {
-        //         'utc': 1,
-        //         'some-key': 'some-value 1',
-        //         'some-other-key' : 'some-other-value 1'
-        //     },
-        //     {
-        //         'utc': 2,
-        //         'some-key': 'some-value 2',
-        //         'some-other-key' : 'some-other-value 2'
-        //     }
-        // ],
+        mockTelemetry = [
+            {
+                'utc': 1,
+                'some-key': 'some-value 1',
+                'some-other-key' : 'some-other-value 1'
+            },
+            {
+                'utc': 2,
+                'some-key': 'some-value 2',
+                'some-other-key' : 'some-other-value 2'
+            }
+        ],
         mockObj = {
             ladTable: {
                 identifier: { namespace: "", key: "lad-object"},
@@ -129,22 +133,31 @@ fdescribe("The LAD Table", () => {
         });
     });
 
-    describe("The table view", () => {
+    describe("table view", () => {
         let applicableViews,
             ladTableViewProvider,
-            ladTableView;
+            ladTableView,
+            ladTableCompositionCollection;
 
         beforeEach(() => {
+            let telemetryRequestPromise = Promise.resolve(mockTelemetry);
+            openmct.telemetry.request.and.returnValue(telemetryRequestPromise);
+
             applicableViews = openmct.objectViews.get(mockObj.ladTable);
             ladTableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
-            ladTableView = ladTableViewProvider.view(mockObj.ladTable, true, [mockObj.ladTable]);
+            ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
             ladTableView.show(child, true);
-            return Vue.nextTick();
+
+            ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
+            ladTableCompositionCollection.load();
+            ladTableCompositionCollection.add(mockObj.telemetry);
+
+            return telemetryRequestPromise.then(() => Vue.nextTick());
         });
 
         it("should show one row per oject in the composition", () => {
+            console.log(parent.querySelectorAll(selectors.latTableClass), parent.querySelectorAll(selectors.ladTableRow))
             expect(true).toBe(false);
-            pending();
         });
 
         it("when an item is removed, it should no longer be in the table", () => {
