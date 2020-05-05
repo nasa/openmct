@@ -54,27 +54,29 @@ function (
      * @constructor
      */
     function MCTChartController($scope) {
-        this.$scope = $scope;
-        this.isDestroyed = false;
-        this.lines = [];
-        this.pointSets = [];
-        this.alarmSets = [];
-        this.offset = {};
-        this.config = $scope.config;
-        this.listenTo(this.$scope, '$destroy', this.destroy, this);
-        this.draw = this.draw.bind(this);
-        this.scheduleDraw = this.scheduleDraw.bind(this);
-        this.seriesElements = new WeakMap();
+        this.$onInit = () => {
+            this.$scope = $scope;
+            this.isDestroyed = false;
+            this.lines = [];
+            this.pointSets = [];
+            this.alarmSets = [];
+            this.offset = {};
+            this.config = $scope.config;
+            this.listenTo(this.$scope, '$destroy', this.destroy, this);
+            this.draw = this.draw.bind(this);
+            this.scheduleDraw = this.scheduleDraw.bind(this);
+            this.seriesElements = new WeakMap();
 
-        this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
-        this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
-        this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
-        this.listenTo(this.config.xAxis, 'change:key', this.clearOffset, this);
-        this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
-        this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
-        this.$scope.$watch('highlights', this.scheduleDraw);
-        this.$scope.$watch('rectangles', this.scheduleDraw);
-        this.config.series.forEach(this.onSeriesAdd, this);
+            this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+            this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+            this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
+            this.listenTo(this.config.xAxis, 'change:key', this.clearOffset, this);
+            this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
+            this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
+            this.$scope.$watch('highlights', this.scheduleDraw);
+            this.$scope.$watch('rectangles', this.scheduleDraw);
+            this.config.series.forEach(this.onSeriesAdd, this);
+        }
     }
 
     eventHelpers.extend(MCTChartController.prototype);

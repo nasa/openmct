@@ -221,7 +221,7 @@ export default {
             return position;
         },
         formatTime(unixTime, timeFormat) {
-            return Moment(unixTime).format(timeFormat);
+            return Moment.utc(unixTime).format(timeFormat);
         },
         moveSnapshot(snapshotId) {
             const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
