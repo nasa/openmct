@@ -65,7 +65,7 @@
 
         &.is-current {
             $c: $colorBodyFg;
-            border-color: rgba($c, 0.5);
+            border-color: rgba($c, 0.2);
             background: rgba($c, 0.2);
         }
 
