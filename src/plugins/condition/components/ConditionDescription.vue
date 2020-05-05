@@ -126,7 +126,7 @@ export default {
         },
         getTelemetryName(criterion, telemetryObject) {
             if (criterion.telemetry === 'all' || criterion.telemetry === 'any') {
-                return criterion.telemetry === 'all' ? 'All telemetry' : 'Any telemetry';
+                return criterion.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
             } else {
                 return telemetryObject.name;
             }
