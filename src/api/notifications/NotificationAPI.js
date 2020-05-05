@@ -328,9 +328,11 @@ export default class NotificationAPI extends EventEmitter {
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
+            const autoDismissTimeout = notification.model.options.autoDismissTimeout
+                || DEFAULT_AUTO_DISMISS_TIMEOUT;
             this.activeTimeout = setTimeout(() => {
                 this._dismissOrMinimize(notification);
-            }, DEFAULT_AUTO_DISMISS_TIMEOUT);
+            }, autoDismissTimeout);
         } else {
             delete this.activeTimeout;
         }

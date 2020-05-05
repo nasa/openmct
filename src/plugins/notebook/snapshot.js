@@ -64,6 +64,7 @@ export default class Snapshot {
 
     _showNotification(msg, url) {
         const options = {
+            autoDismissTimeout: 30000,
             link : {
                 callback: this._navigateToNotebook(url),
                 cssClass: '',
