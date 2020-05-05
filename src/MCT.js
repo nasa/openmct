@@ -252,6 +252,7 @@ define([
         // Plugins that are installed by default
 
         this.install(this.plugins.Plot());
+        this.install(this.plugins.PlotlyPlot());
         this.install(this.plugins.TelemetryTable());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
