@@ -2,7 +2,9 @@
   "name": "openmct",
   "version": "1.0.0-snapshot",
   "description": "The Open MCT core platform",
-  "dependencies": {},
+  "dependencies": {
+    "plotly.js-dist": "^1.54.1"
+  },
   "devDependencies": {
     "angular": "1.7.9",
     "angular-route": "1.4.14",
