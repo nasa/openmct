@@ -23,9 +23,12 @@
     }
 
     &:not(.c-so-view--no-frame) {
-        background: $colorBodyBg;
         border: $browseFrameBorder;
         padding: $interiorMargin;
+
+        .is-editing & {
+            background: rgba($colorBodyBg, 0.8);
+        }
     }
 
     &--no-frame {
