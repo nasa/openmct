@@ -117,8 +117,8 @@ export default class ConditionManager extends EventEmitter {
 
     updateCondition(conditionConfiguration, index) {
         let condition = this.conditions[index];
-        condition.update(conditionConfiguration);
         this.conditionSetDomainObject.configuration.conditionCollection[index] = conditionConfiguration;
+        condition.update(conditionConfiguration);
         this.persistConditions();
     }
 

@@ -177,7 +177,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                         metadataValue = metadataObj.name;
                     }
                     if(metadataObj.enumerations && inputValue.length) {
-                        if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                        if (metadataObj.enumerations[inputValue[0]] !== undefined && metadataObj.enumerations[inputValue[0]].string) {
                             inputValue = [metadataObj.enumerations[inputValue[0]].string];
                         }
                     }

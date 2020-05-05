@@ -35,7 +35,7 @@
     <span class="c-style__condition-desc__text"
           v-else
     >
-        When all else fails
+        When no other condition is matched
     </span>
 </div>
 </template>
@@ -59,27 +59,9 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            description: ''
-        }
-    },
-    watch: {
-        condition: {
-            handler(val) {
-                this.getConditionDescription();
-            },
-            deep: true
-        }
-    },
-    mounted() {
-        this.getConditionDescription();
-    },
-    methods: {
-        getConditionDescription() {
-            if (this.condition) {
-                this.description = this.condition.summary;
-            }
+    computed: {
+        description() {
+            return this.condition ? this.condition.summary : '';
         }
     }
 }

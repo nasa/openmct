@@ -49,8 +49,8 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     initialize() {
-        this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
         this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
+        this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
     }
 
     isValid() {
@@ -169,7 +169,7 @@ export default class TelemetryCriterion extends EventEmitter {
                         metadataValue = metadataObj.name;
                     }
                     if(metadataObj.enumerations && inputValue.length) {
-                        if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
+                        if (metadataObj.enumerations[inputValue[0]] !== undefined && metadataObj.enumerations[inputValue[0]].string) {
                             inputValue = [metadataObj.enumerations[inputValue[0]].string];
                         }
                     }
