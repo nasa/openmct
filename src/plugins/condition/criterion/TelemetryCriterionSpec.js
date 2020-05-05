@@ -83,7 +83,7 @@ describe("The telemetry criterion", function () {
             operation: 'textContains',
             metadata: 'value',
             input: ['Hell'],
-            telemetryObject: testTelemetryObject
+            telemetryObjects: {[testTelemetryObject.identifier.key]: testTelemetryObject}
         };
 
         mockListener = jasmine.createSpy('listener');
