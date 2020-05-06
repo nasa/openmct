@@ -26,7 +26,7 @@ import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
-import {TRIGGER} from "@/plugins/condition/utils/constants";
+import {TRIGGER_CONJUNCTION, TRIGGER_LABEL} from "./utils/constants";
 
 /*
 * conditionConfiguration = {
@@ -213,26 +213,19 @@ export default class Condition extends EventEmitter {
         let description = '';
         this.criteria.forEach((criterion, index) => {
             if (!index) {
-                description = 'When';
+                description = `Match if ${triggerDescription.prefix}`;
             }
-            description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription : ''}`;
+            description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
         });
         this.description = description;
         this.conditionManager.updateConditionDescription(this);
     }
 
     getTriggerDescription() {
-        let description = '';
-        switch(this.trigger) {
-        case TRIGGER.ANY:
-        case TRIGGER.XOR:
-            description = 'or';
-            break;
-        case TRIGGER.ALL:
-        case TRIGGER.NOT: description = 'and';
-            break;
-        }
-        return description;
+        return {
+            conjunction: TRIGGER_CONJUNCTION[this.trigger],
+            prefix: `${TRIGGER_LABEL[this.trigger]}: `
+        };
     }
 
     requestLADConditionResult() {

@@ -35,7 +35,7 @@
     <span class="c-style__condition-desc__text"
           v-else
     >
-        When no other condition is matched
+        Match if no other condition is matched
     </span>
 </div>
 </template>

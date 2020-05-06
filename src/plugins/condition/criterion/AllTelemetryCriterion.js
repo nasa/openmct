@@ -161,7 +161,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     }
 
     getDescription() {
-        const telemetryDescription = this.telemetry === 'all' ? 'All telemetry' : 'Any telemetry';
+        const telemetryDescription = this.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
         let metadataValue = this.metadata;
         let inputValue = this.input;
         if (this.metadata) {

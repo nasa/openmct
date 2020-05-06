@@ -108,6 +108,7 @@
 <script>
 import { OPERATIONS } from '../utils/operations';
 import { INPUT_TYPES } from '../utils/operations';
+import {TRIGGER_CONJUNCTION} from "../utils/constants";
 
 export default {
     inject: ['openmct'],
@@ -143,8 +144,8 @@ export default {
     },
     computed: {
         setRowLabel: function () {
-            let operator = this.trigger === 'all' ? 'and ': 'or ';
-            return (this.index !== 0 ? operator : '') + 'when';
+            let operator = TRIGGER_CONJUNCTION[this.trigger];
+            return (this.index !== 0 ? operator : '') + ' when';
         },
         filteredOps: function () {
             return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);

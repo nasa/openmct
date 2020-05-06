@@ -250,7 +250,7 @@ export default {
             keys.forEach((trigger) => {
                 triggerOptions.push({
                     value: TRIGGER[trigger],
-                    label: TRIGGER_LABEL[TRIGGER[trigger]]
+                    label: `when ${TRIGGER_LABEL[TRIGGER[trigger]]}`
                 });
             });
             return triggerOptions;
