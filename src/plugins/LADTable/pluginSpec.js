@@ -23,7 +23,6 @@ import LadPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct
-    // createMouseEvent
 } from 'testTools';
 
 let openmct,
@@ -32,10 +31,10 @@ let openmct,
     child;
 
 let selectors = {}
-selectors.ladTableClass = 'c-table.c-lad-table';
-selectors.ladTableRow = selectors.ladTableClass + ' tr';
+selectors.ladTableClass = '.c-table.c-lad-table';
+selectors.ladTableRow = selectors.ladTableClass + ' tbody tr';
 
-fdescribe("The LAD Table", () => {
+describe("The LAD Table", () => {
 
     const ladTableKey = 'LadTable',
         mockTelemetry = [
@@ -54,7 +53,7 @@ fdescribe("The LAD Table", () => {
             ladTable: {
                 identifier: { namespace: "", key: "lad-object"},
                 type: ladTableKey,
-                composition: []
+                composition: [{ namespace: "", key: "telemetry-object"}]
             },
             telemetry: {
                 identifier: { namespace: "", key: "telemetry-object"},
@@ -62,23 +61,28 @@ fdescribe("The LAD Table", () => {
                 name: "Test Telemetry Object",
                 telemetry: {
                     values: [{
-                        key: "some-key",
-                        utc: 0,
-                        name: "Some attribute",
+                        key: "utc",
+                        format: "utc",
                         hints: {
                             domain: 1
                         }
                     }, {
-                        key: "some-other-key",
-                        utc: 1,
-                        name: "Some other attribute",
+                        key: "some-key",
+                        name: "Some attribute",
                         hints: {
                             range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Some other attribute",
+                        hints: {
+                            range: 2
                         }
                     }]
                 }
             }
         };
+    let getObjectPromise;
 
     // this setups up the app
     beforeEach((done) => {
@@ -92,11 +96,16 @@ fdescribe("The LAD Table", () => {
         child = document.createElement('div');
         parent.appendChild(child);
 
+        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+
         ladPlugin = new LadPlugin();
         openmct.install(ladPlugin);
 
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
         spyOn(openmct.objects, 'mutate').and.returnValue(true);
+
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(mockObj.telemetry));
+
+        openmct.time.bounds({start: 0, end: 3});
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -136,28 +145,30 @@ fdescribe("The LAD Table", () => {
     describe("table view", () => {
         let applicableViews,
             ladTableViewProvider,
-            ladTableView,
-            ladTableCompositionCollection;
+            ladTableView
 
         beforeEach(() => {
-            let telemetryRequestPromise = Promise.resolve(mockTelemetry);
-            openmct.telemetry.request.and.returnValue(telemetryRequestPromise);
+            let telemetryRequestResolve;
+            let telemetryRequestPromise = new Promise((resolve) => {
+                telemetryRequestResolve = resolve;
+            })
+            openmct.telemetry.request.and.callFake(() => {
+                telemetryRequestResolve(mockTelemetry);
+                return telemetryRequestPromise;
+            });
 
             applicableViews = openmct.objectViews.get(mockObj.ladTable);
             ladTableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
             ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
             ladTableView.show(child, true);
 
-            ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
-            ladTableCompositionCollection.load();
-            ladTableCompositionCollection.add(mockObj.telemetry);
-
-            return telemetryRequestPromise.then(() => Vue.nextTick());
+            return telemetryRequestPromise
+                .then(() => Vue.nextTick());
         });
 
-        it("should show one row per oject in the composition", () => {
-            console.log(parent.querySelectorAll(selectors.latTableClass), parent.querySelectorAll(selectors.ladTableRow))
-            expect(true).toBe(false);
+        fit("should show one row per oject in the composition", () => {
+            const rowCount = parent.querySelectorAll(selectors.ladTableRow).length;
+            expect(rowCount).toBe(1);
         });
 
         it("when an item is removed, it should no longer be in the table", () => {
