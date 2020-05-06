@@ -27,7 +27,7 @@
                 {'is-current': isCurrent(tab)},
                 tab.type.definition.cssClass
             ]"
-            @click="showTab(tab)"
+            @click="showTab(tab, index)"
         >
             <span class="c-button__label">{{ tab.domainObject.name }}</span>
         </button>
@@ -87,7 +87,13 @@ export default {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
-            this.composition.load();
+            this.composition.load().then(() => {
+                let currentTabIndex = this.domainObject.currentTabIndex;
+
+                if (currentTabIndex !== undefined && this.tabsList.length > currentTabIndex) {
+                    this.currentTab = this.tabsList[currentTabIndex];
+                }
+            });
         }
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
@@ -106,7 +112,11 @@ export default {
         document.removeEventListener('dragend', this.dragend);
     },
     methods:{
-        showTab(tab) {
+        showTab(tab, index) {
+            if (index !== undefined) {
+                this.storeCurrentTabIndex(index);
+            }
+
             this.currentTab = tab;
         },
         addItem(domainObject) {
@@ -132,7 +142,7 @@ export default {
             this.tabsList.splice(pos, 1);
 
             if (this.isCurrent(tabToBeRemoved)) {
-                this.showTab(this.tabsList[this.tabsList.length - 1]);
+                this.showTab(this.tabsList[this.tabsList.length - 1], this.tabsList.length - 1);
             }
         },
         onReorder(reorderPlan) {
@@ -144,6 +154,7 @@ export default {
         },
         onDrop(e) {
             this.setCurrentTab = true;
+            this.storeCurrentTabIndex(this.tabsList.length);
         },
         dragstart(e) {
             if (e.dataTransfer.types.includes('openmct/domain-object-path')) {
@@ -165,6 +176,9 @@ export default {
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
+        },
+        storeCurrentTabIndex(index) {
+            this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         }
     }
 }
