@@ -166,7 +166,7 @@ describe("The LAD Table", () => {
                 .then(() => Vue.nextTick());
         });
 
-        fit("should show one row per oject in the composition", () => {
+        it("should show one row per oject in the composition", () => {
             const rowCount = parent.querySelectorAll(selectors.ladTableRow).length;
             expect(rowCount).toBe(1);
         });
@@ -202,7 +202,7 @@ describe("The LAD Table", () => {
         expect(true).toBe(false);
         pending();
     });
-    
+
 });
 
 
