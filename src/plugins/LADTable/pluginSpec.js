@@ -22,7 +22,10 @@
 import LadPlugin from './plugin.js';
 import Vue from 'vue';
 import {
-    createOpenMct
+    createOpenMct,
+    getMockObjects,
+    getMockTelemetry
+    // createMouseEvent
 } from 'testTools';
 
 let openmct,
@@ -30,59 +33,20 @@ let openmct,
     parent,
     child;
 
-let selectors = {}
+let selectors = {};
 selectors.ladTableClass = '.c-table.c-lad-table';
 selectors.ladTableRow = selectors.ladTableClass + ' tbody tr';
 
-describe("The LAD Table", () => {
+fdescribe("The LAD Table", () => {
 
     const ladTableKey = 'LadTable',
-        mockTelemetry = [
-            {
-                'utc': 1,
-                'some-key': 'some-value 1',
-                'some-other-key' : 'some-other-value 1'
-            },
-            {
-                'utc': 2,
-                'some-key': 'some-value 2',
-                'some-other-key' : 'some-other-value 2'
-            }
-        ],
-        mockObj = {
-            ladTable: {
-                identifier: { namespace: "", key: "lad-object"},
-                type: ladTableKey,
-                composition: [{ namespace: "", key: "telemetry-object"}]
-            },
-            telemetry: {
-                identifier: { namespace: "", key: "telemetry-object"},
-                type: "test-telemetry-object",
-                name: "Test Telemetry Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Some other attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            }
-        };
-    let getObjectPromise;
+        mockTelemetry = getMockTelemetry(),
+        mockObj = getMockObjects({
+            objectKeyStrings: ['ladTable', 'telemetry']
+        });
+
+    // add telemetry object as composition in lad table
+    mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
 
     // this setups up the app
     beforeEach((done) => {
@@ -206,9 +170,39 @@ describe("The LAD Table", () => {
 });
 
 
-describe("The LAD Table Set", () => {
-    it("lad table tests", () => {
-        expect(true).toBe(false);
-        pending();
+fdescribe("The LAD Table Set", () => {
+    const ladTableSetKey = 'LadTableSet',
+        // ladTableKey = 'LadTable',
+        mockObj = getMockObjects({
+            objectKeyStrings: ['ladTable', 'ladTableSet']
+        });
+
+    beforeEach((done) => {
+        const appHolder = document.createElement('div');
+        appHolder.style.width = '640px';
+        appHolder.style.height = '480px';
+
+        openmct = createOpenMct();
+
+        parent = document.createElement('div');
+        child = document.createElement('div');
+        parent.appendChild(child);
+
+        ladPlugin = new LadPlugin();
+        openmct.install(ladPlugin);
+
+        openmct.on('start', done);
+        openmct.start(appHolder);
     });
+
+    it("should provide a lad table set view only for lad table set objects", () => {
+        let applicableViews = openmct.objectViews.get(mockObj.ladTableSet),
+            ladTableSetView = applicableViews.find(
+                (viewProvider) => viewProvider.key === ladTableSetKey
+            );
+
+        expect(applicableViews.length).toEqual(1);
+        expect(ladTableSetView).toBeDefined();
+    });
+
 });
