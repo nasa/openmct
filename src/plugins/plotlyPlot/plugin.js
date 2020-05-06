@@ -1,17 +1,15 @@
-// import PlotlyTelemetryProvider from './PlotlyTelemetryProvider.js';
-import PlotlyPlotViewProvider from './PlotlyPlotViewProvider.js';
+import PlotlyViewProvider from './PlotlyViewProvider.js';
 
-export default function plugin() {
+export default function () {
     return function install(openmct) {
-//        openmct.telemetry.addProvider(new PlotlyTelemetryProvider(openmct, config));
-        openmct.objectViews.addProvider(new PlotlyPlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new PlotlyViewProvider(openmct));
 
         openmct.types.addType('plotlyPlot', {
             name: "Plotly Plot",
             description: "Simple plot rendered by plotly.js",
             creatable: true,
             cssClass: 'icon-plot-overlay',
-            initialize(domainObject) {
+            initialize: function (domainObject) {
                 domainObject.composition = [];
             }
         });
