@@ -66,17 +66,23 @@ export default {
         addTelemetry(telemetryObject) {
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
-                    this.createPlot(telemetryData);
+                    this.createPlot(telemetryData, telemetryObject);
                 }, () => {console.log(error)});
         },
-        createPlot(telemetryData) {
+        formatDatumX(datum) {
+            let timestamp = moment.utc(datum.utc).format('YYYY-MM-DD hh:mm:ss.ms');
+            return timestamp;
+        },
+        formatDatumY(datum) {
+            return datum.sin;
+        },
+        createPlot(telemetryData, telemetryObject) {
             let x = [],
                 y = [];
 
             telemetryData.forEach((datum, index) => {
-                let timestamp = moment.utc(datum.utc).format('YYYY-MM-DD hh:mm:ss.ms');
-                x.push(timestamp);
-                y.push(datum.sin);
+                x.push(this.formatDatumX(datum));
+                y.push(this.formatDatumY(datum));
             })
             
             let data = [{
@@ -92,25 +98,42 @@ export default {
                 data,
                 this.getLayout()
             )
+
+            this.subscribe(telemetryObject);
         },
         subscribe(domainObject) {
-            this.date = ''
-            this.openmct.objects.get(this.keystring)
-                .then((object) => {
-                    const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-                    console.log('metadata', metadata);
-                    // this.timeKey = this.openmct.time.timeSystem().key;
-                    // this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
-                    // // this.imageFormat = this.openmct.telemetry.getValueFormatter(metadata.valuesForHints(['image'])[0]);
-                    // this.unsubscribe = this.openmct.telemetry
-                    //     .subscribe(this.domainObject, (datum) => {
-                    //         this.updateHistory(datum);
-                    //         this.updateValues(datum);
-                    //     });
+            // this.date = ''
+            // this.openmct.objects.get(this.keystring)
+            //     .then((object) => {
+            //         const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+            //         console.log('metadata', metadata);
+            //         // this.timeKey = this.openmct.time.timeSystem().key;
+            //         // this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
+            //         // // this.imageFormat = this.openmct.telemetry.getValueFormatter(metadata.valuesForHints(['image'])[0]);
+            //         // this.unsubscribe = this.openmct.telemetry
+            //         //     .subscribe(this.domainObject, (datum) => {
+            //         //         this.updateHistory(datum);
+            //         //         this.updateValues(datum);
+            //         //     });
 
-                    // this.requestHistory(this.openmct.time.bounds());
-                });
+            //         // this.requestHistory(this.openmct.time.bounds());
+            //     });
+
+            this.openmct.telemetry.subscribe(domainObject, (datum) => {
+                this.updateData(datum)
+            })
         },
+        updateData(datum) {
+            // Plotly.extendTraces(
+            //     this.plotElement,
+            //     {
+            //         x: [this.formatDatumX(datum)],
+            //         y: [this.formatDatumY(datum)]
+            //     },
+            //     [0]
+            // );
+            console.log(datum);
+        }
     }
 }
 </script>
