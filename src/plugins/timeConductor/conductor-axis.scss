@@ -9,12 +9,6 @@
     border-radius: $controlCr;
     height: $h;
 
-    .c-conductor__zooming {
-        position: absolute;
-        background-color: blue;
-        height: $h;
-    }
-
     svg {
         text-rendering: geometricPrecision;
         width: 100%;

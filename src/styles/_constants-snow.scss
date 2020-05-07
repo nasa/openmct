@@ -132,7 +132,7 @@ $colorPausedFg: #fff;
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: pushBack($colorKey, 50%);
-$colorKeySubtle: pushBack($colorKey, 10%);
+$colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
 $colorTime: #618cff;
@@ -142,6 +142,9 @@ $colorTimeHov: pushBack($colorTime, 5%);
 $colorTimeSubtle: pushBack($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$timeConductorAxisHoverFilter: brightness(0.8);
+$timeConductorActiveBg: $colorKey;
+$timeConductorActivePanBg: #A0CDE1;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
