@@ -11,7 +11,8 @@ export default {
     data: function () {
 
         return {
-            telemetryObjects: []
+            telemetryObjects: [],
+            points: 0
         }
     },
     mounted() {
@@ -58,6 +59,7 @@ export default {
         addTelemetry(telemetryObject) {
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
+                    this.points = telemetryData.length;
                     this.createPlot(telemetryData, telemetryObject);
                 }, () => {console.log(error)});
         },
@@ -80,7 +82,8 @@ export default {
             let data = [{
                 x,
                 y,
-                mode: 'line'
+                type: 'scattergl',
+                mode: 'lines+markers'
             }];
 
             Plotly.newPlot(
@@ -104,7 +107,8 @@ export default {
                     x: [[this.formatDatumX(datum)]],
                     y: [[this.formatDatumY(datum)]]
                 },
-                [0]
+                [0],
+                this.points
             );
         }
     }
