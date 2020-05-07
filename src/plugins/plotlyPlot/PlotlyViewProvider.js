@@ -24,41 +24,41 @@ import PlotlyViewLayout from './components/PlotlyViewLayout.vue';
 import Vue from 'vue';
 
 export default function PlotlyViewProvider(openmct) {
-    const hasTelemetry = function (domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        console.log('metadata', metadata);
-        return metadata.valuesForHints(['plot']).length > 0;
-    };
-
     return {
         key: 'plotlyPlot',
         name: 'Plotly Plot',
         cssClass: 'icon-plot-overlay',
         canView: function (domainObject) {
-            console.log('domainObject', domainObject);
-            return hasTelemetry(domainObject);
-            // return true;
+            return domainObject.type === 'plotlyPlot';
         },
-        view: function (domainObject) {
+        canEdit: function (domainObject) {
+            return domainObject.type === 'plotlyPlot';
+        },
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
-                show: function (element) {
+                show: function (element, isEditing) {
                     component =  new Vue({
+                        provide: {
+                            openmct,
+                            domainObject,
+                            objectPath
+                        },
                         el: element,
                         components: {
                             PlotlyViewLayout
                         },
-                        provide: {
-                            openmct,
-                            domainObject
+                        data() {
+                            return {
+                                isEditing
+                            }
                         },
-                        template: '<plotly-view-layout ref="ImageryLayout"></plotly-view-layout>'
+                        template: '<plotly-view-layout :isEditing="isEditing"></plotly-view-layout>'
                     });
+                },
+                onEditModeChange: function (isEditing) {
+                    component.isEditing = isEditing;
                 },
                 destroy: function (element) {
                     component.$destroy();
