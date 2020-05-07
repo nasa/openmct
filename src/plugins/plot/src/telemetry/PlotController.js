@@ -227,8 +227,9 @@ define([
     };
 
     PlotController.prototype.stopLoading = function () {
-        this.$scope.pending -= 1;
-        this.$scope.$digest();
+        this.$scope.$evalAsync(() => {
+            this.$scope.pending -= 1;
+        });
     };
 
     /**
