@@ -116,12 +116,25 @@ export const getMockObjects = (opts = {}) => {
         requestedMocks.telemetry.telemetry.values = values;
     }
 
+    // overwrite any field keys
+    if(opts.overwrite) {
+        for(let mock in requestedMocks) {
+            if(opts.overwrite[mock]) {
+                for(let key in opts.overwrite[mock]) {
+                    if (Object.prototype.hasOwnProperty.call(opts.overwrite[mock], key)) {
+                        requestedMocks[mock][key] = opts.overwrite[mock][key];
+                    }
+                }
+            }
+        }
+    }
+
     return requestedMocks;
 }
 
 // EXAMPLE:
 // getMockTelemetry({
-//     name: 'Jamie Telemetry',
+//     name: 'My Telemetry',
 //     keys: ['test','other','yeah','sup'],
 //     count: 8,
 //     format: 'local'
