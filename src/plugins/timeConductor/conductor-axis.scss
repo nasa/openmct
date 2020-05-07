@@ -54,22 +54,6 @@
             stroke: $colorBodyBgSubtle;
             transition: $transOut;
         }
-
-        &:hover,
-        &:active {
-            $c: $colorKeySubtle;
-            background-color: $c;
-            transition: $transIn;
-            svg text {
-                stroke: $c;
-                transition: $transIn;
-            }
-        }
-
-        .alt-pressed {
-            @include cursorGrab();
-            background-color: blue;
-        }
     }
 
     .is-realtime-mode & {
