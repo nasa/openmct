@@ -22,16 +22,12 @@
 <template>
 <div
     class="c-conductor"
-<<<<<<< HEAD
-    :class="[isFixed ? 'is-fixed-mode' : 'is-realtime-mode']"
-=======
     :class="[
         { 'is-zooming': isZooming },
         { 'is-panning': isPanning },
         { 'alt-pressed': altPressed },
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
->>>>>>> acc0abc90... move zoom/pan styling up to conductor
 >
     <form
         ref="conductorForm"
