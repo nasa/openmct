@@ -124,15 +124,14 @@ export default {
             })
         },
         updateData(datum) {
-            // Plotly.extendTraces(
-            //     this.plotElement,
-            //     {
-            //         x: [this.formatDatumX(datum)],
-            //         y: [this.formatDatumY(datum)]
-            //     },
-            //     [0]
-            // );
-            console.log(datum);
+            Plotly.extendTraces(
+                this.plotElement,
+                {
+                    x: [[this.formatDatumX(datum)]],
+                    y: [[this.formatDatumY(datum)]]
+                },
+                [0]
+            );
         }
     }
 }
