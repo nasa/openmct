@@ -4,6 +4,7 @@
 
 <script>
 import Plotly from 'plotly.js-dist';
+import moment from 'moment'
 
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
@@ -15,21 +16,22 @@ export default {
         }
     },
     mounted() {
-        // this.composition = this.openmct.composition.get(this.domainObject);
-        // this.composition.on('add', this.addTelemetry);
-        // this.composition.load();
-        // this.addTelemetryObject(this.domainObject);
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.composition.on('add', this.addTelemetry);
+        this.composition.load();
+
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
 
         console.log('this.metadata', this.metadata);
 
         // this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         // this.subscribe(this.domainObject);
-        let plot = document.querySelector('.l-view-section');
-        Plotly.newPlot(plot, [{
-            x: [1, 2, 3, 4, 5],
-            y: [1, 2, 4, 8, 16]
-        }], this.getLayout(), {displayModeBar: false});
+        this.plotElement = document.querySelector('.l-view-section');
+        // Plotly.newPlot(this.plotElement, [{
+        //     x: [1, 2, 3, 4, 5],
+        //     y: [1, 2, 4, 8, 16]
+        // }], this.getLayout(), {displayModeBar: false});
+
     },
     methods: {
         getLayout() {
@@ -45,13 +47,11 @@ export default {
                 },
                 xaxis: {
                     // title: this.plotAxisTitle.xAxisTitle,
-                    zeroline: false,
-                    hoverformat: ".2r"
+                    zeroline: false
                 },
                 yaxis: {
                     // title: this.plotAxisTitle.yAxisTitle,
-                    zeroline: false,
-                    hoverformat: ".2r"
+                    zeroline: false
                 },
                 margin: {
                     l: 20,
@@ -63,11 +63,35 @@ export default {
                 plot_bgcolor: 'transparent'
             }
         },
-        addTelemetryObject(telemetryObject) {
+        addTelemetry(telemetryObject) {
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
-                    console.log('telemetryData', telemetryData);
-                });
+                    this.createPlot(telemetryData);
+                }, () => {console.log(error)});
+        },
+        createPlot(telemetryData) {
+            let x = [],
+                y = [];
+
+            telemetryData.forEach((datum, index) => {
+                let timestamp = moment.utc(datum.utc).format('YYYY-MM-DD hh:mm:ss.ms');
+                x.push(timestamp);
+                y.push(datum.sin);
+            })
+            
+            let data = [{
+                x,
+                y,
+                mode: 'line'
+            }];
+            var layout = {
+                title:'Line and Scatter Plot'
+            };
+            Plotly.newPlot(
+                this.plotElement,
+                data,
+                this.getLayout()
+            )
         },
         subscribe(domainObject) {
             this.date = ''
