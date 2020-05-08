@@ -162,8 +162,6 @@ export default {
                 end: this.bounds.end
             };
 
-            // when choosing an existing entry, remove it and add it back as latest entry
-            // const isNotEqual = (entry) => entry.start !== this.start || entry.end !== this.end;
             const isNotEqual = function (entry) {
                 const start = entry.start !== this.start;
                 const end = entry.end !== this.end;
