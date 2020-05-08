@@ -185,19 +185,15 @@ export default {
             }
         },
         drag($event) {
-            if (this.dragging) {
-                console.log('Rejected drag due to RAF cap');
-                return;
+            if (!this.dragging) {
+                this.dragging = true;
+
+                requestAnimationFrame(() => {
+                    this.dragX = $event.clientX;
+                    this.inPanMode ? this.pan() : this.zoom();
+                    this.dragging = false;
+                });
             }
-
-            this.dragging = true;
-
-            requestAnimationFrame(() => {
-                this.dragX = $event.clientX;
-                this.inPanMode ? this.pan() : this.zoom();
-            });
-
-            this.dragging = false;
         },
         dragEnd() {
             this.inPanMode ? this.endPan() : this.endZoom();
