@@ -24,7 +24,7 @@
 <template>
 <tr @contextmenu.prevent="showContextMenu">
     <td>{{ name }}</td>
-    <td>{{ timestamp }}</td>
+    <td>{{ formattedTimestamp }}</td>
     <td :class="valueClass">
         {{ value }}
     </td>
@@ -56,6 +56,11 @@ export default {
             value: '---',
             valueClass: '',
             currentObjectPath
+        }
+    },
+    computed: {
+        formattedTimestamp() {
+            return this.timestamp !== '---' ? this.formats[this.timestampKey].format(this.timestamp) : this.timestamp;
         }
     },
     mounted() {
@@ -102,30 +107,31 @@ export default {
     methods: {
         updateValues(datum) {
             let newTimestamp = this.formats[this.timestampKey].parse(datum),
-                update = false, limit;
+                shouldUpdate = false,
+                limit;
 
             if(this.inBounds(newTimestamp)) {
 
                 // if timestamp is set, need tocheck, else update
                 if(this.timestamp !== '---') {
-                    let existingTimestamp = this.formats[this.timestampKey].parse(this.timestamp);
+                    let existingTimestamp = this.formattedTimestamp;
 
                     // if existing is in bounds, need to check, if not update
                     if(this.inBounds(existingTimestamp)) {
 
                         // race condition check
                         if(newTimestamp >= existingTimestamp) {
-                            update = true;
+                            shouldUpdate = true;
                         }
                     } else {
-                        update = true;
+                        shouldUpdate = true;
                     }
                 } else {
-                    update = true;
+                    shouldUpdate = true;
                 }
 
-                if(update) {
-                    this.timestamp = this.formats[this.timestampKey].format(datum);
+                if(shouldUpdate) {
+                    this.timestamp = this.formats[this.timestampKey].parse(datum);
                     this.value = this.formats[this.valueKey].format(datum);
                     limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
 
