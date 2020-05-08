@@ -209,12 +209,10 @@ export default {
             this.openmct.telemetry
                 .request(this.domainObject, bounds)
                 .then((values = []) => {
-                    if (this.requestCount > requestId) {
-                        return 'Stale request';
+                    if (this.requestCount === requestId) {
+                        values.forEach(this.updateHistory, false);
+                        this.updateValues(values[values.length - 1]);
                     }
-
-                    values.forEach(this.updateHistory, false);
-                    this.updateValues(values[values.length - 1]);
                 });
         },
         timeSystemChange(system) {
