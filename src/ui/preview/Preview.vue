@@ -104,7 +104,7 @@ export default {
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this), true);
+                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this));
             } else {
                 this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
             }
@@ -124,7 +124,7 @@ export default {
             }
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
-                let firstChild = this.viewContainer.querySelector(':first-child');
+                let firstChild = this.$refs.objectView.querySelector(':first-child');
                 if (firstChild) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
                         if (firstChild.style[key]) {
