@@ -24,6 +24,7 @@ export default class LADTableCompositionPolicy {
 
     constructor(openmct) {
         this.openmct = openmct;
+        return this.allow.bind(this);
     }
 
     allow(parent, child) {
