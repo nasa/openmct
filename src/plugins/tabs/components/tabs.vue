@@ -58,7 +58,6 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import _ from 'lodash';
 
 var unknownObjectType = {
     definition: {
@@ -123,7 +122,8 @@ export default {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
                 tabItem = {
                     domainObject,
-                    type: type
+                    type: type,
+                    key: this.openmct.objects.makeKeyString(domainObject.identifier)
                 };
 
             this.tabsList.push(tabItem);
@@ -172,7 +172,7 @@ export default {
             this.allowDrop = false;
         },
         isCurrent(tab) {
-            return _.isEqual(this.currentTab, tab)
+            return this.currentTab.key === tab.key;
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
