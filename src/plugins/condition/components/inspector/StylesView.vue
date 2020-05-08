@@ -480,7 +480,7 @@ export default {
             }
         },
         removeConditionalStyles(domainObjectStyles, itemId) {
-            if (itemId) {
+            if (itemId && domainObjectStyles[itemId]) {
                 domainObjectStyles[itemId].conditionSetIdentifier = undefined;
                 delete domainObjectStyles[itemId].conditionSetIdentifier;
                 domainObjectStyles[itemId].selectedConditionId = undefined;
@@ -560,7 +560,7 @@ export default {
                         if (_.isEmpty(itemStaticStyle)) {
                             itemStaticStyle = undefined;
                         }
-                        domainObjectStyles[item.id].staticStyle = { style: itemStaticStyle };
+                        domainObjectStyles[item.id] = { staticStyle: { style: itemStaticStyle } };
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
                             let style = {};
