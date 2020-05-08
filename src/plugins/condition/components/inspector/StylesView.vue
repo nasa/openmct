@@ -543,7 +543,6 @@ export default {
             }
             let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
 
-            //this if causes the layout objects to not style
             if (items) {
                 items.forEach(item => {
                     let itemStaticStyle = {};
