@@ -34,7 +34,7 @@ export default function PlotlyViewProvider(openmct) {
         canEdit: function (domainObject) {
             return domainObject.type === 'plotlyPlot';
         },
-        view: function (domainObject, objectPath) {
+        view: function (domainObject) {
             let component;
 
             return {
@@ -42,8 +42,7 @@ export default function PlotlyViewProvider(openmct) {
                     component =  new Vue({
                         provide: {
                             openmct,
-                            domainObject,
-                            objectPath
+                            domainObject
                         },
                         el: element,
                         components: {

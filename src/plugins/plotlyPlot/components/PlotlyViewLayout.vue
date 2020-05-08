@@ -7,12 +7,12 @@ import Plotly from 'plotly.js-dist';
 import moment from 'moment';
 
 export default {
-    inject: ['openmct', 'domainObject', 'objectPath'],
+    inject: ['openmct', 'domainObject'],
     data: function () {
-
         return {
             telemetryObjects: [],
-            points: 0
+            points: 0,
+            yAxisProp: ''
         }
     },
     mounted() {
@@ -20,12 +20,12 @@ export default {
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
+        this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
-
-
     },
     methods: {
-        getLayout() {
+        getLayout(telemetryObject) {
+            this.getYAxisLabel(telemetryObject);
             return {
                 hovermode: 'compare',
                 hoverdistance: -1,
@@ -37,13 +37,11 @@ export default {
                     color: "#666"
                 },
                 xaxis: {
-                    // title: this.plotAxisTitle.xAxisTitle,
                     title: 'UTC',
                     zeroline: false
                 },
                 yaxis: {
-                    // title: this.plotAxisTitle.yAxisTitle,
-                    title: 'Sine',
+                    title: this.getYAxisLabel(telemetryObject),
                     zeroline: false
                 },
                 margin: {
@@ -56,19 +54,41 @@ export default {
                 plot_bgcolor: 'transparent'
             }
         },
-        addTelemetryObject(telemetryObject) {
+        getYAxisLabel(telemetryObject) {
+            this.setYAxisProp(telemetryObject);
+            const valueMetadatas = this.openmct.telemetry.getMetadata(telemetryObject).values();
+            const index = valueMetadatas.findIndex(value => value.key === this.yAxisProp);
+            const yLabel = valueMetadatas[index].name;
+
+            return yLabel;
+        },
+        setYAxisProp(telemetryObject) {
+            if (telemetryObject.type === 'generator') {
+                this.yAxisProp = 'sin';
+            } else if (telemetryObject.type === 'example.state-generator') {
+                this.yAxisProp = 'state';
+            } else if (telemetryObject.type === 'conditionSet') {
+                this.yAxisProp = 'output';
+            }
+
+        },
+        addTelemetry(telemetryObject) {
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
                     this.points = telemetryData.length;
                     this.createPlot(telemetryData, telemetryObject);
                 });
         },
+        removeTelemetry(identifier) {
+            const id = this.openmct.objects.makeKeyString(identifier);
+            delete this.telemetryObjects[id];
+        },
         formatDatumX(datum) {
             let timestamp = moment.utc(datum.utc).format('YYYY-MM-DDTHH:mm:ss[Z]');
             return timestamp;
         },
         formatDatumY(datum) {
-            return datum.sin;
+            return datum[this.yAxisProp ? this.yAxisProp : 'value'];
         },
         createPlot(telemetryData, telemetryObject) {
             let x = [],
@@ -83,13 +103,16 @@ export default {
                 x,
                 y,
                 type: 'scattergl',
-                mode: 'lines+markers'
+                mode: 'lines+markers',
+                line: {
+                    shape: 'linear'
+                }
             }];
 
             Plotly.newPlot(
                 this.plotElement,
                 data,
-                this.getLayout(),
+                this.getLayout(telemetryObject),
                 { displayModeBar: false }
             )
 
