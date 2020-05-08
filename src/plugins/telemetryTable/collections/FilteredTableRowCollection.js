@@ -45,12 +45,13 @@ define(
             setColumnFilter(columnKey, filter) {
                 filter = filter.trim().toLowerCase();
 
+                let rowsToFilter = this.getRowsToFilter(columnKey, filter);
+
                 if (filter.length === 0) {
                     delete this.columnFilters[columnKey];
                 } else {
                     this.columnFilters[columnKey] = filter;
                 }
-                let rowsToFilter = this.getRowsToFilter(columnKey, filter);
 
                 this.rows = rowsToFilter.filter(this.matchesFilters, this);
                 this.emit('filter');
@@ -81,6 +82,10 @@ define(
              * @private
              */
             isSubsetOfCurrentFilter(columnKey, filter) {
+                if (this.columnFilters[columnKey] instanceof RegExp) {
+                    return false;
+                }
+
                 return this.columnFilters[columnKey] &&
                     filter.startsWith(this.columnFilters[columnKey]) &&
                     // startsWith check will otherwise fail when filter cleared
