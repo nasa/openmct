@@ -232,6 +232,7 @@ export default {
                         itemsWithConditionalStyles += 1;
                     }
                 } else {
+                    this.canHide = true;
                     domainObject = selectionItem[1].context.item;
                     if (item && !layoutItem || this.isItemType('subobject-view', layoutItem)) {
                         subObjects.push(item);
@@ -563,7 +564,7 @@ export default {
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
                             let style = {};
-                            Object.keys(item.applicableStyles).forEach(key => {
+                            Object.keys(item.applicableStyles).concat(['isStyleInvisible']).forEach(key => {
                                 style[key] = conditionalStyle.style[key];
                             });
                             itemConditionalStyle.styles.push({
