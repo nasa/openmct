@@ -20,52 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/LADTable.vue',
-    'vue'
-], function (
-    LadTableComponent,
-    Vue
-) {
-    function LADTableViewProvider(openmct) {
-        return {
-            key: 'LadTable',
-            name: 'LAD Table',
-            cssClass: 'icon-tabular-lad',
-            canView: function (domainObject) {
-                return domainObject.type === 'LadTable';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'LadTable';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
+import LadTableSet from './components/LadTableSet.vue';
+import Vue from 'vue';
 
-                return {
-                    show: function (element) {
-                        component =  new Vue({
-                            el: element,
-                            components: {
-                                LadTableComponent: LadTableComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                objectPath
-                            },
-                            template: '<lad-table-component></lad-table-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
-    return LADTableViewProvider;
-});
+export default function LADTableViewProvider(openmct) {
+    return {
+        key: 'LadTable',
+        name: 'LAD Table',
+        cssClass: 'icon-tabular-lad',
+        canView: function (domainObject) {
+            return domainObject.type === 'LadTable';
+        },
+        canEdit: function (domainObject) {
+            return domainObject.type === 'LadTable';
+        },
+        view: function (domainObject, objectPath) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component =  new Vue({
+                        el: element,
+                        components: {
+                            LadTableComponent: LadTableSet.default
+                        },
+                        provide: {
+                            openmct,
+                            domainObject,
+                            objectPath
+                        },
+                        template: '<lad-table-component></lad-table-component>'
+                    });
+                },
+                destroy: function (element) {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return 1;
+        }
+    };
+}

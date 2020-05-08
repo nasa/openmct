@@ -19,53 +19,46 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import LadTableSet from './components/LadTableSet.vue';
+import Vue from 'vue';
 
-define([
-    './components/LadTableSet.vue',
-    'vue'
-], function (
-    LadTableSet,
-    Vue
-) {
-    function LADTableSetViewProvider(openmct) {
-        return {
-            key: 'LadTableSet',
-            name: 'LAD Table Set',
-            cssClass: 'icon-tabular-lad-set',
-            canView: function (domainObject) {
-                return domainObject.type === 'LadTableSet';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'LadTableSet';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
+export default function LADTableSetViewProvider(openmct) {
+    return {
+        key: 'LadTableSet',
+        name: 'LAD Table Set',
+        cssClass: 'icon-tabular-lad-set',
+        canView: function (domainObject) {
+            return domainObject.type === 'LadTableSet';
+        },
+        canEdit: function (domainObject) {
+            return domainObject.type === 'LadTableSet';
+        },
+        view: function (domainObject, objectPath) {
+            let component;
 
-                return {
-                    show: function (element) {
-                        component =  new Vue({
-                            el: element,
-                            components: {
-                                LadTableSet: LadTableSet.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                objectPath
-                            },
-                            template: '<lad-table-set></lad-table-set>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
-    return LADTableSetViewProvider;
-});
+            return {
+                show: function (element) {
+                    component =  new Vue({
+                        el: element,
+                        components: {
+                            LadTableSet: LadTableSet.default
+                        },
+                        provide: {
+                            openmct,
+                            domainObject,
+                            objectPath
+                        },
+                        template: '<lad-table-set></lad-table-set>'
+                    });
+                },
+                destroy: function (element) {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return 1;
+        }
+    };
+}

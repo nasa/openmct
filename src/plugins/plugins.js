@@ -180,7 +180,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable;
+    plugins.LADTable = LADTable.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
