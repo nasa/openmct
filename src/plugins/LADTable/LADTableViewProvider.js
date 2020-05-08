@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadTable from './components/LadTable.vue';
+import LadTable from './components/LADTable.vue';
 import Vue from 'vue';
 
 export default function LADTableViewProvider(openmct) {
