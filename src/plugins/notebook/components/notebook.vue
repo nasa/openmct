@@ -239,6 +239,7 @@ export default {
             const section = this.getSelectedSection();
 
             return {
+                domainObject: this.internalDomainObject,
                 notebookMeta,
                 section,
                 page
@@ -440,7 +441,7 @@ export default {
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             this.removeDefaultClass(defaultNotebookObject);
-            setDefaultNotebook(notebookStorage);
+            setDefaultNotebook(this.openmct, notebookStorage);
             this.addDefaultClass();
             this.defaultSectionId = notebookStorage.section.id;
             this.defaultPageId = notebookStorage.page.id;
