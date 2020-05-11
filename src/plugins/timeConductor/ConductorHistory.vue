@@ -29,9 +29,7 @@
     <div v-if="open"
          class="c-menu c-conductor__history-menu"
     >
-        <ul
-            v-if="hasHistoryPresets"
-        >
+        <ul v-if="hasHistoryPresets">
             <li
                 v-for="preset in presets"
                 :key="preset.label"
@@ -42,7 +40,12 @@
             </li>
         </ul>
 
-        <div class="c-menu__section-separator c-menu__section-hint">
+        <div
+            v-if="hasHistoryPresets"
+            class="c-menu__section-separator"
+        ></div>
+
+        <div class="c-menu__section-hint">
             Past timeframes, ordered by latest first
         </div>
 
@@ -65,29 +68,6 @@ import toggleMixin from '../../ui/mixins/toggle-mixin';
 
 const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
 const DEFAULT_RECORDS = 10;
-const DEFAULT_UTC_PRESETS = [
-    {
-        label: 'Last Day',
-        bounds: {
-            start: Date.now() - 1000 * 60 * 60 * 24,
-            end: Date.now()
-        }
-    },
-    {
-        label: 'Last 2 hours',
-        bounds: {
-            start: Date.now() - 1000 * 60 * 60 * 2,
-            end: Date.now()
-        }
-    },
-    {
-        label: 'Last hour',
-        bounds: {
-            start: Date.now() - 1000 * 60 * 60,
-            end: Date.now()
-        }
-    }
-];
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -196,9 +176,9 @@ export default {
         },
         loadPresets(configurations) {
             const configuration = configurations.find(option => option.presets);
-            const preset = configuration ? configuration.presets : DEFAULT_UTC_PRESETS;
+            const presets = configuration ? configuration.presets : [];
 
-            return preset;
+            return presets;
         },
         loadRecords(configurations) {
             const configuration = configurations.find(option => option.records);
