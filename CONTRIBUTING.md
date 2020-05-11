@@ -300,4 +300,4 @@ checklist).
 2. Appropriate unit tests included?
 3. Code style and in-line documentation are appropriate?
 4. Commit messages meet standards?
-5. Associated issue has been labelled `unverified`?
+5. Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
