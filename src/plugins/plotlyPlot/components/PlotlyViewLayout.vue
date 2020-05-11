@@ -4,7 +4,9 @@
 
 <script>
 import Plotly from 'plotly.js-dist';
-import moment from 'moment'
+import moment from 'moment';
+import RemoveAction from '../../remove/RemoveAction.js';
+
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -20,8 +22,17 @@ export default {
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
-        this.composition.on('remove', this.removeTelemetry);
+        this.composition.on('remove', this.removeFromComposition);
         this.composition.load();
+
+        this.RemoveAction = new RemoveAction(this.openmct);
+
+        // this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+    },
+    beforeDestroy() {
+        // this.composition.off('remove', this.removeChildObject);
+
+        // this.unobserve();
     },
     methods: {
         getLayout(telemetryObject) {
@@ -79,9 +90,11 @@ export default {
                     this.createPlot(telemetryData, telemetryObject);
                 }, () => {console.log(error)});
         },
-        removeTelemetry(identifier) {
-            const id = this.openmct.objects.makeKeyString(identifier);
-            delete this.telemetryObjects[id];
+        removeFromComposition(identifier) {
+            return this.openmct.objects.get(identifier).then((childDomainObject) => {
+                console.log('childDomainObject', childDomainObject);
+                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
+            });
         },
         formatDatumX(datum) {
             let timestamp = moment.utc(datum.utc).format('YYYY-MM-DDTHH:mm:ss[Z]');
