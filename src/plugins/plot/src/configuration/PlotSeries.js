@@ -322,7 +322,15 @@ define([
          *                  a point to the end without dupe checking.
          */
         add: function (point, appendOnly) {
-            var insertIndex = this.data.length;
+            var insertIndex = this.data.length,
+                currentYVal = this.getYVal(point),
+                lastYVal = this.getYVal(this.data[insertIndex - 1]);
+
+            if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
+                console.warn('[Plot] Invalid Y Values detected');
+                return;
+            }
+
             if (!appendOnly) {
                 insertIndex = this.sortedIndex(point);
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
@@ -332,11 +340,21 @@ define([
                     return;
                 }
             }
+
             this.updateStats(point);
             point.mctLimitState = this.evaluate(point);
             this.data.splice(insertIndex, 0, point);
             this.emit('add', point, insertIndex, this);
         },
+
+        /**
+         * 
+         * @private
+         */
+        isValueInvalid: function (val) {
+            return Number.isNaN(val) || val === undefined;
+        },
+
         /**
          * Remove a point from the data array and notify listeners.
          * @private
