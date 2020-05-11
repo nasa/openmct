@@ -348,7 +348,7 @@ define([
         },
 
         /**
-         * 
+         *
          * @private
          */
         isValueInvalid: function (val) {
