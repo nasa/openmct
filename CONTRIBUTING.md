@@ -292,7 +292,7 @@ checklist).
 2. Unit tests included and/or updated with changes?
 3. Command line build passes?
 4. Changes have been smoke-tested?
-5. Associated issue includes testing instructions?
+5. Testing instructions included?
 
 ### Reviewer Checklist
 
