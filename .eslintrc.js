@@ -66,6 +66,16 @@ module.exports = {
         ],
         "dot-notation": "error",
         "indent": ["error", 4],
+        
+        /*"array-callback-return": "error",
+        "consistent-return": "error",
+        "default-case-last": "error",
+        "default-param-last": "error",
+        "grouped-accessor-pairs": "error",*/
+        "max-classes-per-file": ["error", 1],
+        "noalert": "error",
+
+
         "vue/html-indent": [
             "error",
             4,
