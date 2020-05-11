@@ -88,7 +88,9 @@
                         }
                     ],
                     // maximum entries to retain in conductor history
-                    records: 10
+                    records: 10,
+                    // maximum duration between start and end bounds
+                    limit: 1000 * 60 * 60 * 24
                 },
                 {
                     name: "Realtime",
