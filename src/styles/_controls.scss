@@ -512,10 +512,13 @@ select {
     @include menuInner();
 
     &__section-hint {
+        $m: $interiorMargin;
+        margin: $m 0;
+        padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+
         opacity: 0.6;
         font-size: 0.9em;
         font-style: italic;
-        //text-align: center;
     }
 
     &__section-separator {
