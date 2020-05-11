@@ -88,7 +88,8 @@ define([
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -180,7 +181,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable;
+    plugins.LADTable = LADTable.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;

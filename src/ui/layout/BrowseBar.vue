@@ -198,8 +198,6 @@ export default {
         updateName(event) {
             if (event.target.innerText !== this.domainObject.name && event.target.innerText.match(/\S/)) {
                 this.openmct.objects.mutate(this.domainObject, 'name', event.target.innerText);
-            } else {
-                event.target.innerText = this.domainObject.name;
             }
         },
         updateNameOnEnterKeyPress(event) {
