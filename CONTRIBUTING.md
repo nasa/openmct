@@ -292,6 +292,7 @@ checklist).
 2. Unit tests included and/or updated with changes?
 3. Command line build passes?
 4. Changes have been smoke-tested?
+5. Associated issue includes testing instructions?
 
 ### Reviewer Checklist
 
@@ -299,3 +300,4 @@ checklist).
 2. Appropriate unit tests included?
 3. Code style and in-line documentation are appropriate?
 4. Commit messages meet standards?
+5. Associated issue has been labelled `unverified`?
