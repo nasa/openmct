@@ -22,6 +22,7 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
+import { getLatestTimestamp } from '../utils/time';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
 
@@ -107,40 +108,53 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
-    requestLAD(options) {
-        options = Object.assign({},
-            options,
-            {
-                strategy: 'latest',
-                size: 1
-            }
-        );
+    requestLAD(telemetryObjects) {
+        const options = {
+            strategy: 'latest',
+            size: 1
+        };
 
         if (!this.isValid()) {
-            return this.formatData({}, options.telemetryObjects);
+            return this.formatData({}, telemetryObjects);
         }
 
-        let keys = Object.keys(Object.assign({}, options.telemetryObjects));
+        let keys = Object.keys(Object.assign({}, telemetryObjects));
         const telemetryRequests = keys
             .map(key => this.openmct.telemetry.request(
-                options.telemetryObjects[key],
+                telemetryObjects[key],
                 options
             ));
 
+        let telemetryDataCache = {};
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
-                let latestDatum;
+                let latestTimestamp;
+                const timeSystems = this.openmct.time.getAllTimeSystems();
+                const timeSystem = this.openmct.time.timeSystem();
+
                 telemetryRequestsResults.forEach((results, index) => {
-                    latestDatum = results.length ? results[results.length - 1] : {};
-                    if (index < telemetryRequestsResults.length-1) {
-                        if (latestDatum) {
-                            this.telemetryDataCache[latestDatum.id] = this.computeResult(latestDatum);
-                        }
-                    }
+                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    const datumId = keys[index];
+                    const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObjects[datumId]);
+
+                    telemetryDataCache[datumId] = this.computeResult(normalizedDatum);
+
+                    latestTimestamp = getLatestTimestamp(
+                        latestTimestamp,
+                        normalizedDatum,
+                        timeSystems,
+                        timeSystem
+                    );
                 });
+
+                const datum = {
+                    result: evaluateResults(Object.values(telemetryDataCache), this.telemetry),
+                    ...latestTimestamp
+                };
+
                 return {
                     id: this.id,
-                    data: this.formatData(latestDatum, options.telemetryObjects)
+                    data: datum
                 };
             });
     }

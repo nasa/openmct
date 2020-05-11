@@ -565,6 +565,20 @@ select {
         }
     }
 }
+/******************************************************** CONTROL BARS */
+.c-control-bar {
+    display: flex;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
+    &__label {
+        display: inline-block;
+        white-space: nowrap;
+    }
+}
 
 /******************************************************** PALETTES */
 .c-palette {
