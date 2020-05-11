@@ -135,11 +135,12 @@ For per-sprint testing, a testathon is typically performed at the beginning of t
 #### Process
 
 1. Prior to the scheduled testathon, a list will be compiled of all issues that are closed and unverified.
-2. For each issue, testers should review the associated PR for testing instructions.
+2. For each issue, testers should review the associated PR for testing instructions. See the contributing guide for instructions on [pull requests](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md#merging).
 3. As each issue is verified via testing, any team members testing it should leave a comment on that issue indicating that it has been verified fixed.
-4. If a bug is found that relates to an issue being tested, notes should be included on the associated issue. Bug notes should include reproduction steps.
+4. If a bug is found that relates to an issue being tested, notes should be included on the associated issue, and the issue should be reopened. Bug notes should include reproduction steps.
 5. For any bugs that are not obviously related to any of the issues under test, a new issue should be created with details about the bug, including reproduction steps. If unsure about whether a bug relates to an issue being tested, just create a new issue.
 6. At the end of the testathon, triage will take place, where all tested issues will be reviewed.
 7. If verified fixed, an issue will remain closed, and will have the “unverified” label removed.
 8. For any bugs found, a severity will be assigned.
-9. A second testathon will be scheduled for later in the week that will aim to address all issues with a severity of “Major” or above. The above steps will be repeated.
+9. A second testathon will be scheduled for later in the week that will aim to address all issues identified as blockers, as well as any other issues scoped by the team during triage.
+10. Any issues that were not tested will remain "unverified" and will be picked up in the next testathon.
