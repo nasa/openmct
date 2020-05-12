@@ -36,6 +36,9 @@ let openmct,
 let selectors = {};
 selectors.ladTableClass = '.c-table.c-lad-table';
 selectors.ladTableBodyRows = selectors.ladTableClass + ' tbody tr';
+selectors.ladTableBodyRowsFirstData = selectors.ladTableBodyRows + ' td:first-child';
+selectors.ladTableBodyRowsSecondtData = selectors.ladTableBodyRows + ' td:nth-child(2)';
+selectors.ladTableBodyRowsThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
 selectors.ladTableFirstBodyRow = selectors.ladTableClass + ' tbody tr:first-child';
 selectors.ladTableFirstRowFirstData = selectors.ladTableBodyRows + ' td:first-child';
 selectors.ladTableFirstRowSecondData = selectors.ladTableBodyRows + ' td:nth-child(2)';
@@ -45,9 +48,11 @@ fdescribe("The LAD Table", () => {
 
     let ladTableKey = 'LadTable',
         telemetryCount = 2,
-        mockTelemetry = getMockTelemetry({ count: telemetryCount }),
+        timeFormat = 'utc',
+        mockTelemetry = getMockTelemetry({ count: telemetryCount, format: timeFormat }),
         mockObj = getMockObjects({
-            objectKeyStrings: ['ladTable', 'telemetry']
+            objectKeyStrings: ['ladTable', 'telemetry'],
+            format: timeFormat
         });
 
     // add telemetry object as composition in lad table
@@ -113,30 +118,36 @@ fdescribe("The LAD Table", () => {
 
     describe("table view", () => {
         let applicableViews,
-            objectsGetCount = 1,
-            ladTableCompositionCollection,
+            // ladTableCompositionCollection,
             ladTableViewProvider,
             ladTableView,
-            extraMockTelemetryObj = getMockObjects({
+            anotherTelemetryObj = getMockObjects({
                 objectKeyStrings: ['telemetry'],
                 overwrite: {
                     telemetry: {
-                        identifier: {namespace: "", key: "another-telemetry-object" }
+                        name: "New Telemetry Object",
+                        identifier: { namespace: "", key: "another-telemetry-object" }
                     }
                 }
             }).telemetry;
+        let tableViewLoop = 0;
 
         // add another telemetry object as composition in lad table to test multi rows
-        mockObj.ladTable.composition.push(extraMockTelemetryObj.identifier);
+        mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
 
-        beforeEach(async (done) => {
+        beforeEach(async () => {
+            console.log('LOOP', ++tableViewLoop);
             let telemetryRequestResolve,
-                objectsGetResolve;
+                telemetryObjectResolve,
+                anotherTelemetryObjectResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                     telemetryRequestResolve = resolve;
                 }),
-                objectsGetPromise = new Promise((resolve) => {
-                    objectsGetResolve = resolve;
+                telemetryObjectPromise = new Promise((resolve) => {
+                    telemetryObjectResolve = resolve;
+                }),
+                anotherTelemetryObjectPromise = new Promise((resolve) => {
+                    anotherTelemetryObjectResolve = resolve;
                 })
             openmct.telemetry.request.and.callFake(() => {
                 console.log('TELEMETRY REQUEST call');
@@ -144,9 +155,14 @@ fdescribe("The LAD Table", () => {
                 return telemetryRequestPromise;
             });
             openmct.objects.get.and.callFake((obj) => {
-                console.log('OJBECT GET call', obj);
-                objectsGetResolve(obj.key === 'telemetry-object' ? mockObj.telemetry : extraMockTelemetryObj);
-                return objectsGetPromise;
+                console.log('OBJECT GET call');
+                if(obj.key === 'telemetry-object') {
+                    telemetryObjectResolve(mockObj.telemetry);
+                    return telemetryObjectPromise;
+                } else {
+                    anotherTelemetryObjectResolve(anotherTelemetryObj);
+                    return anotherTelemetryObjectPromise;
+                }
             });
 
             applicableViews = openmct.objectViews.get(mockObj.ladTable);
@@ -157,9 +173,8 @@ fdescribe("The LAD Table", () => {
             // ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
             // ladTableCompositionCollection.load();
 
-            await Promise.all([telemetryRequestPromise, objectsGetPromise]);
-            await Vue.nextTick();
-            return done();
+            await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
+            return await Vue.nextTick();
         });
 
         it("should show one row per object in the composition", () => {
@@ -170,21 +185,14 @@ fdescribe("The LAD Table", () => {
         it("when an item is removed, it should no longer be in the table", async () => {
             // ladTableCompositionCollection.remove(mockObj.telemetry);
             // await Vue.nextTick();
-            // console.log('after remove', mockObj.ladTable.composition);
             const rowCount = parent.querySelectorAll(selectors.ladTableBodyRows).length;
             expect(rowCount).toBe(1);
             pending();
         });
 
         it("should show the most recent datum from the telemetry producing object", () => {
-
-            console.log('first body row', parent.querySelector(selectors.ladTableFirstBodyRow));
-            console.log('row', parent.querySelector(selectors.ladTableBodyRows));
-            console.log('first data', parent.querySelector(selectors.ladTableFirstRowFirstData));
-            console.log('secend data', parent.querySelector(selectors.ladTableFirstRowSecondData));
-            console.log('third data', parent.querySelector(selectors.ladTableFirstRowThirdData));
-            console.log('second row', parent.querySelectorAll(selectors.ladTableBodyRows)[1]);
             expect(true).toBe(false);
+            pending();
         });
 
         it("should show the name provided for the the telemetry producing object", () => {
@@ -192,19 +200,28 @@ fdescribe("The LAD Table", () => {
                 expectedName = mockObj.telemetry.name;
             expect(rowName).toBe(expectedName);
         });
-    });
 
-    it("should show the correct value for the datum dependent on hints", () => {
-        expect(true).toBe(false);
-        pending();
-    });
-
-    it("should show the correct formatting for the datum for domain and range values", () => {
-        expect(true).toBe(false);
-        pending();
+        it("should show the correct values for the datum based on domain and range hints", () => {
+            const range = mockObj.telemetry.telemetry.values.find((val) => {
+                return val.hints && val.hints.range !== undefined;
+            }).key;
+            const domain = mockObj.telemetry.telemetry.values.find((val) => {
+                return val.hints && val.hints.domain !== undefined;
+            }).key;
+            const mostRecentTelemetry = mockTelemetry.reduce((prev, cur) => {
+                return prev[timeFormat] > cur[timeFormat] ? prev : cur;
+            });
+            const rangeValue = mostRecentTelemetry[range];
+            const domainValue = new Date(mostRecentTelemetry[domain]).toISOString().replace('T', ' ');
+            const actualDomainValue = parent.querySelector(selectors.ladTableFirstRowSecondData).innerText;
+            const actualRangeValue = parent.querySelector(selectors.ladTableFirstRowThirdData).innerText;
+            expect(actualRangeValue).toBe(rangeValue);
+            expect(actualDomainValue).toBe(domainValue);
+        });
     });
 
     it("should only add telemetry within set bounds", () => {
+        // set up time bounds from telemetry
         expect(true).toBe(false);
         pending();
     });
@@ -217,7 +234,7 @@ fdescribe("The LAD Table Set", () => {
     let mockObj = getMockObjects({
         objectKeyStrings: ['ladTable', 'ladTableSet']
     });
-    
+
 
     beforeEach((done) => {
         const appHolder = document.createElement('div');

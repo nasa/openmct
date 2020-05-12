@@ -44,14 +44,16 @@ function clearBuiltinSpy(funcDefinition) {
 //     name: 'Jamie Telemetry',
 //     keys: ['test','other','yeah','sup'],
 //     format: 'local',
-//     hints: {
-//         test: {
-//             domain: 1
-//         },
-//         other: {
-//             range: 2
-//         }
-//     }
+//     telemetryConfig: {
+//          hints: {
+//              test: {
+//                  domain: 1
+//              },
+//              other: {
+//                  range: 2
+//              }
+//          }
+//      }
 // })
 export const getMockObjects = (opts = {}) => {
     opts.type = opts.type || 'default';
@@ -62,11 +64,11 @@ export const getMockObjects = (opts = {}) => {
     let requestedMocks = {};
 
     if (!opts.objectKeyStrings) {
-        requestedMocks = mockObjects[opts.type];
+        requestedMocks = copyObj(mockObjects[opts.type]);
     } else {
         opts.objectKeyStrings.forEach(objKey => {
             if(mockObjects[opts.type] && mockObjects[opts.type][objKey]) {
-                requestedMocks[objKey] = mockObjects[opts.type][objKey]
+                requestedMocks[objKey] = copyObj(mockObjects[opts.type][objKey]);
             } else {
                 throw `No mock object for object key "${objKey}" of type "${opts.type}"`;
             }
@@ -122,6 +124,7 @@ export const getMockObjects = (opts = {}) => {
             if(opts.overwrite[mock]) {
                 for(let key in opts.overwrite[mock]) {
                     if (Object.prototype.hasOwnProperty.call(opts.overwrite[mock], key)) {
+                        console.log('overwrite' + ' ' + mock + ' ' + key, opts.overwrite[mock][key])
                         requestedMocks[mock][key] = opts.overwrite[mock][key];
                     }
                 }
@@ -170,6 +173,11 @@ export const getMockTelemetry = (opts = {}) => {
     }
 
     return telemetry;
+}
+
+// copy objects a bit more easily
+function copyObj(obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 // add any other necessary types to this mockObjects object
