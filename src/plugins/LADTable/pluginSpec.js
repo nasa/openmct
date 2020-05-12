@@ -25,7 +25,6 @@ import {
     createOpenMct,
     getMockObjects,
     getMockTelemetry
-    // createMouseEvent
 } from 'testTools';
 
 let openmct,
@@ -44,7 +43,7 @@ selectors.ladTableFirstRowFirstData = selectors.ladTableBodyRows + ' td:first-ch
 selectors.ladTableFirstRowSecondData = selectors.ladTableBodyRows + ' td:nth-child(2)';
 selectors.ladTableFirstRowThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
 
-xdescribe("The LAD Table", () => {
+describe("The LAD Table", () => {
 
     let ladTableKey = 'LadTable',
         telemetryCount = 2,
@@ -186,7 +185,7 @@ xdescribe("The LAD Table", () => {
             pending();
         });
 
-        xit("should show the most recent datum from the telemetry producing object", () => {
+        it("should show the most recent datum from the telemetry producing object", () => {
             expect(true).toBe(false);
             pending();
         });
@@ -213,6 +212,7 @@ xdescribe("The LAD Table", () => {
             const actualRangeValue = parent.querySelector(selectors.ladTableFirstRowThirdData).innerText;
             expect(actualRangeValue).toBe(rangeValue);
             expect(actualDomainValue).toBe(domainValue);
+            expect(true).toBe(false);
             pending();
         });
     });
