@@ -36,7 +36,27 @@ define([
                 cssClass: 'icon-tabs-view',
                 initialize(domainObject) {
                     domainObject.composition = [];
-                }
+                    domainObject.keep_alive = true;
+                },
+                form: [
+                    {
+                        "key": "keep_alive",
+                        "name": "Keep Tabs Alive",
+                        "control": "select",
+                        "options": [
+                            {
+                                'name': 'True',
+                                'value': true
+                            },
+                            {
+                                'name': 'False',
+                                'value': false
+                            }
+                        ],
+                        "required": true,
+                        "cssClass": "l-input"
+                    }
+                ]
             });
         };
     };

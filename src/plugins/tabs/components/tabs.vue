@@ -27,7 +27,7 @@
                 {'is-current': isCurrent(tab)},
                 tab.type.definition.cssClass
             ]"
-            @click="showTab(tab)"
+            @click="showTab(tab, index)"
         >
             <span class="c-button__label">{{ tab.domainObject.name }}</span>
         </button>
@@ -48,6 +48,7 @@
             </div>
         </div>
         <object-view
+            v-if="internalDomainObject.keep_alive ? currentTab : isCurrent(tab)"
             class="c-tabs-view__object"
             :object="tab.domainObject"
         />
@@ -57,7 +58,6 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import _ from 'lodash';
 
 var unknownObjectType = {
     definition: {
@@ -73,6 +73,7 @@ export default {
     },
     data: function () {
         return {
+            internalDomainObject: this.domainObject,
             currentTab: {},
             tabsList: [],
             setCurrentTab: true,
@@ -85,8 +86,16 @@ export default {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
-            this.composition.load();
+            this.composition.load().then(() => {
+                let currentTabIndex = this.domainObject.currentTabIndex;
+
+                if (currentTabIndex !== undefined && this.tabsList.length > currentTabIndex) {
+                    this.currentTab = this.tabsList[currentTabIndex];
+                }
+            });
         }
+
+        this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
@@ -96,18 +105,25 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
 
+        this.unsubscribe();
+
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
     methods:{
-        showTab(tab) {
+        showTab(tab, index) {
+            if (index !== undefined) {
+                this.storeCurrentTabIndex(index);
+            }
+
             this.currentTab = tab;
         },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
                 tabItem = {
                     domainObject,
-                    type: type
+                    type: type,
+                    key: this.openmct.objects.makeKeyString(domainObject.identifier)
                 };
 
             this.tabsList.push(tabItem);
@@ -126,7 +142,7 @@ export default {
             this.tabsList.splice(pos, 1);
 
             if (this.isCurrent(tabToBeRemoved)) {
-                this.showTab(this.tabsList[this.tabsList.length - 1]);
+                this.showTab(this.tabsList[this.tabsList.length - 1], this.tabsList.length - 1);
             }
         },
         onReorder(reorderPlan) {
@@ -138,6 +154,7 @@ export default {
         },
         onDrop(e) {
             this.setCurrentTab = true;
+            this.storeCurrentTabIndex(this.tabsList.length);
         },
         dragstart(e) {
             if (e.dataTransfer.types.includes('openmct/domain-object-path')) {
@@ -155,7 +172,13 @@ export default {
             this.allowDrop = false;
         },
         isCurrent(tab) {
-            return _.isEqual(this.currentTab, tab)
+            return this.currentTab.key === tab.key;
+        },
+        updateInternalDomainObject(domainObject) {
+            this.internalDomainObject = domainObject;
+        },
+        storeCurrentTabIndex(index) {
+            this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         }
     }
 }
