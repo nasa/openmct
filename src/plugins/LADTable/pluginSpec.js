@@ -44,7 +44,7 @@ selectors.ladTableFirstRowFirstData = selectors.ladTableBodyRows + ' td:first-ch
 selectors.ladTableFirstRowSecondData = selectors.ladTableBodyRows + ' td:nth-child(2)';
 selectors.ladTableFirstRowThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
 
-describe("The LAD Table", () => {
+xdescribe("The LAD Table", () => {
 
     let ladTableKey = 'LadTable',
         telemetryCount = 2,
@@ -130,7 +130,6 @@ describe("The LAD Table", () => {
                     }
                 }
             }).telemetry;
-        let tableViewLoop = 0;
 
         // add another telemetry object as composition in lad table to test multi rows
         mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
