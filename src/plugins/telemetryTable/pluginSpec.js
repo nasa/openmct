@@ -48,7 +48,6 @@ describe("the plugin", () => {
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
-        openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.time.timeSystem('utc', {start: 0, end: 3});
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
