@@ -326,16 +326,14 @@ export default {
             input.title = '';
         },
         validateAllBounds(ref) {
-            let validationResult = true;
-            const input = this.$refs[ref];
-            const formattedDate = input === this.$refs.startDate
-                ? this.formattedBounds.start
-                : this.formattedBounds.end
-            ;
+            if (!this.areBoundsFormatsValid()) {
+                return false;
+            }
 
-            if (!this.timeFormatter.validate(formattedDate)) {
-                validationResult = 'Invalid date';
-            } else {
+            let validationResult = true;
+            const currentInput = this.$refs[ref];
+
+            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
                 let boundsValues = {
                     start: this.timeFormatter.parse(this.formattedBounds.start),
                     end: this.timeFormatter.parse(this.formattedBounds.end)
@@ -347,22 +345,33 @@ export default {
                     && limit
                     && boundsValues.end - boundsValues.start > limit
                 ) {
-                    validationResult = "Start and end difference exceeds allowable limit";
+                    if (input === currentInput) {
+                        validationResult = "Start and end difference exceeds allowable limit";
+                    }
                 } else {
-                    validationResult = this.openmct.time.validateBounds(boundsValues);
+                    if (input === currentInput) {
+                        validationResult = this.openmct.time.validateBounds(boundsValues);
+                    }
                 }
 
-            }
+                return this.handleValidationResults(input, validationResult);
+            });
+        },
+        areBoundsFormatsValid() {
+            let validationResult = true;
 
-            if (validationResult !== true) {
-                input.setCustomValidity(validationResult);
-                input.title = validationResult;
-                return false;
-            } else {
-                input.setCustomValidity('');
-                input.title = '';
-                return true;
-            }
+            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
+                const formattedDate = input === this.$refs.startDate
+                    ? this.formattedBounds.start
+                    : this.formattedBounds.end
+                ;
+
+                if (!this.timeFormatter.validate(formattedDate)) {
+                    validationResult = 'Invalid date';
+                }
+
+                return this.handleValidationResults(input, validationResult);
+            });
         },
         validateAllOffsets(event) {
             return [this.$refs.startOffset, this.$refs.endOffset].every((input) => {
@@ -385,16 +394,19 @@ export default {
                     validationResult = this.openmct.time.validateOffsets(offsetValues);
                 }
 
-                if (validationResult !== true) {
-                    input.setCustomValidity(validationResult);
-                    input.title = validationResult;
-                    return false;
-                } else {
-                    input.setCustomValidity('');
-                    input.title = '';
-                    return true;
-                }
+                return this.handleValidationResults(input, validationResult);
             });
+        },
+        handleValidationResults(input, validationResult) {
+            if (validationResult !== true) {
+                input.setCustomValidity(validationResult);
+                input.title = validationResult;
+                return false;
+            } else {
+                input.setCustomValidity('');
+                input.title = '';
+                return true;
+            }
         },
         submitForm() {
             // Allow Vue model to catch up to user input.
