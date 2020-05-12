@@ -48,7 +48,7 @@ describe("the plugin", () => {
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
-        openmct.time.timeSystem('utc', {start: 0, end: 3});
+        openmct.time.timeSystem('utc', {start: 0, end: 4});
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
@@ -125,22 +125,33 @@ describe("the plugin", () => {
                     'utc': 2,
                     'some-key': 'some-value 2',
                     'some-other-key' : 'some-other-value 2'
+                },
+                {
+                    'utc': 3,
+                    'some-key': 'some-value 3',
+                    'some-other-key' : 'some-other-value 3'
                 }
             ];
-            let telemetryRequestPromise = Promise.resolve(testTelemetry);
-            openmct.telemetry.request.and.returnValue(telemetryRequestPromise);
+            let telemetryPromiseResolve;
+            let telemetryPromise = new Promise((resolve) => {
+                telemetryPromiseResolve = resolve;
+            })
+            openmct.telemetry.request.and.callFake(() => {
+                telemetryPromiseResolve(testTelemetry);
+                return telemetryPromise;
+            })
 
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
 
-            return telemetryRequestPromise.then(() => Vue.nextTick());
+            return telemetryPromise.then(() => Vue.nextTick());
         });
 
-        it("Renders a row for every telemetry datum returned",() => {
+        fit("Renders a row for every telemetry datum returned",() => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
-            expect(rows.length).toBe(2);
+            expect(rows.length).toBe(3);
         });
 
 
