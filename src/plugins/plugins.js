@@ -51,7 +51,8 @@ define([
     './conditionWidget/plugin',
     './themes/espresso',
     './themes/maelstrom',
-    './themes/snow'
+    './themes/snow',
+    './windowLayout/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -83,7 +84,8 @@ define([
     ConditionWidgetPlugin,
     Espresso,
     Maelstrom,
-    Snow
+    Snow,
+    WindowLayout
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -192,6 +194,7 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.WindowLayout = WindowLayout.default;
 
     return plugins;
 });
