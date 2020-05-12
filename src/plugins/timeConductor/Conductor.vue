@@ -57,7 +57,7 @@
                     type="text"
                     autocorrect="off"
                     spellcheck="false"
-                    @change="validateAllBounds(); submitForm()"
+                    @change="validateAllBounds('startDate'); submitForm()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
@@ -97,7 +97,7 @@
                     autocorrect="off"
                     spellcheck="false"
                     :disabled="!isFixed"
-                    @change="validateAllBounds(); submitForm()"
+                    @change="validateAllBounds('endDate'); submitForm()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
@@ -325,48 +325,44 @@ export default {
             input.setCustomValidity('');
             input.title = '';
         },
-        validateAllBounds() {
-            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                let validationResult = true;
-                let formattedDate;
+        validateAllBounds(ref) {
+            let validationResult = true;
+            const input = this.$refs[ref];
+            const formattedDate = input === this.$refs.startDate
+                ? this.formattedBounds.start
+                : this.formattedBounds.end
+            ;
 
-                if (input === this.$refs.startDate) {
-                    formattedDate = this.formattedBounds.start;
+            if (!this.timeFormatter.validate(formattedDate)) {
+                validationResult = 'Invalid date';
+            } else {
+                let boundsValues = {
+                    start: this.timeFormatter.parse(this.formattedBounds.start),
+                    end: this.timeFormatter.parse(this.formattedBounds.end)
+                };
+                const limit = this.getBoundsLimit();
+
+                if (
+                    this.timeSystem.isUTCBased
+                    && limit
+                    && boundsValues.end - boundsValues.start > limit
+                ) {
+                    validationResult = "Start and end difference exceeds allowable limit";
                 } else {
-                    formattedDate = this.formattedBounds.end;
+                    validationResult = this.openmct.time.validateBounds(boundsValues);
                 }
 
-                if (!this.timeFormatter.validate(formattedDate)) {
-                    validationResult = 'Invalid date';
-                } else {
-                    let boundsValues = {
-                        start: this.timeFormatter.parse(this.formattedBounds.start),
-                        end: this.timeFormatter.parse(this.formattedBounds.end)
-                    };
-                    const limit = this.getBoundsLimit();
+            }
 
-                    if (
-                        this.timeSystem.isUTCBased
-                        && limit
-                        && boundsValues.end - boundsValues.start > limit
-                    ) {
-                        validationResult = "Start and end difference exceeds allowable limit";
-                    } else {
-                        validationResult = this.openmct.time.validateBounds(boundsValues);
-                    }
-
-                }
-
-                if (validationResult !== true) {
-                    input.setCustomValidity(validationResult);
-                    input.title = validationResult;
-                    return false;
-                } else {
-                    input.setCustomValidity('');
-                    input.title = '';
-                    return true;
-                }
-            });
+            if (validationResult !== true) {
+                input.setCustomValidity(validationResult);
+                input.title = validationResult;
+                return false;
+            } else {
+                input.setCustomValidity('');
+                input.title = '';
+                return true;
+            }
         },
         validateAllOffsets(event) {
             return [this.$refs.startOffset, this.$refs.endOffset].every((input) => {
@@ -412,12 +408,12 @@ export default {
         },
         startDateSelected(date) {
             this.formattedBounds.start = this.timeFormatter.format(date);
-            this.validateAllBounds();
+            this.validateAllBounds('startDate');
             this.submitForm();
         },
         endDateSelected(date) {
             this.formattedBounds.end = this.timeFormatter.format(date);
-            this.validateAllBounds();
+            this.validateAllBounds('endDate');
             this.submitForm();
         }
     }
