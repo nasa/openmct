@@ -4,17 +4,15 @@
 
 <script>
 import Plotly from 'plotly.js-dist';
-import moment from 'moment';
-import RemoveAction from '../../remove/RemoveAction.js';
-
+import moment from 'moment'
 
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
+
         return {
             telemetryObjects: [],
-            points: 0,
-            yAxisProp: ''
+            points: 0
         }
     },
     mounted() {
@@ -22,21 +20,12 @@ export default {
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
-        this.composition.on('remove', this.removeFromComposition);
         this.composition.load();
 
-        this.RemoveAction = new RemoveAction(this.openmct);
 
-        // this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
-    },
-    beforeDestroy() {
-        // this.composition.off('remove', this.removeChildObject);
-
-        // this.unobserve();
     },
     methods: {
-        getLayout(telemetryObject) {
-            this.getYAxisLabel(telemetryObject);
+        getLayout() {
             return {
                 hovermode: 'compare',
                 hoverdistance: -1,
@@ -48,11 +37,13 @@ export default {
                     color: "#666"
                 },
                 xaxis: {
+                    // title: this.plotAxisTitle.xAxisTitle,
                     title: 'UTC',
                     zeroline: false
                 },
                 yaxis: {
-                    title: this.getYAxisLabel(telemetryObject),
+                    // title: this.plotAxisTitle.yAxisTitle,
+                    title: 'Sine',
                     zeroline: false
                 },
                 margin: {
@@ -65,74 +56,59 @@ export default {
                 plot_bgcolor: 'transparent'
             }
         },
-        getYAxisLabel(telemetryObject) {
-            this.setYAxisProp(telemetryObject);
-            const valueMetadatas = this.openmct.telemetry.getMetadata(telemetryObject).values();
-            const index = valueMetadatas.findIndex(value => value.key === this.yAxisProp);
-            const yLabel = valueMetadatas[index].name;
-
-            return yLabel;
-        },
-        setYAxisProp(telemetryObject) {
-            if (telemetryObject.type === 'generator') {
-                this.yAxisProp = 'sin';
-            } else if (telemetryObject.type === 'example.state-generator') {
-                this.yAxisProp = 'state';
-            } else if (telemetryObject.type === 'conditionSet') {
-                this.yAxisProp = 'output';
-            }
-
-        },
         addTelemetry(telemetryObject) {
+            this.telemetryObjects.push(telemetryObject);
+            const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
                     this.points = telemetryData.length;
-                    this.createPlot(telemetryData, telemetryObject);
+                    this.addTrace(telemetryData, telemetryObject, index);
                 });
-        },
-        removeFromComposition(identifier) {
-            return this.openmct.objects.get(identifier).then((childDomainObject) => {
-                console.log('childDomainObject', childDomainObject);
-                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
-            });
         },
         formatDatumX(datum) {
             let timestamp = moment.utc(datum.utc).format('YYYY-MM-DDTHH:mm:ss[Z]');
             return timestamp;
         },
         formatDatumY(datum) {
-            return datum[this.yAxisProp ? this.yAxisProp : 'value'];
+            return datum.sin;
         },
-        createPlot(telemetryData, telemetryObject) {
-            let x = [],
-                y = [];
+        addTrace(telemetryData, telemetryObject, index) {
+            let x = [];
+            let y = [];
 
-            telemetryData.forEach((datum, index) => {
+            const colors = ['red', 'green', 'blue'];
+
+            telemetryData.forEach((datum) => {
                 x.push(this.formatDatumX(datum));
                 y.push(this.formatDatumY(datum));
             })
 
-            let data = [{
+            let traceData = [{
                 x,
                 y,
                 type: 'scattergl',
-                mode: 'lines+markers',
+                mode: 'lines',
                 line: {
+                    color: colors[index],
                     shape: 'linear'
                 }
             }];
 
-            Plotly.newPlot(
-                this.plotElement,
-                data,
-                this.getLayout(telemetryObject),
-                { displayModeBar: false }
-            )
+            if (!this.plotElement.childNodes.length) {
+                Plotly.newPlot(
+                    this.plotElement,
+                    traceData,
+                    this.getLayout(telemetryObject),
+                    { displayModeBar: false }
+                )
+            } else {
+                Plotly.addTraces(this.plotElement, traceData);
+            }
 
             this.subscribe(telemetryObject);
         },
-        subscribe(domainObject) {
-            this.openmct.telemetry.subscribe(domainObject, (datum) => {
+        subscribe(telemetryObject) {
+            this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 this.updateData(datum)
             })
         },
@@ -140,10 +116,10 @@ export default {
             Plotly.extendTraces(
                 this.plotElement,
                 {
-                    x: [[this.formatDatumX(datum)]],
-                    y: [[this.formatDatumY(datum)]]
+                    x: [[this.formatDatumX(datum)], [this.formatDatumX(datum)]],
+                    y: [[this.formatDatumY(datum)], [this.formatDatumY(datum)]]
                 },
-                [0],
+                [0, 1],
                 this.points
             );
         }
