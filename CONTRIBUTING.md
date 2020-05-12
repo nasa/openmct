@@ -103,7 +103,7 @@ the name chosen could not be mistaken for a topic or master branch.
 ### Merging
 
 When development is complete on an issue, the first step toward merging it
-back into the master branch is to file a Pull Request. The contributions
+back into the master branch is to file a Pull Request (PR). The contributions
 should meet code, test, and commit message standards as described below,
 and the pull request should include a completed author checklist, also
 as described below. Pull requests may be assigned to specific team
@@ -113,6 +113,12 @@ Code review should take place using discussion features within the pull
 request. When the reviewer is satisfied, they should add a comment to
 the pull request containing the reviewer checklist (from below) and complete
 the merge back to the master branch.
+
+Additionally:
+* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, create one.
+* Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
+* A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
+* When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
 
 ## Standards
 
