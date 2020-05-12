@@ -25,9 +25,7 @@
 <tr @contextmenu.prevent="showContextMenu">
     <td>{{ name }}</td>
     <td>{{ formattedTimestamp }}</td>
-    <td :class="valueClass">
-        {{ value }}
-    </td>
+    <td :class="valueClass">{{ value }}</td>
 </tr>
 </template>
 
