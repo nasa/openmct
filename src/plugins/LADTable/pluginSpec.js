@@ -43,7 +43,7 @@ selectors.ladTableFirstRowFirstData = selectors.ladTableBodyRows + ' td:first-ch
 selectors.ladTableFirstRowSecondData = selectors.ladTableBodyRows + ' td:nth-child(2)';
 selectors.ladTableFirstRowThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
 
-describe("The LAD Table", () => {
+fdescribe("The LAD Table", () => {
 
     let ladTableKey = 'LadTable',
         telemetryCount = 2,
@@ -212,17 +212,14 @@ describe("The LAD Table", () => {
             const actualRangeValue = parent.querySelector(selectors.ladTableFirstRowThirdData).innerText;
             expect(actualRangeValue).toBe(rangeValue);
             expect(actualDomainValue).toBe(domainValue);
+        });
+
+        it("should only add telemetry within set bounds", () => {
+            // set up time bounds from telemetry
             expect(true).toBe(false);
             pending();
         });
     });
-
-    it("should only add telemetry within set bounds", () => {
-        // set up time bounds from telemetry
-        expect(true).toBe(false);
-        pending();
-    });
-
 });
 
 
