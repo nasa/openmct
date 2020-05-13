@@ -5,7 +5,8 @@
 <script>
 import Plotly from 'plotly.js-dist';
 import moment from 'moment'
-import RemoveAction from '../../remove/RemoveAction.js';
+import RemoveAction from '../../remove/RemoveAction';
+import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 
 export default {
     inject: ['openmct', 'domainObject'],
