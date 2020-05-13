@@ -32,6 +32,8 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
+import _ from 'lodash';
+
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -63,6 +65,8 @@ export default {
             .append("svg:svg")
             .attr("width", "100%")
             .attr("height", height);
+
+        this.setScale = _.throttle(this.setScale, 200);
 
         this.width = this.$refs.axisHolder.clientWidth;
         this.xAxis = d3Axis.axisTop();

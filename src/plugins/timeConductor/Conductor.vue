@@ -146,6 +146,8 @@ import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 
+import _ from 'lodash';
+
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
@@ -185,6 +187,7 @@ export default {
         }
     },
     mounted() {
+        this.setViewFromBounds = _.throttle(this.setViewFromBounds, 200);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
 
         this.openmct.time.on('bounds', this.setViewFromBounds);
