@@ -119,6 +119,8 @@ Additionally:
 * Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
+* Every PR must have two reviewers assigned, though only one approval is necessary for merge.
+* When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
 
 ## Standards
 
