@@ -34,7 +34,7 @@
                 v-for="preset in presets"
                 :key="preset.label"
                 class="icon-clock"
-                @click="selectTimespan(preset.bounds)"
+                @click="selectPresetBounds(preset.bounds)"
             >
                 {{ preset.label }}
             </li>
@@ -160,11 +160,13 @@ export default {
         selectTimespan(timespan) {
             this.openmct.time.bounds(timespan);
         },
-        selectHours(hours) {
-            const now = Date.now();
+        selectPresetBounds(bounds) {
+            const start = typeof bounds.start === 'function' ? bounds.start() : bounds.start;
+            const end = typeof bounds.end === 'function' ? bounds.end() : bounds.end;
+
             this.selectTimespan({
-                start: now - hours * 60 * 60 * 1000,
-                end: now
+                start: start,
+                end: end
             });
         },
         loadConfiguration() {
