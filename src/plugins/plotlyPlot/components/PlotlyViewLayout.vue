@@ -5,14 +5,14 @@
 <script>
 import Plotly from 'plotly.js-dist';
 import moment from 'moment'
+import RemoveAction from '../../remove/RemoveAction.js';
 
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
 
         return {
-            telemetryObjects: [],
-            points: 0
+            telemetryObjects: []
         }
     },
     mounted() {
@@ -20,12 +20,13 @@ export default {
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
+        this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-
+        this.RemoveAction = new RemoveAction(this.openmct);
     },
     methods: {
-        getLayout() {
+        getLayout(telemetryObject) {
             return {
                 hovermode: 'compare',
                 hoverdistance: -1,
@@ -42,8 +43,7 @@ export default {
                     zeroline: false
                 },
                 yaxis: {
-                    // title: this.plotAxisTitle.yAxisTitle,
-                    title: 'Sine',
+                    title: this.getYAxisLabel(telemetryObject),
                     zeroline: false
                 },
                 margin: {
@@ -61,9 +61,35 @@ export default {
             const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
-                    this.points = telemetryData.length;
                     this.addTrace(telemetryData, telemetryObject, index);
                 });
+        },
+        removeTelemetry(identifier) {
+            if (!this.domainObject.composition.length) {
+                this.plotElement.remove()
+            } else {
+                Plotly.deleteTraces(this.plotElement, this.domainObject.composition.length);
+            }
+            return this.openmct.objects.get(identifier).then((childDomainObject) => {
+                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
+            });
+        },
+        getYAxisLabel(telemetryObject) {
+            this.setYAxisProp(telemetryObject);
+            const valueMetadatas = this.openmct.telemetry.getMetadata(telemetryObject).values();
+            const index = valueMetadatas.findIndex(value => value.key === this.yAxisProp);
+            const yLabel = valueMetadatas[index].name;
+
+            return yLabel;
+        },
+        setYAxisProp(telemetryObject) {
+            if (telemetryObject.type === 'generator') {
+                this.yAxisProp = 'sin';
+            } else if (telemetryObject.type === 'example.state-generator') {
+                this.yAxisProp = 'state';
+            } else if (telemetryObject.type === 'conditionSet') {
+                this.yAxisProp = 'output';
+            }
         },
         formatDatumX(datum) {
             let timestamp = moment.utc(datum.utc).format('YYYY-MM-DDTHH:mm:ss[Z]');
@@ -99,28 +125,31 @@ export default {
                     this.plotElement,
                     traceData,
                     this.getLayout(telemetryObject),
-                    { displayModeBar: false }
+                    {
+                        displayModeBar: false,
+                        staticPlot: true
+                    }
                 )
             } else {
                 Plotly.addTraces(this.plotElement, traceData);
             }
 
-            this.subscribe(telemetryObject);
+            this.subscribe(telemetryObject, index, telemetryData.length);
         },
-        subscribe(telemetryObject) {
+        subscribe(telemetryObject, index, length) {
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                this.updateData(datum)
+                this.updateData(datum, index, length)
             })
         },
-        updateData(datum) {
+        updateData(datum, index, length) {
             Plotly.extendTraces(
                 this.plotElement,
                 {
-                    x: [[this.formatDatumX(datum)], [this.formatDatumX(datum)]],
-                    y: [[this.formatDatumY(datum)], [this.formatDatumY(datum)]]
+                    x: [[this.formatDatumX(datum)]],
+                    y: [[this.formatDatumY(datum)]]
                 },
-                [0, 1],
-                this.points
+                [index],
+                length
             );
         }
     }
