@@ -206,26 +206,30 @@ export default {
             isZooming: false
         }
     },
-    created() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = true;
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'Alt') {
-                this.altPressed = false;
-            }
-        });
-    },
     mounted() {
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', this.setViewFromBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
     },
+    beforeDestroy() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
+    },
     methods: {
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
+        },
         pan(bounds) {
             this.isPanning = true;
             this.setViewFromBounds(bounds);
