@@ -35,6 +35,8 @@
 
 <script>
 import PreviewHeader from './preview-header.vue';
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 
 export default {
     components: {
@@ -69,6 +71,14 @@ export default {
     },
     destroyed() {
         this.view.destroy();
+        if (this.stopListeningStyles) {
+            this.stopListeningStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            delete this.styleRuleManager;
+        }
     },
     methods: {
         clear() {
@@ -90,6 +100,46 @@ export default {
 
             this.view = this.currentView.view(this.domainObject, this.objectPath);
             this.view.show(this.viewContainer, false);
+            this.initObjectStyles();
+        },
+        initObjectStyles() {
+            if (!this.styleRuleManager) {
+                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this));
+            } else {
+                this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
+            }
+
+            if (this.stopListeningStyles) {
+                this.stopListeningStyles();
+            }
+
+            this.stopListeningStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+            });
+        },
+        updateStyle(styleObj) {
+            if (!styleObj) {
+                return;
+            }
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                let firstChild = this.$refs.objectView.querySelector(':first-child');
+                if (firstChild) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
+                        if (firstChild.style[key]) {
+                            firstChild.style[key] = '';
+                        }
+                    } else {
+                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
+                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        }
+                        firstChild.style[key] = styleObj[key];
+                    }
+                }
+            });
         }
     }
 }
