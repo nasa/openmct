@@ -112,13 +112,12 @@ export default {
 
                 // if timestamp is set, need tocheck, else update
                 if(this.timestamp !== '---') {
-                    let existingTimestamp = this.formattedTimestamp;
 
                     // if existing is in bounds, need to check, if not update
-                    if(this.inBounds(existingTimestamp)) {
+                    if(this.inBounds(this.timestamp)) {
 
                         // race condition check
-                        if(newTimestamp >= existingTimestamp) {
+                        if(newTimestamp >= this.timestamp) {
                             shouldUpdate = true;
                         }
                     } else {
