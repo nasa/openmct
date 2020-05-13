@@ -182,21 +182,6 @@ define([
             this.set('format', yFormat.format.bind(yFormat));
             this.set('values', yMetadata.values);
             if (!label) {
-                var labelUnits = series.map(function (s) {
-                    return s.metadata.value(s.get('yKey')).units;
-                }).reduce(function (a, b) {
-                    if (a === undefined) {
-                        return b;
-                    }
-                    if (a === b) {
-                        return a;
-                    }
-                    return '';
-                }, undefined);
-                if (labelUnits) {
-                    this.set('label', labelUnits);
-                    return;
-                }
                 var labelName = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).name;
                 }).reduce(function (a, b) {
@@ -208,7 +193,28 @@ define([
                     }
                     return '';
                 }, undefined);
-                this.set('label', labelName);
+
+                if (labelName) {
+                    this.set('label', labelName);
+                    return;
+                }
+
+                var labelUnits = series.map(function (s) {
+                    return s.metadata.value(s.get('yKey')).units;
+                }).reduce(function (a, b) {
+                    if (a === undefined) {
+                        return b;
+                    }
+                    if (a === b) {
+                        return a;
+                    }
+                    return '';
+                }, undefined);
+
+                if (labelUnits) {
+                    this.set('label', labelUnits);
+                    return;
+                }
             }
         },
         defaults: function (options) {
