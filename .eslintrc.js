@@ -71,9 +71,11 @@ module.exports = {
         "consistent-return": "error",
         "default-case-last": "error",
         "default-param-last": "error",
-        "grouped-accessor-pairs": "error",*/
-        "max-classes-per-file": ["error", 1],
+        "grouped-accessor-pairs": "error",
         "noalert": "error",
+        "no-constructor-return": "error" */
+        "no-case-declarations": "error",
+        "max-classes-per-file": ["error", 1],
 
 
         "vue/html-indent": [
