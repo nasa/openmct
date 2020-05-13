@@ -120,6 +120,7 @@ Additionally:
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
 * Every PR must have two reviewers assigned, though only one approval is necessary for merge.
+* Changes to API require approval by a senior developer.
 * When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
 
 ## Standards
