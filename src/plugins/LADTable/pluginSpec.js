@@ -216,11 +216,15 @@ describe("The LAD Table", () => {
 });
 
 
-describe("The LAD Table Set", () => {
+fdescribe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
     let mockObj = getMockObjects({
-        objectKeyStrings: ['ladTable', 'ladTableSet']
-    });
+            objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
+        }),
+        bounds = {
+            start: 0,
+            end: 1
+        };
 
 
     beforeEach((done) => {
@@ -234,8 +238,12 @@ describe("The LAD Table Set", () => {
         child = document.createElement('div');
         parent.appendChild(child);
 
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+
         ladPlugin = new LadPlugin();
         openmct.install(ladPlugin);
+
+        openmct.time.bounds({ start: bounds.start, end: bounds.end });
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -251,4 +259,26 @@ describe("The LAD Table Set", () => {
         expect(ladTableSetView).toBeDefined();
     });
 
+    describe('composition', () => {
+        let ladTableSetCompositionCollection;
+
+        beforeEach(() => {
+            ladTableSetCompositionCollection = openmct.composition.get(mockObj.ladTableSet);
+            ladTableSetCompositionCollection.load();
+            mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
+            mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
+        });
+
+        it("should accept lad table objects", () => {
+            expect(() => {
+                ladTableSetCompositionCollection.add(mockObj.ladTable);
+            }).not.toThrow();
+        });
+
+        it("should reject non lad table objects", () => {
+            expect(()=> {
+                ladTableSetCompositionCollection.add(mockObj.telemetry);
+            }).toThrow();
+        });
+    });
 });
