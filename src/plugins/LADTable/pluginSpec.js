@@ -216,7 +216,7 @@ describe("The LAD Table", () => {
 });
 
 
-fdescribe("The LAD Table Set", () => {
+describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
     let mockObj = getMockObjects({
             objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
