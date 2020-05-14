@@ -108,7 +108,7 @@ import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import {getApplicableStylesForItem} from "@/plugins/condition/utils/styleUtils";
-import { isEmpty } from 'arrayUtils';
+import isEmpty from 'lodash/isEmpty';
 
 export default {
     name: 'ConditionalStylesView',

@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    'lodash',
-    'arrayUtils'
+    'lodash'
 ], function (
-    _,
-    arrayUtils
+    _
 ) {
 
     function RootRegistry() {
@@ -37,7 +35,7 @@ define([
             return provider();
         });
         return Promise.all(promises)
-            .then(arrayUtils.flatten);
+            .then(_.flatten);
     };
 
     function isKey(key) {

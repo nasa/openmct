@@ -25,14 +25,12 @@ define([
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
     'objectUtils',
-    'arrayUtils',
     'lodash'
 ], function (
     TelemetryMetadataManager,
     TelemetryValueFormatter,
     DefaultMetadataProvider,
     objectUtils,
-    arrayUtils,
     _
 ) {
     /**
@@ -372,7 +370,7 @@ define([
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         var options = metadatas.map(function (metadata) {
             var values = metadata.valuesForHints(hints);
-            return arrayUtils.keyBy(values, 'key');
+            return _.keyBy(values, 'key');
         }).reduce(function (a, b) {
             var results = {};
             Object.keys(a).forEach(function (key) {

@@ -57,7 +57,6 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, endpoint)
         );
-        // TODO check if this is needed
         this.updateConditionTelemetry();
     }
 

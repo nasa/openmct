@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { flatten, isEmpty } from 'arrayUtils';
 import _ from 'lodash';
 
 const FILTER_INDICATOR_LABEL = 'Filters:';
@@ -80,7 +79,7 @@ export default {
                     }
                 });
 
-                names = flatten(names);
+                names = _.flatten(names);
                 this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
             });
         },
@@ -89,7 +88,7 @@ export default {
             filters = _.omit(filters, [USE_GLOBAL]);
 
             Object.keys(filters).forEach(key => {
-                if (!isEmpty(filters[key])) {
+                if (!_.isEmpty(filters[key])) {
                     metadataValues.forEach(metadatum => {
                         if (key === metadatum.key) {
                             if (typeof metadatum.filters[0] === "object") {
@@ -102,7 +101,7 @@ export default {
                 }
             });
 
-            return flatten(filterNames);
+            return _.flatten(filterNames);
         },
         getFilterLabels(filterObject, metadatum,) {
             let filterLabels = [];

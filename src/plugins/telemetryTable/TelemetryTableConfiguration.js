@@ -22,9 +22,8 @@
 
 define([
     'lodash',
-    'EventEmitter',
-    'arrayUtils'
-], function (_, EventEmitter, arrayUtils) {
+    'EventEmitter'
+], function (_, EventEmitter) {
 
     class TelemetryTableConfiguration extends EventEmitter {
         constructor(domainObject, openmct) {
@@ -100,7 +99,7 @@ define([
         }
 
         hasColumnWithKey(columnKey) {
-            return arrayUtils.flatten(Object.values(this.columns))
+            return _.flatten(Object.values(this.columns))
                 .some(column => column.getKey() === columnKey);
         }
 
@@ -109,7 +108,7 @@ define([
         }
 
         getAllHeaders() {
-            let flattenedColumns = arrayUtils.flatten(Object.values(this.columns));
+            let flattenedColumns = _.flatten(Object.values(this.columns));
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
 

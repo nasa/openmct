@@ -43,8 +43,7 @@ const webpackConfig = {
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
             "testUtils": path.join(__dirname, "src/testUtils.js"),
-            "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js"),
-            "arrayUtils": path.join(__dirname, "src/api/utils/array-utils.js")
+            "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
