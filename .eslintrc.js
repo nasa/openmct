@@ -76,6 +76,11 @@ module.exports = {
         "no-constructor-return": "error" */
         "no-case-declarations": "error",
         "max-classes-per-file": ["error", 1],
+        "no-eq-null": "error",
+        "no-eval": "error",
+        "no-floating-decimal": "error",
+        "no-implicit-coercion": "error",
+
 
 
         "vue/html-indent": [
