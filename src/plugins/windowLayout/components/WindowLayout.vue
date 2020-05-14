@@ -150,7 +150,6 @@ export default {
                                 return;
                             }
                             this.openWindows[data.name].info = data.info;
-                            console.log(data.info);
                             this.persistWindowInformation();
                         } else {
                             if (!this.openWindows[data.name]) {
