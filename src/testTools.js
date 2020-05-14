@@ -39,6 +39,19 @@ function clearBuiltinSpy(funcDefinition) {
     funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
 
+export const getLatestTelemetry = (telemetry = [], opts = {}) => {
+    let latest = [],
+        timeFormat = opts.timeFormat || 'utc';
+
+    if(telemetry.length) {
+        latest = telemetry.reduce((prev, cur) => {
+            return prev[timeFormat] > cur[timeFormat] ? prev : cur;
+        });
+    }
+
+    return latest;
+};
+
 // EXAMPLE:
 // getMockObjects({
 //     name: 'Jamie Telemetry',
