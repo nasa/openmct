@@ -1,0 +1,318 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/***************************** DRAGGING */
+.is-active-dragging {
+    .c-condition-h__drop-target {
+        height: 3px;
+        margin-bottom: $interiorMarginSm;
+    }
+}
+
+.c-condition-h {
+    &__drop-target {
+        border-radius: $controlCr;
+        height: 0;
+        min-height: 0;
+        transition: background-color, height;
+        transition-duration: 150ms;
+    }
+
+    &.is-drag-target {
+        .c-condition > * {
+            pointer-events: none; // Keeps the JS drop handler from being intercepted by internal elements
+        }
+
+        .c-condition-h__drop-target {
+            background-color: rgba($colorKey, 0.7);
+        }
+    }
+}
+
+.c-cs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    /************************** CONDITION SET LAYOUT */
+    &__current-output {
+        flex: 0 0 auto;
+    }
+
+    &__test-data-and-conditions-w {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__test-data,
+    &__conditions {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    &__test-data {
+        flex: 0 0 auto;
+        max-height: 50%;
+
+        &.is-expanded {
+            margin-bottom: $interiorMargin * 4;
+        }
+    }
+
+    &__conditions {
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 0 1 auto;
+        overflow: hidden;
+
+        > * {
+            flex: 0 0 auto;
+            overflow: hidden;
+            + * {
+                margin-top: $interiorMarginSm;
+            }
+        }
+
+        .c-button {
+            align-self: start;
+        }
+    }
+
+    .is-editing & {
+        // Add some space to kick away from blue editing border indication
+        padding: $interiorMargin;
+    }
+
+    section {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__conditions-h {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        overflow: auto;
+        padding-right: $interiorMarginSm;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    .hint {
+        padding: $interiorMarginSm;
+    }
+
+    /************************** SPECIFIC ITEMS */
+    &__current-output-value {
+        flex-direction: row;
+        align-items: baseline;
+        padding: 0 $interiorMargin $interiorMarginLg $interiorMargin;
+
+        > * {
+            padding: $interiorMargin 0; // Must do this to align label and value
+        }
+
+        &__label {
+            color: $colorInspectorSectionHeaderFg;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        &__value {
+            $p: $interiorMargin * 3;
+            font-size: 1.25em;
+            margin-left: $interiorMargin;
+            padding-left: $p;
+            padding-right: $p;
+            background: rgba(black, 0.2);
+            border-radius: 5px;
+        }
+    }
+}
+
+/***************************** CONDITIONS AND TEST DATUM ELEMENTS */
+.c-condition,
+.c-test-datum {
+    @include discreteItem();
+    display: flex;
+    padding: $interiorMargin;
+    line-height: 170%; // Aligns text with controls like selects
+}
+
+.c-cdef,
+.c-cs-test {
+    &__controls {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &__buttons {
+        white-space: nowrap;
+    }
+}
+
+.c-condition {
+    border: 1px solid transparent;
+    flex-direction: column;
+    min-width: 400px;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+    &--browse {
+        .c-condition__summary {
+            border-top: 1px solid $colorInteriorBorder;
+            padding-top: $interiorMargin;
+        }
+    }
+
+    /***************************** HEADER */
+    &__header {
+        $h: 22px;
+        display: flex;
+        align-items: start;
+        align-content: stretch;
+        overflow: hidden;
+        min-height: $h;
+        line-height: $h;
+
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-left: $interiorMarginSm;
+            }
+        }
+    }
+
+    &__drag-grippy {
+        transform: translateY(50%);
+    }
+
+    &__name {
+        font-weight: bold;
+        align-self: baseline; // Fixes bold line-height offset problem
+    }
+
+    &__output,
+    &__summary {
+        flex: 1 1 auto;
+    }
+
+    &.is-current {
+        $c: $colorBodyFg;
+        border-color: rgba($c, 0.2);
+        background: rgba($c, 0.2);
+    }
+}
+
+/***************************** CONDITION DEFINITION, EDITING */
+.c-cdef {
+    display: grid;
+    grid-row-gap: $interiorMarginSm;
+    grid-column-gap: $interiorMargin;
+    grid-auto-columns: min-content 1fr max-content;
+    align-items: start;
+    min-width: 150px;
+    margin-left: 29px;
+    overflow: hidden;
+
+    &__criteria,
+    &__match-and-criteria {
+        display: contents;
+    }
+
+    &__label {
+        grid-column: 1;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    &__separator {
+        grid-column: 1 / span 3;
+    }
+
+    &__controls {
+        align-items: flex-start;
+        grid-column: 2;
+
+        > * > * {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &__buttons {
+        grid-column: 3;
+    }
+}
+
+.c-c__drag-ghost {
+    width: 100%;
+    min-height: $interiorMarginSm;
+
+    &.dragging {
+        min-height: 5em;
+        background-color: lightblue;
+        border-radius: 2px;
+    }
+}
+
+/***************************** TEST DATA */
+.c-cs__test-data {
+    &__controls {
+        flex: 0 0 auto;
+    }
+}
+
+.c-cs-tests {
+    flex: 0 1 auto;
+    overflow: auto;
+    padding-right: $interiorMarginSm;
+
+    > * + * {
+        margin-top: $interiorMarginSm;
+    }
+}
+
+.c-cs-test {
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+}

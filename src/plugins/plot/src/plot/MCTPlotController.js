@@ -34,25 +34,27 @@ define([
      * values near the cursor.
      */
     function MCTPlotController($scope, $element, $window) {
-        this.$scope = $scope;
-        this.$scope.config = this.config;
-        this.$scope.plot = this;
-        this.$element = $element;
-        this.$window = $window;
+        this.$onInit = () => {
+            this.$scope = $scope;
+            this.$scope.config = this.config;
+            this.$scope.plot = this;
+            this.$element = $element;
+            this.$window = $window;
 
-        this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
-        this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
+            this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
+            this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
 
-        this.pan = undefined;
-        this.marquee = undefined;
+            this.pan = undefined;
+            this.marquee = undefined;
 
-        this.chartElementBounds = undefined;
-        this.tickUpdate = false;
+            this.chartElementBounds = undefined;
+            this.tickUpdate = false;
 
-        this.$scope.plotHistory = this.plotHistory = [];
-        this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
+            this.$scope.plotHistory = this.plotHistory = [];
+            this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
-        this.initialize();
+            this.initialize();
+        }
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
@@ -65,10 +67,10 @@ define([
         }
         this.$canvas = this.$element.find('canvas');
 
-        this.listenTo(this.$canvas, 'click', this.onMouseClick, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
+        this.listenTo(this.$canvas, 'wheel', this.wheelZoom, this);
 
         this.watchForMarquee();
     };
@@ -76,7 +78,6 @@ define([
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
 
-        this.listenTo(this.$canvas, 'click', this.onMouseClick, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
@@ -208,23 +209,6 @@ define([
         this.highlightValues(point);
     };
 
-    MCTPlotController.prototype.onMouseClick = function ($event) {
-        const isClick = this.isMouseClick();
-        if (this.pan) {
-            this.endPan($event);
-        }
-        if (this.marquee) {
-            this.endMarquee($event);
-        }
-        this.$scope.$apply();
-
-        if (!this.$scope.highlights.length || !isClick) {
-            return;
-        }
-
-        this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
-    };
-
     MCTPlotController.prototype.highlightValues = function (point) {
         this.highlightPoint = point;
         this.$scope.$emit('plot:highlight:update', point);
@@ -272,11 +256,23 @@ define([
     MCTPlotController.prototype.onMouseUp = function ($event) {
         this.stopListening(this.$window, 'mouseup', this.onMouseUp, this);
         this.stopListening(this.$window, 'mousemove', this.trackMousePosition, this);
+
+        if (this.isMouseClick()) {
+            this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
+        }
+
+        if (this.allowPan) {
+            return this.endPan($event);
+        }
+
+        if (this.allowMarquee) {
+            return this.endMarquee($event);
+        }
     };
 
     MCTPlotController.prototype.isMouseClick = function () {
         if (!this.marquee) {
-            return;
+            return false;
         }
 
         const { start, end } = this.marquee;

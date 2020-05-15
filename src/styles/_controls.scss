@@ -54,13 +54,21 @@ button {
         background: $splitterBtnColorBg;
         color: $splitterBtnColorFg;
         border-radius: $smallCr;
-        font-size: 6px;
         line-height: 90%;
         padding: 3px 10px;
 
         @include hover() {
             background: $colorBtnBgHov;
             color: $colorBtnFgHov;
+        }
+
+        @include desktop() {
+            font-size: 6px;
+        }
+
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-size: 1.1em;
         }
     }
 
@@ -78,6 +86,20 @@ button {
 /********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+
+    &--section-collapse {
+        color: inherit;
+        display: block;
+        transition: transform $transOutTime;
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+        }
+
+        &.is-collapsed {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .c-click-link {
@@ -100,13 +122,8 @@ button {
         margin-left: $interiorMargin;
     }
 
-    $c1: nth($mixedSettingBg, 1);
-    $c2: nth($mixedSettingBg, 2);
-    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
-
     &--mixed {
-        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
-        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+        @include mixedBg();
     }
 
     &--swatched {
@@ -129,13 +146,26 @@ button {
             flex: 1 1 auto;
             font-size: 1.1em;
         }
+    }
+}
 
-        &--mixed {
-            // Styling for swatched buttons when settings are mixed
-            > [class*='swatch'] {
-                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
-            }
-        }
+.c-list-button {
+    @include cControl();
+    color: $colorBodyFg;
+    cursor: pointer;
+    justify-content: start;
+    padding: $interiorMargin;
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    @include hover() {
+        background: $colorItemTreeHoverBg;
+    }
+
+    .c-button {
+        flex: 0 0 auto;
     }
 }
 
@@ -186,6 +216,41 @@ button {
         &:before {
             transform: rotate(90deg);
         }
+    }
+}
+
+/******************************************************** DRAG AFFORDANCES */
+.c-grippy {
+    $d: 10px;
+    @include grippy($c: $colorItemTreeVC, $dir: 'y');
+    width: $d; height: $d;
+
+    &--vertical-drag {
+        cursor: ns-resize;
+    }
+}
+
+/******************************************************** SECTION */
+section {
+    flex: 0 1 auto;
+    overflow: hidden;
+    + section {
+        margin-top: $interiorMargin;
+    }
+
+    .c-section__header {
+        @include propertiesHeader();
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+    > [class*='__label'] {
+        flex: 1 1 auto;
+        text-transform: uppercase;
     }
 }
 
@@ -301,7 +366,7 @@ select {
     background-position: right .4em top 80%, 0 0;
     border: none;
     border-radius: $controlCr;
-    padding: 1px 20px 1px $interiorMargin;
+    padding: 2px 20px 2px $interiorMargin;
 
     *,
     option {
@@ -500,6 +565,20 @@ select {
         }
     }
 }
+/******************************************************** CONTROL BARS */
+.c-control-bar {
+    display: flex;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
+    &__label {
+        display: inline-block;
+        white-space: nowrap;
+    }
+}
 
 /******************************************************** PALETTES */
 .c-palette {
@@ -619,6 +698,12 @@ select {
 
 .c-separator {
     @include cToolbarSeparator();
+    height: 100%;
+}
+
+.c-row-separator {
+    border-top: 1px solid $colorInteriorBorder;
+    height: 1px;
 }
 
 .c-toolbar {
@@ -641,7 +726,7 @@ select {
         $pTB: 2px;
         padding: $pTB $pLR;
 
-        &:hover {
+        @include hover() {
             background: $editUIBaseColorHov !important;
             color: $editUIBaseColorFg !important;
         }
@@ -656,7 +741,7 @@ select {
                 color: $colorBtnCautionBg;
             }
 
-            &:hover {
+            @include hover() {
                 background: rgba($colorBtnCautionBgHov, 0.2);
                 :before {
                     color: $colorBtnCautionBgHov;
@@ -722,7 +807,29 @@ select {
     }
 }
 
-/***************************************************** SLIDERS */
+/******************************************************** STYLE EDITING */
+.c-style {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+
+    > * + * { margin-left: $interiorMargin; }
+}
+
+.c-style-thumb {
+    background-size: cover;
+    border: 1px solid transparent;
+    border-radius: $basicCr;
+    box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
+    flex: 0 0 auto;
+    padding: $interiorMargin $interiorMarginLg;
+
+    &--mixed {
+        @include mixedBg();
+    }
+}
+
+/******************************************************** SLIDERS */
 .c-slider {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }

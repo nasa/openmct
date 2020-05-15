@@ -4,6 +4,8 @@
 
 <script>
 import _ from "lodash"
+import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
 export default {
     inject: ["openmct"],
@@ -31,6 +33,19 @@ export default {
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();
         }
+
+        if (this.unlisten) {
+            this.unlisten();
+        }
+
+        if (this.stopListeningStyles) {
+            this.stopListeningStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            delete this.styleRuleManager;
+        }
     },
     created() {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
@@ -43,6 +58,11 @@ export default {
             capture: true
         });
         this.$el.addEventListener('drop', this.addObjectToParent);
+        if (this.currentObject) {
+            //This is to apply styles to subobjects in a layout
+            this.initObjectStyles();
+        }
+
     },
     methods: {
         clear() {
@@ -76,6 +96,29 @@ export default {
             this.clear();
             this.updateView(true);
         },
+        updateStyle(styleObj) {
+            if (!styleObj) {
+                return;
+            }
+            let keys = Object.keys(styleObj);
+            keys.forEach(key => {
+                let firstChild = this.$el.querySelector(':first-child');
+                if (firstChild) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
+                        if (firstChild.style[key]) {
+                            firstChild.style[key] = '';
+                        }
+                    } else {
+                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
+                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        }
+                        firstChild.style[key] = styleObj[key];
+                    }
+                }
+            });
+        },
         updateView(immediatelySelect) {
             this.clear();
             if (!this.currentObject) {
@@ -89,7 +132,7 @@ export default {
             }
 
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.viewContainer.classList.add('u-angular-object-view-wrapper');
             this.$el.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
@@ -125,6 +168,8 @@ export default {
             this.openmct.objectViews.on('clearData', this.clearData);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
+            this.updateStyle();
+
             if (this.unlisten) {
                 this.unlisten();
             }
@@ -149,13 +194,32 @@ export default {
             });
 
             this.viewKey = viewKey;
+
             this.updateView(immediatelySelect);
+
+            this.initObjectStyles();
+        },
+        initObjectStyles() {
+            if (!this.styleRuleManager) {
+                this.styleRuleManager = new StyleRuleManager((this.currentObject.configuration && this.currentObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this), true);
+            } else {
+                this.styleRuleManager.updateObjectStyleConfig(this.currentObject.configuration && this.currentObject.configuration.objectStyles);
+            }
+
+            if (this.stopListeningStyles) {
+                this.stopListeningStyles();
+            }
+
+            this.stopListeningStyles = this.openmct.objects.observe(this.currentObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+            });
         },
         loadComposition() {
             return this.composition.load();
         },
         getSelectionContext() {
-            if (this.currentView.getSelectionContext) {
+            if (this.currentView && this.currentView.getSelectionContext) {
                 return this.currentView.getSelectionContext();
             } else {
                 return { item: this.currentObject };

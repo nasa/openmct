@@ -1,0 +1,60 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+.c-condition-widget {
+    $shdwSize: 3px;
+    @include userSelectNone();
+    background-color: rgba($colorBodyFg, 0.1); // Give a little presence if the user hasn't defined a fill color
+    border-radius: $basicCr;
+    border: 1px solid transparent;
+    display: inline-block;
+    padding: $interiorMarginLg $interiorMarginLg * 2;
+}
+
+a.c-condition-widget {
+    // Widget is conditionally made into a <a> when URL property has been defined
+    cursor: pointer !important;
+    pointer-events: inherit;
+}
+
+// Make Condition Widget expand when in a hidden frame Layout context
+// For both static and Flexible Layouts
+.c-so-view--no-frame > .c-so-view__object-view > .c-condition-widget {
+    @include abs();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+// Add some margin when a Condition Widget is in a Flexible Layout
+.c-fl .c-so-view--no-frame .c-condition-widget {
+    @include abs(1px);
+}
+
+// When the widget is in the main view, center it in the space
+.l-shell__main-container > .c-condition-widget {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

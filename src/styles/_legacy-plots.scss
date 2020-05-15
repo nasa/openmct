@@ -25,32 +25,6 @@ mct-plot {
 }
 
 /*********************** STACKED PLOT LAYOUT */
-.t-plot-stacked {
-    .l-view-section {
-        //  Make this a flex container
-        display: flex;
-        flex-flow: column nowrap;
-        .gl-plot.child-frame {
-            mct-plot {
-                display: flex;
-                flex: 1 1 auto;
-                height: 100%;
-                position: relative;
-            }
-            flex: 1 1 auto;
-            &:not(:first-child) {
-                margin-top: $interiorMargin;
-            }
-        }
-    }
-
-    .s-status-timeconductor-unsynced .holder-plot {
-        .t-object-alert.t-alert-unsynced {
-            display: block;
-        }
-    }
-}
-
 .is-editing {
     .gl-plot.child-frame {
         &:hover {
@@ -67,10 +41,70 @@ mct-plot {
     }
 }
 
+.c-plot,
 .gl-plot {
-    color: $colorPlotFg;
+    .s-status-taking-snapshot & {
+        .c-control-bar {
+            display: none;
+        }
+        .gl-plot-y-label__select {
+            display: none;
+        }
+    }
+}
+
+.c-plot {
+    //$p: $mainViewPad;
+    @include abs($mainViewPad);
+    //position: absolute;
+    //top: $p; right: $p; bottom: $p; left: $p;
+
     display: flex;
-    //font-size: 0.7rem;
+    flex-direction: column;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    .l-control-bar {
+        flex: 0 0 auto;
+    }
+
+    .l-view-section {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    &--stacked {
+        .child-frame {
+            .has-control-bar {
+                .c-control-bar {
+                    // Hides buttons per plot element in a stacked plot
+                    display: none;
+                }
+            }
+
+            mct-plot {
+                display: flex;
+                flex: 1 1 auto;
+                height: 100%;
+                position: relative;
+            }
+            flex: 1 1 auto;
+        }
+
+        .s-status-timeconductor-unsynced .holder-plot {
+            .t-object-alert.t-alert-unsynced {
+                display: block;
+            }
+        }
+    }
+}
+
+
+.gl-plot {
+    display: flex;
     position: relative;
     width: 100%;
     height: 100%;
@@ -127,10 +161,10 @@ mct-plot {
     }
 
     .gl-plot-coords {
+        // This does not appear to be in use in Open MCT
         box-sizing: border-box;
         border-radius: $controlCr;
         background: black;
-        color: lighten($colorBodyFg, 30%);
         padding: 2px 5px;
         position: absolute;
         top: nth($plotDisplayArea,1) + $interiorMarginLg;
@@ -145,7 +179,6 @@ mct-plot {
 
     .gl-plot-label,
     .l-plot-label {
-        color: $colorPlotLabelFg;
         position: absolute;
         text-align: center;
 
@@ -163,7 +196,7 @@ mct-plot {
             left: 0; top: 0; right: auto; bottom: 0;
             padding-left: 5px;
             text-orientation: mixed;
-            overflow: hidden;
+            //overflow: hidden;
             writing-mode: vertical-lr;
             &:before {
                 // Icon denoting configurability
@@ -335,11 +368,11 @@ mct-plot {
     z-index: -10;
 
     .l-view-section {
-        $m: $interiorMargin;
-        top: $m !important;
-        right: $m;
-        bottom: $m;
-        left: $m;
+        //$m: $interiorMargin;
+        //top: $m !important;
+        //right: $m;
+        //bottom: $m;
+        //left: $m;
 
         .s-status-timeconductor-unsynced .holder-plot {
             .t-object-alert.t-alert-unsynced {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,6 +47,8 @@ define([
     './goToOriginalAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
+    './condition/plugin',
+    './conditionWidget/plugin',
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow'
@@ -77,6 +79,8 @@ define([
     GoToOriginalAction,
     ClearData,
     WebPagePlugin,
+    ConditionPlugin,
+    ConditionWidgetPlugin,
     Espresso,
     Maelstrom,
     Snow
@@ -84,7 +88,8 @@ define([
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -171,7 +176,7 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook;
+    plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
@@ -185,6 +190,8 @@ define([
     plugins.Espresso = Espresso.default;
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
+    plugins.Condition = ConditionPlugin.default;
+    plugins.ConditionWidget = ConditionWidgetPlugin.default;
 
     return plugins;
 });

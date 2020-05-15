@@ -23,9 +23,12 @@
     }
 
     &:not(.c-so-view--no-frame) {
-        background: $colorBodyBg;
         border: $browseFrameBorder;
         padding: $interiorMargin;
+
+        .is-editing & {
+            background: rgba($colorBodyBg, 0.8);
+        }
     }
 
     &--no-frame {
@@ -58,7 +61,7 @@
         height: 0; // Chrome 73 overflow bug fix
         overflow: auto;
 
-        .c-object-view {
+        .u-angular-object-view-wrapper {
             .u-fills-container {
                 // Expand component types that fill a container
                 @include abs();
@@ -69,7 +72,14 @@
     .c-click-icon,
     .c-button {
         // Shrink buttons a bit when they appear in a frame
-        font-size: 0.85em;
+        font-size: 0.9em;
         padding: 3px 5px;
     }
+}
+
+.u-angular-object-view-wrapper {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }

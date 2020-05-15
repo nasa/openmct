@@ -28,12 +28,12 @@
     }"
 >
     <div class="c-so-view__header">
-        <div
-            class="c-so-view__header__icon"
-            :class="cssClass"
-        ></div>
-        <div class="c-so-view__header__name">
-            {{ domainObject && domainObject.name }}
+        <div class="c-object-label"
+             :class="[cssClass, classList]"
+        >
+            <div class="c-object-label__name">
+                {{ domainObject && domainObject.name }}
+            </div>
         </div>
         <context-menu-drop-down
             :object-path="objectPath"
@@ -59,12 +59,15 @@
 <script>
 import ObjectView from './ObjectView.vue'
 import ContextMenuDropDown from './contextMenuDropDown.vue';
+import PreviewHeader from '@/ui/preview/preview-header.vue';
+import Vue from 'vue';
 
 const SIMPLE_CONTENT_TYPES = [
     'clock',
     'timer',
     'summary-widget',
-    'hyperlink'
+    'hyperlink',
+    'conditionWidget'
 ];
 
 export default {
@@ -98,6 +101,16 @@ export default {
             complexContent
         }
     },
+    computed: {
+        classList() {
+            const classList = this.domainObject.classList;
+            if (!classList || !classList.length) {
+                return '';
+            }
+
+            return classList.join(' ');
+        }
+    },
     methods: {
         expand() {
             let objectView = this.$refs.objectView,
@@ -105,12 +118,40 @@ export default {
                 childElement = parentElement.children[0];
 
             this.openmct.overlays.overlay({
-                element: childElement,
+                element: this.getOverlayElement(childElement),
                 size: 'large',
                 onDestroy() {
                     parentElement.append(childElement);
                 }
             });
+        },
+        getOverlayElement(childElement) {
+            const fragment = new DocumentFragment();
+            const header = this.getPreviewHeader();
+            fragment.append(header);
+            fragment.append(childElement);
+
+            return fragment;
+        },
+        getPreviewHeader() {
+            const domainObject = this.objectPath[0];
+            const preview = new Vue({
+                components: {
+                    PreviewHeader
+                },
+                provide: {
+                    openmct: this.openmct,
+                    objectPath: this.objectPath
+                },
+                data() {
+                    return {
+                        domainObject
+                    }
+                },
+                template: '<PreviewHeader :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
+            });
+
+            return preview.$mount().$el;
         },
         getSelectionContext() {
             return this.$refs.objectView.getSelectionContext();

@@ -47,6 +47,7 @@ define([
             this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
+            this.datumCache = [];
             this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
@@ -155,6 +156,7 @@ define([
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows.add(telemetryRows);
+            this.emit('historical-rows-processed');
         }
 
         /**
@@ -179,7 +181,7 @@ define([
         }
 
         refreshData(bounds, isTick) {
-            if (!isTick) {
+            if (!isTick && this.outstandingRequests === 0) {
                 this.filteredRows.clear();
                 this.boundedRows.clear();
                 this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
@@ -227,10 +229,26 @@ define([
                     return;
                 }
 
-                if (!this.paused) {
+                if (this.paused) {
+                    let realtimeDatum = {
+                        datum,
+                        columnMap,
+                        keyString,
+                        limitEvaluator
+                    };
+
+                    this.datumCache.push(realtimeDatum);
+                } else {
                     this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
                 }
             }, subscribeOptions);
+        }
+
+        processDatumCache() {
+            this.datumCache.forEach(cachedDatum => {
+                this.processRealtimeDatum(cachedDatum.datum, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
+            });
+            this.datumCache = [];
         }
 
         processRealtimeDatum(datum, columnMap, keyString, limitEvaluator) {
@@ -272,8 +290,8 @@ define([
 
         unpause() {
             this.paused = false;
+            this.processDatumCache();
             this.boundedRows.subscribeToBounds();
-            this.refreshData();
         }
 
         destroy() {

@@ -347,78 +347,6 @@ define(['lodash'], function (_) {
                     };
                 }
 
-                function getFillMenu(selectedParent, selection) {
-                    return {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' ||
-                                type === 'telemetry-view' ||
-                                type === 'box-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".fill";
-                        },
-                        icon: "icon-paint-bucket",
-                        title: "Set fill color"
-                    };
-                }
-
-                function getStrokeMenu(selectedParent, selection) {
-                    return {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' ||
-                                type === 'telemetry-view' ||
-                                type === 'box-view' ||
-                                type === 'image-view' ||
-                                type === 'line-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".stroke";
-                        },
-                        icon: "icon-line-horz",
-                        title: "Set border color"
-                    };
-                }
-
-                function getTextColorMenu(selectedParent, selection) {
-                    return {
-                        control: "color-picker",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' || type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".color";
-                        },
-                        icon: "icon-font",
-                        mandatory: true,
-                        title: "Set text color",
-                        preventNone: true
-                    };
-                }
-
-                function getURLButton(selectedParent, selection) {
-                    return {
-                        control: "button",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'image-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath);
-                        },
-                        icon: "icon-image",
-                        title: "Edit image properties",
-                        dialog: DIALOG_FORM.image
-                    };
-                }
-
                 function getTextButton(selectedParent, selection) {
                     return {
                         control: "button",
@@ -429,7 +357,7 @@ define(['lodash'], function (_) {
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-gear",
+                        icon: "icon-font",
                         title: "Edit text properties",
                         dialog: DIALOG_FORM.text
                     };
@@ -505,20 +433,24 @@ define(['lodash'], function (_) {
 
                 let toolbar = {
                     'add-menu': [],
+                    'text': [],
+                    'url': [],
                     'toggle-frame': [],
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
                     'text-style': [],
                     'position': [],
-                    'text': [],
-                    'url': [],
                     'remove': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
+
+                    if (!layoutItem) {
+                        return;
+                    }
 
                     if (layoutItem.type === 'subobject-view') {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
@@ -546,15 +478,8 @@ define(['lodash'], function (_) {
                         if (toolbar['telemetry-value'].length === 0) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
-                        if (toolbar.style.length < 2) {
-                            toolbar.style = [
-                                getFillMenu(selectedParent, selectedObjects),
-                                getStrokeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selectedObjects),
                                 getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
@@ -571,15 +496,8 @@ define(['lodash'], function (_) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
-                        if (toolbar.style.length < 2) {
-                            toolbar.style = [
-                                getFillMenu(selectedParent, selectedObjects),
-                                getStrokeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextColorMenu(selectedParent, selectedObjects),
                                 getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
@@ -599,12 +517,6 @@ define(['lodash'], function (_) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'box-view') {
-                        if (toolbar.style.length < 2) {
-                            toolbar.style = [
-                                getFillMenu(selectedParent, selectedObjects),
-                                getStrokeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -618,11 +530,6 @@ define(['lodash'], function (_) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'image-view') {
-                        if (toolbar.style.length === 0) {
-                            toolbar.style = [
-                                getStrokeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -632,18 +539,10 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
-                        if (toolbar.url.length === 0) {
-                            toolbar.url = [getURLButton(selectedParent, selectedObjects)];
-                        }
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'line-view') {
-                        if (toolbar.style.length === 0) {
-                            toolbar.style = [
-                                getStrokeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),

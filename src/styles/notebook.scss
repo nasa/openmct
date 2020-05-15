@@ -22,34 +22,61 @@
 
 /*********************************************** NOTEBOOK */
 .c-notebook {
+    $headerFontSize: 1.3em;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
+    height: 100%;
 
-    &-snapshot {
-        flex: 1 1 auto;
+    /****************************** CONTENT */
+    &__body {
+        // Holds __nav and __page-view
         display: flex;
-        flex-direction: column;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
 
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-
-        &__header {
-            flex: 0 0 auto;
-        }
-
-        &__image {
-            flex: 1 1 auto;
+    &__nav {
+        flex: 0 0 auto;
+        * {
+            overflow: hidden;
         }
     }
 
-    > [class*="__"] + [class*="__"] {
+    .c-sidebar {
+        background: $sideBarBg;
+        .c-sidebar__pane {
+            flex-basis: 50%;
+        }
+    }
+
+    body.mobile & {
+        .c-list-button,
+        &-snapshot-menubutton {
+            display: none;
+        }
+    }
+
+    /****************************** CONTENT */
+    &__contents {
+        width: 70%;
+    }
+
+    &__page-view {
+        // Holds __header, __drag-area and __entries
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        width: 100%;
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-top: $interiorMargin;
+            }
+        }
+    }
+
+    > * + * {
         margin-top: $interiorMargin;
     }
 
@@ -111,17 +138,93 @@
         }
     }
 
+    /***** PAGE VIEW */
+    &__page-view {
+        &__header {
+            display: flex;
+            flex-wrap: wrap; // Allows wrapping in mobile portrait and narrow placements
+            line-height: 220%;
+            > * {
+                flex: 0 0 auto;
+            }
+        }
+
+        &__path {
+            flex: 1 1 auto;
+            margin: 0 $interiorMargin;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: $headerFontSize;
+            > * {
+                // Section
+                flex: 0 0 auto;
+                + * {
+                    // Page
+                    display: inline;
+                    flex: 1 1 auto;
+                    @include ellipsize();
+                }
+            }
+        }
+    }
+
     &__entries {
         flex-direction: column;
         flex: 1 1 auto;
-        padding-right: $interiorMarginSm;
         overflow-x: hidden;
         overflow-y: scroll;
+
+        @include desktop() {
+            padding-right: $interiorMarginSm; // Scrollbar kickoff
+        }
 
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
         }
+    }
 
+    /***** SEARCH RESULTS */
+    &__search-results {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: 5px;
+        }
+
+        &__header {
+            font-size: $headerFontSize;
+            flex: 0 0 auto;
+        }
+
+        .c-notebook__entries {
+            flex: 1 1 auto;
+        }
+
+        .c-ne {
+            flex-direction: column;
+
+            > * + * {
+                margin-top: $interiorMargin;
+            }
+        }
+    }
+}
+
+.is-notebook-default {
+    &:after {
+        color: $colorFilter;
+        content: $glyph-icon-notebook-page;
+        display: block;
+        font-family: symbolsfont;
+        font-size: 0.9em;
+        margin-left: $interiorMargin;
+    }
+
+    &.c-list__item:after {
+        flex: 1 0 auto;
+        text-align: right;
     }
 }
 
@@ -183,10 +286,29 @@
     }
 
     &__embeds {
-        flex-wrap: wrap;
+        //flex-wrap: wrap;
 
         > [class*="__embed"] {
-            margin: 0 $interiorMarginSm $interiorMarginSm 0;
+            //margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        }
+    }
+
+    &__section-and-page {
+        // Shown when c-ne within search results
+        background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
+        border-radius: $controlCr;
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        padding: $interiorMargin;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        [class*='icon'] {
+            font-size: 0.8em;
+            opacity: 0.7;
         }
     }
 }
@@ -194,7 +316,7 @@
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 50px;
+    $d: 30px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -266,7 +388,79 @@
 .s-status-taking-snapshot,
 .overlay.snapshot {
     // Handle overflow-y issues with tables and html2canvas
+    background: $colorBodyBg; // Prevent html2canvas from using white background
+    color: $colorBodyFg;
+    padding: $interiorMarginSm !important; // Prevents items from going right to the edge of the image
+
     .l-sticky-headers .l-tabular-body { overflow: auto; }
+    .l-browse-bar {
+        display: none; // Suppress browse-bar when snapshotting from view-large overlay
+        + * {
+            margin-top: 0 !important; // Remove margin from any following elements
+        }
+    }
+
+    * {
+        box-shadow: none !important; // Prevent html2canvas problems with box-shadow
+    }
+}
+
+.c-notebook-snapshot {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__header {
+        flex: 0 0 auto;
+    }
+
+    &__image {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
+        flex: 1 1 auto;
+    }
+}
+
+/****************************** SNAPSHOT CONTAINER */
+.c-snapshots-h {
+    // Is hidden when the parent div l-shell__drawer is collapsed, so no worries about padding, etc.
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: $interiorMarginLg;
+
+    > * {
+        flex: 1 1 auto;
+        &:first-child {
+            flex: 0 0 auto;
+        }
+    }
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+}
+
+.c-snapshots {
+    flex-wrap: wrap;
+    overflow: auto;
+
+    .c-snapshot {
+        margin: 0 $interiorMarginSm $interiorMarginSm 0;
+    }
+
+    .hint {
+        font-size: 1.25em;
+        font-style: italic;
+        opacity: 0.7;
+        padding: $interiorMarginLg;
+        text-align: center;
+    }
 }
 
 /****************************** PAINTERRO OVERRIDES */
@@ -401,7 +595,8 @@ body.mobile {
 
     &.phone.portrait {
         .c-notebook__head,
-        .c-notebook__entry {
+        .c-notebook__entry,
+        .c-ne__time-and-content {
             flex-direction: column;
 
             > [class*="__"] + [class*="__"] {
@@ -413,9 +608,14 @@ body.mobile {
         .c-notebook__entry {
             [class*="text"] {
                 min-height: 0;
-                padding: 0;
                 pointer-events: none;
             }
         }
     }
+}
+
+/****************************** INDICATOR */
+.c-indicator.has-new-snapshot {
+    $c: $colorOk;
+    @include pulseProp($animName: flashSnapshot, $dur: 500ms, $iter: infinite, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
 }

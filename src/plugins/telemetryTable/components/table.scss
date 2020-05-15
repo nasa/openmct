@@ -21,10 +21,6 @@
         vertical-align: middle; // This is crucial to hiding 4px height injected by browser by default
     }
 
-    td {
-        color: $colorTelemFresh;
-    }
-
     /******************************* WRAPPERS */
     &__headers-w {
         // Wraps __headers table
@@ -169,7 +165,16 @@
 /******************************* LEGACY */
 .s-status-taking-snapshot,
 .overlay.snapshot {
-    // Handle overflow-y issues with tables and html2canvas
-    // Replaces .l-sticky-headers .l-tabular-body { overflow: auto; }
-    .c-table__body-w { overflow: auto; }
+    .c-table {
+        &__body-w {
+            overflow: auto; // Handle overflow-y issues with tables and html2canvas
+        }
+
+        &-control-bar {
+            display: none;
+            + * {
+                margin-top: 0 !important;
+            }
+        }
+    }
 }
