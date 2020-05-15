@@ -83,17 +83,7 @@ export default {
         }
     },
     mounted() {
-        let axisHolder = this.$refs.axisHolder;
-        this.height = axisHolder.offsetHeight;
-        this.width = axisHolder.clientWidth;
-        const rect = axisHolder.getBoundingClientRect();
-        this.left = Math.round(rect.left);
-
-        let vis = d3Selection.select(axisHolder)
-            .append("svg:svg")
-            .attr("width", "100%")
-            .attr("height", this.height);
-
+        let vis = d3Selection.select(this.$refs.axisHolder).append("svg:svg");
 
         this.xAxis = d3Axis.axisTop();
         this.dragging = false;
@@ -103,16 +93,26 @@ export default {
             .attr("class", "axis");
 
         this.setViewFromTimeSystem(this.openmct.time.timeSystem());
+        this.setAxisDimensions();
         this.setScale();
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
         setInterval(this.resize, RESIZE_POLL_INTERVAL);
     },
-    destroyed() {
-    },
     methods: {
+        setAxisDimensions() {
+            const axisHolder = this.$refs.axisHolder;
+            const rect = axisHolder.getBoundingClientRect();
+
+            this.left = Math.round(rect.left);
+            this.width = axisHolder.clientWidth;
+        },
         setScale() {
+            if (!this.width) {
+                return;
+            }
+
             let timeSystem = this.openmct.time.timeSystem();
 
             if (timeSystem.isUTCBased) {
@@ -291,7 +291,7 @@ export default {
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
-                this.width = this.$refs.axisHolder.clientWidth;
+                this.setAxisDimensions();
                 this.setScale();
             }
         }
