@@ -6,7 +6,6 @@
 import Plotly from 'plotly.js-dist';
 import moment from 'moment'
 import RemoveAction from '../../remove/RemoveAction';
-import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -24,9 +23,15 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.RemoveAction = new RemoveAction(this.openmct);
+        console.log('this.openmct.time.clock()', this.openmct.time.clock());
+        // this.openmct.time.on('bounds', this.refreshData);
+
     },
     methods: {
+        refreshData() {
+            console.log('this.openmct.time.clock()', this.openmct.time.clock());
+
+        },
         getLayout(telemetryObject) {
             return {
                 hovermode: 'compare',
@@ -39,7 +44,7 @@ export default {
                     color: "#666"
                 },
                 xaxis: {
-                    // title: this.plotAxisTitle.xAxisTitle,
+                    // make this dynamic
                     title: 'UTC',
                     zeroline: false
                 },
