@@ -162,19 +162,32 @@ export default {
             }).show(this.embed.snapshot.src);
         },
         changeLocation() {
-            this.openmct.time.stopClock();
-            this.openmct.time.bounds({
-                start: this.embed.bounds.start,
-                end: this.embed.bounds.end
-            });
-
             const link = this.embed.historicLink;
             if (!link) {
                 return;
             }
 
+            const bounds = this.openmct.time.bounds();
+            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
+                && this.embed.bounds.end !== bounds.end;
+            const isFixedTimespanMode = !this.openmct.time.clock();
+
+            this.openmct.time.stopClock();
             window.location.href = link;
-            const message = 'Time bounds changed to fixed timespan mode';
+
+            let message = '';
+            if (isTimeBoundChanged) {
+                this.openmct.time.bounds({
+                    start: this.embed.bounds.start,
+                    end: this.embed.bounds.end
+                });
+                message = 'Time bound values changed';
+            }
+
+            if (!isFixedTimespanMode) {
+                message = 'Time bound values changed to fixed timespan mode';
+            }
+
             this.openmct.notifications.alert(message);
         },
         formatTime(unixTime, timeFormat) {
