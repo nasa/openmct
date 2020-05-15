@@ -70,15 +70,18 @@ export default class ConditionClass extends EventEmitter {
             return;
         }
 
-        this.criteria.forEach(criterion => {
-            if (this.isAnyOrAllTelemetry(criterion)) {
-                criterion.getResult(datum, this.conditionManager.telemetryObjects);
-            } else {
-                criterion.getResult(datum);
-            }
-        });
+        if (this.isTelemetryUsed(datum.id)) {
 
-        this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+            this.criteria.forEach(criterion => {
+                if (this.isAnyOrAllTelemetry(criterion)) {
+                    criterion.getResult(datum, this.conditionManager.telemetryObjects);
+                } else {
+                    criterion.getResult(datum);
+                }
+            });
+
+            this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+        }
     }
 
     isAnyOrAllTelemetry(criterion) {
