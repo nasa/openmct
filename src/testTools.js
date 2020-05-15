@@ -137,7 +137,6 @@ export const getMockObjects = (opts = {}) => {
             if(opts.overwrite[mock]) {
                 for(let key in opts.overwrite[mock]) {
                     if (Object.prototype.hasOwnProperty.call(opts.overwrite[mock], key)) {
-                        console.log('overwrite' + ' ' + mock + ' ' + key, opts.overwrite[mock][key])
                         requestedMocks[mock][key] = opts.overwrite[mock][key];
                     }
                 }
