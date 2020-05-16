@@ -148,18 +148,18 @@ JavaScript sources in Open MCT should:
    and/or their inclusion makes sense within the flow of the code
    (e.g. as arguments to a forEach call).
 1. Named functions are preferred over functions assigned to variables.
-eg.
-```JavaScript
-function renameObject(object, newName) {
-    Object.name = newName;
-}
-```
-is preferable to
-```JavaScript
-const rename = (object, newName) => {
-    Object.name = newName;
-}
-```
+   eg.
+   ```JavaScript
+   function renameObject(object, newName) {
+       Object.name = newName;
+   }
+   ```
+   is preferable to
+   ```JavaScript
+   const rename = (object, newName) => {
+       Object.name = newName;
+   }
+   ```
 1. Avoid deep nesting (especially of functions), except where necessary
    (e.g. due to closure scope).
 1. End with a single new-line character.
@@ -183,77 +183,34 @@ const rename = (object, newName) => {
 1. Don’t use the ternary operator. Yes it's terse, but there's probably a clearer way of writing it.
 1. Test specs should reside alongside the source code they test, not in a separate directory.
 1. Organize code by feature, not by type.
-eg.
-```
-- telemetryTable
-    - row
-        TableRow.js
-        TableRowCollection.js
-        TableRow.vue
-    - column
-        TableColumn.js
-        TableColumn.vue
-    plugin.js
-    pluginSpec.js
-```
-is preferable to
-```
-- telemetryTable
-    - components
-        TableRow.vue
-        TableColumn.vue
-    - collections
-        TableRowCollection.js
-    TableColumn.js
-    TableRow.js
-    plugin.js
-    pluginSpec.js
-```
+   eg.
+   ```
+   - telemetryTable
+       - row
+           TableRow.js
+           TableRowCollection.js
+           TableRow.vue
+       - column
+           TableColumn.js
+           TableColumn.vue
+       plugin.js
+       pluginSpec.js
+   ```
+   is preferable to
+   ```
+   - telemetryTable
+       - components
+           TableRow.vue
+           TableColumn.vue
+       - collections
+           TableRowCollection.js
+       TableColumn.js
+       TableRow.js
+       plugin.js
+       pluginSpec.js
+   ```
 Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
-
-#### Code Example
-
-```js
-/*global define*/
-
-/**
- * Bundles should declare themselves as namespaces in whichever source
- * file is most like the "main point of entry" to the bundle.
- * @namespace some/bundle
- */
-define(
-    ['./OtherClass'],
-    function (OtherClass) {
-        "use strict";
-
-        /**
-         * A summary of how to use this class goes here.
-         *
-         * @constructor
-         * @memberof some/bundle
-         */
-        function ExampleClass() {
-        }
-
-        // Methods which are not intended for external use should
-        // not have JSDoc (or should be marked @private)
-        ExampleClass.prototype.privateMethod = function () {
-        };
-
-        /**
-         * A summary of this method goes here.
-         * @param {number} n a parameter
-         * @returns {number} a return value
-         */
-        ExampleClass.prototype.publicMethod = function (n) {
-            return n * 2;
-        }
-
-        return ExampleClass;
-    }
-);
-```
 
 ### Test Standards
 
