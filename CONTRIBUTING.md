@@ -130,7 +130,7 @@ this repository. This is verified by the command line build.
 JavaScript sources in Open MCT should:
 
 1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
-1. Include JSDoc for any exposed API (e.g. public methods, constructors).
+1. Include JSDoc for any exposed API (e.g. public methods, classes).
 1. Include non-JSDoc comments as-needed for explaining private variables,
    methods, or algorithms when they are non-obvious. Otherwise code 
    should be self-documenting.
