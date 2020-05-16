@@ -122,43 +122,93 @@ changes.
 
 ### Code Standards
 
-JavaScript sources in Open MCT must satisfy JSLint under its default
-settings. This is verified by the command line build.
+JavaScript sources in Open MCT must satisfy the ESLint rules defined in 
+this repository. This is verified by the command line build.
 
 #### Code Guidelines
 
 JavaScript sources in Open MCT should:
 
-* Use four spaces for indentation. Tabs should not be used.
-* Include JSDoc for any exposed API (e.g. public methods, constructors).
-* Include non-JSDoc comments as-needed for explaining private variables,
-  methods, or algorithms when they are non-obvious.
-* Define one public class per script, expressed as a constructor function
-  returned from an AMD-style module.
-* Follow “Java-like” naming conventions. These includes:
-  * Classes should use camel case, first letter capitalized
-    (e.g. SomeClassName).
-  * Methods, variables, fields, and function names should use camel case,
-    first letter lower-case (e.g. someVariableName).
-  * Constants (variables or fields which are meant to be declared and 
-    initialized statically, and never changed) should use only capital 
-    letters, with underscores between words (e.g. SOME_CONSTANT).
-  * File names should be the name of the exported class, plus a .js extension
-    (e.g. SomeClassName.js).
-* Avoid anonymous functions, except when functions are short (a few lines)
-  and/or their inclusion makes sense within the flow of the code
-  (e.g. as arguments to a forEach call).
-* Avoid deep nesting (especially of functions), except where necessary
-  (e.g. due to closure scope).
-* End with a single new-line character.
-* Expose public methods by declaring them on the class's prototype.
-* Within a given function's scope, do not mix declarations and imperative
-  code, and  present these in the following order:
-  * First, variable declarations and initialization.
-  * Second, function declarations.
-  * Third, imperative statements.
-  * Finally, the returned value.
-
+1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
+1. Include JSDoc for any exposed API (e.g. public methods, constructors).
+1. Include non-JSDoc comments as-needed for explaining private variables,
+   methods, or algorithms when they are non-obvious. Otherwise code 
+   should be self-documenting.
+1. Classes and Vue components should use camel case, first letter capitalized
+   (e.g. SomeClassName).
+1. Methods, variables, fields, events, and function names should use camelCase,
+   first letter lower-case (e.g. someVariableName).
+1. Source files that export functions should use camelCase, first letter lower-case (eg. testTools.js)
+1. Constants (variables or fields which are meant to be declared and 
+   initialized statically, and never changed) should use only capital 
+   letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `CONST`s
+1. File names should be the name of the exported class, plus a .js extension
+   (e.g. SomeClassName.js).
+1. Avoid anonymous functions, except when functions are short (a few lines)
+   and/or their inclusion makes sense within the flow of the code
+   (e.g. as arguments to a forEach call).
+1. Named functions are preferred over functions assigned to variables.
+eg.
+```JavaScript
+function renameObject(object, newName) {
+    Object.name = newName;
+}
+```
+is preferable to
+```JavaScript
+const rename = (object, newName) => {
+    Object.name = newName;
+}
+```
+1. Avoid deep nesting (especially of functions), except where necessary
+   (e.g. due to closure scope).
+1. End with a single new-line character.
+1. Always use ES6 `Class`es and inheritence rather than the pre-ES6 prototypal 
+   pattern.
+1. Within a given function's scope, do not mix declarations and imperative
+   code, and  present these in the following order:
+   * First, variable declarations and initialization.
+   * Secondly, imperative statements.
+   * Finally, the returned value.
+1. Avoid the use of "magic" values.
+   eg.
+   ```JavaScript
+   Const UNAUTHORIZED = 401
+   if (responseCode === UNAUTHORIZED)
+   ```
+   is preferable to
+   ```JavaScript
+   if (responseCode === 401)
+   ```
+1. Don’t use the ternary operator. Yes it's terse, but there's probably a clearer way of writing it.
+1. Test specs should reside alongside the source code they test, not in a separate directory.
+1. Organize code by feature, not by type.
+eg.
+```
+- telemetryTable
+    - row
+        TableRow.js
+        TableRowCollection.js
+        TableRow.vue
+    - column
+        TableColumn.js
+        TableColumn.vue
+    plugin.js
+    pluginSpec.js
+```
+is preferable to
+```
+- telemetryTable
+    - components
+        TableRow.vue
+        TableColumn.vue
+    - collections
+        TableRowCollection.js
+    TableColumn.js
+    TableRow.js
+    plugin.js
+    pluginSpec.js
+```
 Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
 
