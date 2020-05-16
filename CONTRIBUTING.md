@@ -144,9 +144,9 @@ JavaScript sources in Open MCT should:
    letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `const`s
 1. File names should be the name of the exported class, plus a .js extension
    (e.g. SomeClassName.js).
-1. Avoid anonymous functions, except when functions are short (a few lines)
-   and/or their inclusion makes sense within the flow of the code
-   (e.g. as arguments to a forEach call).
+1. Avoid anonymous functions, except when functions are short (one or two lines)
+   and their inclusion makes sense within the flow of the code
+   (e.g. as arguments to a forEach call). Anonymous functions should always be arrow functions.
 1. Named functions are preferred over functions assigned to variables.
    eg.
    ```JavaScript
