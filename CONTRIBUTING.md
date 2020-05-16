@@ -141,7 +141,7 @@ JavaScript sources in Open MCT should:
 1. Source files that export functions should use camelCase, first letter lower-case (eg. testTools.js)
 1. Constants (variables or fields which are meant to be declared and 
    initialized statically, and never changed) should use only capital 
-   letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `CONST`s
+   letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `const`s
 1. File names should be the name of the exported class, plus a .js extension
    (e.g. SomeClassName.js).
 1. Avoid anonymous functions, except when functions are short (a few lines)
