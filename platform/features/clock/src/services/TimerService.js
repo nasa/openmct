@@ -72,7 +72,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @return {boolean} true if there is a timer
      */
     TimerService.prototype.hasTimer = function () {
-        return !!this.timer;
+        return Boolean(this.timer);
     };
 
     /**
@@ -83,7 +83,7 @@ define(['EventEmitter'], function (EventEmitter) {
     TimerService.prototype.convert = function (timestamp) {
         var clock = this.time.clock();
         var canConvert = this.hasTimer() &&
-            !!clock &&
+            Boolean(clock) &&
             this.timer.timerState !== 'stopped';
 
         if (!canConvert) {

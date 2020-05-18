@@ -174,7 +174,7 @@ define(
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
-                        canRepresent = !!(representation && domainObject),
+                        canRepresent = Boolean(representation && domainObject),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 

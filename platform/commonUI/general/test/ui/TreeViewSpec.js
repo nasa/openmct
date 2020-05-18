@@ -49,7 +49,7 @@ define([
             mockDomainObj.getId.and.returnValue(id);
             mockDomainObj.getModel.and.returnValue(model);
             mockDomainObj.hasCapability.and.callFake(function (c) {
-                return !!(capabilities[c]);
+                return Boolean(capabilities[c]);
             });
             mockDomainObj.getCapability.and.callFake(function (c) {
                 return capabilities[c];

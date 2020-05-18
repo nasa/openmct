@@ -147,7 +147,7 @@ define(function () {
         }
         var includeTypes = this.$scope.ngModel.checked;
         return function (model) {
-            return !!includeTypes[model.type];
+            return Boolean(includeTypes[model.type]);
         };
     };
 

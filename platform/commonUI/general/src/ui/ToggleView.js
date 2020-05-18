@@ -25,7 +25,7 @@ define([
     '../../res/templates/tree/toggle.html'
 ], function ($, toggleTemplate) {
     function ToggleView(state) {
-        this.expanded = !!state;
+        this.expanded = Boolean(state);
         this.callbacks = [];
         this.el = $(toggleTemplate);
         this.el.on('click', function () {

@@ -60,7 +60,7 @@ define([
             return 0;
         }
 
-        var precision = Math.max(0, -(+exponential.slice(i + 1)));
+        var precision = Math.max(0, -(Number(exponential.slice(i + 1))));
 
         if (precision > 20) {
             precision = 20;
@@ -81,7 +81,7 @@ define([
             Math.floor(stop / step) * step + step / 2, // inclusive
             step
         ).map(function round(tick) {
-            return +tick.toFixed(precision);
+            return Number(tick.toFixed(precision));
         });
     }
 

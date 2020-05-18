@@ -120,7 +120,7 @@ define(
          * @returns {boolean} true if this object has relationships
          */
         RelationshipCapability.appliesTo = function (model) {
-            return !!(model || {}).relationships;
+            return Boolean((model || {}).relationships);
         };
 
         return RelationshipCapability;

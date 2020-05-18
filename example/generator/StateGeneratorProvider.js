@@ -48,7 +48,7 @@ define([
         var interval = setInterval(function () {
             var now = Date.now();
             var datum = pointForTimestamp(now, duration, domainObject.name);
-            datum.value += "";
+            datum.value = String(datum.value);
             callback(datum);
         }, duration);
 

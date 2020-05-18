@@ -78,7 +78,7 @@ define(
                 if ($scope.ngModelController) {
                     $scope.ngModelController.$setValidity(
                         'composition',
-                        !!$scope.treeModel.selectedObject
+                        Boolean($scope.treeModel.selectedObject)
                     );
                 }
             }

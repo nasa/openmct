@@ -214,7 +214,7 @@ export default class ConditionClass extends EventEmitter {
                 results.forEach(resultObj => {
                     const { id, data, data: { result } } = resultObj;
                     if (this.findCriterion(id)) {
-                        criteriaResults[id] = !!result;
+                        criteriaResults[id] = Boolean(result);
                     }
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,

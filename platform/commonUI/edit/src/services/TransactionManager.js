@@ -50,7 +50,7 @@ define([], function () {
      * @returns {boolean} true if callbacks have been added
      */
     TransactionManager.prototype.isScheduled = function (id) {
-        return !!this.clearTransactionFns[id];
+        return Boolean(this.clearTransactionFns[id]);
     };
 
     /**

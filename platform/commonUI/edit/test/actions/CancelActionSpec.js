@@ -102,7 +102,7 @@ define(
                 });
 
                 mockDomainObject.hasCapability.and.callFake(function (name) {
-                    return !!capabilities[name];
+                    return Boolean(capabilities[name]);
                 });
 
                 capabilities.editor.finish.and.returnValue(mockPromise(true));

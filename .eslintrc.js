@@ -117,6 +117,11 @@ module.exports = {
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
 
+        // https://eslint.org/docs/rules/no-implicit-coercion
+        "no-implicit-coercion": "error",
+        //https://eslint.org/docs/rules/no-unneeded-ternary
+        "no-unneeded-ternary": "error",
+
         "vue/html-indent": [
             "error",
             4,

@@ -174,7 +174,7 @@ define(
                 return false;
             }
 
-            return !!element.closest('[data-selectable]');
+            return Boolean(element.closest('[data-selectable]'));
         };
 
         /**

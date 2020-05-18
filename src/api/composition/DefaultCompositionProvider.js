@@ -72,7 +72,7 @@ define([
      * @method appliesTo
      */
     DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
-        return !!domainObject.composition;
+        return Boolean(domainObject.composition);
     };
 
     /**

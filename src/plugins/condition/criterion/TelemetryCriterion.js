@@ -140,7 +140,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 this.input.forEach(input => params.push(input));
             }
             if (typeof comparator === 'function') {
-                result = !!comparator(params);
+                result = Boolean(comparator(params));
             }
         }
         return result;

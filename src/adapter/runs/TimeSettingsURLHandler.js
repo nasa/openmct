@@ -87,14 +87,14 @@ define([
             !isNaN(parseInt(searchParams[SEARCH.END_DELTA], 0xA))) {
             parsedParams.clockOffsets = {
                 start: -searchParams[SEARCH.START_DELTA],
-                end: +searchParams[SEARCH.END_DELTA]
+                end: Number(searchParams[SEARCH.END_DELTA])
             };
         }
         if (!isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
             !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA))) {
             parsedParams.bounds = {
-                start: +searchParams[SEARCH.START_BOUND],
-                end: +searchParams[SEARCH.END_BOUND]
+                start: Number(searchParams[SEARCH.START_BOUND]),
+                end: Number(searchParams[SEARCH.END_BOUND])
             };
         }
         return parsedParams;

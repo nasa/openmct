@@ -202,7 +202,7 @@ function (
         if (this.drawAPI) {
             this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
         }
-        return !!this.drawAPI;
+        return Boolean(this.drawAPI);
     };
 
     MCTChartController.prototype.fallbackToCanvas = function () {

@@ -127,8 +127,8 @@ define([
         }
 
         this.onSelectionPath =
-            !!domainObject &&
-            !!this.activeObject &&
+            Boolean(domainObject) &&
+            Boolean(this.activeObject) &&
             (activeIdPath.length <= selectedIdPath.length) &&
                 activeIdPath.every(function (id, index) {
                     return selectedIdPath[index] === id;

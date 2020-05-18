@@ -81,7 +81,7 @@ define([
                 }[c];
             });
             mockDomainObject.hasCapability.and.callFake(function (c) {
-                return !!mockDomainObject.getCapability(c);
+                return Boolean(mockDomainObject.getCapability(c));
             });
             mockParentObject.getCapability.and.callFake(function (c) {
                 return {

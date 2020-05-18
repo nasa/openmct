@@ -152,7 +152,7 @@ define(
             var applicableObject =
                 context.selectedObject || context.domainObject;
 
-            return !!(applicableObject &&
+            return Boolean(applicableObject &&
                 applicableObject.hasCapability('context'));
         };
 

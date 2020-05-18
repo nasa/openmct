@@ -52,7 +52,7 @@ define(
          * @returns {boolean} true on mobile
          */
         AgentService.prototype.isMobile = function () {
-            return !!this.mobileName;
+            return Boolean(this.mobileName);
         };
 
         /**

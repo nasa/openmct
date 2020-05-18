@@ -152,7 +152,7 @@ define([
      * @returns {boolean} true if the object is a telemetry object.
      */
     TelemetryAPI.prototype.isTelemetryObject = function (domainObject) {
-        return !!this.findMetadataProvider(domainObject);
+        return Boolean(this.findMetadataProvider(domainObject));
     };
 
     /**
@@ -171,8 +171,8 @@ define([
             'will not be supported in future versions of Open MCT.  Please ' +
             'use openmct.telemetry.isTelemetryObject instead.'
         );
-        return !!this.findSubscriptionProvider(domainObject) ||
-               !!this.findRequestProvider(domainObject);
+        return Boolean(this.findSubscriptionProvider(domainObject)) ||
+               Boolean(this.findRequestProvider(domainObject));
     };
 
     /**

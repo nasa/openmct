@@ -333,7 +333,7 @@ define(
          * domain object model has a "telemetry" field.
          */
         TelemetryCapability.appliesTo = function (model) {
-            return (model && model.telemetry) ? true : false;
+            return Boolean(model && model.telemetry);
         };
 
         return TelemetryCapability;

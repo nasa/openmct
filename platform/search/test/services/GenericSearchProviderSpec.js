@@ -87,7 +87,7 @@ define([
                 return Promise.resolve(domainObject.composition);
             });
             compositionProvider.appliesTo.and.callFake(function (domainObject) {
-                return !!domainObject.composition;
+                return Boolean(domainObject.composition);
             });
             openmct = {
                 composition: {

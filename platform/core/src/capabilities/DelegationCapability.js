@@ -105,7 +105,7 @@ define(
          * @returns {boolean} true if the capability is delegated
          */
         DelegationCapability.prototype.doesDelegateCapability = function (key) {
-            return !!(this.delegateCapabilities[key]);
+            return Boolean(this.delegateCapabilities[key]);
         };
 
         /**

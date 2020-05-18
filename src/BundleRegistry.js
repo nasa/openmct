@@ -49,7 +49,7 @@ define(function () {
     };
 
     BundleRegistry.prototype.contains = function (path) {
-        return !!this.bundles[path];
+        return Boolean(this.bundles[path]);
     };
 
     BundleRegistry.prototype.get = function (path) {

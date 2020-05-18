@@ -306,7 +306,7 @@ export default {
             const isPhone = Array.from(classList).includes('phone');
             const isTablet = Array.from(classList).includes('tablet');
             const isPortrait = window.screen.orientation.type.includes('portrait');
-            const isInLayout = !!this.$el.closest('.c-so-view');
+            const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
         },

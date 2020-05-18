@@ -249,7 +249,7 @@ export default class ConditionManager extends EventEmitter {
                     results.forEach(resultObj => {
                         const { id, data, data: { result } } = resultObj;
                         if (this.findConditionById(id)) {
-                            conditionResults[id] = !!result;
+                            conditionResults[id] = Boolean(result);
                         }
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,

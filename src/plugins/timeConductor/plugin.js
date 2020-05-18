@@ -23,7 +23,7 @@
 import Conductor from './Conductor.vue';
 
 function isTruthy(a) {
-    return !!a;
+    return Boolean(a);
 }
 
 function validateMenuOption(menuOption, index) {
