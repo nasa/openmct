@@ -19,7 +19,7 @@ export default {
     },
     mounted() {
         this.openWindows = {};
-        this.windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes,innerHeight=480,innerWidth=640,screenY=100";
+        this.windowFeatures = "menubar=yes,location=yes,tabs=yes, resizable=yes,scrollbars=yes, innerHeight=480,innerWidth=640,screenY=100";
         window.addEventListener("message", this.receiveMessage, false);
         if (window.opener) {
             window.opener.postMessage({
@@ -44,7 +44,8 @@ export default {
                         screenHeight: screen.height,
                         screenAvailableWidth: screen.availWidth,
                         screenAvailHeight: screen.availHeight,
-                        devicePixelRatio: window.devicePixelRatio
+                        devicePixelRatio: window.devicePixelRatio,
+                        url: window.location.href
                     },
                     name: window.name
                 },'*');
@@ -80,8 +81,8 @@ export default {
                 const windowObjs = JSON.parse(persistedWindowObjs);
                 windowObjs.forEach(windowObj => {
                     let newWindowName = windowObj.name;
-                    const features = `menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes,innerHeight=${windowObj.info.innerHeight || 480},innerWidth=${windowObj.info.innerWidth || 640},screenX=${windowObj.info.screenLeft || this.getScreenX()},screenY=${windowObj.info.screenTop || 100}`;
-                    const windowReference = window.open(window.location.href, newWindowName, features);
+                    const features = `menubar=yes,location=yes,resizable=yes,scrollbars=yes,innerHeight=${windowObj.info.innerHeight || 480},innerWidth=${windowObj.info.innerWidth || 640},screenX=${windowObj.info.screenLeft || this.getScreenX()},screenY=${windowObj.info.screenTop || 100}`;
+                    const windowReference = window.open((windowObj.info.url || window.location.href), newWindowName, features);
                     this.openWindows[newWindowName] = {
                         windowReference,
                         name: newWindowName,
@@ -129,7 +130,8 @@ export default {
                                     screenHeight: screen.height,
                                     screenAvailableWidth: screen.availWidth,
                                     screenAvailHeight: screen.availHeight,
-                                    devicePixelRatio: window.devicePixelRatio
+                                    devicePixelRatio: window.devicePixelRatio,
+                                    url: window.location.href
                                 },
                                 name: window.name
                             }, origin);
