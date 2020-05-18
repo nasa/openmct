@@ -78,7 +78,7 @@ export default {
                 name: 'Styles'
             }],
             currentTabbedView: {}
-        }
+        };
     },
     mounted() {
         this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
@@ -128,8 +128,8 @@ export default {
             this.currentTabbedView = view;
         },
         isCurrent(view) {
-            return _.isEqual(this.currentTabbedView, view)
+            return _.isEqual(this.currentTabbedView, view);
         }
     }
-}
+};
 </script>

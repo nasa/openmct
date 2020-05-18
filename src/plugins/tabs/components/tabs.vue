@@ -181,5 +181,5 @@ export default {
             this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         }
     }
-}
+};
 </script>

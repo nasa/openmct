@@ -64,7 +64,7 @@ export default {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
             compositions: []
-        }
+        };
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
@@ -125,7 +125,7 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         },
         removeSecondary(primary) {
             return (identifier) => {
@@ -135,8 +135,8 @@ export default {
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         }
     }
-}
+};
 </script>

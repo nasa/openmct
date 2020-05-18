@@ -43,7 +43,7 @@ define([
             cssClass: 'icon-tabular-realtime',
             canView(domainObject) {
                 return domainObject.type === 'table' ||
-                    hasTelemetry(domainObject)
+                    hasTelemetry(domainObject);
             },
             canEdit(domainObject) {
                 return domainObject.type === 'table';
@@ -90,7 +90,7 @@ define([
                         component.$destroy();
                         component = undefined;
                     }
-                }
+                };
             },
             priority() {
                 return 1;

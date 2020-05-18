@@ -28,7 +28,7 @@ export default {
             domainObject: {},
             multiSelect: false,
             itemsSelected: 0
-        }
+        };
     },
     computed: {
         item() {
@@ -72,5 +72,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

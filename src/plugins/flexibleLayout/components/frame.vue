@@ -83,7 +83,7 @@ export default {
         return {
             domainObject: undefined,
             objectPath: undefined
-        }
+        };
     },
     computed: {
         hasFrame() {
@@ -139,5 +139,5 @@ export default {
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
     }
-}
+};
 </script>

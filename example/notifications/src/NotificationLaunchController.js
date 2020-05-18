@@ -93,7 +93,7 @@ define(
                  * @param notification
                  */
                 function incrementProgress() {
-                    progress = Math.min(100, Math.floor(progress + Math.random() * 30))
+                    progress = Math.min(100, Math.floor(progress + Math.random() * 30));
                     let progressText = ["Estimated time" +
                     " remaining:" +
                     " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");

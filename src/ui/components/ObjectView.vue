@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import _ from "lodash"
+import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
@@ -262,7 +262,7 @@ export default {
             }
         },
         hasComposableDomainObject(event) {
-            return event.dataTransfer.types.includes('openmct/composable-domain-object')
+            return event.dataTransfer.types.includes('openmct/composable-domain-object');
         },
         getComposableDomainObject(event) {
             let serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
@@ -285,7 +285,7 @@ export default {
             }
         }
     }
-}
+};
 </script>
 
 

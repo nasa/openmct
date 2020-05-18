@@ -112,7 +112,7 @@ export default {
             return this.container.frames;
         },
         sizeString() {
-            return `${Math.round(this.container.size)}%`
+            return `${Math.round(this.container.size)}%`;
         }
     },
     mounted() {
@@ -121,7 +121,7 @@ export default {
             addContainer: this.addContainer,
             type: 'container',
             containerId: this.container.id
-        }
+        };
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
     },
@@ -147,7 +147,7 @@ export default {
                 if (index === -1) {
                     return framePos !== 0;
                 } else {
-                    return framePos !== index && (framePos - 1) !== index
+                    return framePos !== index && (framePos - 1) !== index;
                 }
             } else {
                 return true;
@@ -199,7 +199,7 @@ export default {
         },
         getFrameSize(size) {
             if (size < MIN_FRAME_SIZE) {
-                return MIN_FRAME_SIZE
+                return MIN_FRAME_SIZE;
             } else if (size > (this.maxMoveSize - MIN_FRAME_SIZE)) {
                 return (this.maxMoveSize - MIN_FRAME_SIZE);
             } else {
@@ -213,5 +213,5 @@ export default {
             event.dataTransfer.setData('containerid', this.container.id);
         }
     }
-}
+};
 </script>

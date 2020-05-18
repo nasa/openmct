@@ -54,7 +54,7 @@ define([
             this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
 
             this.initialize();
-        }
+        };
     }
 
     MCTPlotController.$inject = ['$scope', '$element', '$window'];
@@ -278,7 +278,7 @@ define([
         const { start, end } = this.marquee;
 
         return start.x === end.x && start.y === end.y;
-    }
+    };
 
     MCTPlotController.prototype.updateMarquee = function () {
         if (!this.marquee) {

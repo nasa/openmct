@@ -40,7 +40,7 @@ class ApplicationRouter extends EventEmitter {
      * start(); Start routing.
      */
     constructor() {
-        super()
+        super();
         this.routes = [];
         this.started = false;
     }
@@ -62,13 +62,13 @@ class ApplicationRouter extends EventEmitter {
 
     handleLocationChange(pathString) {
         if (pathString[0] !== '/') {
-            pathString = '/' + pathString
+            pathString = '/' + pathString;
         }
 
         let url = new URL(
             pathString,
             `${location.protocol}//${location.host}${location.pathname}`
-        )
+        );
 
         let oldLocation = this.currentLocation;
 

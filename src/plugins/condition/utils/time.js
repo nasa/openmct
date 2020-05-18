@@ -31,15 +31,15 @@ export const getLatestTimestamp = (
     const key = currentTimeSystem.key;
 
     if (!latest || !latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
+        latest = updateLatestTimeStamp(compare, timeSystems);
     }
 
     if (compare[key] > latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
+        latest = updateLatestTimeStamp(compare, timeSystems);
     }
 
     return latest;
-}
+};
 
 function updateLatestTimeStamp(timestamp, timeSystems) {
     let latest = {};

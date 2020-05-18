@@ -124,7 +124,7 @@ define([
             this.listenTo(this.axis, 'change:format', this.updateTicks, this);
             this.listenTo(this.$scope, '$destroy', this.stopListening, this);
             this.updateTicks();
-        }
+        };
     }
 
     MCTTicksController.$inject = ['$scope', '$element'];

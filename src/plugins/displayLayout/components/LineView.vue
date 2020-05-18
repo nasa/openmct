@@ -283,5 +283,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

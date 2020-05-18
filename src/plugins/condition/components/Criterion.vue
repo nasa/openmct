@@ -139,7 +139,7 @@ export default {
             operationFormat: '',
             enumerations: [],
             inputTypes: INPUT_TYPES
-        }
+        };
     },
     computed: {
         setRowLabel: function () {
@@ -156,7 +156,7 @@ export default {
                     if (this.filteredOps[i].appliesTo.length) {
                         type = this.inputTypes[this.filteredOps[i].appliesTo[0]];
                     } else {
-                        type = 'text'
+                        type = 'text';
                     }
                     break;
                 }
@@ -242,7 +242,7 @@ export default {
             }
             options.forEach((option) => {
                 const found = this.telemetryMetadataOptions.find((metadataOption) => {
-                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name))
+                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name));
                 });
                 if (!found) {
                     this.telemetryMetadataOptions.push(option);

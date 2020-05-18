@@ -82,5 +82,5 @@ export default {
             return focusButton[0];
         }
     }
-}
+};
 </script>

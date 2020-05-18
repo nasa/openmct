@@ -392,7 +392,7 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        const startPromise = new Main()
+        const startPromise = new Main();
         startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;

@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
-import LayoutFrame from './LayoutFrame.vue'
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
+import LayoutFrame from './LayoutFrame.vue';
 
 const MINIMUM_FRAME_SIZE = [320, 180],
     DEFAULT_DIMENSIONS = [10, 10],
@@ -100,7 +100,7 @@ export default {
         return {
             domainObject: undefined,
             currentObjectPath: []
-        }
+        };
     },
     watch: {
         index(newIndex) {
@@ -135,5 +135,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

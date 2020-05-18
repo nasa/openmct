@@ -129,7 +129,7 @@ define([
                     expect(newComposition[0].key).toEqual('b');
                     expect(newComposition[1].key).toEqual('c');
                     expect(newComposition[2].key).toEqual('a');
-                })
+                });
             });
             it('supports adding an object to composition', function () {
                 let addListener = jasmine.createSpy('addListener');

@@ -126,7 +126,7 @@ class ContextMenuAPI {
         return {
             x: eventPosX,
             y: eventPosY
-        }
+        };
     }
     /**
      * @private

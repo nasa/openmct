@@ -64,7 +64,7 @@ export default {
             navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
             children: [],
             expanded: false
-        }
+        };
     },
     computed: {
         isAlias() {
@@ -189,5 +189,5 @@ export default {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         }
     }
-}
+};
 </script>

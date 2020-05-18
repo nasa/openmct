@@ -15,4 +15,4 @@ export const installTheme = (openmct, themeName) => {
     newTheme.dataset[dataAttribute] = themeName;
 
     document.head.appendChild(newTheme);
-}
+};

@@ -66,7 +66,7 @@ export default class PreviewAction {
             ],
             onDestroy: () => {
                 PreviewAction.isVisible = false;
-                preview.$destroy()
+                preview.$destroy();
             }
         });
 

@@ -83,7 +83,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
         if (data) {
             this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
+                datum[timeSystem.key] = data[timeSystem.key];
             });
         }
         return datum;

@@ -27,7 +27,7 @@
 
 <script>
 import FilterObject from './FilterObject.vue';
-import GlobalFilters from './GlobalFilters.vue'
+import GlobalFilters from './GlobalFilters.vue';
 
 const FILTER_VIEW_TITLE = 'Filters applied';
 const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';
@@ -51,7 +51,7 @@ export default {
             globalMetadata: {},
             providedObject,
             children: {}
-        }
+        };
     },
     computed: {
         hasActiveFilters() {
@@ -157,7 +157,7 @@ export default {
             let filtersToRemove = new Set();
 
             this.children[keyString].metadataWithFilters.forEach(metadatum => {
-                let keepFilter = false
+                let keepFilter = false;
                 Object.keys(this.children).forEach(childKeyString => {
                     if (childKeyString !== keyString) {
                         let filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
@@ -232,5 +232,5 @@ export default {
             this.openmct.objects.mutate(this.providedObject, 'configuration.globalFilters', this.globalFilters);
         }
     }
-}
+};
 </script>

@@ -39,5 +39,5 @@ export default {
             this.$emit('change', event.target.checked, {...this.options});
         }
     }
-}
+};
 </script>

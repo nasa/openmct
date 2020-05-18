@@ -208,7 +208,7 @@ export default class ConditionManager extends EventEmitter {
         let currentCondition = conditionCollection[conditionCollection.length-1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            const condition = this.findConditionById(conditionCollection[i].id)
+            const condition = this.findConditionById(conditionCollection[i].id);
             if (condition.result) {
                 //first condition to be true wins
                 currentCondition = conditionCollection[i];
@@ -315,7 +315,7 @@ export default class ConditionManager extends EventEmitter {
                 },
                 timestamp
             )
-        )
+        );
     }
 
     getTestData(metadatum) {
@@ -366,6 +366,6 @@ export default class ConditionManager extends EventEmitter {
 
         this.conditionClassCollection.forEach((condition) => {
             condition.destroy();
-        })
+        });
     }
 }

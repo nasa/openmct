@@ -98,7 +98,7 @@ export default {
             loaded: false,
             children: [],
             expanded: false
-        }
+        };
     },
     computed: {
         navigated() {
@@ -181,5 +181,5 @@ export default {
             this.loaded = true;
         }
     }
-}
+};
 </script>

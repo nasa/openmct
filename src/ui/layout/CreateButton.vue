@@ -65,7 +65,7 @@ export default {
             items: items,
             selectedMenuItem: {},
             opened: false
-        }
+        };
     },
     computed: {
         sortedItems() {
@@ -130,5 +130,5 @@ export default {
             return this.openmct.$injector.get('instantiate')(oldModel, keyString);
         }
     }
-}
+};
 </script>

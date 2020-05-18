@@ -130,7 +130,7 @@ export default {
             conditionsLoaded: false,
             navigateToPath: '',
             selectedConditionId: ''
-        }
+        };
     },
     destroyed() {
         this.removeListeners();
@@ -237,7 +237,7 @@ export default {
                 data() {
                     return {
                         handleItemSelection
-                    }
+                    };
                 },
                 template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
             }).$mount();
@@ -437,7 +437,7 @@ export default {
                 domainObjectStyles = {
                     ...domainObjectStyles,
                     ...objectStyle
-                }
+                };
             }
 
             return domainObjectStyles;
@@ -453,5 +453,5 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration.objectStyles', style);
         }
     }
-}
+};
 </script>

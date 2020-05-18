@@ -77,14 +77,14 @@ define(
          */
         ExampleIdentityProvider.prototype.returnUser = function (user) {
             return this.user = user;
-        }
+        };
 
         /**
          * @private
          */
         ExampleIdentityProvider.prototype.returnUndefined = function () {
             return undefined;
-        }
+        };
 
         return ExampleIdentityProvider;
     }

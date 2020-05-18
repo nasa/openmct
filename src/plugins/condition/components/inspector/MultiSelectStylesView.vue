@@ -66,7 +66,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             mixedStyles: [],
             isStaticAndConditionalStyles: false
-        }
+        };
     },
     destroyed() {
         this.removeListeners();
@@ -250,7 +250,7 @@ export default {
                 if (!domainObjectStyles.staticStyle) {
                     domainObjectStyles.staticStyle = {
                         style: {}
-                    }
+                    };
                 }
                 if (this.isStaticAndConditionalStyles) {
                     this.removeConditionalStyles(domainObjectStyles);
@@ -265,5 +265,5 @@ export default {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         }
     }
-}
+};
 </script>

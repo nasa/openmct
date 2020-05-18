@@ -88,5 +88,5 @@ export default {
             this.$emit('setView', view);
         }
     }
-}
+};
 </script>

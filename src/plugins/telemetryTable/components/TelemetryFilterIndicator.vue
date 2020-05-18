@@ -29,7 +29,7 @@ export default {
         return {
             filterNames: [],
             filteredTelemetry: {}
-        }
+        };
     },
     computed: {
         hasMixedFilters() {
@@ -125,5 +125,5 @@ export default {
             this.setFilterNames();
         }
     }
-}
+};
 </script>

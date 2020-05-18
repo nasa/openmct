@@ -160,7 +160,7 @@ export default class ConditionClass extends EventEmitter {
                 criterion = {
                     item: this.criteria[i],
                     index: i
-                }
+                };
             }
         }
 

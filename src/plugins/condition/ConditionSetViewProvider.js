@@ -59,7 +59,7 @@ export default class ConditionSetViewProvider {
                     data() {
                         return {
                             isEditing
-                        }
+                        };
                     },
                     template: '<condition-set :isEditing="isEditing"></condition-set>'
                 });

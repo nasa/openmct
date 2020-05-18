@@ -55,7 +55,7 @@ define([
                             data() {
                                 return {
                                     isEditing: isEditing
-                                }
+                                };
                             },
                             template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
                         });

@@ -54,7 +54,7 @@ export default {
     data() {
         return {
             popupMenuItems: []
-        }
+        };
     },
     watch: {
     },
@@ -67,12 +67,12 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            }
+            };
             const preview = {
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)
-            }
+            };
 
             this.popupMenuItems = [removeEmbed, preview];
         },
@@ -197,7 +197,7 @@ export default {
             const options = {
                 name: this.removeActionString,
                 callback: this.removeEmbed.bind(this)
-            }
+            };
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
@@ -218,7 +218,7 @@ export default {
 
             const snapshotOverlay = this.openmct.overlays.overlay({
                 element: snapshot.$mount().$el,
-                onDestroy: () => { snapshot.$destroy(true) },
+                onDestroy: () => { snapshot.$destroy(true); },
                 size: 'large',
                 dismissable: true,
                 buttons: [
@@ -248,5 +248,5 @@ export default {
             this.$emit('updateEmbed', embed);
         }
     }
-}
+};
 </script>

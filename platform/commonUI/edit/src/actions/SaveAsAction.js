@@ -163,11 +163,11 @@ function (
             return this.openmct.editor.save().then(() => {
                 // Force mutation for search indexing
                 return clonedObject;
-            })
+            });
         }
 
         function finishEditing(clonedObject) {
-            return fetchObject(clonedObject.getId())
+            return fetchObject(clonedObject.getId());
         }
 
         function indexForSearch(savedObject) {

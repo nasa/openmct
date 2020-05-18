@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import ObjectView from './ObjectView.vue'
+import ObjectView from './ObjectView.vue';
 import ContextMenuDropDown from './contextMenuDropDown.vue';
 import PreviewHeader from '@/ui/preview/preview-header.vue';
 import Vue from 'vue';
@@ -99,7 +99,7 @@ export default {
         return {
             cssClass,
             complexContent
-        }
+        };
     },
     computed: {
         classList() {
@@ -146,7 +146,7 @@ export default {
                 data() {
                     return {
                         domainObject
-                    }
+                    };
                 },
                 template: '<PreviewHeader :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
             });
@@ -157,5 +157,5 @@ export default {
             return this.$refs.objectView.getSelectionContext();
         }
     }
-}
+};
 </script>

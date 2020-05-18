@@ -46,6 +46,6 @@ define(
             };
         }
 
-        return ExampleStyleGuideModelProvider
+        return ExampleStyleGuideModelProvider;
     }
 );

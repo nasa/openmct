@@ -37,8 +37,8 @@ define(
                 this.futureBuffer = new SortedTableRowCollection();
                 this.openmct = openmct;
 
-                this.sortByTimeSystem = this.sortByTimeSystem.bind(this)
-                this.bounds = this.bounds.bind(this)
+                this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+                this.bounds = this.bounds.bind(this);
 
                 this.sortByTimeSystem(openmct.time.timeSystem());
 

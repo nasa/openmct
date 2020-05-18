@@ -121,6 +121,8 @@ module.exports = {
         "no-implicit-coercion": "error",
         //https://eslint.org/docs/rules/no-unneeded-ternary
         "no-unneeded-ternary": "error",
+        // https://eslint.org/docs/rules/semi
+        "semi": ["error", "always"],
 
         "vue/html-indent": [
             "error",

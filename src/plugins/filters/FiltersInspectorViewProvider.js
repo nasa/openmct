@@ -61,12 +61,12 @@ define([
                             component = undefined;
                         }
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
     return FiltersInspectorViewProvider;
 });

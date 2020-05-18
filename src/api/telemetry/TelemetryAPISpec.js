@@ -320,7 +320,7 @@ define([
                     }
                 });
                 mockTypeService.getType.and.returnValue(mockObjectType);
-            })
+            });
             it('respects explicit priority', function () {
                 mockMetadata.values = [
                     {
@@ -531,6 +531,6 @@ define([
                     expect(values[index].key).toBe(key);
                 });
             });
-        })
+        });
     });
 });

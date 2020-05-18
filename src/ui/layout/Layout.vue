@@ -124,7 +124,7 @@ var exitFullScreen = () => {
     else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
-}
+};
 
 export default {
     inject: ['openmct'],
@@ -155,7 +155,7 @@ export default {
             isEditing: false,
             hasToolbar: false,
             headExpanded
-        }
+        };
     },
     computed: {
         toolbar() {
@@ -206,5 +206,5 @@ export default {
             this.hasToolbar = structure.length > 0;
         }
     }
-}
+};
 </script>

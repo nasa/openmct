@@ -58,8 +58,8 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
-import printj from 'printj'
+import LayoutFrame from './LayoutFrame.vue';
+import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
@@ -113,7 +113,7 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined
-        }
+        };
     },
     computed: {
         showLabel() {
@@ -251,6 +251,6 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
-}
+};
 
 </script>

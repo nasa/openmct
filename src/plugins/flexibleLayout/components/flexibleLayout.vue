@@ -149,14 +149,14 @@ export default {
         return {
             domainObject: this.layoutObject,
             newFrameLocation: []
-        }
+        };
     },
     computed: {
         layoutDirectionStr() {
             if (this.rowsLayout) {
-                return 'Rows'
+                return 'Rows';
             } else {
-                return 'Columns'
+                return 'Columns';
             }
         },
         containers() {
@@ -252,7 +252,7 @@ export default {
 
             this.removeFromComposition(frame.domainObjectIdentifier)
                 .then(() => {
-                    sizeToFill(container.frames)
+                    sizeToFill(container.frames);
                     this.setSelectionToParent();
                 });
         },
@@ -276,7 +276,7 @@ export default {
             if (index === -1) {
                 return containerPos !== 0;
             } else {
-                return containerPos !== index && (containerPos - 1) !== index
+                return containerPos !== index && (containerPos - 1) !== index;
             }
         },
         persist(index) {
@@ -312,7 +312,7 @@ export default {
         },
         getContainerSize(size) {
             if (size < MIN_CONTAINER_SIZE) {
-                return MIN_CONTAINER_SIZE
+                return MIN_CONTAINER_SIZE;
             } else if (size > (this.maxMoveSize - MIN_CONTAINER_SIZE)) {
                 return (this.maxMoveSize - MIN_CONTAINER_SIZE);
             } else {
@@ -348,5 +348,5 @@ export default {
             this.persist();
         }
     }
-}
+};
 </script>

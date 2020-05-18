@@ -55,7 +55,7 @@ export default {
     },
     data() {
         return {
-        }
+        };
     },
     watch: {
     },
@@ -109,5 +109,5 @@ export default {
             this.$emit('updateSection', { sections, id });
         }
     }
-}
+};
 </script>

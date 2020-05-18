@@ -302,7 +302,7 @@ export default {
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
-                }
+                };
             }
         }
     },
@@ -337,7 +337,7 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false
-        }
+        };
     },
     computed: {
         dropTargetStyle() {
@@ -345,7 +345,7 @@ export default {
                 top: this.$refs.headersTable.offsetTop + 'px',
                 height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
-            }
+            };
         },
         lastHeaderKey() {
             let headerKeys = Object.keys(this.headers);
@@ -517,7 +517,7 @@ export default {
                 this.sortOptions = {
                     key: columnKey,
                     direction: 'asc'
-                }
+                };
             }
             this.table.sortBy(this.sortOptions);
         },
@@ -871,5 +871,5 @@ export default {
             this.$nextTick().then(this.calculateColumnWidths);
         }
     }
-}
+};
 </script>

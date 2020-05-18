@@ -33,7 +33,7 @@ define([
                 parentObject.type === 'layout' &&
                 selectedObject &&
                 openmct.telemetry.isTelemetryObject(selectedObject) &&
-                !options.showAsView.includes(selectedObject.type)
+                !options.showAsView.includes(selectedObject.type);
         }
 
         return {
@@ -66,12 +66,12 @@ define([
                         component.$destroy();
                         component = undefined;
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
 
     return AlphanumericFormatViewProvider;

@@ -46,5 +46,5 @@ export default {
             this.$emit('click', this.options);
         }
     }
-}
+};
 </script>

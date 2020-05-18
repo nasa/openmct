@@ -29,7 +29,7 @@ function SimpleVuePlugin() {
             }
         });
 
-    }
+    };
 }
 
-export default SimpleVuePlugin
+export default SimpleVuePlugin;

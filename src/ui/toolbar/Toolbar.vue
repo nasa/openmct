@@ -68,7 +68,7 @@ export default {
                     toolbarItem.dialog.sections.forEach(section => {
                         section.rows.forEach(row => {
                             formKeys.push(row.key);
-                        })
+                        });
                     });
                     toolbarItem.formKeys = formKeys;
                 }
@@ -87,7 +87,7 @@ export default {
             if (!this.domainObjectsById[id]) {
                 this.domainObjectsById[id] = {
                     domainObject: domainObject
-                }
+                };
                 this.observeObject(domainObject, id);
             }
         },
@@ -266,5 +266,5 @@ export default {
         this.openmct.editor.off('isEditing', this.handleEditing);
         this.removeListeners();
     }
-}
+};
 </script>

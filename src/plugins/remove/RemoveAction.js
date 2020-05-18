@@ -62,8 +62,8 @@ export default class RemoveAction {
                         }
                     }
                 ]
-            })
-        })
+            });
+        });
     }
 
     inNavigationPath(object) {

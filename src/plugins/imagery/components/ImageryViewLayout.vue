@@ -80,7 +80,7 @@ export default {
             isPaused: false,
             requestCount: 0,
             timeFormat: ''
-        }
+        };
     },
     mounted() {
         this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -116,7 +116,7 @@ export default {
                 this.time;
         },
         handleScroll() {
-            const thumbsWrapper = this.$refs.thumbsWrapper
+            const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper) {
                 return;
             }
@@ -195,7 +195,7 @@ export default {
             }
         },
         subscribe(domainObject) {
-            this.date = ''
+            this.date = '';
             this.imageUrl = '';
             this.openmct.objects.get(this.keystring)
                 .then((object) => {
@@ -234,5 +234,5 @@ export default {
             this.imageUrl = this.imageFormat.format(datum);
         }
     }
-}
+};
 </script>

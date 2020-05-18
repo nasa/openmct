@@ -98,7 +98,7 @@ define([
                     'reorder',
                     this.onProviderReorder,
                     this
-                )
+                );
             }
         }
 

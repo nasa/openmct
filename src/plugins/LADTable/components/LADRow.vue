@@ -56,7 +56,7 @@ export default {
             value: '---',
             valueClass: '',
             currentObjectPath
-        }
+        };
     },
     mounted() {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
@@ -83,7 +83,7 @@ export default {
             .metadata
             .valuesForHints(['range'])[0];
 
-        this.valueKey = this.valueMetadata.key
+        this.valueKey = this.valueMetadata.key;
 
         this.unsubscribe = this.openmct
             .telemetry
@@ -131,6 +131,6 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
-}
+};
 </script>
 

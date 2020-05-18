@@ -11,7 +11,7 @@ export default {
     data() {
         return {
             selection: []
-        }
+        };
     },
     mounted() {
         this.openmct.selection.on('change', this.updateSelection);
@@ -38,5 +38,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

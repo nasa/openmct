@@ -317,8 +317,8 @@ export default {
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) { return; }
+            if (targetIndex > this.moveIndex) { targetIndex--; } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -326,8 +326,8 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) { return; }
+            if (targetIndex > this.moveIndex) { targetIndex--; } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -370,8 +370,8 @@ export default {
             });
         },
         initCap(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1)
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
     }
-}
+};
 </script>

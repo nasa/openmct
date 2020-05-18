@@ -69,12 +69,12 @@ define([
 
                         tableConfiguration = undefined;
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
     return TableConfigurationViewProvider;
 });

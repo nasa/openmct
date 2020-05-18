@@ -134,7 +134,7 @@ export default {
             showTime: 0,
             showNav: false,
             sidebarCoversEntries: false
-        }
+        };
     },
     computed: {
         filteredAndSortedEntries() {
@@ -192,7 +192,7 @@ export default {
     updated: function () {
         this.$nextTick(function () {
             this.focusOnEntryId();
-        })
+        });
     },
     methods: {
         addDefaultClass() {
@@ -243,7 +243,7 @@ export default {
                 notebookMeta,
                 section,
                 page
-            }
+            };
         },
         dragOver(event) {
             event.preventDefault();
@@ -461,7 +461,7 @@ export default {
             const page = pages.find(p => p.id === id);
             if (!page && defaultNotebookPage.id === id) {
                 this.defaultSectionId = null;
-                this.defaultPageId = null
+                this.defaultPageId = null;
                 this.removeDefaultClass(this.internalDomainObject);
                 clearDefaultNotebook();
 
@@ -489,7 +489,7 @@ export default {
             const section = sections.find(s => s.id === id);
             if (!section && defaultNotebookSection.id === id) {
                 this.defaultSectionId = null;
-                this.defaultPageId = null
+                this.defaultPageId = null;
                 this.removeDefaultClass(this.internalDomainObject);
                 clearDefaultNotebook();
 
@@ -560,5 +560,5 @@ export default {
             this.updateDefaultNotebookSection(sections, id);
         }
     }
-}
+};
 </script>

@@ -52,10 +52,10 @@ define(
                                 notification.dismiss();
                                 notificationsList.splice(currentIndex, 1);
                             }
-                        }
+                        };
                     }
                     return notification;
-                })
+                });
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",

@@ -100,5 +100,5 @@ export default {
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }
     }
-}
+};
 </script>

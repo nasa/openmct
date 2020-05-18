@@ -111,7 +111,7 @@ export default {
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
             notebookEnabled: this.openmct.types.get('notebook')
-        }
+        };
     },
     computed: {
         classList() {
@@ -140,7 +140,7 @@ export default {
         },
         hasParent() {
             return this.domainObject !== PLACEHOLDER_OBJECT &&
-                    this.parentUrl !== '#/browse'
+                    this.parentUrl !== '#/browse';
         },
         parentUrl() {
             let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -150,7 +150,7 @@ export default {
         type() {
             let objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
-                return {}
+                return {};
             }
             return objectType.definition;
         },
@@ -273,5 +273,5 @@ export default {
             window.location.hash = this.parentUrl;
         }
     }
-}
+};
 </script>

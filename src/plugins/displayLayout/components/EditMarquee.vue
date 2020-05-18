@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag'
+import LayoutDrag from './../LayoutDrag';
 
 export default {
     inject: ['openmct'],
@@ -65,7 +65,7 @@ export default {
     data() {
         return {
             dragPosition: undefined
-        }
+        };
     },
     computed: {
         marqueePosition() {
@@ -109,7 +109,7 @@ export default {
                 y: y,
                 width: width,
                 height: height
-            }
+            };
         },
         marqueeStyle() {
             return {
@@ -187,5 +187,5 @@ export default {
             event.preventDefault();
         }
     }
-}
+};
 </script>

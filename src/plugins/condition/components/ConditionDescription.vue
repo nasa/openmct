@@ -63,7 +63,7 @@ export default {
         return {
             criterionDescriptions: [],
             triggerDescription: ''
-        }
+        };
     },
     watch: {
         condition: {
@@ -150,5 +150,5 @@ export default {
             return found ? found.getDescription(values) : '';
         }
     }
-}
+};
 </script>

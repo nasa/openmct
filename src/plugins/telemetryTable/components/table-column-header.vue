@@ -158,5 +158,5 @@ export default {
             this.$emit("sort");
         }
     }
-}
+};
 </script>

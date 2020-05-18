@@ -51,7 +51,7 @@ export default {
             multiSelect: false,
             originalPath: [],
             keyString: ''
-        }
+        };
     },
     computed: {
         orderedOriginalPath() {
@@ -79,7 +79,7 @@ export default {
                     domainObject,
                     key,
                     objectPath: pathArray.slice(index)
-                }
+                };
             });
         },
         clearData() {
@@ -120,5 +120,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

@@ -104,7 +104,7 @@ define(['./Type'], function (Type) {
                 let def = Type.definitionFromLegacyDefinition(type);
                 this.addType(type.key, def);
             });
-    }
+    };
 
     return TypeRegistry;
 });

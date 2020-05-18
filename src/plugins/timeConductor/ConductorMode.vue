@@ -113,7 +113,7 @@ export default {
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular'
-                }
+                };
             } else {
                 return {
                     key: clock.key,
@@ -121,7 +121,7 @@ export default {
                     description: "Monitor streaming data in real-time. The Time " +
                     "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock'
-                }
+                };
             }
         },
 
@@ -160,10 +160,10 @@ export default {
         getMatchingConfig(options) {
             const matchers = {
                 clock(config) {
-                    return options.clock === config.clock
+                    return options.clock === config.clock;
                 },
                 timeSystem(config) {
-                    return options.timeSystem === config.timeSystem
+                    return options.timeSystem === config.timeSystem;
                 }
             };
 
@@ -181,5 +181,5 @@ export default {
         }
     }
 
-}
+};
 </script>

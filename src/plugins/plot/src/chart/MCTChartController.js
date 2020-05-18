@@ -76,7 +76,7 @@ function (
             this.$scope.$watch('highlights', this.scheduleDraw);
             this.$scope.$watch('rectangles', this.scheduleDraw);
             this.config.series.forEach(this.onSeriesAdd, this);
-        }
+        };
     }
 
     eventHelpers.extend(MCTChartController.prototype);

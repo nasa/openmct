@@ -67,7 +67,7 @@ export default {
             currentSearch: '',
             isDragging: false,
             selection: []
-        }
+        };
     },
     mounted() {
         let selection = this.openmct.selection.get();
@@ -128,7 +128,7 @@ export default {
                         this.composition.off('remove', this.removeElement);
                         this.composition.off('reorder', this.reorderElements);
                         delete this.compositionUnlistener;
-                    }
+                    };
                 }
             }
         },
@@ -171,5 +171,5 @@ export default {
             document.removeEventListener('dragend', this.hideDragStyling);
         }
     }
-}
+};
 </script>

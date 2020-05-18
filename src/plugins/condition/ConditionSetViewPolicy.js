@@ -28,6 +28,6 @@ ConditionSetViewPolicy.prototype.allow = function (view, domainObject) {
         return view.key === 'conditionSet.view';
     }
     return true;
-}
+};
 
 export default ConditionSetViewPolicy;

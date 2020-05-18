@@ -136,7 +136,7 @@ export default {
                 return {
                     applied: false,
                     conditionTestInputs: []
-                }
+                };
             }
         }
     },
@@ -232,5 +232,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

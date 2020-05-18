@@ -62,7 +62,7 @@ define([
                             uses.forEach(function (key, i) {
                                 scope[key] = results[i];
                             });
-                            element = openmct.$angular.element(child)
+                            element = openmct.$angular.element(child);
                             templateLinker.link(
                                 scope,
                                 element,
@@ -88,7 +88,7 @@ define([
                         element = null;
                         scope = null;
                     }
-                }
+                };
             }
         };
     }

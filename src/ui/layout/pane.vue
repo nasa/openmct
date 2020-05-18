@@ -57,11 +57,11 @@ export default {
         return {
             collapsed: false,
             resizing: false
-        }
+        };
     },
     beforeMount() {
         this.type = this.$parent.type;
-        this.styleProp = (this.type === 'horizontal') ? 'width' : 'height'
+        this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     methods: {
         toggleCollapse: function () {
@@ -127,5 +127,5 @@ export default {
             this.trackSize();
         }
     }
-}
+};
 </script>

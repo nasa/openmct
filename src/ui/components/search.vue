@@ -31,7 +31,7 @@ export default {
     data: function () {
         return {
             active: false
-        }
+        };
     },
     computed: {
         inputListeners: function () {
@@ -44,7 +44,7 @@ export default {
                         vm.active = (event.target.value.length > 0);
                     }
                 }
-            )
+            );
         }
     },
     watch: {
@@ -61,5 +61,5 @@ export default {
             this.active = false;
         }
     }
-}
+};
 </script>

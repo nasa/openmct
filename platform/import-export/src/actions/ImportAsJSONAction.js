@@ -156,7 +156,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
                 Object.prototype.hasOwnProperty.call(value, 'namespace') &&
                 value.key === oldId.key &&
                 value.namespace === oldId.namespace) {
-                return newId
+                return newId;
             } else {
                 return value;
             }

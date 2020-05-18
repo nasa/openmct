@@ -32,7 +32,7 @@ export default {
             snapshotCount: 0,
             snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT,
             flashIndicator: false
-        }
+        };
     },
     mounted() {
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
@@ -93,5 +93,5 @@ export default {
             this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
         }
     }
-}
+};
 </script>

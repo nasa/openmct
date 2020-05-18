@@ -119,7 +119,7 @@ define([
                         scope = null;
                         unlistenToStatus();
                     }
-                }
+                };
             },
             priority: function () {
                 let priority = legacyView.priority || DEFAULT_VIEW_PRIORITY;

@@ -379,7 +379,7 @@ define(['lodash'], function (_) {
                                 return {
                                     name: value.name,
                                     value: value.key
-                                }
+                                };
                             })
                         };
                     }
@@ -573,7 +573,7 @@ define(['lodash'], function (_) {
                     return accumulator;
                 }, []));
             }
-        }
+        };
     }
 
     return DisplayLayoutToolbar;

@@ -44,8 +44,8 @@ export default {
             this.items = this.items
                 .filter((i) => {
                     return i.model.identifier.key !== identifier.key
-                        || i.model.identifier.namespace !== identifier.namespace
+                        || i.model.identifier.namespace !== identifier.namespace;
                 });
         }
     }
-}
+};

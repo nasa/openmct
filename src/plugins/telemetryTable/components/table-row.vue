@@ -95,19 +95,19 @@ export default {
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
                 components[header] = this.row.getCellComponentName(header) || 'table-cell';
-                return components
+                return components;
             }, {}),
             selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
                 return selectable;
             }, {})
-        }
+        };
     },
     computed: {
         listeners() {
             let listenersObject = {
                 click: this.markRow
-            }
+            };
 
             if (this.row.getContextMenuActions().length) {
                 listenersObject.contextmenu = this.showContextMenu;
@@ -179,5 +179,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

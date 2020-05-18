@@ -133,7 +133,7 @@ export default {
             table: undefined,
             date: undefined,
             time: undefined
-        }
+        };
     },
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);
@@ -250,5 +250,5 @@ export default {
             return TIME_OPTIONS[key];
         }
     }
-}
+};
 </script>

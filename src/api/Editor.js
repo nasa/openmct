@@ -62,7 +62,7 @@ export default class Editor extends EventEmitter {
         return this.getTransactionService().commit().then((result)=>{
             this.editing = false;
             this.emit('isEditing', false);
-            return result
+            return result;
         }).catch((error)=>{
             throw error;
         });

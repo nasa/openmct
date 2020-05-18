@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag'
+import LayoutDrag from './../LayoutDrag';
 
 export default {
     inject: ['openmct'],
@@ -115,5 +115,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

@@ -2,7 +2,7 @@ export default {
     data() {
         return {
             open: false
-        }
+        };
     },
     methods: {
         toggle(event) {
@@ -26,4 +26,4 @@ export default {
     destroyed() {
         document.removeEventListener('click', this.toggle);
     }
-}
+};

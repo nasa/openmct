@@ -82,7 +82,7 @@ export default {
         return {
             domainObject: {},
             multiSelect: false
-        }
+        };
     },
     computed: {
         item() {
@@ -107,7 +107,7 @@ export default {
             }
             return definition.form
                 .map((field) => {
-                    let path = field.property
+                    let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];
                     }
@@ -157,5 +157,5 @@ export default {
             return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';
         }
     }
-}
+};
 </script>

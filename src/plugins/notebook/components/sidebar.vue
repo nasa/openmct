@@ -120,7 +120,7 @@ export default {
     },
     data() {
         return {
-        }
+        };
     },
     watch: {
         pages(newpages) {
@@ -185,5 +185,5 @@ export default {
             this.$emit('updateSection', { sections, id });
         }
     }
-}
+};
 </script>

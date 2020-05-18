@@ -41,7 +41,7 @@ export default class LegacyContextMenuAction {
             let context = {
                 category: 'contextual',
                 domainObject: this.openmct.legacyObject(pathWithRoot)
-            }
+            };
             let legacyAction = new this.LegacyAction(context);
 
             if (!legacyAction.getMetadata) {

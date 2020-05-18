@@ -158,7 +158,7 @@ export default {
                         end: newStart + deltaTime
                     });
                     this.dragging = false;
-                })
+                });
             } else {
                 console.log('Rejected drag due to RAF cap');
             }
@@ -178,5 +178,5 @@ export default {
         }
     }
 
-}
+};
 </script>

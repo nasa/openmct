@@ -57,5 +57,5 @@ export default {
             this.$emit('change', event.target.valueAsNumber, this.options);
         }
     }
-}
+};
 </script>

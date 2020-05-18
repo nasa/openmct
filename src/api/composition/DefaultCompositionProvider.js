@@ -59,7 +59,7 @@ define([
     DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
         return !(parent.identifier.namespace === child.identifier.namespace &&
             parent.identifier.key === child.identifier.key);
-    }
+    };
 
     /**
      * Check if this provider should be used to load composition for a
@@ -260,7 +260,7 @@ define([
         }
         this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
         this.topicListener = () => {
-            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation)
+            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
         };
     };
 

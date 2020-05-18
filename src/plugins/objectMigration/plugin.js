@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Migrations from './Migrations.js'
+import Migrations from './Migrations.js';
 
 export default function () {
     return function (openmct) {
@@ -48,6 +48,6 @@ export default function () {
                     }
                     return object;
                 });
-        }
+        };
     };
 }

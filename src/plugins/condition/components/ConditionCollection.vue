@@ -94,7 +94,7 @@ export default {
                 return {
                     applied: false,
                     conditionTestInputs: []
-                }
+                };
             }
         }
     },
@@ -148,7 +148,7 @@ export default {
     methods: {
         handleConditionSetResultUpdated(data) {
             this.currentConditionId = data.conditionId;
-            this.$emit('conditionSetResultUpdated', data)
+            this.$emit('conditionSetResultUpdated', data);
         },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
@@ -182,7 +182,7 @@ export default {
                 }
                 arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
                 return arr;
-            }
+            };
             const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
             const reorderPlan = [];
 
@@ -228,5 +228,5 @@ export default {
             this.conditionManager.updateTestData(this.testData);
         }
     }
-}
+};
 </script>

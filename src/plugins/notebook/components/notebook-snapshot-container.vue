@@ -71,7 +71,7 @@ export default {
             popupMenuItems: [],
             removeActionString: 'Delete all snapshots',
             snapshots: []
-        }
+        };
     },
     mounted() {
         this.addPopupMenuItems();
@@ -86,7 +86,7 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            }
+            };
 
             this.popupMenuItems = [removeSnapshot];
         },
@@ -100,7 +100,7 @@ export default {
             const options = {
                 name: this.removeActionString,
                 callback: this.removeAllSnapshots.bind(this)
-            }
+            };
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
@@ -125,5 +125,5 @@ export default {
             this.snapshotContainer.updateSnapshot(snapshot);
         }
     }
-}
+};
 </script>
