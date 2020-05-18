@@ -50,7 +50,8 @@ define([
             values: [
                 {
                     key: "name",
-                    name: "Name"
+                    name: "Name",
+                    format: "string"
                 },
                 {
                     key: "utc",
