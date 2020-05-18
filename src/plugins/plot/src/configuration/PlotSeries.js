@@ -160,6 +160,7 @@ define([
                     );
             }
 
+            /* eslint-disable you-dont-need-lodash-underscore/concat */
             return this.openmct
                 .telemetry
                 .request(this.domainObject, options)
@@ -171,6 +172,7 @@ define([
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
+            /* eslint-enable you-dont-need-lodash-underscore/concat */
         },
         /**
          * Update x formatter on x change.

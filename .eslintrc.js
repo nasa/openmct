@@ -24,11 +24,7 @@ module.exports = {
         }
     },
     "rules": {
-        "you-dont-need-lodash-underscore/uniq": "off",
         "you-dont-need-lodash-underscore/omit": "off",
-        "you-dont-need-lodash-underscore/concat": "off",
-        "you-dont-need-lodash-underscore/values": "off",
-        "you-dont-need-lodash-underscore/map": "off",
         "you-dont-need-lodash-underscore/throttle": "off",
         "you-dont-need-lodash-underscore/flatten": "off",
         "no-bitwise": "error",
