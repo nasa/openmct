@@ -268,17 +268,21 @@ export default {
             subObjects.forEach(this.registerListener);
         },
         updateDomainObjectItemStyles(newItems) {
-            //check that all items that have been styles still exist. Otherwise delete those styles
             let keys = Object.keys(this.domainObject.configuration.objectStyles || {});
             keys.forEach((key) => {
-                if ((key !== 'styles') &&
-                    (key !== 'staticStyle') &&
-                    (key !== 'conditionSetIdentifier')) {
+                if (this.isKeyItemId(key)) {
                     if (!(newItems.find(item => item.id === key))) {
                         this.removeItemStyles(key);
                     }
                 }
             });
+        },
+        isKeyItemId(key) {
+            return (key !== 'styles') &&
+                (key !== 'staticStyle') &&
+                (key !== 'defaultConditionId') &&
+                (key !== 'selectedConditionId') &&
+                (key !== 'conditionSetIdentifier');
         },
         registerListener(domainObject) {
             let id = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -293,9 +297,9 @@ export default {
             }
         },
         observeObject(domainObject, id) {
-            let unobserveObject = this.openmct.objects.observe(domainObject, '*', function (newObject) {
+            let unobserveObject = this.openmct.objects.observe(domainObject, '*', (newObject) => {
                 this.domainObjectsById[id] = JSON.parse(JSON.stringify(newObject));
-            }.bind(this));
+            });
             this.unObserveObjects.push(unobserveObject);
         },
         removeListeners() {
@@ -385,10 +389,9 @@ export default {
         removeItemStyles(itemId) {
             let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (itemId && domainObjectStyles[itemId]) {
-                domainObjectStyles[itemId] = undefined;
                 delete domainObjectStyles[itemId];
 
-                if (_.isEmpty(domainObjectStyles)) {
+                if (Object.keys(domainObjectStyles).length <= 0) {
                     domainObjectStyles = undefined;
                 }
                 this.persist(this.domainObject, domainObjectStyles);
@@ -454,7 +457,7 @@ export default {
                 domainObjects.forEach(domainObject => {
                     let objectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
                     this.removeConditionalStyles(objectStyles);
-                    if (_.isEmpty(objectStyles)) {
+                    if (Object.keys(objectStyles).length <= 0) {
                         objectStyles = undefined;
                     }
                     this.persist(domainObject, objectStyles);
@@ -464,14 +467,14 @@ export default {
                 this.items.forEach((item) => {
                     const itemId = item.id;
                     this.removeConditionalStyles(domainObjectStyles, itemId);
-                    if (_.isEmpty(domainObjectStyles[itemId])) {
+                    if (Object.keys(domainObjectStyles[itemId]).length <= 0) {
                         delete domainObjectStyles[itemId];
                     }
                 });
             }  else {
                 this.removeConditionalStyles(domainObjectStyles);
             }
-            if (_.isEmpty(domainObjectStyles)) {
+            if (Object.keys(domainObjectStyles).length <= 0) {
                 domainObjectStyles = undefined;
             }
             this.persist(this.domainObject, domainObjectStyles);
@@ -504,10 +507,10 @@ export default {
             this.getAndPersistStyles(property);
         },
         updateConditionalStyle(conditionStyle, property) {
-            let found = this.findStyleByConditionId(conditionStyle.conditionId);
-            if (found) {
-                found.style = conditionStyle.style;
-                this.selectedConditionId = found.conditionId;
+            let foundStyle = this.findStyleByConditionId(conditionStyle.conditionId);
+            if (foundStyle) {
+                foundStyle.style = conditionStyle.style;
+                this.selectedConditionId = foundStyle.conditionId;
                 this.getAndPersistStyles(property);
             }
         },
@@ -552,12 +555,10 @@ export default {
                         if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
                             itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
                         }
-                        Object.keys(item.applicableStyles).forEach(key => {
-                            if (property === key) {
-                                itemStaticStyle[key] = this.staticStyle.style[key];
-                            }
-                        });
-                        if (_.isEmpty(itemStaticStyle)) {
+                        if (item.applicableStyles[property]) {
+                            itemStaticStyle[property] = this.staticStyle.style[property];
+                        }
+                        if (Object.keys(itemStaticStyle).length <= 0) {
                             itemStaticStyle = undefined;
                         }
                         domainObjectStyles[item.id] = { staticStyle: { style: itemStaticStyle } };
