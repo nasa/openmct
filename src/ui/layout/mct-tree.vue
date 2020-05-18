@@ -31,9 +31,9 @@
         class="c-tree-and-search__tree c-tree"
     >
         <tree-item
-            v-for="treeItem in allTreeItems"
-            :key="treeItem.id"
-            :node="treeItem"
+            v-for="item in allTreeItems"
+            :key="item.id"
+            :node="item"
         />
     </ul>
     <!-- end main tree -->
@@ -44,9 +44,9 @@
         class="c-tree-and-search__tree c-tree"
     >
         <tree-item
-            v-for="treeItem in filteredTreeItems"
-            :key="treeItem.id"
-            :node="treeItem"
+            v-for="item in filteredTreeItems"
+            :key="item.id"
+            :node="item"
         />
     </ul>
     <!-- end search tree -->
