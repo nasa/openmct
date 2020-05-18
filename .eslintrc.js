@@ -167,6 +167,8 @@ module.exports = {
         "space-unary-ops": ["error", {"words": true, "nonwords": false}],
         // https://eslint.org/docs/rules/arrow-spacing
         "arrow-spacing": "error",
+        // https://eslint.org/docs/rules/semi-spacing
+        "semi-spacing": ["error", {"before": false, "after": true}],
 
         "vue/html-indent": [
             "error",

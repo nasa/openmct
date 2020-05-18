@@ -50,7 +50,7 @@ define(
                         catch: function (callback) {
                             return mockPromise(callback(value));
                         }
-                    } ;
+                    };
             }
 
             beforeEach(function () {
