@@ -97,8 +97,8 @@ export default {
         gridSize: {
             type: Array,
             required: true,
-            validator: (arr) => arr && arr.length === 2
-                && arr.every(el => typeof el === 'number')
+            validator: (arr) => arr && arr.length === 2 &&
+                arr.every(el => typeof el === 'number')
         },
         initSelect: Boolean,
         index: {
@@ -117,6 +117,7 @@ export default {
     computed: {
         showFrameEdit() {
             let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
+
             return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
         },
         position() {
@@ -124,13 +125,20 @@ export default {
             if (this.dragging && this.dragPosition) {
                 ({x, y, x2, y2} = this.dragPosition);
             }
-            return {x, y, x2, y2};
+
+            return {
+                x,
+                y,
+                x2,
+                y2
+            };
         },
         stroke() {
             if (this.itemStyle) {
                 if (this.itemStyle.border) {
                     return this.itemStyle.border.replace('1px solid ', '');
                 }
+
                 return '';
             } else {
                 return this.item.stroke;
@@ -142,6 +150,7 @@ export default {
             let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
             let left = this.gridSize[0] * Math.min(x, x2);
             let top = this.gridSize[1] * Math.min(y, y2);
+
             return {
                 left: `${left}px`,
                 top: `${top}px`,
@@ -161,24 +170,27 @@ export default {
                 if (y2 < y) {
                     return 1;
                 }
+
                 return 4;
             }
+
             if (y2 < y) {
                 return 2;
             }
+
             return 3;
         },
         linePosition() {
-            return this.vectorQuadrant % 2 !== 0
+            return this.vectorQuadrant % 2 !== 0 ?
                 // odd vectorQuadrant slopes up
-                ? {
+                {
                     x1: '0%',
                     y1: '100%',
                     x2: '100%',
                     y2: '0%'
-                }
+                } :
                 // even vectorQuadrant slopes down
-                : {
+                {
                     x1: '0%',
                     y1: '0%',
                     x2: '100%',
@@ -208,6 +220,7 @@ export default {
         if (this.removeSelectable) {
             this.removeSelectable();
         }
+
         this.openmct.selection.off('change', this.setSelection);
     },
     methods: {
@@ -247,8 +260,14 @@ export default {
             if (!this.dragging) {
                 this.$emit('endMove');
             } else {
-                this.$emit('endLineResize', this.item, {x, y, x2, y2});
+                this.$emit('endLineResize', this.item, {
+                    x,
+                    y,
+                    x2,
+                    y2
+                });
             }
+
             this.dragPosition = undefined;
             this.dragging = undefined;
             event.preventDefault();
@@ -257,7 +276,12 @@ export default {
             let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
             let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
             let {x, y, x2, y2} = this.item;
-            let dragPosition = {x, y, x2, y2};
+            let dragPosition = {
+                x,
+                y,
+                x2,
+                y2
+            };
 
             if (this.dragging === 'start') {
                 dragPosition.x -= gridDeltaX;
@@ -272,6 +296,7 @@ export default {
                 dragPosition.x2 -= gridDeltaX;
                 dragPosition.y2 -= gridDeltaY;
             }
+
             return dragPosition;
         },
         setSelection(selection) {

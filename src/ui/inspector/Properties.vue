@@ -95,22 +95,26 @@ export default {
             if (!this.type) {
                 return `Unknown: ${this.item.type}`;
             }
+
             return this.type.definition.name;
         },
         typeProperties() {
             if (!this.type) {
                 return [];
             }
+
             let definition = this.type.definition;
             if (!definition.form || definition.form.length === 0) {
                 return [];
             }
+
             return definition.form
                 .map((field) => {
                     let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];
                     }
+
                     return {
                         name: field.name,
                         path
@@ -141,12 +145,14 @@ export default {
         updateSelection(selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
+
                 return;
             }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
                 this.domainObject = {};
+
                 return;
             } else {
                 this.multiSelect = false;

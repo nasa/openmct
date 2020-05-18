@@ -31,6 +31,7 @@ export default {
     },
     data() {
         inputUniqueId++;
+
         return {
             uid: `mct-input-id-${inputUniqueId}`
         };

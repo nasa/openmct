@@ -30,6 +30,7 @@ export default {
     },
     data() {
         uniqueId++;
+
         return {
             uid: `mct-checkbox-id-${uniqueId}`
         };

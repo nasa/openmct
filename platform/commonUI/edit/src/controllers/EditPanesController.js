@@ -51,6 +51,7 @@ define(
             // Update root when represented object changes
             $scope.$watch('domainObject', updateRoot);
         }
+
         /**
          * Get the root-level domain object, as reported by the
          * represented domain object.

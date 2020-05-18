@@ -51,6 +51,7 @@ define([], function () {
                 } else {
                     legacyIndicator = LegacyIndicatorDef;
                 }
+
                 return legacyIndicator;
             }
 

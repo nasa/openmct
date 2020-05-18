@@ -65,6 +65,7 @@ define([
         if (this.$canvas) {
             this.stopListening(this.$canvas);
         }
+
         this.$canvas = this.$element.find('canvas');
 
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
@@ -167,8 +168,14 @@ define([
 
     MCTPlotController.prototype.trackMousePosition = function ($event) {
         this.trackChartElementBounds($event);
-        this.xScale.range({min: 0, max: this.chartElementBounds.width});
-        this.yScale.range({min: 0, max: this.chartElementBounds.height});
+        this.xScale.range({
+            min: 0,
+            max: this.chartElementBounds.width
+        });
+        this.yScale.range({
+            min: 0,
+            max: this.chartElementBounds.height
+        });
 
         this.positionOverElement = {
             x: $event.clientX - this.chartElementBounds.left,
@@ -184,6 +191,7 @@ define([
         if (this.cursorGuide) {
             this.updateCrosshairs($event);
         }
+
         this.highlightValues(this.positionOverPlot.x);
         this.updateMarquee();
         this.updatePan();
@@ -206,6 +214,7 @@ define([
         if (point === this.highlightPoint) {
             return;
         }
+
         this.highlightValues(point);
     };
 
@@ -227,12 +236,14 @@ define([
                     return series.data.length > 0;
                 }).map(function (series) {
                     series.closest = series.nearestPoint(point);
+
                     return {
                         series: series,
                         point: series.closest
                     };
                 }, this);
         }
+
         this.$scope.$digest();
     };
 
@@ -248,6 +259,7 @@ define([
         if (this.allowPan) {
             return this.startPan($event);
         }
+
         if (this.allowMarquee) {
             return this.startMarquee($event);
         }
@@ -284,6 +296,7 @@ define([
         if (!this.marquee) {
             return;
         }
+
         this.marquee.end = this.positionOverPlot;
         this.marquee.endPixels = this.positionOverElement;
     };
@@ -327,6 +340,7 @@ define([
             // if marquee zoom doesn't occur.
             this.plotHistory.pop();
         }
+
         this.$scope.rectangles = [];
         this.marquee = undefined;
     };
@@ -344,7 +358,7 @@ define([
         this.freeze();
         this.trackHistory();
 
-        var xAxisDist= (currentXaxis.max - currentXaxis.min) * zoomFactor,
+        var xAxisDist = (currentXaxis.max - currentXaxis.min) * zoomFactor,
             yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
         if (zoomDirection === 'in') {
@@ -451,6 +465,7 @@ define([
         };
         $event.preventDefault();
         this.trackHistory();
+
         return false;
     };
 
@@ -459,6 +474,7 @@ define([
         if (!this.pan) {
             return;
         }
+
         var dX = this.pan.start.x - this.positionOverPlot.x,
             dY = this.pan.start.y - this.positionOverPlot.y,
             xRange = this.config.xAxis.get('displayRange'),
@@ -528,8 +544,10 @@ define([
         var previousAxisRanges = this.plotHistory.pop();
         if (this.plotHistory.length === 0) {
             this.clear();
+
             return;
         }
+
         this.config.xAxis.set('displayRange', previousAxisRanges.x);
         this.config.yAxis.set('displayRange', previousAxisRanges.y);
         this.$scope.$emit('user:viewport:change:end');

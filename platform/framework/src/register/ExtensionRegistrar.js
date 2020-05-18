@@ -80,6 +80,7 @@ define(
                 var name = extension.key ?
                     ("extension-" + extension.key + "#" + index) :
                     ("extension#" + index);
+
                 return category + "[" + name + "]";
             }
 
@@ -147,7 +148,9 @@ define(
                         extensions.forEach(registerExtension);
                         registerExtensionArraysForCategory(category, names);
                     }
+
                     registeredCategories[category] = true;
+
                     return true;
                 }
             }
@@ -159,6 +162,7 @@ define(
                     Constants.EXTENSION_SUFFIX,
                     dependency.length - Constants.EXTENSION_SUFFIX.length
                 );
+
                 return index !== -1;
             }
 
@@ -192,7 +196,6 @@ define(
 
                 return Object.keys(needed);
             }
-
 
             // Register any extension categories that are depended-upon but
             // have not been declared anywhere; such dependencies are then

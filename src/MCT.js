@@ -102,19 +102,21 @@ define([
         };
         /* eslint-enable no-undef */
 
+        this.legacyBundle = {
+            extensions: {
+                services: [
+                    {
+                        key: "openmct",
+                        implementation: function ($injector) {
+                            this.$injector = $injector;
 
-        this.legacyBundle = { extensions: {
-            services: [
-                {
-                    key: "openmct",
-                    implementation: function ($injector) {
-                        this.$injector = $injector;
-                        return this;
-                    }.bind(this),
-                    depends: ['$injector']
-                }
-            ]
-        } };
+                            return this;
+                        }.bind(this),
+                        depends: ['$injector']
+                    }
+                ]
+            }
+        };
 
         /**
          * Tracks current selection state of the application.
@@ -289,6 +291,7 @@ define([
         function instantiate(model, keyString) {
             var capabilities = capabilityService.getCapabilities(model, keyString);
             model.id = keyString;
+
             return new DomainObjectImpl(keyString, model, capabilities);
         }
 
@@ -300,6 +303,7 @@ define([
                 .map((o) => {
                     let keyString = objectUtils.makeKeyString(o.identifier);
                     let oldModel = objectUtils.toOldFormat(o);
+
                     return instantiate(oldModel, keyString);
                 })
                 .reverse()
@@ -310,6 +314,7 @@ define([
         } else {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return instantiate(oldModel, keyString);
         }
     };

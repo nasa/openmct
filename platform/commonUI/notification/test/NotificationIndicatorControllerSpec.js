@@ -35,7 +35,7 @@ define(
                 mockScope = jasmine.createSpy("$scope");
                 mockDialogService = jasmine.createSpyObj(
                     "dialogService",
-                    ["getDialogResponse","dismiss"]
+                    ["getDialogResponse", "dismiss"]
                 );
                 mockNotificationService.highest = {
                     severity: "error"

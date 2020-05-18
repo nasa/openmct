@@ -21,13 +21,13 @@ export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
     });
 
     const params = historicLink.split('&').map(param => {
-        if (param.includes(TIME_BOUNDS.START_BOUND)
-                || param.includes(TIME_BOUNDS.START_DELTA)) {
+        if (param.includes(TIME_BOUNDS.START_BOUND) ||
+                param.includes(TIME_BOUNDS.START_DELTA)) {
             param = `${TIME_BOUNDS.START_BOUND}=${bounds.start}`;
         }
 
-        if (param.includes(TIME_BOUNDS.END_BOUND)
-                || param.includes(TIME_BOUNDS.END_DELTA)) {
+        if (param.includes(TIME_BOUNDS.END_BOUND) ||
+                param.includes(TIME_BOUNDS.END_DELTA)) {
             param = `${TIME_BOUNDS.END_BOUND}=${bounds.end}`;
         }
 
@@ -76,13 +76,16 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
     const domainObject = objectPath[0];
     const domainObjectType = openmct.types.get(domainObject.type);
 
-    const cssClass = domainObjectType && domainObjectType.definition
-        ? domainObjectType.definition.cssClass
-        : 'icon-object-unknown';
+    const cssClass = domainObjectType && domainObjectType.definition ?
+        domainObjectType.definition.cssClass :
+        'icon-object-unknown';
     const date = Date.now();
-    const historicLink = link
-        ? getHistoricLinkInFixedMode(openmct, bounds, link)
-        : objectLink.computed.objectLink.call({ objectPath, openmct });
+    const historicLink = link ?
+        getHistoricLinkInFixedMode(openmct, bounds, link) :
+        objectLink.computed.objectLink.call({
+            objectPath,
+            openmct
+        });
     const name = domainObject.name;
     const type = domainObject.identifier.key;
 
@@ -113,9 +116,9 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed =
         return;
     }
 
-    const embeds = embed
-        ? [embed]
-        : [];
+    const embeds = embed ?
+        [embed] :
+        [];
 
     const defaultEntries = getNotebookDefaultEntries(notebookStorage, domainObject);
     const id = `entry-${date}`;

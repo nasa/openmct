@@ -149,6 +149,7 @@ export default {
         } else {
             this.initializeStaticStyle();
         }
+
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
@@ -177,6 +178,7 @@ export default {
             } else {
                 domainObject = this.selection[0][0].context.item;
             }
+
             this.domainObject = domainObject;
             this.initialStyles = getApplicableStylesForItem(domainObject, layoutItem);
             this.$nextTick(() => {
@@ -191,9 +193,11 @@ export default {
             if (this.stopObserving) {
                 this.stopObserving();
             }
+
             if (this.stopObservingItems) {
                 this.stopObservingItems();
             }
+
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
             }
@@ -221,6 +225,7 @@ export default {
                     conditionSetDomainObject = item;
                 }
             };
+
             const dismissDialog = (overlay, initialize) => {
                 overlay.dismiss();
                 if (initialize && conditionSetDomainObject) {
@@ -229,6 +234,7 @@ export default {
                     this.initializeConditionalStyles();
                 }
             };
+
             let vm = new Vue({
                 provide: {
                     openmct: this.openmct
@@ -280,7 +286,7 @@ export default {
         removeConditionSet() {
             this.conditionSetDomainObject = undefined;
             this.conditionalStyles = [];
-            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (this.itemId) {
                 domainObjectStyles[this.itemId].conditionSetIdentifier = undefined;
                 domainObjectStyles[this.itemId].selectedConditionId = undefined;
@@ -299,6 +305,7 @@ export default {
                 domainObjectStyles.styles = undefined;
                 delete domainObjectStyles.styles;
             }
+
             if (_.isEmpty(domainObjectStyles)) {
                 domainObjectStyles = undefined;
             }
@@ -310,7 +317,7 @@ export default {
         },
         updateDomainObjectItemStyles(newItems) {
             //check that all items that have been styles still exist. Otherwise delete those styles
-            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             let itemsToRemove = [];
             let keys = Object.keys(domainObjectStyles);
             //TODO: Need an easier way to find which properties are itemIds
@@ -340,17 +347,20 @@ export default {
             if (_.isEmpty(domainObjectStyles)) {
                 domainObjectStyles = undefined;
             }
+
             this.persist(domainObjectStyles);
         },
         initializeConditionalStyles() {
             if (!this.conditions) {
                 this.conditions = {};
             }
+
             let conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 if (conditionConfiguration.isDefault) {
                     this.selectedConditionId = conditionConfiguration.id;
                 }
+
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
@@ -375,6 +385,7 @@ export default {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
             }
+
             if (this.conditionSetDomainObject) {
                 this.openmct.telemetry.request(this.conditionSetDomainObject)
                     .then(output => {
@@ -424,11 +435,12 @@ export default {
             if (defaultConditionId) {
                 objectStyle.defaultConditionId = defaultConditionId;
             }
+
             if (this.conditionSetDomainObject) {
                 objectStyle.conditionSetIdentifier = this.conditionSetDomainObject.identifier;
             }
 
-            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
 
             if (this.itemId) {
                 domainObjectStyles[this.itemId] = objectStyle;

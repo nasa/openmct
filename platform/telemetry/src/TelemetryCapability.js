@@ -118,6 +118,7 @@ define(
                         $injector.get("telemetryService"));
                 } catch (e) {
                     $log.info("Telemetry service unavailable");
+
                     return (this.telemetryService = null);
                 }
             };
@@ -163,6 +164,7 @@ define(
             if (!fullRequest.id) {
                 fullRequest.id = domainObject.getId();
             }
+
             if (!fullRequest.key) {
                 fullRequest.key = domainObject.getId();
             }

@@ -57,7 +57,7 @@ define([
                 path = path.split('/');
             }
 
-            return pathToObjects(path).then((objects)=>{
+            return pathToObjects(path).then((objects) => {
                 isRoutingInProgress = false;
 
                 if (currentNavigation !== navigateCall) {
@@ -82,8 +82,10 @@ define([
 
                 if (!navigatedObject) {
                     openmct.layout.$refs.browseObject.clear();
+
                     return;
                 }
+
                 let currentProvider = openmct
                     .objectViews
                     .getByProviderKey(currentViewKey);
@@ -91,7 +93,8 @@ define([
                 document.title = browseObject.name; //change document title to current object in main view
 
                 if (currentProvider && currentProvider.canView(navigatedObject)) {
-                    viewObject(navigatedObject,  currentProvider);
+                    viewObject(navigatedObject, currentProvider);
+
                     return;
                 }
 
@@ -110,7 +113,7 @@ define([
         }
 
         function pathToObjects(path) {
-            return Promise.all(path.map((keyString)=>{
+            return Promise.all(path.map((keyString) => {
                 return openmct.objects.get(keyString);
             }));
         }

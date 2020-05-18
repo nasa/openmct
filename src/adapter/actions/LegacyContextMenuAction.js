@@ -51,6 +51,7 @@ export default class LegacyContextMenuAction {
                     return metadata;
                 }.bind(legacyAction);
             }
+
             legacyAction.perform();
         });
     }
@@ -84,6 +85,7 @@ export default class LegacyContextMenuAction {
                 return OUTSIDE_EDIT_PATH_BLACKLIST.some(actionKey => this.LegacyAction.key === actionKey);
             }
         }
+
         return false;
     }
 }

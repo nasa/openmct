@@ -70,6 +70,7 @@ define([
                     jasmine.createSpy('throttled-' + mockThrottledFns.length);
                 mockThrottledFn.and.callFake(fn);
                 mockThrottledFns.push(mockThrottledFn);
+
                 return mockThrottledFn;
             });
             mockTopic.and.returnValue(mockMutationTopic);
@@ -101,7 +102,6 @@ define([
                 mockNavigationService
             );
         });
-
 
         it("listens for mutation with a throttled function", function () {
             expect(mockMutationTopic.listen)

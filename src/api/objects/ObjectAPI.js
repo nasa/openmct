@@ -36,7 +36,6 @@ define([
     EventEmitter
 ) {
 
-
     /**
      * Utilities for loading, saving, and manipulating domain objects.
      * @interface ObjectAPI
@@ -66,6 +65,7 @@ define([
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
+
         return this.providers[identifier.namespace] || this.fallbackProvider;
     };
 
@@ -188,6 +188,7 @@ define([
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         var mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
+
         return mutableObject.set(path, value);
     };
 
@@ -204,6 +205,7 @@ define([
         var mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
+
         return mutableObject.stopListening.bind(mutableObject);
     };
 

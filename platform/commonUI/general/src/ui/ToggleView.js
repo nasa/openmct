@@ -49,6 +49,7 @@ define([
 
     ToggleView.prototype.observe = function (callback) {
         this.callbacks.push(callback);
+
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
                 return c !== callback;

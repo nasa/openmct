@@ -59,6 +59,7 @@ function matchExact(results, target) {
         if (result) {
             matches++;
         }
+
         if (matches > target) {
             return false;
         }

@@ -43,7 +43,7 @@ define([
 
                 return {
                     show: function (element, isEditing) {
-                        component =  new Vue({
+                        component = new Vue({
                             provide: {
                                 openmct,
                                 layoutObject: domainObject
@@ -83,5 +83,6 @@ define([
             }
         };
     }
+
     return FlexibleLayoutViewProvider;
 });

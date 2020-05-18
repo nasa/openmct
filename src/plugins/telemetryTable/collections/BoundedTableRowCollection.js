@@ -60,18 +60,25 @@ define(
                 } else if (afterEndOfBounds) {
                     this.futureBuffer.addOne(item);
                 }
+
                 return false;
             }
 
             sortByTimeSystem(timeSystem) {
-                this.sortBy({key: timeSystem.key, direction: 'asc'});
+                this.sortBy({
+                    key: timeSystem.key,
+                    direction: 'asc'
+                });
                 let formatter = this.openmct.telemetry.getValueFormatter({
                     key: timeSystem.key,
                     source: timeSystem.key,
                     format: timeSystem.timeFormat
                 });
                 this.parseTime = formatter.parse.bind(formatter);
-                this.futureBuffer.sortBy({key: timeSystem.key, direction: 'asc'});
+                this.futureBuffer.sortBy({
+                    key: timeSystem.key,
+                    direction: 'asc'
+                });
             }
 
             /**
@@ -127,6 +134,7 @@ define(
                      */
                     this.emit('remove', discarded);
                 }
+
                 if (added && added.length > 0) {
                     /**
                      * An `added` event is emitted when a bounds change results in
@@ -153,5 +161,6 @@ define(
                 this.unsubscribeFromBounds();
             }
         }
+
         return BoundedTableRowCollection;
     });

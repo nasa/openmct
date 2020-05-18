@@ -91,7 +91,6 @@ define(
                 }
             };
 
-
             /*
              Demonstrates launching an error dialog
              */
@@ -153,6 +152,7 @@ define(
             };
 
         }
+
         return DialogLaunchController;
     }
 );

@@ -63,8 +63,8 @@ export default {
         gridSize: {
             type: Array,
             required: true,
-            validator: (arr) => arr && arr.length === 2
-                && arr.every(el => typeof el === 'number')
+            validator: (arr) => arr && arr.length === 2 &&
+                arr.every(el => typeof el === 'number')
         },
         index: {
             type: Number,
@@ -80,8 +80,10 @@ export default {
                 if (this.itemStyle.imageUrl !== undefined) {
                     backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
                 }
+
                 border = this.itemStyle.border;
             }
+
             return {
                 backgroundImage,
                 border

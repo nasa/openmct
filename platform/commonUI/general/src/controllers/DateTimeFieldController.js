@@ -53,6 +53,7 @@ define(
                     $scope.textInvalid = false;
                     $scope.lastValidValue = $scope.textValue;
                 }
+
                 $scope.pickerModel = { value: value };
             }
 

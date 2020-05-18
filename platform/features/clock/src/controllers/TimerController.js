@@ -26,7 +26,6 @@ define(
 
         var FORMATTER = new TimerFormatter();
 
-
         /**
          * Controller for views of a Timer domain object.
          *
@@ -146,6 +145,7 @@ define(
                 if (lastSign !== self.signValue || lastText !== self.textValue) {
                     $scope.$apply();
                 }
+
                 if (active) {
                     $window.requestAnimationFrame(tick);
                 }
@@ -187,7 +187,6 @@ define(
             return this.relevantAction ?
                 this.relevantAction.getMetadata().name : "";
         };
-
 
         /**
          * Perform the action associated with the start/pause button.

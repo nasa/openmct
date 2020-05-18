@@ -149,6 +149,7 @@ define(
                     if (children.length !== 3 ||
                             children[1].nodeName.toLowerCase() !== 'mct-splitter') {
                         $log.warn(CHILDREN_WARNING_MESSAGE);
+
                         return;
                     }
 
@@ -202,6 +203,7 @@ define(
                     $log.warn(ANCHOR_WARNING_MESSAGE);
                     anchorKey = DEFAULT_ANCHOR;
                 }
+
                 anchor = ANCHORS[anchorKey];
 
                 $scope.$watch($attrs.position, getSetPosition);
@@ -223,7 +225,6 @@ define(
                     $interval.cancel(activeInterval);
                 });
 
-
                 // Interface exposed by controller, for mct-splitter to user
                 return {
                     anchor: function () {
@@ -235,6 +236,7 @@ define(
                         }
 
                         setUserWidthPreference(newPosition);
+
                         return getSetPosition(newPosition);
                     },
                     startResizing: function () {
@@ -254,6 +256,7 @@ define(
                 controller: ['$scope', '$element', '$attrs', controller]
             };
         }
+
         return MCTSplitPane;
 
     }

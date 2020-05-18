@@ -34,6 +34,7 @@ export default {
     computed: {
         hasMixedFilters() {
             let filtersToCompare = _.omit(this.filteredTelemetry[Object.keys(this.filteredTelemetry)[0]], [USE_GLOBAL]);
+
             return Object.values(this.filteredTelemetry).some(filters => {
                 return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
             });
@@ -68,7 +69,7 @@ export default {
 
             composition && composition.load().then((domainObjects) => {
                 domainObjects.forEach(telemetryObject => {
-                    let keyString= this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                    let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
                     let filters = this.filteredTelemetry[keyString];
 
@@ -101,7 +102,7 @@ export default {
 
             return _.flatten(filterNames);
         },
-        getFilterLabels(filterObject, metadatum,) {
+        getFilterLabels(filterObject, metadatum) {
             let filterLabels = [];
             Object.values(filterObject).forEach(comparator => {
                 comparator.forEach(filterValue => {

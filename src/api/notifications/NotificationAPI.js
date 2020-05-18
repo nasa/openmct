@@ -83,6 +83,7 @@ export default class NotificationAPI extends EventEmitter {
             autoDismiss: true,
             severity: "info"
         };
+
         return this._notify(notificationModel);
     }
 
@@ -96,6 +97,7 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             severity: "alert"
         };
+
         return this._notify(notificationModel);
     }
 
@@ -109,6 +111,7 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             severity: "error"
         };
+
         return this._notify(notificationModel);
     }
 
@@ -125,6 +128,7 @@ export default class NotificationAPI extends EventEmitter {
             progressText: progressText,
             severity: "info"
         };
+
         return this._notify(notificationModel);
     }
 
@@ -195,6 +199,7 @@ export default class NotificationAPI extends EventEmitter {
         if (index >= 0) {
             this.notifications.splice(index, 1);
         }
+
         this._setActiveNotification(this._selectNextNotification());
         this._setHighestSeverity();
         notification.emit('destroy');
@@ -308,8 +313,10 @@ export default class NotificationAPI extends EventEmitter {
 
         if (!notification) {
             delete this.activeTimeout;
+
             return;
         }
+
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {

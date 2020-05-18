@@ -192,6 +192,7 @@ define([
             this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
     };
+
     /**
      * @private
      */
@@ -228,6 +229,7 @@ define([
                 });
             }
         }
+
         this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         let id = objectUtils.makeKeyString(domainObject.identifier);
@@ -258,6 +260,7 @@ define([
         if (this.topicListener) {
             return;
         }
+
         this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
         this.topicListener = () => {
             this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
@@ -303,7 +306,6 @@ define([
         removed.forEach(function (removedChild) {
             listeners.remove.forEach(notify(removedChild));
         });
-
 
     };
 

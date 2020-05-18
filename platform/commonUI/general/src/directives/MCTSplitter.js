@@ -56,7 +56,7 @@ define(
                                 (anchor.reversed ? -1 : 1);
 
                         // Update the position of this splitter
-                        newPosition =  initialPosition + pixelDelta;
+                        newPosition = initialPosition + pixelDelta;
 
                         if (initialPosition !== newPosition) {
                             mctSplitPane.position(newPosition);

@@ -147,13 +147,13 @@ export default {
         drag($event) {
             if (!this.dragging) {
                 this.dragging = true;
-                requestAnimationFrame(()=>{
+                requestAnimationFrame(() => {
                     let deltaX = $event.clientX - this.dragStartX;
                     let percX = deltaX / this.width;
                     let bounds = this.openmct.time.bounds();
                     let deltaTime = bounds.end - bounds.start;
                     let newStart = bounds.start - percX * deltaTime;
-                    this.$emit('panAxis',{
+                    this.$emit('panAxis', {
                         start: newStart,
                         end: newStart + deltaTime
                     });

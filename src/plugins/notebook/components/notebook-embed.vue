@@ -168,8 +168,8 @@ export default {
             }
 
             const bounds = this.openmct.time.bounds();
-            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
-                && this.embed.bounds.end !== bounds.end;
+            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start &&
+                this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
             this.openmct.time.stopClock();
@@ -218,7 +218,9 @@ export default {
 
             const snapshotOverlay = this.openmct.overlays.overlay({
                 element: snapshot.$mount().$el,
-                onDestroy: () => { snapshot.$destroy(true); },
+                onDestroy: () => {
+                    snapshot.$destroy(true);
+                },
                 size: 'large',
                 dismissable: true,
                 buttons: [

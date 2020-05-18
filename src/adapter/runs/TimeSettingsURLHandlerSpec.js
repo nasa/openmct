@@ -44,18 +44,19 @@ define([
         var initialize;
         var triggerLocationChange;
 
-
         beforeEach(function () {
             clockA = jasmine.createSpyObj('clockA', ['on', 'off']);
             clockA.key = 'clockA';
             clockA.currentValue = function () {
                 return 1000;
             };
+
             clockB = jasmine.createSpyObj('clockB', ['on', 'off']);
             clockB.key = 'clockB';
             clockB.currentValue = function () {
                 return 2000;
             };
+
             timeSystemA = {key: 'timeSystemA'};
             timeSystemB = {key: 'timeSystemB'};
             boundsA = {
@@ -104,11 +105,13 @@ define([
                 if (arguments.length === 0) {
                     return search;
                 }
+
                 if (value === null) {
                     delete search[key];
                 } else {
                     search[key] = String(value);
                 }
+
                 return this;
             });
 
@@ -472,7 +475,6 @@ define([
                 expect(time.stopClock).toHaveBeenCalled();
             });
         });
-
 
         describe("location updates from time API in fixed", function () {
             beforeEach(function () {

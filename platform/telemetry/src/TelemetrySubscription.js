@@ -49,7 +49,6 @@ define(
          * @method platform/telemetry.TelemetryPool#put
          */
 
-
         /**
          * A TelemetrySubscription tracks latest values for streaming
          * telemetry data and handles notifying interested observers.
@@ -112,11 +111,11 @@ define(
                 updatePending = false;
             }
 
-
             // Look up metadata associated with an object's telemetry
             function lookupMetadata(domainObj) {
                 var telemetryCapability =
                     domainObj.getCapability("telemetry");
+
                 return telemetryCapability &&
                         telemetryCapability.getMetadata();
             }
@@ -149,6 +148,7 @@ define(
             function subscribe(domainObj) {
                 var telemetryCapability =
                     domainObj.getCapability("telemetry");
+
                 return telemetryCapability.subscribe(function (telemetry) {
                     update(domainObj, telemetry);
                 });
@@ -178,6 +178,7 @@ define(
                 if (callback) {
                     callback();
                 }
+
                 return objects;
             }
 
@@ -225,7 +226,6 @@ define(
             this.unlistenToMutation = addMutationListener();
         }
 
-
         /**
          * From a telemetry series, retrieve a single data point
          * containing all fields for domains/ranges
@@ -255,6 +255,7 @@ define(
          */
         TelemetrySubscription.prototype.unsubscribeAll = function () {
             var $q = this.$q;
+
             return this.unsubscribePromise.then(function (unsubscribes) {
                 return $q.all(unsubscribes.map(function (unsubscribe) {
                     return unsubscribe();
@@ -270,6 +271,7 @@ define(
             if (this.unlistenToMutation) {
                 this.unlistenToMutation();
             }
+
             return this.unsubscribeAll();
         };
 
@@ -291,6 +293,7 @@ define(
         TelemetrySubscription.prototype.getDomainValue = function (domainObject, key) {
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
+
             return latestValue && (key ?
                 latestValue.datum[key] :
                 latestValue.domain);
@@ -314,6 +317,7 @@ define(
         TelemetrySubscription.prototype.getRangeValue = function (domainObject, key) {
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
+
             return latestValue && (key ?
                 latestValue.datum[key] :
                 latestValue.range);
@@ -327,6 +331,7 @@ define(
          */
         TelemetrySubscription.prototype.getDatum = function (domainObject) {
             var id = domainObject.getId();
+
             return (this.latestValues[id] || {}).datum;
         };
 

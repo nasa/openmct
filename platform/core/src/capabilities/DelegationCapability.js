@@ -27,7 +27,6 @@ define(
     [],
     function () {
 
-
         /**
          * The `delegation` capability allows a domain object to indicate
          * that it wishes to delegate responsibility for some other
@@ -64,7 +63,6 @@ define(
                 });
             }
         }
-
 
         /**
          * Get the domain objects which are intended to be delegated

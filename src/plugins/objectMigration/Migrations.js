@@ -37,6 +37,7 @@ define([
                                 nameKeyMap[value.name] = value.key;
                             });
                         }
+
                         return nameKeyMap;
                     }, {});
                 });
@@ -46,9 +47,9 @@ define([
         }
 
         function isTelemetry(domainObject) {
-            if (openmct.telemetry.isTelemetryObject(domainObject)
-                && domainObject.type !== 'summary-widget'
-                && domainObject.type !== 'example.imagery') {
+            if (openmct.telemetry.isTelemetryObject(domainObject) &&
+                domainObject.type !== 'summary-widget' &&
+                domainObject.type !== 'example.imagery') {
                 return true;
             } else {
                 return false;
@@ -109,6 +110,7 @@ define([
             migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
             delete migratedObject.layoutGrid;
             delete migratedObject.configuration.layout;
+
             return migratedObject;
         }
 
@@ -164,7 +166,7 @@ define([
                     item.size = element.size || DEFAULT_SIZE;
                 } else if (element.type === 'fixed.image') {
                     item.type = "image-view";
-                    item.url =element.url;
+                    item.url = element.url;
                     item.stroke = element.stroke || DEFAULT_STROKE;
                 }
 
@@ -231,6 +233,7 @@ define([
                         .then(function () {
                             newLayoutObject.configuration.items =
                                 migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize);
+
                             return newLayoutObject;
                         });
                 }
@@ -244,17 +247,20 @@ define([
                 migrate(domainObject) {
                     let currentTableConfiguration = domainObject.configuration.table || {};
                     let currentColumnConfiguration = currentTableConfiguration.columns || {};
+
                     return getColumnNameKeyMap(domainObject).then(nameKeyMap => {
                         let hiddenColumns = Object.keys(currentColumnConfiguration).filter(columnName => {
                             return currentColumnConfiguration[columnName] === false;
                         }).reduce((hiddenColumnsMap, hiddenColumnName) => {
                             let key = nameKeyMap[hiddenColumnName];
                             hiddenColumnsMap[key] = true;
+
                             return hiddenColumnsMap;
                         }, {});
 
                         domainObject.configuration.hiddenColumns = hiddenColumns;
                         delete domainObject.configuration.table;
+
                         return domainObject;
                     });
                 }

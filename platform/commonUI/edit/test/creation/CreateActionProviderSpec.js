@@ -51,6 +51,7 @@ define(
                 );
                 mockType.hasFeature.and.returnValue(true);
                 mockType.getName.and.returnValue(name);
+
                 return mockType;
             }
 

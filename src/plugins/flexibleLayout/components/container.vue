@@ -86,7 +86,7 @@ import DropHint from './dropHint.vue';
 const MIN_FRAME_SIZE = 5;
 
 export default {
-    inject:['openmct'],
+    inject: ['openmct'],
     components: {
         FrameComponent,
         ResizeHandle,
@@ -133,6 +133,7 @@ export default {
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }
+
             let frameId = event.dataTransfer.getData('frameid'),
                 containerIndex = Number(event.dataTransfer.getData('containerIndex'));
 
@@ -160,8 +161,10 @@ export default {
                     this.index,
                     insertIndex
                 );
+
                 return;
             }
+
             // move frame.
             let frameId = event.dataTransfer.getData('frameid');
             let containerIndex = Number(event.dataTransfer.getData('containerIndex'));

@@ -83,11 +83,13 @@ class ContextMenuAPI {
                 if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
                     return true;
                 }
+
                 return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
             } else {
                 if (action.appliesTo === undefined) {
                     return true;
                 }
+
                 return action.appliesTo(objectPath) && !action.hideInDefaultMenu;
             }
         });

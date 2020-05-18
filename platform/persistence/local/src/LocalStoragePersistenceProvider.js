@@ -71,11 +71,13 @@ define(
             var spaceObj = this.getValue(space);
             spaceObj[key] = value;
             this.setValue(space, spaceObj);
+
             return this.$q.when(true);
         };
 
         LocalStoragePersistenceProvider.prototype.readObject = function (space, key) {
             var spaceObj = this.getValue(space);
+
             return this.$q.when(spaceObj[key]);
         };
 
@@ -83,6 +85,7 @@ define(
             var spaceObj = this.getValue(space);
             delete spaceObj[key];
             this.setValue(space, spaceObj);
+
             return this.$q.when(true);
         };
 

@@ -126,10 +126,11 @@ export default {
     destroyed() {
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
-        if(this.conditionManager) {
+        if (this.conditionManager) {
             this.conditionManager.off('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
             this.conditionManager.destroy();
         }
+
         if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
@@ -171,23 +172,31 @@ export default {
                 while (old_index < 0) {
                     old_index += arr.length;
                 }
+
                 while (new_index < 0) {
                     new_index += arr.length;
                 }
+
                 if (new_index >= arr.length) {
                     var k = new_index - arr.length;
                     while ((k--) + 1) {
                         arr.push(undefined);
                     }
                 }
+
                 arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+
                 return arr;
             };
+
             const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
             const reorderPlan = [];
 
             for (let i = 0; i < oldIndexArr.length; i++) {
-                reorderPlan.push({oldIndex: Number(newIndexArr[i]), newIndex: i});
+                reorderPlan.push({
+                    oldIndex: Number(newIndexArr[i]),
+                    newIndex: i
+                });
             }
 
             this.reorder(reorderPlan);
@@ -203,6 +212,7 @@ export default {
             let index = _.findIndex(this.telemetryObjs, (obj) => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
                 let id = this.openmct.objects.makeKeyString(identifier);
+
                 return objId === id;
             });
             if (index > -1) {

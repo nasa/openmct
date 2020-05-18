@@ -34,7 +34,10 @@ define(
                     key: "cancel"
                 }
             ],
-            OK_OPTIONS = [{ name: "OK", key: "ok" }];
+            OK_OPTIONS = [{
+                name: "OK",
+                key: "ok"
+            }];
 
         /**
          * Populates a `dialogModel` to pass to `dialogService.getUserChoise`

@@ -99,6 +99,7 @@ export default {
                 activeNotification.off('minimized', this.minimized);
                 activeNotification.off('destroy', this.destroyActiveNotification);
             }
+
             activeNotification = notification;
             this.clearModel();
             this.applyModel(notification.model);

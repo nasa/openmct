@@ -48,6 +48,7 @@ define(
             if ((key === 'edit' && category === 'view-control') || key === 'properties') {
                 identifier = objectUtils.parseKeyString(domainObject.getId());
                 provider = this.openmct.objects.getProvider(identifier);
+
                 return provider.save !== undefined;
             }
 

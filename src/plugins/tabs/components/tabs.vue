@@ -67,7 +67,7 @@ var unknownObjectType = {
 };
 
 export default {
-    inject: ['openmct','domainObject', 'composition'],
+    inject: ['openmct', 'domainObject', 'composition'],
     components: {
         ObjectView
     },
@@ -110,7 +110,7 @@ export default {
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
-    methods:{
+    methods: {
         showTab(tab, index) {
             if (index !== undefined) {
                 this.storeCurrentTabIndex(index);

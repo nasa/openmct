@@ -91,7 +91,7 @@ define(['zepto'], function ($) {
 
         this.overlayContainer = this.overlay.querySelector('.t-contents');
 
-        this.closeButton =  this.overlay.querySelector('a.close');
+        this.closeButton = this.overlay.querySelector('a.close');
         this.closeButton.addEventListener('click', this.toggleOverlay);
 
         this.doneButton = this.overlay.querySelector('a.t-done');
@@ -178,6 +178,7 @@ define(['zepto'], function ($) {
         var button = document.createElement('div');
         $(button).addClass('holder flex-elem');
         button.innerHTML = NEW_BUTTON_TEMPLATE;
+
         return button;
     }
 

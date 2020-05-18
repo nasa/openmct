@@ -88,7 +88,6 @@ define(
                     expect(region.regions.indexOf(part2)).toBe(-1);
                 });
 
-
                 it("with object matches that object", function () {
                     expect(region.regions.length).toBe(4);
                     expect(region.regions.indexOf(part2)).toBe(1);

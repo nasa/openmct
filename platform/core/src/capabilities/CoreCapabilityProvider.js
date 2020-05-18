@@ -72,6 +72,7 @@ define(
                         $log.warn("No key defined for capability; skipping.");
                     }
                 });
+
                 return result;
             }
 

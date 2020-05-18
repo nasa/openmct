@@ -67,7 +67,7 @@ export default {
         return {
             autoScroll: true,
             date: '',
-            filters : {
+            filters: {
                 brightness: 100,
                 contrast: 100
             },
@@ -122,8 +122,8 @@ export default {
             }
 
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
-                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth ||
+                    (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
         paused(state) {

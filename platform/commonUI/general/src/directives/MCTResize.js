@@ -76,6 +76,7 @@ define(
                         if (!linking) { // Avoid apply-in-a-digest
                             scope.$apply();
                         }
+
                         lastBounds = bounds;
                     }
                 }
@@ -86,6 +87,7 @@ define(
                     if (!active) {
                         return;
                     }
+
                     fireEval({
                         width: element[0].offsetWidth,
                         height: element[0].offsetHeight

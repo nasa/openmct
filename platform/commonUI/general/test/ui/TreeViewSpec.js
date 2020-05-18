@@ -57,6 +57,7 @@ define([
             mockDomainObj.useCapability.and.callFake(function (c) {
                 return capabilities[c] && capabilities[c].invoke();
             });
+
             return mockDomainObj;
         }
 
@@ -131,6 +132,7 @@ define([
                     .and.returnValue(Promise.resolve(mockComposition));
 
                 treeView.model(mockDomainObject);
+
                 return testCapabilities.composition.invoke();
             });
 
@@ -149,6 +151,7 @@ define([
                     mockComposition.pop();
                     testCapabilities.mutation.listen
                         .calls.mostRecent().args[0](mockDomainObject.getModel());
+
                     return testCapabilities.composition.invoke();
                 });
 
@@ -232,6 +235,7 @@ define([
 
                     return testCapabilities.composition.invoke().then(function () {
                         treeView.value(mockGrandchild);
+
                         return newCapabilities.composition.invoke();
                     });
                 });

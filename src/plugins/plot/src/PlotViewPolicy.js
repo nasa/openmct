@@ -48,6 +48,7 @@ define(
             if (rangeValues.length === 0) {
                 return false;
             }
+
             return !rangeValues.every(function (value) {
                 return value.format === 'string';
             });

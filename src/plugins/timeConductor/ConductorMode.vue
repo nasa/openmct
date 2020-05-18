@@ -71,6 +71,7 @@ export default {
             //Create copy of active clock so the time API does not get reactified.
             activeClock = Object.create(activeClock);
         }
+
         return {
             selectedMode: this.getModeOptionForClock(activeClock),
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
@@ -102,7 +103,7 @@ export default {
                 .map(this.getModeOptionForClock);
 
             function isDefinedAndUnique(key, index, array) {
-                return key!== undefined && array.indexOf(key) === index;
+                return key !== undefined && array.indexOf(key) === index;
             }
         },
 

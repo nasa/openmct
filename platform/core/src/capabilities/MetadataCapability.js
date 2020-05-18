@@ -43,6 +43,7 @@ define(
 
             function hasDisplayableValue(metadataProperty) {
                 var t = typeof metadataProperty.value;
+
                 return (t === 'string' || t === 'number');
             }
 
@@ -67,6 +68,7 @@ define(
 
             function getCommonMetadata() {
                 var type = domainObject.getCapability('type');
+
                 // Note that invalid values will be filtered out later
                 return [
                     {

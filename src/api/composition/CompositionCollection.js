@@ -74,9 +74,11 @@ define([
         if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
+
         if (!this.mutationListener) {
             this._synchronize();
         }
+
         if (this.provider.on && this.provider.off) {
             if (event === 'add') {
                 this.provider.on(
@@ -85,14 +87,18 @@ define([
                     this.onProviderAdd,
                     this
                 );
-            } if (event === 'remove') {
+            }
+
+            if (event === 'remove') {
                 this.provider.on(
                     this.domainObject,
                     'remove',
                     this.onProviderRemove,
                     this
                 );
-            } if (event === 'reorder') {
+            }
+
+            if (event === 'reorder') {
                 this.provider.on(
                     this.domainObject,
                     'reorder',
@@ -180,6 +186,7 @@ define([
             if (!this.publicAPI.composition.checkPolicy(this.domainObject, child)) {
                 throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
             }
+
             this.provider.add(this.domainObject, child.identifier);
         } else {
             this.emit('add', child);
@@ -201,10 +208,12 @@ define([
             }.bind(this))
             .then(function (childObjects) {
                 childObjects.forEach(c => this.add(c, true));
+
                 return childObjects;
             }.bind(this))
             .then(function (children) {
                 this.emit('load');
+
                 return children;
             }.bind(this));
     };
@@ -259,6 +268,7 @@ define([
     CompositionCollection.prototype.onProviderAdd = function (childId) {
         return this.publicAPI.objects.get(childId).then(function (child) {
             this.add(child, true);
+
             return child;
         }.bind(this));
     };

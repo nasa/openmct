@@ -96,6 +96,7 @@ define([
             if (!domainObject.configuration || !domainObject.configuration.series) {
                 return;
             }
+
             return domainObject.configuration.series.filter(function (seriesConfig) {
                 return seriesConfig.identifier.key === identifier.key &&
                     seriesConfig.identifier.namespace === identifier.namespace;

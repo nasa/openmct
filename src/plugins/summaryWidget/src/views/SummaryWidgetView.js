@@ -27,13 +27,13 @@ define([
         if (this.unsubscribe) {
             this.unsubscribe();
         }
+
         this.hasUpdated = false;
 
         this.container.innerHTML = summaryWidgetTemplate;
         this.widget = this.container.querySelector('a');
         this.icon = this.container.querySelector('#widgetIcon');
         this.label = this.container.querySelector('.js-sw__label');
-
 
         if (this.domainObject.url) {
             this.widget.setAttribute('href', this.domainObject.url);
@@ -46,6 +46,7 @@ define([
         } else {
             this.widget.removeAttribute('target');
         }
+
         var renderTracker = {};
         this.renderTracker = renderTracker;
         this.openmct.telemetry.request(this.domainObject, {
@@ -58,6 +59,7 @@ define([
                 results.length === 0) {
                 return;
             }
+
             this.updateState(results[results.length - 1]);
         }.bind(this));
 

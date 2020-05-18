@@ -50,7 +50,7 @@ define(
                         catch: function (callback) {
                             return mockPromise(callback(value));
                         }
-                    }   ;
+                    } ;
             }
 
             beforeEach(function () {
@@ -67,7 +67,10 @@ define(
                 mockDomainObject.getCapability.and.callFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.getModel.and.returnValue({location: 'a', persisted: undefined});
+                mockDomainObject.getModel.and.returnValue({
+                    location: 'a',
+                    persisted: undefined
+                });
                 mockDomainObject.getId.and.returnValue(0);
 
                 mockClonedObject = jasmine.createSpyObj(

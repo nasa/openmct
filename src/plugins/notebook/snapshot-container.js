@@ -72,9 +72,9 @@ export default class SnapshotContainer extends EventEmitter {
     updateSnapshot(snapshot) {
         const snapshots = this.getSnapshots();
         const updatedSnapshots = snapshots.map(s => {
-            return s.id === snapshot.id
-                ? snapshot
-                : s;
+            return s.id === snapshot.id ?
+                snapshot :
+                s;
         });
 
         return this.saveSnapshots(updatedSnapshots);

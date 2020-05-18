@@ -102,7 +102,7 @@ export default {
         hasActiveFilters() {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(comparator => {
-                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
+                return (typeof (comparator) === 'object' && !_.isEmpty(comparator));
             });
         }
     },

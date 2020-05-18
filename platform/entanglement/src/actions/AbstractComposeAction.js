@@ -54,7 +54,6 @@ define(
          * @method platform/entanglement.AbstractComposeService#validate
          */
 
-
         /**
          * Template class for Move, Copy, and Link actions.
          *
@@ -105,6 +104,7 @@ define(
             Object.keys(original).forEach(function (k) {
                 clone[k] = original[k];
             });
+
             return clone;
         };
 
@@ -130,8 +130,9 @@ define(
 
             validateLocation = function (newParentObj) {
                 var newContext = self.cloneContext();
-                newContext.selectedObject =  object;
+                newContext.selectedObject = object;
                 newContext.domainObject = newParentObj;
+
                 return composeService.validate(object, newParentObj) &&
                     self.policyService.allow("action", self, newContext);
             };

@@ -73,6 +73,7 @@ define(['./Type'], function (Type) {
             if (!typeDef.name) {
                 typeDef.name = typeDef.label;
             }
+
             delete typeDef.label;
         }
     };
@@ -108,5 +109,4 @@ define(['./Type'], function (Type) {
 
     return TypeRegistry;
 });
-
 

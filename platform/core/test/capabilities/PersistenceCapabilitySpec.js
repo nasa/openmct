@@ -57,7 +57,10 @@ define(
 
             beforeEach(function () {
                 happyPromise = asPromise(true);
-                model = { someKey: "some value", name: "domain object"};
+                model = {
+                    someKey: "some value",
+                    name: "domain object"
+                };
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",

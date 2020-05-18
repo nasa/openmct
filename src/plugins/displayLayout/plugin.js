@@ -39,6 +39,7 @@ export default function DisplayLayoutPlugin(options) {
             },
             view: function (domainObject, objectPath) {
                 let component;
+
                 return {
                     show(container) {
                         component = new Vue({

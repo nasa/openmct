@@ -35,6 +35,6 @@
 
 <script>
 export default {
-    inject:['iconClass', 'title', 'hint', 'timestamp', 'message']
+    inject: ['iconClass', 'title', 'hint', 'timestamp', 'message']
 };
 </script>

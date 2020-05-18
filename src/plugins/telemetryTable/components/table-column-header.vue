@@ -85,7 +85,10 @@ export default {
             this.resizeStartX = event.clientX;
             this.resizeStartWidth = this.columnWidth;
 
-            document.addEventListener('mouseup', this.resizeColumnEnd, {once: true, capture: true});
+            document.addEventListener('mouseup', this.resizeColumnEnd, {
+                once: true,
+                capture: true
+            });
             document.addEventListener('mousemove', this.resizeColumn);
             event.preventDefault();
         },
@@ -130,6 +133,7 @@ export default {
             } else {
                 dropOffsetLeft = element.offsetLeft + element.offsetWidth;
             }
+
             this.$emit('dropTargetOffsetChanged', dropOffsetLeft);
             this.$emit('dropTargetActive', true);
         },
@@ -149,6 +153,7 @@ export default {
                         toIndex++;
                     }
                 }
+
                 if (toIndex !== fromIndex) {
                     this.$emit('reorderColumn', fromIndex, toIndex);
                 }

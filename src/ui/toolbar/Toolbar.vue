@@ -55,6 +55,7 @@ export default {
 
             if (selection.length === 0 || !selection[0][0]) {
                 this.structure = [];
+
                 return;
             }
 
@@ -185,6 +186,7 @@ export default {
                     toolbarItem.nonSpecific = false;
                 } else {
                     toolbarItem.nonSpecific = true;
+
                     return {};
                 }
             }
@@ -200,6 +202,7 @@ export default {
                     unObserveObject();
                 });
             }
+
             this.unObserveObjects = [];
         },
         updateObjectValue(value, item) {

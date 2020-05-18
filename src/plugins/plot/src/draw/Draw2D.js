@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define([
     'lodash',
     'EventEmitter',
@@ -73,7 +72,6 @@ define([
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
     };
-
 
     Draw2D.prototype.clear = function () {
         this.width = this.canvas.width = this.canvas.offsetWidth;
@@ -161,7 +159,6 @@ define([
             );
         }
     };
-
 
     return Draw2D;
 });

@@ -66,7 +66,6 @@ define(['EventEmitter'], function (EventEmitter) {
         return this.timer;
     };
 
-
     /**
      * Check if there is a currently active timer.
      * @return {boolean} true if there is a timer
@@ -106,6 +105,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimerService.prototype.now = function () {
         var clock = this.time.clock();
+
         return clock && this.convert(clock.currentValue());
     };
 

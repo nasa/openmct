@@ -23,7 +23,7 @@ export default {
     components: {
         NotebookEntry
     },
-    props:{
+    props: {
         results: {
             type: Array,
             default() {

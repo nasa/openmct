@@ -52,6 +52,7 @@ define(
                     if (callback && active) {
                         callback(telemetryObject, series);
                     }
+
                     // Pass it along for promise-chaining
                     return series;
                 }
@@ -62,6 +63,7 @@ define(
 
             self.unsubscribe = function () {
                 active = false;
+
                 return subscription.unsubscribe();
             };
 
@@ -76,9 +78,9 @@ define(
              */
             self.getSeries = function (domainObject) {
                 var id = domainObject.getId();
+
                 return seriesMap[id];
             };
-
 
             /**
              * Change the request duration.
@@ -126,6 +128,7 @@ define(
                         if (series.getDatum) {
                             return series.getDatum(index);
                         }
+
                         return subscription.makeDatum(telemetryObject, series, index);
                     }
                 }

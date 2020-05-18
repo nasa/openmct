@@ -69,7 +69,9 @@ define(
                     function Constructor() {
                         return impl.apply(this, arguments);
                     }
+
                     Constructor.prototype = impl.prototype;
+
                     return Constructor;
                 }
 

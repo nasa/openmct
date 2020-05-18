@@ -34,7 +34,6 @@ define(['csv'], function (CSV) {
      * @param {string} filename the name of the file to export
      */
 
-
     /**
      * The `exportService` provides a means to initiate downloads of
      * structured data in the CSV format.

@@ -138,12 +138,14 @@ define([
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
                     //Check that telemetry object has not been removed since telemetry was requested.
                     if (!this.telemetryObjects.includes(telemetryObject)) {
                         return;
                     }
+
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
@@ -166,6 +168,7 @@ define([
             if (this.outstandingRequests === 0) {
                 this.emit('outstanding-requests', true);
             }
+
             this.outstandingRequests++;
         }
 
@@ -200,6 +203,7 @@ define([
 
             return columns[objectKeyString].reduce((map, column) => {
                 map[column.getKey()] = column;
+
                 return map;
             }, {});
         }

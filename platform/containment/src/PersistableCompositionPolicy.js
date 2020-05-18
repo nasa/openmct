@@ -50,8 +50,10 @@ define(
             if (!(parent.hasCapability('editor') && parent.getCapability('editor').isEditContextRoot())) {
                 var identifier = objectUtils.parseKeyString(parent.getId());
                 var provider = this.openmct.objects.getProvider(identifier);
+
                 return provider.save !== undefined;
             }
+
             return true;
         };
 

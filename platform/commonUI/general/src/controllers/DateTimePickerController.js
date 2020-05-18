@@ -35,6 +35,7 @@ define(
                 while (arr.length < 60) {
                     arr.push(arr.length);
                 }
+
                 return {
                     hours: arr.slice(0, 24),
                     minutes: arr,
@@ -70,7 +71,10 @@ define(
                 interacted = false;
 
             function generateTable() {
-                var m = moment.utc({ year: year, month: month }).day(0),
+                var m = moment.utc({
+                        year: year,
+                        month: month
+                    }).day(0),
                     table = [],
                     row,
                     col;
@@ -142,6 +146,7 @@ define(
 
             $scope.isSelected = function (cell) {
                 var date = $scope.date || {};
+
                 return cell.day === date.day &&
                     cell.month === date.month &&
                     cell.year === date.year;
@@ -167,10 +172,12 @@ define(
                     month = 0;
                     year += 1;
                 }
+
                 if (month < 0) {
                     month = 11;
                     year -= 1;
                 }
+
                 interacted = true;
                 updateScopeForMonth();
             };

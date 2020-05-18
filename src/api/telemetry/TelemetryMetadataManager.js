@@ -40,6 +40,7 @@ define([
             if (!valueMetadata.hints.hasOwnProperty('domain')) {
                 valueMetadata.hints.domain = valueMetadata.hints.x;
             }
+
             delete valueMetadata.hints.x;
         }
 
@@ -52,6 +53,7 @@ define([
             if (!valueMetadata.hints.hasOwnProperty('range')) {
                 valueMetadata.hints.range = valueMetadata.hints.y;
             }
+
             delete valueMetadata.hints.y;
         }
 
@@ -59,9 +61,11 @@ define([
             if (!valueMetadata.values) {
                 valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
             }
+
             if (!valueMetadata.hasOwnProperty('max')) {
                 valueMetadata.max = _.max(valueMetadata.values) + 1;
             }
+
             if (!valueMetadata.hasOwnProperty('min')) {
                 valueMetadata.min = _.min(valueMetadata.values) - 1;
             }
@@ -70,6 +74,7 @@ define([
         if (!valueMetadata.hints.hasOwnProperty('priority')) {
             valueMetadata.hints.priority = index;
         }
+
         return valueMetadata;
     }
 
@@ -112,15 +117,18 @@ define([
             /*jshint validthis: true */
             return this.hints.hasOwnProperty(hint);
         }
+
         function hasHints(metadata) {
             return hints.every(hasHint, metadata);
         }
+
         var matchingMetadata = this.valueMetadatas.filter(hasHints);
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];
             };
         });
+
         return _.sortByAll(matchingMetadata, ...iteratees);
     };
 
@@ -143,7 +151,6 @@ define([
 
         return valueMetadata.key;
     };
-
 
     return TelemetryMetadataManager;
 

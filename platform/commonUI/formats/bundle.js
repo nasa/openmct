@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/formats",
+        name: "platform/commonUI/formats",
         definition: {
             "name": "Format Registry",
             "description": "Provides a registry for formats, which allow parsing and formatting of values.",

@@ -132,6 +132,7 @@ define(
          */
         AgentService.prototype.isBrowser = function (name) {
             name = name.toLowerCase();
+
             return this.userAgent.toLowerCase().indexOf(name) !== -1;
         };
 

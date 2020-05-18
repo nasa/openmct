@@ -61,12 +61,14 @@ export default class ConditionClass extends EventEmitter {
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
+
         this.trigger = conditionConfiguration.configuration.trigger;
     }
 
     getResult(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
+
             return;
         }
 
@@ -144,18 +146,21 @@ export default class ConditionClass extends EventEmitter {
         } else {
             criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         }
+
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         if (!this.criteria) {
             this.criteria = [];
         }
+
         this.criteria.push(criterion);
+
         return criterionConfigurationWithId.id;
     }
 
     findCriterion(id) {
         let criterion;
 
-        for (let i=0, ii=this.criteria.length; i < ii; i ++) {
+        for (let i = 0, ii = this.criteria.length; i < ii; i++) {
             if (this.criteria[i].id === id) {
                 criterion = {
                     item: this.criteria[i],
@@ -193,6 +198,7 @@ export default class ConditionClass extends EventEmitter {
 
             return true;
         }
+
         return false;
     }
 
@@ -216,6 +222,7 @@ export default class ConditionClass extends EventEmitter {
                     if (this.findCriterion(id)) {
                         criteriaResults[id] = Boolean(result);
                     }
+
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
                         data,
@@ -223,6 +230,7 @@ export default class ConditionClass extends EventEmitter {
                         this.openmct.time.timeSystem()
                     );
                 });
+
                 return {
                     id: this.id,
                     data: Object.assign(
@@ -241,9 +249,10 @@ export default class ConditionClass extends EventEmitter {
     destroyCriteria() {
         let success = true;
         //looping through the array backwards since destroyCriterion modifies the criteria array
-        for (let i=this.criteria.length-1; i >= 0; i--) {
+        for (let i = this.criteria.length - 1; i >= 0; i--) {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
+
         return success;
     }
 

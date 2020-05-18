@@ -85,6 +85,7 @@ define(
                         result[k] = b[k];
                     }
                 });
+
                 return result;
             }
 

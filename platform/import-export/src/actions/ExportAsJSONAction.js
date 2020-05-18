@@ -94,6 +94,7 @@ define(['lodash'], function (_) {
                                 } else {
                                     this.tree[this.getId(child)] = child;
                                 }
+
                                 this.write(child);
                             }
                         }
@@ -140,6 +141,7 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.copyObject = function (object) {
         var jsonString = JSON.stringify(object);
+
         return JSON.parse(jsonString);
     };
 
@@ -151,6 +153,7 @@ define(['lodash'], function (_) {
 
             return true;
         }
+
         return false;
     };
 
@@ -169,6 +172,7 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.isCreatable = function (domainObject) {
         var type = this.typeService.getType(domainObject.type);
+
         return this.policyService.allow(
             "creation",
             type

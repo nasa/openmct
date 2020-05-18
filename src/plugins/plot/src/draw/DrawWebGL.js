@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define([
     'lodash',
     'EventEmitter',
@@ -144,6 +143,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
@@ -155,6 +155,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.height = this.canvas.height = this.canvas.offsetHeight;
         this.width = this.canvas.width = this.canvas.offsetWidth;
         this.overlay.height = this.overlay.offsetHeight;
@@ -184,6 +185,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         if (dimensions && dimensions.length > 0 &&
                 origin && origin.length > 0) {
             this.gl.uniform2fv(this.uDimensions, dimensions);
@@ -205,6 +207,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.doDraw(this.gl.LINE_STRIP, buf, color, points);
     };
 
@@ -216,6 +219,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.gl.uniform1f(this.uPointSize, pointSize);
         this.doDraw(this.gl.POINTS, buf, color, points);
     };
@@ -233,6 +237,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
         ), color, 4);

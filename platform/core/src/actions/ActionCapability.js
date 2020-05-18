@@ -76,7 +76,7 @@ define(
             // but additionally adds a domainObject field.
             var baseContext;
             if (typeof context === 'string') {
-                baseContext =  { key: context };
+                baseContext = { key: context };
             } else {
                 baseContext = context || {};
             }
@@ -113,7 +113,6 @@ define(
                     undefined
             );
         };
-
 
         return ActionCapability;
     }

@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 /**
  * This bundle contains services for managing the flow of execution,
  * such as support for running web workers on background threads.
@@ -55,6 +54,7 @@ define(
                         );
                         workerUrls[key] = URL.createObjectURL(blob);
                     }
+
                     sharedWorkers[key] = worker.shared;
                 }
             }
@@ -82,6 +82,7 @@ define(
             var scriptUrl = this.workerUrls[key],
                 Worker = this.sharedWorkers[key] ?
                     this.SharedWorker : this.Worker;
+
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
 

@@ -66,6 +66,7 @@ define(
                     Math.round(28.3333 * group.length)
                 ]));
             }
+
             GROUPS.push(group);
 
             // Ten basic colors

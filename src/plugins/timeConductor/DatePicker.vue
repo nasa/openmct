@@ -99,6 +99,7 @@ const TIME_OPTIONS = (function makeRanges() {
     while (arr.length < 60) {
         arr.push(arr.length);
     }
+
     return {
         hours: arr.slice(0, 24),
         minutes: arr,
@@ -141,7 +142,10 @@ export default {
     },
     methods: {
         generateTable() {
-            let m = moment.utc({ year: this.picker.year, month: this.picker.month }).day(0),
+            let m = moment.utc({
+                    year: this.picker.year,
+                    month: this.picker.month
+                }).day(0),
                 table = [],
                 row,
                 col;
@@ -209,6 +213,7 @@ export default {
 
         isSelected(cell) {
             let date = this.date || {};
+
             return cell.day === date.day &&
                 cell.month === date.month &&
                 cell.year === date.year;
@@ -234,10 +239,12 @@ export default {
                 this.picker.month = 0;
                 this.picker.year += 1;
             }
+
             if (this.picker.month < 0) {
                 this.picker.month = 11;
                 this.picker.year -= 1;
             }
+
             this.picker.interacted = true;
             this.updateViewForMonth();
         },

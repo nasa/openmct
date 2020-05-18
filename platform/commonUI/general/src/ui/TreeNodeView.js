@@ -41,6 +41,7 @@ define([
                     this.li.find('.c-tree__item-subtree').eq(0)
                         .append($(this.subtreeView.elements()));
                 }
+
                 $(this.subtreeView.elements()).removeClass('hidden');
             } else if (this.subtreeView) {
                 $(this.subtreeView.elements()).addClass('hidden');
@@ -83,7 +84,7 @@ define([
         this.activeObject = domainObject;
         if (domainObject && domainObject.hasCapability('adapter')) {
             var obj = domainObject.useCapability('adapter');
-            var hasComposition =  this.openmct.composition.get(obj) !== undefined;
+            var hasComposition = this.openmct.composition.get(obj) !== undefined;
             if (hasComposition) {
                 $(this.toggleView.elements()).addClass('is-enabled');
             } else {

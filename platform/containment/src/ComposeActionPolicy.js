@@ -40,6 +40,7 @@ define(
             this.getPolicyService = function () {
                 return $injector.get('policyService');
             };
+
             this.openmct = openmct;
         }
 
@@ -67,6 +68,7 @@ define(
                     (context || {}).selectedObject
                 );
             }
+
             return true;
         };
 

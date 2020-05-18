@@ -69,7 +69,7 @@ export default {
     },
     computed: {
         sortedItems() {
-            return this.items.slice().sort((a,b) => {
+            return this.items.slice().sort((a, b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
@@ -88,6 +88,7 @@ export default {
             if (this.opened) {
                 return;
             }
+
             this.opened = true;
             setTimeout(() => document.addEventListener('click', this.close));
         },
@@ -95,6 +96,7 @@ export default {
             if (!this.opened) {
                 return;
             }
+
             this.opened = false;
             document.removeEventListener('click', this.close);
         },
@@ -121,12 +123,14 @@ export default {
                         context,
                         this.openmct
                     );
+
                     return action.perform();
                 });
         },
         convertToLegacy(domainObject) {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return this.openmct.$injector.get('instantiate')(oldModel, keyString);
         }
     }

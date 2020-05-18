@@ -68,6 +68,7 @@ export default class TelemetryCriterion extends EventEmitter {
         const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
             datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
+
             return datum;
         }, {});
 
@@ -86,6 +87,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 datum[timeSystem.key] = data[timeSystem.key];
             });
         }
+
         return datum;
     }
 
@@ -122,11 +124,12 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     findOperation(operation) {
-        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+        for (let i = 0, ii = OPERATIONS.length; i < ii; i++) {
             if (operation === OPERATIONS[i].name) {
                 return OPERATIONS[i].operation;
             }
         }
+
         return null;
     }
 
@@ -139,10 +142,12 @@ export default class TelemetryCriterion extends EventEmitter {
             if (this.input instanceof Array && this.input.length) {
                 this.input.forEach(input => params.push(input));
             }
+
             if (typeof comparator === 'function') {
                 result = Boolean(comparator(params));
             }
         }
+
         return result;
     }
 
@@ -152,7 +157,6 @@ export default class TelemetryCriterion extends EventEmitter {
             data: data
         });
     }
-
 
     destroy() {
         delete this.telemetryObject;

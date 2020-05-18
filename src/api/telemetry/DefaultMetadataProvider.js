@@ -119,9 +119,9 @@ define([
         if (!this.typeService) {
             this.typeService = this.openmct.$injector.get('typeService');
         }
+
         return Boolean(this.typeService.getType(domainObject.type).typeDef.telemetry);
     };
-
 
     return DefaultMetadataProvider;
 

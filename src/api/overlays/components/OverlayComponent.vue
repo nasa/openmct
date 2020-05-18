@@ -72,6 +72,7 @@ export default {
                 if (this.buttons[index].emphasis) {
                     this.focusIndex = index;
                 }
+
                 return this.buttons[index].emphasis;
             });
 

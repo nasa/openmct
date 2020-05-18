@@ -101,6 +101,7 @@ define([
      */
     MeanTelemetryProvider.prototype.getLinkedObject = function (domainObject) {
         var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+
         return this.objectAPI.get(objectId);
     };
 

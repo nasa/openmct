@@ -210,8 +210,10 @@ export default {
                     end: endOffset
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -225,8 +227,10 @@ export default {
                     end: end
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -286,10 +290,12 @@ export default {
                 if (validationResult !== true) {
                     input.setCustomValidity(validationResult);
                     input.title = validationResult;
+
                     return false;
                 } else {
                     input.setCustomValidity('');
                     input.title = '';
+
                     return true;
                 }
             });
@@ -318,10 +324,12 @@ export default {
                 if (validationResult !== true) {
                     input.setCustomValidity(validationResult);
                     input.title = validationResult;
+
                     return false;
                 } else {
                     input.setCustomValidity('');
                     input.title = '';
+
                     return true;
                 }
             });

@@ -79,7 +79,7 @@ export default {
     methods: {
         getTriggerDescription(trigger) {
             let description = '';
-            switch(trigger) {
+            switch (trigger) {
             case TRIGGER.ANY:
             case TRIGGER.XOR:
                 description = 'or';
@@ -88,11 +88,12 @@ export default {
             case TRIGGER.NOT: description = 'and';
                 break;
             }
+
             return description;
         },
         getConditionDescription() {
             if (this.condition) {
-                this.triggerDescription =  this.getTriggerDescription(this.condition.configuration.trigger);
+                this.triggerDescription = this.getTriggerDescription(this.condition.configuration.trigger);
                 this.criterionDescriptions = [];
                 this.condition.configuration.criteria.forEach((criterion, index) => {
                     this.getCriterionDescription(criterion, index);
@@ -128,13 +129,15 @@ export default {
                                 if (metadataObj.name) {
                                     metadataValue = metadataObj.name;
                                 }
-                                if(metadataObj.enumerations && inputValue.length) {
+
+                                if (metadataObj.enumerations && inputValue.length) {
                                     if (metadataObj.enumerations[inputValue[0]] && metadataObj.enumerations[inputValue[0]].string) {
                                         inputValue = [metadataObj.enumerations[inputValue[0]].string];
                                     }
                                 }
                             }
                         }
+
                         let description = `${telemetryObject.name} ${metadataValue} ${this.getOperatorText(criterion.operation, inputValue)}`;
                         if (this.criterionDescriptions[index]) {
                             this.criterionDescriptions[index] = description;
@@ -147,6 +150,7 @@ export default {
         },
         getOperatorText(operationName, values) {
             const found = OPERATIONS.find((operation) => operation.name === operationName);
+
             return found ? found.getDescription(values) : '';
         }
     }

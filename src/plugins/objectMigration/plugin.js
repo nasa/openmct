@@ -43,9 +43,11 @@ export default function () {
                         migrateObject(object)
                             .then(newObject => {
                                 openmct.objects.mutate(newObject, 'persisted', Date.now());
+
                                 return newObject;
                             });
                     }
+
                     return object;
                 });
         };

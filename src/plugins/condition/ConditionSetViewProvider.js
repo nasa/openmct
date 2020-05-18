@@ -44,6 +44,7 @@ export default class ConditionSetViewProvider {
     view(domainObject, objectPath) {
         let component;
         const openmct = this.openmct;
+
         return {
             show: (container, isEditing) => {
                 component = new Vue({

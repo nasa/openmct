@@ -110,6 +110,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
+
                 let newModel = tree[keystring];
                 delete newModel.persisted;
 
@@ -133,6 +134,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
 
             tree = this.rewriteId(oldId, newId, tree);
         }, this);
+
         return tree;
     };
 
@@ -190,9 +192,11 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         } catch (e) {
             return false;
         }
+
         if (!json.openmct || !json.rootId) {
             return false;
         }
+
         return true;
     };
 
@@ -200,7 +204,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         var dialog,
             model = {
                 title: "Invalid File",
-                actionText:  "The selected file was either invalid JSON or was " +
+                actionText: "The selected file was either invalid JSON or was " +
                 "not formatted properly for import into Open MCT.",
                 severity: "error",
                 options: [

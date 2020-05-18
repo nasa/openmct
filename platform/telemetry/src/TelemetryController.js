@@ -124,6 +124,7 @@ define(
                     // Request won't happen, so don't
                     // mark it as pending.
                     self.pending -= trackPending ? 1 : 0;
+
                     return;
                 }
 
@@ -178,6 +179,7 @@ define(
                     var head = domainObject.hasCapability("telemetry") ?
                             [domainObject] : [],
                         tail = result || [];
+
                     return head.concat(tail);
                 });
             }
@@ -380,6 +382,7 @@ define(
                  */
                 requestData: function (request) {
                     self.request = request || {};
+
                     return requestTelemetry(true);
                 },
                 /**

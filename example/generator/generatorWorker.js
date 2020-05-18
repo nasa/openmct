@@ -64,13 +64,14 @@
                     data: {
                         name: data.name,
                         utc: nextStep,
-                        yesterday: nextStep - 60*60*24*1000,
+                        yesterday: nextStep - 60 * 60 * 24 * 1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
                         cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                     }
                 });
                 nextStep += step;
             }
+
             return nextStep;
         }
 
@@ -87,6 +88,7 @@
         if (request.end === undefined) {
             request.end = Date.now();
         }
+
         if (request.start === undefined) {
             request.start = request.end - FIFTEEN_MINUTES;
         }
@@ -110,11 +112,12 @@
             data.push({
                 name: request.name,
                 utc: nextStep,
-                yesterday: nextStep - 60*60*24*1000,
+                yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
+
         self.postMessage({
             id: message.id,
             data: data

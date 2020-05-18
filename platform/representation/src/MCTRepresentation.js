@@ -158,9 +158,11 @@ define(
                     if (!domainObject) {
                         return [];
                     }
+
                     if (!domainObject.hasCapability('context')) {
                         return [domainObject.getId()];
                     }
+
                     return domainObject.getCapability('context')
                         .getPath().map(function (pathObject) {
                             return pathObject.getId();
@@ -299,7 +301,6 @@ define(
          * @param {DomainObject} domainObject the domain object
          *        being represented
          */
-
 
         return MCTRepresentation;
     }

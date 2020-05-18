@@ -98,8 +98,8 @@ export default {
         gridSize: {
             type: Array,
             required: true,
-            validator: (arr) => arr && arr.length === 2
-                && arr.every(el => typeof el === 'number')
+            validator: (arr) => arr && arr.length === 2 &&
+                arr.every(el => typeof el === 'number')
         },
         initSelect: Boolean,
         index: {
@@ -118,10 +118,12 @@ export default {
     computed: {
         showLabel() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'label';
         },
         showValue() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
@@ -156,6 +158,7 @@ export default {
             }
 
             let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
             return alarm && alarm.cssClass;
         }
     },

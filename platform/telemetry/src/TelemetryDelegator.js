@@ -61,6 +61,7 @@ define(
                 var head = domainObject.hasCapability("telemetry") ?
                         [domainObject] : [],
                     tail = result || [];
+
                 return head.concat(tail);
             });
         };

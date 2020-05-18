@@ -51,13 +51,14 @@ export default {
         gridSize: {
             type: Array,
             required: true,
-            validator: (arr) => arr && arr.length === 2
-                && arr.every(el => typeof el === 'number')
+            validator: (arr) => arr && arr.length === 2 &&
+                arr.every(el => typeof el === 'number')
         }
     },
     computed: {
         style() {
             let {x, y, width, height} = this.item;
+
             return {
                 left: (this.gridSize[0] * x) + 'px',
                 top: (this.gridSize[1] * y) + 'px',

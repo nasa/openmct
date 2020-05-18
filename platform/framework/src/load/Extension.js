@@ -65,6 +65,7 @@ define(
                 logName += definition.name || "";
                 logName += ")";
             }
+
             logName += " from " + bundle.getLogName();
 
             // Copy over definition. This allows us to attach the bundle

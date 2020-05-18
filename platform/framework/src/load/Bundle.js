@@ -24,7 +24,6 @@ define(
     ['../Constants', './Extension'],
     function (Constants, Extension) {
 
-
         /**
          * A bundle's plain JSON definition.
          *
@@ -39,7 +38,6 @@ define(
          * @constructor
          * @memberof platform/framework
          */
-
 
         /**
          * Instantiate a new reference to a bundle, based on its human-readable
@@ -78,13 +76,12 @@ define(
             this.logName = logName;
         }
 
-
         // Utility function for resolving paths in this bundle
         Bundle.prototype.resolvePath = function (elements) {
             var path = this.path;
+
             return [path].concat(elements || []).join(Constants.SEPARATOR);
         };
-
 
         /**
          * Get the path to this bundle.

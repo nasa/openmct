@@ -59,6 +59,7 @@ define(
                     (typeof persistenceCapability === 'function') ?
                         persistenceCapability(domainObject) :
                         persistenceCapability;
+
                 return new TransactionalPersistenceCapability(
                     self.$q,
                     self.transactionService,
@@ -66,6 +67,7 @@ define(
                     domainObject
                 );
             };
+
             return capabilities;
         };
 

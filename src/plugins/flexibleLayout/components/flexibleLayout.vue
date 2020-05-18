@@ -87,10 +87,10 @@
 </template>
 
 <script>
-import ContainerComponent  from './container.vue';
+import ContainerComponent from './container.vue';
 import Container from '../utils/container';
 import Frame from '../utils/frame';
-import ResizeHandle from  './resizeHandle.vue';
+import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
 
@@ -106,6 +106,7 @@ function sizeItems(items, newItem) {
         if (!newItem.size || newItem.size === 100) {
             newItem.size = Math.round(100 / items.length);
         }
+
         let oldItems = items.filter(item => item !== newItem);
         // Resize oldItems to fit inside remaining space;
         let remainder = 100 - newItem.size;
@@ -125,6 +126,7 @@ function sizeToFill(items) {
     if (items.length === 0) {
         return;
     }
+
     let oldTotal = items.reduce((total, item) => total + item.size, 0);
     items.forEach((item) => {
         item.size = Math.round(item.size * 100 / oldTotal);
@@ -332,6 +334,7 @@ export default {
             } else {
                 this.containers.splice(toIndex, 0, container);
             }
+
             this.persist();
         },
         removeChildObject(identifier) {

@@ -49,6 +49,7 @@ export default {
             if (selectedOption) {
                 return selectedOption.name || selectedOption.value;
             }
+
             // If no selected option, then options are non-specific
             return '??px';
         },
@@ -61,6 +62,7 @@ export default {
             if (this.options.value === option.value) {
                 return;
             }
+
             this.$emit('change', option.value, this.options);
         }
     }

@@ -253,6 +253,7 @@ export default {
                     label: TRIGGER_LABEL[TRIGGER[trigger]]
                 });
             });
+
             return triggerOptions;
         },
         canEvaluateCriteria: function () {
@@ -267,6 +268,7 @@ export default {
                     return true;
                 }
             }
+
             return false;
         }
     },
@@ -293,6 +295,7 @@ export default {
             } else {
                 this.condition.configuration.output = this.selectedOutputSelection;
             }
+
             this.persist();
         },
         addCriteria() {
@@ -317,8 +320,14 @@ export default {
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
-            if (!this.isDragging) { return; }
-            if (targetIndex > this.moveIndex) { targetIndex--; } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -326,8 +335,14 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
-            if (!this.isDragging) { return; }
-            if (targetIndex > this.moveIndex) { targetIndex--; } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;

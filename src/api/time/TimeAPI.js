@@ -157,6 +157,7 @@ define(['EventEmitter'], function (EventEmitter) {
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
         }
+
         return true;
     };
 
@@ -178,6 +179,7 @@ define(['EventEmitter'], function (EventEmitter) {
         } else if (offsets.start >= offsets.end) {
             return "Specified start offset must be < end offset";
         }
+
         return true;
     };
 
@@ -207,6 +209,7 @@ define(['EventEmitter'], function (EventEmitter) {
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
+
             //Create a copy to avoid direct mutation of conductor bounds
             this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
@@ -225,6 +228,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 this.timeOfInterest(undefined);
             }
         }
+
         //Return a copy to prevent direct mutation of time conductor bounds.
         return JSON.parse(JSON.stringify(this.boundsVal));
     };
@@ -246,6 +250,7 @@ define(['EventEmitter'], function (EventEmitter) {
                     "an active clock."
                 );
             }
+
             var timeSystem;
 
             if (timeSystemOrKey === undefined) {
@@ -312,6 +317,7 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit('timeOfInterest', this.toi);
         }
+
         return this.toi;
     };
 
@@ -440,6 +446,7 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit("clockOffsets", offsets);
         }
+
         return this.offsets;
     };
 

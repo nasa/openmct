@@ -17,6 +17,7 @@ function SimpleVuePlugin() {
             },
             view: function (domainObject) {
                 var vm;
+
                 return {
                     show: function (container) {
                         vm = new Vue(HelloWorld);

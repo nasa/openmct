@@ -54,6 +54,7 @@ define(
                             }
                         };
                     }
+
                     return notification;
                 });
                 dialogService.getDialogResponse('overlay-message-list', {
@@ -67,6 +68,7 @@ define(
 
             };
         }
+
         return NotificationIndicatorController;
     }
 );

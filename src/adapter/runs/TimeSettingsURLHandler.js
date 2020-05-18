@@ -36,7 +36,11 @@ define([
     };
     var TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
     // Used to shorthand calls to $location, which clears null parameters
-    var NULL_PARAMETERS = { key: null, start: null, end: null };
+    var NULL_PARAMETERS = {
+        key: null,
+        start: null,
+        end: null
+    };
 
     /**
      * Communicates settings from the URL to the time API,
@@ -66,7 +70,10 @@ define([
         bounds = bounds || NULL_PARAMETERS;
         deltas = deltas || NULL_PARAMETERS;
         if (deltas.start) {
-            deltas = { start: -deltas.start, end: deltas.end };
+            deltas = {
+                start: -deltas.start,
+                end: deltas.end
+            };
         }
 
         this.$location.search(SEARCH.MODE, mode);
@@ -90,6 +97,7 @@ define([
                 end: Number(searchParams[SEARCH.END_DELTA])
             };
         }
+
         if (!isNaN(parseInt(searchParams[SEARCH.START_BOUND], 0xA)) &&
             !isNaN(parseInt(searchParams[SEARCH.END_BOUND], 0xA))) {
             parsedParams.bounds = {
@@ -97,6 +105,7 @@ define([
                 end: Number(searchParams[SEARCH.END_BOUND])
             };
         }
+
         return parsedParams;
     };
 
@@ -105,6 +114,7 @@ define([
         if (_.isEqual(params, this.last)) {
             return; // Do nothing;
         }
+
         this.last = params;
 
         if (!params.timeSystem) {
@@ -120,14 +130,17 @@ define([
             } else if (!_.isEqual(this.time.bounds(), params.bounds)) {
                 this.time.bounds(params.bounds);
             }
+
             if (this.time.clock()) {
                 this.time.stopClock();
             }
         } else if (params.clockOffsets) {
             if (params.clock === 'fixed') {
                 this.time.stopClock();
+
                 return;
             }
+
             if (!this.time.clock() ||
                 this.time.clock().key !== params.clock) {
 
@@ -135,6 +148,7 @@ define([
             } else if (!_.isEqual(this.time.clockOffsets(), params.clockOffsets)) {
                 this.time.clockOffsets(params.clockOffsets);
             }
+
             if (!this.time.timeSystem() ||
                 this.time.timeSystem().key !== params.timeSystem) {
 

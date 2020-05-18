@@ -121,6 +121,7 @@ define(
                             if ($scope.toggle) {
                                 $scope.toggle.setState(true);
                             }
+
                             self.trackExpansion();
                         }
 
@@ -156,6 +157,7 @@ define(
                 this.$scope.ngModel.selectedObject =
                     this.$scope.domainObject;
             }
+
             if ((this.$scope.parameters || {}).callback) {
                 this.$scope.parameters.callback(this.$scope.domainObject);
             }

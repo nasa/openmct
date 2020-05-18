@@ -58,7 +58,10 @@ define(
             }
 
             beforeEach(function () {
-                mockQ = { when: mockPromise, reject: mockReject };
+                mockQ = {
+                    when: mockPromise,
+                    reject: mockReject
+                };
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["error", "warn", "info", "debug"]
@@ -167,6 +170,7 @@ define(
                     mockDomainObject.getId.and.returnValue(id);
                     mockCompositionCapability.invoke
                         .and.returnValue(mockPromise([mockDomainObject]));
+
                     return mockPromise(mockDomainObject);
                 });
 
@@ -206,7 +210,6 @@ define(
 
                 expect(mockLog.error).toHaveBeenCalled();
             });
-
 
         });
     }

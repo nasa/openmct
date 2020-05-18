@@ -118,6 +118,7 @@ define(
 
         DomainObjectImpl.prototype.getCapability = function (name) {
             var capability = this.capabilities[name];
+
             return typeof capability === 'function' ?
                 capability(this) : capability;
         };

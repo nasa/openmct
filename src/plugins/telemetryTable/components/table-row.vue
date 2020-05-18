@@ -95,10 +95,12 @@ export default {
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
                 components[header] = this.row.getCellComponentName(header) || 'table-cell';
+
                 return components;
             }, {}),
-            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+            selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+
                 return selectable;
             }, {})
         };
@@ -159,7 +161,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.openmct.router.path[0]

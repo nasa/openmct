@@ -113,6 +113,7 @@ define(
             var unlisten = mutation.listen(getMetadata);
             $scope.$on('$destroy', unlisten);
         }
+
         return ObjectInspectorController;
     }
 );

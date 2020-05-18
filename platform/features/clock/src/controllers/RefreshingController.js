@@ -42,6 +42,7 @@ define(
             function triggerRefresh() {
                 var persistence = $scope.domainObject &&
                     $scope.domainObject.getCapability('persistence');
+
                 return persistence && persistence.refresh();
             }
 

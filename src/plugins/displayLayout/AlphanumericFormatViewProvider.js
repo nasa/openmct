@@ -29,6 +29,7 @@ define([
         function isTelemetryObject(selectionPath) {
             let selectedObject = selectionPath[0].context.item;
             let parentObject = selectionPath[1].context.item;
+
             return parentObject &&
                 parentObject.type === 'layout' &&
                 selectedObject &&
@@ -48,6 +49,7 @@ define([
             },
             view: function (domainObject, objectPath) {
                 let component;
+
                 return {
                     show: function (element) {
                         component = new Vue({

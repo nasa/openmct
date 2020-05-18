@@ -65,6 +65,7 @@ define(
                 } else {
                     model.timestamp = now();
                 }
+
                 model.timerState = 'started';
                 model.pausedTime = undefined;
             }

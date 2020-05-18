@@ -57,7 +57,6 @@ define([
         };
     };
 
-
     StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
         return domainObject.type === 'example.state-generator';
     };
@@ -69,11 +68,13 @@ define([
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;
         }
+
         var data = [];
         while (start <= end && data.length < 5000) {
             data.push(pointForTimestamp(start, duration, domainObject.name));
             start += duration;
         }
+
         return Promise.resolve(data);
     };
 

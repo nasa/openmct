@@ -93,7 +93,6 @@ define(
                 action = new EditAndComposeAction(actionContext);
             });
 
-
             it("adds to the parent's composition when performed", function () {
                 action.perform();
                 expect(mockComposition.add)

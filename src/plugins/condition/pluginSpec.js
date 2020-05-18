@@ -81,7 +81,7 @@ describe('the plugin', function () {
 
         it('provides a view', () => {
             const testViewObject = {
-                id:"test-object",
+                id: "test-object",
                 type: "conditionSet",
                 configuration: {
                     conditionCollection: []

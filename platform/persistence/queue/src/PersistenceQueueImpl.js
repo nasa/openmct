@@ -82,6 +82,7 @@ define(
                 function clearFlushPromise(value) {
                     self.flushPromise = undefined;
                     flushingDefer.resolve(value);
+
                     return value;
                 }
 
@@ -109,6 +110,7 @@ define(
                 } else {
                     self.scheduleFlush();
                 }
+
                 // Update lastObservedSize to detect quiescence
                 self.lastObservedSize = Object.keys(self.persistences).length;
             }
@@ -127,7 +129,6 @@ define(
             return self.activeDefer.promise;
         };
 
-
         /**
          * Queue persistence of a domain object.
          * @param {DomainObject} domainObject the domain object
@@ -139,6 +140,7 @@ define(
             var id = domainObject.getId();
             this.persistences[id] = persistence;
             this.objects[id] = domainObject;
+
             return this.scheduleFlush();
         };
 

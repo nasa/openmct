@@ -70,6 +70,7 @@ define(
                             $scope.structure.validate) {
                     if (!$scope.structure.validate(domainObject)) {
                         setLocatingObject(priorObject, undefined);
+
                         return;
                     }
                 }

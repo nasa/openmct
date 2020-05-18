@@ -54,7 +54,7 @@ describe("the plugin", () => {
 
     it("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
-            id:"test-object",
+            id: "test-object",
             type: "test-object",
             telemetry: {
                 values: [{
@@ -76,7 +76,10 @@ describe("the plugin", () => {
 
         beforeEach(() => {
             testTelemetryObject = {
-                identifier:{ namespace: "", key: "test-object"},
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
                 type: "test-object",
                 name: "Test Object",
                 telemetry: {
@@ -99,17 +102,18 @@ describe("the plugin", () => {
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
             tableView.show(child, true);
+
             return Vue.nextTick();
         });
 
-        it("Renders a column for every item in telemetry metadata",() => {
+        it("Renders a column for every item in telemetry metadata", () => {
             let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
             expect(headers.length).toBe(2);
             expect(headers[0].innerText).toBe('Some attribute');
             expect(headers[1].innerText).toBe('Another attribute');
         });
 
-        it("Supports column reordering via drag and drop",() => {
+        it("Supports column reordering via drag and drop", () => {
             let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
             let fromColumn = columns[0];
             let toColumn = columns[1];

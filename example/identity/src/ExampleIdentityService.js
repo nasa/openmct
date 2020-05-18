@@ -25,25 +25,29 @@ define(
     function () {
         "use strict";
 
-        var DEFAULT_IDENTITY = { key: "user", name: "Example User" },
+        var DEFAULT_IDENTITY = {
+                key: "user",
+                name: "Example User"
+            },
             DIALOG_STRUCTURE = {
                 name: "Identify Yourself",
-                sections: [{ rows: [
-                    {
-                        name: "User ID",
-                        control: "textfield",
-                        key: "key",
-                        required: true
-                    },
-                    {
-                        name: "Human name",
-                        control: "textfield",
-                        key: "name",
-                        required: true
-                    }
-                ]}]
+                sections: [{
+                    rows: [
+                        {
+                            name: "User ID",
+                            control: "textfield",
+                            key: "key",
+                            required: true
+                        },
+                        {
+                            name: "Human name",
+                            control: "textfield",
+                            key: "name",
+                            required: true
+                        }
+                    ]
+                }]
             };
-
 
         /**
          * Example implementation of an identity service. This prompts the

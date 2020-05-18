@@ -73,7 +73,7 @@ export default {
             tabbedViews: [{
                 key: '__properties',
                 name: 'Properties'
-            },{
+            }, {
                 key: '__styles',
                 name: 'Styles'
             }],
@@ -110,8 +110,8 @@ export default {
                     let type = this.openmct.types.get(object.type);
                     this.showStyles = this.isLayoutObject(selection[0], object.type) || this.isCreatableObject(object, type);
                 }
-                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key))
-                {
+
+                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key)) {
                     this.updateCurrentTab(this.tabbedViews[0]);
                 }
             }

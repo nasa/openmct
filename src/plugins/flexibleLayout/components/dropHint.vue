@@ -35,7 +35,7 @@
 
 <script>
 export default {
-    props:{
+    props: {
         index: {
             type: Number,
             required: true

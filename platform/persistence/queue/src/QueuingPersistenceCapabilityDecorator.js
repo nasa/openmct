@@ -72,6 +72,7 @@ define(
                         );
                     };
                 }
+
                 return capabilities;
             }
 

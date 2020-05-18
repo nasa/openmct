@@ -76,6 +76,7 @@ define([], function () {
                 copyRangesToRow(row, i);
                 rows.push(row);
             }
+
             exportService.exportCSV(rows, { headers: headers });
         });
     };

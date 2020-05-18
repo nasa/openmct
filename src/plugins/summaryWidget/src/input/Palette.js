@@ -133,6 +133,7 @@ define([
                 this.updateSelected(item);
             }
         }
+
         this.eventEmitter.emit('change', self.value);
     };
 

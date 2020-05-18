@@ -70,11 +70,12 @@ export default {
             let originalPath = path;
 
             if (!skipSlice) {
-                originalPath = path.slice(1,-1);
+                originalPath = path.slice(1, -1);
             }
 
             this.originalPath = originalPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+
                 return {
                     domainObject,
                     key,
@@ -90,11 +91,13 @@ export default {
         updateSelection(selection) {
             if (!selection.length || !selection[0].length) {
                 this.clearData();
+
                 return;
             }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
+
                 return;
             } else {
                 this.multiSelect = false;
@@ -106,6 +109,7 @@ export default {
             if (!this.domainObject && parentObject && parentObject.context.item) {
                 this.setOriginalPath([parentObject.context.item], true);
                 this.keyString = '';
+
                 return;
             }
 

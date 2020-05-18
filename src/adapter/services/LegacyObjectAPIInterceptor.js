@@ -84,9 +84,11 @@ define([
 
     ObjectServiceProvider.prototype.get = function (key) {
         var keyString = utils.makeKeyString(key);
+
         return this.objectService.getObjects([keyString])
             .then(function (results) {
                 var model = results[keyString].getModel();
+
                 return utils.toNewFormat(model, key);
             });
     };
@@ -100,6 +102,7 @@ define([
             var results = {},
                 promises = keys.map(function (keyString) {
                     var key = utils.parseKeyString(keyString);
+
                     return openmct.objects.get(key)
                         .then(function (object) {
                             object = utils.toOldFormat(object);

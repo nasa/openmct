@@ -83,7 +83,7 @@ define([
 ) {
 
     return {
-        name:"platform/core",
+        name: "platform/core",
         definition: {
             "name": "Open MCT Core",
             "description": "Defines core concepts of Open MCT.",

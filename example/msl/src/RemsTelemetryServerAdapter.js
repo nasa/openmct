@@ -95,12 +95,14 @@ define(
                         });
                     }
                 });
+
                 return data;
             }
 
             function fallbackToLocal() {
                 self.$log.warn("Loading REMS data failed, probably due to" +
                     " cross origin policy. Falling back to local data");
+
                 return self.$http.get(self.localDataURI);
             }
 
@@ -113,9 +115,11 @@ define(
             }
 
             function packageAndResolve(results) {
-                return {id: id, values: results};
+                return {
+                    id: id,
+                    values: results
+                };
             }
-
 
             return (this.promise = this.promise || this.$http.get(this.REMS_WS_URL))
                 .catch(fallbackToLocal)

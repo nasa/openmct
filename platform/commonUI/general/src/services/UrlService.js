@@ -80,10 +80,12 @@ define(
                     arr.push(key + '=' + search[key]);
                 }
             }
+
             var searchPath = "?" + arr.join('&'),
                 newTabPath =
                     "#" + this.urlForLocation(mode, domainObject) +
                             searchPath;
+
             return newTabPath;
         };
 

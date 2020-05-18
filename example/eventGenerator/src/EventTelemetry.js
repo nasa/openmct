@@ -51,6 +51,7 @@ define(
             generatorData.getRangeValue = function (i, range) {
                 var domainDelta = this.getDomainValue(i) - firstObservedTime,
                     ind = i % messages.length;
+
                 return messages[ind] + " - [" + domainDelta.toString() + "]";
             };
 

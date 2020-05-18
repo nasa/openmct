@@ -34,9 +34,12 @@ define([
             if (!domainObject.hasOwnProperty('telemetry')) {
                 return false;
             }
+
             let metadata = openmct.telemetry.getMetadata(domainObject);
+
             return metadata.values().length > 0;
         }
+
         return {
             key: 'table',
             name: 'Telemetry Table',
@@ -97,5 +100,6 @@ define([
             }
         };
     }
+
     return TelemetryTableViewProvider;
 });

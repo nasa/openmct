@@ -95,6 +95,7 @@ define([
                     if (thisRequest !== currentRequest) {
                         return;
                     }
+
                     composition = openmct.composition.get(obj);
                     composition.on('add', addChild);
                     composition.on('remove', removeChild);
@@ -129,6 +130,7 @@ define([
             if (!tickWidthMap.hasOwnProperty(plotId)) {
                 return;
             }
+
             tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
             var newTickWidth = _.max(tickWidthMap);
             if (newTickWidth !== tickWidth || width !== tickWidth) {

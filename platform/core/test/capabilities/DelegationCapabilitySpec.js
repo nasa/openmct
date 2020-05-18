@@ -41,6 +41,7 @@ define(
                     captured[k] = v;
                 };
             }
+
             function TestDomainObject(caps, id) {
                 return {
                     getId: function () {
@@ -67,20 +68,23 @@ define(
                 };
             }
 
-
             beforeEach(function () {
                 captured = {};
                 typeDef = {};
                 typeDef.delegates = ["foo"];
-                type = { getDefinition: function () {
-                    return typeDef;
-                } };
+                type = {
+                    getDefinition: function () {
+                        return typeDef;
+                    }
+                };
                 children = [];
                 capabilities = {
                     type: type,
-                    composition: { invoke: function () {
-                        return mockPromise(children);
-                    } }
+                    composition: {
+                        invoke: function () {
+                            return mockPromise(children);
+                        }
+                    }
                 };
                 object = new TestDomainObject(capabilities);
 

@@ -62,6 +62,7 @@ define(
             ids.forEach(function (id) {
                 result[id] = modelMap[id];
             });
+
             return this.$q.when(result);
         };
 

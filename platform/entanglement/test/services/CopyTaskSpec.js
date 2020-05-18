@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [
         '../../src/services/CopyTask',
@@ -85,6 +84,7 @@ define(
                         var id = "some-id-" + counter;
                         cloneIds[model.originalId] = id;
                         counter += 1;
+
                         return domainObjectFactory({
                             id: id,
                             model: model,
@@ -133,6 +133,7 @@ define(
                         promise.then(function (v) {
                             value = v;
                         });
+
                         return value;
                     }));
                 });
@@ -141,9 +142,7 @@ define(
                     mockDeferred.promise = synchronousPromise(value);
                 });
 
-
             });
-
 
             describe("produces models which", function () {
                 var model;
@@ -172,7 +171,6 @@ define(
                     expect(model.someObj.someProperty)
                         .toEqual(cloneIds[testModel.someObj.someProperty]);
                 });
-
 
                 it("contain rewritten identifiers in property names", function () {
                     expect(model.someObj[cloneIds[ID_A]])
@@ -264,7 +262,6 @@ define(
             });
 
         });
-
 
     }
 );

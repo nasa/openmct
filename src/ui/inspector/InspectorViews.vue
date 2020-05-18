@@ -30,6 +30,7 @@ export default {
                 });
                 this.$el.innerHTML = '';
             }
+
             this.selectedViews = this.openmct.inspectorViews.get(selection);
             this.selectedViews.forEach(selectedView => {
                 let viewContainer = document.createElement('div');

@@ -88,6 +88,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 datum[timeSystem.key] = data[timeSystem.key];
             });
         }
+
         return datum;
     }
 
@@ -126,6 +127,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             ));
 
         let telemetryDataCache = {};
+
         return Promise.all(telemetryRequests)
             .then(telemetryRequestsResults => {
                 let latestTimestamp;

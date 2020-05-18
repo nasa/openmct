@@ -16,6 +16,7 @@ define([
 
     function LegacyViewProvider(legacyView, openmct, convertToLegacyObject) {
         console.warn(`DEPRECATION WARNING: Migrate ${legacyView.key} from ${legacyView.bundle.path} to use the new View APIs.  Legacy view support will be removed soon.`);
+
         return {
             key: legacyView.key,
             name: legacyView.name,
@@ -28,9 +29,11 @@ define([
                 if (!domainObject || !domainObject.identifier) {
                     return false;
                 }
+
                 if (legacyView.type) {
                     return domainObject.type === legacyView.type;
                 }
+
                 let legacyObject = convertToLegacyObject(domainObject);
                 if (legacyView.needs) {
                     let meetsNeeds = legacyView.needs.every(k => legacyObject.hasCapability(k));
@@ -38,6 +41,7 @@ define([
                         return false;
                     }
                 }
+
                 return openmct.$injector.get('policyService').allow(
                     'view', legacyView, legacyObject
                 );
@@ -79,6 +83,7 @@ define([
                                     results[i] = r;
                                 }));
                             }
+
                             return result;
                         });
 
@@ -86,6 +91,7 @@ define([
                             if (isDestroyed) {
                                 return;
                             }
+
                             uses.forEach(function (key, i) {
                                 scope[key] = results[i];
                             });
@@ -126,6 +132,7 @@ define([
                 if (typeof priority === 'string') {
                     priority = PRIORITY_LEVELS[priority];
                 }
+
                 return priority;
             }
         };

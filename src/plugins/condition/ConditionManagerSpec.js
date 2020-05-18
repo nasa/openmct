@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionManager  from './ConditionManager';
+import ConditionManager from './ConditionManager';
 
 describe('ConditionManager', () => {
 
@@ -93,6 +93,7 @@ describe('ConditionManager', () => {
             setTimeout(() => {
                 loader.resolve();
             });
+
             return loader.promise;
         });
         mockComposition.on('add', mockListener);

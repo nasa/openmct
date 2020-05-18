@@ -57,6 +57,7 @@ export default {
             if (!type) {
                 return 'icon-object-unknown';
             }
+
             return type.definition.cssClass;
         }
     },
@@ -67,6 +68,7 @@ export default {
             });
             this.$once('hook:destroyed', removeListener);
         }
+
         this.previewAction = new PreviewAction(this.openmct);
     },
     methods: {
@@ -94,6 +96,7 @@ export default {
             if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
+
             // serialize domain object anyway, because some views can drag-and-drop objects without composition
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);

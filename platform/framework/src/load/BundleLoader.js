@@ -84,12 +84,15 @@ define(
                     function (x) {
                         if (x === null || typeof x !== 'object') {
                             $log.warn(BAD_CONTENTS_PREFIX + bundlePath);
+
                             return undefined;
                         }
+
                         return x;
                     },
                     function () {
                         $log.warn(LOAD_ERROR_PREFIX + bundlePath);
+
                         return undefined;
                     }
                 );
@@ -139,6 +142,7 @@ define(
                         err.status,
                         err.statusText
                     ].join(' '));
+
                     return loadBundlesFromArray([]);
                 }
 

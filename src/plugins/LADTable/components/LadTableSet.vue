@@ -99,14 +99,18 @@ export default {
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({composition, addCallback, removeCallback});
+            this.compositions.push({
+                composition,
+                addCallback,
+                removeCallback
+            });
         },
         removePrimary(identifier) {
             let index = _.findIndex(this.primaryTelemetryObjects, (primary) => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
 
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
-            this.primaryTelemetryObjects.splice(index,1);
+            this.primaryTelemetryObjects.splice(index, 1);
             primary = undefined;
         },
         reorderPrimary(reorderPlan) {

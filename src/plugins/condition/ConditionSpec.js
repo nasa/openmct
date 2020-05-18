@@ -42,7 +42,10 @@ describe("The condition", function () {
         conditionManager.on('telemetryReceived', mockTelemetryReceived);
 
         testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
+            identifier: {
+                namespace: "",
+                key: "test-object"
+            },
             type: "test-object",
             name: "Test Object",
             telemetry: {
@@ -74,7 +77,7 @@ describe("The condition", function () {
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
             resolve(testTelemetryObject);
-        }));        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
+        })); openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe', 'getMetadata']);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});

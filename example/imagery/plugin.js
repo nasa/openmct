@@ -73,8 +73,8 @@ define([
 
         var historicalProvider = {
             supportsRequest: function (domainObject, options) {
-                return domainObject.type === 'example.imagery'
-                    && options.strategy !== 'latest';
+                return domainObject.type === 'example.imagery' &&
+                    options.strategy !== 'latest';
             },
             request: function (domainObject, options) {
                 var start = options.start;
@@ -84,6 +84,7 @@ define([
                     data.push(pointForTimestamp(start, domainObject.name));
                     start += 5000;
                 }
+
                 return Promise.resolve(data);
             }
         };
@@ -97,7 +98,6 @@ define([
                 return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name)]);
             }
         };
-
 
         return function install(openmct) {
             openmct.types.addType('example.imagery', {

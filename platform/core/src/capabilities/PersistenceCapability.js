@@ -157,6 +157,7 @@ define(
                     return $q.reject('Got empty object model');
                 } else {
                     var modified = model.modified;
+
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
@@ -185,9 +186,9 @@ define(
          */
         PersistenceCapability.prototype.getSpace = function () {
             var id = this.domainObject.getId();
+
             return this.identifierService.parse(id).getSpace();
         };
-
 
         /**
          * Check if this domain object has been persisted at some
@@ -205,6 +206,7 @@ define(
          */
         PersistenceCapability.prototype.getKey = function () {
             var id = this.domainObject.getId();
+
             return this.identifierService.parse(id).getKey();
         };
 

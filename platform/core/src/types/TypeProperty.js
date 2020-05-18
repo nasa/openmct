@@ -94,6 +94,7 @@ define(
             // Otherwise, look up in the sequence defined in the array
             if (propertyPath.length > 0) {
                 value = object[propertyPath[0]];
+
                 return propertyPath.length > 1 ?
                     lookupValue(value, propertyPath.slice(1)) :
                     value;

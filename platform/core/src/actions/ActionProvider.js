@@ -118,6 +118,7 @@ define(
                             "due to:",
                             e.message
                         ].join(" "));
+
                         return undefined;
                     }
                 }

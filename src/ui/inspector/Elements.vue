@@ -74,6 +74,7 @@ export default {
         if (selection && selection.length > 0) {
             this.showSelection(selection);
         }
+
         this.openmct.selection.on('change', this.showSelection);
         this.openmct.editor.on('isEditing', this.setEditState);
     },
@@ -84,6 +85,7 @@ export default {
         if (this.mutationUnobserver) {
             this.mutationUnobserver();
         }
+
         if (this.compositionUnlistener) {
             this.compositionUnlistener();
         }
@@ -97,6 +99,7 @@ export default {
             if (_.isEqual(this.selection, selection)) {
                 return;
             }
+
             this.selection = selection;
             this.elements = [];
             this.elementsCache = {};
@@ -106,6 +109,7 @@ export default {
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }
+
             if (this.compositionUnlistener) {
                 this.compositionUnlistener();
             }

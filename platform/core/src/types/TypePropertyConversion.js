@@ -23,7 +23,6 @@
 define(
     function () {
 
-
         var conversions = {
                 number: {
                     toModelValue: parseFloat,
@@ -74,6 +73,7 @@ define(
                 if (!conversions[name]) {
                     throw new Error("Unknown conversion type: " + name);
                 }
+
                 return conversions[name];
             }
         }
@@ -93,7 +93,6 @@ define(
          * @param {*} modelValue value as stored in a model
          * @returns {*} value to display within a form
          */
-
 
         return TypePropertyConversion;
     }

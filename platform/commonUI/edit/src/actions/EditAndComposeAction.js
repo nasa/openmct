@@ -24,7 +24,6 @@ define(
     [],
     function () {
 
-
         /**
          * Add one domain object to another's composition.
          * @constructor
@@ -44,6 +43,7 @@ define(
             function doLink() {
                 var composition = self.domainObject &&
                         self.domainObject.getCapability('composition');
+
                 return composition && composition.add(self.selectedObject);
             }
 
