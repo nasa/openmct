@@ -5,14 +5,14 @@
 <script>
 import Plotly from 'plotly.js-dist';
 import moment from 'moment'
-import RemoveAction from '../../remove/RemoveAction';
 
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
 
         return {
-            telemetryObjects: []
+            telemetryObjects: [],
+            lastBounds: this.openmct.time.bounds()
         }
     },
     mounted() {
@@ -23,14 +23,26 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        console.log('this.openmct.time.clock()', this.openmct.time.clock());
-        // this.openmct.time.on('bounds', this.refreshData);
+        this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+        this.bounds = this.bounds.bind(this);
+
+        this.sortByTimeSystem(this.openmct.time.timeSystem());
+
+        this.lastBounds = this.openmct.time.bounds();
+
+        this.subscribeToBounds();
+
+        this.openmct.time.on('bounds', this.refreshData);
+        this.openmct.time.on('clock', this.refreshData);
 
     },
     methods: {
         refreshData() {
-            console.log('this.openmct.time.clock()', this.openmct.time.clock());
-
+            if (!this.openmct.time.clock()) {
+                this.unsubscribeToBounds();
+            } else {
+                this.subscribeToBounds();
+            }
         },
         getLayout(telemetryObject) {
             return {
@@ -68,6 +80,9 @@ export default {
             return this.openmct.telemetry.request(telemetryObject)
                 .then(telemetryData => {
                     this.addTrace(telemetryData, telemetryObject, index);
+                    if (this.openmct.time.clock()) {
+                        this.subscribe(telemetryObject, index, telemetryData.length);
+                    }
                 }, () => {console.log(error)});
         },
         removeTelemetry(identifier) {
@@ -76,9 +91,6 @@ export default {
             } else {
                 Plotly.deleteTraces(this.plotElement, this.domainObject.composition.length);
             }
-            return this.openmct.objects.get(identifier).then((childDomainObject) => {
-                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
-            });
         },
         getYAxisLabel(telemetryObject) {
             this.setYAxisProp(telemetryObject);
@@ -140,7 +152,6 @@ export default {
                 Plotly.addTraces(this.plotElement, traceData);
             }
 
-            this.subscribe(telemetryObject, index, telemetryData.length);
         },
         subscribe(telemetryObject, index, length) {
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
@@ -157,6 +168,60 @@ export default {
                 [index],
                 length
             );
+        },
+        bounds(bounds) {
+            let startChanged = this.lastBounds.start !== bounds.start;
+            let endChanged = this.lastBounds.end !== bounds.end;
+
+            let startIndex = 0;
+            let endIndex = 0;
+
+            let discarded = [];
+            let added = [];
+            let testValue = {
+                datum: {}
+            };
+
+            this.lastBounds = bounds;
+
+            if (startChanged) {
+                testValue.datum[this.sortOptions.key] = bounds.start;
+                // Calculate the new index of the first item within the bounds
+                startIndex = this.sortedIndex(this.rows, testValue);
+                discarded = this.rows.splice(0, startIndex);
+            }
+
+            if (endChanged) {
+                testValue.datum[this.sortOptions.key] = bounds.end;
+                // Calculate the new index of the last item in bounds
+                endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
+                added = this.futureBuffer.rows.splice(0, endIndex);
+                added.forEach((datum) => this.rows.push(datum));
+            }
+
+            if (discarded && discarded.length > 0) {
+                /**
+                 * A `discarded` event is emitted when telemetry data fall out of
+                 * bounds due to a bounds change event
+                 * @type {object[]} discarded the telemetry data
+                 * discarded as a result of the bounds change
+                 */
+                this.emit('remove', discarded);
+            }
+            if (added && added.length > 0) {
+                /**
+                 * An `added` event is emitted when a bounds change results in
+                 * received telemetry falling within the new bounds.
+                 * @type {object[]} added the telemetry data that is now within bounds
+                 */
+                this.emit('add', added);
+            }
+        },
+        unsubscribeFromBounds() {
+            this.openmct.time.off('bounds', this.bounds);
+        },
+        subscribeToBounds() {
+            this.openmct.time.on('bounds', this.bounds);
         }
     }
 }
