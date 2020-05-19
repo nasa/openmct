@@ -169,12 +169,10 @@ export default {
 
             const bounds = this.openmct.time.bounds();
             const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
-                && this.embed.bounds.end !== bounds.end;
+                || this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
             this.openmct.time.stopClock();
-            window.location.href = link;
-
             let message = '';
             if (isTimeBoundChanged) {
                 this.openmct.time.bounds({
@@ -189,6 +187,7 @@ export default {
             }
 
             this.openmct.notifications.alert(message);
+            window.location.href = link;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
