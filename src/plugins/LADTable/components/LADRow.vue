@@ -105,43 +105,27 @@ export default {
     methods: {
         updateValues(datum) {
             let newTimestamp = this.formats[this.timestampKey].parse(datum),
-                shouldUpdate = false,
+                shouldUpdate = this.timestamp === '---' || newTimestamp >= this.timestamp,
                 limit;
 
-            if(this.inBounds(newTimestamp)) {
+            if(!this.inBounds(newTimestamp)) {
+                return;
+            }
 
-                // if timestamp is set, need tocheck, else update
-                if(this.timestamp !== '---') {
+            if(shouldUpdate) {
+                this.timestamp = this.formats[this.timestampKey].parse(datum);
+                this.value = this.formats[this.valueKey].format(datum);
+                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
 
-                    // if existing is in bounds, need to check, if not update
-                    if(this.inBounds(this.timestamp)) {
-
-                        // race condition check
-                        if(newTimestamp >= this.timestamp) {
-                            shouldUpdate = true;
-                        }
-                    } else {
-                        shouldUpdate = true;
-                    }
+                if (limit) {
+                    this.valueClass = limit.cssClass;
                 } else {
-                    shouldUpdate = true;
+                    this.valueClass = '';
                 }
-
-                if(shouldUpdate) {
-                    this.timestamp = this.formats[this.timestampKey].parse(datum);
-                    this.value = this.formats[this.valueKey].format(datum);
-                    limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-
-                    if (limit) {
-                        this.valueClass = limit.cssClass;
-                    } else {
-                        this.valueClass = '';
-                    }
-                }
-
             }
         },
         requestHistory() {
+            this.timestamp = '---';
             this.openmct
                 .telemetry
                 .request(this.domainObject, {
@@ -149,7 +133,7 @@ export default {
                     end: this.bounds.end,
                     strategy: 'latest'
                 })
-                .then((array) => this.updateValues(array[array.length - 1]));
+                .then((data) => this.updateValues(data[data.length - 1]));
         },
         updateName(name) {
             this.name = name;
