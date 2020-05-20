@@ -23,26 +23,39 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
-        this.bounds = this.bounds.bind(this);
+        this.bounds = this.openmct.time.bounds();
+        this.outstandingRequests = 0;
 
-        this.sortByTimeSystem(this.openmct.time.timeSystem());
-
-        this.lastBounds = this.openmct.time.bounds();
-
-        this.subscribeToBounds();
-
-        this.openmct.time.on('bounds', this.refreshData);
-        this.openmct.time.on('clock', this.refreshData);
-
+        this.openmct.time.on('bounds', this.updateBounds);
     },
+    // destroyed() {
+    //     this.unsubscribe();
+    //     this.openmct.time.off('bounds', this.updateBounds);
+    // },
     methods: {
-        refreshData() {
-            if (!this.openmct.time.clock()) {
-                this.unsubscribeToBounds();
-            } else {
-                this.subscribeToBounds();
+        updateBounds(bounds, isTick) {
+            this.bounds = bounds;
+            if(!isTick && this.outstandingRequests === 0) {
+                this.telemetryObjects.forEach((telemetryObject, index) => {
+                    this.requestHistory(telemetryObject, index);
+                });
             }
+        },
+        requestHistory(telemetryObject, index) {
+            this.incrementOutstandingRequests();
+            this.openmct
+                .telemetry
+                .request(telemetryObject, {
+                    start: this.bounds.start,
+                    end: this.bounds.end
+                })
+                .then((data) => this.addTrace(data, telemetryObject, index));
+        },
+        incrementOutstandingRequests() {
+            if (this.outstandingRequests === 0) {
+                this.$emit('outstanding-requests', true);
+            }
+            this.outstandingRequests++;
         },
         getLayout(telemetryObject) {
             return {
@@ -76,14 +89,9 @@ export default {
         },
         addTelemetry(telemetryObject) {
             this.telemetryObjects.push(telemetryObject);
+            // get index by length
             const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
-            return this.openmct.telemetry.request(telemetryObject)
-                .then(telemetryData => {
-                    this.addTrace(telemetryData, telemetryObject, index);
-                    if (this.openmct.time.clock()) {
-                        this.subscribe(telemetryObject, index, telemetryData.length);
-                    }
-                });
+            return this.requestHistory(telemetryObject, index);
         },
         removeTelemetry(identifier) {
             if (!this.domainObject.composition.length) {
@@ -147,16 +155,15 @@ export default {
                         displayModeBar: false,
                         staticPlot: true
                     }
-                )
+                );
             } else {
                 Plotly.addTraces(this.plotElement, traceData);
             }
 
-        },
-        subscribe(telemetryObject, index, length) {
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                this.updateData(datum, index, length)
-            })
+                this.updateData(datum, index, telemetryData.length);
+            });
+
         },
         updateData(datum, index, length) {
             Plotly.extendTraces(
@@ -168,60 +175,6 @@ export default {
                 [index],
                 length
             );
-        },
-        bounds(bounds) {
-            let startChanged = this.lastBounds.start !== bounds.start;
-            let endChanged = this.lastBounds.end !== bounds.end;
-
-            let startIndex = 0;
-            let endIndex = 0;
-
-            let discarded = [];
-            let added = [];
-            let testValue = {
-                datum: {}
-            };
-
-            this.lastBounds = bounds;
-
-            if (startChanged) {
-                testValue.datum[this.sortOptions.key] = bounds.start;
-                // Calculate the new index of the first item within the bounds
-                startIndex = this.sortedIndex(this.rows, testValue);
-                discarded = this.rows.splice(0, startIndex);
-            }
-
-            if (endChanged) {
-                testValue.datum[this.sortOptions.key] = bounds.end;
-                // Calculate the new index of the last item in bounds
-                endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
-                added = this.futureBuffer.rows.splice(0, endIndex);
-                added.forEach((datum) => this.rows.push(datum));
-            }
-
-            if (discarded && discarded.length > 0) {
-                /**
-                 * A `discarded` event is emitted when telemetry data fall out of
-                 * bounds due to a bounds change event
-                 * @type {object[]} discarded the telemetry data
-                 * discarded as a result of the bounds change
-                 */
-                this.emit('remove', discarded);
-            }
-            if (added && added.length > 0) {
-                /**
-                 * An `added` event is emitted when a bounds change results in
-                 * received telemetry falling within the new bounds.
-                 * @type {object[]} added the telemetry data that is now within bounds
-                 */
-                this.emit('add', added);
-            }
-        },
-        unsubscribeFromBounds() {
-            this.openmct.time.off('bounds', this.bounds);
-        },
-        subscribeToBounds() {
-            this.openmct.time.on('bounds', this.bounds);
         }
     }
 }
