@@ -23,26 +23,36 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
-        this.bounds = this.bounds.bind(this);
+        // this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+        // this.bounds = this.bounds.bind(this);
 
-        this.sortByTimeSystem(this.openmct.time.timeSystem());
+        // this.sortByTimeSystem(this.openmct.time.timeSystem());
 
-        this.lastBounds = this.openmct.time.bounds();
+        // this.lastBounds = this.openmct.time.bounds();
 
-        this.subscribeToBounds();
+        // this.subscribeToBounds();
 
-        this.openmct.time.on('bounds', this.refreshData);
+        this.openmct.time.on('bounds', this.updateBounds);
         this.openmct.time.on('clock', this.refreshData);
-
+        this.openmct.time.on('timeSystem', this.updateTimeSystem);
     },
     methods: {
         refreshData() {
             if (!this.openmct.time.clock()) {
-                this.unsubscribeToBounds();
+                console.log('unsubscribe')
+                // this.unsubscribeFromBounds();
             } else {
-                this.subscribeToBounds();
+                console.log('subscribe')
+                // this.subscribeToBounds();
+                // this.telemetryObjects.forEach((telemetryObject, index) => {
+                //     this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+                //         this.updateData(datum, index, length)
+                //     });
+                // });
             }
+        },
+        updateBounds() {
+            console.log('updateBounds');
         },
         getLayout(telemetryObject) {
             return {
@@ -155,8 +165,8 @@ export default {
         },
         subscribe(telemetryObject, index, length) {
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                this.updateData(datum, index, length)
-            })
+                this.updateData(datum, index, length);
+            });
         },
         updateData(datum, index, length) {
             Plotly.extendTraces(
@@ -185,14 +195,14 @@ export default {
             this.lastBounds = bounds;
 
             if (startChanged) {
-                testValue.datum[this.sortOptions.key] = bounds.start;
+                // testValue.datum[this.sortOptions.key] = bounds.start;
                 // Calculate the new index of the first item within the bounds
                 startIndex = this.sortedIndex(this.rows, testValue);
                 discarded = this.rows.splice(0, startIndex);
             }
 
             if (endChanged) {
-                testValue.datum[this.sortOptions.key] = bounds.end;
+                // testValue.datum[this.sortOptions.key] = bounds.end;
                 // Calculate the new index of the last item in bounds
                 endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
                 added = this.futureBuffer.rows.splice(0, endIndex);

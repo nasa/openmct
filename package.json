@@ -57,7 +57,7 @@
     "minimist": "^1.1.1",
     "moment": "2.25.3",
     "moment-duration-format": "^2.2.2",
-    "moment-timezone": "^0.5.21",
+    "moment-timezone": "0.5.28",
     "node-bourbon": "^4.2.3",
     "node-sass": "^4.9.2",
     "painterro": "^0.2.65",
