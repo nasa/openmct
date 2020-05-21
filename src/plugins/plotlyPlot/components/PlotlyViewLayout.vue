@@ -49,23 +49,18 @@ export default {
             console.log('refreshData')
             this.bounds = bounds;
 
-            if(!isTick) { // if fixed timespan get new data on bounds change
-                // console.log('refreshData - fixed', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'));
-                this.telemetryObjects.forEach((telemetryObject, index) => {
+            this.telemetryObjects.forEach((telemetryObject, index) => {
+                if(!isTick) {
                     this.requestHistory(telemetryObject, index, false);
-                });
-            } else {
-                console.log(this.timeRange)
-                console.log(this.openmct.time.bounds().end - this.openmct.time.bounds().start)
-                console.log('------------')
-                if (this.timeRange === 0 || this.timeRange !== this.openmct.time.bounds().end - this.openmct.time.bounds().start) {
-                    console.log('new request')
-                    this.timeRange = this.openmct.time.bounds().end - this.openmct.time.bounds().start;
-                    this.telemetryObjects.forEach((telemetryObject, index) => {
+                } else {
+                    if (this.timeRange === 0 || this.timeRange !== this.openmct.time.bounds().end - this.openmct.time.bounds().start) {
+                        console.log('new request')
+                        this.timeRange = this.openmct.time.bounds().end - this.openmct.time.bounds().start;
                         this.requestHistory(telemetryObject, index, false);
-                    });
+                    }
                 }
-            }
+            });
+
         },
         requestHistory(telemetryObject, index, isAdd) {
             console.log('requestHistory this.bounds.end', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'))
