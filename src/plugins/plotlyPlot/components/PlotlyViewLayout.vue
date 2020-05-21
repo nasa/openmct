@@ -25,9 +25,7 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.openmct.time.on('clock', this.refreshData);
         this.openmct.time.on('bounds', this.refreshData);
-        this.openmct.time.on()
     },
     // destroyed() {
     //     this.unsubscribe();
@@ -46,7 +44,6 @@ export default {
             });
         },
         refreshData(bounds, isTick) {
-            console.log('refreshData')
             this.bounds = bounds;
 
             this.telemetryObjects.forEach((telemetryObject, index) => {
@@ -54,7 +51,6 @@ export default {
                     this.requestHistory(telemetryObject, index, false);
                 } else {
                     if (this.timeRange === 0 || this.timeRange !== this.openmct.time.bounds().end - this.openmct.time.bounds().start) {
-                        console.log('new request')
                         this.timeRange = this.openmct.time.bounds().end - this.openmct.time.bounds().start;
                         this.requestHistory(telemetryObject, index, false);
                     }
@@ -63,7 +59,6 @@ export default {
 
         },
         requestHistory(telemetryObject, index, isAdd) {
-            console.log('requestHistory this.bounds.end', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'))
             this.openmct
                 .telemetry
                 .request(telemetryObject, {
@@ -164,7 +159,7 @@ export default {
                     this.getLayout(telemetryObject),
                     {
                         displayModeBar: false, // turns off hover-activated toolbar
-                        staticPlot: true // turns off hover effects on datapoints
+                        staticPlot: false // turns off hover effects on datapoints
                     }
                 );
             } else { // add a new trace to existing plot or update existing trace with new data (bounds change)
@@ -179,7 +174,7 @@ export default {
         },
         updateData(datum, index, length) {
             // plot all datapoints within bounds
-            if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
+            // if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
                 Plotly.extendTraces(
                     this.plotElement,
                     {
@@ -189,7 +184,7 @@ export default {
                     [index], // apply changes to particular trace
                     length // set the fixed number of points (will drop points from beginning as new points are added)
                 );
-            }
+            // }
         }
     }
 }
