@@ -50,13 +50,16 @@ export default {
                 if(!isTick) {
                     this.requestHistory(telemetryObject, index, false);
                 } else {
-                    if (this.timeRange === 0 || this.timeRange !== this.openmct.time.bounds().end - this.openmct.time.bounds().start) {
-                        this.timeRange = this.openmct.time.bounds().end - this.openmct.time.bounds().start;
+                    if (this.timeRange === 0 || this.timeRange !== this.bounds.end - this.bounds.start) {
+                        this.timeRange = this.bounds.end - this.bounds.start;
                         this.requestHistory(telemetryObject, index, false);
                     }
+                    let update = {
+                        'xaxis.range': [this.formatDatumX({utc: bounds.start}),this.formatDatumX({utc: bounds.end})]
+                    };
+                    Plotly.relayout(this.plotElement, update);
                 }
             });
-
         },
         requestHistory(telemetryObject, index, isAdd) {
             this.openmct
@@ -65,7 +68,9 @@ export default {
                     start: this.bounds.start,
                     end: this.bounds.end
                 })
-                .then((telemetryData) => this.addTrace(telemetryData, telemetryObject, index, isAdd));
+                .then((telemetryData) => {
+                    this.addTrace(telemetryData, telemetryObject, index, isAdd);
+                });
         },
         getLayout(telemetryObject) {
             return {
@@ -169,12 +174,10 @@ export default {
                     Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject));
                 }
             }
-
-
         },
         updateData(datum, index, length) {
             // plot all datapoints within bounds
-            if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
+            if (datum.utc <= this.bounds.end && this.openmct.time.clock()) {
                 Plotly.extendTraces(
                     this.plotElement,
                     {
