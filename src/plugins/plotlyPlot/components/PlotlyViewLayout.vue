@@ -159,7 +159,7 @@ export default {
                     this.getLayout(telemetryObject),
                     {
                         displayModeBar: false, // turns off hover-activated toolbar
-                        staticPlot: false // turns off hover effects on datapoints
+                        staticPlot: true // turns off hover effects on datapoints
                     }
                 );
             } else { // add a new trace to existing plot or update existing trace with new data (bounds change)
@@ -174,7 +174,7 @@ export default {
         },
         updateData(datum, index, length) {
             // plot all datapoints within bounds
-            // if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
+            if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
                 Plotly.extendTraces(
                     this.plotElement,
                     {
@@ -184,7 +184,7 @@ export default {
                     [index], // apply changes to particular trace
                     length // set the fixed number of points (will drop points from beginning as new points are added)
                 );
-            // }
+            }
         }
     }
 }
