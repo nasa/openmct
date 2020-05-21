@@ -26,31 +26,36 @@ import {
     createMouseEvent
 } from 'testTools';
 
-let openmct;
-let tablePlugin;
-let element;
-let child;
-
 describe("the plugin", () => {
-    beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
+    let openmct;
+    let tablePlugin;
+    let element;
+    let child;
 
+    beforeEach((done) => {
         openmct = createOpenMct();
+
+        // Table Plugin is actually installed by default, but because installing it 
+        // again is harmless it is left here as an examplar for non-default plugins.
+        tablePlugin = new TablePlugin();
+        openmct.install(tablePlugin);
 
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
 
-        tablePlugin = new TablePlugin();
-        openmct.install(tablePlugin);
-
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
+
+    describe("defines a table object", function () {
+        it("that is creatable", () => {
+            let tableType = openmct.types.get('table');
+            expect(tableType.definition.creatable).toBe(true);
+        });
+    })
 
     it("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
