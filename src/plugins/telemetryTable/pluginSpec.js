@@ -35,10 +35,6 @@ let child;
 
 describe("the plugin", () => {
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         element = document.createElement('div');
@@ -58,7 +54,7 @@ describe("the plugin", () => {
         });
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -149,7 +145,7 @@ describe("the plugin", () => {
             return telemetryPromise.then(() => Vue.nextTick());
         });
 
-        fit("Renders a row for every telemetry datum returned",() => {
+        it("Renders a row for every telemetry datum returned",() => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
             expect(rows.length).toBe(3);
         });
