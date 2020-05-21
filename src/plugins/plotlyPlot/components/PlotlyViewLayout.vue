@@ -24,38 +24,31 @@ export default {
         this.composition.load();
 
         this.bounds = this.openmct.time.bounds();
-        this.outstandingRequests = 0;
 
-        this.openmct.time.on('bounds', this.updateBounds);
+        this.openmct.time.on('clock', this.refreshData);
+        this.openmct.time.on('bounds', this.refreshData);
     },
     // destroyed() {
     //     this.unsubscribe();
     //     this.openmct.time.off('bounds', this.updateBounds);
     // },
     methods: {
-        updateBounds(bounds, isTick) {
+        refreshData(bounds, isTick) {
             this.bounds = bounds;
-            if(!isTick && this.outstandingRequests === 0) {
+            if(!isTick) { // if fixed timespan get new data on bounds change
+                console.log('refreshData - fixed');
                 this.telemetryObjects.forEach((telemetryObject, index) => {
                     this.requestHistory(telemetryObject, index);
                 });
+            } else {
+                console.log('refreshData - clock');
             }
         },
         requestHistory(telemetryObject, index) {
-            this.incrementOutstandingRequests();
             this.openmct
                 .telemetry
-                .request(telemetryObject, {
-                    start: this.bounds.start,
-                    end: this.bounds.end
-                })
-                .then((data) => this.addTrace(data, telemetryObject, index));
-        },
-        incrementOutstandingRequests() {
-            if (this.outstandingRequests === 0) {
-                this.$emit('outstanding-requests', true);
-            }
-            this.outstandingRequests++;
+                .request(telemetryObject)
+                .then((telemetryData) => this.addTrace(telemetryData, telemetryObject, index));
         },
         getLayout(telemetryObject) {
             return {
@@ -135,46 +128,50 @@ export default {
                 y.push(this.formatDatumY(datum));
             })
 
-            let traceData = [{
+            let traceData = [{ // trace configuration
                 x,
                 y,
                 type: 'scattergl',
                 mode: 'lines',
                 line: {
-                    color: colors[index],
+                    color: colors[index], // to set new color for each trace
                     shape: 'linear'
                 }
             }];
 
-            if (!this.plotElement.childNodes.length) {
+            if (!this.plotElement.childNodes.length) { // not traces yet, so create new plot
                 Plotly.newPlot(
                     this.plotElement,
                     traceData,
                     this.getLayout(telemetryObject),
                     {
-                        displayModeBar: false,
-                        staticPlot: true
+                        displayModeBar: false, // turns off hover-activated toolbar
+                        staticPlot: true // turns off hover effects on datapoints
                     }
                 );
-            } else {
+            } else { // add a new trace to existing plot
                 Plotly.addTraces(this.plotElement, traceData);
             }
 
+            // subscribe to new telemetry points for the trace
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 this.updateData(datum, index, telemetryData.length);
             });
 
         },
         updateData(datum, index, length) {
-            Plotly.extendTraces(
-                this.plotElement,
-                {
-                    x: [[this.formatDatumX(datum)]],
-                    y: [[this.formatDatumY(datum)]]
-                },
-                [index],
-                length
-            );
+            // plot all datapoints within bounds
+            if (datum.utc <= this.openmct.time.bounds().end && this.openmct.time.clock()) {
+                Plotly.extendTraces(
+                    this.plotElement,
+                    {
+                        x: [[this.formatDatumX(datum)]],
+                        y: [[this.formatDatumY(datum)]]
+                    },
+                    [index], // apply changes to particular trace
+                    length // set the fixed number of points (will drop points from beginning as new points are added)
+                );
+            }
         }
     }
 }
