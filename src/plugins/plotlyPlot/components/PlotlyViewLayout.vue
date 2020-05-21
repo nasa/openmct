@@ -12,7 +12,9 @@ export default {
 
         return {
             telemetryObjects: [],
-            lastBounds: this.openmct.time.bounds()
+            bounds: this.openmct.time.bounds(),
+            timeRange:  0,
+            plotData: {}
         }
     },
     mounted() {
@@ -23,32 +25,57 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.bounds = this.openmct.time.bounds();
-
         this.openmct.time.on('clock', this.refreshData);
         this.openmct.time.on('bounds', this.refreshData);
+        this.openmct.time.on()
     },
     // destroyed() {
     //     this.unsubscribe();
     //     this.openmct.time.off('bounds', this.updateBounds);
     // },
     methods: {
+        addTelemetry(telemetryObject) {
+            this.telemetryObjects.push(telemetryObject);
+            // get index by length
+            const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
+            this.requestHistory(telemetryObject, index, true);
+            // subscribe to new telemetry points for the trace
+            this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+                const length = this.plotData[telemetryObject.identifier.key].x.length;
+                this.updateData(datum, index, length);
+            });
+        },
         refreshData(bounds, isTick) {
+            console.log('refreshData')
             this.bounds = bounds;
+
             if(!isTick) { // if fixed timespan get new data on bounds change
-                console.log('refreshData - fixed');
+                // console.log('refreshData - fixed', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'));
                 this.telemetryObjects.forEach((telemetryObject, index) => {
-                    this.requestHistory(telemetryObject, index);
+                    this.requestHistory(telemetryObject, index, false);
                 });
             } else {
-                console.log('refreshData - clock');
+                console.log(this.timeRange)
+                console.log(this.openmct.time.bounds().end - this.openmct.time.bounds().start)
+                console.log('------------')
+                if (this.timeRange === 0 || this.timeRange !== this.openmct.time.bounds().end - this.openmct.time.bounds().start) {
+                    console.log('new request')
+                    this.timeRange = this.openmct.time.bounds().end - this.openmct.time.bounds().start;
+                    this.telemetryObjects.forEach((telemetryObject, index) => {
+                        this.requestHistory(telemetryObject, index, false);
+                    });
+                }
             }
         },
-        requestHistory(telemetryObject, index) {
+        requestHistory(telemetryObject, index, isAdd) {
+            console.log('requestHistory this.bounds.end', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'))
             this.openmct
                 .telemetry
-                .request(telemetryObject)
-                .then((telemetryData) => this.addTrace(telemetryData, telemetryObject, index));
+                .request(telemetryObject, {
+                    start: this.bounds.start,
+                    end: this.bounds.end
+                })
+                .then((telemetryData) => this.addTrace(telemetryData, telemetryObject, index, isAdd));
         },
         getLayout(telemetryObject) {
             return {
@@ -79,12 +106,6 @@ export default {
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent'
             }
-        },
-        addTelemetry(telemetryObject) {
-            this.telemetryObjects.push(telemetryObject);
-            // get index by length
-            const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
-            return this.requestHistory(telemetryObject, index);
         },
         removeTelemetry(identifier) {
             if (!this.domainObject.composition.length) {
@@ -117,7 +138,7 @@ export default {
         formatDatumY(datum) {
             return datum.sin;
         },
-        addTrace(telemetryData, telemetryObject, index) {
+        addTrace(telemetryData, telemetryObject, index, isAdd) {
             let x = [];
             let y = [];
 
@@ -139,6 +160,8 @@ export default {
                 }
             }];
 
+            this.plotData[telemetryObject.identifier.key] = traceData[0];
+
             if (!this.plotElement.childNodes.length) { // not traces yet, so create new plot
                 Plotly.newPlot(
                     this.plotElement,
@@ -149,14 +172,14 @@ export default {
                         staticPlot: true // turns off hover effects on datapoints
                     }
                 );
-            } else { // add a new trace to existing plot
-                Plotly.addTraces(this.plotElement, traceData);
+            } else { // add a new trace to existing plot or update existing trace with new data (bounds change)
+                if (isAdd) {
+                    Plotly.addTraces(this.plotElement, traceData);
+                } else {
+                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject));
+                }
             }
 
-            // subscribe to new telemetry points for the trace
-            this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                this.updateData(datum, index, telemetryData.length);
-            });
 
         },
         updateData(datum, index, length) {
