@@ -25,28 +25,30 @@ import {
     createOpenMct,
     createMouseEvent,
     spyOnBuiltins,
-    clearBuiltinSpies
+    resetApplicationState
 } from 'testTools';
 
-let openmct;
-let tablePlugin;
-let element;
-let child;
-
 describe("the plugin", () => {
+    let openmct;
+    let tablePlugin;
+    let element;
+    let child;
+
     beforeEach((done) => {
         openmct = createOpenMct();
+
+        // Table Plugin is actually installed by default, but because installing it
+        // again is harmless it is left here as an examplar for non-default plugins.
+        tablePlugin = new TablePlugin();
+        openmct.install(tablePlugin);
+
+        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
 
-        tablePlugin = new TablePlugin();
-        openmct.install(tablePlugin);
-
         openmct.time.timeSystem('utc', {start: 0, end: 4});
-
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
         spyOnBuiltins(['requestAnimationFrame']);
         window.requestAnimationFrame.and.callFake((callBack) => {
@@ -58,8 +60,15 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        clearBuiltinSpies();
+        resetApplicationState();
     });
+
+    describe("defines a table object", function () {
+        it("that is creatable", () => {
+            let tableType = openmct.types.get('table');
+            expect(tableType.definition.creatable).toBe(true);
+        });
+    })
 
     it("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
