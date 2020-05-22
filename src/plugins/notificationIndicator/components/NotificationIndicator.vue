@@ -25,6 +25,7 @@
         v-if="showNotificationsOverlay"
         :notifications="notifications"
         @close="toggleNotificationsList"
+        @clear-all="dismissAllNotifications"
         >
     </notifications-list>
 </div>
@@ -63,7 +64,7 @@ export default {
         },
         generateMockMessages() {
             for (let i = 0; i < 100; i++) {
-                this.openmct.notifications.error('Test Error Messages');
+                this.openmct.notifications.alert('Test Error Messages');
             }
         }
     },

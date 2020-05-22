@@ -7,17 +7,24 @@
             </div>
         </div>
         <div class="w-messages c-overlay__messages">
-            <!-- <mct-include
-                ng-repeat="msg in ngModel.dialog.messages | orderBy: '-'"
-                key="'notification-message'" ng-model="msg.model"></mct-include> -->
+            <notification-message
+                v-for="(notification, index) in notifications"
+                :key="index"
+                :notification="notification.model">
+            </notification-message>
         </div>
     </div>
 </template>
 
 <script>
+import NotificationMessage from './NotificationMessage.vue';
+
 export default {
     inject: ['openmct'],
     props: ['notifications'],
+    components: {
+        NotificationMessage
+    },
     data() {
         return {}
     },
@@ -27,11 +34,21 @@ export default {
                 element: this.$el,
                 size: 'large',
                 dismissable: true,
+                buttons: [
+                    {
+                        label: 'Clear All Notifications',
+                        emphasis: true,
+                        callback:() => {
+                            this.$emit('clear-all');
+                            this.overlay.dismiss();
+                        }
+                    }
+                ],
                 onDestroy: () => {
                    this.$emit('close', false); 
                 }
             });
-        }
+        },
     },
     mounted() {
         this.openOverlay();
