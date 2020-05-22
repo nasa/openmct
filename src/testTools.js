@@ -34,6 +34,11 @@ export const clearBuiltinSpies = () => {
     nativeFunctions = [];
 };
 
+export const resetApplicationState = () => {
+    clearBuiltinSpies();
+    window.location.hash = '#';
+}
+
 function clearBuiltinSpy(funcDefinition) {
     funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
