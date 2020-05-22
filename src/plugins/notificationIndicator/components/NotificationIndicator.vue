@@ -72,7 +72,7 @@ export default {
         this.openmct.notifications.on('notification', this.updateNotifications);
         this.openmct.notifications.on('dismiss-all', this.updateNotifications);
 
-        window.setTimeout(this.generateMockMessages, 3000)
+        // window.setTimeout(this.generateMockMessages, 3000)
     }
 }
 </script>

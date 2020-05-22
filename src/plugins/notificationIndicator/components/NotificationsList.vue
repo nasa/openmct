@@ -10,7 +10,7 @@
             <notification-message
                 v-for="(notification, index) in notifications"
                 :key="index"
-                :notification="notification.model">
+                :notification="notification">
             </notification-message>
         </div>
     </div>
