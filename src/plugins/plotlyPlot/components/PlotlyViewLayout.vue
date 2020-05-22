@@ -34,10 +34,8 @@ export default {
     methods: {
         addTelemetry(telemetryObject) {
             this.telemetryObjects.push(telemetryObject);
-            // get index by length
             const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
             this.requestHistory(telemetryObject, index, true);
-            // subscribe to new telemetry points for the trace
             this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 const length = this.plotData[telemetryObject.identifier.key].x.length;
                 this.updateData(datum, index, length);
@@ -54,10 +52,6 @@ export default {
                         this.timeRange = this.bounds.end - this.bounds.start;
                         this.requestHistory(telemetryObject, index, false);
                     }
-                    let update = {
-                        'xaxis.range': [this.formatDatumX({utc: bounds.start}),this.formatDatumX({utc: bounds.end})]
-                    };
-                    Plotly.relayout(this.plotElement, update);
                 }
             });
         },
@@ -72,7 +66,7 @@ export default {
                     this.addTrace(telemetryData, telemetryObject, index, isAdd);
                 });
         },
-        getLayout(telemetryObject) {
+        getLayout(telemetryObject, isFixed) {
             return {
                 hovermode: 'compare',
                 hoverdistance: -1,
@@ -83,10 +77,13 @@ export default {
                     size: "12px",
                     color: "#666"
                 },
-                xaxis: {
-                    // make this dynamic
+                xaxis: { // hardcoded as UTC for now
                     title: 'UTC',
-                    zeroline: false
+                    zeroline: false,
+                    range: isFixed ? 'undefined' : [
+                        this.formatDatumX({utc: this.bounds.start}),
+                        this.formatDatumX({utc: this.bounds.start})
+                    ]
                 },
                 yaxis: {
                     title: this.getYAxisLabel(telemetryObject),
@@ -148,7 +145,7 @@ export default {
                 x,
                 y,
                 type: 'scattergl',
-                mode: 'lines',
+                mode: 'lines+markers',
                 line: {
                     color: colors[index], // to set new color for each trace
                     shape: 'linear'
@@ -161,17 +158,17 @@ export default {
                 Plotly.newPlot(
                     this.plotElement,
                     traceData,
-                    this.getLayout(telemetryObject),
+                    this.getLayout(telemetryObject, true),
                     {
                         displayModeBar: false, // turns off hover-activated toolbar
                         staticPlot: true // turns off hover effects on datapoints
                     }
                 );
-            } else { // add a new trace to existing plot or update existing trace with new data (bounds change)
-                if (isAdd) {
+            } else {
+                if (isAdd) { // add a new trace to existing plot
                     Plotly.addTraces(this.plotElement, traceData);
-                } else {
-                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject));
+                } else { // update existing trace with new data (bounds change)
+                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject, false));
                 }
             }
         },
@@ -187,6 +184,10 @@ export default {
                     [index], // apply changes to particular trace
                     length // set the fixed number of points (will drop points from beginning as new points are added)
                 );
+                let newRange = {
+                    'xaxis.range': [this.formatDatumX({utc: this.bounds.start}),this.formatDatumX({utc: this.bounds.end})]
+                };
+                Plotly.relayout(this.plotElement, newRange);
             }
         }
     }
