@@ -55,8 +55,8 @@ export default {
     data() {
         return {
             isProgressNotification: false,
-            progressPerc: 0,
-            progressText: ''
+            progressPerc: this.notification.model.progressPerc,
+            progressText: this.notification.model.progressText
         }
     },
     methods: {
