@@ -53,12 +53,12 @@ define([
                         ]
                     }
                 ],
-                "indicators": [
-                    {
-                        "implementation": NotificationIndicator,
-                        "priority": "fallback"
-                    }
-                ],
+                // "indicators": [
+                //     {
+                //         "implementation": NotificationIndicator,
+                //         "priority": "fallback"
+                //     }
+                // ],
                 "services": [
                     {
                         "key": "notificationService",

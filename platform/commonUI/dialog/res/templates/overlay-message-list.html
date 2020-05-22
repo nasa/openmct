@@ -6,6 +6,12 @@
                     ng-show="ngModel.dialog.messages.length > 1 ||
                             ngModel.dialog.messages.length == 0">s</span>
             </div>
+            <button
+                ng-if="ngModel.dialog.topBarButton"
+                class="c-button c-button--major"
+                ng-click="ngModel.topBarButton.onClick">
+                {{console.log(ng-model.topBarButton)}}
+            </button>
         </div>
         <div class="w-messages c-overlay__messages">
             <mct-include

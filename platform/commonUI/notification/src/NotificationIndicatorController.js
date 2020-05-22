@@ -48,6 +48,7 @@ define(
                         notification.model.primaryOption = {
                             label: 'Dismiss',
                             callback: () => {
+                                console.log('notification dismissed');
                                 let currentIndex = notificationsList.indexOf(notification);
                                 notification.dismiss();
                                 notificationsList.splice(currentIndex, 1);
@@ -61,7 +62,16 @@ define(
                         title: "Messages",
                         //Launch the message list dialog with the models
                         // from the notifications
-                        messages: notificationsList
+                        messages: notificationsList,
+                        topBarButton: {
+                            onClick: () => {
+                                console.log('clicked');
+                                notificationsList.forEach(notification => {
+                                    notification.dismiss();
+                                });
+                                notificationsList = [];
+                            }
+                        }
                     }
                 });
 
