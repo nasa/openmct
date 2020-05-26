@@ -84,9 +84,6 @@ export default class RemoveAction {
             !this.openmct.objects.areIdsEqual(id, child.identifier)
         );
 
-        console.log('composition', composition);
-
-
         this.openmct.objects.mutate(parent, 'composition', composition);
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
