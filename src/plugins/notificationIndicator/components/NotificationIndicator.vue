@@ -1,27 +1,19 @@
 <template>
-<div 
-    v-if="notifications.length > 0" 
+<div
+    v-if="notifications.length > 0"
     class="c-indicator c-indicator--clickable icon-bell"
     :class="[severityClass]">
-    <span 
-        class="c-indicator__label"
-        style="display:flex; flex-direction:column;">
-        <span 
-            class="angular-w">
-            <button 
-                @click="toggleNotificationsList(true)">
+    <span class="c-indicator__label">
+            <button @click="toggleNotificationsList(true)">
                 {{notifications.length}} Notification<span v-show="notifications.length > 1">s</span>
             </button>
-            <button 
-                class="angular-w"
-                @click="dismissAllNotifications()">
+            <button @click="dismissAllNotifications()">
                 Clear All
             </button>
-        </span>
     </span>
     <span class="c-indicator__count">{{notifications.length}}</span>
 
-    <notifications-list 
+    <notifications-list
         v-if="showNotificationsOverlay"
         :notifications="notifications"
         @close="toggleNotificationsList"
