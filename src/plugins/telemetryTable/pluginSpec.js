@@ -140,11 +140,11 @@ describe("the plugin", () => {
             let telemetryPromiseResolve;
             let telemetryPromise = new Promise((resolve) => {
                 telemetryPromiseResolve = resolve;
-            })
+            });
             openmct.telemetry.request.and.callFake(() => {
                 telemetryPromiseResolve(testTelemetry);
                 return telemetryPromise;
-            })
+            });
 
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
