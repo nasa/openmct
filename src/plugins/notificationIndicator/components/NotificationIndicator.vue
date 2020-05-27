@@ -6,7 +6,7 @@
 >
     <span class="c-indicator__label">
         <button @click="toggleNotificationsList(true)">
-            {{ notifications.length }} Notification<span v-show="notifications.length > 1">s</span>
+            {{ notificationsCountMessage(notifications.length) }}
         </button>
         <button @click="dismissAllNotifications()">
             Clear All
@@ -57,6 +57,13 @@ export default {
         updateNotifications() {
             this.notifications = this.openmct.notifications.notifications;
             this.highest = this.openmct.notifications.highest;
+        },
+        notificationsCountMessage(count) {
+            if (count > 1) {
+                return `${count} Notifications`;
+            } else {
+                return `${count} Notification`;
+            }
         }
     }
 }

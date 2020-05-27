@@ -60,7 +60,6 @@ define(
         };
 
         DialogService.prototype.getDialogResponse = function (key, model, resultGetter, typeClass) {
-            console.log(model);
             // We will return this result as a promise, because user
             // input is asynchronous.
             var deferred = this.$q.defer(),

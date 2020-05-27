@@ -34,6 +34,7 @@ export default function plugin() {
                 template: '<NotificationIndicator></NotificationIndicator>'
             }),
             indicator = {
+                key: 'notifications-indicator',
                 element: component.$mount().$el
             };
 

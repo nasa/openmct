@@ -3,13 +3,13 @@
     <div class="c-overlay__top-bar">
         <div class="c-overlay__dialog-title">Notifications</div>
         <div class="c-overlay__dialog-hint">
-            Displaying {{ notifications.length }} notification<span v-show="notifications.length > 1 || notifications.length === 0">s</span>
+            {{ notificationsCountDisplayMessage(notifications.length) }}
         </div>
     </div>
     <div class="w-messages c-overlay__messages">
         <notification-message
-            v-for="(notification, index) in notifications"
-            :key="index"
+            v-for="notification in notifications"
+            :key="notification.model.timestamp"
             :notification="notification"
         />
     </div>
@@ -56,6 +56,13 @@ export default {
                     this.$emit('close', false);
                 }
             });
+        },
+        notificationsCountDisplayMessage(count) {
+            if (count > 1 || count === 0) {
+                return `Displaying ${count} notifications`;
+            } else {
+                return `Displaying ${count} notification`;
+            }
         }
     }
 }

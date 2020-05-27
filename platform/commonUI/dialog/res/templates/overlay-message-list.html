@@ -10,7 +10,7 @@
                 ng-if="ngModel.dialog.topBarButton"
                 class="c-button c-button--major"
                 ng-click="ngModel.topBarButton.onClick">
-                {{console.log(ng-model.topBarButton)}}
+                {{ ngModel.topBarButton.label }}
             </button>
         </div>
         <div class="w-messages c-overlay__messages">
@@ -22,7 +22,7 @@
             <button ng-repeat="dialogAction in ngModel.dialog.actions"
                class="c-button c-button--major"
                ng-click="dialogAction.action()">
-                {{dialogAction.label}}
+                {{ dialogAction.label }}
             </button>
         </div>
     </div>
