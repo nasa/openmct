@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import isEmpty from 'lodash/isEmpty';
+
 const NONE_VALUE = '__no_value';
 
 const styleProps = {
@@ -154,7 +156,7 @@ export const getApplicableStylesForItem = (domainObject, item) => {
 };
 
 export const getStylesWithoutNoneValue = (style) => {
-    if (_.isEmpty(style) || !style) {
+    if (isEmpty(style) || !style) {
         return;
     }
     let styleObj = {};
