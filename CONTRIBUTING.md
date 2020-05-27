@@ -219,9 +219,9 @@ define(
 Automated testing shall occur whenever changes are merged into the main
 development branch and must be confirmed alongside any pull request.
 
-Automated tests are typically unit tests which exercise individual software
-components. Tests are subject to code review along with the actual
-implementation, to ensure that tests are applicable and useful.
+Automated tests are tests which exercise plugins, API, and utility classes. 
+Tests are subject to code review along with the actual implementation, to 
+ensure that tests are applicable and useful.
 
 Examples of useful tests:
 * Tests which replicate bugs (or their root causes) to verify their
@@ -231,8 +231,24 @@ Examples of useful tests:
 * Tests which verify expected interactions with other components in the
   system.
 
-During automated testing, code coverage metrics will be reported. Line
-coverage must remain at or above 80%.
+#### Guidelines
+* 100% statement coverage is achievable and desirable.
+* Do blackbox testing. Test external behaviors, not internal details. Write tests that describe what your plugin is supposed to do. How it does this doesn't matter, so don't test it.
+* Unit test specs for plugins should be defined at the plugin level. Start with one test spec per plugin named pluginSpec.js, and as this test spec grows too big, break it up into multiple test specs that logically group related tests.
+* Unit tests for API or for utility functions and classes may be defined at a per-source file level.
+* Wherever possible only use and mock public API, builtin functions, and UI in your test specs. Do not directly invoke any private functions. ie. only call or mock functions and objects exposed by openmct.* (eg. openmct.telemetry, openmct.objectView, etc.), and builtin browser functions (fetch, requestAnimationFrame, setTimeout, etc.).
+* Where builtin functions have been mocked, be sure to clear them between tests.
+* Test at an appropriate level of isolation. Eg. 
+    * If you’re testing a view, you do not need to test the whole application UI, you can just fetch the view provider using the public API and render the view into an element that you have created. 
+    * You do not need to test that the view switcher works, there should be separate tests for that. 
+    * You do not need to test that telemetry providers work, you can mock openmct.telemetry.request() to feed test data to the view.
+    * Use your best judgement when deciding on appropriate scope.
+* Automated tests for plugins should start by actually installing the plugin being tested, and then test that installing the plugin adds the desired features and behavior to Open MCT, observing the above rules.
+* All variables used in a test spec, including any instances of the Open MCT API should be initialized in the relevant beforeEach block. BeforeEach is preferable to beforeAll to avoid leaking of state between tests.
+
+#### Examples
+* [Example of an automated test spec for an object view plugin](https://github.com/nasa/openmct/blob/master/src/plugins/telemetryTable/pluginSpec.js)
+* [Example of an automated test spec for API](https://github.com/nasa/openmct/blob/master/src/api/time/TimeAPISpec.js)
 
 ### Commit Message Standards
 
