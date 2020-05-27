@@ -108,6 +108,7 @@ import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import {getApplicableStylesForItem} from "@/plugins/condition/utils/styleUtils";
+import isEmpty from 'lodash/isEmpty';
 
 export default {
     name: 'ConditionalStylesView',
@@ -288,7 +289,7 @@ export default {
                 delete domainObjectStyles[this.itemId].conditionSetIdentifier;
                 domainObjectStyles[this.itemId].styles = undefined;
                 delete domainObjectStyles[this.itemId].styles;
-                if (_.isEmpty(domainObjectStyles[this.itemId])) {
+                if (isEmpty(domainObjectStyles[this.itemId])) {
                     delete domainObjectStyles[this.itemId];
                 }
             } else {
@@ -299,7 +300,7 @@ export default {
                 domainObjectStyles.styles = undefined;
                 delete domainObjectStyles.styles;
             }
-            if (_.isEmpty(domainObjectStyles)) {
+            if (isEmpty(domainObjectStyles)) {
                 domainObjectStyles = undefined;
             }
 
@@ -337,7 +338,7 @@ export default {
                     delete domainObjectStyles[this.itemId];
                 }
             });
-            if (_.isEmpty(domainObjectStyles)) {
+            if (isEmpty(domainObjectStyles)) {
                 domainObjectStyles = undefined;
             }
             this.persist(domainObjectStyles);

@@ -146,7 +146,7 @@ define([
                 strategy = 'minmax';
             }
 
-            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -160,6 +160,7 @@ define([
                     );
             }
 
+            /* eslint-disable you-dont-need-lodash-underscore/concat */
             return this.openmct
                 .telemetry
                 .request(this.domainObject, options)
@@ -171,6 +172,7 @@ define([
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
+            /* eslint-enable you-dont-need-lodash-underscore/concat */
         },
         /**
          * Update x formatter on x change.
@@ -270,7 +272,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getXVal);
+            return _.sortedIndexBy(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for the series.
