@@ -1,6 +1,6 @@
 define ([
     './ConditionEvaluator',
-    '../../../api/objects/object-utils',
+    'objectUtils',
     'EventEmitter',
     'zepto',
     'lodash'
@@ -9,7 +9,8 @@ define ([
     objectUtils,
     EventEmitter,
     $,
-    _
+    _,
+
 ) {
 
     /**

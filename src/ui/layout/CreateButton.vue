@@ -39,7 +39,7 @@
 
 <script>
 import CreateAction from '../../../platform/commonUI/edit/src/creation/CreateAction';
-import objectUtils from '../../api/objects/object-utils';
+import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],

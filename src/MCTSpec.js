@@ -23,8 +23,8 @@
 define([
     './plugins/plugins',
     'legacyRegistry',
-    'testTools'
-], function (plugins, legacyRegistry, testTools) {
+    'testUtils'
+], function (plugins, legacyRegistry, testUtils) {
     describe("MCT", function () {
         var openmct;
         var mockPlugin;
@@ -38,7 +38,7 @@ define([
             mockListener = jasmine.createSpy('listener');
             oldBundles = legacyRegistry.list();
 
-            openmct = testTools.createOpenMct();
+            openmct = testUtils.createOpenMct();
 
             openmct.install(mockPlugin);
             openmct.install(mockPlugin2);

@@ -28,7 +28,7 @@ define([
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
-    './api/objects/object-utils',
+    'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
     './plugins/buildInfo/plugin',
