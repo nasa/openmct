@@ -2,24 +2,24 @@
 <div
     v-if="notifications.length > 0"
     class="c-indicator c-indicator--clickable icon-bell"
-    :class="[severityClass]">
+    :class="[severityClass]"
+>
     <span class="c-indicator__label">
-            <button @click="toggleNotificationsList(true)">
-                {{notifications.length}} Notification<span v-show="notifications.length > 1">s</span>
-            </button>
-            <button @click="dismissAllNotifications()">
-                Clear All
-            </button>
+        <button @click="toggleNotificationsList(true)">
+            {{ notifications.length }} Notification<span v-show="notifications.length > 1">s</span>
+        </button>
+        <button @click="dismissAllNotifications()">
+            Clear All
+        </button>
     </span>
-    <span class="c-indicator__count">{{notifications.length}}</span>
+    <span class="c-indicator__count">{{ notifications.length }}</span>
 
     <notifications-list
         v-if="showNotificationsOverlay"
         :notifications="notifications"
         @close="toggleNotificationsList"
         @clear-all="dismissAllNotifications"
-        >
-    </notifications-list>
+    />
 </div>
 </template>
 
@@ -31,17 +31,21 @@ export default {
     components: {
         NotificationsList
     },
-    computed: {
-        severityClass() {
-            return `s-status-${this.highest.severity}`;
-        }
-    },
     data() {
         return {
             notifications: this.openmct.notifications.notifications,
             highest: this.openmct.notifications.highest,
             showNotificationsOverlay: false
         }
+    },
+    computed: {
+        severityClass() {
+            return `s-status-${this.highest.severity}`;
+        }
+    },
+    mounted() {
+        this.openmct.notifications.on('notification', this.updateNotifications);
+        this.openmct.notifications.on('dismiss-all', this.updateNotifications);
     },
     methods: {
         dismissAllNotifications() {
@@ -53,18 +57,7 @@ export default {
         updateNotifications() {
             this.notifications = this.openmct.notifications.notifications;
             this.highest = this.openmct.notifications.highest;
-        },
-        generateMockMessages() {
-            for (let i = 0; i < 100; i++) {
-                this.openmct.notifications.alert('Test Error Messages');
-            }
         }
-    },
-    mounted() {
-        this.openmct.notifications.on('notification', this.updateNotifications);
-        this.openmct.notifications.on('dismiss-all', this.updateNotifications);
-
-        // window.setTimeout(this.generateMockMessages, 3000)
     }
 }
 </script>
