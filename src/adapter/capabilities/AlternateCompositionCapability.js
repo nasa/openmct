@@ -24,7 +24,7 @@
  * Module defining AlternateCompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define([
-    '../../api/objects/object-utils',
+    'objectUtils',
     '../../../platform/core/src/capabilities/ContextualDomainObject'
 ], function (objectUtils, ContextualDomainObject) {
     function AlternateCompositionCapability($injector, domainObject) {
