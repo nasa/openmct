@@ -4,15 +4,15 @@
         class="c-tree__item"
         :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
     >
-        <view-control
-            v-model="expanded"
-            class="c-tree__item__view-control"
-            :enabled="hasChildren"
-        />
         <object-label
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigateToPath"
+        />
+        <view-control
+            v-model="expanded"
+            class="c-tree__item__view-control"
+            :enabled="hasChildren"
         />
     </div>
     <ul
