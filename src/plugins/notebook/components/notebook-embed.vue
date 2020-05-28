@@ -186,7 +186,10 @@ export default {
                 message = 'Time bound values changed to fixed timespan mode';
             }
 
-            this.openmct.notifications.alert(message);
+            if (message.length) {
+                this.openmct.notifications.alert(message);
+            }
+
             window.location.href = link;
         },
         formatTime(unixTime, timeFormat) {
