@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './object-utils.js',
+    'objectUtils',
     'lodash'
 ], function (
     utils,

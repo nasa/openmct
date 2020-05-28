@@ -20,25 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct } from "testTools";
+import { createOpenMct } from "testUtils";
 import ConditionPlugin from "./plugin";
 
-let openmct = createOpenMct();
-openmct.install(new ConditionPlugin());
-
-let conditionSetDefinition;
-let mockConditionSetDomainObject;
-let element;
-let child;
-
 describe('the plugin', function () {
+    let conditionSetDefinition;
+    let mockConditionSetDomainObject;
+    let element;
+    let child;
+    let openmct;
 
     beforeAll((done) => {
+        openmct = createOpenMct();
+        openmct.install(new ConditionPlugin());
 
         conditionSetDefinition = openmct.types.get('conditionSet').definition;
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -55,7 +51,7 @@ describe('the plugin', function () {
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
 
     let mockConditionSetObject = {

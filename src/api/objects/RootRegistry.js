@@ -43,7 +43,7 @@ define([
     }
 
     RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (_.isArray(key) && _.every(key, isKey))) {
+        if (isKey(key) || (Array.isArray(key) && key.every(isKey))) {
             this.providers.push(function () {
                 return key;
             });

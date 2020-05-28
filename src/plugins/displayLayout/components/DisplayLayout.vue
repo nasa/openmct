@@ -68,7 +68,6 @@
 
 <script>
 import uuid from 'uuid';
-
 import SubobjectView from './SubobjectView.vue'
 import TelemetryView from './TelemetryView.vue'
 import BoxView from './BoxView.vue'
@@ -76,6 +75,7 @@ import TextView from './TextView.vue'
 import LineView from './LineView.vue'
 import ImageView from './ImageView.vue'
 import EditMarquee from './EditMarquee.vue'
+import _ from 'lodash'
 
 const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
@@ -512,7 +512,7 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = _.findIndex(this.layoutItems, item);
+            let index = this.layoutItems.findIndex(item);
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         }
