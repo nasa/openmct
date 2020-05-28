@@ -92,6 +92,7 @@ const ORDERS = {
     bottom: Number.NEGATIVE_INFINITY
 };
 const DRAG_OBJECT_TRANSFER_PREFIX = 'openmct/domain-object/';
+const DUPLICATE_OFFSET = 3;
 
 let components = ITEM_TYPE_VIEW_MAP;
 components['edit-marquee'] = EditMarquee;
@@ -345,7 +346,6 @@ export default {
 
             if (this.isTelemetry(domainObject)) {
                 this.promptUserForViewType(domainObject, droppedObjectPosition, $event);
-                // this.addItem('telemetry-view', domainObject, droppedObjectPosition);
             } else {
                 let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 
@@ -570,6 +570,27 @@ export default {
             let index = this.layoutItems.findIndex(item);
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
+        },
+        createDeepCopy(object) {
+            let copyString = JSON.stringify(object),
+                parsedString = JSON.parse(copyString);
+
+            return parsedString;
+        },
+        duplicateItem(selectedItems) {
+            selectedItems.forEach(selectedItem => {
+                let layoutItem = selectedItem[0].context.layoutItem,
+                    copy = this.createDeepCopy(layoutItem);
+
+                copy.id = uuid();
+                copy.y += DUPLICATE_OFFSET;
+                copy.x += DUPLICATE_OFFSET;
+                
+                this.trackItem(copy);
+                this.layoutItems.push(copy);
+                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                this.initSelectIndex = this.layoutItems.length - 1;
+            });
         }
     }
 }

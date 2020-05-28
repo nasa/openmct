@@ -415,6 +415,20 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getDuplicateButton(selectedParent, selectionPath, selection) {
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        icon: "icon-duplicate",
+                        title: "Duplicate the selected object",
+                        method: function () {
+                            let duplicateItem = selectionPath[1].context.duplicateItem;
+                            
+                            duplicateItem(selection);
+                        }
+                    };
+                }
+
                 function getSeparator() {
                     return {
                         control: "separator"
@@ -441,7 +455,8 @@ define(['lodash'], function (_) {
                     'style': [],
                     'text-style': [],
                     'position': [],
-                    'remove': []
+                    'remove': [],
+                    'duplicate': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
@@ -555,6 +570,9 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+                    }
+                    if(toolbar.duplicate.length === 0) {
+                        toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
                     }
                 });
 
