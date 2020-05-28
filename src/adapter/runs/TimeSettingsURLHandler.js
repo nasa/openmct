@@ -78,7 +78,7 @@ define([
     };
 
     TimeSettingsURLHandler.prototype.parseQueryParams = function () {
-        var searchParams = _.pick(this.$location.search(), _.values(SEARCH));
+        var searchParams = _.pick(this.$location.search(), Object.values(SEARCH));
         var parsedParams = {
             clock: searchParams[SEARCH.MODE],
             timeSystem: searchParams[SEARCH.TIME_SYSTEM]

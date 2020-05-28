@@ -51,7 +51,7 @@ define([
         }
     }
 
-    _.extend(Draw2D.prototype, EventEmitter.prototype);
+    Object.assign(Draw2D.prototype, EventEmitter.prototype);
     eventHelpers.extend(Draw2D.prototype);
 
     // Convert from logical to physical x coordinates
