@@ -153,28 +153,46 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
+    getMetaDataObject(telemetryObject, metadata) {
+        let metadataObject;
+        if (metadata) {
+            const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+        }
+        return metadataObject;
+    }
+
+    getInputValueFromMetaData(metadataObject, input) {
+        let inputValue;
+        if (metadataObject) {
+            if(metadataObject.enumerations && input.length) {
+                const enumeration = metadataObject.enumerations[input[0]];
+                if (enumeration !== undefined && enumeration.string) {
+                    inputValue = [enumeration.string];
+                }
+            }
+        }
+        return inputValue;
+    }
+
+    getMetadataValueFromMetaData(metadataObject) {
+        let metadataValue;
+        if (metadataObject) {
+            if (metadataObject.name) {
+                metadataValue = metadataObject.name;
+            }
+        }
+        return metadataValue;
+    }
+
     getDescription(criterion, index) {
         let description;
         if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
             description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
         } else {
-            let metadataValue = this.metadata;
-            let inputValue = this.input;
-            if (this.metadata) {
-                const telemetryMetadata = this.openmct.telemetry.getMetadata(this.telemetryObject);
-
-                const metadataObj = telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === this.metadata);
-                if (metadataObj) {
-                    if (metadataObj.name) {
-                        metadataValue = metadataObj.name;
-                    }
-                    if(metadataObj.enumerations && inputValue.length) {
-                        if (metadataObj.enumerations[inputValue[0]] !== undefined && metadataObj.enumerations[inputValue[0]].string) {
-                            inputValue = [metadataObj.enumerations[inputValue[0]].string];
-                        }
-                    }
-                }
-            }
+            const metadataObject = this.getMetaDataObject(this.telemetryObject, this.metadata);
+            const metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
+            const inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
             description = `${this.telemetryObject.name} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
         }
 

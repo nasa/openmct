@@ -168,19 +168,10 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             const telemetryObjects = Object.values(this.telemetryObjects);
             for (let i=0; i < telemetryObjects.length; i++) {
                 const telemetryObject = telemetryObjects[i];
-                const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-
-                const metadataObj = telemetryMetadata.valueMetadatas.find((metadata) => metadata.key === this.metadata);
-                if (metadataObj) {
-
-                    if (metadataObj.name) {
-                        metadataValue = metadataObj.name;
-                    }
-                    if(metadataObj.enumerations && inputValue.length) {
-                        if (metadataObj.enumerations[inputValue[0]] !== undefined && metadataObj.enumerations[inputValue[0]].string) {
-                            inputValue = [metadataObj.enumerations[inputValue[0]].string];
-                        }
-                    }
+                const metadataObject = this.getMetaDataObject(telemetryObject, this.metadata);
+                if (metadataObject) {
+                    metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
+                    inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
                     break;
                 }
             }

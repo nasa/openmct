@@ -180,8 +180,9 @@ export default {
         checkTelemetry() {
             if(this.criterion.telemetry) {
                 const isAnyAllTelemetry = this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all';
+                const telemetryForCriterionExists = this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier));
                 if (!isAnyAllTelemetry &&
-                    !this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
+                    !telemetryForCriterionExists) {
                     //telemetry being used was removed. So reset this criterion.
                     this.criterion.telemetry = '';
                     this.criterion.metadata = '';
