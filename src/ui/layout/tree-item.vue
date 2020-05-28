@@ -3,6 +3,7 @@
     <div
         class="c-tree__item"
         :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
+        :style="{ paddingLeft: ancestors * 10 + 10 + 'px' }"
     >
         <object-label
             :domain-object="node.object"
@@ -31,6 +32,7 @@
             v-for="child in children"
             :key="child.id"
             :node="child"
+            :ancestors="ancestors + 1"
         />
     </ul>
 </li>
@@ -53,6 +55,10 @@ export default {
         node: {
             type: Object,
             required: true
+        },
+        ancestors: {
+            type: Number,
+            default: 0
         }
     },
     data() {
@@ -92,12 +98,9 @@ export default {
         }
     },
     mounted() {
-        // TODO: should update on mutation.
         // TODO: click navigation should not fubar hash quite so much.
-        // TODO: should highlight if navigated to.
-        // TODO: should have context menu.
         // TODO: should support drag/drop composition
-        // TODO: set isAlias per tree-item
+        let objectComposition = this.openmct.composition.get(this.node.object);
 
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
@@ -105,13 +108,19 @@ export default {
         });
 
         this.$once('hook:destroyed', removeListener);
-        if (this.openmct.composition.get(this.node.object)) {
+        if (objectComposition && objectComposition.domainObject.composition.length > 0) {
             this.hasChildren = true;
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
 
         this.getLocalStorageExpanded();
+
+        console.log('tree-item: mounted - domainObject', this.domainObject.name, this.domainObject);
+        console.log('tree-item: mounted - HAS CHILRDENSLNL', objectComposition);
+        console.log('tree-item: mounted - ancestors', this.ancestors);
+        console.log('tree-item: mounted - hasChildren', this.hasChildren);
+        console.log('tree-item: mounted - expanded', this.expanded);
     },
     beforeDestroy() {
         /****
@@ -152,6 +161,7 @@ export default {
             return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
         },
         highlightIfNavigated(newPath, oldPath) {
+            console.log('tree-item: router change:path | highlightifnavigated', {newPath, oldPath})
             if (newPath === this.navigateToPath) {
                 this.navigated = true;
             } else if (oldPath === this.navigateToPath) {
@@ -160,7 +170,7 @@ export default {
         },
         getLocalStorageExpanded() {
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-
+            console.log('tree-item: getlocalstorageexpanded', {expandedPaths});
             if (expandedPaths) {
                 expandedPaths = JSON.parse(expandedPaths);
                 this.expanded = expandedPaths.includes(this.navigateToPath);
@@ -170,7 +180,7 @@ export default {
         setLocalStorageExpanded() {
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-
+            console.log('tree-item: setexpandedpaths', {expandedPaths})
             if (this.expanded) {
                 if (!expandedPaths.includes(this.navigateToPath)) {
                     expandedPaths.push(this.navigateToPath);
@@ -183,6 +193,7 @@ export default {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         },
         removeLocalStorageExpanded() {
+            console.log('tree-item: removelocalstorageexpanded')
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
             expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));

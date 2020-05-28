@@ -4,7 +4,8 @@
     flex: 1 1 auto;
     //TODO: Do we need this???
     //padding-right: $interiorMarginSm;
-    overflow: auto;
+    width: 100%;
+    overflow: hidden;
 
     > * + * { margin-top: $interiorMargin; }
 
@@ -44,13 +45,23 @@
 
     &__item {
         $aPad: $interiorMarginSm;
-        border-radius: $controlCr;
+        // border-radius: $controlCr;
         display: flex;
         align-items: center;
         cursor: pointer;
         line-height: 110%;
         padding: $interiorMarginSm $interiorMargin;
         transition: background 150ms ease;
+        border-bottom: 1px solid $colorInteriorBorder;
+
+
+        .c-disclosure-triangle {
+            border-radius: 3px;
+            
+            &:hover {
+                color: darken($colorKeyFg, 10%);
+            }
+        }
 
         &:hover {
             background: $colorItemTreeHoverBg;
@@ -73,10 +84,18 @@
 
 .c-tree {
     .c-tree {
-        margin-left: 15px;
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: all;
+
+        .c-tree__item {
+            padding-left: 15px;
+        }
     }
 
     &__item {
+
         > * + * {
             margin-left: $interiorMarginSm;
         }

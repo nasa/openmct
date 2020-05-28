@@ -75,15 +75,18 @@ export default {
     mounted() {
         this.searchService = this.openmct.$injector.get('searchService');
         this.getAllChildren();
+        console.log('tree: mounted');
     },
     methods: {
         getAllChildren() {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
+                    console.log('tree: root', root);
                     return this.openmct.composition.get(root).load()
                 })
                 .then(children => {
+                    console.log('tree: children', children);
                     this.isLoading = false;
                     this.allTreeItems = children.map(c => {
                         return {
