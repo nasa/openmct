@@ -52,6 +52,7 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
+        :viewKeyProp="viewKeyProp"
     />
 </div>
 </template>
@@ -89,6 +90,9 @@ export default {
         showEditView: {
             type: Boolean,
             default: true
+        },
+        viewKeyProp: {
+            type: String
         }
     },
     data() {

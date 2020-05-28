@@ -34,6 +34,7 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
+        :viewKeyProp="item.viewKey"
     />
 </layout-frame>
 </template>
@@ -61,7 +62,7 @@ function hasFrameByDefault(type) {
 }
 
 export default {
-    makeDefinition(openmct, gridSize, domainObject, position) {
+    makeDefinition(openmct, gridSize, domainObject, position, viewKey) {
         let defaultDimensions = getDefaultDimensions(gridSize);
         position = position || DEFAULT_POSITION;
 
@@ -71,7 +72,8 @@ export default {
             x: position[0],
             y: position[1],
             identifier: domainObject.identifier,
-            hasFrame: hasFrameByDefault(domainObject.type)
+            hasFrame: hasFrameByDefault(domainObject.type),
+            viewKey
         };
     },
     inject: ['openmct', 'objectPath'],

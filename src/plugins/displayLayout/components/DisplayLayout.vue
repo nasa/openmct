@@ -284,6 +284,51 @@ export default {
         mutate(path, value) {
             this.openmct.objects.mutate(this.internalDomainObject, path, value);
         },
+        promptUserForViewType(domainObject, droppedObjectPosition, $event) {
+            $event.stopImmediatePropagation();
+
+            let applicableViews = this.openmct.objectViews.get(domainObject),
+                alphaNumericView = {
+                    key: 'telemetry-view',
+                    name: 'Alpha Numeric'
+                },
+                dialog;
+            
+            applicableViews.push(alphaNumericView);
+
+            let promptButtonChoices = applicableViews.map((view) => {
+                let label = view.name,
+                    callback,
+                    emphasis;
+                
+                if (view.key === 'telemetry-view') {
+                    callback = () => {
+                        this.addItem(view.key, domainObject, droppedObjectPosition);
+                        this.composition.add(domainObject);
+                        dialog.dismiss();
+                    }
+                    emphasis = true;
+                } else {
+                    callback = () => {
+                        this.addItem('subobject-view', domainObject, droppedObjectPosition, view.key);
+                        this.composition.add(domainObject);
+                        dialog.dismiss();
+                    }
+                }
+
+                return {
+                    label,
+                    callback,
+                    emphasis
+                }
+            });
+
+            dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'How would you like this item to be added?',
+                buttons: promptButtonChoices
+            });
+        },
         handleDrop($event) {
             if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return;
@@ -299,7 +344,8 @@ export default {
             ];
 
             if (this.isTelemetry(domainObject)) {
-                this.addItem('telemetry-view', domainObject, droppedObjectPosition);
+                this.promptUserForViewType(domainObject, droppedObjectPosition, $event);
+                // this.addItem('telemetry-view', domainObject, droppedObjectPosition);
             } else {
                 let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 
@@ -365,7 +411,8 @@ export default {
                 let count = this.telemetryViewMap[keyString] || 0;
                 this.telemetryViewMap[keyString] = ++count;
             } else if (item.type === "subobject-view") {
-                this.objectViewMap[keyString] = true;
+                let count = this.objectViewMap[keyString] || 0;
+                this.objectViewMap[keyString] = ++count;
             }
         },
         removeItem(selectedItems) {
@@ -384,17 +431,25 @@ export default {
                 return;
             }
 
-            let keyString = this.openmct.objects.makeKeyString(item.identifier);
+            let keyString = this.openmct.objects.makeKeyString(item.identifier),
+                telemetryViewCount = this.telemetryViewMap[keyString],
+                objectViewCount = this.objectViewMap[keyString];
 
             if (item.type === 'telemetry-view') {
-                let count = --this.telemetryViewMap[keyString];
+                telemetryViewCount = --this.telemetryViewMap[keyString];
 
-                if (count === 0) {
+                if (telemetryViewCount === 0) {
                     delete this.telemetryViewMap[keyString];
-                    this.removeFromComposition(keyString);
                 }
             } else if (item.type === 'subobject-view') {
-                delete this.objectViewMap[keyString];
+                objectViewCount = --this.objectViewMap[keyString];
+
+                if (objectViewCount === 0) {
+                    delete this.objectViewMap[keyString];
+                }
+            }
+
+            if (!telemetryViewCount && !objectViewCount) {
                 this.removeFromComposition(keyString);
             }
         },
@@ -413,7 +468,7 @@ export default {
         addChild(child) {
             let identifier = this.openmct.objects.makeKeyString(child.identifier);
             if (this.isTelemetry(child)) {
-                if (!this.telemetryViewMap[identifier]) {
+                if (!this.telemetryViewMap[identifier] && !this.objectViewMap[identifier]) {
                     this.addItem('telemetry-view', child);
                 }
             } else if (!this.objectViewMap[identifier]) {
