@@ -26,7 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry
-} from 'testTools';
+} from 'testUtils';
 
 let openmct,
     ladPlugin,
