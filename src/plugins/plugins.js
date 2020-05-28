@@ -52,7 +52,7 @@ define([
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow',
-    './timeSettingsURLHandler/plugin'
+    './URLTimeSettingsSynchronizer/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -85,7 +85,7 @@ define([
     Espresso,
     Maelstrom,
     Snow,
-    TimeSettingsURLHandler
+    URLTimeSettingsSynchronizer
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -194,7 +194,7 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
-    plugins.TimeSettingsURLHandler = TimeSettingsURLHandler.default;
+    plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
 
     return plugins;
 });
