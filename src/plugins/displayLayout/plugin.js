@@ -22,7 +22,7 @@
 
 import Layout from './components/DisplayLayout.vue'
 import Vue from 'vue'
-import objectUtils from '../../api/objects/object-utils.js'
+import objectUtils from 'objectUtils'
 import DisplayLayoutType from './DisplayLayoutType.js'
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'

@@ -51,14 +51,21 @@ describe("The condition", function () {
                     key: "some-key",
                     name: "Some attribute",
                     hints: {
+                        range: 2
+                    }
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
+                    hints: {
                         domain: 1
                     }
                 }, {
-                    key: "some-other-key",
-                    name: "Another attribute",
-                    hints: {
-                        range: 1
-                    }
+                    key: "testSource",
+                    source: "value",
+                    name: "Test",
+                    format: "string"
                 }]
             }
         };
@@ -136,5 +143,39 @@ describe("The condition", function () {
         const result = conditionObj.destroyCriteria();
         expect(result).toBeTrue();
         expect(conditionObj.criteria.length).toEqual(0);
+    });
+
+    it("gets the result of a condition when new telemetry data is received", function () {
+        conditionObj.getResult({
+            value: '0',
+            utc: 'Hi',
+            id: testTelemetryObject.identifier.key
+        });
+        expect(conditionObj.result).toBeTrue();
+    });
+
+    it("gets the result of a condition when new telemetry data is received", function () {
+        conditionObj.getResult({
+            value: '1',
+            utc: 'Hi',
+            id: testTelemetryObject.identifier.key
+        });
+        expect(conditionObj.result).toBeFalse();
+    });
+
+    it("keeps the old result new telemetry data is not used by it", function () {
+        conditionObj.getResult({
+            value: '0',
+            utc: 'Hi',
+            id: testTelemetryObject.identifier.key
+        });
+        expect(conditionObj.result).toBeTrue();
+
+        conditionObj.getResult({
+            value: '1',
+            utc: 'Hi',
+            id: '1234'
+        });
+        expect(conditionObj.result).toBeTrue();
     });
 });
