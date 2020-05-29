@@ -159,7 +159,7 @@ export default {
             let x = [];
             let y = [];
 
-            const colors = ['red', 'green', 'blue'];
+            const colors = ['rgb(32, 178, 170)', 'rgb(154, 205, 50)', 'rgb(255, 140, 0)'];
 
             telemetryData.forEach((datum) => {
                 x.push(this.formatDatumX(datum));

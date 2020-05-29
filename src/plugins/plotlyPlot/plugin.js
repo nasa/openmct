@@ -1,6 +1,6 @@
 import PlotlyViewProvider from './PlotlyViewProvider.js';
 
-export default function () {
+export default function plugin() {
     return function install(openmct) {
         openmct.objectViews.addProvider(new PlotlyViewProvider(openmct));
 
