@@ -12,7 +12,7 @@ export default {
 
         return {
             telemetryObjects: [],
-            bounds: this.openmct.time.bounds(),
+            bounds: {},
             timeRange:  0,
             plotData: {},
             subscriptions: {}
