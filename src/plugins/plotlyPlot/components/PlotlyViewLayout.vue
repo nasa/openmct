@@ -26,12 +26,12 @@ export default {
         this.composition.on('remove', this.removeTelemetry);
         this.composition.load();
 
-        this.openmct.time.on('clock', this.refreshData);
         this.openmct.time.on('bounds', this.refreshData);
         this.openmct.time.on('clock', this.changeClock);
     },
     destroyed() {
-        this.unsubscribe();
+        Object.keys(this.subscriptions)
+            .forEach(subscription => this.unsubscribe(subscription));
     },
     methods: {
         changeClock() {
@@ -55,9 +55,7 @@ export default {
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
                 }
-
-                const length = this.plotData[telemetryObject.identifier.key].x.length;
-                this.updateData(datum, index, length);
+                this.updateData(datum, index);
             });
         },
         unsubscribe(keyString) {
@@ -65,7 +63,6 @@ export default {
             delete this.subscriptions[keyString];
         },
         refreshData(bounds, isTick) {
-            console.log('refreshData')
             this.bounds = bounds;
 
             this.telemetryObjects.forEach((telemetryObject, index) => {
@@ -81,7 +78,6 @@ export default {
             });
         },
         requestHistory(telemetryObject, index, isAdd) {
-            console.log('requestHistory this.bounds.end', moment.utc(this.bounds.end).format('YYYY-MM-DDTHH:mm:ss[Z]'))
             this.openmct
                 .telemetry
                 .request(telemetryObject, {
@@ -175,9 +171,13 @@ export default {
                 y,
                 type: 'scattergl',
                 mode: 'lines+markers',
+                marker: {
+                    size: 4
+                },
                 line: {
                     color: colors[index], // to set new color for each trace
-                    shape: 'linear'
+                    shape: 'linear',
+                    width: 2
                 }
             }];
 
@@ -198,10 +198,11 @@ export default {
                     Plotly.addTraces(this.plotElement, traceData);
                 } else { // update existing trace with new data (bounds change)
                     Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject, false));
+                    this.updatePlotRange();
                 }
             }
         },
-        updateData(datum, index, length) {
+        updateData(datum, index) {
             // plot all datapoints within bounds
             if (datum.utc <= this.bounds.end && this.openmct.time.clock()) {
                 Plotly.extendTraces(
@@ -210,14 +211,19 @@ export default {
                         x: [[this.formatDatumX(datum)]],
                         y: [[this.formatDatumY(datum)]]
                     },
-                    [index], // apply changes to particular trace
-                    length // set the fixed number of points (will drop points from beginning as new points are added)
+                    [index]
                 );
-                let newRange = {
-                    'xaxis.range': [this.formatDatumX({utc: this.bounds.start}),this.formatDatumX({utc: this.bounds.end})]
-                };
-                Plotly.relayout(this.plotElement, newRange);
+                this.updatePlotRange();
             }
+        },
+        updatePlotRange() {
+            let newRange = {
+                'xaxis.range': [
+                    this.formatDatumX({utc: this.bounds.start}),
+                    this.formatDatumX({utc: this.bounds.end})
+                ]
+            };
+            Plotly.relayout(this.plotElement, newRange);
         }
     }
 }
