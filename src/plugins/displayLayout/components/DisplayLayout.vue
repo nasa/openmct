@@ -581,13 +581,24 @@ export default {
             selectedItems.forEach(selectedItem => {
                 let layoutItem = selectedItem[0].context.layoutItem,
                     copy = this.createDeepCopy(layoutItem);
-
-                copy.id = uuid();
-                copy.y += DUPLICATE_OFFSET;
-                copy.x += DUPLICATE_OFFSET;
                 
+                copy.id = uuid();
+
+                let offsetKeys = ['x', 'y'];
+
+                if (copy.type === 'line-view') {
+                    offsetKeys = offsetKeys.concat(['x2', 'y2']);
+                }
+
+                offsetKeys.forEach(key => {
+                    copy[key] += DUPLICATE_OFFSET
+                });
+
                 this.trackItem(copy);
                 this.layoutItems.push(copy);
+            });
+
+            this.$nextTick(() => {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
                 this.initSelectIndex = this.layoutItems.length - 1;
             });
