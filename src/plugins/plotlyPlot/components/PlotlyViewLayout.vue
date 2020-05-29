@@ -44,7 +44,7 @@ export default {
         },
         addTelemetry(telemetryObject) {
             this.telemetryObjects.push(telemetryObject);
-            const index = this.telemetryObjects.findIndex(obj => obj === telemetryObject);
+            const index = this.telemetryObjects.length - 1;
             this.requestHistory(telemetryObject, index, true);
             this.subscribeTo(telemetryObject, index);
         },
@@ -204,7 +204,8 @@ export default {
         },
         updateData(datum, index) {
             // plot all datapoints within bounds
-            if (datum.utc <= this.bounds.end && this.openmct.time.clock()) {
+            if (datum.utc <= this.bounds.end) {
+
                 Plotly.extendTraces(
                     this.plotElement,
                     {
