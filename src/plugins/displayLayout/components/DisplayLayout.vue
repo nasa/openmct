@@ -52,6 +52,7 @@
         :init-select="initSelectIndex === index"
         :index="index"
         :multi-select="selectedLayoutItems.length > 1"
+        :ref="`layout-item-${item.id}`"
         @move="move"
         @endMove="endMove"
         @endLineResize="endLineResize"
@@ -545,8 +546,25 @@ export default {
 
             return parsedString;
         },
+        dispatchSelection(selectItemsArray) {
+            let event = new MouseEvent('click', {
+                bubbles: true,
+                shiftKey: true,
+                cancelable: true,
+                view: window
+            })
+
+            selectItemsArray.forEach((id) => {
+                let refId = `layout-item-${id}`,
+                    element = this.$refs[refId] && this.$refs[refId][0].$el;
+
+
+                element.dispatchEvent(event);
+            });
+        },
         duplicateItem(selectedItems) {
-            let objectStyles = this.internalDomainObject.configuration.objectStyles;
+            let objectStyles = this.internalDomainObject.configuration.objectStyles,
+                selectItemsArray = [];
 
             selectedItems.forEach(selectedItem => {
                 let layoutItem = selectedItem[0].context.layoutItem,
@@ -554,6 +572,7 @@ export default {
                     copy = this.createDeepCopy(layoutItem);
                 
                 copy.id = uuid();
+                selectItemsArray.push(copy.id);
 
                 let offsetKeys = ['x', 'y'];
 
@@ -576,7 +595,8 @@ export default {
             this.$nextTick(() => {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
-                this.initSelectIndex = this.layoutItems.length - 1;
+                this.$el.click(); //clear selection;
+                this.dispatchSelection(selectItemsArray);
             });
         }
     }
