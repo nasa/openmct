@@ -578,8 +578,11 @@ export default {
             return parsedString;
         },
         duplicateItem(selectedItems) {
+            let objectStyles = this.internalDomainObject.configuration.objectStyles;
+
             selectedItems.forEach(selectedItem => {
                 let layoutItem = selectedItem[0].context.layoutItem,
+                    layoutItemStyle = objectStyles[layoutItem.id],
                     copy = this.createDeepCopy(layoutItem);
                 
                 copy.id = uuid();
@@ -594,12 +597,17 @@ export default {
                     copy[key] += DUPLICATE_OFFSET
                 });
 
+                if (layoutItemStyle) {
+                    objectStyles[copy.id] = layoutItemStyle;
+                }
+
                 this.trackItem(copy);
                 this.layoutItems.push(copy);
             });
 
             this.$nextTick(() => {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+                this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
                 this.initSelectIndex = this.layoutItems.length - 1;
             });
         }
