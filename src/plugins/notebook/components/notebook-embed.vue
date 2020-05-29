@@ -169,11 +169,10 @@ export default {
 
             const bounds = this.openmct.time.bounds();
             const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
-                && this.embed.bounds.end !== bounds.end;
+                || this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
-            window.location.href = link;
-
+            this.openmct.time.stopClock();
             let message = '';
             if (isTimeBoundChanged) {
                 this.openmct.time.bounds({
@@ -187,7 +186,11 @@ export default {
                 message = 'Time bound values changed to fixed timespan mode';
             }
 
-            this.openmct.notifications.alert(message);
+            if (message.length) {
+                this.openmct.notifications.alert(message);
+            }
+
+            window.location.href = link;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);

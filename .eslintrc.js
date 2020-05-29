@@ -10,7 +10,8 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue/recommended"
+        "plugin:vue/recommended",
+        "plugin:you-dont-need-lodash-underscore/compatible"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -22,6 +23,9 @@ module.exports = {
         }
     },
     "rules": {
+        "you-dont-need-lodash-underscore/omit": "off",
+        "you-dont-need-lodash-underscore/throttle": "off",
+        "you-dont-need-lodash-underscore/flatten": "off",
         "no-bitwise": "error",
         "curly": "error",
         "eqeqeq": "error",

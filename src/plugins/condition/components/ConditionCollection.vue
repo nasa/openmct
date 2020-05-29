@@ -200,7 +200,7 @@ export default {
             this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
-            let index = _.findIndex(this.telemetryObjs, (obj) => {
+            let index = this.telemetryObjs.findIndex(obj => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
                 let id = this.openmct.objects.makeKeyString(identifier);
                 return objId === id;
