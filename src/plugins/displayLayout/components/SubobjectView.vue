@@ -140,7 +140,8 @@ export default {
                 childContext.index = this.index;
                 this.context = childContext;
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.initSelect);
+                    this.$el, this.context, this.immediatelySelect);
+                delete this.immediatelySelect;
             });
         }
     }

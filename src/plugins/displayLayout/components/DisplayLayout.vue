@@ -556,10 +556,15 @@ export default {
 
             selectItemsArray.forEach((id) => {
                 let refId = `layout-item-${id}`,
-                    element = this.$refs[refId] && this.$refs[refId][0].$el;
+                    component = this.$refs[refId] && this.$refs[refId][0],
+                    selectable;
 
-
-                element.dispatchEvent(event);
+                if (component) {
+                    component.$nextTick(() => {
+                        component.immediatelySelect = event;
+                        component.$el.dispatchEvent(event);
+                    });
+                }
             });
         },
         duplicateItem(selectedItems) {
@@ -596,7 +601,10 @@ export default {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
                 this.$el.click(); //clear selection;
-                this.dispatchSelection(selectItemsArray);
+
+                this.$nextTick(() => {
+                    this.dispatchSelection(selectItemsArray);
+                });
             });
         }
     }
