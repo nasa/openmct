@@ -2,30 +2,27 @@
 <div class="c-imagery">
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
-            <span class="holder flex-elem grows c-imagery__lc__sliders">
-                <input v-model="filters.brightness"
-                       class="icon-brightness"
-                       type="range"
-                       min="0"
-                       max="500"
-                >
-                <input v-model="filters.contrast"
-                       class="icon-contrast"
-                       type="range"
-                       min="0"
-                       max="500"
-                >
-            </span>
-            <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
-                <a class="s-icon-button icon-reset t-btn-reset"
-                   @click="filters={brightness: 100, contrast: 100}"
-                ></a>
-            </span>
+            <imagery-view-menu-switcher :icon-class="'icon-brightness'"
+                                        :title="'Filters menu'">
+                <imagery-settings @filterChanged="updateFilterValues" />
+            </imagery-view-menu-switcher>
+            <imagery-view-menu-switcher v-if="layers.length"
+                                        :icon-class="'icon-layers'"
+                                        :title="'Layers menu'">
+                <imagery-layers :layers="layers"
+                                @toggleLayerVisibility="toggleLayerVisibility"/>
+            </imagery-view-menu-switcher>
         </div>
         <div class="main-image s-image-main c-imagery__main-image"
              :class="{'paused unnsynced': paused(),'stale':false }"
              :style="{'background-image': `url(${getImageUrl()})`,
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
+        >
+        </div>
+        <div class="layer-image s-image-layer c-imagery__layer-image"
+             v-for="(layer, index) in visibleLayers"
+             :key="index"
+             :style="{'background-image': `url(${layer.value})`}"
         >
         </div>
         <div class="c-imagery__control-bar">
@@ -60,9 +57,17 @@
 
 <script>
 import _ from 'lodash';
+import ImagerySettings from "./ImagerySettings.vue";
+import ImageryLayers from "./ImageryLayers.vue";
+import ImageryViewMenuSwitcher from "./ImageryViewMenuSwitcher.vue";
 
 export default {
     inject: ['openmct', 'domainObject'],
+    components: {
+        ImagerySettings,
+        ImageryLayers,
+        ImageryViewMenuSwitcher
+    },
     data() {
         return {
             autoScroll: true,
@@ -79,7 +84,9 @@ export default {
             imageUrl: '',
             isPaused: false,
             requestCount: 0,
-            timeFormat: ''
+            timeFormat: '',
+            layers: [],
+            visibleLayers: []
         }
     },
     mounted() {
@@ -195,7 +202,7 @@ export default {
             }
         },
         subscribe(domainObject) {
-            this.date = ''
+            this.date = '';
             this.imageUrl = '';
             this.openmct.objects.get(this.keystring)
                 .then((object) => {
@@ -203,6 +210,10 @@ export default {
                     this.timeKey = this.openmct.time.timeSystem().key;
                     this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
                     this.imageFormat = this.openmct.telemetry.getValueFormatter(metadata.valuesForHints(['image'])[0]);
+                    const layersMetadata = metadata.value('layers');
+                    if (layersMetadata) {
+                        this.layers = layersMetadata.enumerations;
+                    }
                     this.unsubscribe = this.openmct.telemetry
                         .subscribe(this.domainObject, (datum) => {
                             this.updateHistory(datum);
@@ -232,6 +243,14 @@ export default {
 
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
+        },
+        updateFilterValues(filters) {
+            this.filters = filters;
+        },
+        toggleLayerVisibility(index) {
+            let isVisible = this.layers[index].visible === true;
+            this.layers[index].visible = !isVisible;
+            this.visibleLayers = this.layers.filter((layer) => { return layer.visible; });
         }
     }
 }

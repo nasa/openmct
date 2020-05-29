@@ -32,11 +32,24 @@ button {
 }
 
 .c-button {
+
     &--menu {
         &:after {
             content: $glyph-icon-arrow-down;
             font-family: symbolsfont;
             opacity: 0.5;
+        }
+
+        &_switcher {
+            margin-right: $interiorMarginSm;
+
+            &__close-btn {
+                position: absolute;
+                top: $interiorMarginLg;
+                right: 0;
+                z-index: 3;
+                padding-top: $interiorMarginSm;
+            }
         }
     }
 

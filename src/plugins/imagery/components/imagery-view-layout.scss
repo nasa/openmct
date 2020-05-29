@@ -14,7 +14,7 @@
         flex: 1 1 auto;
     }
 
-    &__main-image {
+    &__main-image, &__layer-image {
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
@@ -95,6 +95,13 @@
     border: 1px solid transparent;
 }
 
+.s-image-layer {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+}
+
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
@@ -143,6 +150,12 @@
                 border-bottom: 1px solid $bc;
                 margin-top: 2px;
             }
+        }
+    }
+
+    &__lc {
+        &__close-btn {
+            $bc: $scrollbarTrackColorBg;
         }
     }
 }

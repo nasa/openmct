@@ -129,6 +129,25 @@ define([
                                 hints: {
                                     image: 1
                                 }
+                            },
+                            {
+                                key: "layers",
+                                source: "value",
+                                name: "Layers",
+                                format: "enum",
+                                enumerations: [
+                                    {
+                                        value: 'dist/images/bg-splash.jpg',
+                                        string: 'Big Splash'
+                                    },
+                                    {
+                                        value: '',
+                                        string: 'dist/images/logo-nasa.svg'
+                                    }
+                                ],
+                                hints: {
+                                    range: 1
+                                }
                             }
                         ]
                     }
