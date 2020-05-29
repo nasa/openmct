@@ -93,7 +93,11 @@ export default {
                 hovermode: 'compare',
                 hoverdistance: -1,
                 autosize: "true",
-                showlegend: false,
+                showlegend: true,
+                legend: {
+                    y: 1.1,
+                    "orientation": "h"
+                },
                 font: {
                     family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
                     size: "12px",
@@ -124,11 +128,11 @@ export default {
         removeTelemetry(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
             this.unsubscribe(keyString);
-            this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(identifier, object.identifier));
-            if (!this.domainObject.composition.length) {
+            this.telemetryObjects = this.telemetryObjects.filter(object => !(identifier.key === object.identifier.key));
+            if (!this.telemetryObjects.length) {
                 Plotly.purge(this.plotElement);
             } else {
-                Plotly.deleteTraces(this.plotElement, this.domainObject.composition.length);
+                Plotly.deleteTraces(this.plotElement, this.telemetryObjects.length - 1);
             }
         },
         getYAxisLabel(telemetryObject) {
@@ -159,6 +163,7 @@ export default {
             let x = [];
             let y = [];
 
+            // temp palette for demo
             const colors = ['rgb(32, 178, 170)', 'rgb(154, 205, 50)', 'rgb(255, 140, 0)'];
 
             telemetryData.forEach((datum) => {
@@ -172,12 +177,12 @@ export default {
                 type: 'scattergl',
                 mode: 'lines+markers',
                 marker: {
-                    size: 4
+                    size: 5
                 },
                 line: {
                     color: colors[index], // to set new color for each trace
                     shape: 'linear',
-                    width: 2
+                    width: 1.5
                 }
             }];
 
