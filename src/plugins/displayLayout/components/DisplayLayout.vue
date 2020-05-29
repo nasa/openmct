@@ -285,50 +285,18 @@ export default {
         mutate(path, value) {
             this.openmct.objects.mutate(this.internalDomainObject, path, value);
         },
-        promptUserForViewType(domainObject, droppedObjectPosition, $event) {
-            $event.stopImmediatePropagation();
+        switchViewType(context, viewType, selection) {
+            let domainObject = context.item,
+                layoutItem = context.layoutItem,
+                position = [layoutItem.x, layoutItem.y];
 
-            let applicableViews = this.openmct.objectViews.get(domainObject),
-                alphaNumericView = {
-                    key: 'telemetry-view',
-                    name: 'Alpha Numeric'
-                },
-                dialog;
-            
-            applicableViews.push(alphaNumericView);
+            if (viewType === 'telemetry-view') {
+                this.addItem(viewType, domainObject, position);
+            } else {
+                this.addItem('subobject-view', domainObject, position, viewType);
+            }
 
-            let promptButtonChoices = applicableViews.map((view) => {
-                let label = view.name,
-                    callback,
-                    emphasis;
-                
-                if (view.key === 'telemetry-view') {
-                    callback = () => {
-                        this.addItem(view.key, domainObject, droppedObjectPosition);
-                        this.composition.add(domainObject);
-                        dialog.dismiss();
-                    }
-                    emphasis = true;
-                } else {
-                    callback = () => {
-                        this.addItem('subobject-view', domainObject, droppedObjectPosition, view.key);
-                        this.composition.add(domainObject);
-                        dialog.dismiss();
-                    }
-                }
-
-                return {
-                    label,
-                    callback,
-                    emphasis
-                }
-            });
-
-            dialog = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: 'How would you like this item to be added?',
-                buttons: promptButtonChoices
-            });
+            this.removeItem(selection);
         },
         handleDrop($event) {
             if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
@@ -345,7 +313,7 @@ export default {
             ];
 
             if (this.isTelemetry(domainObject)) {
-                this.promptUserForViewType(domainObject, droppedObjectPosition, $event);
+                this.addItem('telemetry-view', domainObject, droppedObjectPosition);
             } else {
                 let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
 

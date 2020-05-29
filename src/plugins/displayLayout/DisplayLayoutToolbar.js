@@ -423,10 +423,51 @@ define(['lodash'], function (_) {
                         title: "Duplicate the selected object",
                         method: function () {
                             let duplicateItem = selectionPath[1].context.duplicateItem;
-                            
+
                             duplicateItem(selection);
                         }
                     };
+                }
+
+                function populateViewOptions(context) {
+                    let domainObject = context.item,
+                        layoutItem = context.layoutItem,
+                        applicableViews = this.openmct.objectViews.get(domainObject),
+                        alphaNumericView = {
+                            key: 'telemetry-view',
+                            name: 'Alpha Numeric'
+                        };
+
+                    return applicableViews.concat([alphaNumericView]).filter(view => {
+                        if (context.layoutItem.type === alphaNumericView.key) {
+                            return view.key !== context.layoutItem.type;
+                        } else {
+                            return view.key !== layoutItem.viewKey;
+                        }
+                    }).map(view => {
+                        return {
+                            name: view.name,
+                            value: view.key
+                        };
+                    });
+                }
+
+                function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
+                    if (selection.length === 1 && selectionPath[1].context.isTelemetry(selectionPath[0].context.item)) {
+                        let displayLayoutContext = selectionPath[1].context,
+                            layoutItemContext = selectionPath[0].context;
+
+                        return {
+                            control: "menu",
+                            domainObject: selectedParent,
+                            icon: "icon-layers",
+                            title: "Switch the view type between Plots, Tables and Alpha-Numerics",
+                            options: populateViewOptions(layoutItemContext),
+                            method: function (option) {
+                                displayLayoutContext.switchViewType(layoutItemContext, option.value, selection);
+                            }
+                        };
+                    }
                 }
 
                 function getSeparator() {
@@ -456,7 +497,8 @@ define(['lodash'], function (_) {
                     'text-style': [],
                     'position': [],
                     'remove': [],
-                    'duplicate': []
+                    'duplicate': [],
+                    'viewSwitcher': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
@@ -486,6 +528,9 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                        }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
                             toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
@@ -509,6 +554,9 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                        }
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {

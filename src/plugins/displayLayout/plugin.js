@@ -67,8 +67,10 @@ export default function DisplayLayoutPlugin(options) {
                             addElement: component && component.$refs.displayLayout.addElement,
                             removeItem: component && component.$refs.displayLayout.removeItem,
                             orderItem: component && component.$refs.displayLayout.orderItem,
-                            duplicateItem: component && component.$refs.displayLayout.duplicateItem
-                        }
+                            duplicateItem: component && component.$refs.displayLayout.duplicateItem,
+                            isTelemetry: component && component.$refs.displayLayout.isTelemetry,
+                            switchViewType: component && component.$refs.displayLayout.switchViewType
+                        };
                     },
                     destroy() {
                         component.$destroy();
