@@ -95,8 +95,7 @@ export default {
                 autosize: "true",
                 showlegend: true,
                 legend: {
-                    y: 1.1,
-                    "orientation": "h"
+                    y: 1.1
                 },
                 font: {
                     family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -174,6 +173,7 @@ export default {
             let traceData = [{ // trace configuration
                 x,
                 y,
+                name: telemetryObject.name,
                 type: 'scattergl',
                 mode: 'lines+markers',
                 marker: {
