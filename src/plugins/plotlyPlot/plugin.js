@@ -1,4 +1,4 @@
-import PlotlyViewProvider from './PlotlyViewProvider.js';
+import PlotlyViewProvider from './PlotlyViewProvider';
 
 export default function plugin() {
     return function install(openmct) {
@@ -11,7 +11,6 @@ export default function plugin() {
             cssClass: 'icon-plot-overlay',
             initialize: function (domainObject) {
                 domainObject.composition = [];
-                domainObject.telemetry = {};
             }
         });
     };

@@ -95,7 +95,8 @@ export default {
                 autosize: "true",
                 showlegend: true,
                 legend: {
-                    y: 1.1
+                    y: 1.1,
+                    "orientation": "h"
                 },
                 font: {
                     family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
