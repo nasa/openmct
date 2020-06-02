@@ -1,6 +1,6 @@
 define([
     './Select',
-    '../../../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     Select,
     objectUtils

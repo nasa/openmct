@@ -22,7 +22,7 @@
 
 define([
     './SummaryWidgetEvaluator',
-    '../../../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     SummaryWidgetEvaluator,
     objectUtils

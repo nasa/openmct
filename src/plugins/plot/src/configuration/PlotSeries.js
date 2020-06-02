@@ -146,7 +146,7 @@ define([
                 strategy = 'minmax';
             }
 
-            options = _.extend({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -160,6 +160,7 @@ define([
                     );
             }
 
+            /* eslint-disable you-dont-need-lodash-underscore/concat */
             return this.openmct
                 .telemetry
                 .request(this.domainObject, options)
@@ -171,6 +172,7 @@ define([
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
+            /* eslint-enable you-dont-need-lodash-underscore/concat */
         },
         /**
          * Update x formatter on x change.
@@ -270,7 +272,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getXVal);
+            return _.sortedIndexBy(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for the series.
@@ -322,7 +324,15 @@ define([
          *                  a point to the end without dupe checking.
          */
         add: function (point, appendOnly) {
-            var insertIndex = this.data.length;
+            var insertIndex = this.data.length,
+                currentYVal = this.getYVal(point),
+                lastYVal = this.getYVal(this.data[insertIndex - 1]);
+
+            if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
+                console.warn('[Plot] Invalid Y Values detected');
+                return;
+            }
+
             if (!appendOnly) {
                 insertIndex = this.sortedIndex(point);
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
@@ -332,11 +342,21 @@ define([
                     return;
                 }
             }
+
             this.updateStats(point);
             point.mctLimitState = this.evaluate(point);
             this.data.splice(insertIndex, 0, point);
             this.emit('add', point, insertIndex, this);
         },
+
+        /**
+         *
+         * @private
+         */
+        isValueInvalid: function (val) {
+            return Number.isNaN(val) || val === undefined;
+        },
+
         /**
          * Remove a point from the data array and notify listeners.
          * @private

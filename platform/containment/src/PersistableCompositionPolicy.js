@@ -26,7 +26,7 @@
  * @namespace platform/containment
  */
 define(
-    ['../../../src/api/objects/object-utils'],
+    ['objectUtils'],
     function (objectUtils) {
 
         function PersistableCompositionPolicy(openmct) {
