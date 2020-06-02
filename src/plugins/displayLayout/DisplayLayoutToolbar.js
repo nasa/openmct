@@ -435,11 +435,13 @@ define(['lodash'], function (_) {
                         applicableViews = [
                             {
                                 key: 'telemetry.plot.overlay',
-                                name: 'Plot'
+                                name: 'Plot',
+                                class: "icon-plot-overlay"
                             },
                             {
                                 key: 'table',
-                                name: 'Table'
+                                name: 'Table',
+                                class: 'icon-tabular-realtime'
                             },
                             {
                                 key: 'telemetry-view',
@@ -450,12 +452,14 @@ define(['lodash'], function (_) {
                     let views = applicableViews.filter(view => {
                         if (context.layoutItem.type === 'telemetry-view') {
                             return view.key !== 'telemetry-view';
+                        } else {
+                            return context.item.type !== view.key;
                         }
-                        return view;
                     }).map(view => {
                         return {
                             name: view.name,
-                            value: view.key
+                            value: view.key,
+                            class: view.class
                         };
                     });
 
@@ -463,20 +467,26 @@ define(['lodash'], function (_) {
                 }
 
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
-                    if (selection.length === 1 && selectionPath[1].context.isTelemetry(selectionPath[0].context.item)) {
+                    if (selection.length === 1) {
                         let displayLayoutContext = selectionPath[1].context,
-                            layoutItemContext = selectionPath[0].context;
+                            selectedItemContext = selectionPath[0].context,
+                            selectedItemType = selectedItemContext.item.type;
 
-                        return {
-                            control: "menu",
-                            domainObject: selectedParent,
-                            icon: "icon-layers",
-                            title: "Switch the view type between Plots, Tables and Alpha-Numerics",
-                            options: populateViewOptions(layoutItemContext),
-                            method: function (option) {
-                                displayLayoutContext.switchViewType(layoutItemContext, option.value, selection);
-                            }
-                        };
+                        if (displayLayoutContext.isTelemetry(selectedItemContext.item) ||
+                            selectedItemType === 'telemetry.plot.overlay' ||
+                            selectedItemType === 'table') {
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-layers",
+                                title: "Switch the view type between Plots, Tables and Alpha-Numerics",
+                                options: populateViewOptions(selectedItemContext),
+                                method: function (option) {
+                                    displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                                }
+                            };
+                        }
                     }
                 }
 
@@ -506,9 +516,9 @@ define(['lodash'], function (_) {
                     'style': [],
                     'text-style': [],
                     'position': [],
-                    'remove': [],
                     'duplicate': [],
-                    'viewSwitcher': []
+                    'viewSwitcher': [],
+                    'remove': []
                 };
 
                 selectedObjects.forEach(selectionPath => {

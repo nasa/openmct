@@ -312,19 +312,37 @@ export default {
 
             return object;
         },
-        createNewLayoutItem(domainObject, domainObjectType, layoutType, position) {
-            let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], domainObjectType);
-
-            this.composition.add(newDomainObject);
-            this.addItem(layoutType, newDomainObject, position);
+        convertToAlpha(identifier, position) {
+            this.openmct.objects.get(identifier).then((domainObject) => {
+                this.composition.add(domainObject);
+                this.addItem('telemetry-view', domainObject, position);
+            });
         },
         switchViewType(context, viewType, selection) {
             let domainObject = context.item,
                 layoutItem = context.layoutItem,
-                position = [layoutItem.x, layoutItem.y];
+                position = [layoutItem.x, layoutItem.y],
+                newDomainObject,
+                layoutType = 'subobject-view';
 
             if (this.isTelemetry(domainObject)) {
-                this.createNewLayoutItem(domainObject, viewType, 'subobject-view', position);
+                newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
+            } else {
+                if (viewType !== 'telemetry-view') {
+                    newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, viewType);
+                } else {
+                    domainObject.composition.forEach((identifier , index) => {
+                        let positionX = position[0] + (index * DUPLICATE_OFFSET),
+                            positionY = position[1] + (index * DUPLICATE_OFFSET);
+
+                        this.convertToAlpha(identifier, [positionX, positionY]);
+                    });
+                }
+            }
+
+            if (newDomainObject) {
+                this.composition.add(newDomainObject);
+                this.addItem(layoutType, newDomainObject, position);
             }
 
             this.removeItem(selection);
