@@ -71,7 +71,6 @@ export default {
     data() {
         return {
             autoScroll: true,
-            date: '',
             filters : {
                 brightness: 100,
                 contrast: 100
@@ -83,6 +82,7 @@ export default {
             imageHistory: [],
             imageUrl: '',
             isPaused: false,
+            metadata: {},
             requestCount: 0,
             timeFormat: '',
             layers: [],
@@ -90,17 +90,38 @@ export default {
         }
     },
     mounted() {
+        // set
         this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.subscribe(this.domainObject);
+        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        const metaDataValues = this.metadata.valuesForHints(['image'])[0];
+        this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
+        const layersMetadata = metaDataValues.layers;
+        if (layersMetadata) {
+            this.layers = layersMetadata;
+        }
+        // initialize
+        this.timeKey = this.openmct.time.timeSystem().key;
+        this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
+        // listen
+        this.openmct.time.on('bounds', this.boundsChange);
+        this.openmct.time.on('timeSystem', this.timeSystemChange);
+        // kickoff
+        this.subscribe();
+        this.requestHistory();
     },
     updated() {
         this.scrollToRight();
     },
     beforeDestroy() {
-        this.stopListening();
+        if (this.unsubscribe) {
+            this.unsubscribe();
+            delete this.unsubscribe;
+        }
+        this.openmct.time.off('bounds', this.boundsChange);
+        this.openmct.time.off('timeSystem', this.timeSystemChange);
     },
     methods: {
-        datumMatchesMostRecent(datum) {
+        datumIsNotValid(datum) {
             if (this.imageHistory.length === 0) {
                 return false;
             }
@@ -110,7 +131,14 @@ export default {
             const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
             const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
 
-            return (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
+            // datum is not valid if it matches the last datum in history,
+            // or it is before the last datum in the history
+            const datumTimeCheck = this.timeFormat.parse(datum);
+            const historyTimeCheck = this.timeFormat.parse(this.imageHistory.slice(-1)[0]);
+            const matchesLast = (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
+            const isStale = datumTimeCheck < historyTimeCheck;
+
+            return matchesLast || isStale;
         },
         getImageUrl(datum) {
             return datum ?
@@ -154,21 +182,6 @@ export default {
 
             return this.isPaused;
         },
-        requestHistory(bounds) {
-            this.requestCount++;
-            this.imageHistory = [];
-            const requestId = this.requestCount;
-            this.openmct.telemetry
-                .request(this.domainObject, bounds)
-                .then((values = []) => {
-                    if (this.requestCount > requestId) {
-                        return Promise.resolve('Stale request');
-                    }
-
-                    values.forEach(this.updateHistory);
-                    this.updateValues(values[values.length - 1]);
-                });
-        },
         scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 return;
@@ -195,45 +208,56 @@ export default {
                 image.selected = true;
             }
         },
-        stopListening() {
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                delete this.unsubscribe;
+        boundsChange(bounds, isTick) {
+            if(!isTick) {
+                this.requestHistory();
             }
         },
-        subscribe(domainObject) {
-            this.date = '';
-            this.imageUrl = '';
-            this.openmct.objects.get(this.keystring)
-                .then((object) => {
-                    const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-                    this.timeKey = this.openmct.time.timeSystem().key;
-                    this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
-                    const metaDataValues = metadata.valuesForHints(['image'])[0];
-                    this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-                    const layersMetadata = metaDataValues.layers;
-                    if (layersMetadata) {
-                        this.layers = layersMetadata;
+        requestHistory() {
+            let bounds = this.openmct.time.bounds();
+            this.requestCount++;
+            const requestId = this.requestCount;
+            this.imageHistory = [];
+            this.openmct.telemetry
+                .request(this.domainObject, bounds)
+                .then((values = []) => {
+                    if (this.requestCount === requestId) {
+                        values.forEach(this.updateHistory, false);
+                        this.updateValues(values[values.length - 1]);
                     }
-                    this.unsubscribe = this.openmct.telemetry
-                        .subscribe(this.domainObject, (datum) => {
-                            this.updateHistory(datum);
-                            this.updateValues(datum);
-                        });
+                });
+        },
+        timeSystemChange(system) {
+            // reset timesystem dependent variables
+            this.timeKey = system.key;
+            this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
+        },
+        subscribe() {
+            this.unsubscribe = this.openmct.telemetry
+                .subscribe(this.domainObject, (datum) => {
+                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
+                        bounds = this.openmct.time.bounds();
 
-                    this.requestHistory(this.openmct.time.bounds());
+                    if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
+                        this.updateHistory(datum);
+                        this.updateValues(datum);
+                    }
                 });
         },
         unselectAllImages() {
             this.imageHistory.forEach(image => image.selected = false);
         },
-        updateHistory(datum) {
-            if (this.datumMatchesMostRecent(datum)) {
+        updateHistory(datum, updateValues = true) {
+            if (this.datumIsNotValid(datum)) {
                 return;
             }
 
             const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
+
+            if(updateValues) {
+                this.updateValues(datum);
+            }
         },
         updateValues(datum) {
             if (this.isPaused) {

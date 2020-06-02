@@ -124,8 +124,21 @@ export const getConditionalStyleForItem = (domainObject, id) => {
             if (domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
                 return domainObjectStyles[id].styles;
             }
-        } else if (domainObjectStyles.staticStyle) {
+        } else if (domainObjectStyles.conditionSetIdentifier) {
             return domainObjectStyles.styles;
+        }
+    }
+};
+
+export const getConditionSetIdentifierForItem = (domainObject, id) => {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
+                return domainObjectStyles[id].conditionSetIdentifier;
+            }
+        } else if (domainObjectStyles.conditionSetIdentifier) {
+            return domainObjectStyles.conditionSetIdentifier;
         }
     }
 };
