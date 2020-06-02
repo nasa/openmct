@@ -24,7 +24,7 @@ import {createMouseEvent, createOpenMct} from "testUtils";
 import ImageryPlugin from "./plugin";
 import Vue from 'vue';
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -122,12 +122,12 @@ fdescribe('the plugin', function () {
                         },
                         layers: [
                             {
-                                source: 'dist/images/bg-splash.jpg',
-                                name: 'Big Splash'
+                                source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                name: '16:9'
                             },
                             {
-                                source: 'dist/images/logo-nasa.svg',
-                                name: 'Nasa Logo'
+                                source: 'dist/imagery/example-imagery-layer-safe.png',
+                                name: 'Safe'
                             }
                         ]
                     }]
@@ -169,8 +169,8 @@ fdescribe('the plugin', function () {
             return Vue.nextTick().then(() => {
                 let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
                 expect(layersMenu.length).toBe(1);
-                let layers = element.querySelectorAll('.checkbox-menu');
-                expect(layers.length).toBe(1);
+                let layers = element.querySelectorAll('.checkbox-menu li');
+                expect(layers.length).toBe(2);
             });
         });
     });
