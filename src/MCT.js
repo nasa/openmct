@@ -267,6 +267,7 @@ define([
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());
+        this.install(this.plugins.NotificationIndicator());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
