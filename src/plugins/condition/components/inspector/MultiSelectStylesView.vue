@@ -50,6 +50,7 @@
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
+import isEmpty from 'lodash/isEmpty';
 
 export default {
     name: 'MultiSelectStylesView',
@@ -178,7 +179,7 @@ export default {
                 domainObjectStyles[itemId] = undefined;
                 delete domainObjectStyles[this.itemId];
 
-                if (_.isEmpty(domainObjectStyles)) {
+                if (isEmpty(domainObjectStyles)) {
                     domainObjectStyles = undefined;
                 }
                 this.persist(this.domainObject, domainObjectStyles);
@@ -239,7 +240,7 @@ export default {
                     if (this.isStaticAndConditionalStyles) {
                         this.removeConditionalStyles(domainObjectStyles, item.id);
                     }
-                    if (_.isEmpty(itemStaticStyle)) {
+                    if (isEmpty(itemStaticStyle)) {
                         itemStaticStyle = undefined;
                         domainObjectStyles[item.id] = undefined;
                     } else {

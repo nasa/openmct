@@ -23,7 +23,7 @@
 define([
     '../configuration/configStore',
     '../lib/eventHelpers',
-    '../../../../api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     configStore,
