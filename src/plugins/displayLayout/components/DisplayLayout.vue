@@ -286,15 +286,45 @@ export default {
         mutate(path, value) {
             this.openmct.objects.mutate(this.internalDomainObject, path, value);
         },
+        createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
+            let identifier = {
+                    key: uuid(),
+                    namespace: domainObject.identifier.namespace
+                },
+                type = this.openmct.types.get(viewType),
+                parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
+                objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name,
+                object = {};
+            
+            if (model) {
+                object = JSON.parse(JSON.stringify(model))
+            } else {
+                object.type = viewType;
+                type.definition.initialize(object);
+                object.composition.push(...composition);
+            }
+
+            object.name = objectName;
+            object.identifier = identifier;
+            object.location = parentKeyString;
+
+            this.openmct.objects.mutate(object, 'persisted', Date.now());
+
+            return object;
+        },
+        createNewLayoutItem(domainObject, domainObjectType, layoutType, position) {
+            let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], domainObjectType);
+
+            this.composition.add(newDomainObject);
+            this.addItem(layoutType, newDomainObject, position);
+        },
         switchViewType(context, viewType, selection) {
             let domainObject = context.item,
                 layoutItem = context.layoutItem,
                 position = [layoutItem.x, layoutItem.y];
 
-            if (viewType === 'telemetry-view') {
-                this.addItem(viewType, domainObject, position);
-            } else {
-                this.addItem('subobject-view', domainObject, position, viewType);
+            if (this.isTelemetry(domainObject)) {
+                this.createNewLayoutItem(domainObject, viewType, 'subobject-view', position);
             }
 
             this.removeItem(selection);
@@ -568,11 +598,13 @@ export default {
             });
         },
         duplicateItem(selectedItems) {
-            let objectStyles = this.internalDomainObject.configuration.objectStyles,
-                selectItemsArray = [];
+            let objectStyles = this.internalDomainObject.configuration.objectStyles || {},
+                selectItemsArray = [],
+                newDomainObjectsArray = [];
 
             selectedItems.forEach(selectedItem => {
                 let layoutItem = selectedItem[0].context.layoutItem,
+                    domainObject = selectedItem[0].context.item,
                     layoutItemStyle = objectStyles[layoutItem.id],
                     copy = this.createDeepCopy(layoutItem);
                 
@@ -583,6 +615,13 @@ export default {
 
                 if (copy.type === 'line-view') {
                     offsetKeys = offsetKeys.concat(['x2', 'y2']);
+                }
+
+                if (copy.type === 'subobject-view') {
+                    let newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject);
+                    
+                    newDomainObjectsArray.push(newDomainObject);
+                    copy.identifier = newDomainObject.identifier;
                 }
 
                 offsetKeys.forEach(key => {
@@ -603,6 +642,9 @@ export default {
                 this.$el.click(); //clear selection;
 
                 this.$nextTick(() => {
+                    newDomainObjectsArray.forEach(domainObject => {
+                        this.composition.add(domainObject);
+                    });
                     this.dispatchSelection(selectItemsArray);
                 });
             });

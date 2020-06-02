@@ -432,24 +432,34 @@ define(['lodash'], function (_) {
                 function populateViewOptions(context) {
                     let domainObject = context.item,
                         layoutItem = context.layoutItem,
-                        applicableViews = this.openmct.objectViews.get(domainObject),
-                        alphaNumericView = {
-                            key: 'telemetry-view',
-                            name: 'Alpha Numeric'
-                        };
+                        applicableViews = [
+                            {
+                                key: 'telemetry.plot.overlay',
+                                name: 'Plot'
+                            },
+                            {
+                                key: 'table',
+                                name: 'Table'
+                            },
+                            {
+                                key: 'telemetry-view',
+                                name: 'Alpha Numeric'
+                            }
+                        ];
 
-                    return applicableViews.concat([alphaNumericView]).filter(view => {
-                        if (context.layoutItem.type === alphaNumericView.key) {
-                            return view.key !== context.layoutItem.type;
-                        } else {
-                            return view.key !== layoutItem.viewKey;
+                    let views = applicableViews.filter(view => {
+                        if (context.layoutItem.type === 'telemetry-view') {
+                            return view.key !== 'telemetry-view';
                         }
+                        return view;
                     }).map(view => {
                         return {
                             name: view.name,
                             value: view.key
                         };
                     });
+
+                    return views;
                 }
 
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
