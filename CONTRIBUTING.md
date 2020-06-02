@@ -169,7 +169,7 @@ JavaScript sources in Open MCT should:
    code, and  present these in the following order:
    * First, variable declarations and initialization.
    * Secondly, imperative statements.
-   * Finally, the returned value.
+   * Finally, the returned value. Functions should only have a single return statement.
 1. Avoid the use of "magic" values.
    eg.
    ```JavaScript
