@@ -126,27 +126,18 @@ define([
                                 name: 'Image',
                                 key: 'url',
                                 format: 'image',
-                                hints: {
-                                    image: 1
-                                }
-                            },
-                            {
-                                key: "layers",
-                                source: "value",
-                                name: "Layers",
-                                format: "enum",
-                                enumerations: [
+                                layers: [
                                     {
-                                        value: 'dist/images/bg-splash.jpg',
-                                        string: 'Big Splash'
+                                        source: 'dist/images/bg-splash.jpg',
+                                        name: 'Big Splash'
                                     },
                                     {
-                                        value: '',
-                                        string: 'dist/images/logo-nasa.svg'
+                                        source: 'dist/images/logo-nasa.svg',
+                                        name: 'Nasa Logo'
                                     }
                                 ],
                                 hints: {
-                                    range: 1
+                                    image: 1
                                 }
                             }
                         ]

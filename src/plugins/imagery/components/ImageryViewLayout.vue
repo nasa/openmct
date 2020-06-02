@@ -22,7 +22,7 @@
         <div class="layer-image s-image-layer c-imagery__layer-image"
              v-for="(layer, index) in visibleLayers"
              :key="index"
-             :style="{'background-image': `url(${layer.value})`}"
+             :style="{'background-image': `url(${layer.source})`}"
         >
         </div>
         <div class="c-imagery__control-bar">
@@ -209,10 +209,11 @@ export default {
                     const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
                     this.timeKey = this.openmct.time.timeSystem().key;
                     this.timeFormat = this.openmct.telemetry.getValueFormatter(metadata.value(this.timeKey));
-                    this.imageFormat = this.openmct.telemetry.getValueFormatter(metadata.valuesForHints(['image'])[0]);
-                    const layersMetadata = metadata.value('layers');
+                    const metaDataValues = metadata.valuesForHints(['image'])[0];
+                    this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
+                    const layersMetadata = metaDataValues.layers;
                     if (layersMetadata) {
-                        this.layers = layersMetadata.enumerations;
+                        this.layers = layersMetadata;
                     }
                     this.unsubscribe = this.openmct.telemetry
                         .subscribe(this.domainObject, (datum) => {
