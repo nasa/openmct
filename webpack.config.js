@@ -66,6 +66,10 @@ const webpackConfig = {
                 to: 'favicons'
             },
             {
+                from: 'src/images/imagery',
+                to: 'imagery'
+            },
+            {
                 from: './index.html',
                 transform: function (content) {
                     return content.toString().replace(/dist\//g, '');

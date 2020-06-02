@@ -128,12 +128,16 @@ define([
                                 format: 'image',
                                 layers: [
                                     {
-                                        source: 'dist/images/bg-splash.jpg',
-                                        name: 'Big Splash'
+                                        source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                        name: '16:9'
                                     },
                                     {
-                                        source: 'dist/images/logo-nasa.svg',
-                                        name: 'Nasa Logo'
+                                        source: 'dist/imagery/example-imagery-layer-safe.png',
+                                        name: 'Safe'
+                                    },
+                                    {
+                                        source: 'dist/imagery/example-imagery-layer-scale.png',
+                                        name: 'Scale'
                                     }
                                 ],
                                 hints: {
