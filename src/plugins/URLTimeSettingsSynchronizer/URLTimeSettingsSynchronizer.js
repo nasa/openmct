@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import HashRelativeURL from './HashRelativeURL.js';
 
 const TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
 const DUMMY_URL="https://nasa.gov";
@@ -51,7 +52,7 @@ export default class URLTimeSettingsSynchronizer {
     updateTimeSettings() {
         // Prevent from triggering self
         if (!this.isUrlUpdateInProgress) {
-            let url = this.createUrlWrapper();
+            let url = HashRelativeURL.fromCurrent();
             let timeParameters = this.parseParametersFromUrl(url);
 
             if (this.areTimeParametersValid(timeParameters)) {
@@ -122,7 +123,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let url = this.createUrlWrapper();
+        let url = HashRelativeURL.fromCurrent();
         let clock = this.openmct.time.clock();
         let bounds = this.openmct.time.bounds();
         let clockOffsets = this.openmct.time.clockOffsets();
@@ -150,7 +151,7 @@ export default class URLTimeSettingsSynchronizer {
 
         url.searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
         this.isUrlUpdateInProgress = true;
-        window.location.hash = `#${url.pathname}${url.search}`;
+        window.location.hash = url.toRelativePathString();
     }
 
     areTimeParametersValid(timeParameters) {
