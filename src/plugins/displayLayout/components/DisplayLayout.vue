@@ -346,6 +346,7 @@ export default {
             }
 
             this.removeItem(selection);
+            this.initSelectIndex = this.layoutItems.length - 1; //restore selection
         },
         handleDrop($event) {
             if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
