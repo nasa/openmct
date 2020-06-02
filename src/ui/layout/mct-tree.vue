@@ -33,6 +33,7 @@
         <tree-item
             v-for="item in allTreeItems"
             :key="item.id"
+            :class="childrenSlideClass"
             :node="item"
         />
     </ul>
@@ -47,6 +48,7 @@
             v-for="item in filteredTreeItems"
             :key="item.id"
             :node="item"
+            :root-path="ROOT_PATH"
         />
     </ul>
     <!-- end search tree -->
@@ -56,6 +58,8 @@
 <script>
 import treeItem from './tree-item.vue'
 import search from '../components/search.vue';
+
+const ROOT_PATH = '/browse';
 
 export default {
     inject: ['openmct'],
@@ -69,7 +73,8 @@ export default {
             searchValue: '',
             allTreeItems: [],
             filteredTreeItems: [],
-            isLoading: false
+            isLoading: false,
+            childrenSlideClass: 'slide-left'
         }
     },
     mounted() {
@@ -93,7 +98,7 @@ export default {
                             id: this.openmct.objects.makeKeyString(c.identifier),
                             object: c,
                             objectPath: [c],
-                            navigateToParent: '/browse'
+                            navigateToParent: ROOT_PATH
                         };
                     });
                 });
@@ -111,7 +116,7 @@ export default {
                         objectPath = context.getPath().slice(1)
                             .map(oldObject => oldObject.useCapability('adapter'))
                             .reverse();
-                        navigateToParent = '/browse/' + objectPath.slice(1)
+                        navigateToParent = ROOT_PATH + '/' + objectPath.slice(1)
                             .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
                             .join('/');
                     }
