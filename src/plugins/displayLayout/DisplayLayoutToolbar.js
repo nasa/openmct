@@ -430,24 +430,27 @@ define(['lodash'], function (_) {
                 }
 
                 function populateViewOptions(context) {
-                    let domainObject = context.item,
-                        layoutItem = context.layoutItem,
-                        applicableViews = [
-                            {
-                                key: 'telemetry.plot.overlay',
-                                name: 'Plot',
-                                class: "icon-plot-overlay"
-                            },
-                            {
-                                key: 'table',
-                                name: 'Table',
-                                class: 'icon-tabular-realtime'
-                            },
-                            {
-                                key: 'telemetry-view',
-                                name: 'Alpha Numeric'
-                            }
-                        ];
+                    let applicableViews = [
+                        {
+                            key: 'telemetry.plot.overlay',
+                            name: 'Plot',
+                            class: "icon-plot-overlay"
+                        },
+                        {
+                            key: "telemetry.plot.stacked",
+                            name: "Stacked Plot",
+                            class: "icon-plot-stacked"
+                        },
+                        {
+                            key: 'table',
+                            name: 'Table',
+                            class: 'icon-tabular-realtime'
+                        },
+                        {
+                            key: 'telemetry-view',
+                            name: 'Alpha Numeric'
+                        }
+                    ];
 
                     let views = applicableViews.filter(view => {
                         if (context.layoutItem.type === 'telemetry-view') {
@@ -486,6 +489,7 @@ define(['lodash'], function (_) {
 
                         if (selectedItemContext.layoutItem.type === 'telemetry-view' ||
                             selectedItemType === 'telemetry.plot.overlay' ||
+                            selectedItemType === 'telemetry.plot.stacked' ||
                             selectedItemType === 'table') {
 
                             return {

@@ -20,9 +20,6 @@ export default {
             default: () => {
                 return [];
             }
-        },
-        viewKeyProp: {
-            type: String
         }
     },
     watch: {
@@ -245,7 +242,7 @@ export default {
             }
         },
         getViewProvider() {
-            let provider = this.openmct.objectViews.getByProviderKey(this.viewKeyProp || this.viewKey);
+            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
 
             if (!provider) {
                 provider = this.openmct.objectViews.get(this.currentObject)[0];

@@ -47,12 +47,12 @@
         :is="item.type"
         v-for="(item, index) in layoutItems"
         :key="item.id"
+        :ref="`layout-item-${item.id}`"
         :item="item"
         :grid-size="gridSize"
         :init-select="initSelectIndex === index"
         :index="index"
         :multi-select="selectedLayoutItems.length > 1"
-        :ref="`layout-item-${item.id}`"
         @move="move"
         @endMove="endMove"
         @endLineResize="endLineResize"
@@ -536,7 +536,7 @@ export default {
                 parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
                 objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name,
                 object = {};
-            
+
             if (model) {
                 object = this.createDeepCopy(model);
             } else {
@@ -575,8 +575,7 @@ export default {
 
             selectItemsArray.forEach((id) => {
                 let refId = `layout-item-${id}`,
-                    component = this.$refs[refId] && this.$refs[refId][0],
-                    selectable;
+                    component = this.$refs[refId] && this.$refs[refId][0];
 
                 if (component) {
                     component.$nextTick(() => {
@@ -596,7 +595,7 @@ export default {
                     domainObject = selectedItem[0].context.item,
                     layoutItemStyle = objectStyles[layoutItem.id],
                     copy = this.createDeepCopy(layoutItem);
-                
+
                 copy.id = uuid();
                 selectItemsArray.push(copy.id);
 
@@ -608,7 +607,7 @@ export default {
 
                 if (copy.type === 'subobject-view') {
                     let newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject);
-                    
+
                     newDomainObjectsArray.push(newDomainObject);
                     copy.identifier = newDomainObject.identifier;
                 }

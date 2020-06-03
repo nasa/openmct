@@ -34,7 +34,6 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
-        :viewKeyProp="item.viewKey"
     />
 </layout-frame>
 </template>
