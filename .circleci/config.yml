@@ -5,7 +5,7 @@ jobs:
         - image: circleci/node:13-browsers
           environment:
             CHROME_BIN: "/usr/bin/google-chrome"
-        - resource_class: medium+
+    resource_class: medium+
     steps:
         - checkout
         - run:
