@@ -8,13 +8,13 @@ jobs:
     steps:
         - checkout
         - run:
-            name: Rebuild node-sass
-            command: 'npm rebuild node-sass'
-        - run:
             name: Update npm
             command: 'sudo npm install -g npm@latest'
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}
+        - run:
+            name: Rebuild node-sass
+            command: 'npm rebuild node-sass'
         - run:
             name: Installing dependencies (npm install)
             command: npm install
