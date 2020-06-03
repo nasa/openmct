@@ -312,7 +312,7 @@ export default {
 
             return object;
         },
-        convertToAlpha(identifier, position) {
+        convertToTelemetryView(identifier, position) {
             this.openmct.objects.get(identifier).then((domainObject) => {
                 this.composition.add(domainObject);
                 this.addItem('telemetry-view', domainObject, position);
@@ -325,7 +325,7 @@ export default {
                 newDomainObject,
                 layoutType = 'subobject-view';
 
-            if (this.isTelemetry(domainObject)) {
+            if (layoutItem.type === 'telemetry-view') {
                 newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
             } else {
                 if (viewType !== 'telemetry-view') {
@@ -335,7 +335,7 @@ export default {
                         let positionX = position[0] + (index * DUPLICATE_OFFSET),
                             positionY = position[1] + (index * DUPLICATE_OFFSET);
 
-                        this.convertToAlpha(identifier, [positionX, positionY]);
+                        this.convertToTelemetryView(identifier, [positionX, positionY]);
                     });
                 }
             }
@@ -347,6 +347,24 @@ export default {
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        mergeMultipleTelemetryViews(selection, viewType) {
+            let identifiers = selection.map(selectedItem => {
+                    return selectedItem[0].context.layoutItem.identifier;
+                }),
+                firstDomainObject = selection[0][0].context.item,
+                firstLayoutItem = selection[0][0].context.layoutItem,
+                position = [firstLayoutItem.x, firstLayoutItem.y],
+                mockDomainObject = {
+                    name: 'Merged Telemetry Views',
+                    identifier: firstDomainObject.identifier
+                },
+                newDomainObject = this.createNewDomainObject(mockDomainObject, identifiers, viewType);
+
+            this.composition.add(newDomainObject);
+            this.addItem('subobject-view', newDomainObject, position);
+            this.removeItem(selection);
+            this.initSelectIndex = this.layoutItems.length - 1;
         },
         handleDrop($event) {
             if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {

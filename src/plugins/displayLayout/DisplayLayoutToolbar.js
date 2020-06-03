@@ -466,13 +466,25 @@ define(['lodash'], function (_) {
                     return views;
                 }
 
+                function areAllTelemetryViews(selection) {
+                    let allTelemetry = true;
+
+                    selection.forEach(selectedItem => {
+                        if (selectedItem[0].context.layoutItem.type !== 'telemetry-view') {
+                            allTelemetry = false;
+                        }
+                    });
+
+                    return allTelemetry;
+                }
+
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
                     if (selection.length === 1) {
                         let displayLayoutContext = selectionPath[1].context,
                             selectedItemContext = selectionPath[0].context,
                             selectedItemType = selectedItemContext.item.type;
 
-                        if (displayLayoutContext.isTelemetry(selectedItemContext.item) ||
+                        if (selectedItemContext.layoutItem.type === 'telemetry-view' ||
                             selectedItemType === 'telemetry.plot.overlay' ||
                             selectedItemType === 'table') {
 
@@ -484,6 +496,23 @@ define(['lodash'], function (_) {
                                 options: populateViewOptions(selectedItemContext),
                                 method: function (option) {
                                     displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                                }
+                            };
+                        }
+                    } else if (selection.length > 1) {
+                        let displayLayoutContext = selectionPath[1].context,
+                            selectedItemContext = selection[0][0].context;
+
+                        if (areAllTelemetryViews(selection)) {
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-layers",
+                                title: "Merge into a telemetry table or plot",
+                                options: populateViewOptions(selectedItemContext),
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
                                 }
                             };
                         }
