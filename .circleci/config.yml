@@ -8,6 +8,9 @@ jobs:
     steps:
         - checkout
         - run:
+            name: Rebuild node-sass
+            command: 'npm rebuild node-sass'
+        - run:
             name: Update npm
             command: 'sudo npm install -g npm@latest'
         - restore_cache:
