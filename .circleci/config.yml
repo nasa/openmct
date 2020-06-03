@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-        - image: circleci/node:8-browsers
+        - image: circleci/node:13-browsers
           environment:
             CHROME_BIN: "/usr/bin/google-chrome"
         - resource_class: medium+
@@ -13,6 +13,9 @@ jobs:
             command: 'sudo npm install -g npm@latest'
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}
+        - run:
+            name: Rebuild node-sass
+            command: 'npm rebuild node-sass'
         - run:
             name: Installing dependencies (npm install)
             command: npm install
