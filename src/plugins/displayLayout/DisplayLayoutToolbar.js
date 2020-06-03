@@ -491,8 +491,8 @@ define(['lodash'], function (_) {
                             return {
                                 control: "menu",
                                 domainObject: selectedParent,
-                                icon: "icon-layers",
-                                title: "Switch the view type between Plots, Tables and Alpha-Numerics",
+                                icon: "icon-object",
+                                title: "Switch the view type between plots, tables and alpha-numerics",
                                 options: populateViewOptions(selectedItemContext),
                                 method: function (option) {
                                     displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
@@ -500,15 +500,14 @@ define(['lodash'], function (_) {
                             };
                         }
                     } else if (selection.length > 1) {
-                        let displayLayoutContext = selectionPath[1].context,
-                            selectedItemContext = selection[0][0].context;
-
                         if (areAllTelemetryViews(selection)) {
+                            let displayLayoutContext = selectionPath[1].context,
+                                selectedItemContext = selection[0][0].context;
 
                             return {
                                 control: "menu",
                                 domainObject: selectedParent,
-                                icon: "icon-layers",
+                                icon: "icon-object",
                                 title: "Merge into a telemetry table or plot",
                                 options: populateViewOptions(selectedItemContext),
                                 method: function (option) {
