@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import isEmpty from 'lodash/isEmpty';
+
 const NONE_VALUE = '__no_value';
 
 const styleProps = {
@@ -122,8 +124,21 @@ export const getConditionalStyleForItem = (domainObject, id) => {
             if (domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
                 return domainObjectStyles[id].styles;
             }
-        } else if (domainObjectStyles.staticStyle) {
+        } else if (domainObjectStyles.conditionSetIdentifier) {
             return domainObjectStyles.styles;
+        }
+    }
+};
+
+export const getConditionSetIdentifierForItem = (domainObject, id) => {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].conditionSetIdentifier) {
+                return domainObjectStyles[id].conditionSetIdentifier;
+            }
+        } else if (domainObjectStyles.conditionSetIdentifier) {
+            return domainObjectStyles.conditionSetIdentifier;
         }
     }
 };
@@ -154,7 +169,7 @@ export const getApplicableStylesForItem = (domainObject, item) => {
 };
 
 export const getStylesWithoutNoneValue = (style) => {
-    if (_.isEmpty(style) || !style) {
+    if (isEmpty(style) || !style) {
         return;
     }
     let styleObj = {};

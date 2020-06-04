@@ -21,44 +21,15 @@
  *****************************************************************************/
 
 define([
-    "./src/NotificationIndicatorController",
-    "./src/NotificationIndicator",
-    "./src/NotificationService",
-    "./res/notification-indicator.html"
+    "./src/NotificationService"
 ], function (
-    NotificationIndicatorController,
-    NotificationIndicator,
-    NotificationService,
-    notificationIndicatorTemplate
+    NotificationService
 ) {
 
     return {
         name:"platform/commonUI/notification",
         definition: {
             "extensions": {
-                "templates": [
-                    {
-                        "key": "notificationIndicatorTemplate",
-                        "template": notificationIndicatorTemplate
-                    }
-                ],
-                "controllers": [
-                    {
-                        "key": "NotificationIndicatorController",
-                        "implementation": NotificationIndicatorController,
-                        "depends": [
-                            "$scope",
-                            "openmct",
-                            "dialogService"
-                        ]
-                    }
-                ],
-                "indicators": [
-                    {
-                        "implementation": NotificationIndicator,
-                        "priority": "fallback"
-                    }
-                ],
                 "services": [
                     {
                         "key": "notificationService",

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,15 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import Vue from 'vue';
+import NotificationIndicator from './components/NotificationIndicator.vue';
 
-define(
-    [],
-    function () {
+export default function plugin() {
+    return function install(openmct) {
+        let component = new Vue ({
+                provide: {
+                    openmct
+                },
+                components: {
+                    NotificationIndicator: NotificationIndicator
+                },
+                template: '<NotificationIndicator></NotificationIndicator>'
+            }),
+            indicator = {
+                key: 'notifications-indicator',
+                element: component.$mount().$el
+            };
 
-        function NotificationIndicator() {}
-
-        NotificationIndicator.template = 'notificationIndicatorTemplate';
-
-        return NotificationIndicator;
-    }
-);
+        openmct.indicators.add(indicator);
+    };
+}

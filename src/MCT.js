@@ -28,7 +28,7 @@ define([
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
-    './api/objects/object-utils',
+    'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
     './plugins/buildInfo/plugin',
@@ -267,6 +267,7 @@ define([
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());
         this.install(this.plugins.URLTimeSettingsSynchronizer());
+        this.install(this.plugins.NotificationIndicator());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
