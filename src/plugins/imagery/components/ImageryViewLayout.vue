@@ -100,8 +100,9 @@ export default {
             if (this.domainObject.configuration && layersMetadata.length) {
                 let persistedLayers = this.domainObject.configuration.layers;
                 layersMetadata.forEach((layer, index) => {
-                    if (layer.name === persistedLayers[index].name) {
-                        layer.visible = persistedLayers[index].visible === true;
+                    const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
+                    if (persistedLayer) {
+                        layer.visible = persistedLayer.visible === true;
                     }
                 });
             }
