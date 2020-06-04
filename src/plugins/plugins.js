@@ -34,7 +34,6 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './plotlyPlot/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -68,7 +67,6 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    PlotlyPlotPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -175,7 +173,6 @@ define([
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;
-    plugins.PlotlyPlot = PlotlyPlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
