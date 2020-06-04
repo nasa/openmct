@@ -40,7 +40,7 @@ export function createMouseEvent(eventName) {
     });
 }
 
-export const spyOnBuiltins = (functionNames, object = window) => {
+export function spyOnBuiltins(functionNames, object = window) {
     functionNames.forEach(functionName => {
         if (nativeFunctions[functionName]) {
             throw `Builtin spy function already defined for ${functionName}`;
@@ -49,14 +49,14 @@ export const spyOnBuiltins = (functionNames, object = window) => {
         nativeFunctions.push({functionName, object, nativeFunction: object[functionName]});
         spyOn(object, functionName);
     });
-};
+}
 
-export const clearBuiltinSpies = () => {
+export function clearBuiltinSpies() {
     nativeFunctions.forEach(clearBuiltinSpy);
     nativeFunctions = [];
-};
+}
 
-export const resetApplicationState = () => {
+export function resetApplicationState() {
     clearBuiltinSpies();
     window.location.hash = '#';
 }

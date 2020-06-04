@@ -28,11 +28,19 @@ import objectUtils from '../api/objects/object-utils.js';
  * as URL for modifying state in the URL. This wraps native API with some utility functions that operate only on the
  * hash section of the URL.
  */
+
 export function setSearchParam(paramName, paramValue) {
     let url = getHashRelativeURL();
 
     url.searchParams.set(paramName, paramValue);
-    this.setLocationFromUrl(url);
+    setLocationFromUrl(url);
+}
+
+export function deleteSearchParam(paramName) {
+    let url = getHashRelativeURL();
+
+    url.searchParams.delete(paramName);
+    setLocationFromUrl(url);
 }
 
 /**
@@ -72,15 +80,21 @@ export function setObjectPath(objectPath) {
     let url = getHashRelativeURL();
 
     if (objectPath instanceof Array) {
+        if (objectPath.length > 0 && isDomainObject(objectPath[0])) {
+            throw 'setObjectPath must be called with either a string, or an array of Domain Objects';
+        }
         objectPathString = objectPath.reduce((pathString, object) => {
             return `${pathString}/${objectUtils.makeKeyString(object.identifier)}`;
-        });
+        }, '');
     } else {
         objectPathString = objectPath
     }
-
-    url.pathName = objectPathString;
+    url.pathname = objectPathString;
     setLocationFromUrl(url);
+}
+
+function isDomainObject(potentialObject) {
+    return potentialObject.identifier === undefined;
 }
 
 function setLocationFromUrl(url) {
