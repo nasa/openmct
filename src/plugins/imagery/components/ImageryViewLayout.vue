@@ -97,7 +97,7 @@ export default {
         this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
         let layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
-            if (this.domainObject.configuration && layersMetadata.length) {
+            if (this.domainObject.type === 'example.imagery' && layersMetadata.length) {
                 let persistedLayers = this.domainObject.configuration.layers;
                 layersMetadata.forEach((layer) => {
                     const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
@@ -123,7 +123,7 @@ export default {
         this.scrollToRight();
     },
     beforeDestroy() {
-        if (this.domainObject.configuration) {
+        if (this.domainObject.type === 'example.imagery') {
             this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
         }
 
