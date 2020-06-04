@@ -1,5 +1,5 @@
 <template>
-<div class="c-checkbox-menu c-menu--to-left c-menu--has-close-btn">
+<div class="c-checkbox-menu js-checkbox-menu c-menu--to-left c-menu--has-close-btn">
     <ul
         @click="$event.stopPropagation()"
     >

@@ -169,7 +169,7 @@ fdescribe('the plugin', function () {
             return Vue.nextTick().then(() => {
                 let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-switcher-menu__content');
                 expect(layersMenu.length).toBe(1);
-                let layers = element.querySelectorAll('.checkbox-menu li');
+                let layers = element.querySelectorAll('.js-checkbox-menu li');
                 expect(layers.length).toBe(2);
             });
         });
@@ -252,7 +252,7 @@ fdescribe('the plugin', function () {
             return Vue.nextTick().then(() => {
                 let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
                 expect(layersMenu.length).toBe(1);
-                let layers = element.querySelectorAll('.checkbox-menu input[checked]');
+                let layers = element.querySelectorAll('.js-checkbox-menu input[checked]');
                 expect(layers.length).toBe(1);
             });
         });
@@ -266,9 +266,9 @@ fdescribe('the plugin', function () {
             return Vue.nextTick().then(() => {
                 let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
                 expect(layersMenu.length).toBe(1);
-                let checkedlayers = element.querySelectorAll('.checkbox-menu input[checked]');
+                let checkedlayers = element.querySelectorAll('.js-checkbox-menu input[checked]');
                 expect(checkedlayers.length).toBe(1);
-                let uncheckedLayers = element.querySelectorAll('.checkbox-menu input:not([checked])');
+                let uncheckedLayers = element.querySelectorAll('.js-checkbox-menu input:not([checked])');
                 expect(uncheckedLayers.length).toBe(1);
                 uncheckedLayers[0].dispatchEvent(event);
                 return Vue.nextTick().then(() => {
