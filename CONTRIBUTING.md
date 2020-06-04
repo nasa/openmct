@@ -178,7 +178,7 @@ JavaScript sources in Open MCT should:
    code, and  present these in the following order:
    * First, variable declarations and initialization.
    * Secondly, imperative statements.
-   * Finally, the returned value. Where it improves code clarity, a single return statement at the end of the function should be used
+   * Finally, the returned value. A single return statement at the end of the function should be used, except where an early return would improve code clarity.
 1. Avoid the use of "magic" values.
    eg.
    ```JavaScript
