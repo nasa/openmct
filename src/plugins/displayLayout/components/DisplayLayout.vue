@@ -655,6 +655,32 @@ export default {
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1;
         },
+        mergeMultipleOverlayPlots(selection, viewType) {
+            let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item),
+                overlayPlotIdentifiers = overlayPlots.map(overlayPlot => overlayPlot.identifier),
+                firstOverlayPlot = overlayPlots[0],
+                firstLayoutItem = selection[0][0].context.layoutItem,
+                position = [firstLayoutItem.x, firstLayoutItem.y],
+                mockDomainObject = {
+                    name: 'Merged Overlay Plots',
+                    identifier: firstOverlayPlot.identifier
+                },
+                newDomainObject = this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType),
+                newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier),
+                internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+
+            this.composition.add(newDomainObject);
+            this.addItem('subobject-view', newDomainObject, position);
+
+            overlayPlots.forEach(overlayPlot => {
+                if (overlayPlot.location === internalDomainObjectKeyString) {
+                    this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
+                }
+            });
+
+            this.removeItem(selection);
+            this.initSelectIndex = this.layoutItems.length - 1;
+        },
         switchViewType(context, viewType, selection) {
             let domainObject = context.item,
                 layoutItem = context.layoutItem,

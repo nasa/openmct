@@ -41,38 +41,83 @@ define(['lodash'], function (_) {
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
-                    'text': {
-                        name: "Text Element Properties",
-                        sections: [
-                            {
-                                rows: [
-                                    {
-                                        key: "text",
-                                        control: "textfield",
-                                        name: "Text",
-                                        required: true
-                                    }
-                                ]
-                            }
-                        ]
+                        'text': {
+                            name: "Text Element Properties",
+                            sections: [
+                                {
+                                    rows: [
+                                        {
+                                            key: "text",
+                                            control: "textfield",
+                                            name: "Text",
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        'image': {
+                            name: "Image Properties",
+                            sections: [
+                                {
+                                    rows: [
+                                        {
+                                            key: "url",
+                                            control: "textfield",
+                                            name: "Image URL",
+                                            "cssClass": "l-input-lg",
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
                     },
-                    'image': {
-                        name: "Image Properties",
-                        sections: [
-                            {
-                                rows: [
-                                    {
-                                        key: "url",
-                                        control: "textfield",
-                                        name: "Image URL",
-                                        "cssClass": "l-input-lg",
-                                        required: true
-                                    }
-                                ]
-                            }
+                    viewTypes = {
+                        'telemetry.plot.overlay': {
+                            value: 'telemetry.plot.overlay',
+                            name: 'Overlay Plot',
+                            class: "icon-plot-overlay"
+                        },
+                        'telemetry.plot.stacked': {
+                            value: "telemetry.plot.stacked",
+                            name: "Stacked Plot",
+                            class: "icon-plot-stacked"
+                        },
+                        'table': {
+                            value: 'table',
+                            name: 'Table',
+                            class: 'icon-tabular-realtime'
+                        },
+                        'telemetry-view': {
+                            value: 'telemetry-view',
+                            name: 'Alpha Numeric'
+                        }
+                    },
+                    applicableViews = {
+                        'telemetry-view': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes.table
+                        ],
+                        'telemetry.plot.overlay': [
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes.table,
+                            viewTypes['telemetry-view']
+                        ],
+                        'table': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes['telemetry-view']
+                        ],
+                        'telemetry-view-multi': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes.table
+                        ],
+                        'telemetry.plot.overlay-multi': [
+                            viewTypes['telemetry.plot.stacked']
                         ]
-                    }
-                };
+                    };
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -429,51 +474,24 @@ define(['lodash'], function (_) {
                     };
                 }
 
-                function populateViewOptions(context) {
-                    let applicableViews = [
-                        {
-                            key: 'telemetry.plot.overlay',
-                            name: 'Plot',
-                            class: "icon-plot-overlay"
-                        },
-                        {
-                            key: "telemetry.plot.stacked",
-                            name: "Stacked Plot",
-                            class: "icon-plot-stacked"
-                        },
-                        {
-                            key: 'table',
-                            name: 'Table',
-                            class: 'icon-tabular-realtime'
-                        },
-                        {
-                            key: 'telemetry-view',
-                            name: 'Alpha Numeric'
-                        }
-                    ];
+                function getPropertyFromPath(object, path) {
+                    let splitPath = path.split('.'),
+                        property = Object.assign({}, object);
 
-                    let views = applicableViews.filter(view => {
-                        if (context.layoutItem.type === 'telemetry-view') {
-                            return view.key !== 'telemetry-view';
-                        } else {
-                            return context.item.type !== view.key;
-                        }
-                    }).map(view => {
-                        return {
-                            name: view.name,
-                            value: view.key,
-                            class: view.class
-                        };
-                    });
+                    while (splitPath.length) {
+                        property = property[splitPath.shift()];
+                    }
 
-                    return views;
+                    return property;
                 }
 
-                function areAllTelemetryViews(selection) {
+                function areAllViews(type, path, selection) {
                     let allTelemetry = true;
 
                     selection.forEach(selectedItem => {
-                        if (selectedItem[0].context.layoutItem.type !== 'telemetry-view') {
+                        let selectedItemContext = selectedItem[0].context;
+
+                        if (getPropertyFromPath(selectedItemContext, path) !== type) {
                             allTelemetry = false;
                         }
                     });
@@ -487,35 +505,49 @@ define(['lodash'], function (_) {
                             selectedItemContext = selectionPath[0].context,
                             selectedItemType = selectedItemContext.item.type;
 
-                        if (selectedItemContext.layoutItem.type === 'telemetry-view' ||
-                            selectedItemType === 'telemetry.plot.overlay' ||
-                            selectedItemType === 'telemetry.plot.stacked' ||
-                            selectedItemType === 'table') {
+                        if (selectedItemContext.layoutItem.type === 'telemetry-view') {
+                            selectedItemType = 'telemetry-view';
+                        }
 
+                        let viewOptions = applicableViews[selectedItemType];
+
+                        if (viewOptions) {
                             return {
                                 control: "menu",
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Switch the view type between plots, tables and alpha-numerics",
-                                options: populateViewOptions(selectedItemContext),
+                                options: viewOptions,
                                 method: function (option) {
                                     displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
                                 }
                             };
                         }
                     } else if (selection.length > 1) {
-                        if (areAllTelemetryViews(selection)) {
-                            let displayLayoutContext = selectionPath[1].context,
-                                selectedItemContext = selection[0][0].context;
+                        if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
 
                             return {
                                 control: "menu",
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Merge into a telemetry table or plot",
-                                options: populateViewOptions(selectedItemContext),
+                                options: applicableViews['telemetry-view-multi'],
                                 method: function (option) {
                                     displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
+                                }
+                            };
+                        } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Merge into a stacked plot",
+                                options: applicableViews['telemetry.plot.overlay-multi'],
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
                                 }
                             };
                         }
