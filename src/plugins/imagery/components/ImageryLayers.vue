@@ -10,10 +10,16 @@
                 class="c-inspect-properties__row"
             >
                 <div class="c-inspect-properties__value">
-                    <input
-                        :id="index + 'LayerControl'"
-                        type="checkbox"
-                        @change="toggleLayerVisibility(index)"
+                    <input v-if="layer.visible"
+                           :id="index + 'LayerControl'"
+                           checked
+                           type="checkbox"
+                           @change="toggleLayerVisibility(index)"
+                    >
+                    <input v-else
+                           :id="index + 'LayerControl'"
+                           type="checkbox"
+                           @change="toggleLayerVisibility(index)"
                     >
                     <label :for="index + 'LayerControl'">{{ layer.name }}</label>
                 </div>

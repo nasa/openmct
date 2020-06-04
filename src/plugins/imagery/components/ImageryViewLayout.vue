@@ -95,17 +95,17 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         const metaDataValues = this.metadata.valuesForHints(['image'])[0];
         this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-        const layersMetadata = metaDataValues.layers;
+        let layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
-            this.layers = layersMetadata;
-            if (this.domainObject.configuration && this.layers.length) {
+            if (this.domainObject.configuration && layersMetadata.length) {
                 let persistedLayers = this.domainObject.configuration.layers;
-                this.layers.forEach((layer, index) => {
+                layersMetadata.forEach((layer, index) => {
                     if (layer.name === persistedLayers[index].name) {
                         layer.visible = persistedLayers[index].visible === true;
                     }
                 });
             }
+            this.layers = layersMetadata;
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
