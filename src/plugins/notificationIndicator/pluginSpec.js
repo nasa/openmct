@@ -24,7 +24,7 @@ import NotificationIndicatorPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct
-} from 'testUtils';
+} from 'utils/testing';
 
 describe('the plugin', () => {
     let notificationIndicatorPlugin,

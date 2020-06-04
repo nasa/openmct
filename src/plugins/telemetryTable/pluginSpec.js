@@ -26,7 +26,7 @@ import {
     createMouseEvent,
     spyOnBuiltins,
     resetApplicationState
-} from 'testUtils';
+} from 'utils/testing';
 
 describe("the plugin", () => {
     let openmct;

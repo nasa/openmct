@@ -23,7 +23,7 @@
 define([
     './plugins/plugins',
     'legacyRegistry',
-    'testUtils'
+    'utils/testing'
 ], function (plugins, legacyRegistry, testUtils) {
     describe("MCT", function () {
         var openmct;

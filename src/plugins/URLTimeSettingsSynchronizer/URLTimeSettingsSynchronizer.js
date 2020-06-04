@@ -19,7 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import HashRelativeURL from './HashRelativeURL.js';
+import {
+    getAllSearchParams,
+    setAllSearchParams
+} from 'utils/openmctLocation';
 
 const TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
 const DUMMY_URL="https://nasa.gov";
@@ -52,8 +55,7 @@ export default class URLTimeSettingsSynchronizer {
     updateTimeSettings() {
         // Prevent from triggering self
         if (!this.isUrlUpdateInProgress) {
-            let url = HashRelativeURL.fromCurrent();
-            let timeParameters = this.parseParametersFromUrl(url);
+            let timeParameters = this.parseParametersFromUrl();
 
             if (this.areTimeParametersValid(timeParameters)) {
                 this.setTimeApiFromUrl(timeParameters);
@@ -69,19 +71,21 @@ export default class URLTimeSettingsSynchronizer {
         return new URL(`${DUMMY_URL}${window.location.hash.substring(1)}`);
     }
 
-    parseParametersFromUrl(url) {
-        let mode = url.searchParams.get(SEARCH_MODE);
-        let timeSystem = url.searchParams.get(SEARCH_TIME_SYSTEM);
+    parseParametersFromUrl() {
+        let searchParams = getAllSearchParams();
 
-        let startBound = parseInt(url.searchParams.get(SEARCH_START_BOUND), 10);
-        let endBound = parseInt(url.searchParams.get(SEARCH_END_BOUND), 10);
+        let mode = searchParams.get(SEARCH_MODE);
+        let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
+
+        let startBound = parseInt(searchParams.get(SEARCH_START_BOUND), 10);
+        let endBound = parseInt(searchParams.get(SEARCH_END_BOUND), 10);
         let bounds = {
             start: startBound,
             end: endBound
         };
 
-        let startOffset = parseInt(url.searchParams.get(SEARCH_START_DELTA));
-        let endOffset = parseInt(url.searchParams.get(SEARCH_END_DELTA));
+        let startOffset = parseInt(searchParams.get(SEARCH_START_DELTA));
+        let endOffset = parseInt(searchParams.get(SEARCH_END_DELTA));
         let clockOffsets = {
             start: 0 - startOffset,
             end: endOffset
@@ -123,35 +127,36 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let url = HashRelativeURL.fromCurrent();
+        let searchParams = getAllSearchParams();
         let clock = this.openmct.time.clock();
         let bounds = this.openmct.time.bounds();
         let clockOffsets = this.openmct.time.clockOffsets();
 
         if (clock === undefined) {
-            url.searchParams.set(SEARCH_MODE, MODE_FIXED);
-            url.searchParams.set(SEARCH_START_BOUND, bounds.start);
-            url.searchParams.set(SEARCH_END_BOUND, bounds.end);
+            searchParams.set(SEARCH_MODE, MODE_FIXED);
+            searchParams.set(SEARCH_START_BOUND, bounds.start);
+            searchParams.set(SEARCH_END_BOUND, bounds.end);
 
-            url.searchParams.delete(SEARCH_START_DELTA);
-            url.searchParams.delete(SEARCH_END_DELTA);
+            searchParams.delete(SEARCH_START_DELTA);
+            searchParams.delete(SEARCH_END_DELTA);
         } else {
-            url.searchParams.set(SEARCH_MODE, clock.key);
+            searchParams.set(SEARCH_MODE, clock.key);
 
             if (clockOffsets !== undefined) {
-                url.searchParams.set(SEARCH_START_DELTA, 0 - clockOffsets.start);
-                url.searchParams.set(SEARCH_END_DELTA, clockOffsets.end);
+                searchParams.set(SEARCH_START_DELTA, 0 - clockOffsets.start);
+                searchParams.set(SEARCH_END_DELTA, clockOffsets.end);
             } else {
-                url.searchParams.delete(SEARCH_START_DELTA);
-                url.searchParams.delete(SEARCH_END_DELTA);
+                searchParams.delete(SEARCH_START_DELTA);
+                searchParams.delete(SEARCH_END_DELTA);
             }
-            url.searchParams.delete(SEARCH_START_BOUND);
-            url.searchParams.delete(SEARCH_END_BOUND);
+            searchParams.delete(SEARCH_START_BOUND);
+            searchParams.delete(SEARCH_END_BOUND);
         }
 
-        url.searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
+        searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
         this.isUrlUpdateInProgress = true;
-        window.location.hash = url.toRelativePathString();
+
+        setAllSearchParams(searchParams);
     }
 
     areTimeParametersValid(timeParameters) {
