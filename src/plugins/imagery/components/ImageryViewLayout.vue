@@ -95,9 +95,19 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         const metaDataValues = this.metadata.valuesForHints(['image'])[0];
         this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-        const layersMetadata = metaDataValues.layers;
+        let layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
+            if (this.domainObject.configuration && layersMetadata.length) {
+                let persistedLayers = this.domainObject.configuration.layers;
+                layersMetadata.forEach((layer) => {
+                    const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
+                    if (persistedLayer) {
+                        layer.visible = persistedLayer.visible === true;
+                    }
+                });
+            }
             this.layers = layersMetadata;
+            this.visibleLayers = this.layers.filter((layer) => { return layer.visible; });
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
@@ -113,6 +123,10 @@ export default {
         this.scrollToRight();
     },
     beforeDestroy() {
+        if (this.domainObject.configuration) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
+        }
+
         if (this.unsubscribe) {
             this.unsubscribe();
             delete this.unsubscribe;

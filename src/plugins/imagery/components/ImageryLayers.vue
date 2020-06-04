@@ -7,10 +7,16 @@
                 v-for="(layer, index) in layers"
                 :key="index"
         >
-            <input
-                    :id="index + 'LayerControl'"
-                    type="checkbox"
-                    @change="toggleLayerVisibility(index)"
+            <input v-if="layer.visible"
+                   :id="index + 'LayerControl'"
+                   checked
+                   type="checkbox"
+                   @change="toggleLayerVisibility(index)"
+            >
+            <input v-else
+                   :id="index + 'LayerControl'"
+                   type="checkbox"
+                   @change="toggleLayerVisibility(index)"
             >
             <label :for="index + 'LayerControl'">{{ layer.name }}</label>
         </li>

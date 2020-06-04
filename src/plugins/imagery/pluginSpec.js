@@ -24,12 +24,12 @@ import {createMouseEvent, createOpenMct} from "testUtils";
 import ImageryPlugin from "./plugin";
 import Vue from 'vue';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let element;
     let child;
     let openmct;
 
-    beforeAll((done) => {
+    beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new ImageryPlugin());
 
@@ -173,5 +173,116 @@ describe('the plugin', function () {
                 expect(layers.length).toBe(2);
             });
         });
+
+    });
+
+    describe("The imagery view for creatable objects", () => {
+        let testCreatableTelemetryObject;
+        let applicableViews;
+        let imageryViewProvider;
+        let imageryView;
+
+        beforeEach(() => {
+            testCreatableTelemetryObject = {
+                identifier:{ namespace: "", key: "test-object"},
+                type: "test-object",
+                name: "Test Object",
+                configuration: {
+                    layers: [
+                        {
+                            source: 'dist/imagery/example-imagery-layer-16x9.png',
+                            name: '16:9',
+                            visible: true
+                        },
+                        {
+                            source: 'dist/imagery/example-imagery-layer-safe.png',
+                            name: 'Safe'
+                        }
+                    ]
+                },
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        name: 'Time',
+                        key: 'utc',
+                        format: 'utc',
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        format: 'image',
+                        hints: {
+                            image: 1
+                        },
+                        layers: [
+                            {
+                                source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                name: '16:9'
+                            },
+                            {
+                                source: 'dist/imagery/example-imagery-layer-safe.png',
+                                name: 'Safe'
+                            }
+                        ]
+                    }]
+                }
+            };
+            applicableViews = openmct.objectViews.get(testCreatableTelemetryObject);
+            imageryViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'example.imagery');
+            imageryView = imageryViewProvider.view(testCreatableTelemetryObject, true, [testCreatableTelemetryObject]);
+            imageryView.show(child, true);
+            return Vue.nextTick();
+        });
+
+        it("shows previously visible layers",() => {
+            let layersMenuSwitcher = element.querySelectorAll('button.c-button--menu.icon-layers');
+            expect(layersMenuSwitcher.length).toBe(1);
+            expect(layersMenuSwitcher[0].title).toBe('Layers menu');
+            let event = createMouseEvent('click');
+            layersMenuSwitcher[0].dispatchEvent(event);
+            return Vue.nextTick().then(() => {
+                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
+                expect(layersMenu.length).toBe(1);
+                let layers = element.querySelectorAll('.checkbox-menu input[checked]');
+                expect(layers.length).toBe(1);
+            });
+        });
+
+        it("saves visible layers",() => {
+            let layersMenuSwitcher = element.querySelectorAll('button.c-button--menu.icon-layers');
+            expect(layersMenuSwitcher.length).toBe(1);
+            expect(layersMenuSwitcher[0].title).toBe('Layers menu');
+            let event = createMouseEvent('click');
+            layersMenuSwitcher[0].dispatchEvent(event);
+            return Vue.nextTick().then(() => {
+                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
+                expect(layersMenu.length).toBe(1);
+                let checkedlayers = element.querySelectorAll('.checkbox-menu input[checked]');
+                expect(checkedlayers.length).toBe(1);
+                let uncheckedLayers = element.querySelectorAll('.checkbox-menu input:not([checked])');
+                expect(uncheckedLayers.length).toBe(1);
+                uncheckedLayers[0].dispatchEvent(event);
+                return Vue.nextTick().then(() => {
+                    imageryView.destroy();
+                    return Vue.nextTick().then(() => {
+                        const visibleLayers = testCreatableTelemetryObject.configuration.layers.filter((layer) => {
+                            return layer.visible === true;
+                        });
+                        expect(visibleLayers.length).toBe(2);
+                    });
+
+                });
+            });
+        });
+
     });
 });
