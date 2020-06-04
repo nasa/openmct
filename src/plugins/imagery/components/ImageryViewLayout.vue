@@ -98,6 +98,14 @@ export default {
         const layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
             this.layers = layersMetadata;
+            if (this.domainObject.configuration && this.layers.length) {
+                let persistedLayers = this.domainObject.configuration.layers;
+                this.layers.forEach((layer, index) => {
+                    if (layer.name === persistedLayers[index].name) {
+                        layer.visible = persistedLayers[index].visible === true;
+                    }
+                });
+            }
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
@@ -113,6 +121,10 @@ export default {
         this.scrollToRight();
     },
     beforeDestroy() {
+        if (this.domainObject.configuration) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
+        }
+
         if (this.unsubscribe) {
             this.unsubscribe();
             delete this.unsubscribe;
