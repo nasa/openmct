@@ -58,6 +58,7 @@
             <Condition v-for="(condition, index) in conditionCollection"
                        :key="condition.id"
                        :condition="condition"
+                       :current-condition-id="currentConditionId"
                        :condition-index="index"
                        :telemetry="telemetryObjs"
                        :is-editing="isEditing"
@@ -107,7 +108,8 @@ export default {
             moveIndex: undefined,
             isDragging: false,
             defaultOutput: undefined,
-            dragCounter: 0
+            dragCounter: 0,
+            currentConditionId: ''
         };
     },
     watch: {
@@ -145,6 +147,7 @@ export default {
     },
     methods: {
         handleConditionSetResultUpdated(data) {
+            this.currentConditionId = data.conditionId;
             this.$emit('conditionSetResultUpdated', data)
         },
         observeForChanges() {
@@ -197,7 +200,7 @@ export default {
             this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
-            let index = _.findIndex(this.telemetryObjs, (obj) => {
+            let index = this.telemetryObjs.findIndex(obj => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
                 let id = this.openmct.objects.makeKeyString(identifier);
                 return objId === id;

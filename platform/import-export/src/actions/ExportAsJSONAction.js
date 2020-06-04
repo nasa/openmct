@@ -121,7 +121,7 @@ define(['lodash'], function (_) {
      */
     ExportAsJSONAction.prototype.rewriteLink = function (child, parent) {
         this.externalIdentifiers.push(this.getId(child));
-        var index = _.findIndex(parent.composition, function (id) {
+        var index = parent.composition.findIndex(id => {
             return _.isEqual(child.identifier, id);
         });
         var copyOfChild = this.copyObject(child);

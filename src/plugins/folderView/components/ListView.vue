@@ -64,6 +64,7 @@
 <script>
 import compositionLoader from './composition-loader';
 import ListItem from './ListItem.vue';
+import _ from 'lodash';
 
 export default {
     components: {ListItem},

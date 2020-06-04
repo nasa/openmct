@@ -22,7 +22,7 @@
 
 define([
     '../capabilities/AlternateCompositionCapability',
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     AlternateCompositionCapability,
     objectUtils

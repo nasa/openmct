@@ -52,6 +52,7 @@ define([
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow',
+    './notificationIndicator/plugin',
     './dsn/plugin'
 ], function (
     _,
@@ -85,6 +86,7 @@ define([
     Espresso,
     Maelstrom,
     Snow,
+    NotificationIndicator,
     DsnPlugin
 ) {
     var bundleMap = {
@@ -194,6 +196,7 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.NotificationIndicator = NotificationIndicator.default;
 
     plugins.DsnPlugin = DsnPlugin;
 
