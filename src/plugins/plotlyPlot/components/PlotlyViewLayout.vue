@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Plotly from 'plotly.js/dist/plotly';
+import Plotly from 'plotly.js/dist/plotly.min.js';
 import moment from 'moment'
 
 export default {
