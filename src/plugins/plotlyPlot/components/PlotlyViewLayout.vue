@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Plotly from 'plotly.js-dist';
+//import Plotly from 'plotly.js-dist';
 import moment from 'moment'
 
 export default {
@@ -36,7 +36,7 @@ export default {
     methods: {
         changeClock() {
             if (this.openmct.time.clock()) {
-                Plotly.purge(this.plotElement);
+                //Plotly.purge(this.plotElement);
                 this.telemetryObjects.forEach((telemetryObject, index) => {
                     this.subscribeTo(telemetryObject, index);
                 });
@@ -130,9 +130,9 @@ export default {
             this.unsubscribe(keyString);
             this.telemetryObjects = this.telemetryObjects.filter(object => !(identifier.key === object.identifier.key));
             if (!this.telemetryObjects.length) {
-                Plotly.purge(this.plotElement);
+                //Plotly.purge(this.plotElement);
             } else {
-                Plotly.deleteTraces(this.plotElement, this.telemetryObjects.length - 1);
+                //Plotly.deleteTraces(this.plotElement, this.telemetryObjects.length - 1);
             }
         },
         getYAxisLabel(telemetryObject) {
@@ -190,36 +190,36 @@ export default {
             this.plotData[telemetryObject.identifier.key] = traceData[0];
 
             if (!this.plotElement.childNodes.length) { // not traces yet, so create new plot
-                Plotly.newPlot(
-                    this.plotElement,
-                    traceData,
-                    this.getLayout(telemetryObject, true),
-                    {
-                        displayModeBar: false, // turns off hover-activated toolbar
-                        staticPlot: true // turns off hover effects on datapoints
-                    }
-                );
+                // Plotly.newPlot(
+                //     this.plotElement,
+                //     traceData,
+                //     this.getLayout(telemetryObject, true),
+                //     {
+                //         displayModeBar: false, // turns off hover-activated toolbar
+                //         staticPlot: true // turns off hover effects on datapoints
+                //     }
+                // );
             } else {
-                if (isAdd) { // add a new trace to existing plot
-                    Plotly.addTraces(this.plotElement, traceData);
-                } else { // update existing trace with new data (bounds change)
-                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject, false));
-                    this.updatePlotRange();
-                }
+                // if (isAdd) { // add a new trace to existing plot
+                //     Plotly.addTraces(this.plotElement, traceData);
+                // } else { // update existing trace with new data (bounds change)
+                //     Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject, false));
+                //     this.updatePlotRange();
+                // }
             }
         },
         updateData(datum, index) {
             // plot all datapoints within bounds
             if (datum.utc <= this.bounds.end) {
 
-                Plotly.extendTraces(
-                    this.plotElement,
-                    {
-                        x: [[this.formatDatumX(datum)]],
-                        y: [[this.formatDatumY(datum)]]
-                    },
-                    [index]
-                );
+                // Plotly.extendTraces(
+                //     this.plotElement,
+                //     {
+                //         x: [[this.formatDatumX(datum)]],
+                //         y: [[this.formatDatumY(datum)]]
+                //     },
+                //     [index]
+                // );
                 this.updatePlotRange();
             }
         },
@@ -230,7 +230,7 @@ export default {
                     this.formatDatumX({utc: this.bounds.end})
                 ]
             };
-            Plotly.relayout(this.plotElement, newRange);
+//            Plotly.relayout(this.plotElement, newRange);
         }
     }
 }
