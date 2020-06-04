@@ -126,7 +126,7 @@ export default {
         if (this.domainObject.type === 'example.imagery') {
             this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
         }
-
+        this.visibleLayers = [];
         if (this.unsubscribe) {
             this.unsubscribe();
             delete this.unsubscribe;
