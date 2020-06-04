@@ -153,7 +153,7 @@ describe('the plugin', function () {
             let event = createMouseEvent('click');
             filtersMenuSwitcher[0].dispatchEvent(event);
             return Vue.nextTick().then(() => {
-                let filtersMenu = element.querySelectorAll('button.c-button--menu.icon-brightness + .c-button--menu_switcher__content');
+                let filtersMenu = element.querySelectorAll('button.c-button--menu.icon-brightness + .c-switcher-menu__content');
                 expect(filtersMenu.length).toBe(1);
                 let filtersSliders = element.querySelectorAll('.c-imagery__lc__sliders');
                 expect(filtersSliders.length).toBe(1);
@@ -167,7 +167,7 @@ describe('the plugin', function () {
             let event = createMouseEvent('click');
             layersMenuSwitcher[0].dispatchEvent(event);
             return Vue.nextTick().then(() => {
-                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
+                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-switcher-menu__content');
                 expect(layersMenu.length).toBe(1);
                 let layers = element.querySelectorAll('.checkbox-menu li');
                 expect(layers.length).toBe(2);

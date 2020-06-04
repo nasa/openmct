@@ -512,9 +512,53 @@ select {
     }
 }
 
-.c-menu {
+.c-menu,
+.c-checkbox-menu,
+.c-control-menu {
     @include menuOuter();
+
+    &--to-left {
+        left: auto;
+        right: 0;
+    }
+
+    &--has-close-btn {
+        // Uses flex row layout
+        display: flex;
+        align-items: flex-start;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+.c-menu {
     @include menuInner();
+}
+
+.c-checkbox-menu,
+.c-control-menu {
+    padding: $interiorMarginLg;
+}
+
+.c-checkbox-menu {
+    //@include menuInner();
+    li {
+        color: $colorMenuFg;
+        cursor: pointer;
+        display: flex;
+        justify-content: start;
+        white-space: nowrap;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        + li {
+             margin-top: $interiorMargin;
+         }
+    }
 }
 
 .c-super-menu {
@@ -901,8 +945,11 @@ input[type="range"] {
     // Holder for local controls
     &--horz {
         // Horizontal layout be
-        display: inline-flex;
-        align-items: center;
+        display: flex;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
     }
 
     &--overlay-content {

@@ -1,7 +1,7 @@
 <template>
-<div class="c-button--menu_switcher">
+<div class="c-switcher-menu">
     <button
-        class="c-button--menu"
+        class="c-button c-button--menu c-switcher-menu__button"
         :class="iconClass"
         :title="title"
         @click.stop="toggleMenu"
@@ -10,11 +10,8 @@
     </button>
     <div
         v-show="showMenu"
-        class="c-button--menu_switcher__content"
+        class="c-switcher-menu__content"
     >
-        <span class="holder t-close-btn-holder c-button--menu_switcher__close-btn">
-            <a class="s-icon-button icon-x t-btn-close"></a>
-        </span>
         <slot></slot>
     </div>
 </div>

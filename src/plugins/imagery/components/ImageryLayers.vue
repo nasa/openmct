@@ -1,25 +1,22 @@
 <template>
-<div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc"
-     @click="$event.stopPropagation()"
->
-    <div class="menu checkbox-menu">
-        <ul class="c-inspect-properties__section">
-            <li
+<div class="c-checkbox-menu c-menu--to-left c-menu--has-close-btn">
+    <ul
+        @click="$event.stopPropagation()"
+    >
+        <li
                 v-for="(layer, index) in layers"
                 :key="index"
-                class="c-inspect-properties__row"
+        >
+            <input
+                    :id="index + 'LayerControl'"
+                    type="checkbox"
+                    @change="toggleLayerVisibility(index)"
             >
-                <div class="c-inspect-properties__value">
-                    <input
-                        :id="index + 'LayerControl'"
-                        type="checkbox"
-                        @change="toggleLayerVisibility(index)"
-                    >
-                    <label :for="index + 'LayerControl'">{{ layer.name }}</label>
-                </div>
-            </li>
-        </ul>
-    </div>
+            <label :for="index + 'LayerControl'">{{ layer.name }}</label>
+        </li>
+    </ul>
+
+    <a class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></a>
 </div>
 </template>
 

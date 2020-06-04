@@ -105,31 +105,21 @@
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
+        // Outer holder, holds menu buttons
+        //@include test();
         position: absolute;
         right: $interiorMargin; top: $interiorMargin;
         z-index: 2;
-        background: $colorLocalControlOvrBg;
-        border-radius: $basicCr;
-        max-width: 200px;
-        min-width: 100px;
-        width: 35%;
-        align-items: center;
-        padding: $interiorMargin $interiorMarginLg;
-
-        input[type="range"] {
-            display: block;
-            width: 100%;
-            &:not(:first-child) {
-                margin-top: $interiorMarginLg;
-            }
-
-            &:before {
-                margin-right: $interiorMarginSm;
-            }
-        }
+        //background: $colorLocalControlOvrBg;
+        //border-radius: $basicCr;
+        //max-width: 200px;
+        //min-width: 100px;
+        //width: 35%;
+        //padding: $interiorMargin $interiorMarginLg;
     }
 
     &__lc {
+        // Local Controls
         &__reset-btn {
             $bc: $scrollbarTrackColorBg;
             &:before,
@@ -156,6 +146,33 @@
     &__lc {
         &__close-btn {
             $bc: $scrollbarTrackColorBg;
+        }
+    }
+}
+
+.c-image-controls {
+    // Brightness/contrast
+
+    &__controls {
+        // Sliders and reset element
+        display: flex;
+        align-items: center;
+        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+        width: 150px;
+    }
+
+    &__sliders {
+        display: flex;
+        flex-direction: column;
+
+        input[type='range'] {
+            &:before {
+                margin-right: $interiorMarginSm;
+            }
+
+            + input[type='range'] {
+                margin-top: 11px;
+            }
         }
     }
 }
