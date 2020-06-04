@@ -24,7 +24,7 @@ import {createMouseEvent, createOpenMct} from "testUtils";
 import ImageryPlugin from "./plugin";
 import Vue from 'vue';
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -185,7 +185,7 @@ fdescribe('the plugin', function () {
         beforeEach(() => {
             testCreatableTelemetryObject = {
                 identifier:{ namespace: "", key: "test-object"},
-                type: "test-object",
+                type: "example.imagery",
                 name: "Test Object",
                 configuration: {
                     layers: [
