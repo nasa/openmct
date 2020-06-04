@@ -99,7 +99,7 @@ export default {
         if (layersMetadata) {
             if (this.domainObject.configuration && layersMetadata.length) {
                 let persistedLayers = this.domainObject.configuration.layers;
-                layersMetadata.forEach((layer, index) => {
+                layersMetadata.forEach((layer) => {
                     const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
                     if (persistedLayer) {
                         layer.visible = persistedLayer.visible === true;
@@ -107,6 +107,7 @@ export default {
                 });
             }
             this.layers = layersMetadata;
+            this.visibleLayers = this.layers.filter((layer) => { return layer.visible; });
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
