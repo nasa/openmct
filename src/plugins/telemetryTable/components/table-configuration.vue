@@ -23,17 +23,17 @@
             </li>
             <li class="c-inspect-properties__row">
                 <div
-                        class="c-inspect-properties__label"
-                        title="Show or hide headers"
+                    class="c-inspect-properties__label"
+                    title="Show or hide headers"
                 >
                     <label for="header-visibility">Hide Header</label>
                 </div>
                 <div class="c-inspect-properties__value">
                     <input
-                            id="header-visibility"
-                            type="checkbox"
-                            :checked="configuration.hideHeaders === true"
-                            @change="toggleHeaderVisibility"
+                        id="header-visibility"
+                        type="checkbox"
+                        :checked="configuration.hideHeaders === true"
+                        @change="toggleHeaderVisibility"
                     >
                 </div>
             </li>
