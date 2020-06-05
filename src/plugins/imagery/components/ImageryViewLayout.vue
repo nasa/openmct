@@ -101,7 +101,7 @@ export default {
         let layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
             this.layers = layersMetadata;
-            if (this.domainObject.configuration && layersMetadata.length) {
+            if (this.domainObject.configuration) {
                 let persistedLayers = this.domainObject.configuration.layers;
                 layersMetadata.forEach((layer) => {
                     const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
@@ -112,6 +112,9 @@ export default {
                 this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
             } else {
                 this.visibleLayers = [];
+                this.layers.forEach((layer) => {
+                    layer.visible = false;
+                })
             }
         }
         // initialize
@@ -132,6 +135,7 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
         }
         this.visibleLayers = [];
+        this.layers = [];
         if (this.unsubscribe) {
             this.unsubscribe();
             delete this.unsubscribe;
