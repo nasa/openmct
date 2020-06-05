@@ -24,7 +24,7 @@ import {createMouseEvent, createOpenMct} from "testUtils";
 import ImageryPlugin from "./plugin";
 import Vue from 'vue';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -155,7 +155,7 @@ describe('the plugin', function () {
             return Vue.nextTick().then(() => {
                 let filtersMenu = element.querySelectorAll('button.c-button--menu.icon-brightness + .c-switcher-menu__content');
                 expect(filtersMenu.length).toBe(1);
-                let filtersSliders = element.querySelectorAll('.c-imagery__lc__sliders');
+                let filtersSliders = element.querySelectorAll('.c-image-controls__sliders');
                 expect(filtersSliders.length).toBe(1);
             });
         });
@@ -250,7 +250,7 @@ describe('the plugin', function () {
             let event = createMouseEvent('click');
             layersMenuSwitcher[0].dispatchEvent(event);
             return Vue.nextTick().then(() => {
-                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
+                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-switcher-menu__content');
                 expect(layersMenu.length).toBe(1);
                 let layers = element.querySelectorAll('.js-checkbox-menu input[checked]');
                 expect(layers.length).toBe(1);
@@ -264,7 +264,7 @@ describe('the plugin', function () {
             let event = createMouseEvent('click');
             layersMenuSwitcher[0].dispatchEvent(event);
             return Vue.nextTick().then(() => {
-                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-button--menu_switcher__content');
+                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-switcher-menu__content');
                 expect(layersMenu.length).toBe(1);
                 let checkedlayers = element.querySelectorAll('.js-checkbox-menu input[checked]');
                 expect(checkedlayers.length).toBe(1);

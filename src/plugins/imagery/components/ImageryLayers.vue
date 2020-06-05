@@ -4,8 +4,8 @@
         @click="$event.stopPropagation()"
     >
         <li
-                v-for="(layer, index) in layers"
-                :key="index"
+            v-for="(layer, index) in layers"
+            :key="index"
         >
             <input v-if="layer.visible"
                    :id="index + 'LayerControl'"

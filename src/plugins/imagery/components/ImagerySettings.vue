@@ -21,7 +21,7 @@
                    @input="notifyFiltersChanged"
             >
         </span>
-            <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
+        <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
             <a class="s-icon-button icon-reset t-btn-reset"
                @click="resetFilters"
             ></a>

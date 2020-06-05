@@ -3,14 +3,17 @@
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--horz h-local-controls--overlay-content c-local-controls--show-on-hover c-imagery__lc">
             <imagery-view-menu-switcher :icon-class="'icon-brightness'"
-                                        :title="'Filters menu'">
+                                        :title="'Filters menu'"
+            >
                 <imagery-settings @filterChanged="updateFilterValues" />
             </imagery-view-menu-switcher>
             <imagery-view-menu-switcher v-if="layers.length"
                                         :icon-class="'icon-layers'"
-                                        :title="'Layers menu'">
+                                        :title="'Layers menu'"
+            >
                 <imagery-layers :layers="layers"
-                                @toggleLayerVisibility="toggleLayerVisibility"/>
+                                @toggleLayerVisibility="toggleLayerVisibility"
+                />
             </imagery-view-menu-switcher>
         </div>
         <div class="main-image s-image-main c-imagery__main-image"
@@ -19,9 +22,9 @@
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
         >
         </div>
-        <div class="layer-image s-image-layer c-imagery__layer-image"
-             v-for="(layer, index) in visibleLayers"
+        <div v-for="(layer, index) in visibleLayers"
              :key="index"
+             class="layer-image s-image-layer c-imagery__layer-image"
              :style="{'background-image': `url(${layer.source})`}"
         >
         </div>
@@ -107,7 +110,7 @@ export default {
                 });
             }
             this.layers = layersMetadata;
-            this.visibleLayers = this.layers.filter((layer) => { return layer.visible; });
+            this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
@@ -133,6 +136,7 @@ export default {
         }
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
+        console.log('Destroying view', this.domainObject);
     },
     methods: {
         datumIsNotValid(datum) {
