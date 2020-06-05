@@ -472,6 +472,7 @@ select {
 @mixin menuOuter() {
     border-radius: $basicCr;
     background: $colorMenuBg;
+    filter: $menuFilter;
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
     box-shadow: $shdwMenu;
@@ -908,6 +909,7 @@ input[type="range"] {
     // HTML5 range inputs
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
     background: transparent; /* Otherwise white in Chrome */
+
     &:focus {
         outline: none; /* Removes the blue border. */
     }
