@@ -47,6 +47,27 @@
                 </div>
             </li>
         </ul>
+        <div class="c-inspect-properties__header">
+            Table Header Visibility
+        </div>
+        <ul class="c-inspect-properties__section">
+            <li class="c-inspect-properties__row">
+                <div
+                    class="c-inspect-properties__label"
+                    title="Show or hide headers"
+                >
+                    <label for="header-visibility">Hide Header</label>
+                </div>
+                <div class="c-inspect-properties__value">
+                    <input
+                        id="header-visibility"
+                        type="checkbox"
+                        :checked="configuration.hideHeaders === true"
+                        @change="toggleHeaderVisibility"
+                    >
+                </div>
+            </li>
+        </ul>
     </template>
 </div>
 </template>
@@ -120,6 +141,12 @@ export default {
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
             });
+        },
+        toggleHeaderVisibility() {
+            let hideHeaders = this.configuration.hideHeaders;
+
+            this.configuration.hideHeaders = !hideHeaders;
+            this.tableConfiguration.updateConfiguration(this.configuration);
         }
     }
 }
