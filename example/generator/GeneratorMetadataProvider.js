@@ -50,7 +50,8 @@ define([
             values: [
                 {
                     key: "name",
-                    name: "Name"
+                    name: "Name",
+                    format: "string"
                 },
                 {
                     key: "utc",
@@ -99,7 +100,7 @@ define([
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {
-        return _.extend(
+        return Object.assign(
             {},
             domainObject.telemetry,
             METADATA_BY_TYPE[domainObject.type]

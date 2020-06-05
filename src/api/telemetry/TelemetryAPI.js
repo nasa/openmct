@@ -24,7 +24,7 @@ define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
-    '../objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     TelemetryMetadataManager,
@@ -370,7 +370,7 @@ define([
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         var options = metadatas.map(function (metadata) {
             var values = metadata.valuesForHints(hints);
-            return _.indexBy(values, 'key');
+            return _.keyBy(values, 'key');
         }).reduce(function (a, b) {
             var results = {};
             Object.keys(a).forEach(function (key) {
@@ -383,7 +383,7 @@ define([
         var sortKeys = hints.map(function (h) {
             return 'hints.' + h;
         });
-        return _.sortByAll(options, sortKeys);
+        return _.sortBy(options, sortKeys);
     };
 
     /**

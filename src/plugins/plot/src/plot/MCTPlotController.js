@@ -325,7 +325,7 @@ define([
         } else {
             // A history entry is created by startMarquee, need to remove
             // if marquee zoom doesn't occur.
-            this.back();
+            this.plotHistory.pop();
         }
         this.$scope.rectangles = [];
         this.marquee = undefined;
