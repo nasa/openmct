@@ -110,7 +110,7 @@ export default {
                 });
             }
             this.layers = layersMetadata;
-            this.visibleLayers = this.layers.filter((layer) => { return layer.visible; });
+            this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
@@ -136,6 +136,7 @@ export default {
         }
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
+        console.log('Destroying view');
     },
     methods: {
         datumIsNotValid(datum) {
