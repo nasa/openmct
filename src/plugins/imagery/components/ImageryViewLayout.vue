@@ -1,7 +1,7 @@
 <template>
 <div class="c-imagery">
     <div class="c-imagery__main-image-wrapper has-local-controls">
-        <div class="h-local-controls h-local-controls--horz h-local-controls--overlay-content c-local-controls--XXshow-on-hover c-imagery__lc">
+        <div class="h-local-controls h-local-controls--horz h-local-controls--overlay-content c-local-controls--show-on-hover c-imagery__lc">
             <imagery-view-menu-switcher :icon-class="'icon-brightness'"
                                         :title="'Filters menu'"
             >

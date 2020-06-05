@@ -82,11 +82,6 @@
             margin-left: $interiorMargin;
         }
     }
-
-    .c-button,
-    .c-click-icon {
-        filter: $overlayBrightnessAdjust;
-    }
 }
 
 body.desktop {

@@ -167,6 +167,7 @@
 
         input[type='range'] {
             &:before {
+                color: rgba($colorMenuFg, 0.5);
                 margin-right: $interiorMarginSm;
             }
 

@@ -225,8 +225,8 @@ $shdwSelect: none;
 $controlDisabledOpacity: 0.3;
 
 // Menus
-$colorMenuBg: pushBack($colorBodyBg, 10%);
-$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuBg: $colorBodyBg;
+$colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
 $colorMenuHovBg: $colorMenuIc;
 $colorMenuHovFg: $colorMenuBg;
@@ -235,6 +235,7 @@ $colorMenuElementHilite: darken($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
 $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
+$menuFilter: brightness(1);
 
 // Palettes and Swatches
 $paletteItemBorderOuterColorSelected: black;
@@ -283,7 +284,6 @@ $overlayColorFg: $colorMenuFg;
 $colorOvrBtnBg: pullForward($overlayColorBg, 40%);
 $colorOvrBtnFg: #fff;
 $overlayCr: $interiorMarginLg;
-$overlayBrightnessAdjust: brightness(1); // Applied in a filter: property
 
 // Indicator colors
 $colorIndicatorAvailable: $colorKey;
