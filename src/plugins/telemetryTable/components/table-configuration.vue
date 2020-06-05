@@ -2,7 +2,7 @@
 <div class="c-inspect-properties">
     <template v-if="isEditing">
         <div class="c-inspect-properties__header">
-            Table Column Size
+            Table Layout
         </div>
         <ul class="c-inspect-properties__section">
             <li class="c-inspect-properties__row">
@@ -18,6 +18,22 @@
                         type="checkbox"
                         :checked="configuration.autosize !== false"
                         @change="toggleAutosize()"
+                    >
+                </div>
+            </li>
+            <li class="c-inspect-properties__row">
+                <div
+                        class="c-inspect-properties__label"
+                        title="Show or hide headers"
+                >
+                    <label for="header-visibility">Hide Header</label>
+                </div>
+                <div class="c-inspect-properties__value">
+                    <input
+                            id="header-visibility"
+                            type="checkbox"
+                            :checked="configuration.hideHeaders === true"
+                            @change="toggleHeaderVisibility"
                     >
                 </div>
             </li>
@@ -43,27 +59,6 @@
                         type="checkbox"
                         :checked="configuration.hiddenColumns[key] !== true"
                         @change="toggleColumn(key)"
-                    >
-                </div>
-            </li>
-        </ul>
-        <div class="c-inspect-properties__header">
-            Table Header Visibility
-        </div>
-        <ul class="c-inspect-properties__section">
-            <li class="c-inspect-properties__row">
-                <div
-                    class="c-inspect-properties__label"
-                    title="Show or hide headers"
-                >
-                    <label for="header-visibility">Hide Header</label>
-                </div>
-                <div class="c-inspect-properties__value">
-                    <input
-                        id="header-visibility"
-                        type="checkbox"
-                        :checked="configuration.hideHeaders === true"
-                        @change="toggleHeaderVisibility"
                     >
                 </div>
             </li>
