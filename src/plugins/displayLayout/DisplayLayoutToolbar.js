@@ -74,6 +74,11 @@ define(['lodash'], function (_) {
                         }
                     },
                     viewTypes = {
+                        'telemetry-view': {
+                            value: 'telemetry-view',
+                            name: 'Alphanumeric',
+                            class: 'icon-alphanumeric'
+                        },
                         'telemetry.plot.overlay': {
                             value: 'telemetry.plot.overlay',
                             name: 'Overlay Plot',
@@ -88,10 +93,6 @@ define(['lodash'], function (_) {
                             value: 'table',
                             name: 'Table',
                             class: 'icon-tabular-realtime'
-                        },
-                        'telemetry-view': {
-                            value: 'telemetry-view',
-                            name: 'Alpha Numeric'
                         }
                     },
                     applicableViews = {
@@ -516,7 +517,7 @@ define(['lodash'], function (_) {
                                 control: "menu",
                                 domainObject: selectedParent,
                                 icon: "icon-object",
-                                title: "Switch the view type between plots, tables and alpha-numerics",
+                                title: "Switch the way this telemetry is displayed",
                                 options: viewOptions,
                                 method: function (option) {
                                     displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
@@ -574,6 +575,7 @@ define(['lodash'], function (_) {
                     'add-menu': [],
                     'text': [],
                     'url': [],
+                    'viewSwitcher': [],
                     'toggle-frame': [],
                     'display-mode': [],
                     'telemetry-value': [],
@@ -581,7 +583,6 @@ define(['lodash'], function (_) {
                     'text-style': [],
                     'position': [],
                     'duplicate': [],
-                    'viewSwitcher': [],
                     'remove': []
                 };
 
