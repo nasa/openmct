@@ -56,9 +56,13 @@ export function clearBuiltinSpies() {
     nativeFunctions = [];
 }
 
-export function resetApplicationState() {
+export function resetApplicationState(openmct) {
     clearBuiltinSpies();
     window.location.hash = '#';
+
+    if (openmct !== undefined) {
+        openmct.destroy();
+    }
 }
 
 function clearBuiltinSpy(funcDefinition) {

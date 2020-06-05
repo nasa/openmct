@@ -434,6 +434,10 @@ define([
         plugin(this);
     };
 
+    MCT.prototype.destroy = function () {
+        this.emit('destroy');
+    };
+
     MCT.prototype.plugins = plugins;
 
     return MCT;
