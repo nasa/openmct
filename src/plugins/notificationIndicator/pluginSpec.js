@@ -23,16 +23,21 @@
 import NotificationIndicatorPlugin from './plugin.js';
 import Vue from 'vue';
 import {
-    createOpenMct
+    createOpenMct,
+    resetApplicationState
 } from 'utils/testing';
 
-describe('the plugin', () => {
+xdescribe('the plugin', () => {
     let notificationIndicatorPlugin,
         openmct,
         indicatorObject,
         indicatorElement,
         parentElement,
         mockMessages = ['error', 'test', 'notifications'];
+
+    beforeAll(() => {
+        resetApplicationState();
+    });
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -53,6 +58,10 @@ describe('the plugin', () => {
         });
 
         openmct.startHeadless();
+    });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
     });
 
     describe('the indicator plugin element', () => {

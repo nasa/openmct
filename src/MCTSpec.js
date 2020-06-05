@@ -32,6 +32,10 @@ define([
         var mockListener;
         var oldBundles;
 
+        beforeAll(() => {
+            testUtils.resetApplicationState();
+        });
+
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
             mockPlugin2 = jasmine.createSpy('plugin2');
@@ -52,6 +56,7 @@ define([
                     legacyRegistry.delete(bundle);
                 }
             });
+            testUtils.resetApplicationState(openmct);
         });
 
         it("exposes plugins", function () {

@@ -34,6 +34,10 @@ describe("the plugin", () => {
     let element;
     let child;
 
+    beforeAll(() => {
+        resetApplicationState();
+    })
+
     beforeEach((done) => {
         openmct = createOpenMct();
 
@@ -60,7 +64,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState();
+        resetApplicationState(openmct);
     });
 
     describe("defines a table object", function () {

@@ -21,12 +21,8 @@
  *****************************************************************************/
 import URLTimeSettingsSynchronizer from "./URLTimeSettingsSynchronizer.js";
 
-let singletonInstance;
-
 export default function () {
     return function install(openmct) {
-        if (singletonInstance === undefined) {
-            singletonInstance = new URLTimeSettingsSynchronizer(openmct);
-        }
+        return new URLTimeSettingsSynchronizer(openmct);
     }
 }

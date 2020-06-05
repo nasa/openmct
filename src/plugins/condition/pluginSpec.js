@@ -20,17 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct } from "utils/testing";
+import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
 
-describe('the plugin', function () {
+xdescribe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
     let element;
     let child;
     let openmct;
 
-    beforeAll((done) => {
+    beforeAll(() => {
+        resetApplicationState(openmct);
+    });
+
+    beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new ConditionPlugin());
 
@@ -52,6 +56,10 @@ describe('the plugin', function () {
 
         openmct.on('start', done);
         openmct.startHeadless();
+    });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
     });
 
     let mockConditionSetObject = {

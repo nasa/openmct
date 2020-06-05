@@ -39,17 +39,33 @@ export default class URLTimeSettingsSynchronizer {
         this.openmct = openmct;
         this.isUrlUpdateInProgress = false;
 
-        openmct.on('start', () => this.initialize());
+        this.initialize = this.initialize.bind(this);
+        this.destroy = this.destroy.bind(this);
+        this.updateTimeSettings = this.updateTimeSettings.bind(this);
+        this.setUrlFromTimeApi = this.setUrlFromTimeApi.bind(this);
+
+        openmct.on('start', this.initialize);
+        openmct.on('destroy', this.destroy);
     }
 
     initialize() {
-        this.updateTimeSettings(true);
+        this.updateTimeSettings();
 
-        window.addEventListener('hashchange', () => this.updateTimeSettings());
+        window.addEventListener('hashchange', this.updateTimeSettings);
         TIME_EVENTS.forEach(event => {
-            this.openmct.time.on(event, () => this.setUrlFromTimeApi());
+            this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
 
+    }
+
+    destroy() {
+        window.removeEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.off('start', this.initialize);
+        this.openmct.off('destroy', this.destroy);
+
+        TIME_EVENTS.forEach(event => {
+            this.openmct.time.off(event, this.setUrlFromTimeApi);
+        });
     }
 
     updateTimeSettings() {
@@ -155,7 +171,6 @@ export default class URLTimeSettingsSynchronizer {
 
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
         this.isUrlUpdateInProgress = true;
-
         setAllSearchParams(searchParams);
     }
 
