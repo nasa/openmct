@@ -136,7 +136,7 @@ export default {
         }
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
-        console.log('Destroying view');
+        console.log('Destroying view', this.domainObject);
     },
     methods: {
         datumIsNotValid(datum) {
