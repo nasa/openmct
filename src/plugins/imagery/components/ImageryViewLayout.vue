@@ -100,6 +100,7 @@ export default {
         this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
         let layersMetadata = metaDataValues.layers;
         if (layersMetadata) {
+            this.layers = layersMetadata;
             if (this.domainObject.type === 'example.imagery' && layersMetadata.length) {
                 let persistedLayers = this.domainObject.configuration.layers;
                 layersMetadata.forEach((layer) => {
@@ -108,9 +109,10 @@ export default {
                         layer.visible = persistedLayer.visible === true;
                     }
                 });
+                this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
+            } else {
+                this.visibleLayers = [];
             }
-            this.layers = layersMetadata;
-            this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
         }
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
@@ -136,7 +138,6 @@ export default {
         }
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
-        console.log('Destroying view', this.domainObject);
     },
     methods: {
         datumIsNotValid(datum) {
