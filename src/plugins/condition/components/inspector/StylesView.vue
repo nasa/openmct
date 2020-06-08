@@ -457,7 +457,7 @@ export default {
                 domainObjects.forEach(domainObject => {
                     let objectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
                     this.removeConditionalStyles(objectStyles);
-                    if (Object.keys(objectStyles).length <= 0) {
+                    if (objectStyles && Object.keys(objectStyles).length <= 0) {
                         objectStyles = undefined;
                     }
                     this.persist(domainObject, objectStyles);
@@ -467,14 +467,14 @@ export default {
                 this.items.forEach((item) => {
                     const itemId = item.id;
                     this.removeConditionalStyles(domainObjectStyles, itemId);
-                    if (Object.keys(domainObjectStyles[itemId]).length <= 0) {
+                    if (domainObjectStyles[itemId] && Object.keys(domainObjectStyles[itemId]).length <= 0) {
                         delete domainObjectStyles[itemId];
                     }
                 });
             }  else {
                 this.removeConditionalStyles(domainObjectStyles);
             }
-            if (Object.keys(domainObjectStyles).length <= 0) {
+            if (domainObjectStyles && Object.keys(domainObjectStyles).length <= 0) {
                 domainObjectStyles = undefined;
             }
             this.persist(this.domainObject, domainObjectStyles);
@@ -553,9 +553,9 @@ export default {
                     let itemConditionalStyle = { styles: []};
                     if (!this.conditionSetDomainObject) {
                         if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
-                            itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
+                            itemStaticStyle = Object.assign({}, domainObjectStyles[item.id].staticStyle.style);
                         }
-                        if (item.applicableStyles[property]) {
+                        if (item.applicableStyles[property] !== undefined) {
                             itemStaticStyle[property] = this.staticStyle.style[property];
                         }
                         if (Object.keys(itemStaticStyle).length <= 0) {
