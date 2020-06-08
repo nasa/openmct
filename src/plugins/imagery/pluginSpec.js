@@ -283,36 +283,6 @@ describe('the plugin', function () {
                 });
             });
         });
-
-        it("does not save layers for imagery objects that cannot be saved",() => {
-            let testImageryObject = Object.assign({}, testCreatableImageryObject);
-            delete testImageryObject.configuration;
-
-            let layersMenuSwitcher = element.querySelectorAll('button.c-button--menu.icon-layers');
-            expect(layersMenuSwitcher.length).toBe(1);
-            expect(layersMenuSwitcher[0].title).toBe('Layers menu');
-            let event = createMouseEvent('click');
-            layersMenuSwitcher[0].dispatchEvent(event);
-            return Vue.nextTick().then(() => {
-                let layersMenu = element.querySelectorAll('button.c-button--menu.icon-layers + .c-switcher-menu__content');
-                expect(layersMenu.length).toBe(1);
-                let checkedlayers = element.querySelectorAll('.js-checkbox-menu input[checked]');
-                expect(checkedlayers.length).toBe(1);
-                let uncheckedLayers = element.querySelectorAll('.js-checkbox-menu input:not([checked])');
-                expect(uncheckedLayers.length).toBe(1);
-                uncheckedLayers[0].dispatchEvent(event);
-                return Vue.nextTick().then(() => {
-                    imageryView.destroy();
-                    return Vue.nextTick().then(() => {
-                        const visibleLayers = testCreatableImageryObject.configuration.layers.filter((layer) => {
-                            return layer.visible === true;
-                        });
-                        expect(visibleLayers.length).toBe(2);
-                    });
-
-                });
-            });
-        });
     });
 
     describe("The imagery view for objects that are not creatable", () => {

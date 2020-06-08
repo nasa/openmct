@@ -98,31 +98,14 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         const metaDataValues = this.metadata.valuesForHints(['image'])[0];
         this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-        let layersMetadata = metaDataValues.layers;
-        if (layersMetadata) {
-            this.layers = layersMetadata;
-            if (this.domainObject.configuration) {
-                let persistedLayers = this.domainObject.configuration.layers;
-                layersMetadata.forEach((layer) => {
-                    const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
-                    if (persistedLayer) {
-                        layer.visible = persistedLayer.visible === true;
-                    }
-                });
-                this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
-            } else {
-                this.visibleLayers = [];
-                this.layers.forEach((layer) => {
-                    layer.visible = false;
-                })
-            }
-        }
+        this.loadVisibleLayers(metaDataValues);
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
         this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
+        window.addEventListener('beforeunload', this.persistVisibleLayers);
         // kickoff
         this.subscribe();
         this.requestHistory();
@@ -131,17 +114,14 @@ export default {
         this.scrollToRight();
     },
     beforeDestroy() {
-        if (this.domainObject.configuration) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
-        }
-        this.visibleLayers = [];
-        this.layers = [];
+        this.persistVisibleLayers();
         if (this.unsubscribe) {
             this.unsubscribe();
             delete this.unsubscribe;
         }
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
+        window.removeEventListener('beforeunload', this.persistVisibleLayers);
     },
     methods: {
         datumIsNotValid(datum) {
@@ -184,6 +164,27 @@ export default {
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
+        loadVisibleLayers(metaDataValues) {
+            let layersMetadata = metaDataValues.layers;
+            if (layersMetadata) {
+                this.layers = layersMetadata;
+                if (this.domainObject.configuration) {
+                    let persistedLayers = this.domainObject.configuration.layers;
+                    layersMetadata.forEach((layer) => {
+                        const persistedLayer = persistedLayers.find((object) =>{ return object.name === layer.name; });
+                        if (persistedLayer) {
+                            layer.visible = persistedLayer.visible === true;
+                        }
+                    });
+                    this.visibleLayers = this.layers.filter((layer) => { return layer.visible === true; });
+                } else {
+                    this.visibleLayers = [];
+                    this.layers.forEach((layer) => {
+                        layer.visible = false;
+                    })
+                }
+            }
+        },
         paused(state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
@@ -204,6 +205,13 @@ export default {
             }
 
             return this.isPaused;
+        },
+        persistVisibleLayers() {
+            if (this.domainObject.configuration) {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
+            }
+            this.visibleLayers = [];
+            this.layers = [];
         },
         scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
