@@ -153,7 +153,6 @@ define(['EventEmitter'], function (EventEmitter) {
             isNaN(bounds.start) ||
             isNaN(bounds.end)
         ) {
-            console.error(`Bounds ${JSON.stringify(bounds)}`);
             return "Start and end must be specified as integer values";
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
