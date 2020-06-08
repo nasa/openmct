@@ -20,18 +20,18 @@ describe('the openmct location utility functions', () => {
     });
 
     it('The deleteSearchParam function deletes an individual search paramater in the window location hash', () => {
-        window.location.hash += '#/?testParam=testValue';
+        window.location.hash = '#/?testParam=testValue';
         deleteSearchParam('testParam');
         expect(window.location.hash.includes('testParam=testValue')).toBe(false);
     });
 
     it('The getSearchParam function returns the value of an individual search paramater in the window location hash', () => {
-        window.location.hash += '#/?testParam=testValue';
+        window.location.hash = '#/?testParam=testValue';
         expect(getSearchParam('testParam')).toBe('testValue');
     });
 
     it('The getAllSearchParams function returns the values of all search paramaters in the window location hash', () => {
-        window.location.hash += '#/?testParam1=testValue1&testParam2=testValue2&testParam3=testValue3';
+        window.location.hash = '#/?testParam1=testValue1&testParam2=testValue2&testParam3=testValue3';
         let searchParams = getAllSearchParams();
         expect(searchParams.get('testParam1')).toBe('testValue1');
         expect(searchParams.get('testParam2')).toBe('testValue2');
@@ -39,7 +39,7 @@ describe('the openmct location utility functions', () => {
     });
 
     it('The setAllSearchParams function replaces all search paramaters in the window location hash', () => {
-        window.location.hash += '#/?testParam1=testValue1&testParam2=testValue2&testParam3=testValue3';
+        window.location.hash = '#/?testParam1=testValue1&testParam2=testValue2&testParam3=testValue3';
         let searchParams = getAllSearchParams();
         searchParams.delete('testParam3');
         searchParams.set('testParam1', 'updatedTestValue1');

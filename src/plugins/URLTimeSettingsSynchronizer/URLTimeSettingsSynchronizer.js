@@ -25,7 +25,6 @@ import {
 } from 'utils/openmctLocation';
 
 const TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
-const DUMMY_URL="https://nasa.gov";
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';
 const SEARCH_START_BOUND = 'tc.startBound';
@@ -73,6 +72,7 @@ export default class URLTimeSettingsSynchronizer {
         if (!this.isUrlUpdateInProgress) {
             let timeParameters = this.parseParametersFromUrl();
 
+
             if (this.areTimeParametersValid(timeParameters)) {
                 this.setTimeApiFromUrl(timeParameters);
             } else {
@@ -81,10 +81,6 @@ export default class URLTimeSettingsSynchronizer {
         } else {
             this.isUrlUpdateInProgress = false;
         }
-    }
-
-    createUrlWrapper() {
-        return new URL(`${DUMMY_URL}${window.location.hash.substring(1)}`);
     }
 
     parseParametersFromUrl() {
@@ -100,8 +96,8 @@ export default class URLTimeSettingsSynchronizer {
             end: endBound
         };
 
-        let startOffset = parseInt(searchParams.get(SEARCH_START_DELTA));
-        let endOffset = parseInt(searchParams.get(SEARCH_END_DELTA));
+        let startOffset = parseInt(searchParams.get(SEARCH_START_DELTA), 10);
+        let endOffset = parseInt(searchParams.get(SEARCH_END_DELTA), 10);
         let clockOffsets = {
             start: 0 - startOffset,
             end: endOffset
