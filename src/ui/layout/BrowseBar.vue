@@ -24,6 +24,10 @@
             class="l-browse-bar__context-actions c-disclosure-button"
             @click.prevent.stop="showContextMenu"
         ></div>
+        <div
+            class="l-browse-sync-tree"
+            @click="syncNavigationTree"
+        >Sync</div>
     </div>
 
     <div class="l-browse-bar__end">
@@ -271,6 +275,9 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
+        },
+        syncNavigationTree() {
+            this.$emit('syncTreeNavigation');
         }
     }
 }

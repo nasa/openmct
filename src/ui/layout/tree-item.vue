@@ -43,11 +43,12 @@
                 v-if="activeChild && child.id === activeChild || !activeChild"
                 :key="child.id"
                 :class="{[childrenSlideClass] : child.id !== activeChild}"
-                :root-path="rootPath"
                 :node="child"
                 :collapse-children="collapseMyChildren"
                 :ancestors="ancestors + 1"
+                :sync-check="triggerChildSync"
                 @expanded="handleExpanded"
+                @childState="handleChildState"
             />
         </template>
     </ul>
@@ -61,6 +62,10 @@ import ObjectLabel from '../components/ObjectLabel.vue';
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const SLIDE_RIGHT = 'slide-right';
 const SLIDE_LEFT = 'slide-left';
+
+function copyItem(item) {
+    return JSON.parse(JSON.stringify(item));
+}
 
 export default {
     name: 'TreeItem',
@@ -78,13 +83,13 @@ export default {
             type: Number,
             default: 0
         },
-        rootPath: {
+        collapseChildren: {
             type: String,
             default: ''
         },
-        collapseChildren: {
-            type: Boolean,
-            default: false
+        syncCheck: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -97,8 +102,12 @@ export default {
             children: [],
             expanded: false,
             activeChild: undefined,
-            collapseMyChildren: false,
-            childrenSlideClass: SLIDE_LEFT
+            collapseMyChildren: '',
+            childrenSlideClass: SLIDE_LEFT,
+            triggerChildSync: '',
+            onChildrenLoaded: [],
+            mountedChildren: [],
+            onChildMounted: []
         }
     },
     computed: {
@@ -113,38 +122,80 @@ export default {
     },
     watch: {
         expanded() {
-            console.log('tree-item: watch:expanded - ' + this.domainObject.name, this.expanded);
-            if(this.expanded) {
-                this.$emit('expanded', this.domainObject);
-            }
             if (!this.hasChildren) {
                 return;
             }
-            if (!this.loaded && !this.isLoading) {
-                this.composition = this.openmct.composition.get(this.domainObject);
-                this.composition.on('add', this.addChild);
-                this.composition.on('remove', this.removeChild);
-                this.composition.load().then(this.finishLoading);
-                this.isLoading = true;
+            if(this.expanded) {
+                this.$emit('expanded', this.domainObject);
+                this.loadChildren();
             }
             this.setLocalStorageExpanded(this.navigateToPath);
         },
         collapseChildren() {
-
-            console.log('tree-item: collapseChildren watch: callapse this', this.domainObject.name, this.collapseChildren)
             if(this.collapseChildren) {
                 this.expanded = false;
                 this.activeChild = undefined;
+                this.loaded = false;
+                this.children = [];
+            }
+        },
+        syncCheck() {
+            let currentLocationPath = this.openmct.router.currentLocation.path;
+            if(currentLocationPath) {
+                let isAncestor = currentLocationPath.includes(this.navigateToPath);
+
+                // not the currently navigated object, but it is an ancestor
+                if(isAncestor && !this.navigated) {
+                    let descendantPath = currentLocationPath.split(this.navigateToPath + '/')[1],
+                        descendants = descendantPath.split('/'),
+                        descendantCount = descendants.length,
+                        immediateDescendant = descendants[0];
+
+                    this.activeChild = undefined;
+
+                    if(descendantCount > 1) {
+                        this.activeChild = immediateDescendant;
+                    }
+
+                    // if current path is not expanded, need to expand (load children) and trigger sync
+                    if(!this.expanded) {
+                        if(descendantCount > 1) {
+                            this.onChildrenLoaded.push(() => {
+                                this.triggerChildrenSyncCheck()
+                            });
+                        }
+                        this.expanded = true;
+
+                    // if current path IS expanded, then we need to check that child is mounted
+                    // as it could have been unmounted previously if it was not the activeChild
+                    } else {
+                        let alreadyMounted = this.mountedChildren.includes(immediateDescendant);
+                        if(alreadyMounted) {
+                            this.triggerChildrenSyncCheck()
+                        } else {
+                            this.onChildMounted.push({
+                                child: immediateDescendant,
+                                callback: () => {
+                                    this.triggerChildrenSyncCheck()
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    this.expanded = false;
+                    this.activeChild = undefined;
+                }
             }
         }
     },
-    beforeMount() {
-        console.log('tree-item: beforeMount', this.node.object.name);
-    },
     mounted() {
-        // TODO: click navigation should not fubar hash quite so much.
-        // TODO: should support drag/drop composition
         let objectComposition = this.openmct.composition.get(this.node.object);
+
+        this.$emit('childState', { 
+            type: 'mounted',
+            id: this.openmct.objects.makeKeyString(this.node.object.identifier),
+            name: this.node.object.name
+        });
 
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
@@ -159,10 +210,6 @@ export default {
         this.openmct.router.on('change:path', this.highlightIfNavigated);
 
         this.getLocalStorageExpanded();
-
-        console.log('tree-item: mounted - domainObject', this.domainObject.name, this.domainObject);
-        console.log('tree-item: mounted - hasChildren', this.hasChildren);
-        console.log('tree-item: mounted - expanded', this.expanded);
     },
     beforeDestroy() {
         /****
@@ -170,13 +217,16 @@ export default {
             * the watcher on this.expanded is not triggering this.setLocalStorageExpanded(),
             * even though Vue documentation states, "At this stage the instance is still fully functional."
         *****/
-        console.log('tree-item: beforeDestroy', this.domainObject.name);
         this.expanded = false;
         this.setLocalStorageExpanded();
         this.activeChild = undefined;
     },
     destroyed() {
-        console.log('tree-item: destroyed', this.domainObject.name);
+        this.$emit('childState', {
+            type: 'destroyed',
+            id: this.openmct.objects.makeKeyString(this.domainObject.identifier),
+            name: this.domainObject.name
+        });
         this.openmct.router.off('change:path', this.highlightIfNavigated);
         if (this.composition) {
             this.composition.off('add', this.addChild);
@@ -198,15 +248,31 @@ export default {
             this.children = this.children
                 .filter(c => c.id !== removeId);
         },
+        loadChildren() {
+            if (!this.loaded && !this.isLoading) {
+                this.composition = this.openmct.composition.get(this.domainObject);
+                this.composition.on('add', this.addChild);
+                this.composition.on('remove', this.removeChild);
+                this.composition.load().then(this.finishLoading);
+                this.isLoading = true;
+            }
+        },
         finishLoading() {
             this.isLoading = false;
             this.loaded = true;
+            // specifically for sync child loading
+            for(let callback of this.onChildrenLoaded) {
+                callback();
+            }
+            this.onChildrenLoaded = [];
+        },
+        triggerChildrenSyncCheck() {
+            this.triggerChildSync = this.makeHash();
         },
         buildPathString(parentPath) {
             return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
         },
         highlightIfNavigated(newPath, oldPath) {
-            console.log('tree-item: router change:path | highlightifnavigated - me: ' + this.domainObject.name + ' paths: ', {newPath, oldPath})
             if (newPath === this.navigateToPath) {
                 this.navigated = true;
             } else if (oldPath === this.navigateToPath) {
@@ -219,13 +285,11 @@ export default {
                 expandedPaths = JSON.parse(expandedPaths);
                 this.expanded = expandedPaths.includes(this.navigateToPath);
             }
-            console.log('tree-item: getlocalstorageexpanded', {expandedPaths});
         },
         // expanded nodes/paths are stored in local storage as an array
         setLocalStorageExpanded() {
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-            console.log('tree-item: setexpandedpaths', {expandedPaths})
             if (this.expanded) {
                 if (!expandedPaths.includes(this.navigateToPath)) {
                     expandedPaths.push(this.navigateToPath);
@@ -238,7 +302,6 @@ export default {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         },
         removeLocalStorageExpanded() {
-            console.log('tree-item: removelocalstorageexpanded')
             let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
             expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
@@ -246,23 +309,36 @@ export default {
         },
         handleExpanded(expandedObject) {
             this.activeChild = this.openmct.objects.makeKeyString(expandedObject.identifier);
-            this.collapseMyChildren = false; // reset
             this.childrenSlideClass = SLIDE_LEFT;
         },
-        resetTreeHere() {
-            console.log('tree-item: resetTreeHere - ', this.domainObject.name, this.openmct.objects.makeKeyString(this.domainObject.identifier));
-            console.log('tree-item: resetTreeHere - SLIDE RIGHT YO!!!!');
-            this.childrenSlideClass = SLIDE_RIGHT;
-            this.expanded = true;
-            this.activeChild = undefined;
-            this.collapseMyChildren = true;
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-            if (expandedPaths) {
-                expandedPaths = JSON.parse(expandedPaths);
-                // expandedPaths.pop();
-                console.log('tree-item: resetTreeHere - expandedPaths', {expandedPaths});
-                // localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
+        handleChildState(opts) {
+            if(opts.type === 'mounted') {
+                this.mountedChildren.push(opts.id);
+                if(this.onChildMounted.length && this.onChildMounted[0].child === opts.id) {
+                    this.onChildMounted[0].callback();
+                    this.onChildMounted = [];
+                }
+            } else {
+                if(this.mountedChildren.includes(opts.id)) {
+                    let removeIndex = this.mountedChildren.indexOf(opts.id);
+                    this.mountedChildren.splice(removeIndex, 1);
+                }
             }
+        },
+        resetTreeHere() {
+            this.childrenSlideClass = SLIDE_RIGHT;
+            this.activeChild = undefined;
+            this.collapseMyChildren = this.makeHash();
+            this.expanded = true;
+        },
+        makeHash(length = 20) {
+            let hash = String(Date.now()),
+                characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            length -= hash.length;
+            for (let i = 0; i < length; i++) {
+                hash += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return hash;
         }
     }
 }

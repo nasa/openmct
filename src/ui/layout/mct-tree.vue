@@ -35,6 +35,7 @@
             :key="item.id"
             :class="childrenSlideClass"
             :node="item"
+            :sync-check="checkForSync"
         />
     </ul>
     <!-- end main tree -->
@@ -48,7 +49,6 @@
             v-for="item in filteredTreeItems"
             :key="item.id"
             :node="item"
-            :root-path="ROOT_PATH"
         />
     </ul>
     <!-- end search tree -->
@@ -59,8 +59,6 @@
 import treeItem from './tree-item.vue'
 import search from '../components/search.vue';
 
-const ROOT_PATH = '/browse';
-
 export default {
     inject: ['openmct'],
     name: 'MctTree',
@@ -68,13 +66,26 @@ export default {
         search,
         treeItem
     },
+    props: {
+        syncTreeNavigation: {
+            type: Boolean,
+            required: true
+        }
+    },
     data() {
         return {
             searchValue: '',
             allTreeItems: [],
             filteredTreeItems: [],
             isLoading: false,
-            childrenSlideClass: 'slide-left'
+            childrenSlideClass: 'slide-left',
+            checkForSync: this.makeHash()
+        }
+    },
+    watch: {
+        syncTreeNavigation() {
+            console.log('sync in mct-tree');
+            this.checkForSync = this.makeHash();
         }
     },
     mounted() {
@@ -98,7 +109,7 @@ export default {
                             id: this.openmct.objects.makeKeyString(c.identifier),
                             object: c,
                             objectPath: [c],
-                            navigateToParent: ROOT_PATH
+                            navigateToParent: '/browse'
                         };
                     });
                 });
@@ -116,7 +127,7 @@ export default {
                         objectPath = context.getPath().slice(1)
                             .map(oldObject => oldObject.useCapability('adapter'))
                             .reverse();
-                        navigateToParent = ROOT_PATH + '/' + objectPath.slice(1)
+                        navigateToParent = '/browse/' + objectPath.slice(1)
                             .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
                             .join('/');
                     }
@@ -136,6 +147,14 @@ export default {
             if (this.searchValue !== '') {
                 this.getFilteredChildren();
             }
+        },
+        makeHash(length = 20) {
+            let hash = '',
+                characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < length; i++) {
+                hash += characters.charAt(Math.floor(Math.random() * characters.length)) + Date.now();
+            }
+            return hash;
         }
     }
 }
