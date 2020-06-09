@@ -11,10 +11,7 @@ jobs:
             name: Update npm
             command: 'sudo npm install -g npm@latest'
         - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-        - run:
-            name: Rebuild node-sass
-            command: 'npm rebuild node-sass'
+            key: dependency-cache-node-13-{{ checksum "package.json" }}
         - run:
             name: Installing dependencies (npm install)
             command: npm install

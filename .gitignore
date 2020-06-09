@@ -38,3 +38,4 @@ protractor/logs
 npm-debug.log
 
 package-lock.json
+report.*.json
