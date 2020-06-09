@@ -50,7 +50,7 @@ export default {
 
         return {
             name: this.domainObject.name,
-            timestamp: '---',
+            timestamp: undefined,
             value: '---',
             valueClass: '',
             currentObjectPath
@@ -58,7 +58,7 @@ export default {
     },
     computed: {
         formattedTimestamp() {
-            return this.timestamp !== '---' ? this.formats[this.timestampKey].format(this.timestamp) : this.timestamp;
+            return this.timestamp !== undefined ? this.formats[this.timestampKey].format(this.timestamp) : '---';
         }
     },
     mounted() {
@@ -105,41 +105,23 @@ export default {
     methods: {
         updateValues(datum) {
             let newTimestamp = this.formats[this.timestampKey].parse(datum),
-                shouldUpdate = false,
                 limit;
 
-            if(this.inBounds(newTimestamp)) {
-
-                // if timestamp is set, need tocheck, else update
-                if(this.timestamp !== '---') {
-
-                    // if existing is in bounds, need to check, if not update
-                    if(this.inBounds(this.timestamp)) {
-
-                        // race condition check
-                        if(newTimestamp >= this.timestamp) {
-                            shouldUpdate = true;
-                        }
-                    } else {
-                        shouldUpdate = true;
-                    }
+            if(this.shouldUpdate(newTimestamp)) {
+                this.timestamp = this.formats[this.timestampKey].parse(datum);
+                this.value = this.formats[this.valueKey].format(datum);
+                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+                if (limit) {
+                    this.valueClass = limit.cssClass;
                 } else {
-                    shouldUpdate = true;
+                    this.valueClass = '';
                 }
-
-                if(shouldUpdate) {
-                    this.timestamp = this.formats[this.timestampKey].parse(datum);
-                    this.value = this.formats[this.valueKey].format(datum);
-                    limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-
-                    if (limit) {
-                        this.valueClass = limit.cssClass;
-                    } else {
-                        this.valueClass = '';
-                    }
-                }
-
             }
+        },
+        shouldUpdate(newTimestamp) {
+            return (this.timestamp === undefined) ||
+                (this.inBounds(newTimestamp) &&
+                newTimestamp > this.timestamp);
         },
         requestHistory() {
             this.openmct
@@ -147,6 +129,7 @@ export default {
                 .request(this.domainObject, {
                     start: this.bounds.start,
                     end: this.bounds.end,
+                    size: 1,
                     strategy: 'latest'
                 })
                 .then((array) => this.updateValues(array[array.length - 1]));
