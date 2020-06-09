@@ -1,9 +1,13 @@
 .c-tree-and-search {
+    $hoverBg: rgba(#000, 0.1);
+    $hoverFg: #ccc;
+    $selected: #fff;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     //TODO: Do we need this???
     //padding-right: $interiorMarginSm;
+    width: 100%;
     overflow: auto;
 
     > * + * { margin-top: $interiorMargin; }
@@ -25,6 +29,104 @@
         flex: 1 1 auto;
         height: 0; // Chrome 73 overflow bug fix
         padding-right: $interiorMarginSm;
+    }
+
+    // new tree refactor
+    .c-tree,
+    .c-list {
+        &__item {
+            border-radius: 0;
+
+            &:hover {
+                background: $hoverBg;
+    
+                [class*="__name"] {
+                    color: darken($colorKeyFg, 10%);
+                }
+            }
+    
+            &.is-navigated-object,
+            &.is-selected {
+                background: none;
+    
+                [class*="__name"] {
+                    color: $selected;
+                }
+            }
+        }
+    }
+    // new tree refactor
+    .c-tree {
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: all;
+
+        .c-tree {
+            padding-left: 0;
+        }
+
+        &__item {
+            border-bottom: 1px solid $colorInteriorBorder;
+
+            &.is-navigated-object,
+            &.is-selected {
+                .c-tree__item__type-icon:before {
+                    color: $selected;
+                }
+            }
+
+            .c-nav {
+                $dimension: 20px;
+                border-radius: 3px;
+    
+                &__up, &__down {
+                    color: #fff;
+                    flex: 0 0 auto;
+                    height: $dimension;
+                    width: $dimension;
+                    opacity: 0;
+                    position: relative;
+                    text-align: center;
+    
+                    &.is-enabled {
+                        opacity: 1;
+                    }
+    
+                    &:hover {
+                        color: darken($colorKeyFg, 10%);
+                    }
+    
+                    &:before {
+                        // Nav arrow
+                        $color: rgba(#999, 0.5);
+                        $dimension: 7px;
+                        $width: 3px;
+                        border: solid $color;
+                        border-width: $width;
+                        border-width: 0 $width $width 0;
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        left: 50%; top: 50%;
+                        height: $dimension;
+                        width: $dimension;
+                    }
+    
+                    &:hover:before {
+                        border-color: $colorItemTreeHoverFg;
+                    }
+                }
+    
+                &__up:before {
+                    transform: translate(-30%, -50%) rotate(135deg);
+                }
+    
+                &__down:before {
+                    transform: translate(-70%, -50%) rotate(-45deg);    
+                }
+            }
+        }
     }
 }
 
@@ -156,4 +258,33 @@
         border-radius: $controlCr;
         padding: $interiorMargin;
     }
+}
+
+// TRANSITIONS
+.slide-left,
+.slide-right {
+  animation-duration: 500ms;
+  animation-iteration-count: 1;
+  transition: all;
+  transition-timing-function: ease-in-out;
+}
+
+.slide-left {
+  animation-name: animSlideLeft;
+}
+
+.slide-right {
+  animation-name: animSlideRight;
+}
+
+@keyframes animSlideLeft {
+  0% {opactiy: 0; transform: translateX(100%);}
+  10% {opacity: 1;}
+  100% {transform: translateX(0);}
+}
+
+@keyframes animSlideRight {
+  0% {opactiy: 0; transform: translateX(-100%);}
+  10% {opacity: 1;}
+  100% {transform: translateX(0);}
 }

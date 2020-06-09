@@ -47,12 +47,16 @@
             label="Browse"
             collapsable
         >
-            <mct-tree class="l-shell__tree" />
+            <mct-tree 
+                :sync-tree-navigation="triggerSync"
+                class="l-shell__tree"
+            />
         </pane>
         <pane class="l-shell__pane-main">
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                @syncTreeNavigation="handleSyncTreeNavigation"
             />
             <toolbar
                 v-if="toolbar"
@@ -154,7 +158,8 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            headExpanded
+            headExpanded,
+            triggerSync: false
         }
     },
     computed: {
@@ -204,6 +209,9 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        handleSyncTreeNavigation() {
+            this.triggerSync = !this.triggerSync;
         }
     }
 }
