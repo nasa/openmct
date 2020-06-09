@@ -31,7 +31,7 @@ define([
     function dynamicPathForKey(key) {
         return function (object, model) {
             var modelIdentifier = model.get('identifier');
-            var index = _.findIndex(object.configuration.series, function (s) {
+            var index = object.configuration.series.findIndex(s => {
                 return _.isEqual(s.identifier, modelIdentifier);
             });
             return 'configuration.series[' + index + '].' + key;

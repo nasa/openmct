@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (objectUtils) {
     function ActionDialogDecorator(mct, actionService) {
         this.mct = mct;

@@ -128,6 +128,11 @@ export default class NotificationAPI extends EventEmitter {
         return this._notify(notificationModel);
     }
 
+    dismissAllNotifications() {
+        this.notifications = [];
+        this.emit('dismiss-all');
+    }
+
     /**
      * Minimize a notification. The notification will still be available
      * from the notification list. Typically notifications with a

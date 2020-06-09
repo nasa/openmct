@@ -67,10 +67,10 @@ define([
         }
         this.$canvas = this.$element.find('canvas');
 
-        this.listenTo(this.$canvas, 'click', this.onMouseClick, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
+        this.listenTo(this.$canvas, 'wheel', this.wheelZoom, this);
 
         this.watchForMarquee();
     };
@@ -78,7 +78,6 @@ define([
     MCTPlotController.prototype.initialize = function () {
         this.$canvas = this.$element.find('canvas');
 
-        this.listenTo(this.$canvas, 'click', this.onMouseClick, this);
         this.listenTo(this.$canvas, 'mousemove', this.trackMousePosition, this);
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
@@ -210,23 +209,6 @@ define([
         this.highlightValues(point);
     };
 
-    MCTPlotController.prototype.onMouseClick = function ($event) {
-        const isClick = this.isMouseClick();
-        if (this.pan) {
-            this.endPan($event);
-        }
-        if (this.marquee) {
-            this.endMarquee($event);
-        }
-        this.$scope.$apply();
-
-        if (!this.$scope.highlights.length || !isClick) {
-            return;
-        }
-
-        this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
-    };
-
     MCTPlotController.prototype.highlightValues = function (point) {
         this.highlightPoint = point;
         this.$scope.$emit('plot:highlight:update', point);
@@ -274,11 +256,23 @@ define([
     MCTPlotController.prototype.onMouseUp = function ($event) {
         this.stopListening(this.$window, 'mouseup', this.onMouseUp, this);
         this.stopListening(this.$window, 'mousemove', this.trackMousePosition, this);
+
+        if (this.isMouseClick()) {
+            this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
+        }
+
+        if (this.allowPan) {
+            return this.endPan($event);
+        }
+
+        if (this.allowMarquee) {
+            return this.endMarquee($event);
+        }
     };
 
     MCTPlotController.prototype.isMouseClick = function () {
         if (!this.marquee) {
-            return;
+            return false;
         }
 
         const { start, end } = this.marquee;
@@ -331,7 +325,7 @@ define([
         } else {
             // A history entry is created by startMarquee, need to remove
             // if marquee zoom doesn't occur.
-            this.back();
+            this.plotHistory.pop();
         }
         this.$scope.rectangles = [];
         this.marquee = undefined;

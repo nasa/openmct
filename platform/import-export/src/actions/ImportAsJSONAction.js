@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, objectUtils) {
+define(['zepto', 'objectUtils'], function ($, objectUtils) {
 
     /**
      * The ImportAsJSONAction is available from context menus and allows a user

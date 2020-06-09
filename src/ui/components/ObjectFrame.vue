@@ -59,6 +59,8 @@
 <script>
 import ObjectView from './ObjectView.vue'
 import ContextMenuDropDown from './contextMenuDropDown.vue';
+import PreviewHeader from '@/ui/preview/preview-header.vue';
+import Vue from 'vue';
 
 const SIMPLE_CONTENT_TYPES = [
     'clock',
@@ -116,12 +118,40 @@ export default {
                 childElement = parentElement.children[0];
 
             this.openmct.overlays.overlay({
-                element: childElement,
+                element: this.getOverlayElement(childElement),
                 size: 'large',
                 onDestroy() {
                     parentElement.append(childElement);
                 }
             });
+        },
+        getOverlayElement(childElement) {
+            const fragment = new DocumentFragment();
+            const header = this.getPreviewHeader();
+            fragment.append(header);
+            fragment.append(childElement);
+
+            return fragment;
+        },
+        getPreviewHeader() {
+            const domainObject = this.objectPath[0];
+            const preview = new Vue({
+                components: {
+                    PreviewHeader
+                },
+                provide: {
+                    openmct: this.openmct,
+                    objectPath: this.objectPath
+                },
+                data() {
+                    return {
+                        domainObject
+                    }
+                },
+                template: '<PreviewHeader :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
+            });
+
+            return preview.$mount().$el;
         },
         getSelectionContext() {
             return this.$refs.objectView.getSelectionContext();
