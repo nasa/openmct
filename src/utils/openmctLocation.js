@@ -64,7 +64,7 @@ export function getSearchParam(paramName) {
 }
 
 /**
- * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams} 
+ * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams}
  * object for accessing all current search parameters
  */
 export function getAllSearchParams() {
