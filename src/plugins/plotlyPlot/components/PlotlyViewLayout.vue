@@ -12,10 +12,18 @@ export default {
 
         return {
             telemetryObjects: [],
-            bounds: {},
+            bounds: this.openmct.time.bounds(),
             timeRange:  0,
             plotData: {},
             subscriptions: {}
+        }
+    },
+    computed: {
+        getContainerHeight: function () {
+            return this.plotElement.parentNode.offsetHeight;
+        },
+        getContainerWidth: function () {
+            return this.plotElement.parentNode.offsetWidth;
         }
     },
     mounted() {
@@ -88,16 +96,17 @@ export default {
                     this.addTrace(telemetryData, telemetryObject, index, isAdd);
                 });
         },
-        getLayout(telemetryObject, isFixed) {
+        getLayout(telemetryObject) {
             return {
                 hovermode: 'compare',
                 hoverdistance: -1,
                 autosize: "true",
                 showlegend: true,
                 legend: {
-                    y: 1.1,
+                    y: 1.07,
                     "orientation": "h"
                 },
+                height: this.getContainerHeight,
                 font: {
                     family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
                     size: "12px",
@@ -106,23 +115,77 @@ export default {
                 xaxis: { // hardcoded as UTC for now
                     title: 'UTC',
                     zeroline: false,
-                    range: isFixed ? 'undefined' : [
+                    showgrid: false,
+                    range: [
                         this.formatDatumX({utc: this.bounds.start}),
-                        this.formatDatumX({utc: this.bounds.start})
+                        this.formatDatumX({utc: this.bounds.end})
                     ]
                 },
                 yaxis: {
                     title: this.getYAxisLabel(telemetryObject),
-                    zeroline: false
+                    zeroline: false,
+                    showgrid: false,
+                    tickwidth: 3,
+                    tickcolor: 'transparent'
                 },
                 margin: {
                     l: 40,
-                    r: 10,
+                    r: 5,
                     b: 40,
-                    t: 10
+                    t: 0
                 },
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent'
+            }
+        },
+        addTrace(telemetryData, telemetryObject, index, isAdd) {
+            let x = [];
+            let y = [];
+
+            // temp palette for demo
+            const colors = ['rgb(32, 178, 170)', 'rgb(154, 205, 50)', 'rgb(255, 140, 0)'];
+
+            telemetryData.forEach((datum) => {
+                x.push(this.formatDatumX(datum));
+                y.push(this.formatDatumY(datum));
+            })
+
+            let traceData = [{ // trace configuration
+                x,
+                y,
+                name: telemetryObject.name,
+                type: 'scattergl',
+                mode: 'lines+markers',
+                marker: {
+                    size: 5
+                },
+                line: {
+                    color: colors[index], // to set new color for each trace
+                    shape: 'linear',
+                    width: 1.5
+                }
+            }];
+
+            this.plotData[telemetryObject.identifier.key] = traceData[0];
+
+            if (!this.plotElement.childNodes.length) { // not traces yet, so create new plot
+                // this.bounds = this.openmct.time.bounds();
+                Plotly.newPlot(
+                    this.plotElement,
+                    traceData,
+                    this.getLayout(telemetryObject),
+                    {
+                        displayModeBar: true, // turns off hover-activated toolbar
+                        staticPlot: true // turns off hover effects on datapoints
+                    }
+                );
+            } else {
+                if (isAdd) { // add a new trace to existing plot
+                    Plotly.addTraces(this.plotElement, traceData);
+                } else { // update existing trace with new data (bounds change)
+                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject));
+                    this.updatePlotRange();
+                }
             }
         },
         removeTelemetry(identifier) {
@@ -158,55 +221,6 @@ export default {
         },
         formatDatumY(datum) {
             return datum.sin;
-        },
-        addTrace(telemetryData, telemetryObject, index, isAdd) {
-            let x = [];
-            let y = [];
-
-            // temp palette for demo
-            const colors = ['rgb(32, 178, 170)', 'rgb(154, 205, 50)', 'rgb(255, 140, 0)'];
-
-            telemetryData.forEach((datum) => {
-                x.push(this.formatDatumX(datum));
-                y.push(this.formatDatumY(datum));
-            })
-
-            let traceData = [{ // trace configuration
-                x,
-                y,
-                name: telemetryObject.name,
-                type: 'scattergl',
-                mode: 'lines+markers',
-                marker: {
-                    size: 5
-                },
-                line: {
-                    color: colors[index], // to set new color for each trace
-                    shape: 'linear',
-                    width: 1.5
-                }
-            }];
-
-            this.plotData[telemetryObject.identifier.key] = traceData[0];
-
-            if (!this.plotElement.childNodes.length) { // not traces yet, so create new plot
-                Plotly.newPlot(
-                    this.plotElement,
-                    traceData,
-                    this.getLayout(telemetryObject, true),
-                    {
-                        displayModeBar: false, // turns off hover-activated toolbar
-                        staticPlot: true // turns off hover effects on datapoints
-                    }
-                );
-            } else {
-                if (isAdd) { // add a new trace to existing plot
-                    Plotly.addTraces(this.plotElement, traceData);
-                } else { // update existing trace with new data (bounds change)
-                    Plotly.react(this.plotElement, Object.values(this.plotData), this.getLayout(telemetryObject, false));
-                    this.updatePlotRange();
-                }
-            }
         },
         updateData(datum, index) {
             // plot all datapoints within bounds
