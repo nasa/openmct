@@ -20,10 +20,10 @@ export default {
     },
     computed: {
         getContainerHeight: function () {
-            return this.plotElement.parentNode.offsetHeight;
+            return this.plotElement.parentNode.offsetHeight - 5;
         },
         getContainerWidth: function () {
-            return this.plotElement.parentNode.offsetWidth;
+            return this.plotElement.parentNode.offsetWidth - 5;
         }
     },
     mounted() {
