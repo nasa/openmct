@@ -20,9 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ContextMenuComponent from './ContextMenu.vue';
-import Vue from 'vue';
-
 /**
  * The ContextMenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
