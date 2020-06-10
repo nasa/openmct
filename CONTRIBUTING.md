@@ -136,7 +136,7 @@ this repository. This is verified by the command line build.
 
 #### Code Guidelines
 
-JavaScript sources in Open MCT should:
+The following guidelines are provided for anyone contributing source code to the Open MCT project:
 
 1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
 1. Include JSDoc for any exposed API (e.g. public methods, classes).
