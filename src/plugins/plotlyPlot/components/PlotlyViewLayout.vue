@@ -1,5 +1,5 @@
 <template>
-<div class="l-view-section"></div>
+<div class="l-view-section js-plotly-container"></div>
 </template>
 
 <script>
@@ -27,7 +27,7 @@ export default {
         }
     },
     mounted() {
-        this.plotElement = document.querySelector('.l-view-section');
+        this.plotElement = document.querySelector('.js-plotly-container');
 
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addTelemetry);
