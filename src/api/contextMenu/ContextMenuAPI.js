@@ -30,11 +30,10 @@ import Vue from 'vue';
  * @memberof module:openmct
  */
 class ContextMenuAPI {
-    constructor() {
+    constructor(openmct) {
+        this.openmct = openmct;
         this._allActions = [];
-        this._activeContextMenu = undefined;
 
-        this._hideActiveContextMenu = this._hideActiveContextMenu.bind(this);
         this.registerAction = this.registerAction.bind(this);
     }
 
@@ -77,8 +76,20 @@ class ContextMenuAPI {
      */
     _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
 
-        let applicableActions = this._allActions.filter((action) => {
+        let applicableActions = this._applicableActions(objectPath, actionsToBeIncluded);
 
+        this.openmct.overlays.menu({
+            actions: applicableActions,
+            x,
+            y
+        });
+    }
+
+    /**
+     * @private
+     */
+    _applicableActions(objectPath, actionsToBeIncluded) {
+        let applicableActions = this._allActions.filter((action) => {
             if (actionsToBeIncluded) {
                 if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
                     return true;
@@ -92,66 +103,13 @@ class ContextMenuAPI {
             }
         });
 
-        if (this._activeContextMenu) {
-            this._hideActiveContextMenu();
-        }
-
-        this._activeContextMenu = this._createContextMenuForObject(objectPath, applicableActions);
-        this._activeContextMenu.$mount();
-        document.body.appendChild(this._activeContextMenu.$el);
-
-        let position = this._calculatePopupPosition(x, y, this._activeContextMenu.$el);
-        this._activeContextMenu.$el.style.left = `${position.x}px`;
-        this._activeContextMenu.$el.style.top = `${position.y}px`;
-
-        document.addEventListener('click', this._hideActiveContextMenu);
-    }
-
-    /**
-     * @private
-     */
-    _calculatePopupPosition(eventPosX, eventPosY, menuElement) {
-        let menuDimensions = menuElement.getBoundingClientRect();
-        let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
-        let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
-
-        if (overflowX > 0) {
-            eventPosX = eventPosX - overflowX;
-        }
-
-        if (overflowY > 0) {
-            eventPosY = eventPosY - overflowY;
-        }
-
-        return {
-            x: eventPosX,
-            y: eventPosY
-        }
-    }
-    /**
-     * @private
-     */
-    _hideActiveContextMenu() {
-        document.removeEventListener('click', this._hideActiveContextMenu);
-        document.body.removeChild(this._activeContextMenu.$el);
-        this._activeContextMenu.$destroy();
-        this._activeContextMenu = undefined;
-    }
-
-    /**
-     * @private
-     */
-    _createContextMenuForObject(objectPath, actions) {
-        return new Vue({
-            components: {
-                ContextMenu: ContextMenuComponent
-            },
-            provide: {
-                actions: actions,
-                objectPath: objectPath
-            },
-            template: '<ContextMenu></ContextMenu>'
+        applicableActions.forEach(action => {
+            action.callBack = () => {
+                return action.invoke(objectPath);
+            };
         });
+
+        return applicableActions;
     }
 }
 export default ContextMenuAPI;
