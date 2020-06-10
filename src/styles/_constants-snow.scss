@@ -148,6 +148,8 @@ $browseFrameColor: pullForward($colorBodyBg, 10%);
 $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
+$filterItemHoverFg: brightness(0.9);
+$filterItemUnknown: contrast(0);
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color

@@ -117,6 +117,24 @@
     }
 }
 
+@mixin isUnknown() {
+    // Common styles to be applied to tree items, object labels, grid and list item views
+    font-style: italic;
+    opacity: 0.7;
+
+    &[class*='icon']:before,
+    &[class*='icon']:after,
+    [class*='icon']:before,
+    [class*='icon']:after {
+        font-style: normal; // Prevent symbolsfont element from being italicized;
+    }
+
+    [class*='icon']:before {
+        // Target :before to avoid affecting alias indicator
+        filter: $filterItemUnknown;
+    }
+}
+
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
     background-image: linear-gradient(-45deg,
         rgba($c, $a) 25%, transparent 25%,
