@@ -61,6 +61,15 @@ const styleProps = {
         applicableForType: type => {
             return !type ? false : type === 'image-view';
         }
+    },
+    fontSize: {
+        svgProperty: 'font-size',
+        noneValue: NONE_VALUE,
+        applicableForType: type => {
+            return !type ? true : (type === 'text-view' ||
+                                    type === 'telemetry-view'||
+                                    type === 'subobject-view');
+        }
     }
 };
 

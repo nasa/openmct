@@ -52,3 +52,13 @@ export const ERROR = {
         errorText: 'Condition not found'
     }
 };
+
+export const FONT_SIZE_OPTIONS = 
+    [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128].map(size => {
+        let value = size + 'px';
+
+        return {
+            value,
+            name: value
+        };
+    });

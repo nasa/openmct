@@ -61,6 +61,10 @@
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
         />
+        <toolbar-menu v-if="hasProperty(styleItem.style.fontSize)"
+                      :options="fontSizeOption"
+                      @click="updateStyleValue"
+        />
     </span>
 </div>
 </template>
@@ -70,7 +74,9 @@
 import ToolbarColorPicker from "@/ui/toolbar/components/toolbar-color-picker.vue";
 import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 import ToolbarToggleButton from "@/ui/toolbar/components/toolbar-toggle-button.vue";
+import ToolbarMenu from "@/ui/toolbar/components/toolbar-menu.vue";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import {FONT_SIZE_OPTIONS} from "@/plugins/condition/utils/constants";
 import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
 
 export default {
@@ -78,7 +84,8 @@ export default {
     components: {
         ToolbarButton,
         ToolbarColorPicker,
-        ToolbarToggleButton
+        ToolbarToggleButton,
+        ToolbarMenu
     },
     inject: [
         'openmct'
@@ -180,6 +187,14 @@ export default {
                 ]
             }
 
+        },
+        fontSizeOption() {
+            return {
+                isEditing: this.isEditing,
+                property: 'fontSize',
+                label: this.styleItem.style.fontSize || '13px',
+                options: FONT_SIZE_OPTIONS
+            }
         }
     },
     methods: {
@@ -200,6 +215,9 @@ export default {
         },
         updateStyleValue(value, item) {
             value = this.normalizeValueForStyle(value);
+            if (item.property === 'fontSize') {
+                value = value.value;
+            }
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
