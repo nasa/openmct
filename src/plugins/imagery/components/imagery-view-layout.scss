@@ -158,22 +158,29 @@
         display: flex;
         align-items: center;
         margin-right: $interiorMargin; // Need some extra space due to proximity to close button
-        width: 150px;
     }
 
     &__sliders {
         display: flex;
         flex-direction: column;
 
-        input[type='range'] {
-            &:before {
-                color: rgba($colorMenuFg, 0.5);
-                margin-right: $interiorMarginSm;
-            }
+        > * + * {
+            margin-top: 11px;
+        }
+    }
 
-            + input[type='range'] {
-                margin-top: 11px;
-            }
+    &__slider-wrapper {
+        // A wrapper is needed to add the type icon to left of each range input
+        display: flex;
+        align-items: center;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+        input[type='range'] {
+            width: 100px;
         }
     }
 }

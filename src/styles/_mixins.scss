@@ -219,12 +219,6 @@
     background-repeat: $repeatDir;
 }
 
-@mixin sliderTrack($bg: $scrollbarTrackColorBg) {
-    border-radius: 2px;
-    box-sizing: border-box;
-    background-color: $bg;
-}
-
 @mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
     width: 0;
     height: 0;
