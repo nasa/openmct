@@ -420,9 +420,7 @@ select {
     margin: 1px 1px 0 0;
     padding: $interiorMargin $interiorMarginLg;
     white-space: nowrap;
-
     --notchSize: 7px;
-
     clip-path:
         polygon(
             0% 0%,
@@ -433,14 +431,34 @@ select {
             0% 100%
         );
 
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
     @include hover() {
-        background: $colorBtnBgHov;
+        filter: $filterHov;
     }
 
     &.is-current {
         background: $colorBtnReverseBg;
         color: $colorBtnReverseFg;
         pointer-events: none;
+    }
+
+    &.is-missing {
+        @include isMissing();
+
+        .is-missing__indicator {
+            right: -2px;
+            top: -2px;
+            transform: scale(0.8);
+        }
+
+        [class*='__type-icon']:before,
+        [class*='__type-icon']:after,
+        [class*='__name'] {
+            opacity: $opacityMissing;
+        }
     }
 }
 

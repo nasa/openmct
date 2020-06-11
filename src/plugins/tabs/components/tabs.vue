@@ -22,13 +22,17 @@
         <button
             v-for="(tab,index) in tabsList"
             :key="index"
-            class="c-tabs-view__tab c-tab"
+            class="c-tabs-view__tab c-tab is-missing"
             :class="[
-                {'is-current': isCurrent(tab)},
-                tab.type.definition.cssClass
+                {'is-current': isCurrent(tab)}
             ]"
             @click="showTab(tab, index)"
         >
+            <div class="c-button__type-icon"
+                :class="tab.type.definition.cssClass"
+            >
+                <span class="is-missing__indicator" title="This item is missing"></span>
+            </div>
             <span class="c-button__label">{{ tab.domainObject.name }}</span>
         </button>
     </div>
@@ -38,15 +42,6 @@
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
-        <div
-            v-if="currentTab"
-            class="c-tabs-view__object-name c-object-label l-browse-bar__object-name--w"
-            :class="currentTab.type.definition.cssClass"
-        >
-            <div class="l-browse-bar__object-name c-object-label__name">
-                {{ currentTab.domainObject.name }}
-            </div>
-        </div>
         <object-view
             v-if="internalDomainObject.keep_alive ? currentTab : isCurrent(tab)"
             class="c-tabs-view__object"
