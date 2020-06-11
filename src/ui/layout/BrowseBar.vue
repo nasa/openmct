@@ -27,12 +27,12 @@
     </div>
 
     <div class="l-browse-bar__end">
-        <ToggleSwitch 
+        <ToggleSwitch
             v-if="isViewEditable && !isEditing"
-            @change="toggleLock"
             :id="'edit-lock-toggle'"
             :checked="domainObject.locked"
             :label="lockedOrUnlocked"
+            @change="toggleLock"
         />
         <view-switcher
             v-if="!isEditing"
