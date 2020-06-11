@@ -216,7 +216,13 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
     };
 
     ImportAsJSONAction.appliesTo = function (context) {
-        return context.domainObject !== undefined &&
+        let domainObject = context.domainObject;
+
+        if (domainObject && domainObject.model.locked) {
+            return false;
+        }
+
+        return domainObject !== undefined &&
             context.domainObject.hasCapability("composition");
     };
 

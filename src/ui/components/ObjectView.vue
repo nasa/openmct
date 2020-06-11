@@ -226,12 +226,12 @@ export default {
             }
         },
         onDragOver(event) {
-            if (this.hasComposableDomainObject(event)) {
+            if (this.hasComposableDomainObject(event) && !this.currentObject.locked) {
                 event.preventDefault();
             }
         },
         addObjectToParent(event) {
-            if (this.hasComposableDomainObject(event) && this.composition) {
+            if (this.hasComposableDomainObject(event) && this.composition && !this.currentObject.locked) {
                 let composableDomainObject = this.getComposableDomainObject(event);
                 this.loadComposition().then(() => {
                     this.composition.add(composableDomainObject);

@@ -40,7 +40,18 @@ define(
         }
 
         MoveAction.prototype = Object.create(AbstractComposeAction.prototype);
-        MoveAction.appliesTo = AbstractComposeAction.appliesTo;
+
+        MoveAction.appliesTo = function (context) {
+            var applicableObject =
+                context.selectedObject || context.domainObject;
+
+            if (applicableObject && applicableObject.model.locked) {
+                return false;
+            }
+
+            return !!(applicableObject &&
+                applicableObject.hasCapability('context'));
+        };
 
         return MoveAction;
     }

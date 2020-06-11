@@ -27,6 +27,13 @@
     </div>
 
     <div class="l-browse-bar__end">
+        <ToggleSwitch 
+            v-if="isViewEditable && !isEditing"
+            @change="toggleLock"
+            :id="'edit-lock-toggle'"
+            :checked="domainObject.locked"
+            :label="lockedOrUnlocked"
+        />
         <view-switcher
             v-if="!isEditing"
             :current-view="currentView"
@@ -41,7 +48,7 @@
         />
         <div class="l-browse-bar__actions">
             <button
-                v-if="isViewEditable & !isEditing"
+                v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
@@ -93,6 +100,7 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
@@ -100,7 +108,8 @@ export default {
     inject: ['openmct'],
     components: {
         NotebookMenuSwitcher,
-        ViewSwitcher
+        ViewSwitcher,
+        ToggleSwitch
     },
     data: function () {
         return {
@@ -161,6 +170,13 @@ export default {
                 return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
             }
             return false;
+        },
+        lockedOrUnlocked() {
+            if (this.domainObject.locked) {
+                return 'Locked';
+            } else {
+                return 'Unlocked';
+            }
         }
     },
     watch: {
@@ -271,6 +287,9 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
+        },
+        toggleLock(flag) {
+            this.openmct.objects.mutate(this.domainObject, 'locked', flag);
         }
     }
 }

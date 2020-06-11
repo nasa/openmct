@@ -326,6 +326,9 @@ export default {
                 .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
         },
         handleDragOver($event) {
+            if (this.domainObject.locked) {
+                return;
+            }
             // Get the ID of the dragged object
             let draggedKeyString = $event.dataTransfer.types
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
