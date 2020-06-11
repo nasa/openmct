@@ -117,10 +117,11 @@
     }
 }
 
-@mixin isUnknown() {
+@mixin isMissing() {
     // Common styles to be applied to tree items, object labels, grid and list item views
-    font-style: italic;
+    //font-style: italic;
     opacity: 0.7;
+    pointer-events: none;
 
     &[class*='icon']:before,
     &[class*='icon']:after,
@@ -129,9 +130,14 @@
         font-style: normal; // Prevent symbolsfont element from being italicized;
     }
 
-    [class*='icon']:before {
+    [class*='icon']:before,
+    [class*='type-icon'] {
         // Target :before to avoid affecting alias indicator
-        filter: $filterItemUnknown;
+        filter: $filterItemMissing;
+    }
+    [class*='type-icon']:after {
+        // Reset alias indicator
+        filter: $filterItemMissing;
     }
 }
 

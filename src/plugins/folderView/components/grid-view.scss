@@ -38,7 +38,14 @@
         // Object is an alias to an original.
         [class*='__type-icon'] {
             @include isAlias();
-            color: $colorIconAliasForKeyFilter;
+        }
+    }
+
+    &--missing {
+        @include isMissing();
+
+        [class*='__type-icon__glyph'] {
+            filter: $filterItemMissing;
         }
     }
 
@@ -85,15 +92,14 @@
     body.desktop & {
         $transOutMs: 300ms;
         flex-flow: column nowrap;
-        transition: background $transOutMs ease-in-out;
+        transition: $transOutMs ease-in-out;
 
         &:hover {
-            background: $colorItemBgHov;
+            filter: $filterItemHoverFg;
             transition: $transIn;
 
             .c-grid-item__type-icon {
-                filter: $colorKeyFilterHov;
-                transform: scale(1);
+                transform: scale(1.1);
                 transition: $transInBounce;
             }
         }
@@ -115,7 +121,6 @@
             font-size: floor($gridItemDesk / 3);
             margin: $interiorMargin 22.5% $interiorMargin * 3 22.5%;
             order: 2;
-            transform: scale(0.9);
             transform-origin: center;
             transition: all $transOutMs ease-in-out;
         }

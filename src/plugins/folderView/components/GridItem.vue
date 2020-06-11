@@ -1,7 +1,11 @@
 <template>
 <a
     class="l-grid-view__item c-grid-item"
-    :class="{ 'is-alias': item.isAlias === true }"
+    :class="{
+        'is-alias': item.isAlias === true,
+        'c-grid-item--missing': item.status === 'missing',
+        'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
+    }"
     :href="objectLink"
 >
     <div

@@ -149,7 +149,7 @@ $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layo
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(0.9);
-$filterItemUnknown: contrast(0);
+$filterItemMissing: contrast(0.2);
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
