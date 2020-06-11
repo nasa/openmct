@@ -3,7 +3,7 @@
     class="l-grid-view__item c-grid-item"
     :class="{
         'is-alias': item.isAlias === true,
-        'c-grid-item--missing': item.status === 'missing',
+        'is-missing': item.status === 'missing',
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
     }"
     :href="objectLink"
@@ -11,7 +11,8 @@
     <div
         class="c-grid-item__type-icon"
         :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'"
-    ></div>
+    >
+    </div>
     <div class="c-grid-item__details">
         <!-- Name and metadata -->
         <div
@@ -26,6 +27,7 @@
         </div>
     </div>
     <div class="c-grid-item__controls">
+        <div class="is-missing__indicator" title="This item is missing"></div>
         <div
             class="icon-people"
             title="Shared"

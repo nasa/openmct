@@ -119,25 +119,22 @@
 
 @mixin isMissing() {
     // Common styles to be applied to tree items, object labels, grid and list item views
-    //font-style: italic;
-    opacity: 0.7;
-    pointer-events: none;
+    //opacity: 0.7;
+    //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
 
-    &[class*='icon']:before,
-    &[class*='icon']:after,
-    [class*='icon']:before,
-    [class*='icon']:after {
-        font-style: normal; // Prevent symbolsfont element from being italicized;
+    .is-missing__indicator {
+        text-shadow: $colorBodyBg 0 0 2px;
+        color: $colorAlert;
+        font-family: symbolsfont;
+
+        &:before {
+            content: $glyph-icon-alert-triangle;
+        }
     }
 
-    [class*='icon']:before,
-    [class*='type-icon'] {
-        // Target :before to avoid affecting alias indicator
-        filter: $filterItemMissing;
-    }
-    [class*='type-icon']:after {
-        // Reset alias indicator
-        filter: $filterItemMissing;
+    [class*='__type-icon'] .is-missing__indicator {
+        position: absolute;
+        z-index: 3;
     }
 }
 

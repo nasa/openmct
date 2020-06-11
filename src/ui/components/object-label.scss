@@ -12,14 +12,16 @@
         display: inline;
     }
 
-    &__type-icon,
-    &:before {
+    &__type-icon {
         // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        opacity: 0.6;
         margin-right: $interiorMargin;
+    }
+
+    &.is-missing {
+        @include isMissing();
     }
 }
 
@@ -38,5 +40,13 @@
         margin-right: $interiorMarginSm;
         opacity: 1;
         width: $treeTypeIconW;
+    }
+
+    &.is-missing {
+        [class*='__type-icon']:before,
+        [class*='__type-icon']:after,
+        [class*='__name'] {
+            opacity: $opacityMissing;
+        }
     }
 }

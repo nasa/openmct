@@ -7,9 +7,14 @@
             @click="goToParent"
         ></button>
         <div
-            class="l-browse-bar__object-name--w c-object-label"
-            :class="[ type.cssClass, classList ]"
+            class="l-browse-bar__object-name--w c-object-label is-missing"
+            :class="classList"
         >
+            <div class="c-object-label__type-icon"
+                 :class="type.cssClass"
+            >
+                <span class="is-missing__indicator" title="This item is missing"></span>
+            </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"
                 contenteditable

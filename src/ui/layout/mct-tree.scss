@@ -82,9 +82,7 @@
         }
 
         &:hover {
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
+            filter: $filterHov;
         }
 
         &.is-navigated-object,
@@ -117,6 +115,12 @@
 
         &__type-icon {
             color: $colorItemTreeIcon;
+
+            .is-missing__indicator {
+                right: -2px;
+                top: -2px;
+                transform: scale(0.8);
+            }
         }
 
         &.is-alias {

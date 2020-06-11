@@ -1,6 +1,6 @@
 <template>
 <a
-    class="c-tree__item__label c-object-label"
+    class="c-tree__item__label c-object-label is-missing"
     :class="classList"
     draggable="true"
     :href="objectLink"
@@ -10,8 +10,12 @@
     <div
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
-    ></div>
-    <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
+    >
+        <span class="is-missing__indicator" title="This item is missing"></span>
+    </div>
+    <div class="c-tree__item__name c-object-label__name">
+        {{ observedObject.name }}
+    </div>
 </a>
 </template>
 
