@@ -57,6 +57,7 @@
                 :container="container"
                 :rows-layout="rowsLayout"
                 :is-editing="isEditing"
+                :locked="domainObject.locked"
                 @move-frame="moveFrame"
                 @new-frame="setFrameLocation"
                 @persist="persist"

@@ -105,6 +105,10 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        locked: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
@@ -130,6 +134,10 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
+            if (this.locked) {
+                return false;
+            }
+
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }

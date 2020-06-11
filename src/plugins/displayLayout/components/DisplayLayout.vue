@@ -326,7 +326,7 @@ export default {
                 .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
         },
         handleDragOver($event) {
-            if (this.domainObject.locked) {
+            if (this.internalDomainObject.locked) {
                 return;
             }
             // Get the ID of the dragged object
