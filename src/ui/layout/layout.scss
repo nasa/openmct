@@ -354,23 +354,9 @@
         @include headerFont(1.4em);
         min-width: 0;
 
-        &:before {
-            // Icon
-            margin-right: $interiorMargin;
-        }
-
-        &.is-missing {
-            @include isMissing();
-
-            [class*='__type-icon']:before {
-                opacity: $opacityMissing;
-            }
-
-            .is-missing__indicator {
-                right: -5px;
-                top: -4px;
-                transform: scale(0.7);
-            }
+        .is-missing__indicator {
+            right: -5px !important;
+            top: -4px !important;
         }
     }
 

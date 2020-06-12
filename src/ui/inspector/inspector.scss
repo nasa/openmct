@@ -24,22 +24,6 @@
         padding-right: $p;
     }
 
-    &__selected-w {
-        &.is-missing {
-            @include isMissing();
-
-            [class*='__type-icon']:before {
-                opacity: $opacityMissing;
-            }
-
-            .is-missing__indicator {
-                right: -4px;
-                top: -2px;
-                transform: scale(0.7);
-            }
-        }
-    }
-
     &__selected {
         @include ellipsize();
         flex: 1 1 auto;

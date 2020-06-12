@@ -28,9 +28,14 @@
     }"
 >
     <div class="c-so-view__header">
-        <div class="c-object-label"
-             :class="[cssClass, classList]"
+        <div class="c-object-label is-missing"
+             :class="classList"
         >
+            <div class="c-object-label__type-icon"
+                 :class="cssClass"
+             >
+                <span class="is-missing__indicator" title="This item is missing"></span>
+            </div>
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
             </div>

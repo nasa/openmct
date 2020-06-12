@@ -115,12 +115,6 @@
 
         &__type-icon {
             color: $colorItemTreeIcon;
-
-            .is-missing__indicator {
-                right: -2px;
-                top: -2px;
-                transform: scale(0.8);
-            }
         }
 
         &.is-alias {

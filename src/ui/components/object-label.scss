@@ -3,9 +3,11 @@
     // Used mostly in trees and lists
     display: flex;
     align-items: center;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     overflow: hidden;
     white-space: nowrap;
+
+    > * + * { margin-left: $interiorMargin; }
 
     &__name {
         @include ellipsize();
@@ -17,17 +19,30 @@
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        margin-right: $interiorMargin;
+        //margin-right: $interiorMargin;
     }
 
     &.is-missing {
         @include isMissing();
+
+        [class*='__type-icon']:before,
+        [class*='__type-icon']:after{
+            opacity: $opacityMissing;
+        }
+
+        .is-missing__indicator {
+            right: -3px;
+            top: -3px;
+            transform: scale(0.7);
+        }
     }
 }
 
 .c-tree .c-object-label {
     border-radius: $controlCr;
     padding: $interiorMarginSm 1px;
+
+    > * + * { margin-left: $interiorMarginSm; }
 
     &__name {
         display: inline;
@@ -40,13 +55,5 @@
         margin-right: $interiorMarginSm;
         opacity: 1;
         width: $treeTypeIconW;
-    }
-
-    &.is-missing {
-        [class*='__type-icon']:before,
-        [class*='__type-icon']:after,
-        [class*='__name'] {
-            opacity: $opacityMissing;
-        }
     }
 }

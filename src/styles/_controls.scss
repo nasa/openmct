@@ -444,22 +444,6 @@ select {
         color: $colorBtnReverseFg;
         pointer-events: none;
     }
-
-    &.is-missing {
-        @include isMissing();
-
-        .is-missing__indicator {
-            right: -2px;
-            top: -2px;
-            transform: scale(0.8);
-        }
-
-        [class*='__type-icon']:before,
-        [class*='__type-icon']:after,
-        [class*='__name'] {
-            opacity: $opacityMissing;
-        }
-    }
 }
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
