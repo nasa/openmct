@@ -24,12 +24,16 @@
     class="c-so-view has-local-controls"
     :class="{
         'c-so-view--no-frame': !hasFrame,
-        'has-complex-content': complexContent
+        'has-complex-content': complexContent,
+        'is-missing': true
     }"
 >
     <div class="c-so-view__header">
-        <div class="c-object-label is-missing"
-             :class="classList"
+        <div class="c-object-label"
+             :class="{
+                classList,
+                'is-missing': true
+            }"
         >
             <div class="c-object-label__type-icon"
                  :class="cssClass"
@@ -51,6 +55,7 @@
             @click="expand"
         ></button>
     </div>
+    <div class="is-missing__indicator" title="This item is missing"></div>
     <object-view
         ref="objectView"
         class="c-so-view__object-view"

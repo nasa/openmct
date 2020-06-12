@@ -117,12 +117,13 @@
     }
 }
 
-@mixin isMissing() {
+@mixin isMissing($absPos: false) {
     // Common styles to be applied to tree items, object labels, grid and list item views
     //opacity: 0.7;
     //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
 
     .is-missing__indicator {
+        display: block;
         text-shadow: $colorBodyBg 0 0 2px;
         color: $colorAlert;
         font-family: symbolsfont;
@@ -132,9 +133,11 @@
         }
     }
 
-    [class*='__type-icon'] .is-missing__indicator {
-        position: absolute;
-        z-index: 3;
+    @if $absPos {
+        .is-missing__indicator {
+            position: absolute;
+            z-index: 3;
+        }
     }
 }
 

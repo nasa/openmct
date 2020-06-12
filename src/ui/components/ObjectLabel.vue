@@ -1,7 +1,10 @@
 <template>
 <a
-    class="c-tree__item__label c-object-label is-missing"
-    :class="classList"
+    class="c-tree__item__label c-object-label"
+    :class="{
+        classList,
+        'is-missing': true
+    }"
     draggable="true"
     :href="objectLink"
     @dragstart="dragStart"

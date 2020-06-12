@@ -30,10 +30,14 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="styleClass"
+        :class="{
+            styleClass,
+            'is-missing': true
+        }"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
+        <div class="is-missing__indicator" title="This item is missing"></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"

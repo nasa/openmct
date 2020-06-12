@@ -7,8 +7,11 @@
             @click="goToParent"
         ></button>
         <div
-            class="l-browse-bar__object-name--w c-object-label is-missing"
-            :class="classList"
+            class="l-browse-bar__object-name--w c-object-label"
+            :class="{
+                classList,
+                'is-missing': true
+            }"
         >
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"

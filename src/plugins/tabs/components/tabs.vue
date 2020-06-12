@@ -22,10 +22,11 @@
         <button
             v-for="(tab,index) in tabsList"
             :key="index"
-            class="c-tabs-view__tab c-tab c-object-label is-missing"
-            :class="[
-                {'is-current': isCurrent(tab)}
-            ]"
+            class="c-tabs-view__tab c-tab c-object-label"
+            :class="{
+                'is-current': isCurrent(tab),
+                'is-missing': true
+            }"
             @click="showTab(tab, index)"
         >
             <div class="c-object-label__type-icon"
