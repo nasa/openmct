@@ -423,7 +423,7 @@ attribute      | type   | flags    | notes
 
 ###### Value Hints
 
-Each telemetry value description has an object defining hints.  Keys in this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
 
 Known hints:
 
