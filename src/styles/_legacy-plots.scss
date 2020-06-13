@@ -51,6 +51,17 @@ mct-plot {
             display: none;
         }
     }
+
+    /*********************** MISSING ITEM INDICATORS */
+    .is-missing__indicator {
+        display: none;
+    }
+    .is-missing {
+        @include isMissing();
+        .is-missing__indicator {
+            font-size: 0.8em;
+        }
+    }
 }
 
 .c-plot {
@@ -102,7 +113,6 @@ mct-plot {
     }
 }
 
-
 .gl-plot {
     display: flex;
     position: relative;
@@ -116,10 +126,9 @@ mct-plot {
         flex: 1 1 auto;
 
         .l-state-indicators {
-            color: $colorPausedBg;
             position: absolute;
             display: block;
-            font-size: 1.5em;
+            font-size: 1.25em;
             pointer-events: none;
             top: $interiorMarginSm;
             left: $interiorMarginSm;
@@ -127,6 +136,14 @@ mct-plot {
 
             > * + * {
                 margin-left: $interiorMarginSm;
+            }
+
+            &__alert-no-lad {
+                color: $colorPausedBg;
+            }
+
+            &__alert-cursor-lock {
+                color: $colorInfo;
             }
 
             .t-alert-unsynced {
@@ -215,7 +232,6 @@ mct-plot {
             left: 0; top: 0; right: auto; bottom: 0;
             padding-left: 5px;
             text-orientation: mixed;
-            //overflow: hidden;
             writing-mode: vertical-lr;
             &:before {
                 // Icon denoting configurability
@@ -432,10 +448,12 @@ mct-plot {
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
         flex: 1 1 auto;
+        overflow: hidden;
+        padding: 2px;
     }
 
     &__view-control {
-        padding-top: 2px;
+        padding-top: 4px;
         margin-right: $interiorMarginSm;
     }
 
@@ -480,19 +498,35 @@ mct-plot {
 /***************** GENERAL STYLES, ALL STATES */
 .plot-legend-item {
     // General styles for legend items, both expanded and collapsed legend states
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
     .plot-series-color-swatch {
-        border-radius: $smallCr;
+        border-radius: 30%; //$smallCr;
         border: 1px solid $colorBodyBg;
         display: inline-block;
+        flex: 0 0 auto;
         height: $plotSwatchD;
         width: $plotSwatchD;
     }
     .plot-series-name {
         display: inline;
+        @include ellipsize();
     }
 
     .plot-series-value {
         @include ellipsize();
+    }
+}
+
+.plot-series-swatch-and-name {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
     }
 }
 
@@ -503,9 +537,6 @@ mct-plot {
 .gl-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
-
-    &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
-    &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
 
     &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
     &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
@@ -520,17 +551,11 @@ mct-plot {
             display: flex;
             align-items: center;
             justify-content: stretch;
-            &:not(:first-child) {
-                margin-left: $interiorMarginLg;
-            }
+
             .plot-series-swatch-and-name,
             .plot-series-value {
                 @include ellipsize();
                 flex: 1 1 auto;
-            }
-
-            .plot-series-swatch-and-name {
-                margin-right: $interiorMarginSm;
             }
 
             .plot-series-value {
@@ -542,7 +567,7 @@ mct-plot {
     /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
         .gl-plot-legend {
-            // max-height: 70%;
+             max-height: 70%;
         }
 
         .plot-wrapper-expanded-legend {
@@ -563,6 +588,11 @@ mct-plot {
                 display: flex;
                 flex: 1 1 auto;
                 overflow: hidden;
+
+                > .plot-legend-item + .plot-legend-item {
+                    // Space between plot items
+                    margin-left: $interiorMarginLg;
+                }
             }
         }
     }
@@ -594,12 +624,17 @@ mct-plot {
                 min-width: 0;
                 flex: 1 1 auto;
                 overflow-y: auto;
+
+                > * + * {
+                    // Space between plot items
+                    margin-top: $interiorMarginSm;
+                }
             }
             .plot-legend-item {
-                margin-bottom: 1px;
                 margin-left: 0;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 .plot-series-swatch-and-name {
+                    @include ellipsize();
                     flex: 0 1 auto;
                     min-width: 20%;
                 }
@@ -651,5 +686,26 @@ mct-plot {
 .s-status-timeconductor-unsynced {
     .t-alert-unsynced {
         display: inline-block !important;
+    }
+}
+
+/*********************** CURSOR LOCK INDICATOR */
+[class*='c-state-indicator__alert-cursor-lock'] {
+    display: none;
+}
+
+[class*='is-cursor-locked'] {
+    background: rgba($colorInfo, 0.1);
+
+    [class*='c-state-indicator__alert-cursor-lock'] {
+        @include userSelectNone();
+        color: $colorInfo;
+        display: block;
+        margin-right: $interiorMarginSm;
+
+        &[class*='--verbose'] {
+            padding: $interiorMarginSm;
+
+        }
     }
 }
