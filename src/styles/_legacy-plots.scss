@@ -43,6 +43,8 @@ mct-plot {
 
 .c-plot,
 .gl-plot {
+    overflow: hidden;
+
     .s-status-taking-snapshot & {
         .c-control-bar {
             display: none;
@@ -85,6 +87,7 @@ mct-plot {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
+        overflow: hidden;
     }
 
     &--stacked {
@@ -124,6 +127,7 @@ mct-plot {
     .plot-wrapper-axis-and-display-area {
         position: relative;
         flex: 1 1 auto;
+        min-height: $plotMinH;
 
         .l-state-indicators {
             position: absolute;
@@ -384,12 +388,6 @@ mct-plot {
     z-index: -10;
 
     .l-view-section {
-        //$m: $interiorMargin;
-        //top: $m !important;
-        //right: $m;
-        //bottom: $m;
-        //left: $m;
-
         .s-status-timeconductor-unsynced .holder-plot {
             .t-object-alert.t-alert-unsynced {
                 display: none;
@@ -445,10 +443,13 @@ mct-plot {
 /****************** _LEGEND.SCSS */
 .gl-plot-legend,
 .c-plot-legend {
+    overflow: hidden;
+
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
         flex: 1 1 auto;
-        overflow: hidden;
+        height: 100%;
+        overflow: auto;
         padding: 2px;
     }
 
