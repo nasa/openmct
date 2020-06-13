@@ -205,7 +205,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:cdscc.time.zone.offset": {
             "identifier": {
@@ -347,7 +347,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss14.array": {
             "identifier": {
@@ -568,7 +568,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss14.targets": {
             "identifier": {
@@ -625,7 +625,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss14.type": {
             "identifier": {
@@ -788,7 +788,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss24.array": {
             "identifier": {
@@ -1009,7 +1009,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss24.targets": {
             "identifier": {
@@ -1066,7 +1066,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss24.type": {
             "identifier": {
@@ -1229,7 +1229,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss25.array": {
             "identifier": {
@@ -1450,7 +1450,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss25.targets": {
             "identifier": {
@@ -1507,7 +1507,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss25.type": {
             "identifier": {
@@ -1670,7 +1670,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss26.array": {
             "identifier": {
@@ -1891,7 +1891,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss26.targets": {
             "identifier": {
@@ -1948,7 +1948,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss26.type": {
             "identifier": {
@@ -2111,7 +2111,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss34.array": {
             "identifier": {
@@ -2332,7 +2332,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss34.targets": {
             "identifier": {
@@ -2389,7 +2389,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss34.type": {
             "identifier": {
@@ -2552,7 +2552,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss35.array": {
             "identifier": {
@@ -2773,7 +2773,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss35.targets": {
             "identifier": {
@@ -2830,7 +2830,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss35.type": {
             "identifier": {
@@ -2993,7 +2993,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss36.array": {
             "identifier": {
@@ -3214,7 +3214,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss36.targets": {
             "identifier": {
@@ -3271,7 +3271,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss36.type": {
             "identifier": {
@@ -3434,7 +3434,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss43.array": {
             "identifier": {
@@ -3655,7 +3655,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss43.targets": {
             "identifier": {
@@ -3712,7 +3712,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss43.type": {
             "identifier": {
@@ -3875,7 +3875,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss54.array": {
             "identifier": {
@@ -4096,7 +4096,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss54.targets": {
             "identifier": {
@@ -4153,7 +4153,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss54.type": {
             "identifier": {
@@ -4316,7 +4316,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss55.array": {
             "identifier": {
@@ -4537,7 +4537,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss55.targets": {
             "identifier": {
@@ -4594,7 +4594,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss55.type": {
             "identifier": {
@@ -4757,7 +4757,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss63.array": {
             "identifier": {
@@ -4978,7 +4978,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss63.targets": {
             "identifier": {
@@ -5035,7 +5035,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss63.type": {
             "identifier": {
@@ -5198,7 +5198,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss65.array": {
             "identifier": {
@@ -5419,7 +5419,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss65.targets": {
             "identifier": {
@@ -5476,7 +5476,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:dss65.type": {
             "identifier": {
@@ -5727,7 +5727,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:gdscc.time.zone.offset": {
             "identifier": {
@@ -5989,7 +5989,7 @@
                     }
                 ]
             },
-            "type": "table"
+            "type": "dsn.telemetry"
         },
         "deep.space.network:mdscc.time.zone.offset": {
             "identifier": {
