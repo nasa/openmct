@@ -90,7 +90,15 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         invokeEditModeHandler(editMode) {
-            this.currentView.onEditModeChange(editMode);
+            let edit;
+            
+            if (this.currentObject.locked) {
+                edit = false;
+            } else {
+                edit = editMode;
+            }
+
+            this.currentView.onEditModeChange(edit);
         },
         toggleEditView(editMode) {
             this.clear();
@@ -226,12 +234,16 @@ export default {
             }
         },
         onDragOver(event) {
-            if (this.hasComposableDomainObject(event) && !this.currentObject.locked) {
-                event.preventDefault();
+            if (this.hasComposableDomainObject(event)) {
+                if (this.isEditingAllowed()) {
+                    event.preventDefault();
+                } else {
+                    event.stopPropagation();
+                }
             }
         },
         addObjectToParent(event) {
-            if (this.hasComposableDomainObject(event) && this.composition && !this.currentObject.locked) {
+            if (this.hasComposableDomainObject(event) && this.composition) {
                 let composableDomainObject = this.getComposableDomainObject(event);
                 this.loadComposition().then(() => {
                     this.composition.add(composableDomainObject);
@@ -283,6 +295,13 @@ export default {
                     this.currentView.onClearData();
                 }
             }
+        },
+        isEditingAllowed() {
+            let browseObject = this.openmct.layout.$refs.browseObject.currentObject,
+                objectPath= this.currentObjectPath || this.objectPath,
+                parentObject = objectPath[1];
+
+            return [browseObject, parentObject, this.currentObject].every(object => !object.locked);
         }
     }
 }

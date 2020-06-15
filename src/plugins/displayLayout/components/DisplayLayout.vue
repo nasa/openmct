@@ -24,7 +24,8 @@
 <div
     class="l-layout"
     :class="{
-        'is-multi-selected': selectedLayoutItems.length > 1
+        'is-multi-selected': selectedLayoutItems.length > 1,
+        'editing-locked': internalDomainObject.locked
     }"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"

@@ -69,6 +69,9 @@ export default function DisplayLayoutPlugin(options) {
                             orderItem: component && component.$refs.displayLayout.orderItem
                         }
                     },
+                    // onEditModeChange: function (isEditing) {
+                    //     component.isEditing = isEditing;
+                    // },
                     destroy() {
                         component.$destroy();
                     }

@@ -58,6 +58,7 @@
                 :rows-layout="rowsLayout"
                 :is-editing="isEditing"
                 :locked="domainObject.locked"
+                :object-path="objectPath"
                 @move-frame="moveFrame"
                 @new-frame="setFrameLocation"
                 @persist="persist"
@@ -137,7 +138,7 @@ function sizeToFill(items) {
 }
 
 export default {
-    inject: ['openmct', 'layoutObject'],
+    inject: ['openmct', 'objectPath', 'layoutObject'],
     components: {
         ContainerComponent,
         ResizeHandle,

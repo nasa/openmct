@@ -53,6 +53,7 @@
                 :index="i"
                 :container-index="index"
                 :is-editing="isEditing"
+                :object-path="objectPath"
             />
 
             <drop-hint
@@ -109,6 +110,10 @@ export default {
         locked: {
             type: Boolean,
             default: false
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     computed: {
