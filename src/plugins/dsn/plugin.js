@@ -24,10 +24,19 @@ define([
         DSN_TELEMETRY_SOURCE = 'https://eyes.nasa.gov/dsn/data/dsn.xml',
         DSN_TELEMETRY_TYPE = 'dsn.telemetry';
 
+    function checkFetchStatus(response) {
+        if (response.status >= 200 && response.status < 300) {
+            return Promise.resolve(response);
+        } else {
+            return Promise.reject(new Error(response.statusText));
+        }
+    }
+
     function getDsnConfiguration() {
         var url = '/proxyUrl?url=' + encodeURIComponent(DSN_CONFIG_SOURCE);
 
         return fetch(url)
+            .then(checkFetchStatus)
             .then(response => response.text())
             .then(data => {
                 var domParser = new DOMParser(),
@@ -38,7 +47,8 @@ define([
                 xml = domParser.parseFromString(data, 'application/xml');
                 dsn = parser.parseXml(xml);
                 config = dsn.data;
-            });
+            })
+            .catch(error => console.error('Error fetching DSN config: ', error));
     }
 
     function getDsnData(domainObject) {
@@ -46,6 +56,7 @@ define([
         var url = '/proxyUrl?url=' + encodeURIComponent(DSN_TELEMETRY_SOURCE + '?r=' + Math.floor(new Date().getTime() / 5000));
 
         return fetch(url)
+            .then(checkFetchStatus)
             .then(response => response.text())
             .then(data => {
                 var domParser = new DOMParser(),
@@ -67,7 +78,8 @@ define([
                 }
 
                 return dsnData;
-            });
+            })
+            .catch(error => console.error('Error fetching DSN data: ', error));
     }
 
     objectProvider = {
