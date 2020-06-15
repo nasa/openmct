@@ -54,10 +54,11 @@ export default function DisplayLayoutPlugin(options) {
                             },
                             data() {
                                 return {
-                                    domainObject: domainObject
+                                    domainObject: domainObject,
+                                    isEditing: openmct.editor.isEditing()
                                 };
                             },
-                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>'
+                            template: '<layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></layout>'
                         });
                     },
                     getSelectionContext() {
@@ -69,9 +70,9 @@ export default function DisplayLayoutPlugin(options) {
                             orderItem: component && component.$refs.displayLayout.orderItem
                         }
                     },
-                    // onEditModeChange: function (isEditing) {
-                    //     component.isEditing = isEditing;
-                    // },
+                    onEditModeChange: function (isEditing) {
+                        component.isEditing = isEditing;
+                    },
                     destroy() {
                         component.$destroy();
                     }

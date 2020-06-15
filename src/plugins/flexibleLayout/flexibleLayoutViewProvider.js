@@ -71,7 +71,6 @@ define([
                         };
                     },
                     onEditModeChange: function (isEditing) {
-                        console.log(isEditing);
                         component.isEditing = isEditing;
                     },
                     destroy: function (element) {
