@@ -20,20 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class LADTableCompositionPolicy {
-
-    constructor(openmct) {
-        this.openmct = openmct;
-        return this.allow.bind(this);
-    }
-
-    allow(parent, child) {
-        if(parent.type === 'LadTable') {
-            return this.openmct.telemetry.isTelemetryObject(child);
-        } else if(parent.type === 'LadTableSet') {
-            return child.type === 'LadTable';
+export default function LADTableCompositionPolicy(openmct) {
+    return {
+        allow: function (parent, child) {
+            if(parent.type === 'LadTable') {
+                return openmct.telemetry.isTelemetryObject(child);
+            } else if(parent.type === 'LadTableSet') {
+                return child.type === 'LadTable';
+            }
+            return true;
         }
-
-        return true;
     }
 }
