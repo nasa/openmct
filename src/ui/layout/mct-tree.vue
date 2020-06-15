@@ -190,7 +190,6 @@ export default {
     },
     methods: {
         updatevisibleTreeItems() {
-            console.log('update visible tree items');
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(()=> {
@@ -225,7 +224,6 @@ export default {
             }
         },
         setContainerHeight() {
-            console.log('set container height');
             if(this.$refs.mainTree) {
                 let mainTree = this.$refs.mainTree,
                     mainTreeHeight = mainTree.clientHeight;
@@ -310,7 +308,6 @@ export default {
                 .filter(c => c.id !== removeId);
         },
         finishLoading() {
-            console.log('finish loading');
             this.isLoading = false;
             if(this.jumpPath) {
                 this.jumpToPath();
