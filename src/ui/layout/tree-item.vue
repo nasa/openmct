@@ -1,8 +1,17 @@
 <template>
-<li class="c-tree__item-h">
+<li 
+    :style="{
+        'top': virtualScroll ? itemTop : 'auto',
+        'position': virtualScroll ? 'absolute' : 'relative'
+    }"
+    class="c-tree__item-h"
+>
     <div
         class="c-tree__item"
-        :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
+        :class="{
+            'is-alias': isAlias,
+            'is-navigated-object': navigated
+        }"
         :style="{ paddingLeft: leftOffset }"
     >
         <view-control
@@ -54,6 +63,25 @@ export default {
         showDown: {
             type: Boolean,
             default: true
+        },
+        itemIndex: {
+            type: Number,
+            required: false,
+            default: undefined
+        },
+        itemOffset: {
+            type: Number,
+            required: false,
+            default: undefined
+        },
+        itemHeight: {
+            type: Number,
+            required: false,
+            default: 0
+        },
+        virtualScroll: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -66,13 +94,15 @@ export default {
     },
     computed: {
         isAlias() {
-            console.log('is alias');
             let parent = this.node.objectPath[1];
             if (!parent) {
                 return false;
             }
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
             return parentKeyString !== this.node.object.location;
+        },
+        itemTop() {
+            return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
         }
     },
     watch: {

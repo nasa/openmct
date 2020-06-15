@@ -1,5 +1,7 @@
 <template>
-<div class="c-tree-and-search">
+<div
+    class="c-tree-and-search"
+>
     <div class="c-tree-and-search__search">
         <search
             ref="shell-search"
@@ -26,8 +28,8 @@
 
     <!-- main tree -->
     <ul
-        v-if="!isLoading"
-        v-show="!searchValue"
+        v-show="!searchValue && !isLoading"
+        ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
         <!-- ancestors -->
@@ -41,15 +43,31 @@
             @resetTree="handleReset"
         />
         <!-- currently viewed children -->
-        <li :class="childrenSlideClass">
-            <ul>
-                <tree-item
-                    v-for="treeItem in allTreeItems"
-                    :key="treeItem.id"
-                    :node="treeItem"
-                    :left-offset="ancestors.length * 10 + 10 + 'px'"
-                    @expanded="handleExpanded"
-                />
+        <li
+            :class="childrenSlideClass"
+            style="{ position: relative }"
+        >
+            <ul
+                ref="scrollable"
+                class="scrollable-children"
+                :style="scrollableStyles()"
+                @scroll="scrollItems"
+            >
+                <div
+                    :style="{ height: childrenHeight + 'px'}"
+                >
+                    <tree-item
+                        v-for="(treeItem, index) in visibleTreeItems"
+                        :key="treeItem.id"
+                        :node="treeItem"
+                        :left-offset="ancestors.length * 10 + 10 + 'px'"
+                        :item-offset="itemOffset"
+                        :item-index="index"
+                        :item-height="itemHeight"
+                        :virtual-scroll="!noScroll"
+                        @expanded="handleExpanded"
+                    />
+                </div>
             </ul>
         </li>
     </ul>
@@ -75,6 +93,11 @@ import treeItem from './tree-item.vue'
 import search from '../components/search.vue';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
+const ITEM_BUFFER = 5;
+const MAIN_TREE_RECHECK_DELAY = 100;
+const RESIZE_FIRE_DELAY_MS = 500;
+let windowResizeId = undefined,
+    windowResizing = false;
 
 export default {
     inject: ['openmct'],
@@ -91,13 +114,21 @@ export default {
     },
     data() {
         return {
+            isLoading: false,
             searchValue: '',
             allTreeItems: [],
+            visibleTreeItems: [],
             filteredTreeItems: [],
-            isLoading: false,
-            loaded: false,
             ancestors: [],
-            childrenSlideClass: 'slide-left'
+            childrenSlideClass: 'slide-left',
+            availableContainerHeight: 0,
+            noScroll: true,
+            updatingView: false,
+            itemHeight: 28,
+            itemOffset: 0,
+            childrenHeight: 0,
+            scrollable: undefined,
+            pageThreshold: 50
         }
     },
     computed: {
@@ -117,34 +148,138 @@ export default {
         syncTreeNavigation() {
             let currentLocationPath = this.openmct.router.currentLocation.path,
                 descendantPath = currentLocationPath.split('/browse/')[1],
-                alreadyNavigatedCheck = descendantPath.split('/');
+                alreadyNavigatedCheck = descendantPath.split('/'),
+                alreadyNavigated;
+
             alreadyNavigatedCheck.pop();
             alreadyNavigatedCheck = alreadyNavigatedCheck.join('/');
+            alreadyNavigated = this.currentNavigatedPath === alreadyNavigatedCheck;
+            descendantPath = descendantPath.split('/');
 
-            if(currentLocationPath && this.currentNavigatedPath !== alreadyNavigatedCheck) {
-                descendantPath = descendantPath.split('/');
-                descendantPath.pop();
+            if(currentLocationPath && !alreadyNavigated) {
+                this.scrollTo = descendantPath.pop();
                 descendantPath = descendantPath.join('/');
                 this.allChildren = [];
                 this.ancestors = [];
                 this.jumpPath = descendantPath;
                 this.jumpToPath(true);
+            } else if(alreadyNavigated && !this.noScroll) {
+                this.scrollTo = descendantPath.pop();
+                this.autoScroll();
             }
+        },
+        allTreeItems() {
+            this.setChildrenHeight();
+            this.setContainerHeight();
         }
     },
     mounted() {
-        let expandedPath = this.getLocalStorageExpanded();
-        if(expandedPath) {
-            this.jumpPath = expandedPath;
+        let savedPath = this.getSavedNavigatedPath();
+        if(savedPath) {
+            this.jumpPath = savedPath;
         }
         this.searchService = this.openmct.$injector.get('searchService');
-        this.openmct.objects.get('ROOT')
-            .then(root => {
-                let rootNode = this.buildTreeItem(root);
-                this.getAllChildren(rootNode);
-            });
+        window.addEventListener('resize',  this.handleWindowResize);
+        this.openmct.objects.get('ROOT').then(root => {
+            let rootNode = this.buildTreeItem(root);
+            this.getAllChildren(rootNode);
+        });
+    },
+    destroyed() {
+        window.removeEventListener('resize', this.handleWindowResize);
     },
     methods: {
+        updatevisibleTreeItems() {
+            console.log('update visible tree items');
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(()=> {
+                    let start = 0,
+                        end = this.pageThreshold,
+                        allItemsCount = this.allTreeItems.length;
+
+                    if (allItemsCount < this.pageThreshold) {
+                        end = allItemsCount;
+                    } else {
+                        let firstVisible = this.calculateFirstVisibleItem(),
+                            lastVisible = this.calculateLastVisibleItem(),
+                            totalVisible = lastVisible - firstVisible,
+                            numberOffscreen = this.pageThreshold - totalVisible;
+
+                        start = firstVisible - Math.floor(numberOffscreen / 2);
+                        end = lastVisible + Math.ceil(numberOffscreen / 2);
+
+                        if (start < 0) {
+                            start = 0;
+                            end = Math.min(this.pageThreshold, allItemsCount);
+                        } else if (end >= allItemsCount) {
+                            end = allItemsCount;
+                            start = end - this.pageThreshold + 1;
+                        }
+                    }
+                    this.itemOffset = start;
+                    this.visibleTreeItems = this.allTreeItems.slice(start, end);
+
+                    this.updatingView = false;
+                });
+            }
+        },
+        setContainerHeight() {
+            console.log('set container height');
+            if(this.$refs.mainTree) {
+                let mainTree = this.$refs.mainTree,
+                    mainTreeHeight = mainTree.clientHeight;
+
+                if(mainTreeHeight !== 0) {
+                    let ancestorsHeight = this.calculateAncestorHeight(),
+                        allChildrenHeight = this.calculateChildrenHeight();
+
+                    this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
+
+                    if(allChildrenHeight > this.availableContainerHeight) {
+                        this.setPageThreshold();
+                        this.noScroll = false;
+                    } else {
+                        this.noScroll = true;
+                    }
+                    this.updatevisibleTreeItems();
+                } else {
+                    setTimeout(this.setContainerHeight, MAIN_TREE_RECHECK_DELAY);
+                }
+            }
+        },
+        calculateFirstVisibleItem() {
+            let scrollTop = this.$refs.scrollable.scrollTop;
+            return Math.floor(scrollTop / this.itemHeight);
+        },
+        calculateLastVisibleItem() {
+            let scrollBottom = this.$refs.scrollable.scrollTop + this.$refs.scrollable.offsetHeight;
+            return Math.ceil(scrollBottom / this.itemHeight);
+        },
+        calculateChildrenHeight() {
+            let childrenCount = this.allTreeItems.length;
+            return this.itemHeight * childrenCount;
+        },
+        setChildrenHeight() {
+            this.childrenHeight = this.calculateChildrenHeight();
+        },
+        calculateAncestorHeight() {
+            let ancestorCount = this.ancestors.length;
+            return this.itemHeight * ancestorCount;
+        },
+        setPageThreshold() {
+            this.pageThreshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
+        },
+        handleWindowResize() {
+            if(!windowResizing) {
+                windowResizing = true;
+                window.clearTimeout(windowResizeId);
+                windowResizeId = window.setTimeout(() => {
+                    this.setContainerHeight();
+                    windowResizing = false;
+                }, RESIZE_FIRE_DELAY_MS);
+            }
+        },
         getAllChildren(node) {
             this.isLoading = true;
             if (this.composition) {
@@ -166,12 +301,21 @@ export default {
                 navigateToParent: '/browse/' + this.currentNavigatedPath
             };
         },
+        addChild(child) {
+            this.allTreeItems.push(this.buildTreeItem(child));
+        },
+        removeChild(identifier) {
+            let removeId = this.openmct.objects.makeKeyString(identifier);
+            this.allChildren = this.children
+                .filter(c => c.id !== removeId);
+        },
         finishLoading() {
+            console.log('finish loading');
             this.isLoading = false;
-            this.loaded = true;
             if(this.jumpPath) {
                 this.jumpToPath();
             }
+            this.autoScroll();
         },
         async jumpToPath(saveExpandedPath = false) {
             let nodes = this.jumpPath.split('/'),
@@ -186,18 +330,26 @@ export default {
                     this.jumpPath = '';
                     this.getAllChildren(newParent);
                     if(saveExpandedPath) {
-                        this.setLocalStorageExpanded();
+                        this.setCurrentNavigatedPath();
                     }
                 }
             }
         },
-        addChild(child) {
-            this.allTreeItems.push(this.buildTreeItem(child));
+        autoScroll() {
+            if(this.scrollTo) {
+                let indexOfScroll = this.indexOfItemById(this.scrollTo);
+                this.$nextTick(() => {
+                    this.$refs.scrollable.scrollTop = indexOfScroll * this.itemHeight;
+                });
+                this.scrollTo = undefined;
+            }
         },
-        removeChild(identifier) {
-            let removeId = this.openmct.objects.makeKeyString(identifier);
-            this.allChildren = this.children
-                .filter(c => c.id !== removeId);
+        indexOfItemById(id) {
+            for(let i = 0; i < this.allTreeItems.length; i++) {
+                if(this.allTreeItems[i].id === id) {
+                    return i;
+                }
+            }
         },
         getFilteredChildren() {
             this.searchService.query(this.searchValue).then(children => {
@@ -234,23 +386,34 @@ export default {
             }
         },
         handleReset(node) {
+            this.childrenSlideClass = 'slide-right';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
-            this.childrenSlideClass = 'slide-right';
-            this.setLocalStorageExpanded();
+            this.setCurrentNavigatedPath();
         },
         handleExpanded(node) {
+            this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
             this.getAllChildren(newParent);
-            this.childrenSlideClass = 'slide-left';
-            this.setLocalStorageExpanded();
+            this.setCurrentNavigatedPath();
         },
-        getLocalStorageExpanded() {
+        getSavedNavigatedPath() {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
         },
-        setLocalStorageExpanded() {
+        setCurrentNavigatedPath() {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
+        },
+        scrollItems(event) {
+            if(!windowResizing) {
+                this.updatevisibleTreeItems();
+            }
+        },
+        scrollableStyles() {
+            return {
+                height: this.availableContainerHeight + 'px',
+                overflow: this.noScroll ? 'hidden' : 'scroll'
+            }
         }
     }
 }

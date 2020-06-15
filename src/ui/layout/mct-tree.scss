@@ -62,6 +62,12 @@
         overflow-y: auto;
         transition: all;
 
+        .scrollable-children {
+            .c-tree__item-h {
+                width: 100%;
+            }
+        }
+
         .c-tree {
             padding-left: 0;
         }
