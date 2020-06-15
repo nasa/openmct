@@ -105,7 +105,7 @@ export default {
                 });
         },
         processHistoricalData(telemetryData, keyString, isAdd) {
-            const index = this.telemetryObjects.findIndex(object => keyString === object.identifier.key);
+            let index = this.telemetryObjects.findIndex(object => keyString === object.identifier.key);
             this.addTrace(telemetryData, keyString, index, isAdd);
 
             //let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
@@ -185,7 +185,7 @@ export default {
                 font: {
                     family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
                     size: "12px",
-                    color: "#666"
+                    color: "#aaa"
                 },
                 xaxis: { // hardcoded as UTC for now
                     title: 'UTC',
@@ -218,9 +218,6 @@ export default {
             let x = [];
             let y = [];
 
-            // temp palette for demo
-            const colors = ['rgb(32, 178, 170)', 'rgb(154, 205, 50)', 'rgb(255, 140, 0)'];
-
             telemetryData.forEach((datum) => {
                 x.push(this.formatDatumX(datum));
                 y.push(this.formatDatumY(datum));
@@ -236,7 +233,6 @@ export default {
                     size: 5
                 },
                 line: {
-                    color: colors[index], // to set new color for each trace
                     shape: 'linear',
                     width: 1.5
                 }
