@@ -45,23 +45,28 @@ define([
         // Add the same query string parameter the DSN site sends with each request
         var url = '/proxyUrl?url=' + encodeURIComponent(DSN_TELEMETRY_SOURCE + '?r=' + Math.floor(new Date().getTime() / 5000));
 
-        return http.get(url)
-            .then(function (resp) {
-                var data = '',
+        return fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                var domParser = new DOMParser(),
                     dsn,
-                    parser = new DsnParser(config);
+                    dsnData = '',
+                    parser = new DsnParser(config),
+                    xml;
 
-                dsn = parser.parseXml(resp.request.responseXML);
+                xml = domParser.parseFromString(data, 'application/xml');
+                dsn = parser.parseXml(xml);
+
                 if (dsn.data.hasOwnProperty(domainObject.identifier.key)) {
                     if (typeof dsn.data[domainObject.identifier.key] === 'object') {
-                        data = dsn.data[domainObject.identifier.key];
+                        dsnData = dsn.data[domainObject.identifier.key];
                     } else {
-                        data = {};
-                        data[domainObject.identifier.key] = dsn.data[domainObject.identifier.key];
+                        dsnData = {};
+                        dsnData[domainObject.identifier.key] = dsn.data[domainObject.identifier.key];
                     }
                 }
 
-                return data;
+                return dsnData;
             });
     }
 
