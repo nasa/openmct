@@ -94,11 +94,11 @@ define([
             var element = configElements[i];
 
             switch (element.tagName) {
-                case 'sites':
-                    Object.assign(this.dsn.data, this.parseSitesTag(element));
-                    break;
-                case 'spacecraftMap':
-                    Object.assign(this.dsn.data, this.parseSpacecraftMapTag(element));
+            case 'sites':
+                Object.assign(this.dsn.data, this.parseSitesTag(element));
+                break;
+            case 'spacecraftMap':
+                Object.assign(this.dsn.data, this.parseSpacecraftMapTag(element));
             }
         }
     };
@@ -159,34 +159,34 @@ define([
             var child = children[i];
 
             switch (child.tagName) {
-                case 'downSignal':
-                case 'upSignal':
-                    var signal = {},
-                        spacecraftName = child.getAttribute('spacecraft').toLowerCase();
+            case 'downSignal':
+            case 'upSignal':
+                var signal = {},
+                    spacecraftName = child.getAttribute('spacecraft').toLowerCase();
 
-                    signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
-                    signal[key + '.signal.type'] = child.getAttribute('signalType');
-                    signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
-                    signal[key + '.signal.data.rate'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'dataRate');
-                    signal[key + '.signal.frequency'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'frequency');
-                    signal[key + '.signal.power'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'power');
-                    signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
-                    signal[key + '.signal.spacecraft.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'spacecraftId');
-                    signal[key + '.signal.spacecraft.friendly.name'] = this.dsn.data[spacecraftName + '.friendly.name'];
-                    dish[key + '.signals'].push(signal);
-                    break;
-                case 'target':
-                    var target = {},
-                        targetName = child.getAttribute('name').toLowerCase();
+                signal[key + '.signal.direction'] = child.tagName.substring(0, child.tagName.length - 6);
+                signal[key + '.signal.type'] = child.getAttribute('signalType');
+                signal[key + '.signal.type.debug'] = child.getAttribute('signalTypeDebug');
+                signal[key + '.signal.data.rate'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'dataRate');
+                signal[key + '.signal.frequency'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'frequency');
+                signal[key + '.signal.power'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'power');
+                signal[key + '.signal.spacecraft'] = child.getAttribute('spacecraft');
+                signal[key + '.signal.spacecraft.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'spacecraftId');
+                signal[key + '.signal.spacecraft.friendly.name'] = this.dsn.data[spacecraftName + '.friendly.name'];
+                dish[key + '.signals'].push(signal);
+                break;
+            case 'target':
+                var target = {},
+                    targetName = child.getAttribute('name').toLowerCase();
 
-                    target[key + '.target.name'] = child.getAttribute('name');
-                    target[key + '.target.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'id');
-                    target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'uplegRange');
-                    target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'downlegRange');
-                    target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'rtlt');
-                    target[key + '.target.friendly.name'] = targetName ? this.dsn.data[targetName + '.friendly.name'] : '';
-                    dish[key + '.targets'].push(target);
-                    break;
+                target[key + '.target.name'] = child.getAttribute('name');
+                target[key + '.target.id'] = DsnUtils.parseTelemetryAsIntegerOrString(child, 'id');
+                target[key + '.target.upleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'uplegRange');
+                target[key + '.target.downleg.range'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'downlegRange');
+                target[key + '.target.rtlt'] = DsnUtils.parseTelemetryAsFloatOrString(child, 'rtlt');
+                target[key + '.target.friendly.name'] = targetName ? this.dsn.data[targetName + '.friendly.name'] : '';
+                dish[key + '.targets'].push(target);
+                break;
             }
         }
 
@@ -217,14 +217,14 @@ define([
             var element = dsnElements[i];
 
             switch (element.tagName) {
-                case 'station':
-                    Object.assign(this.dsn.data, this.parseStationTag(element));
-                    break;
-                case 'dish':
-                    Object.assign(this.dsn.data, this.parseDishTag(element));
-                    break;
-                case 'timestamp':
-                    this.dsn.data.timestamp = this.parseTimestampTag(element);
+            case 'station':
+                Object.assign(this.dsn.data, this.parseStationTag(element));
+                break;
+            case 'dish':
+                Object.assign(this.dsn.data, this.parseDishTag(element));
+                break;
+            case 'timestamp':
+                this.dsn.data.timestamp = this.parseTimestampTag(element);
             }
         }
     };

@@ -163,8 +163,8 @@ define([
                 // Unsubscribe domain object
                 listeners[domainObject.identifier.key] =
                         listeners[domainObject.identifier.key].filter(function (c) {
-                    return c !== callback;
-                });
+                            return c !== callback;
+                        });
             };
         }
     };
