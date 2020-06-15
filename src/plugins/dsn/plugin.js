@@ -27,12 +27,16 @@ define([
     function getDsnConfiguration() {
         var url = '/proxyUrl?url=' + encodeURIComponent(DSN_CONFIG_SOURCE);
 
-        return http.get(url)
-            .then(function (resp) {
-                var dsn,
-                    parser = new DsnParser();
+        return fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                var domParser = new DOMParser(),
+                    dsn,
+                    parser = new DsnParser(),
+                    xml;
 
-                dsn = parser.parseXml(resp.request.responseXML);
+                xml = domParser.parseFromString(data, 'application/xml');
+                dsn = parser.parseXml(xml);
                 config = dsn.data;
             });
     }
