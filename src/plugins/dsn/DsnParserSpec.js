@@ -1,8 +1,8 @@
 
 define([
     './DsnParser',
-    'text!./res/test-dsn-config-response.xml',
-    'text!./res/test-dsn-response.xml'
+    './res/test-dsn-config-response.xml',
+    './res/test-dsn-response.xml'
 ], function (
     DsnParser,
     testXmlConfigResponse,
