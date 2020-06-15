@@ -2,13 +2,11 @@
 define([
     './res/dsn-dictionary.json',
     './DsnUtils',
-    './DsnParser',
-    './res/http'
+    './DsnParser'
 ], function (
     baseDictionary,
     DsnUtils,
-    DsnParser,
-    http
+    DsnParser
 ) {
 
     var compositionProvider,
