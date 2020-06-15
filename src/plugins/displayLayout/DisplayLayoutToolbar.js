@@ -448,7 +448,7 @@ define(['lodash'], function (_) {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
-                    if (!layoutItem) {
+                    if (!layoutItem || selectedParent.locked) {
                         return;
                     }
 
