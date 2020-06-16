@@ -28,29 +28,23 @@ import {
     getLatestTelemetry
 } from 'testUtils';
 
+const TABLE_BODY_ROWS = '.js-lad-table__body__row';
+const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';
+const TABLE_BODY_FIRST_ROW_FIRST_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
+const TABLE_BODY_FIRST_ROW_SECOND_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
+const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
+const LAD_SET_TABLE_HEADERS = '.js-lad-table-set__table-headers';
+
 let openmct,
     ladPlugin,
     parent,
     child;
 
-let selectors = {};
-selectors.ladTableClass = '.c-table.c-lad-table';
-selectors.ladTableBodyRows = selectors.ladTableClass + ' tbody tr';
-selectors.ladTableBodyRowsFirstData = selectors.ladTableBodyRows + ' td:first-child';
-selectors.ladTableBodyRowsSecondtData = selectors.ladTableBodyRows + ' td:nth-child(2)';
-selectors.ladTableBodyRowsThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
-selectors.ladTableFirstBodyRow = selectors.ladTableClass + ' tbody tr:first-child';
-selectors.ladTableFirstRowFirstData = selectors.ladTableBodyRows + ' td:first-child';
-selectors.ladTableFirstRowSecondData = selectors.ladTableBodyRows + ' td:nth-child(2)';
-selectors.ladTableFirstRowThirdData = selectors.ladTableBodyRows + ' td:nth-child(3)';
-
-selectors.ladTableSetTableHeaders = selectors.ladTableClass + ' .c-table__group-header';
-
 function utcTimeFormat(value) {
     return new Date(value).toISOString().replace('T', ' ')
 }
 
-describe("The LAD Table", () => {
+fdescribe("The LAD Table", () => {
 
     const ladTableKey = 'LadTable';
     let telemetryCount = 3,
@@ -180,7 +174,7 @@ describe("The LAD Table", () => {
         });
 
         it("should show one row per object in the composition", () => {
-            const rowCount = parent.querySelectorAll(selectors.ladTableBodyRows).length;
+            const rowCount = parent.querySelectorAll(TABLE_BODY_ROWS).length;
             expect(rowCount).toBe(mockObj.ladTable.composition.length);
         });
 
@@ -188,12 +182,12 @@ describe("The LAD Table", () => {
             const latestDatum = getLatestTelemetry(mockTelemetry, { timeFormat });
             const expectedDate = utcTimeFormat(latestDatum[timeFormat]);
             await Vue.nextTick();
-            const latestDate = parent.querySelector(selectors.ladTableFirstRowSecondData).innerText;
+            const latestDate = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
             expect(latestDate).toBe(expectedDate);
         });
 
         it("should show the name provided for the the telemetry producing object", () => {
-            const rowName = parent.querySelector(selectors.ladTableFirstRowFirstData).innerText,
+            const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText,
                 expectedName = mockObj.telemetry.name;
             expect(rowName).toBe(expectedName);
         });
@@ -209,8 +203,8 @@ describe("The LAD Table", () => {
             const rangeValue = mostRecentTelemetry[range];
             const domainValue = utcTimeFormat(mostRecentTelemetry[domain]);
             await Vue.nextTick();
-            const actualDomainValue = parent.querySelector(selectors.ladTableFirstRowSecondData).innerText;
-            const actualRangeValue = parent.querySelector(selectors.ladTableFirstRowThirdData).innerText;
+            const actualDomainValue = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
+            const actualRangeValue = parent.querySelector(TABLE_BODY_FIRST_ROW_THIRD_DATA).innerText;
             expect(actualRangeValue).toBe(rangeValue);
             expect(actualDomainValue).toBe(domainValue);
         });
@@ -347,7 +341,7 @@ describe("The LAD Table Set", () => {
         });
 
         it("should show one row per lad table object in the composition", () => {
-            const rowCount = parent.querySelectorAll(selectors.ladTableSetTableHeaders).length;
+            const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
             expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
             pending();
         });
