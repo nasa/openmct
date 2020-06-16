@@ -4,7 +4,6 @@
 
 <script>
 import Plotly from 'plotly.js-dist';
-import moment from 'moment';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 import FilteredTableRowCollection from '../../telemetryTable/collections/FilteredTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
@@ -25,7 +24,8 @@ export default {
             plotComposition: undefined,
             telemetryObjects: [],
             configuration: new TelemetryTableConfiguration(this.domainObject, this.openmct),
-            keyString: this.openmct.objects.makeKeyString(this.domainObject.identifier)
+            keyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
+            timestampKey: this.openmct.time.timeSystem().key
         }
     },
     computed: {
@@ -34,6 +34,9 @@ export default {
         },
         getContainerWidth: function () {
             return this.plotElement.parentNode.offsetWidth - 5;
+        },
+        formattedTimestamp() {
+            return this.formats[this.timestampKey].format(this.timestamp);
         }
     },
     mounted() {
@@ -41,8 +44,10 @@ export default {
 
         this.createPlotDataCollections();
 
-        this.openmct.time.on('bounds', this.refreshData);
         this.openmct.time.on('timeSystem', this.changeClock);
+        this.openmct.time.on('bounds', this.refreshData);
+
+        this.timestampKey = this.openmct.time.timeSystem().key;
 
         this.initialize();
     },
@@ -50,6 +55,8 @@ export default {
     destroyed() {
         Object.keys(this.subscriptions)
             .forEach(subscription => this.unsubscribe(subscription));
+        this.openmct.time.off('timeSystem', this.updateTimeSystem);
+        this.openmct.time.off('bounds', this.updateBounds);
     },
     methods: {
         initialize() {
@@ -77,6 +84,13 @@ export default {
             }
         },
         addTelemetryObject(telemetryObject) {
+            this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+            this.valueMetadata = this
+                .metadata
+                .valuesForHints(['range'])[0];
+            this.valueKey = this.valueMetadata.key;
+
             this.telemetryObjects.push(telemetryObject);
             this.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject, true);
@@ -98,7 +112,6 @@ export default {
             return new TelemetryTableColumn(this.openmct, metadatum);
         },
         requestDataFor(telemetryObject, isAdd) {
-            this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
@@ -110,8 +123,6 @@ export default {
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
                     this.processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator, isAdd);
-                }).finally(() => {
-                    this.decrementOutstandingRequests();
                 });
         },
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator, isAdd) {
@@ -137,26 +148,6 @@ export default {
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
             });
         },
-        /**
-         * @private
-         */
-        incrementOutstandingRequests() {
-            if (this.outstandingRequests === 0) {
-                this.$emit('outstanding-requests', true);
-            }
-            this.outstandingRequests++;
-        },
-
-        /**
-         * @private
-         */
-        decrementOutstandingRequests() {
-            this.outstandingRequests--;
-
-            if (this.outstandingRequests === 0) {
-                this.$emit('outstanding-requests', false);
-            }
-        },
         refreshData(bounds, isTick) {
             this.bounds = bounds;
             if ((!isTick && this.outstandingRequests === 0) || this.bounds.end - this.bounds.start) {
@@ -167,7 +158,6 @@ export default {
         },
         clearData() {
             this.boundedRows.clear();
-            // this.$emit('refresh');
         },
         subscribeTo(telemetryObject) {
             let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
@@ -236,18 +226,17 @@ export default {
                     size: "12px",
                     color: "#aaa"
                 },
-                xaxis: { // hardcoded as UTC for now
-                    title: 'UTC',
+                xaxis: {
+                    title: this.timestampKey.toUpperCase(),
                     zeroline: false,
                     showgrid: false,
                     range: [
-                        this.formatDatumX({utc: this.bounds.start}),
-                        this.formatDatumX({utc: this.bounds.end})
+                        this.formats[this.timestampKey].format(this.bounds.start),
+                        this.formats[this.timestampKey].format(this.bounds.end)
                     ]
                 },
                 yaxis: {
-                    // title: this.getYAxisLabel(telemetryObject),
-                    title: 'Sine',
+                    title: this.valueMetadata.name,
                     zeroline: false,
                     showgrid: false,
                     tickwidth: 3,
@@ -268,8 +257,8 @@ export default {
             let y = [];
 
             telemetryData.forEach((datum) => {
-                x.push(this.formatDatumX(datum));
-                y.push(this.formatDatumY(datum));
+                x.push(this.formats[this.timestampKey].format(datum));
+                y.push(this.formats[this.valueKey].format(datum));
             })
 
             let traceData = [{ // trace configuration
@@ -306,30 +295,6 @@ export default {
                 }
             }
         },
-        getYAxisLabel(telemetryObject) {
-            this.setYAxisProp(telemetryObject);
-            const valueMetadatas = this.openmct.telemetry.getMetadata(telemetryObject).values();
-            const index = valueMetadatas.findIndex(value => value.key === this.yAxisProp);
-            const yLabel = valueMetadatas[index].name;
-
-            return yLabel;
-        },
-        setYAxisProp(telemetryObject) {
-            if (telemetryObject.type === 'generator') {
-                this.yAxisProp = 'sin';
-            } else if (telemetryObject.type === 'example.state-generator') {
-                this.yAxisProp = 'state';
-            } else if (telemetryObject.type === 'conditionSet') {
-                this.yAxisProp = 'output';
-            }
-        },
-        formatDatumX(datum) {
-            let timestamp = moment.utc(datum.utc).format('YYYY-MM-DDTHH:mm:ss[Z]');
-            return timestamp;
-        },
-        formatDatumY(datum) {
-            return datum.sin;
-        },
         updateData(datum, index) {
             // plot all datapoints within bounds
             if (datum.utc <= this.bounds.end) {
@@ -337,8 +302,8 @@ export default {
                 Plotly.extendTraces(
                     this.plotElement,
                     {
-                        x: [[this.formatDatumX(datum)]],
-                        y: [[this.formatDatumY(datum)]]
+                        x: [[this.formats[this.timestampKey].format(datum)]],
+                        y: [[this.formats[this.valueKey].format(datum)]]
                     },
                     [index]
                 );
@@ -348,11 +313,19 @@ export default {
         updatePlotRange() {
             let newRange = {
                 'xaxis.range': [
-                    this.formatDatumX({utc: this.bounds.start}),
-                    this.formatDatumX({utc: this.bounds.end})
+                    this.formats[this.timestampKey].format(this.bounds.start),
+                    this.formats[this.timestampKey].format(this.bounds.end)
                 ]
             };
             Plotly.relayout(this.plotElement, newRange);
+        },
+        updateFilters() {
+            this.filteredRows.clear();
+            this.boundedRows.clear();
+            Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
+
+            this.telemetryObjects.forEach(this.requestDataFor.bind(this));
+            this.telemetryObjects.forEach(this.subscribeTo.bind(this));
         }
     }
 }
