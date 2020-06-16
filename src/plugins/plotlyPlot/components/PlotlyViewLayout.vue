@@ -137,9 +137,6 @@ export default {
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
             });
         },
-        createColumn(metadatum) {
-            return new TelemetryTableColumn(this.openmct, metadatum);
-        },
         /**
          * @private
          */
