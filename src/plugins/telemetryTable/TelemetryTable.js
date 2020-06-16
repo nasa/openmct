@@ -94,12 +94,9 @@ define([
         }
 
         loadComposition() {
-            // console.log('loadComposition this.domainObject', this.domainObject);
             this.tableComposition = this.openmct.composition.get(this.domainObject);
-            // console.log('loadComposition this.tableComposition', this.tableComposition);
             if (this.tableComposition !== undefined) {
                 this.tableComposition.load().then((composition) => {
-                    // console.log('loadComposition composition', composition);
 
                     composition = composition.filter(this.isTelemetryObject);
                     composition.forEach(this.addTelemetryObject);
@@ -111,7 +108,6 @@ define([
         }
 
         addTelemetryObject(telemetryObject) {
-            // console.log('addTelemetryObject', telemetryObject);
             this.addColumnsForObject(telemetryObject, true);
             this.requestDataFor(telemetryObject);
             this.subscribeTo(telemetryObject);
@@ -159,7 +155,6 @@ define([
 
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-            console.log('telemetryRows[0]', telemetryRows[0])
             this.boundedRows.add(telemetryRows);
             this.emit('historical-rows-processed');
         }
