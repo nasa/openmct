@@ -119,7 +119,7 @@ export default {
         });
 
         this.$once('hook:destroyed', removeListener);
-        if (objectComposition && objectComposition.domainObject.composition.length > 0) {
+        if (objectComposition && this.domainObject.composition.length > 0) {
             this.hasChildren = true;
         }
 
