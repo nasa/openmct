@@ -57,7 +57,7 @@ export default class ConditionManager extends EventEmitter {
             endpoint,
             this.telemetryReceived.bind(this, endpoint)
         );
-        this.updateConditionTelemetry();
+        this.updateConditionTelemetryObjects();
     }
 
     unsubscribeFromTelemetry(endpointIdentifier) {
@@ -70,11 +70,11 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions[id]();
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
-        this.removeConditionTelemetry();
+        this.removeConditionTelemetryObjects();
     }
 
     initialize() {
-        this.conditionClassCollection = [];
+        this.conditions = [];
         if (this.conditionSetDomainObject.configuration.conditionCollection.length) {
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.initCondition(conditionConfiguration, index);
@@ -82,13 +82,14 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    updateConditionTelemetry() {
-        this.conditionClassCollection.forEach((condition) => condition.updateTelemetry());
+    updateConditionTelemetryObjects() {
+        this.conditions.forEach((condition) => condition.updateTelemetryObjects());
     }
 
-    removeConditionTelemetry() {
+    removeConditionTelemetryObjects() {
         let conditionsChanged = false;
-        this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration) => {
+        this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, conditionIndex) => {
+            let conditionChanged = false;
             conditionConfiguration.configuration.criteria.forEach((criterion, index) => {
                 const isAnyAllTelemetry = criterion.telemetry && (criterion.telemetry === 'any' || criterion.telemetry === 'all');
                 if (!isAnyAllTelemetry) {
@@ -100,10 +101,14 @@ export default class ConditionManager extends EventEmitter {
                         criterion.metadata = '';
                         criterion.input = [];
                         criterion.operation = '';
-                        conditionsChanged = true;
+                        conditionChanged = true;
                     }
                 }
             });
+            if (conditionChanged) {
+                this.updateCondition(conditionConfiguration, conditionIndex);
+                conditionsChanged = true;
+            }
         });
         if (conditionsChanged) {
             this.persistConditions();
@@ -111,18 +116,24 @@ export default class ConditionManager extends EventEmitter {
     }
 
     updateCondition(conditionConfiguration, index) {
-        let condition = this.conditionClassCollection[index];
-        condition.update(conditionConfiguration);
+        let condition = this.conditions[index];
         this.conditionSetDomainObject.configuration.conditionCollection[index] = conditionConfiguration;
+        condition.update(conditionConfiguration);
+        this.persistConditions();
+    }
+
+    updateConditionDescription(condition) {
+        const found = this.conditionSetDomainObject.configuration.conditionCollection.find(conditionConfiguration => (conditionConfiguration.id === condition.id));
+        found.summary = condition.description;
         this.persistConditions();
     }
 
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct, this);
         if (index !== undefined) {
-            this.conditionClassCollection.splice(index + 1, 0, condition);
+            this.conditions.splice(index + 1, 0, condition);
         } else {
-            this.conditionClassCollection.unshift(condition);
+            this.conditions.unshift(condition);
         }
     }
 
@@ -181,15 +192,15 @@ export default class ConditionManager extends EventEmitter {
     }
 
     removeCondition(index) {
-        let condition = this.conditionClassCollection[index];
+        let condition = this.conditions[index];
         condition.destroy();
-        this.conditionClassCollection.splice(index, 1);
+        this.conditions.splice(index, 1);
         this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
         this.persistConditions();
     }
 
     findConditionById(id) {
-        return this.conditionClassCollection.find(conditionClass => conditionClass.id === id);
+        return this.conditions.find(condition => condition.id === id);
     }
 
     reorderConditions(reorderPlan) {
@@ -234,14 +245,14 @@ export default class ConditionManager extends EventEmitter {
     }
 
     requestLADConditionSetOutput() {
-        if (!this.conditionClassCollection.length) {
+        if (!this.conditions.length) {
             return Promise.resolve([]);
         }
 
         return this.compositionLoad.then(() => {
             let latestTimestamp;
             let conditionResults = {};
-            const conditionRequests = this.conditionClassCollection
+            const conditionRequests = this.conditions
                 .map(condition => condition.requestLADConditionResult());
 
             return Promise.all(conditionRequests)
@@ -281,7 +292,7 @@ export default class ConditionManager extends EventEmitter {
     isTelemetryUsed(endpoint) {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
 
-        for(const condition of this.conditionClassCollection) {
+        for(const condition of this.conditions) {
             if (condition.isTelemetryUsed(id)) {
                 return true;
             }
@@ -300,7 +311,7 @@ export default class ConditionManager extends EventEmitter {
         let timestamp = {};
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
-        this.conditionClassCollection.forEach(condition => {
+        this.conditions.forEach(condition => {
             condition.getResult(normalizedDatum);
         });
 
@@ -364,7 +375,7 @@ export default class ConditionManager extends EventEmitter {
             this.stopObservingForChanges();
         }
 
-        this.conditionClassCollection.forEach((condition) => {
+        this.conditions.forEach((condition) => {
             condition.destroy();
         })
     }
