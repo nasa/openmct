@@ -21,16 +21,20 @@
  *****************************************************************************/
 
 define([
-    './MCT',
     './plugins/plugins',
-    'legacyRegistry'
-], function (MCT, plugins, legacyRegistry) {
-    xdescribe("MCT", function () {
+    'legacyRegistry',
+    'utils/testing'
+], function (plugins, legacyRegistry, testUtils) {
+    describe("MCT", function () {
         var openmct;
         var mockPlugin;
         var mockPlugin2;
         var mockListener;
         var oldBundles;
+
+        beforeAll(() => {
+            testUtils.resetApplicationState();
+        });
 
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
@@ -38,7 +42,7 @@ define([
             mockListener = jasmine.createSpy('listener');
             oldBundles = legacyRegistry.list();
 
-            openmct = new MCT();
+            openmct = testUtils.createOpenMct();
 
             openmct.install(mockPlugin);
             openmct.install(mockPlugin2);
@@ -52,6 +56,7 @@ define([
                     legacyRegistry.delete(bundle);
                 }
             });
+            testUtils.resetApplicationState(openmct);
         });
 
         it("exposes plugins", function () {
@@ -63,8 +68,11 @@ define([
         });
 
         describe("start", function () {
-            beforeEach(function () {
-                openmct.start();
+            let appHolder;
+            beforeEach(function (done) {
+                appHolder = document.createElement("div");
+                openmct.on('start', done);
+                openmct.start(appHolder);
             });
 
             it("calls plugins for configuration", function () {
@@ -75,25 +83,51 @@ define([
             it("emits a start event", function () {
                 expect(mockListener).toHaveBeenCalled();
             });
+
+            it("Renders the application into the provided container element", function () {
+                let openMctShellElements = appHolder.querySelectorAll('div.l-shell');
+                expect(openMctShellElements.length).toBe(1);
+            });
+        });
+
+        describe("startHeadless", function () {
+            beforeEach(function (done) {
+                openmct.on('start', done);
+                openmct.startHeadless();
+            });
+
+            it("calls plugins for configuration", function () {
+                expect(mockPlugin).toHaveBeenCalledWith(openmct);
+                expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+            });
+
+            it("emits a start event", function () {
+                expect(mockListener).toHaveBeenCalled();
+            });
+
+            it("Does not render Open MCT", function () {
+                let openMctShellElements = document.body.querySelectorAll('div.l-shell');
+                expect(openMctShellElements.length).toBe(0);
+            });
         });
 
         describe("setAssetPath", function () {
             var testAssetPath;
 
             beforeEach(function () {
-                testAssetPath = "some/path";
                 openmct.legacyExtension = jasmine.createSpy('legacyExtension');
-                openmct.setAssetPath(testAssetPath);
             });
 
-            it("internally configures the path for assets", function () {
-                expect(openmct.legacyExtension).toHaveBeenCalledWith(
-                    'constants',
-                    {
-                        key: "ASSETS_PATH",
-                        value: testAssetPath
-                    }
-                );
+            it("configures the path for assets", function () {
+                testAssetPath = "some/path/";
+                openmct.setAssetPath(testAssetPath);
+                expect(openmct.getAssetPath()).toBe(testAssetPath);
+            });
+
+            it("adds a trailing /", function () {
+                testAssetPath = "some/path";
+                openmct.setAssetPath(testAssetPath);
+                expect(openmct.getAssetPath()).toBe(testAssetPath + "/");
             });
         });
     });

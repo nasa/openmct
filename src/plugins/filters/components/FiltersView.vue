@@ -27,7 +27,8 @@
 
 <script>
 import FilterObject from './FilterObject.vue';
-import GlobalFilters from './GlobalFilters.vue'
+import GlobalFilters from './GlobalFilters.vue';
+import _ from 'lodash';
 
 const FILTER_VIEW_TITLE = 'Filters applied';
 const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';

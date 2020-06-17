@@ -139,6 +139,7 @@
         ></div>
         <!-- Headers table -->
         <div
+            v-show="!hideHeaders"
             ref="headersTable"
             class="c-telemetry-table__headers-w js-table__headers-w"
             :style="{ 'max-width': widthWithScroll}"
@@ -336,7 +337,8 @@ export default {
             markCounter: 0,
             paused: false,
             markedRows: [],
-            isShowingMarkedRowsOnly: false
+            isShowingMarkedRowsOnly: false,
+            hideHeaders: configuration.hideHeaders
         }
     },
     computed: {
@@ -461,6 +463,7 @@ export default {
                             start = end - VISIBLE_ROW_COUNT + 1;
                         }
                     }
+
                     this.rowOffset = start;
                     this.visibleRows = filteredRows.slice(start, end);
 
@@ -615,6 +618,7 @@ export default {
         },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
+            this.hideHeaders = configuration.hideHeaders;
 
             this.updateHeaders();
             this.$nextTick().then(this.calculateColumnWidths);
