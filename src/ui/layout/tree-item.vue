@@ -54,7 +54,7 @@ export default {
         },
         leftOffset: {
             type: String,
-            required: true
+            default: '0px'
         },
         showUp: {
             type: Boolean,

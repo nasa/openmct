@@ -13,7 +13,7 @@
     </div>
 
     <div
-        v-if="(allTreeItems.length === 0 && !isLoading) || (searchValue && filteredTreeItems.length === 0)"
+        v-if="(searchValue && allTreeItems.length === 0 && !isLoading) || (searchValue && filteredTreeItems.length === 0)"
         class="c-tree-and-search__no-results"
     >
         No results found
@@ -154,25 +154,25 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            const AND_SAVE_PATH = true;
             let currentLocationPath = this.openmct.router.currentLocation.path,
-                descendantPath = currentLocationPath.split('/browse/')[1],
-                alreadyNavigatedCheck = descendantPath.split('/'),
-                alreadyNavigated;
+                jumpAndScroll = currentLocationPath &&
+                    this.currentlyViewedObjectParentPath() &&
+                    !this.currentPathIsActivePath(),
+                justScroll = this.currentPathIsActivePath() && !this.noScroll;
 
-            alreadyNavigatedCheck.pop();
-            alreadyNavigatedCheck = alreadyNavigatedCheck.join('/');
-            alreadyNavigated = this.currentNavigatedPath === alreadyNavigatedCheck;
-            descendantPath = descendantPath.split('/');
+            if(this.searchValue) {
+                this.searchValue = '';
+            }
 
-            if(currentLocationPath && !alreadyNavigated) {
-                this.scrollTo = descendantPath.pop();
-                descendantPath = descendantPath.join('/');
+            if(jumpAndScroll) {
+                this.scrollTo = this.currentlyViewedObjectId();
                 this.allChildren = [];
                 this.ancestors = [];
-                this.jumpPath = descendantPath;
-                this.jumpToPath(true);
-            } else if(alreadyNavigated && !this.noScroll) {
-                this.scrollTo = descendantPath.pop();
+                this.jumpPath = this.currentlyViewedObjectParentPath();
+                this.jumpToPath(AND_SAVE_PATH);
+            } else if(justScroll) {
+                this.scrollTo = this.currentlyViewedObjectId();
                 this.autoScroll();
             }
         }
@@ -180,12 +180,13 @@ export default {
     mounted() {
         let savedPath = this.getSavedNavigatedPath();
         if(savedPath) {
-            this.jumpPath = savedPath;
-            this.afterJump = () => {
+            let scrollIfApplicable = () => {
                 if(this.currentPathIsActivePath()) {
                     this.scrollTo = this.currentlyViewedObjectId();
                 }
-            }
+            };
+            this.jumpPath = savedPath;
+            this.afterJump = scrollIfApplicable;
         }
         this.searchService = this.openmct.$injector.get('searchService');
         window.addEventListener('resize',  this.handleWindowResize);
@@ -382,9 +383,9 @@ export default {
                         objectPath = context.getPath().slice(1)
                             .map(oldObject => oldObject.useCapability('adapter'))
                             .reverse();
-                        navigateToParent = ROOT_PATH + objectPath.slice(1)
-                            .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
-                            .join('/');
+                        navigateToParent = objectPath.slice(1)
+                            .map((parent) => this.openmct.objects.makeKeyString(parent.identifier));
+                        navigateToParent = ROOT_PATH + navigateToParent.reverse().join('/');
                     }
 
                     return {
@@ -420,7 +421,9 @@ export default {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
         },
         setCurrentNavigatedPath() {
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
+            if(!this.searchValue) {
+                localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
+            }
         },
         currentPathIsActivePath() {
             return this.getSavedNavigatedPath() === this.currentlyViewedObjectParentPath();
@@ -468,6 +471,7 @@ export default {
             return styles;
         },
         childrenIn(el, done) {
+            // more reliable way then nextTick
             this.setContainerHeight();
             this.setChildrenHeight();
             done();

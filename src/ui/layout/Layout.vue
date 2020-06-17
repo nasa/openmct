@@ -47,7 +47,7 @@
             label="Browse"
             collapsable
         >
-            <mct-tree 
+            <mct-tree
                 :sync-tree-navigation="triggerSync"
                 class="l-shell__tree"
             />
