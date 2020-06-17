@@ -56,7 +56,7 @@
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
-                @syncTreeNavigation="handleSyncTreeNavigation"
+                @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
                 v-if="toolbar"

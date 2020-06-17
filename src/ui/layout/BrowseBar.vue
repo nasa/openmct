@@ -277,7 +277,7 @@ export default {
             window.location.hash = this.parentUrl;
         },
         syncNavigationTree() {
-            this.$emit('syncTreeNavigation');
+            this.$emit('sync-tree-navigation');
         }
     }
 }

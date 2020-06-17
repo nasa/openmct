@@ -234,7 +234,7 @@ export default {
             }
         },
         setContainerHeight() {
-            if(this.$refs.mainTree) {
+            this.$nextTick(() => {
                 let mainTree = this.$refs.mainTree,
                     mainTreeHeight = mainTree.clientHeight;
 
@@ -254,7 +254,7 @@ export default {
                 } else {
                     setTimeout(this.setContainerHeight, MAIN_TREE_RECHECK_DELAY);
                 }
-            }
+            });
         },
         calculateFirstVisibleItem() {
             let scrollTop = this.$refs.scrollable.scrollTop;
