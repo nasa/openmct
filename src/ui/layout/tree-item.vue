@@ -1,5 +1,5 @@
 <template>
-<li 
+<li
     :style="{
         'top': virtualScroll ? itemTop : 'auto',
         'position': virtualScroll ? 'absolute' : 'relative'
@@ -30,7 +30,7 @@
             v-model="expanded"
             class="c-tree__item__view-control"
             :control-class="'c-nav__down'"
-            :enabled="hasChildren && showDown"
+            :enabled="hasComposition && showDown"
         />
     </div>
 </li>
@@ -87,7 +87,7 @@ export default {
     data() {
         this.navigateToPath = this.buildPathString(this.node.navigateToParent);
         return {
-            hasChildren: false,
+            hasComposition: false,
             navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
             expanded: false
         }
@@ -119,8 +119,8 @@ export default {
         });
 
         this.$once('hook:destroyed', removeListener);
-        if (objectComposition && this.domainObject.composition.length > 0) {
-            this.hasChildren = true;
+        if (objectComposition) {
+            this.hasComposition = true;
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);

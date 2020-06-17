@@ -12,23 +12,24 @@
         />
     </div>
 
-    <!-- loading -->
     <div
-        v-if="isLoading"
-        class="c-tree-and-search__loading loading"
-    ></div>
-    <!-- end loading -->
-
-    <div
-        v-if="(allTreeItems.length === 0) || (searchValue && filteredTreeItems.length === 0)"
+        v-if="(allTreeItems.length === 0 && !isLoading) || (searchValue && filteredTreeItems.length === 0)"
         class="c-tree-and-search__no-results"
     >
         No results found
     </div>
 
+    <!-- loading -->
+    <li
+        v-if="isLoading"
+        :style="loadingStyles()"
+        class="c-tree-and-search__loading loading"
+    ></li>
+    <!-- end loading -->
+
     <!-- main tree -->
     <ul
-        v-show="!searchValue && !isLoading"
+        v-show="!searchValue"
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
@@ -42,34 +43,40 @@
             :left-offset="index * 10 + 10 + 'px'"
             @resetTree="handleReset"
         />
+
         <!-- currently viewed children -->
-        <li
-            :class="childrenSlideClass"
-            style="{ position: relative }"
+        <transition
+            @enter="childrenIn"
         >
-            <ul
-                ref="scrollable"
-                class="scrollable-children"
-                :style="scrollableStyles()"
-                @scroll="scrollItems"
+            <li
+                v-if="!isLoading"
+                :class="childrenSlideClass"
+                style="{ position: relative }"
             >
-                <div
-                    :style="{ height: childrenHeight + 'px'}"
+                <ul
+                    ref="scrollable"
+                    class="scrollable-children"
+                    :style="scrollableStyles()"
+                    @scroll="scrollItems"
                 >
-                    <tree-item
-                        v-for="(treeItem, index) in visibleTreeItems"
-                        :key="treeItem.id"
-                        :node="treeItem"
-                        :left-offset="ancestors.length * 10 + 10 + 'px'"
-                        :item-offset="itemOffset"
-                        :item-index="index"
-                        :item-height="itemHeight"
-                        :virtual-scroll="!noScroll"
-                        @expanded="handleExpanded"
-                    />
-                </div>
-            </ul>
-        </li>
+                    <div
+                        :style="{ height: childrenHeight + 'px'}"
+                    >
+                        <tree-item
+                            v-for="(treeItem, index) in visibleTreeItems"
+                            :key="treeItem.id"
+                            :node="treeItem"
+                            :left-offset="ancestors.length * 10 + 10 + 'px'"
+                            :item-offset="itemOffset"
+                            :item-index="index"
+                            :item-height="itemHeight"
+                            :virtual-scroll="!noScroll"
+                            @expanded="handleExpanded"
+                        />
+                    </div>
+                </ul>
+            </li>
+        </transition>
     </ul>
     <!-- end main tree -->
 
@@ -93,6 +100,7 @@ import treeItem from './tree-item.vue'
 import search from '../components/search.vue';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
+const ROOT_PATH = '/browse/';
 const ITEM_BUFFER = 5;
 const MAIN_TREE_RECHECK_DELAY = 100;
 const RESIZE_FIRE_DELAY_MS = 500;
@@ -167,16 +175,17 @@ export default {
                 this.scrollTo = descendantPath.pop();
                 this.autoScroll();
             }
-        },
-        allTreeItems() {
-            this.setChildrenHeight();
-            this.setContainerHeight();
         }
     },
     mounted() {
         let savedPath = this.getSavedNavigatedPath();
         if(savedPath) {
             this.jumpPath = savedPath;
+            this.afterJump = () => {
+                if(this.currentPathIsActivePath()) {
+                    this.scrollTo = this.currentlyViewedObjectId();
+                }
+            }
         }
         this.searchService = this.openmct.$injector.get('searchService');
         window.addEventListener('resize',  this.handleWindowResize);
@@ -266,7 +275,13 @@ export default {
             return this.itemHeight * ancestorCount;
         },
         setPageThreshold() {
-            this.pageThreshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
+            let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
+            // all items haven't loaded yet (nextTick not working for this)
+            if(threshold === ITEM_BUFFER) {
+                setTimeout(this.setPageThreshold, 100);
+            } else {
+                this.pageThreshold = threshold;
+            }
         },
         handleWindowResize() {
             if(!windowResizing) {
@@ -296,7 +311,7 @@ export default {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
                 objectPath: [domainObject].concat(this.currentObjectPath),
-                navigateToParent: '/browse/' + this.currentNavigatedPath
+                navigateToParent: ROOT_PATH + this.currentNavigatedPath
             };
         },
         addChild(child) {
@@ -326,6 +341,12 @@ export default {
                 if(i === nodes.length - 1) {
                     this.jumpPath = '';
                     this.getAllChildren(newParent);
+                    if(this.afterJump) {
+                        this.$nextTick(() => {
+                            this.afterJump();
+                            delete this.afterJump;
+                        });
+                    }
                     if(saveExpandedPath) {
                         this.setCurrentNavigatedPath();
                     }
@@ -361,7 +382,7 @@ export default {
                         objectPath = context.getPath().slice(1)
                             .map(oldObject => oldObject.useCapability('adapter'))
                             .reverse();
-                        navigateToParent = '/browse/' + objectPath.slice(1)
+                        navigateToParent = ROOT_PATH + objectPath.slice(1)
                             .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
                             .join('/');
                     }
@@ -401,6 +422,29 @@ export default {
         setCurrentNavigatedPath() {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
         },
+        currentPathIsActivePath() {
+            return this.getSavedNavigatedPath() === this.currentlyViewedObjectParentPath();
+        },
+        currentlyViewedObjectId() {
+            let currentPath = this.openmct.router.currentLocation.path,
+                id;
+            if(currentPath) {
+                currentPath = currentPath.split(ROOT_PATH)[1];
+                id = currentPath.split('/').pop();
+            }
+            return id;
+        },
+        currentlyViewedObjectParentPath() {
+            let currentPath = this.openmct.router.currentLocation.path,
+                path;
+            if(currentPath) {
+                currentPath = currentPath.split(ROOT_PATH)[1];
+                currentPath = currentPath.split('/');
+                currentPath.pop();
+                path = currentPath.join('/');
+            }
+            return path;
+        },
         scrollItems(event) {
             if(!windowResizing) {
                 this.updatevisibleTreeItems();
@@ -411,6 +455,22 @@ export default {
                 height: this.availableContainerHeight + 'px',
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             }
+        },
+        loadingStyles() {
+            let styles = {
+                top: '300px'
+            }
+
+            if(this.$refs.mainTree && this.$refs.mainTree.clientHeight !== 0) {
+                styles.top = (this.$refs.mainTree.clientHeight / 2) + 'px';
+            }
+
+            return styles;
+        },
+        childrenIn(el, done) {
+            this.setContainerHeight();
+            this.setChildrenHeight();
+            done();
         }
     }
 }
