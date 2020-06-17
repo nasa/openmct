@@ -26,6 +26,7 @@ import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
+import {TRIGGER_CONJUNCTION, TRIGGER_LABEL} from "./utils/constants";
 
 /*
 * conditionConfiguration = {
@@ -41,13 +42,14 @@ import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
 *   ]
 * }
 */
-export default class ConditionClass extends EventEmitter {
+export default class Condition extends EventEmitter {
 
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
      * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
      * @param openmct
+     * @param conditionManager
      */
     constructor(conditionConfiguration, openmct, conditionManager) {
         super();
@@ -62,6 +64,7 @@ export default class ConditionClass extends EventEmitter {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
         this.trigger = conditionConfiguration.configuration.trigger;
+        this.description = '';
     }
 
     getResult(datum) {
@@ -109,7 +112,7 @@ export default class ConditionClass extends EventEmitter {
         return {
             id: criterionConfiguration.id || uuid(),
             telemetry: criterionConfiguration.telemetry || '',
-            telemetryObject: this.conditionManager.telemetryObjects[this.openmct.objects.makeKeyString(criterionConfiguration.telemetry)],
+            telemetryObjects: this.conditionManager.telemetryObjects,
             operation: criterionConfiguration.operation || '',
             input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
             metadata: criterionConfiguration.metadata || ''
@@ -120,6 +123,7 @@ export default class ConditionClass extends EventEmitter {
         criterionConfigurations.forEach((criterionConfiguration) => {
             this.addCriterion(criterionConfiguration);
         });
+        this.updateDescription();
     }
 
     updateCriteria(criterionConfigurations) {
@@ -127,10 +131,11 @@ export default class ConditionClass extends EventEmitter {
         this.createCriteria(criterionConfigurations);
     }
 
-    updateTelemetry() {
+    updateTelemetryObjects() {
         this.criteria.forEach((criterion) => {
-            criterion.updateTelemetry(this.conditionManager.telemetryObjects);
+            criterion.updateTelemetryObjects(this.conditionManager.telemetryObjects);
         });
+        this.updateDescription();
     }
 
     /**
@@ -178,6 +183,7 @@ export default class ConditionClass extends EventEmitter {
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             this.criteria.splice(found.index, 1, newCriterion);
+            this.updateDescription();
         }
     }
 
@@ -190,6 +196,7 @@ export default class ConditionClass extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
+            this.updateDescription();
 
             return true;
         }
@@ -200,7 +207,28 @@ export default class ConditionClass extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
+            this.updateDescription();
         }
+    }
+
+    updateDescription() {
+        const triggerDescription = this.getTriggerDescription();
+        let description = '';
+        this.criteria.forEach((criterion, index) => {
+            if (!index) {
+                description = `Match if ${triggerDescription.prefix}`;
+            }
+            description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
+        });
+        this.description = description;
+        this.conditionManager.updateConditionDescription(this);
+    }
+
+    getTriggerDescription() {
+        return {
+            conjunction: TRIGGER_CONJUNCTION[this.trigger],
+            prefix: `${TRIGGER_LABEL[this.trigger]}: `
+        };
     }
 
     requestLADConditionResult() {

@@ -56,7 +56,7 @@ export default {
 
         return {
             name: this.domainObject.name,
-            timestamp: '---',
+            timestamp: undefined,
             value: '---',
             valueClass: '',
             currentObjectPath
@@ -64,7 +64,7 @@ export default {
     },
     computed: {
         formattedTimestamp() {
-            return this.timestamp !== '---' ? this.formats[this.timestampKey].format(this.timestamp) : this.timestamp;
+            return this.timestamp !== undefined ? this.formats[this.timestampKey].format(this.timestamp) : '---';
         }
     },
     mounted() {
@@ -111,18 +111,12 @@ export default {
     methods: {
         updateValues(datum) {
             let newTimestamp = this.formats[this.timestampKey].parse(datum),
-                shouldUpdate = this.timestamp === '---' || newTimestamp >= this.timestamp,
                 limit;
 
-            if(!this.inBounds(newTimestamp)) {
-                return;
-            }
-
-            if(shouldUpdate) {
+            if(this.shouldUpdate(newTimestamp)) {
                 this.timestamp = this.formats[this.timestampKey].parse(datum);
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-
                 if (limit) {
                     this.valueClass = limit.cssClass;
                 } else {
@@ -130,16 +124,21 @@ export default {
                 }
             }
         },
+        shouldUpdate(newTimestamp) {
+            return (this.timestamp === undefined) ||
+                (this.inBounds(newTimestamp) &&
+                newTimestamp > this.timestamp);
+        },
         requestHistory() {
-            this.timestamp = '---';
             this.openmct
                 .telemetry
                 .request(this.domainObject, {
                     start: this.bounds.start,
                     end: this.bounds.end,
+                    size: 1,
                     strategy: 'latest'
                 })
-                .then((data) => this.updateValues(data[data.length - 1]));
+                .then((array) => this.updateValues(array[array.length - 1]));
         },
         updateName(name) {
             this.name = name;

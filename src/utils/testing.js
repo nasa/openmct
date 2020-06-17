@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 import MCT from 'MCT';
 let nativeFunctions = [],
     mockObjects = setMockObjects();
@@ -19,7 +41,7 @@ export function createMouseEvent(eventName) {
     });
 }
 
-export const spyOnBuiltins = (functionNames, object = window) => {
+export function spyOnBuiltins(functionNames, object = window) {
     functionNames.forEach(functionName => {
         if (nativeFunctions[functionName]) {
             throw `Builtin spy function already defined for ${functionName}`;
@@ -28,18 +50,27 @@ export const spyOnBuiltins = (functionNames, object = window) => {
         nativeFunctions.push({functionName, object, nativeFunction: object[functionName]});
         spyOn(object, functionName);
     });
-};
+}
 
-export const clearBuiltinSpies = () => {
+export function clearBuiltinSpies() {
     nativeFunctions.forEach(clearBuiltinSpy);
     nativeFunctions = [];
-};
+}
+
+export function resetApplicationState(openmct) {
+    clearBuiltinSpies();
+    window.location.hash = '#';
+
+    if (openmct !== undefined) {
+        openmct.destroy();
+    }
+}
 
 function clearBuiltinSpy(funcDefinition) {
     funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
 
-export const getLatestTelemetry = (telemetry = [], opts = {}) => {
+export function getLatestTelemetry(telemetry = [], opts = {}) {
     let latest = [],
         timeFormat = opts.timeFormat || 'utc';
 
@@ -50,7 +81,7 @@ export const getLatestTelemetry = (telemetry = [], opts = {}) => {
     }
 
     return latest;
-};
+}
 
 // EXAMPLE:
 // getMockObjects({
@@ -68,7 +99,7 @@ export const getLatestTelemetry = (telemetry = [], opts = {}) => {
 //          }
 //      }
 // })
-export const getMockObjects = (opts = {}) => {
+export function getMockObjects(opts = {}) {
     opts.type = opts.type || 'default';
     if(opts.objectKeyStrings && !Array.isArray(opts.objectKeyStrings)) {
         throw `"getMockObjects" optional parameter "objectKeyStrings" must be an array of string object keys`;
@@ -154,7 +185,7 @@ export const getMockObjects = (opts = {}) => {
 //     count: 8,
 //     format: 'local'
 // })
-export const getMockTelemetry = (opts = {}) => {
+export function getMockTelemetry(opts = {}) {
     let count = opts.count || 2,
         format = opts.format || 'utc',
         name = opts.name || 'Mock Telemetry Datum',

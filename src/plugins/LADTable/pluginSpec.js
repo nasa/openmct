@@ -26,7 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry
-} from 'testUtils';
+} from 'utils/testing';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
 const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';
@@ -170,7 +170,8 @@ fdescribe("The LAD Table", () => {
             ladTableView.show(child, true);
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
-            return await Vue.nextTick();
+            await Vue.nextTick();
+            return;
         });
 
         it("should show one row per object in the composition", () => {
@@ -337,7 +338,8 @@ describe("The LAD Table Set", () => {
             ladTableSetView.show(child, true);
 
             await Promise.all([telemetryRequestPromise, ladObjectPromise, anotherLadObjectPromise]);
-            return await Vue.nextTick();
+            await Vue.nextTick();
+            return;
         });
 
         it("should show one row per lad table object in the composition", () => {
