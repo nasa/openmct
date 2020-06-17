@@ -22,10 +22,16 @@
  *****************************************************************************/
 
 <template>
-<tr @contextmenu.prevent="showContextMenu">
-    <td>{{ name }}</td>
-    <td>{{ formattedTimestamp }}</td>
-    <td :class="valueClass">{{ value }}</td>
+<tr
+    class="js-lad-table__body__row"
+    @contextmenu.prevent="showContextMenu"
+>
+    <td class="js-first-data">{{ name }}</td>
+    <td class="js-second-data">{{ formattedTimestamp }}</td>
+    <td
+        class="js-third-data"
+        :class="valueClass"
+    >{{ value }}</td>
 </tr>
 </template>
 

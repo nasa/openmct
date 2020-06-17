@@ -31,8 +31,8 @@ import {
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
 const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';
 const TABLE_BODY_FIRST_ROW_FIRST_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
-const TABLE_BODY_FIRST_ROW_SECOND_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
-const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
+const TABLE_BODY_FIRST_ROW_SECOND_DATA = TABLE_BODY_FIRST_ROW + ' .js-second-data';
+const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-third-data';
 const LAD_SET_TABLE_HEADERS = '.js-lad-table-set__table-headers';
 
 let openmct,
