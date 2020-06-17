@@ -19,50 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
+import Vue from 'vue';
+import NotificationIndicator from './components/NotificationIndicator.vue';
 
-export const evaluateResults = (results, trigger) => {
-    if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(results, 1);
-    } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(results, 0);
-    } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(results);
-    } else {
-        return matchAny(results);
-    }
-}
+export default function plugin() {
+    return function install(openmct) {
+        let component = new Vue ({
+                provide: {
+                    openmct
+                },
+                components: {
+                    NotificationIndicator: NotificationIndicator
+                },
+                template: '<NotificationIndicator></NotificationIndicator>'
+            }),
+            indicator = {
+                key: 'notifications-indicator',
+                element: component.$mount().$el
+            };
 
-function matchAll(results) {
-    for (const result of results) {
-        if (result !== true) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function matchAny(results) {
-    for (const result of results) {
-        if (result === true) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function matchExact(results, target) {
-    let matches = 0;
-    for (const result of results) {
-        if (result === true) {
-            matches++;
-        }
-        if (matches > target) {
-            return false;
-        }
-    }
-
-    return matches === target;
+        openmct.indicators.add(indicator);
+    };
 }

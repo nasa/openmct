@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { OPERATIONS } from '../utils/operations';
+import { OPERATIONS, getOperatorText } from '../utils/operations';
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -49,15 +49,15 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     initialize() {
-        this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
         this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
+        this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
     }
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
     }
 
@@ -153,6 +153,51 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
+    getMetaDataObject(telemetryObject, metadata) {
+        let metadataObject;
+        if (metadata) {
+            const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+        }
+        return metadataObject;
+    }
+
+    getInputValueFromMetaData(metadataObject, input) {
+        let inputValue;
+        if (metadataObject) {
+            if(metadataObject.enumerations && input.length) {
+                const enumeration = metadataObject.enumerations[input[0]];
+                if (enumeration !== undefined && enumeration.string) {
+                    inputValue = [enumeration.string];
+                }
+            }
+        }
+        return inputValue;
+    }
+
+    getMetadataValueFromMetaData(metadataObject) {
+        let metadataValue;
+        if (metadataObject) {
+            if (metadataObject.name) {
+                metadataValue = metadataObject.name;
+            }
+        }
+        return metadataValue;
+    }
+
+    getDescription(criterion, index) {
+        let description;
+        if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
+            description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
+        } else {
+            const metadataObject = this.getMetaDataObject(this.telemetryObject, this.metadata);
+            const metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
+            const inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+            description = `${this.telemetryObject.name} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+        }
+
+        return description;
+    }
 
     destroy() {
         delete this.telemetryObject;

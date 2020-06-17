@@ -51,7 +51,9 @@ define([
     './conditionWidget/plugin',
     './themes/espresso',
     './themes/maelstrom',
-    './themes/snow'
+    './themes/snow',
+    './URLTimeSettingsSynchronizer/plugin',
+    './notificationIndicator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -83,7 +85,9 @@ define([
     ConditionWidgetPlugin,
     Espresso,
     Maelstrom,
-    Snow
+    Snow,
+    URLTimeSettingsSynchronizer,
+    NotificationIndicator
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -192,6 +196,8 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
+    plugins.NotificationIndicator = NotificationIndicator.default;
 
     return plugins;
 });
