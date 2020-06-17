@@ -27,7 +27,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-xdescribe('the plugin', () => {
+describe('the plugin', () => {
     let notificationIndicatorPlugin,
         openmct,
         indicatorObject,

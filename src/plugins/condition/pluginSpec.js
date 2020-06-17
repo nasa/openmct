@@ -26,7 +26,7 @@ import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
     let element;
