@@ -20,15 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function LADTableCompositionPolicy(openmct) {
-    return {
-        allow: function (parent, child) {
-            if(parent.type === 'LadTable') {
-                return openmct.telemetry.isTelemetryObject(child);
-            } else if(parent.type === 'LadTableSet') {
-                return child.type === 'LadTable';
-            }
-            return true;
+export default function ladTableCompositionPolicy(openmct) {
+    return function (parent, child) {
+        if(parent.type === 'LadTable') {
+            return openmct.telemetry.isTelemetryObject(child);
+        } else if(parent.type === 'LadTableSet') {
+            return child.type === 'LadTable';
         }
+        return true;
     }
 }
