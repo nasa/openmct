@@ -266,6 +266,7 @@ define([
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());
+        this.install(this.plugins.URLTimeSettingsSynchronizer());
         this.install(this.plugins.NotificationIndicator());
     }
 
@@ -431,6 +432,10 @@ define([
      */
     MCT.prototype.install = function (plugin) {
         plugin(this);
+    };
+
+    MCT.prototype.destroy = function () {
+        this.emit('destroy');
     };
 
     MCT.prototype.plugins = plugins;
