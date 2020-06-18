@@ -174,11 +174,7 @@ export default {
             if(this.searchValue !== '' && !this.activeSearch) {
                 this.searchActivated();
             } else if(this.searchValue === '') {
-                // reset stuff from search
                 this.searchDeactivated();
-            } else {
-                this.setContainerHeight();
-                this.setChildrenHeight();
             }
         },
         searchResultItems() {
@@ -236,7 +232,7 @@ export default {
                         }
                     }
                     this.itemOffset = start;
-                    this.visibleItems = this.focusedItems.slice(start, end);                    
+                    this.visibleItems = this.focusedItems.slice(start, end);
 
                     this.updatingView = false;
                 });
