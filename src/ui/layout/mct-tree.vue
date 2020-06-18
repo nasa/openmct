@@ -13,7 +13,7 @@
     </div>
 
     <div
-        v-if="(searchValue && allTreeItems.length === 0 && !isLoading) || (searchValue && filteredTreeItems.length === 0)"
+        v-if="(searchValue && allTreeItems.length === 0 && !isLoading) || (searchValue && searchResultItems.length === 0)"
         class="c-tree-and-search__no-results"
     >
         No results found
@@ -29,21 +29,21 @@
 
     <!-- main tree -->
     <ul
-        v-show="!searchValue"
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
         <!-- ancestors -->
-        <tree-item
-            v-for="(ancestor, index) in ancestors"
-            :key="ancestor.id"
-            :node="ancestor"
-            :show-up="index < ancestors.length - 1"
-            :show-down="false"
-            :left-offset="index * 10 + 10 + 'px'"
-            @resetTree="handleReset"
-        />
-
+        <div v-if="!activeSearch">
+            <tree-item
+                v-for="(ancestor, index) in ancestors"
+                :key="ancestor.id"
+                :node="ancestor"
+                :show-up="index < ancestors.length - 1"
+                :show-down="false"
+                :left-offset="index * 10 + 10 + 'px'"
+                @resetTree="handleReset"
+            />
+        </div>
         <!-- currently viewed children -->
         <transition
             @enter="childrenIn"
@@ -63,10 +63,10 @@
                         :style="{ height: childrenHeight + 'px'}"
                     >
                         <tree-item
-                            v-for="(treeItem, index) in visibleTreeItems"
+                            v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
                             :node="treeItem"
-                            :left-offset="ancestors.length * 10 + 10 + 'px'"
+                            :left-offset="itemLeftOffset"
                             :item-offset="itemOffset"
                             :item-index="index"
                             :item-height="itemHeight"
@@ -79,19 +79,6 @@
         </transition>
     </ul>
     <!-- end main tree -->
-
-    <!-- search tree -->
-    <ul
-        v-if="searchValue"
-        class="c-tree-and-search__tree c-tree"
-    >
-        <tree-item
-            v-for="treeItem in filteredTreeItems"
-            :key="treeItem.id"
-            :node="treeItem"
-        />
-    </ul>
-    <!-- end search tree -->
 </div>
 </template>
 
@@ -125,8 +112,8 @@ export default {
             isLoading: false,
             searchValue: '',
             allTreeItems: [],
-            visibleTreeItems: [],
-            filteredTreeItems: [],
+            searchResultItems: [],
+            visibleItems: [],
             ancestors: [],
             childrenSlideClass: 'slide-left',
             availableContainerHeight: 0,
@@ -136,7 +123,8 @@ export default {
             itemOffset: 0,
             childrenHeight: 0,
             scrollable: undefined,
-            pageThreshold: 50
+            pageThreshold: 50,
+            activeSearch: false
         }
     },
     computed: {
@@ -150,6 +138,12 @@ export default {
             return ancestorsCopy
                 .reverse()
                 .map((ancestor) => ancestor.object);
+        },
+        focusedItems() {
+            return this.activeSearch ? this.searchResultItems : this.allTreeItems;
+        },
+        itemLeftOffset() {
+            return this.activeSearch ? '0px' : this.ancestors.length * 10 + 10 + 'px';
         }
     },
     watch: {
@@ -175,6 +169,21 @@ export default {
                 this.scrollTo = this.currentlyViewedObjectId();
                 this.autoScroll();
             }
+        },
+        searchValue() {
+            if(this.searchValue !== '' && !this.activeSearch) {
+                this.searchActivated();
+            } else if(this.searchValue === '') {
+                // reset stuff from search
+                this.searchDeactivated();
+            } else {
+                this.setContainerHeight();
+                this.setChildrenHeight();
+            }
+        },
+        searchResultItems() {
+            this.setContainerHeight();
+            this.setChildrenHeight();
         }
     },
     mounted() {
@@ -199,13 +208,13 @@ export default {
         window.removeEventListener('resize', this.handleWindowResize);
     },
     methods: {
-        updatevisibleTreeItems() {
+        updatevisibleItems() {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(()=> {
                     let start = 0,
                         end = this.pageThreshold,
-                        allItemsCount = this.allTreeItems.length;
+                        allItemsCount = this.focusedItems.length;
 
                     if (allItemsCount < this.pageThreshold) {
                         end = allItemsCount;
@@ -227,7 +236,7 @@ export default {
                         }
                     }
                     this.itemOffset = start;
-                    this.visibleTreeItems = this.allTreeItems.slice(start, end);
+                    this.visibleItems = this.focusedItems.slice(start, end);                    
 
                     this.updatingView = false;
                 });
@@ -242,6 +251,9 @@ export default {
                     let ancestorsHeight = this.calculateAncestorHeight(),
                         allChildrenHeight = this.calculateChildrenHeight();
 
+                    if(this.activeSearch) {
+                        ancestorsHeight = 0;
+                    }
                     this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
 
                     if(allChildrenHeight > this.availableContainerHeight) {
@@ -250,7 +262,7 @@ export default {
                     } else {
                         this.noScroll = true;
                     }
-                    this.updatevisibleTreeItems();
+                    this.updatevisibleItems();
                 } else {
                     setTimeout(this.setContainerHeight, MAIN_TREE_RECHECK_DELAY);
                 }
@@ -265,7 +277,7 @@ export default {
             return Math.ceil(scrollBottom / this.itemHeight);
         },
         calculateChildrenHeight() {
-            let childrenCount = this.allTreeItems.length;
+            let childrenCount = this.focusedItems.length;
             return this.itemHeight * childrenCount;
         },
         setChildrenHeight() {
@@ -370,9 +382,9 @@ export default {
                 }
             }
         },
-        getFilteredChildren() {
+        getSearchResults() {
             this.searchService.query(this.searchValue).then(children => {
-                this.filteredTreeItems = children.hits.map(child => {
+                this.searchResultItems = children.hits.map(child => {
 
                     let context = child.object.getCapability('context'),
                         object = child.object.useCapability('adapter'),
@@ -401,8 +413,18 @@ export default {
             this.searchValue = value;
 
             if (this.searchValue !== '') {
-                this.getFilteredChildren();
+                this.getSearchResults();
             }
+        },
+        searchActivated() {
+            this.activeSearch = true;
+            this.$refs.scrollable.scrollTop = 0;
+        },
+        searchDeactivated() {
+            this.activeSearch = false;
+            this.$refs.scrollable.scrollTop = 0;
+            this.setContainerHeight();
+            this.setChildrenHeight();
         },
         handleReset(node) {
             this.childrenSlideClass = 'slide-right';
@@ -411,11 +433,13 @@ export default {
             this.setCurrentNavigatedPath();
         },
         handleExpanded(node) {
-            this.childrenSlideClass = 'slide-left';
-            let newParent = this.buildTreeItem(node);
-            this.ancestors.push(newParent);
-            this.getAllChildren(newParent);
-            this.setCurrentNavigatedPath();
+            if(!this.activeSearch) {
+                this.childrenSlideClass = 'slide-left';
+                let newParent = this.buildTreeItem(node);
+                this.ancestors.push(newParent);
+                this.getAllChildren(newParent);
+                this.setCurrentNavigatedPath();
+            }
         },
         getSavedNavigatedPath() {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
@@ -450,7 +474,7 @@ export default {
         },
         scrollItems(event) {
             if(!windowResizing) {
-                this.updatevisibleTreeItems();
+                this.updatevisibleItems();
             }
         },
         scrollableStyles() {
