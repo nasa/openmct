@@ -25,7 +25,10 @@ export default {
             telemetryObjects: [],
             configuration: new TelemetryTableConfiguration(this.domainObject, this.openmct),
             keyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
-            timestampKey: this.openmct.time.timeSystem().key
+            timestampKey: this.openmct.time.timeSystem().key,
+            metadataValues: [],
+            boundedRows: [],
+            filteredRows: []
         }
     },
     computed: {
@@ -41,11 +44,10 @@ export default {
     },
     mounted() {
         this.plotElement = document.querySelector('.js-plotly-container');
-
-        this.createPlotDataCollections();
-
         this.openmct.time.on('timeSystem', this.changeClock);
-        this.openmct.time.on('bounds', this.refreshData);
+        // this.openmct.time.on('bounds', this.refreshData);
+        // this.boundedRows.on('add', this.refreshData);
+        // this.boundedRows.off('remove', this.addData);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
@@ -67,10 +69,10 @@ export default {
                 this.addTelemetryObject(this.domainObject);
             }
         },
-        createPlotDataCollections() {
-            this.boundedRows = new BoundedTableRowCollection(this.openmct);
-            this.filteredRows = new FilteredTableRowCollection(this.boundedRows);
-        },
+        // createPlotDataCollections(index) {
+        //     this.boundedRows[index] = new BoundedTableRowCollection(this.openmct);
+        //     this.filteredRows[index] = new FilteredTableRowCollection(this.boundedRows[index]));
+        // },
         loadComposition() {
             this.plotComposition = this.openmct.composition.get(this.domainObject);
             if (this.plotComposition !== undefined) {
@@ -84,22 +86,30 @@ export default {
             }
         },
         addTelemetryObject(telemetryObject) {
-            this.metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
-            this.valueMetadata = this
-                .metadata
-                .valuesForHints(['range'])[0];
-            this.valueKey = this.valueMetadata.key;
-
             this.telemetryObjects.push(telemetryObject);
-            this.addColumnsForObject(telemetryObject, true);
-            this.requestDataFor(telemetryObject, true);
-            this.subscribeTo(telemetryObject);
+            let traceIndex = this.telemetryObjects.length - 1;
+
+            this.boundedRows[traceIndex] = new BoundedTableRowCollection(this.openmct);
+            this.filteredRows[traceIndex] = new FilteredTableRowCollection(this.boundedRows[traceIndex]);
+            this.metadataValues[traceIndex] = {
+                metadata: this.openmct.telemetry.getMetadata(telemetryObject),
+                formats: this.openmct.telemetry.getFormatMap(this.metadataValues[traceIndex].metadata),
+                valueMetadata: this.metadataValues[rowtraceIndexIndex].metadata.valuesForHints(['range'])[0],
+                valueKey: this.metadataValues[traceIndex].valueMetadata.key
+            };
+
+            this.boundedRows[traceIndex].on('add', this.addRow);
+
+            this.addColumnsForObject(telemetryObject, traceIndex, true);
+            this.requestDataFor(telemetryObject, traceIndex, true);
+            this.subscribeTo(telemetryObject, traceIndex);
+
+            this.$emit('object-added', telemetryObject);
         },
         removeTelemetryObject(objectIdentifier) {
             const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             const index = this.telemetryObjects.findIndex(object => objectIdentifier.key === object.identifier.key);
-            this.boundedRows.removeAllRowsForObject(keyString);
+            this.boundedRows[0].removeAllRowsForObject(keyString);
             this.unsubscribe(keyString);
             this.telemetryObjects = this.telemetryObjects.filter(object => !(objectIdentifier.key === object.identifier.key));
             if (!this.telemetryObjects.length) {
@@ -107,11 +117,13 @@ export default {
             } else {
                 Plotly.deleteTraces(this.plotElement, index);
             }
+
+            this.emit('object-removed', objectIdentifier);
         },
         createColumn(metadatum) {
             return new TelemetryTableColumn(this.openmct, metadatum);
         },
-        requestDataFor(telemetryObject, isAdd) {
+        requestDataFor(telemetryObject, traceIndex, isAdd) {
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
@@ -128,9 +140,10 @@ export default {
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator, isAdd) {
             let index = this.telemetryObjects.findIndex(object => keyString === object.identifier.key);
             this.addTrace(telemetryData, keyString, index, isAdd);
-
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-            this.boundedRows.add(telemetryRows);
+            this.boundedRows[0].add(telemetryRows);
+
+            this.$emit('historical-rows-processed');
         },
         getColumnMapForObject(objectKeyString) {
             let columns = this.configuration.getColumns();
@@ -140,7 +153,7 @@ export default {
                 return map;
             }, {});
         },
-        addColumnsForObject(telemetryObject) {
+        addColumnsForObject(telemetryObject, traceIndex) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
             metadataValues.forEach(metadatum => {
@@ -148,23 +161,19 @@ export default {
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
             });
         },
-        refreshData(bounds, isTick) {
-            this.bounds = bounds;
-            if ((!isTick && this.outstandingRequests === 0) || this.bounds.end - this.bounds.start) {
-                this.boundedRows.clear();
-                this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
+        refreshData() {
+            // this.bounds = bounds;
+            // if ((!isTick && this.outstandingRequests === 0) || this.bounds.end - this.bounds.start) {
+                this.boundedRows[0].clear();
+                this.boundedRows[0].sortByTimeSystem(this.openmct.time.timeSystem());
                 this.telemetryObjects.forEach(object => this.requestDataFor(object, false));
-            }
+            // }
         },
-        clearData() {
-            this.boundedRows.clear();
-        },
-        subscribeTo(telemetryObject) {
+        subscribeTo(telemetryObject, traceIndex) {
             let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            const index = this.telemetryObjects.findIndex(object => keyString === object.identifier.key);
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
                 //Check that telemetry object has not been removed since telemetry was requested.
                 if (!this.telemetryObjects.includes(telemetryObject)) {
@@ -178,16 +187,16 @@ export default {
                 };
                 this.datumCache.push(realtimeDatum);
 
-                this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator, index);
+                this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator, traceIndex);
             }, subscribeOptions);
         },
 
-        processRealtimeDatum(datum, columnMap, keyString, limitEvaluator, index) {
-            if (index > this.telemetryObjects.length -1) {
+        processRealtimeDatum(datum, columnMap, keyString, limitEvaluator, traceIndex) {
+            if (traceIndex > this.telemetryObjects.length -1) {
                 return;
             }
-            this.updateData(datum, index);
-            this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+            // this.updateData(datum, index);
+            this.boundedRows[traceIndex].add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
         },
         processDatumCache() {
             this.datumCache.forEach(cachedDatum => {
@@ -276,7 +285,7 @@ export default {
                 }
             }];
 
-            this.boundedRows[keyString] = traceData[0];
+            this.boundedRows[0][keyString] = traceData[0];
 
             if (!this.plotElement.childNodes.length) { // no traces yet, so create new plot
                 this.bounds = this.openmct.time.bounds();
@@ -295,7 +304,10 @@ export default {
                 }
             }
         },
-        updateData(datum, index) {
+        addRow(row, index) {
+            let datum = row.datum;
+            console.log('addRow', datum);
+            index = 0;
             // plot all datapoints within bounds
             if (datum.utc <= this.bounds.end) {
 
@@ -321,7 +333,7 @@ export default {
         },
         updateFilters() {
             this.filteredRows.clear();
-            this.boundedRows.clear();
+            this.boundedRows[traceIndex].clear();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
 
             this.telemetryObjects.forEach(this.requestDataFor.bind(this));
