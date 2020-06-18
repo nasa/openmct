@@ -25,7 +25,8 @@ import {
     createOpenMct,
     getMockObjects,
     getMockTelemetry,
-    getLatestTelemetry
+    getLatestTelemetry,
+    resetApplicationState
 } from 'utils/testing';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
@@ -35,19 +36,18 @@ const TABLE_BODY_FIRST_ROW_SECOND_DATA = TABLE_BODY_FIRST_ROW + ' .js-second-dat
 const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-third-data';
 const LAD_SET_TABLE_HEADERS = '.js-lad-table-set__table-headers';
 
-let openmct,
-    ladPlugin,
-    parent,
-    child;
-
 function utcTimeFormat(value) {
     return new Date(value).toISOString().replace('T', ' ')
 }
 
-fdescribe("The LAD Table", () => {
-
+describe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
-    let telemetryCount = 3,
+
+    let openmct,
+        ladPlugin,
+        parent,
+        child,
+        telemetryCount = 3,
         timeFormat = 'utc',
         mockTelemetry = getMockTelemetry({ count: telemetryCount, format: timeFormat }),
         mockObj = getMockObjects({
@@ -84,7 +84,11 @@ fdescribe("The LAD Table", () => {
         openmct.time.bounds({ start: bounds.start, end: bounds.end });
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless(appHolder);
+    });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
     });
 
     it("should provide a table view only for lad table objects", () => {
@@ -214,7 +218,12 @@ fdescribe("The LAD Table", () => {
 
 describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
-    let telemetryCount = 3,
+
+    let openmct,
+        ladPlugin,
+        parent,
+        child,
+        telemetryCount = 3,
         timeFormat = 'utc',
         mockTelemetry = getMockTelemetry({ count: telemetryCount, format: timeFormat }),
         mockObj = getMockObjects({
@@ -250,6 +259,10 @@ describe("The LAD Table Set", () => {
 
         openmct.on('start', done);
         openmct.start(appHolder);
+    });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {
