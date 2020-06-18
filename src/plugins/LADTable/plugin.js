@@ -49,6 +49,6 @@ export default function plugin() {
             }
         });
 
-        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
     };
 }
