@@ -303,9 +303,9 @@ export default {
             if (this.isTelemetry(domainObject)) {
                 this.addItem('telemetry-view', domainObject, droppedObjectPosition);
             } else {
-                let identifier = this.openmct.objects.makeKeyString(domainObject.identifier);
+                let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-                if (!this.objectViewMap[identifier]) {
+                if (!this.objectViewMap[keyString]) {
                     this.addItem('subobject-view', domainObject, droppedObjectPosition);
                 } else {
                     let prompt = this.openmct.overlays.dialog({
@@ -422,12 +422,12 @@ export default {
             this.layoutItems.forEach(this.trackItem);
         },
         addChild(child) {
-            let identifier = this.openmct.objects.makeKeyString(child.identifier);
+            let keyString = this.openmct.objects.makeKeyString(child.identifier);
             if (this.isTelemetry(child)) {
-                if (!this.telemetryViewMap[identifier] && !this.objectViewMap[identifier]) {
+                if (!this.telemetryViewMap[keyString] && !this.objectViewMap[keyString]) {
                     this.addItem('telemetry-view', child);
                 }
-            } else if (!this.objectViewMap[identifier]) {
+            } else if (!this.objectViewMap[keyString]) {
                 this.addItem('subobject-view', child);
             }
         },
@@ -538,7 +538,7 @@ export default {
                 object = {};
 
             if (model) {
-                object = this.createDeepCopy(model);
+                object = _.cloneDeep(model);
             } else {
                 object.type = viewType;
                 type.definition.initialize(object);
@@ -559,12 +559,6 @@ export default {
                 this.addItem('telemetry-view', domainObject, position);
             });
         },
-        createDeepCopy(object) {
-            let copyString = JSON.stringify(object),
-                parsedString = JSON.parse(copyString);
-
-            return parsedString;
-        },
         dispatchMultipleSelection(selectItemsArray) {
             let event = new MouseEvent('click', {
                 bubbles: true,
@@ -578,10 +572,8 @@ export default {
                     component = this.$refs[refId] && this.$refs[refId][0];
 
                 if (component) {
-                    component.$nextTick(() => {
-                        component.immediatelySelect = event;
-                        component.$el.dispatchEvent(event);
-                    });
+                    component.immediatelySelect = event;
+                    component.$el.dispatchEvent(event);
                 }
             });
         },
@@ -594,7 +586,7 @@ export default {
                 let layoutItem = selectedItem[0].context.layoutItem,
                     domainObject = selectedItem[0].context.item,
                     layoutItemStyle = objectStyles[layoutItem.id],
-                    copy = this.createDeepCopy(layoutItem);
+                    copy = _.cloneDeep(layoutItem);
 
                 copy.id = uuid();
                 selectItemsArray.push(copy.id);
@@ -628,13 +620,11 @@ export default {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
                 this.$el.click(); //clear selection;
-
-                this.$nextTick(() => {
-                    newDomainObjectsArray.forEach(domainObject => {
-                        this.composition.add(domainObject);
-                    });
-                    this.dispatchMultipleSelection(selectItemsArray);
+                
+                newDomainObjectsArray.forEach(domainObject => {
+                    this.composition.add(domainObject);
                 });
+                this.dispatchMultipleSelection(selectItemsArray);
             });
         },
         mergeMultipleTelemetryViews(selection, viewType) {

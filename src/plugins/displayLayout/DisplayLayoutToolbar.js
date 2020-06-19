@@ -479,7 +479,7 @@ define(['lodash'], function (_) {
                     let splitPath = path.split('.'),
                         property = Object.assign({}, object);
 
-                    while (splitPath.length) {
+                    while (splitPath.length && property) {
                         property = property[splitPath.shift()];
                     }
 
