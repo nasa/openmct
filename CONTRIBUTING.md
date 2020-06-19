@@ -136,7 +136,7 @@ this repository. This is verified by the command line build.
 
 #### Code Guidelines
 
-JavaScript sources in Open MCT should:
+The following guidelines are provided for anyone contributing source code to the Open MCT project:
 
 1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
 1. Include JSDoc for any exposed API (e.g. public methods, classes).
@@ -178,7 +178,7 @@ JavaScript sources in Open MCT should:
    code, and  present these in the following order:
    * First, variable declarations and initialization.
    * Secondly, imperative statements.
-   * Finally, the returned value. Functions should only have a single return statement.
+   * Finally, the returned value. A single return statement at the end of the function should be used, except where an early return would improve code clarity.
 1. Avoid the use of "magic" values.
    eg.
    ```JavaScript
@@ -189,7 +189,7 @@ JavaScript sources in Open MCT should:
    ```JavaScript
    if (responseCode === 401)
    ```
-1. Don’t use the ternary operator. Yes it's terse, but there's probably a clearer way of writing it.
+1. Use the ternary operator only for simple cases such as variable assignment. Nested ternaries should be avoided in all cases.
 1. Test specs should reside alongside the source code they test, not in a separate directory.
 1. Organize code by feature, not by type.
    eg.
