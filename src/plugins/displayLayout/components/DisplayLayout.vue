@@ -620,7 +620,7 @@ export default {
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
                 this.$el.click(); //clear selection;
-                
+
                 newDomainObjectsArray.forEach(domainObject => {
                     this.composition.add(domainObject);
                 });
