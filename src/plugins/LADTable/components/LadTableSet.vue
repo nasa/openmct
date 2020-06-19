@@ -35,7 +35,7 @@
         >
             <tr
                 :key="primary.key"
-                class="c-table__group-header"
+                class="c-table__group-header js-lad-table-set__table-headers"
             >
                 <td colspan="10">
                     {{ primary.domainObject.name }}

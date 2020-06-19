@@ -28,10 +28,17 @@ export const TRIGGER = {
 };
 
 export const TRIGGER_LABEL = {
-    'any': 'when any criteria are met',
-    'all': 'when all criteria are met',
-    'not': 'when no criteria are met',
-    'xor': 'when only one criteria is met'
+    'any': 'any criteria are met',
+    'all': 'all criteria are met',
+    'not': 'no criteria are met',
+    'xor': 'only one criterion is met'
+};
+
+export const TRIGGER_CONJUNCTION = {
+    'any': 'or',
+    'all': 'and',
+    'not': 'and',
+    'xor': 'or'
 };
 
 export const STYLE_CONSTANTS = {
