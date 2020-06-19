@@ -91,6 +91,13 @@ export default {
             }
 
             this.context.index = newIndex;
+        },
+        item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.layoutItem = newItem;
         }
     },
     mounted() {
