@@ -26,12 +26,14 @@ define([
     'lodash',
     '../configuration/PlotConfigurationModel',
     '../configuration/configStore',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    '../lib/constants'
 ], function (
     _,
     PlotConfigurationModel,
     configStore,
-    eventHelpers
+    eventHelpers,
+    constants
 ) {
 
     /**
@@ -47,18 +49,21 @@ define([
     function PlotController(
         $scope,
         $element,
+        $location,
         formatService,
         openmct,
         objectService,
-        exportImageService
+        exportImageService,
+        viewportService
     ) {
-
         this.$scope = $scope;
         this.$element = $element;
+        this.$location = $location;
         this.formatService = formatService;
         this.openmct = openmct;
         this.objectService = objectService;
         this.exportImageService = exportImageService;
+        this.viewportService = viewportService;
         this.cursorGuide = false;
 
         $scope.pending = 0;
@@ -68,6 +73,7 @@ define([
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
         this.listenTo($scope, 'clearData', this.clearData);
+        this.listenTo($scope, '$locationChangeSuccess', this.setAxisDisplayRange, this);
 
         this.config = this.getConfig(this.$scope.domainObject);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
@@ -78,6 +84,8 @@ define([
 
         this.newStyleDomainObject = $scope.domainObject.useCapability('adapter');
         this.keyString = this.openmct.objects.makeKeyString(this.newStyleDomainObject.identifier);
+
+        this.setAxisDisplayRange();
 
         this.filterObserver = this.openmct.objects.observe(
             this.newStyleDomainObject,
@@ -257,7 +265,23 @@ define([
      */
     PlotController.prototype.onUserViewportChangeEnd = function () {
         var xDisplayRange = this.config.xAxis.get('displayRange');
+        var yDisplayRange = this.config.yAxis.get('displayRange');
         var xRange = this.config.xAxis.get('range');
+
+        //add viewport x and y axes to URL
+        if (xDisplayRange && !isNaN(parseInt(xDisplayRange.min, 0xA)) && !isNaN(parseInt(xDisplayRange.max, 0xA)) &&
+            yDisplayRange && !isNaN(parseFloat(yDisplayRange.min, 0xA)) && !isNaN(parseFloat(yDisplayRange.max, 0xA))) {
+            this.viewportService.setBounds({
+                x: {
+                    min: parseInt(xDisplayRange.min, 0xA),
+                    max: parseInt(xDisplayRange.max, 0xA)
+                },
+                y: {
+                    min: parseFloat(yDisplayRange.min, 0xA),
+                    max: parseFloat(yDisplayRange.max, 0xA)
+                }
+            });
+        }
 
         if (!this.skipReloadOnInteraction) {
             this.loadMoreData(xDisplayRange);
@@ -300,6 +324,31 @@ define([
     PlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
         this.$scope.$broadcast('cursorguide', $event);
+    };
+
+    PlotController.prototype.setAxisDisplayRange = function () {
+        //read viewport axis values from URL
+        var searchParams = _.pick(this.$location.search(), Object.values(constants.QUERY_PARAM_NAMES));
+
+        //set X-axis viewport
+        if (!isNaN(parseInt(searchParams[constants.QUERY_PARAM_NAMES.START_VIEWPORT_X], 0xA)) &&
+            !isNaN(parseInt(searchParams[constants.QUERY_PARAM_NAMES.END_VIEWPORT_X], 0xA))) {
+            this.config.xAxis.set('autoscale', false);
+            this.config.xAxis.set('displayRange', {
+                min:parseInt(searchParams[constants.QUERY_PARAM_NAMES.START_VIEWPORT_X], 0xA),
+                max:parseInt(searchParams[constants.QUERY_PARAM_NAMES.END_VIEWPORT_X], 0xA)
+            });
+        }
+
+        //set y-axis viewport
+        if (!isNaN(parseFloat(searchParams[constants.QUERY_PARAM_NAMES.START_VIEWPORT_Y], 0xA)) &&
+            !isNaN(parseFloat(searchParams[constants.QUERY_PARAM_NAMES.END_VIEWPORT_Y], 0xA))) {
+            this.config.yAxis.set('autoscale', false);
+            this.config.yAxis.set('displayRange', {
+                min:parseFloat(searchParams[constants.QUERY_PARAM_NAMES.START_VIEWPORT_Y], 0xA),
+                max:parseFloat(searchParams[constants.QUERY_PARAM_NAMES.END_VIEWPORT_Y], 0xA)
+            });
+        }
     };
 
     return PlotController;

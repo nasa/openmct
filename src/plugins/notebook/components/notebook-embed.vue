@@ -30,6 +30,7 @@ import PreviewAction from '../../../ui/preview/PreviewAction';
 import Painterro from 'painterro';
 import RemoveDialog from '../utils/removeDialog';
 import SnapshotTemplate from './snapshot-template.html';
+import ViewportService from '../../plot/src/services/ViewportService';
 import Vue from 'vue';
 
 export default {
@@ -238,6 +239,12 @@ export default {
             const self = this;
             const previewAction = new PreviewAction(self.openmct);
             previewAction.invoke(JSON.parse(self.embed.objectPath));
+
+            //set the plot viewport
+            if ('viewportBounds' in self.embed && self.embed.type in self.embed.viewportBounds) {
+                let svc = new ViewportService(self.openmct);
+                svc.setBounds(self.embed.viewportBounds[self.embed.type]);
+            }
         },
         removeEmbed(success) {
             if (!success) {
