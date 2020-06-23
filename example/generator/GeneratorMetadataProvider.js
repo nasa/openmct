@@ -73,7 +73,7 @@ define([
                 {
                     key: "local",
                     name: "Time",
-                    format: "local",
+                    format: "utc",
                     source: "utc",
                     hints: {
                         domain: 2
