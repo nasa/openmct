@@ -26,7 +26,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct,
         newFolderAction;
 
