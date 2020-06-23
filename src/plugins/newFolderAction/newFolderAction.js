@@ -30,7 +30,6 @@ export default class NewFolderAction {
         this.cssClass = 'icon-folder';
 
         this._openmct = openmct;
-        this._dialogService = openmct.$injector.get('dialogService');
         this._folderType = openmct.types.get('folder');
         this._dialogForm = {
             name: "New Folder Name",
@@ -51,9 +50,11 @@ export default class NewFolderAction {
     invoke(objectPath) {
         let domainObject = objectPath[0],
             parentKeystring = this._openmct.objects.makeKeyString(domainObject.identifier),
-            composition = this._openmct.composition.get(domainObject);
+            composition = this._openmct.composition.get(domainObject),
+            dialogService = this._openmct.$injector.get('dialogService'),
+            folderType = this._openmct.types.get('folder');
 
-        this._dialogService.getUserInput(this._dialogForm, {}).then((userInput) => {
+        dialogService.getUserInput(this._dialogForm, {}).then((userInput) => {
             let name = userInput.name,
                 identifier = {
                     key: uuid(),
@@ -65,8 +66,8 @@ export default class NewFolderAction {
                     location: parentKeystring
                 };
 
-            this._folderType.definition.initialize(objectModel);
-            objectModel.name = name;
+            folderType.definition.initialize(objectModel);
+            objectModel.name = name || 'New Folder';
 
             this._openmct.objects.mutate(objectModel, 'created', Date.now());
             composition.add(objectModel);

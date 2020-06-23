@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import NewFolderAction from './newFolderAction';
+import {
+    createOpenMct,
+    createMouseEvent,
+    spyOnBuiltins,
+    resetApplicationState
+} from 'utils/testing';
 
-export default function () {
-    return function (openmct) {
-        openmct.contextMenu.registerAction(new NewFolderAction(openmct));
-    };
-}
+fdescribe("the plugin", () => {
+    let openmct,
+        newFolderAction;
+
+    beforeAll(() => {
+        resetApplicationState();
+    });
+
+    beforeEach((done) => {
+        openmct = createOpenMct();
+
+        openmct.on('start', done);
+        openmct.startHeadless();
+
+        newFolderAction = openmct.contextMenu._allActions.filter(action => {
+            return action.key === 'newFolder';
+        })[0];
+    });
+
+    it('installs the new folder action', () => {
+        expect(newFolderAction).toBeDefined();
+    });
+});
