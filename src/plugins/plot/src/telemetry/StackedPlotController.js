@@ -126,7 +126,7 @@ define([], function () {
             }
 
             tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
-            const newTickWidth = Math.max(...Object.values(tickWidthMap))
+            const newTickWidth = Math.max(...Object.values(tickWidthMap));
             if (newTickWidth !== tickWidth || width !== tickWidth) {
                 tickWidth = newTickWidth;
                 $scope.$broadcast('plot:tickWidth', tickWidth);
