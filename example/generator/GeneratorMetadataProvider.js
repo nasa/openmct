@@ -29,6 +29,15 @@ define([
                     }
                 },
                 {
+                    key: "local",
+                    name: "Time",
+                    format: "utc",
+                    source: "utc",
+                    hints: {
+                        domain: 3
+                    }
+                },
+                {
                     key: "sin",
                     name: "Sine",
                     formatString: '%0.2f',
@@ -59,6 +68,15 @@ define([
                     format: "utc",
                     hints: {
                         domain: 1
+                    }
+                },
+                {
+                    key: "local",
+                    name: "Time",
+                    format: "local",
+                    source: "utc",
+                    hints: {
+                        domain: 2
                     }
                 },
                 {
