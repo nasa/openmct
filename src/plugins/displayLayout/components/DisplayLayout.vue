@@ -549,7 +549,7 @@ export default {
             object.identifier = identifier;
             object.location = parentKeyString;
 
-            this.openmct.objects.mutate(object, 'persisted', Date.now());
+            this.openmct.objects.mutate(object, 'created', Date.now());
 
             return object;
         },
