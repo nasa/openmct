@@ -30,8 +30,7 @@ define([
     './MCTChartPointSet',
     './MCTChartAlarmPointSet',
     '../draw/DrawLoader',
-    '../lib/eventHelpers',
-    'lodash'
+    '../lib/eventHelpers'
 ],
 function (
     MCTChartLineLinear,
@@ -39,8 +38,7 @@ function (
     MCTChartPointSet,
     MCTChartAlarmPointSet,
     DrawLoader,
-    eventHelpers,
-    _
+    eventHelpers
 ) {
 
     var MARKER_SIZE = 6.0,
