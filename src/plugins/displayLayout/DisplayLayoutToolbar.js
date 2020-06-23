@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,38 +41,84 @@ define(['lodash'], function (_) {
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
-                    'text': {
-                        name: "Text Element Properties",
-                        sections: [
-                            {
-                                rows: [
-                                    {
-                                        key: "text",
-                                        control: "textfield",
-                                        name: "Text",
-                                        required: true
-                                    }
-                                ]
-                            }
-                        ]
+                        'text': {
+                            name: "Text Element Properties",
+                            sections: [
+                                {
+                                    rows: [
+                                        {
+                                            key: "text",
+                                            control: "textfield",
+                                            name: "Text",
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        'image': {
+                            name: "Image Properties",
+                            sections: [
+                                {
+                                    rows: [
+                                        {
+                                            key: "url",
+                                            control: "textfield",
+                                            name: "Image URL",
+                                            "cssClass": "l-input-lg",
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
                     },
-                    'image': {
-                        name: "Image Properties",
-                        sections: [
-                            {
-                                rows: [
-                                    {
-                                        key: "url",
-                                        control: "textfield",
-                                        name: "Image URL",
-                                        "cssClass": "l-input-lg",
-                                        required: true
-                                    }
-                                ]
-                            }
+                    viewTypes = {
+                        'telemetry-view': {
+                            value: 'telemetry-view',
+                            name: 'Alphanumeric',
+                            class: 'icon-alphanumeric'
+                        },
+                        'telemetry.plot.overlay': {
+                            value: 'telemetry.plot.overlay',
+                            name: 'Overlay Plot',
+                            class: "icon-plot-overlay"
+                        },
+                        'telemetry.plot.stacked': {
+                            value: "telemetry.plot.stacked",
+                            name: "Stacked Plot",
+                            class: "icon-plot-stacked"
+                        },
+                        'table': {
+                            value: 'table',
+                            name: 'Table',
+                            class: 'icon-tabular-realtime'
+                        }
+                    },
+                    applicableViews = {
+                        'telemetry-view': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes.table
+                        ],
+                        'telemetry.plot.overlay': [
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes.table,
+                            viewTypes['telemetry-view']
+                        ],
+                        'table': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes['telemetry-view']
+                        ],
+                        'telemetry-view-multi': [
+                            viewTypes['telemetry.plot.overlay'],
+                            viewTypes['telemetry.plot.stacked'],
+                            viewTypes.table
+                        ],
+                        'telemetry.plot.overlay-multi': [
+                            viewTypes['telemetry.plot.stacked']
                         ]
-                    }
-                };
+                    };
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -415,6 +461,100 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getDuplicateButton(selectedParent, selectionPath, selection) {
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        icon: "icon-duplicate",
+                        title: "Duplicate the selected object",
+                        method: function () {
+                            let duplicateItem = selectionPath[1].context.duplicateItem;
+
+                            duplicateItem(selection);
+                        }
+                    };
+                }
+
+                function getPropertyFromPath(object, path) {
+                    let splitPath = path.split('.'),
+                        property = Object.assign({}, object);
+
+                    while (splitPath.length && property) {
+                        property = property[splitPath.shift()];
+                    }
+
+                    return property;
+                }
+
+                function areAllViews(type, path, selection) {
+                    let allTelemetry = true;
+
+                    selection.forEach(selectedItem => {
+                        let selectedItemContext = selectedItem[0].context;
+
+                        if (getPropertyFromPath(selectedItemContext, path) !== type) {
+                            allTelemetry = false;
+                        }
+                    });
+
+                    return allTelemetry;
+                }
+
+                function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
+                    if (selection.length === 1) {
+                        let displayLayoutContext = selectionPath[1].context,
+                            selectedItemContext = selectionPath[0].context,
+                            selectedItemType = selectedItemContext.item.type;
+
+                        if (selectedItemContext.layoutItem.type === 'telemetry-view') {
+                            selectedItemType = 'telemetry-view';
+                        }
+
+                        let viewOptions = applicableViews[selectedItemType];
+
+                        if (viewOptions) {
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Switch the way this telemetry is displayed",
+                                options: viewOptions,
+                                method: function (option) {
+                                    displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                                }
+                            };
+                        }
+                    } else if (selection.length > 1) {
+                        if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Merge into a telemetry table or plot",
+                                options: applicableViews['telemetry-view-multi'],
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
+                                }
+                            };
+                        } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Merge into a stacked plot",
+                                options: applicableViews['telemetry.plot.overlay-multi'],
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
+                                }
+                            };
+                        }
+                    }
+                }
+
                 function getSeparator() {
                     return {
                         control: "separator"
@@ -435,12 +575,14 @@ define(['lodash'], function (_) {
                     'add-menu': [],
                     'text': [],
                     'url': [],
+                    'viewSwitcher': [],
                     'toggle-frame': [],
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
                     'text-style': [],
                     'position': [],
+                    'duplicate': [],
                     'remove': []
                 };
 
@@ -471,6 +613,9 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                        }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
                             toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
@@ -494,6 +639,9 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                        }
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {
@@ -555,6 +703,9 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+                    }
+                    if(toolbar.duplicate.length === 0) {
+                        toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
                     }
                 });
 

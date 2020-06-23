@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,30 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-], function (
-) {
 
-    function ConfigStore() {
-        this.store = {};
+export default class LADTableCompositionPolicy {
+
+    constructor(openmct) {
+        this.openmct = openmct;
+        return this.allow.bind(this);
     }
 
-    ConfigStore.prototype.deleteStore = function (id) {
-        if (this.store[id]) {
-            this.store[id].destroy();
-            delete this.store[id];
+    allow(parent, child) {
+        if(parent.type === 'LadTable') {
+            return this.openmct.telemetry.isTelemetryObject(child);
+        } else if(parent.type === 'LadTableSet') {
+            return child.type === 'LadTable';
         }
-    };
 
-    ConfigStore.prototype.add = function (id, config) {
-        this.store[id] = config;
-    };
-
-    ConfigStore.prototype.get = function (id) {
-        return this.store[id];
-    };
-
-    var STORE = new ConfigStore();
-
-    return STORE;
-});
+        return true;
+    }
+}
