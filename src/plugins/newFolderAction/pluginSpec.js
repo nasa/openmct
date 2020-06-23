@@ -21,8 +21,6 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    createMouseEvent,
-    spyOnBuiltins,
     resetApplicationState
 } from 'utils/testing';
 
