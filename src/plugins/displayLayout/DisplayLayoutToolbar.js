@@ -106,6 +106,9 @@ define(['lodash'], function (_) {
                             viewTypes.table,
                             viewTypes['telemetry-view']
                         ],
+                        'telemetry.plot.stacked': [
+                            viewTypes['telemetry-view']
+                        ],
                         'table': [
                             viewTypes['telemetry.plot.overlay'],
                             viewTypes['telemetry.plot.stacked'],

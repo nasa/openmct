@@ -78,6 +78,30 @@ import ImageView from './ImageView.vue'
 import EditMarquee from './EditMarquee.vue'
 import _ from 'lodash'
 
+const TELEMETRY_IDENTIFIER_FUNCTIONS = {
+    'table': (domainObject) => {
+        return Promise.resolve(domainObject.composition);
+    },
+    'telemetry.plot.overlay': (domainObject) => {
+        return Promise.resolve(domainObject.composition);
+    },
+    'telemetry.plot.stacked': (domainObject, openmct) => {
+        let composition = openmct.composition.get(domainObject);
+
+        return composition.load().then((composition) => {
+            let identifiers = [];
+            composition.forEach(object => {
+                if (object.type === 'telemetry.plot.overlay') {
+                    identifiers.push(...object.composition);
+                } else {
+                    identifiers.push(object.identifier);
+                }
+            });
+            return Promise.resolve(identifiers);
+        });
+    }
+}
+
 const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
     'telemetry-view': TelemetryView,
@@ -671,6 +695,15 @@ export default {
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1;
         },
+        getTelemetryIdentifiers(domainObject) {
+            let method = TELEMETRY_IDENTIFIER_FUNCTIONS[domainObject.type];
+
+            if (method) {
+                return method(domainObject, this.openmct);
+            } else {
+                throw 'No method identified for domainObject type';
+            }
+        },
         switchViewType(context, viewType, selection) {
             let domainObject = context.item,
                 layoutItem = context.layoutItem,
@@ -684,11 +717,13 @@ export default {
                 if (viewType !== 'telemetry-view') {
                     newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, viewType);
                 } else {
-                    domainObject.composition.forEach((identifier , index) => {
-                        let positionX = position[0] + (index * DUPLICATE_OFFSET),
-                            positionY = position[1] + (index * DUPLICATE_OFFSET);
+                    this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
+                        identifiers.forEach((identifier, index) => {
+                            let positionX = position[0] + (index * DUPLICATE_OFFSET),
+                                positionY = position[1] + (index * DUPLICATE_OFFSET);
 
-                        this.convertToTelemetryView(identifier, [positionX, positionY]);
+                            this.convertToTelemetryView(identifier, [positionX, positionY]);
+                        });
                     });
                 }
             }
