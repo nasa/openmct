@@ -30,7 +30,6 @@ export default class NewFolderAction {
         this.cssClass = 'icon-folder';
 
         this._openmct = openmct;
-        this._folderType = openmct.types.get('folder');
         this._dialogForm = {
             name: "New Folder Name",
             sections: [

@@ -30,10 +30,6 @@ describe("the plugin", () => {
     let openmct,
         newFolderAction;
 
-    beforeAll(() => {
-        resetApplicationState();
-    });
-
     beforeEach((done) => {
         openmct = createOpenMct();
 
@@ -43,6 +39,10 @@ describe("the plugin", () => {
         newFolderAction = openmct.contextMenu._allActions.filter(action => {
             return action.key === 'newFolder';
         })[0];
+    });
+
+    afterEach(() => {
+        resetApplicationState();
     });
 
     it('installs the new folder action', () => {
