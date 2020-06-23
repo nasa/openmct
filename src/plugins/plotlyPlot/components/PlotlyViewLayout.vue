@@ -142,7 +142,7 @@ export default {
                 } else { //extending existing trace row by row
                     let datum = rows.datum !== undefined ? rows.datum : rows[0].datum
                     let metadataValues = parentScope.metadataValues[index];
-                    // parentScope.updatePlotRange(index);
+                    parentScope.updatePlotRange(index);
                     Plotly.extendTraces(
                         parentScope.plotElement,
                         {
@@ -186,7 +186,6 @@ export default {
             }, subscribeOptions);
         },
         processHistoricalData(telemetryObject, telemetryData, index, columnMap, keyString, limitEvaluator) {
-            this.boundedRows[index].clear();
             this.setTraceData(telemetryObject, index, this.boundedRows[index] !== undefined);
             const telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows[index].add(telemetryRows);
@@ -200,10 +199,12 @@ export default {
         refreshData(bounds, isTick) {
             this.bounds = bounds;
 
-            if (!isTick  && this.outstandingRequests === 0) {
+            if (!isTick && this.outstandingRequests === 0) {
                 this.telemetryObjects.forEach((object, index) => {
+                    this.filteredRows[index].clear();
                     this.boundedRows[index].clear();
-                    this.requestDataFor(object, index, false);
+                    this.boundedRows[index].sortByTimeSystem(this.openmct.time.timeSystem());
+                    this.requestDataFor(object, index);
                 });
             }
         },
