@@ -28,8 +28,10 @@ define([
     }
 
     ConfigStore.prototype.deleteStore = function (id) {
-        this.store[id].destroy();
-        delete this.store[id];
+        if (this.store[id]) {
+            this.store[id].destroy();
+            delete this.store[id];
+        }
     };
 
     ConfigStore.prototype.add = function (id, config) {
