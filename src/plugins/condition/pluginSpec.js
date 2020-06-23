@@ -25,19 +25,50 @@ import ConditionPlugin from "./plugin";
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
+import ConditionManager from "@/plugins/condition/ConditionManager";
 
 describe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
+    let mockListener;
     let element;
     let child;
     let openmct;
+    let testTelemetryObject;
 
     beforeAll(() => {
         resetApplicationState(openmct);
     });
 
     beforeEach((done) => {
+        testTelemetryObject = {
+            identifier:{ namespace: "", key: "test-object"},
+            type: "test-object",
+            name: "Test Object",
+            telemetry: {
+                valueMetadatas: [{
+                    key: "some-key",
+                    name: "Some attribute",
+                    hints: {
+                        range: 2
+                    }
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
+                    hints: {
+                        domain: 1
+                    }
+                }, {
+                    key: "testSource",
+                    source: "value",
+                    name: "Test",
+                    format: "string"
+                }]
+            }
+        };
+
         openmct = createOpenMct();
         openmct.install(new ConditionPlugin());
 
@@ -54,6 +85,8 @@ describe('the plugin', function () {
             },
             type: 'conditionSet'
         };
+
+        mockListener = jasmine.createSpy('mockListener');
 
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
@@ -355,5 +388,110 @@ describe('the plugin', function () {
             });
         });
 
+    });
+
+    describe('the condition check for staleness', () => {
+        const conditionSetDomainObject = {
+            "configuration":{
+                "conditionTestData":[
+                    {
+                        "telemetry":"",
+                        "metadata":"",
+                        "input":""
+                    }
+                ],
+                "conditionCollection":[
+                    {
+                        "id":"39584410-cbf9-499e-96dc-76f27e69885d",
+                        "configuration":{
+                            "name":"Unnamed Condition",
+                            "output":"Any stale telemetry",
+                            "trigger":"all",
+                            "criteria":[
+                                {
+                                    "id":"35400132-63b0-425c-ac30-8197df7d5862",
+                                    "telemetry":"any",
+                                    "operation":"isStale",
+                                    "input":[
+                                        "1"
+                                    ],
+                                    "metadata":"dataReceived"
+                                }
+                            ]
+                        },
+                        "summary":"Match if all criteria are met: Any telemetry is stale after 5 seconds"
+                    },
+                    {
+                        "isDefault":true,
+                        "id":"2532d90a-e0d6-4935-b546-3123522da2de",
+                        "configuration":{
+                            "name":"Default",
+                            "output":"Default",
+                            "trigger":"all",
+                            "criteria":[
+                            ]
+                        },
+                        "summary":""
+                    }
+                ]
+            },
+            "composition":[
+                {
+                    "namespace":"",
+                    "key":"test-object"
+                }
+            ],
+            "telemetry":{
+            },
+            "name":"Condition Set",
+            "type":"conditionSet",
+            "identifier":{
+                "namespace":"",
+                "key":"cf4456a9-296a-4e6b-b182-62ed29cd15b9"
+            }
+
+        };
+
+        it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
+
+            let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
+            conditionMgr.on('conditionSetResultUpdated', mockListener);
+            conditionMgr.telemetryObjects = {
+                "test-object": testTelemetryObject
+            };
+            conditionMgr.updateConditionTelemetryObjects();
+            setTimeout(() => {
+                expect(mockListener).toHaveBeenCalledWith({
+                    output: 'Any stale telemetry',
+                    id: { namespace: '', key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9' },
+                    conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
+                    utc: undefined
+                });
+                done();
+            }, 1500);
+        });
+
+        it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
+            const date = Date.now();
+            conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["2"];
+            let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
+            conditionMgr.on('conditionSetResultUpdated', mockListener);
+            conditionMgr.telemetryObjects = {
+                "test-object": testTelemetryObject
+            };
+            conditionMgr.updateConditionTelemetryObjects();
+            conditionMgr.telemetryReceived(testTelemetryObject, {
+                utc: date
+            });
+            setTimeout(() => {
+                expect(mockListener).toHaveBeenCalledWith({
+                    output: 'Default',
+                    id: { namespace: '', key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9' },
+                    conditionId: '2532d90a-e0d6-4935-b546-3123522da2de',
+                    utc: undefined
+                });
+                done();
+            }, 1500);
+        });
     });
 });
