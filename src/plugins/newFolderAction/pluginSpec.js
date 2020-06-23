@@ -42,7 +42,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState();
+        resetApplicationState(openmct);
     });
 
     it('installs the new folder action', () => {
