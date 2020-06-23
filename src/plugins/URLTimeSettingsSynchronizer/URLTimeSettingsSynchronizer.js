@@ -24,7 +24,7 @@ import {
     setAllSearchParams
 } from 'utils/openmctLocation';
 
-const TIME_EVENTS = ['bounds', 'timeSystem', 'clock', 'clockOffsets'];
+const TIME_EVENTS = ['timeSystem', 'clock', 'clockOffsets'];
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';
 const SEARCH_START_BOUND = 'tc.startBound';
@@ -42,6 +42,7 @@ export default class URLTimeSettingsSynchronizer {
         this.destroy = this.destroy.bind(this);
         this.updateTimeSettings = this.updateTimeSettings.bind(this);
         this.setUrlFromTimeApi = this.setUrlFromTimeApi.bind(this);
+        this.updateBounds = this.updateBounds.bind(this);
 
         openmct.on('start', this.initialize);
         openmct.on('destroy', this.destroy);
@@ -54,7 +55,7 @@ export default class URLTimeSettingsSynchronizer {
         TIME_EVENTS.forEach(event => {
             this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
-
+        this.openmct.time.on('bounds', this.updateBounds);
     }
 
     destroy() {
@@ -65,13 +66,13 @@ export default class URLTimeSettingsSynchronizer {
         TIME_EVENTS.forEach(event => {
             this.openmct.time.off(event, this.setUrlFromTimeApi);
         });
+        this.openmct.time.on('bounds', this.updateBounds);
     }
 
     updateTimeSettings() {
         // Prevent from triggering self
         if (!this.isUrlUpdateInProgress) {
             let timeParameters = this.parseParametersFromUrl();
-
 
             if (this.areTimeParametersValid(timeParameters)) {
                 this.setTimeApiFromUrl(timeParameters);
@@ -135,6 +136,12 @@ export default class URLTimeSettingsSynchronizer {
                 this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
                 this.openmct.time.timeSystem(timeParameters.timeSystem);
             }
+        }
+    }
+
+    updateBounds(bounds, isTick) {
+        if (!isTick) {
+            this.setUrlFromTimeApi();
         }
     }
 
