@@ -29,11 +29,15 @@ define([
         function isTelemetryObject(selectionPath) {
             let selectedObject = selectionPath[0].context.item;
             let parentObject = selectionPath[1].context.item;
+            let selectedLayoutItem = selectionPath[0].context.layoutItem;
+
             return parentObject &&
                 parentObject.type === 'layout' &&
                 selectedObject &&
+                selectedLayoutItem &&
+                selectedLayoutItem.type === 'telemetry-view' &&
                 openmct.telemetry.isTelemetryObject(selectedObject) &&
-                !options.showAsView.includes(selectedObject.type)
+                !options.showAsView.includes(selectedObject.type);
         }
 
         return {

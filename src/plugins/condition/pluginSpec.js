@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct } from "testUtils";
+import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
@@ -32,6 +32,10 @@ describe('the plugin', function () {
     let element;
     let child;
     let openmct;
+
+    beforeAll(() => {
+        resetApplicationState(openmct);
+    });
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -55,6 +59,10 @@ describe('the plugin', function () {
 
         openmct.on('start', done);
         openmct.startHeadless();
+    });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
     });
 
     let mockConditionSetObject = {

@@ -126,7 +126,7 @@ describe('ConditionManager', () => {
 
     it('creates a conditionCollection with a default condition', function () {
         expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(1);
-        let defaultConditionId = conditionMgr.conditionClassCollection[0].id;
+        let defaultConditionId = conditionMgr.conditions[0].id;
         expect(defaultConditionId).toEqual(mockCondition.id);
     });
 

@@ -19,50 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
 
-export const evaluateResults = (results, trigger) => {
-    if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(results, 1);
-    } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(results, 0);
-    } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(results);
-    } else {
-        return matchAny(results);
-    }
-}
-
-function matchAll(results) {
-    for (const result of results) {
-        if (result !== true) {
-            return false;
+export default function ladTableCompositionPolicy(openmct) {
+    return function (parent, child) {
+        if(parent.type === 'LadTable') {
+            return openmct.telemetry.isTelemetryObject(child);
+        } else if(parent.type === 'LadTableSet') {
+            return child.type === 'LadTable';
         }
+        return true;
     }
-
-    return true;
-}
-
-function matchAny(results) {
-    for (const result of results) {
-        if (result === true) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function matchExact(results, target) {
-    let matches = 0;
-    for (const result of results) {
-        if (result === true) {
-            matches++;
-        }
-        if (matches > target) {
-            return false;
-        }
-    }
-
-    return matches === target;
 }
