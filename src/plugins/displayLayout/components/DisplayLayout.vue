@@ -88,9 +88,9 @@ const TELEMETRY_IDENTIFIER_FUNCTIONS = {
     'telemetry.plot.stacked': (domainObject, openmct) => {
         let composition = openmct.composition.get(domainObject);
 
-        return composition.load().then((composition) => {
+        return composition.load().then((objects) => {
             let identifiers = [];
-            composition.forEach(object => {
+            objects.forEach(object => {
                 if (object.type === 'telemetry.plot.overlay') {
                     identifiers.push(...object.composition);
                 } else {
@@ -708,29 +708,29 @@ export default {
             let domainObject = context.item,
                 layoutItem = context.layoutItem,
                 position = [layoutItem.x, layoutItem.y],
-                newDomainObject,
                 layoutType = 'subobject-view';
 
             if (layoutItem.type === 'telemetry-view') {
-                newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
+                let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
+
+                this.composition.add(newDomainObject);
+                this.addItem(layoutType, newDomainObject, position);
             } else {
-                if (viewType !== 'telemetry-view') {
-                    newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, viewType);
-                } else {
-                    this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
+                this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
+                    if (viewType === 'telemetry-view') {
                         identifiers.forEach((identifier, index) => {
                             let positionX = position[0] + (index * DUPLICATE_OFFSET),
                                 positionY = position[1] + (index * DUPLICATE_OFFSET);
 
                             this.convertToTelemetryView(identifier, [positionX, positionY]);
                         });
-                    });
-                }
-            }
+                    } else {
+                        let newDomainObject = this.createNewDomainObject(domainObject, identifiers, viewType);
 
-            if (newDomainObject) {
-                this.composition.add(newDomainObject);
-                this.addItem(layoutType, newDomainObject, position);
+                        this.composition.add(newDomainObject);
+                        this.addItem(layoutType, newDomainObject, position);
+                    }
+                });
             }
 
             this.removeItem(selection);
