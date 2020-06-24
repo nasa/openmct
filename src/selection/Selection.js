@@ -238,9 +238,12 @@ define(
                     context.item = newItem;
                 });
             }
-
             if (select) {
-                element.click();
+                if (typeof select === 'object') {
+                    element.dispatchEvent(select);
+                } else if (typeof select === 'boolean') {
+                    element.click();
+                }
             }
 
             return function () {
