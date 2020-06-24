@@ -24,16 +24,17 @@
         </div>
         <div class="main-image s-image-main c-imagery__main-image"
              :class="{'paused unnsynced': paused(),'stale':false }"
-             :style="{'background-image': `url(${getImageUrl()})`,
+             :style="{'background-image': getImageUrl() ? `url(${getImageUrl()})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
         >
         </div>
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
             <div class="h-local-controls flex-elem">
-                <a class="c-button icon-pause pause-play"
-                   :class="{'is-paused': paused()}"
-                   @click="paused(!paused())"
+                <a
+                    class="c-button icon-pause pause-play"
+                    :class="{'is-paused': paused()}"
+                    @click="paused(!paused())"
                 ></a>
             </div>
         </div>
@@ -185,6 +186,10 @@ export default {
         setSelectedImage(image) {
             // If we are paused and the current image IS selected, unpause
             // Otherwise, set current image and pause
+            if (!image) {
+                return;
+            }
+
             if (this.isPaused && image.selected) {
                 this.paused(false);
                 this.unselectAllImages();
@@ -197,7 +202,7 @@ export default {
             }
         },
         boundsChange(bounds, isTick) {
-            if(!isTick) {
+            if (!isTick) {
                 this.requestHistory();
             }
         },
