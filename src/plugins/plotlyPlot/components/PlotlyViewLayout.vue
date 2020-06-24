@@ -48,7 +48,11 @@ export default {
     destroyed() {
         Object.keys(this.subscriptions)
             .forEach(subscription => this.unsubscribe(subscription));
-        // this.boundedRows = [];
+        // this.boundedRows.forEach((row, index) => {
+        //     this.boundedRows[index].off('add', addRows);
+        //     this.boundedRows[index].off('remove', removeRow);
+
+        // })
         this.openmct.time.off('timeSystem', this.refreshData);
         this.openmct.time.off('bounds', this.refreshData);
     },
@@ -180,12 +184,25 @@ export default {
                     this.outstandingRequests--;
                 });
         },
+        refreshData(bounds, isTick) {
+            this.bounds = bounds;
+            if (!isTick && this.outstandingRequests === 0) {
+                Plotly.purge(this.plotElement);
+                this.telemetryObjects.forEach((object, index) => {
+                    this.boundedRows[index].clear();
+                    this.requestDataFor(object, index);
+                });
+            }
+        },
         subscribeTo(telemetryObject, index) {
             const subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             const columnMap = this.getColumnMapForObject(keyString);
             const limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+            console.log('---------------');
+            console.log('A: index', index);
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+                console.log('B: index', index);
                 this.processRealtimeDatum(telemetryObject, datum, columnMap, keyString, limitEvaluator, index);
             }, subscribeOptions);
         },
@@ -200,17 +217,6 @@ export default {
             }
             this.setTraceData(telemetryObject, index);
             this.boundedRows[index].add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-        },
-        refreshData(bounds, isTick) {
-            this.bounds = bounds;
-            if (!isTick && this.outstandingRequests === 0) {
-                this.telemetryObjects.forEach((object, index) => {
-                    Plotly.deleteTraces(this.plotElement, index);
-                    this.requestDataFor(object, index);
-                    Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
-                    this.subscribeTo(object, index);
-                });
-            }
         },
         unsubscribe(keyString) {
             this.subscriptions[keyString]();
