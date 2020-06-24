@@ -22,11 +22,9 @@
 
 
 define([
-    'lodash',
     'EventEmitter',
     '../lib/eventHelpers'
 ], function (
-    _,
     EventEmitter,
     eventHelpers
 ) {

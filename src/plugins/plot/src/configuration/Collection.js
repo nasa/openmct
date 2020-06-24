@@ -22,13 +22,11 @@
 /*global define*/
 
 define([
-    'lodash',
     'EventEmitter',
     './Model',
     '../lib/extend',
     '../lib/eventHelpers'
 ], function (
-    _,
     EventEmitter,
     Model,
     extend,
