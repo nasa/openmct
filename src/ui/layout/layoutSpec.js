@@ -1,31 +1,17 @@
-import MctTree from './mct-tree.vue';
-import TreeItem from './tree-item.vue';
 import Vue from 'vue';
 import {
     createOpenMct,
     createMouseEvent,
     spyOnBuiltins,
-    resetApplicationState
+    resetApplicationState,
+    generatePromises,
+    getMockObjects
 } from 'utils/testing';
 
-const ROOT_OBJECT = {
-    "identifier": {
-        "key": "ROOT", 
-        "namespace": ""
-    },
-    "name": "The root object",
-    "type": "root",
-    "composition": [{
-        "namespace": "",
-        "key": "mine"
-    }]
-};
-
-describe("the tree navigation", () => {
-    let openmct;
-    let mctTree;
-    let element;
-    let child;
+fdescribe("the tree navigation", () => {
+    let openmct,
+        element,
+        child;
 
     beforeAll(() => {
         resetApplicationState();
@@ -33,9 +19,8 @@ describe("the tree navigation", () => {
 
     beforeEach((done) => {
         openmct = createOpenMct();
-        mctTree = new MctTree();
 
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve([]));
+        // spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve([]));
         spyOn(openmct.composition, 'get').and.returnValue(Promise.resolve([]));
 
         element = document.createElement('div');
@@ -49,22 +34,43 @@ describe("the tree navigation", () => {
             callBack();
         });
 
+        let promises = generatePromises(['root']),
+            root = getMockObjects({
+                objectKeyStrings: ['root']
+            }).root;
+
+        spyOn(openmct.objects, 'get').and.callFake((id) => {
+            console.log('object get', id);
+            if(id === 'ROOT') {
+                promises.rootPromisResolve(root);
+                return promises.rootPromise;
+            } else {
+                //
+            }
+        });
+
         openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.start();
     });
 
     afterEach(() => {
         resetApplicationState(openmct);
     });
 
-    describe("defines a table object", function () {
+    it("should be true", () => {
+        let tree = document.querySelector('.c-tree-and-search');
+        console.log('tree', tree);
+        expect(true).toBe(false);
+    })
+
+    xdescribe("defines a table object", function () {
         it("that is creatable", () => {
             let tableType = openmct.types.get('table');
             expect(tableType.definition.creatable).toBe(true);
         });
     })
 
-    it("provides a table view for objects with telemetry", () => {
+    xit("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
             id:"test-object",
             type: "test-object",
@@ -80,7 +86,7 @@ describe("the tree navigation", () => {
         expect(tableView).toBeDefined();
     });
 
-    describe("The table view", () => {
+    xdescribe("The table view", () => {
         let testTelemetryObject;
         let applicableViews;
         let tableViewProvider;

@@ -70,6 +70,24 @@ function clearBuiltinSpy(funcDefinition) {
     funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
 
+// for each name in the array passed in a promise and promiseResolve will be created
+// ex. names = ['test']
+// return {
+//   testPromise: ...,
+//   testPromiseResolve: ...
+// }
+export function generatePromises(names = []) {
+    let promises = {};
+
+    names.forEach((name) => {
+        promises[name + 'Promise'] = new Promise((resolve) => {
+            promises[name + 'PromisResolve'] = resolve;
+        });
+    });
+
+    return promises;
+}
+
 export function getLatestTelemetry(telemetry = [], opts = {}) {
     let latest = [],
         timeFormat = opts.timeFormat || 'utc';
@@ -83,22 +101,6 @@ export function getLatestTelemetry(telemetry = [], opts = {}) {
     return latest;
 }
 
-// EXAMPLE:
-// getMockObjects({
-//     name: 'Jamie Telemetry',
-//     keys: ['test','other','yeah','sup'],
-//     format: 'local',
-//     telemetryConfig: {
-//          hints: {
-//              test: {
-//                  domain: 1
-//              },
-//              other: {
-//                  range: 2
-//              }
-//          }
-//      }
-// })
 export function getMockObjects(opts = {}) {
     opts.type = opts.type || 'default';
     if(opts.objectKeyStrings && !Array.isArray(opts.objectKeyStrings)) {
@@ -227,6 +229,12 @@ function copyObj(obj) {
 function setMockObjects() {
     return {
         default: {
+            root: {
+                identifier: { key: "ROOT", namespace: "" },
+                name: "The root object",
+                type: "root",
+                composition: [{ namespace: "", key: "mine"}]
+            },
             ladTable: {
                 identifier: { namespace: "", key: "lad-object"},
                 type: 'LadTable',
