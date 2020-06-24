@@ -134,6 +134,8 @@
 .icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
 .icon-clear-data {  @include glyphBefore($glyph-icon-clear-data); }
 .icon-history {  @include glyphBefore($glyph-icon-history); }
+.icon-arrow-nav-to-parent {  @include glyphBefore($glyph-icon-arrow-nav-to-parent); }
+.icon-crosshair-in-circle {  @include glyphBefore($glyph-icon-crosshair-in-circle); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
@@ -176,6 +178,7 @@
 .icon-conditional {  @include glyphBefore($glyph-icon-conditional); }
 .icon-condition-widget {  @include glyphBefore($glyph-icon-condition-widget); }
 .icon-alphanumeric {  @include glyphBefore($glyph-icon-alphanumeric); }
+.icon-image-telemetry {  @include glyphBefore($glyph-icon-image-telemetry); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
