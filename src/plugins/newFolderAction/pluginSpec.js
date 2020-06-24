@@ -24,9 +24,15 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-describe("the plugin", () => {
+fdescribe("the plugin", () => {
     let openmct,
-        newFolderAction;
+        compositionAPI,
+        newFolderAction,
+        mockObjectPath,
+        mockDialogService,
+        mockComposition,
+        mockPromise,
+        newFolderName = 'New Folder';
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -45,5 +51,49 @@ describe("the plugin", () => {
 
     it('installs the new folder action', () => {
         expect(newFolderAction).toBeDefined();
+    });
+
+    describe('when invoked', () => {
+
+        beforeEach((done) => {
+            compositionAPI = openmct.composition;
+            mockObjectPath = [{
+                name: 'mock folder',
+                type: 'folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            }];
+            mockPromise = {
+                then: (callback) => {
+                    callback({name: newFolderName});
+                    done();
+                }
+            };
+
+            mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
+            mockComposition = jasmine.createSpyObj('composition', ['add']);
+
+            mockDialogService.getUserInput.and.returnValue(mockPromise);
+
+            spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
+            spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
+            spyOn(openmct.objects, 'mutate');
+
+            newFolderAction.invoke(mockObjectPath);
+        });
+
+        it('gets user input for folder name', () => {
+            expect(mockDialogService.getUserInput).toHaveBeenCalled();
+        });
+
+        it('creates a new folder object', () => {
+            expect(openmct.objects.mutate).toHaveBeenCalled();
+        });
+
+        it('adds new folder object to parent composition', () => {
+            expect(mockComposition.add).toHaveBeenCalled();
+        });
     });
 });
