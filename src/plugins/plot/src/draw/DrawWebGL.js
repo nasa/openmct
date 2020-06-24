@@ -114,9 +114,6 @@ define([
         // Create a buffer to holds points which will be drawn
         this.buffer = this.gl.createBuffer();
 
-        // Use a line width of 2.0 for legibility
-        this.gl.lineWidth(2.0);
-
         // Enable blending, for smoothness
         this.gl.enable(this.gl.BLEND);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
