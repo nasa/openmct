@@ -186,21 +186,23 @@ export default {
         setSelectedImage(image) {
             // If we are paused and the current image IS selected, unpause
             // Otherwise, set current image and pause
-            if(image) {
-                if (this.isPaused && image.selected) {
-                    this.paused(false);
-                    this.unselectAllImages();
-                } else {
-                    this.imageUrl = this.getImageUrl(image);
-                    this.time = this.getTime(image);
-                    this.paused(true);
-                    this.unselectAllImages();
-                    image.selected = true;
-                }
+            if (!image) {
+                return;
+            }
+
+            if (this.isPaused && image.selected) {
+                this.paused(false);
+                this.unselectAllImages();
+            } else {
+                this.imageUrl = this.getImageUrl(image);
+                this.time = this.getTime(image);
+                this.paused(true);
+                this.unselectAllImages();
+                image.selected = true;
             }
         },
         boundsChange(bounds, isTick) {
-            if(!isTick) {
+            if (!isTick) {
                 this.requestHistory();
             }
         },
