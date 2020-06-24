@@ -20,6 +20,7 @@
         <span v-if="label"
               class="l-pane__label"
         >{{ label }}</span>
+        <slot name="controls"></slot>
         <button
             v-if="collapsable"
             class="l-pane__collapse-button c-button"

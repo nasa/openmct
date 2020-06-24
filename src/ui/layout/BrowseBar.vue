@@ -7,11 +7,6 @@
             title="Navigate up to parent"
             @click="goToParent"
         ></button>
-        <button
-                class="l-browse-bar__sync-tree-button c-icon-button c-icon-button--major icon-crosshair-in-circle"
-                title="Show in tree"
-                @click="syncNavigationTree"
-        ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
             :class="[ type.cssClass, classList ]"
@@ -277,9 +272,6 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
-        },
-        syncNavigationTree() {
-            this.$emit('sync-tree-navigation');
         }
     }
 }

@@ -92,12 +92,12 @@
                     flex: 0 0 auto;
                     height: $dimension;
                     width: $dimension;
-                    opacity: 0;
+                    visibility: hidden;
                     position: relative;
                     text-align: center;
 
                     &.is-enabled {
-                        opacity: 1;
+                        visibility: visible;
                     }
 
                     &:hover {
