@@ -304,6 +304,10 @@
         display: inline-flex;
     }
 
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
     &__start,
     &__end,
     &__actions {
@@ -320,8 +324,12 @@
 
     &__start {
         flex: 1 1 auto;
-        margin-right: $interiorMargin;
+        //margin-right: $interiorMargin;
         min-width: 0; // Forces interior to compress when pushed on
+
+        [class*='button'] {
+            flex: 0 0 auto;
+        }
     }
 
     &__end {
@@ -330,15 +338,15 @@
 
     &__nav-to-parent-button,
     &__disclosure-button {
-        flex: 0 0 auto;
+        //flex: 0 0 auto;
     }
 
     &__nav-to-parent-button {
         // This is an icon-button
-        $p: $interiorMargin;
-        margin-right: $interiorMargin;
-        padding-left: $p;
-        padding-right: $p;
+        //$p: $interiorMargin;
+        //margin-right: $interiorMargin;
+        //padding-left: $p;
+        //padding-right: $p;
 
         .is-editing & {
             display: none;
@@ -351,7 +359,8 @@
     }
 
     &__object-name--w {
-        @include headerFont(1.4em);
+        @include headerFont(1.5em);
+        margin-left: $interiorMarginLg;
         min-width: 0;
 
         &:before {
