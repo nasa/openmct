@@ -86,7 +86,7 @@ define(
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation');
 
-            if (domainObject && domainObject.model.locked) {
+            if (domainObject && domainObject.model && domainObject.model.locked) {
                 return false;
             }
 
