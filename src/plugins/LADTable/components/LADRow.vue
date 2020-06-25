@@ -72,7 +72,6 @@ export default {
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.bounds = this.openmct.time.bounds();
-        console.log('metadata, formats', this.metadata, this.formats);
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -90,7 +89,6 @@ export default {
         this.openmct.time.on('bounds', this.updateBounds);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
-        console.log('timestamp key', this.timestampKey);
 
         this.valueMetadata = this
             .metadata
@@ -112,23 +110,23 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            if(datum) {
-                let newTimestamp = this.getParsedTimestamp(datum),
-                    limit;
+            // if(datum) {
+            let newTimestamp = this.getParsedTimestamp(datum),
+                limit;
 
-                if(this.shouldUpdate(newTimestamp)) {
-                    this.timestamp = this.getParsedTimestamp(datum);
-                    this.value = this.formats[this.valueKey].format(datum);
-                    limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-                    if (limit) {
-                        this.valueClass = limit.cssClass;
-                    } else {
-                        this.valueClass = '';
-                    }
+            if(this.shouldUpdate(newTimestamp)) {
+                this.timestamp = this.getParsedTimestamp(datum);
+                this.value = this.formats[this.valueKey].format(datum);
+                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+                if (limit) {
+                    this.valueClass = limit.cssClass;
+                } else {
+                    this.valueClass = '';
                 }
-            } else {
-                this.resetValues();
             }
+            // } else {
+            //     this.resetValues();
+            // }
         },
         shouldUpdate(newTimestamp) {
             let newTimestampInBounds = this.inBounds(newTimestamp),
@@ -158,6 +156,7 @@ export default {
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
             if(!isTick) {
+                this.resetValues();
                 this.requestHistory();
             }
         },
