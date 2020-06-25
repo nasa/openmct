@@ -61,6 +61,12 @@
         .scrollable-children {
             .c-tree__item-h {
                 width: 100%;
+                &.empty {
+                    font-style: italic;
+                    color: #666;
+                    display: inline;
+                    vertical-align: middle;
+                }
             }
         }
 
