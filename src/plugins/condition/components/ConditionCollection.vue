@@ -152,7 +152,8 @@ export default {
         },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
-                this.conditionCollection = newConditionCollection;
+                //this forces children to re-render
+                this.conditionCollection = newConditionCollection.map(condition => condition);
                 this.updateDefaultCondition();
             });
         },

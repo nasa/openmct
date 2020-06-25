@@ -23,6 +23,7 @@
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
 import { getLatestTimestamp } from '../utils/time';
+import { getOperatorText } from "@/plugins/condition/utils/operations";
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
 
@@ -46,7 +47,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
         this.removeTelemetryDataCache();
     }
@@ -157,6 +158,25 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                     data: datum
                 };
             });
+    }
+
+    getDescription() {
+        const telemetryDescription = this.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
+        let metadataValue = this.metadata;
+        let inputValue = this.input;
+        if (this.metadata) {
+            const telemetryObjects = Object.values(this.telemetryObjects);
+            for (let i=0; i < telemetryObjects.length; i++) {
+                const telemetryObject = telemetryObjects[i];
+                const metadataObject = this.getMetaDataObject(telemetryObject, this.metadata);
+                if (metadataObject) {
+                    metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
+                    inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+                    break;
+                }
+            }
+        }
+        return `${telemetryDescription} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
     }
 
     destroy() {

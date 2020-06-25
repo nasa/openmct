@@ -52,6 +52,7 @@ define([
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow',
+    './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin'
 ], function (
     _,
@@ -85,6 +86,7 @@ define([
     Espresso,
     Maelstrom,
     Snow,
+    URLTimeSettingsSynchronizer,
     NotificationIndicator
 ) {
     var bundleMap = {
@@ -183,7 +185,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable;
+    plugins.LADTable = LADTable.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
@@ -194,6 +196,7 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
 
     return plugins;
