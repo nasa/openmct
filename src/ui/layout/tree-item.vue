@@ -124,6 +124,7 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
+        console.log(this.navigateToPath, this.openmct.router.currentLocation.path);
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);

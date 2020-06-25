@@ -35,6 +35,14 @@
                 :left-offset="index * 10 + 'px'"
                 @resetTree="handleReset"
             />
+            <!-- loading -->
+            <li
+                v-if="isLoading"
+                class="c-tree__item c-tree-and-search__loading loading"
+            >
+                <span class="c-tree__item__label">Loading...</span>
+            </li>
+            <!-- end loading -->
         </div>
         <!-- currently viewed children -->
         <transition
@@ -51,19 +59,7 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-
-                    <!-- loading -->
-                    <li
-                        v-if="!isLoading"
-                        class="c-tree__item c-tree-and-search__loading loading"
-                    >
-                        <span class="c-tree__item__label">Loading...</span>
-                    </li>
-                    <!-- end loading -->
-
-                    <div
-                        :style="{ height: childrenHeight + 'px'}"
-                    >
+                    <div :style="{ height: childrenHeight + 'px'}">
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -73,8 +69,16 @@
                             :item-index="index"
                             :item-height="itemHeight"
                             :virtual-scroll="!noScroll"
+                            :show-down="activeSearch ? false : true"
                             @expanded="handleExpanded"
                         />
+                        <li
+                            v-if="visibleItems.length === 0"
+                            :style="emptyStyles()"
+                            class="c-tree__item-h empty"
+                        >
+                            Empty
+                        </li>
                     </div>
                 </ul>
             </li>
@@ -318,11 +322,15 @@ export default {
             this.composition.load().then(this.finishLoading);
         },
         buildTreeItem(domainObject) {
+            let navToParent = ROOT_PATH + this.currentNavigatedPath;
+            if(navToParent === ROOT_PATH) {
+                navToParent = navToParent.slice(0, -1);
+            }
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
                 objectPath: [domainObject].concat(this.currentObjectPath),
-                navigateToParent: ROOT_PATH + this.currentNavigatedPath
+                navigateToParent: navToParent
             };
         },
         addChild(child) {
@@ -480,6 +488,13 @@ export default {
                 height: this.availableContainerHeight + 'px',
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             }
+        },
+        emptyStyles() {
+            let offset = ((this.ancestors.length + 1) * 10) + 20; // extra 20 accounts for up arrow nav space
+            return {
+                paddingLeft: offset + 'px',
+                height: this.itemHeight + 'px'
+            };
         },
         childrenIn(el, done) {
             // more reliable way then nextTick
