@@ -5,7 +5,6 @@
 <script>
 import Plotly from 'plotly.js-dist';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
-import FilteredTableRowCollection from '../../telemetryTable/collections/FilteredTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
 import TelemetryTableColumn from '../../telemetryTable/TelemetryTableColumn';
 import TelemetryTableConfiguration from '../../telemetryTable/TelemetryTableConfiguration';
@@ -26,8 +25,8 @@ export default {
             timestampKey: this.openmct.time.timeSystem().key,
             metadataValues: [],
             boundedRows: [],
-            filteredRows: [],
-            xRangeLength: 0
+            xRangeLength: 0,
+            hasListeners: false
         }
     },
     computed: {
@@ -40,6 +39,7 @@ export default {
     },
     mounted() {
         this.plotElement = document.querySelector('.js-plotly-container');
+        // this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('timeSystem', this.refreshData);
         this.openmct.time.on('bounds', this.refreshData);
         this.loadComposition();
@@ -82,7 +82,8 @@ export default {
                 Plotly.purge(this.plotElement);
             }
         },
-        addTraces(telemetryData, keyString, index, extend) {
+        addTraces(telemetryData, keyString, index) {
+            console.log('index', index);
             let x = [];
             let y = [];
             let metadataValues = this.metadataValues[index];
@@ -121,32 +122,32 @@ export default {
                     }
                 );
             } else {
-                if (extend) {
-                    Plotly.deleteTraces(this.plotElement, index);
-                    this.updatePlotRange()
-                }
                 Plotly.addTraces(this.plotElement, traceData);
             }
         },
-        setTraceData(telemetryObject, index, extend) {
+        setTraceData(telemetryObject, index) {
             if (this.boundedRows[index]) {
                 return;
             }
             this.boundedRows[index] = new BoundedTableRowCollection(this.openmct);
-            this.filteredRows[index] = new FilteredTableRowCollection(this.boundedRows[index]);
             this.metadataValues[index] = {};
             this.metadataValues[index].metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.metadataValues[index].formats = this.openmct.telemetry.getFormatMap(this.metadataValues[index].metadata);
             this.metadataValues[index].valueMetadata = this.metadataValues[index].metadata.valuesForHints(['range'])[0];
             this.metadataValues[index].valueKey = this.metadataValues[index].valueMetadata.key;
-            this.boundedRows[index].on('add', addRows);
-            this.boundedRows[index].on('remove', removeRow);
+            if (!this.hasListeners) {
+                this.boundedRows[index].on('add', addRows);
+                this.boundedRows[index].on('remove', removeRow);
+                this.hasListeners = true;
+            }
             const parentScope = this;
 
             function addRows(rows) {
+                console.log('rows.length', rows.length);
+                let isFixed = this.openmct.time.clock() === undefined;
                 if (rows.length) { // new trace (multiple rows)
-                    let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    parentScope.addTraces(rows, keyString, index, extend);
+                    let keyString = parentScope.openmct.objects.makeKeyString(telemetryObject.identifier);
+                    parentScope.addTraces(rows, keyString, index);
                 } else { //extending existing trace row by row
                     let datum = rows.datum !== undefined ? rows.datum : rows[0].datum
                     let metadataValues = parentScope.metadataValues[index];
@@ -162,7 +163,7 @@ export default {
                 }
             }
 
-            function removeRow(row) { // TODO: destroy here s
+            function removeRow(row) { // TODO: destroy here
                 // parentScope.updatePlotRange(index);
                 // Plotly.update(this.plotElement, )
             }
@@ -194,15 +195,22 @@ export default {
                 });
             }
         },
+        setViewFromClock(clock) {
+            if (clock === undefined) {
+                return;
+            }
+            // Plotly.purge(this.plotElement);
+            // this.telemetryObjects.forEach((object, index) => {
+            //     this.boundedRows[index].clear();
+            //     this.requestDataFor(object, index);
+            // });
+        },
         subscribeTo(telemetryObject, index) {
             const subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             const columnMap = this.getColumnMapForObject(keyString);
             const limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-            console.log('---------------');
-            console.log('A: index', index);
             this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                console.log('B: index', index);
                 this.processRealtimeDatum(telemetryObject, datum, columnMap, keyString, limitEvaluator, index);
             }, subscribeOptions);
         },
@@ -306,8 +314,9 @@ export default {
                     metadataValues.formats[this.timestampKey].format(this.bounds.end)
                 ]
             };
+            // console.log('newRange', newRange);
             Plotly.relayout(this.plotElement, newRange);
-        },
+        }
     }
 }
 </script>
