@@ -110,7 +110,6 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            // if(datum) {
             let newTimestamp = this.getParsedTimestamp(datum),
                 limit;
 
@@ -124,9 +123,6 @@ export default {
                     this.valueClass = '';
                 }
             }
-            // } else {
-            //     this.resetValues();
-            // }
         },
         shouldUpdate(newTimestamp) {
             let newTimestampInBounds = this.inBounds(newTimestamp),
