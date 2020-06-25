@@ -26,7 +26,7 @@ export default {
             metadataValues: [],
             boundedRows: [],
             xRangeLength: 0,
-            hasListeners: false
+            hasListeners: []
         }
     },
     computed: {
@@ -83,7 +83,6 @@ export default {
             }
         },
         addTraces(telemetryData, keyString, index) {
-            console.log('index', index);
             let x = [];
             let y = [];
             let metadataValues = this.metadataValues[index];
@@ -126,6 +125,7 @@ export default {
             }
         },
         setTraceData(telemetryObject, index) {
+            console.log('index', index);
             if (this.boundedRows[index]) {
                 return;
             }
@@ -135,20 +135,22 @@ export default {
             this.metadataValues[index].formats = this.openmct.telemetry.getFormatMap(this.metadataValues[index].metadata);
             this.metadataValues[index].valueMetadata = this.metadataValues[index].metadata.valuesForHints(['range'])[0];
             this.metadataValues[index].valueKey = this.metadataValues[index].valueMetadata.key;
-            if (!this.hasListeners) {
+            if (!this.telemetryObjects[index].hasListeners) {
                 this.boundedRows[index].on('add', addRows);
                 this.boundedRows[index].on('remove', removeRow);
-                this.hasListeners = true;
+                this.telemetryObjects[index].hasListeners = true;
             }
             const parentScope = this;
 
             function addRows(rows) {
-                console.log('rows.length', rows.length);
-                let isFixed = this.openmct.time.clock() === undefined;
-                if (rows.length) { // new trace (multiple rows)
+                if (rows.length) { // multiple rows
+                    console.log('parentScope.plotElement.length', parentScope.plotElement.childNodes.length);
                     let keyString = parentScope.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    parentScope.addTraces(rows, keyString, index);
-                } else { //extending existing trace row by row
+                    if (!parentScope.plotElement.childNodes.length) {
+                        parentScope.addTraces(rows, keyString, index);
+                    }
+
+                } else { // add rows to existing trace row by row
                     let datum = rows.datum !== undefined ? rows.datum : rows[0].datum
                     let metadataValues = parentScope.metadataValues[index];
                     parentScope.updatePlotRange(index);
@@ -189,6 +191,7 @@ export default {
             this.bounds = bounds;
             if (!isTick && this.outstandingRequests === 0) {
                 Plotly.purge(this.plotElement);
+                // this.removePlotData();
                 this.telemetryObjects.forEach((object, index) => {
                     this.boundedRows[index].clear();
                     this.requestDataFor(object, index);
@@ -205,6 +208,12 @@ export default {
             //     this.requestDataFor(object, index);
             // });
         },
+        removePlotData() {
+            this.telemetryObjects.forEach((telemetryObject, index) => {
+                this.plotElement.data[index].x = [];
+                this.plotElement.data[index].y = [];
+            });
+        },
         subscribeTo(telemetryObject, index) {
             const subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
             const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -215,7 +224,7 @@ export default {
             }, subscribeOptions);
         },
         processHistoricalData(telemetryObject, telemetryData, index, columnMap, keyString, limitEvaluator) {
-            this.setTraceData(telemetryObject, index, this.boundedRows[index] !== undefined);
+            this.setTraceData(telemetryObject, index);
             const telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows[index].add(telemetryRows);
         },
@@ -314,7 +323,6 @@ export default {
                     metadataValues.formats[this.timestampKey].format(this.bounds.end)
                 ]
             };
-            // console.log('newRange', newRange);
             Plotly.relayout(this.plotElement, newRange);
         }
     }
