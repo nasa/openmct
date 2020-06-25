@@ -3,7 +3,8 @@
     <div class="l-browse-bar__start">
         <button
             v-if="hasParent"
-            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
             @click="goToParent"
         ></button>
         <div
@@ -24,10 +25,6 @@
             class="l-browse-bar__context-actions c-disclosure-button"
             @click.prevent.stop="showContextMenu"
         ></div>
-        <div
-            class="l-browse-sync-tree"
-            @click="syncNavigationTree"
-        >Sync</div>
     </div>
 
     <div class="l-browse-bar__end">
@@ -275,9 +272,6 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
-        },
-        syncNavigationTree() {
-            this.$emit('sync-tree-navigation');
         }
     }
 }

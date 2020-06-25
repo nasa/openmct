@@ -19,14 +19,6 @@
         No results found
     </div>
 
-    <!-- loading -->
-    <li
-        v-if="isLoading"
-        :style="loadingStyles()"
-        class="c-tree-and-search__loading loading"
-    ></li>
-    <!-- end loading -->
-
     <!-- main tree -->
     <ul
         ref="mainTree"
@@ -40,9 +32,17 @@
                 :node="ancestor"
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
-                :left-offset="index * 10 + 10 + 'px'"
+                :left-offset="index * 10 + 'px'"
                 @resetTree="handleReset"
             />
+            <!-- loading -->
+            <li
+                v-if="isLoading"
+                class="c-tree__item c-tree-and-search__loading loading"
+            >
+                <span class="c-tree__item__label">Loading...</span>
+            </li>
+            <!-- end loading -->
         </div>
         <!-- currently viewed children -->
         <transition
@@ -59,9 +59,7 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div
-                        :style="{ height: childrenHeight + 'px'}"
-                    >
+                    <div :style="{ height: childrenHeight + 'px'}">
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -71,8 +69,16 @@
                             :item-index="index"
                             :item-height="itemHeight"
                             :virtual-scroll="!noScroll"
+                            :show-down="activeSearch ? false : true"
                             @expanded="handleExpanded"
                         />
+                        <li
+                            v-if="visibleItems.length === 0"
+                            :style="emptyStyles()"
+                            class="c-tree__item-h empty"
+                        >
+                            Empty
+                        </li>
                     </div>
                 </ul>
             </li>
@@ -143,7 +149,7 @@ export default {
             return this.activeSearch ? this.searchResultItems : this.allTreeItems;
         },
         itemLeftOffset() {
-            return this.activeSearch ? '0px' : this.ancestors.length * 10 + 10 + 'px';
+            return this.activeSearch ? '0px' : this.ancestors.length * 10 + 'px';
         }
     },
     watch: {
@@ -316,11 +322,15 @@ export default {
             this.composition.load().then(this.finishLoading);
         },
         buildTreeItem(domainObject) {
+            let navToParent = ROOT_PATH + this.currentNavigatedPath;
+            if(navToParent === ROOT_PATH) {
+                navToParent = navToParent.slice(0, -1);
+            }
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
                 objectPath: [domainObject].concat(this.currentObjectPath),
-                navigateToParent: ROOT_PATH + this.currentNavigatedPath
+                navigateToParent: navToParent
             };
         },
         addChild(child) {
@@ -479,16 +489,12 @@ export default {
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             }
         },
-        loadingStyles() {
-            let styles = {
-                top: '300px'
-            }
-
-            if(this.$refs.mainTree && this.$refs.mainTree.clientHeight !== 0) {
-                styles.top = (this.$refs.mainTree.clientHeight / 2) + 'px';
-            }
-
-            return styles;
+        emptyStyles() {
+            let offset = ((this.ancestors.length + 1) * 10) + 20; // extra 20 accounts for up arrow nav space
+            return {
+                paddingLeft: offset + 'px',
+                height: this.itemHeight + 'px'
+            };
         },
         childrenIn(el, done) {
             // more reliable way then nextTick

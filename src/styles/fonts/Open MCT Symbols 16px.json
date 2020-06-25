@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1591317448766
+    "created": 1592959282987
   },
   "iconSets": [
     {
@@ -768,12 +768,28 @@
           "tempChar": ""
         },
         {
+          "order": 181,
+          "id": 158,
+          "name": "icon-arrow-up-to-parent",
+          "prevSize": 24,
+          "code": 59954,
+          "tempChar": ""
+        },
+        {
+          "order": 184,
+          "id": 159,
+          "name": "icon-crosshair-in-circle",
+          "prevSize": 24,
+          "code": 59955,
+          "tempChar": ""
+        },
+        {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
           "prevSize": 16,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -781,7 +797,7 @@
           "name": "icon-activity-mode",
           "prevSize": 16,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -789,7 +805,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 16,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -797,7 +813,7 @@
           "name": "icon-clock",
           "prevSize": 16,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -805,7 +821,7 @@
           "name": "icon-database",
           "prevSize": 16,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -813,7 +829,7 @@
           "name": "icon-database-query",
           "prevSize": 16,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -821,7 +837,7 @@
           "name": "icon-dataset",
           "prevSize": 16,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -829,7 +845,7 @@
           "name": "icon-datatable",
           "prevSize": 16,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -837,7 +853,7 @@
           "name": "icon-dictionary",
           "prevSize": 16,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -845,7 +861,7 @@
           "name": "icon-folder",
           "prevSize": 16,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -853,7 +869,7 @@
           "name": "icon-image",
           "prevSize": 16,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -861,7 +877,7 @@
           "name": "icon-layout",
           "prevSize": 16,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -869,7 +885,7 @@
           "name": "icon-object",
           "prevSize": 16,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -877,7 +893,7 @@
           "name": "icon-object-unknown",
           "prevSize": 16,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -885,7 +901,7 @@
           "name": "icon-packet",
           "prevSize": 16,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -893,7 +909,7 @@
           "name": "icon-page",
           "prevSize": 16,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -901,7 +917,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 16,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -909,7 +925,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 16,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -917,7 +933,7 @@
           "name": "icon-session",
           "prevSize": 16,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -925,7 +941,7 @@
           "name": "icon-tabular",
           "prevSize": 16,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -933,7 +949,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 16,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -941,7 +957,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 16,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -949,7 +965,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 16,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -957,7 +973,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 16,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -965,7 +981,7 @@
           "name": "icon-telemetry",
           "prevSize": 16,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
@@ -973,7 +989,7 @@
           "name": "icon-timeline",
           "prevSize": 16,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -981,7 +997,7 @@
           "name": "icon-timer",
           "prevSize": 16,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -989,7 +1005,7 @@
           "name": "icon-topic",
           "prevSize": 16,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -997,7 +1013,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 16,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -1005,7 +1021,7 @@
           "name": "icon-summary-widget",
           "prevSize": 16,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -1013,7 +1029,7 @@
           "name": "icon-notebook",
           "prevSize": 16,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -1021,7 +1037,7 @@
           "name": "icon-tabs-view",
           "prevSize": 16,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -1029,7 +1045,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 16,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1037,7 +1053,7 @@
           "name": "icon-generator-sine",
           "prevSize": 16,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1045,7 +1061,7 @@
           "name": "icon-generator-event",
           "prevSize": 16,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1053,7 +1069,7 @@
           "name": "icon-gauge-v2",
           "prevSize": 16,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
@@ -1061,7 +1077,7 @@
           "name": "icon-spectra",
           "prevSize": 16,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
@@ -1069,7 +1085,7 @@
           "name": "icon-telemetry-spectra",
           "prevSize": 16,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
@@ -1077,7 +1093,7 @@
           "name": "icon-pushbutton",
           "prevSize": 16,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 174,
@@ -1085,7 +1101,7 @@
           "name": "icon-conditional",
           "prevSize": 16,
           "code": 60199,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 178,
@@ -1093,15 +1109,33 @@
           "name": "icon-condition-widget",
           "prevSize": 16,
           "code": 60200,
+<<<<<<< HEAD
           "tempChar": ""
+=======
+          "tempChar": ""
+>>>>>>> new-tree-refactor
         },
         {
           "order": 180,
           "id": 155,
           "name": "icon-alphanumeric",
+<<<<<<< HEAD
           "prevSize": 16,
           "code": 60201,
           "tempChar": ""
+=======
+          "prevSize": 24,
+          "code": 60201,
+          "tempChar": ""
+        },
+        {
+          "order": 183,
+          "id": 156,
+          "name": "icon-image-telemetry",
+          "prevSize": 24,
+          "code": 60202,
+          "tempChar": ""
+>>>>>>> new-tree-refactor
         }
       ],
       "id": 0,
@@ -1125,7 +1159,10 @@
           "grid": 16,
           "tags": [
             "icon-alert-rect-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 48,
@@ -1136,7 +1173,10 @@
           "grid": 16,
           "tags": [
             "icon-alert-triangle-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 112,
@@ -1147,7 +1187,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 94,
@@ -1159,7 +1202,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-double-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 96,
@@ -1170,7 +1216,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-tall-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 111,
@@ -1181,7 +1230,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-right"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 18,
@@ -1192,7 +1244,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-right-equilateral"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 113,
@@ -1203,7 +1258,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 93,
@@ -1215,7 +1273,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-double-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 95,
@@ -1226,7 +1287,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-tall-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 114,
@@ -1237,7 +1301,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 115,
@@ -1248,7 +1315,10 @@
           "grid": 16,
           "tags": [
             "icon-asterisk"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 59,
@@ -1260,7 +1330,10 @@
           "grid": 16,
           "tags": [
             "icon-bell"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 103,
@@ -1271,7 +1344,10 @@
           "grid": 16,
           "tags": [
             "icon-box-round-corners"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 58,
@@ -1283,7 +1359,10 @@
           "grid": 16,
           "tags": [
             "icon-box-with-arrow-cursor"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 120,
@@ -1294,7 +1373,10 @@
           "grid": 16,
           "tags": [
             "icon-check"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 107,
@@ -1307,7 +1389,10 @@
           "grid": 16,
           "tags": [
             "icon-connectivity"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 84,
@@ -1321,7 +1406,10 @@
           "grid": 16,
           "tags": [
             "icon-database-in-brackets"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 49,
@@ -1333,7 +1421,10 @@
           "grid": 16,
           "tags": [
             "icon-eye-open-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 129,
@@ -1344,7 +1435,10 @@
           "grid": 16,
           "tags": [
             "icon-gear"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 60,
@@ -1356,7 +1450,10 @@
           "grid": 16,
           "tags": [
             "icon-hourglass"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 61,
@@ -1367,7 +1464,10 @@
           "grid": 16,
           "tags": [
             "icon-info"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 75,
@@ -1378,7 +1478,10 @@
           "grid": 16,
           "tags": [
             "icon-link-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 86,
@@ -1389,7 +1492,10 @@
           "grid": 16,
           "tags": [
             "icon-lock"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 79,
@@ -1400,7 +1506,10 @@
           "grid": 16,
           "tags": [
             "icon-minus"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 110,
@@ -1414,7 +1523,10 @@
           "grid": 16,
           "tags": [
             "icon-people"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 82,
@@ -1426,7 +1538,10 @@
           "grid": 16,
           "tags": [
             "icon-person"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 92,
@@ -1437,7 +1552,10 @@
           "grid": 16,
           "tags": [
             "icon-plus"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 137,
@@ -1452,7 +1570,12 @@
           "grid": 16,
           "tags": [
             "icon-plus-in-rect"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 128,
@@ -1463,7 +1586,10 @@
           "grid": 16,
           "tags": [
             "icon-trash"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 122,
@@ -1474,7 +1600,10 @@
           "grid": 16,
           "tags": [
             "icon-x-heavy"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 46,
@@ -1486,7 +1615,10 @@
           "grid": 16,
           "tags": [
             "icon-brackets"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 27,
@@ -1500,7 +1632,10 @@
           "grid": 16,
           "tags": [
             "icon-crosshair"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 31,
@@ -1523,7 +1658,10 @@
           "grid": 16,
           "tags": [
             "icon-grippy-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 118,
@@ -1537,7 +1675,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 136,
@@ -1556,7 +1697,14 @@
           "grid": 16,
           "tags": [
             "icon-grippy-ew"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 135,
@@ -1575,7 +1723,14 @@
           "grid": 16,
           "tags": [
             "icon-columns"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 134,
@@ -1594,7 +1749,14 @@
           "grid": 16,
           "tags": [
             "icon-rows"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 140,
@@ -1609,7 +1771,12 @@
           "grid": 16,
           "tags": [
             "icon-filter"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 139,
@@ -1624,7 +1791,12 @@
           "grid": 16,
           "tags": [
             "icon-filter-outline"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 142,
@@ -1643,7 +1815,14 @@
           "grid": 16,
           "tags": [
             "icon-suitcase"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 145,
@@ -1659,7 +1838,12 @@
           "grid": 16,
           "tags": [
             "icon-cursor-locked"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 150,
@@ -1674,7 +1858,12 @@
             "icon-flag"
           ],
           "isMulticolor": false,
-          "isMulticolor2": false
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 152,
@@ -1693,7 +1882,14 @@
           "grid": 16,
           "tags": [
             "icon-eye-disabled"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 153,
@@ -1708,7 +1904,12 @@
           "grid": 16,
           "tags": [
             "icon-notebook-page"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 105,
@@ -1720,7 +1921,10 @@
           "grid": 16,
           "tags": [
             "icon-arrows-right-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 106,
@@ -1732,7 +1936,10 @@
           "grid": 16,
           "tags": [
             "icon-arrows-up-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 56,
@@ -1743,7 +1950,10 @@
           "grid": 16,
           "tags": [
             "icon-bullet"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 133,
@@ -1754,7 +1964,10 @@
           "grid": 16,
           "tags": [
             "icon-calendar"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 83,
@@ -1765,7 +1978,10 @@
           "grid": 16,
           "tags": [
             "icon-chain-links"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 51,
@@ -1777,7 +1993,10 @@
           "grid": 16,
           "tags": [
             "icon-download"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 91,
@@ -1789,7 +2008,10 @@
           "grid": 16,
           "tags": [
             "icon-duplicate"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 78,
@@ -1801,7 +2023,10 @@
           "grid": 16,
           "tags": [
             "icon-folder-new-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 124,
@@ -1815,7 +2040,10 @@
           "grid": 16,
           "tags": [
             "icon-fullscreen-collapse"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 123,
@@ -1829,7 +2057,10 @@
           "grid": 16,
           "tags": [
             "icon-fullscreen-expand"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 104,
@@ -1841,7 +2072,10 @@
           "grid": 16,
           "tags": [
             "icon-layers"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 102,
@@ -1852,7 +2086,10 @@
           "grid": 16,
           "tags": [
             "icon-line-horz"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 20,
@@ -1863,7 +2100,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 21,
@@ -1876,7 +2116,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-in-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 19,
@@ -1888,7 +2131,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-out-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 17,
@@ -1901,7 +2147,10 @@
           "grid": 16,
           "tags": [
             "icon-menu-v2.2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 89,
@@ -1913,7 +2162,10 @@
           "grid": 16,
           "tags": [
             "icon-move"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 127,
@@ -1925,7 +2177,10 @@
           "grid": 16,
           "tags": [
             "icon-new-window"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 63,
@@ -1938,7 +2193,10 @@
           "grid": 16,
           "tags": [
             "icon-paint-bucket-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 117,
@@ -1949,7 +2207,10 @@
           "grid": 16,
           "tags": [
             "icon-pencil"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 72,
@@ -1962,7 +2223,10 @@
           "grid": 16,
           "tags": [
             "icon-pencil-edit-in-place"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 90,
@@ -1973,7 +2237,10 @@
           "grid": 16,
           "tags": [
             "icon-play"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 88,
@@ -1985,7 +2252,10 @@
           "grid": 16,
           "tags": [
             "icon-pause"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 13,
@@ -1997,7 +2267,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-resource"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 80,
@@ -2008,7 +2281,10 @@
           "grid": 16,
           "tags": [
             "icon-pointer-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 81,
@@ -2019,7 +2295,10 @@
           "grid": 16,
           "tags": [
             "icon-pointer-right"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 37,
@@ -2030,7 +2309,10 @@
           "grid": 16,
           "tags": [
             "icon-refresh-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 71,
@@ -2042,7 +2324,10 @@
           "grid": 16,
           "tags": [
             "icon-save-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 70,
@@ -2055,7 +2340,10 @@
           "grid": 16,
           "tags": [
             "icon-save-as"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 68,
@@ -2066,7 +2354,10 @@
           "grid": 16,
           "tags": [
             "icon-sine"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 5,
@@ -2077,7 +2368,10 @@
           "grid": 16,
           "tags": [
             "icon-font"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 87,
@@ -2091,7 +2385,10 @@
           "grid": 16,
           "tags": [
             "icon-thumbs-strip"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 99,
@@ -2102,7 +2399,10 @@
           "grid": 16,
           "tags": [
             "icon-two-parts-both"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 98,
@@ -2113,7 +2413,10 @@
           "grid": 16,
           "tags": [
             "icon-two-parts-one-only"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 40,
@@ -2125,7 +2428,10 @@
           "grid": 16,
           "tags": [
             "icon-resync"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 36,
@@ -2136,7 +2442,10 @@
           "grid": 16,
           "tags": [
             "icon-reset"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 65,
@@ -2150,7 +2459,9 @@
           ],
           "isMulticolor": false,
           "isMulticolor2": false,
-          "colorPermutations": {}
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 38,
@@ -2169,7 +2480,10 @@
           "grid": 16,
           "tags": [
             "icon-brightness"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 39,
@@ -2180,7 +2494,10 @@
           "grid": 16,
           "tags": [
             "icon-contrast"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 35,
@@ -2194,7 +2511,10 @@
           "grid": 16,
           "tags": [
             "icon-expand"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 33,
@@ -2208,7 +2528,10 @@
           "grid": 16,
           "tags": [
             "icon-list-view"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 28,
@@ -2224,7 +2547,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-snap-to"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 29,
@@ -2241,7 +2567,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-snap-no"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 26,
@@ -2253,7 +2582,10 @@
           "grid": 16,
           "tags": [
             "icon-frame-show"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 25,
@@ -2267,7 +2599,10 @@
           "grid": 16,
           "tags": [
             "icon-frame-hide"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 23,
@@ -2279,7 +2614,10 @@
           "grid": 16,
           "tags": [
             "icon-import"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 24,
@@ -2291,7 +2629,10 @@
           "grid": 16,
           "tags": [
             "icon-export"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 4,
@@ -2303,7 +2644,10 @@
           "grid": 16,
           "tags": [
             "icon-font-size-alt1"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 141,
@@ -2320,7 +2664,13 @@
           "grid": 16,
           "tags": [
             "icon-clear-data"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 149,
@@ -2337,7 +2687,54 @@
           "grid": 16,
           "tags": [
             "icon-history"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 158,
+          "paths": [
+            "M643.427 825.261c-81.955-0.697-148.179-67.065-148.642-149.010l-0-0.044v-395.828l296.871 247.393v-197.914l-395.828-329.857-395.828 328.62v197.502l296.871-246.156v396.241c0 190.905 155.239 346.556 346.144 346.968l412.321 0.825 0.412-197.914z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "width": 1056,
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-arrow-up-to-parent"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 159,
+          "paths": [
+            "M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM783.6 783.6c-54.634 54.8-125.77 93.12-205.322 106.874l-2.278 0.326v-250.8h-128v250.8c-161.302-28.062-286.738-153.497-314.468-312.5l-0.332-2.3h250.8v-128h-250.8c28.062-161.302 153.497-286.738 312.5-314.468l2.3-0.332v250.8h128v-250.8c161.302 28.062 286.738 153.497 314.468 312.5l0.332 2.3h-250.8v128h250.8c-14.080 81.83-52.4 152.966-107.191 207.591l-0.009 0.009z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-crosshair-in-circle"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 97,
@@ -2348,7 +2745,10 @@
           "grid": 16,
           "tags": [
             "icon-activity"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 16,
@@ -2359,7 +2759,10 @@
           "grid": 16,
           "tags": [
             "icon-activity-mode"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 125,
@@ -2372,7 +2775,10 @@
           "grid": 16,
           "tags": [
             "icon-autoflow-tabular"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 3,
@@ -2383,7 +2789,10 @@
           "grid": 16,
           "tags": [
             "icon-clock-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 132,
@@ -2395,7 +2804,10 @@
           "grid": 16,
           "tags": [
             "icon-database"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 131,
@@ -2407,7 +2819,10 @@
           "grid": 16,
           "tags": [
             "icon-database-query"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 57,
@@ -2419,7 +2834,10 @@
           "grid": 16,
           "tags": [
             "icon-dataset"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 67,
@@ -2431,7 +2849,10 @@
           "grid": 16,
           "tags": [
             "icon-datatable"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 126,
@@ -2442,7 +2863,10 @@
           "grid": 16,
           "tags": [
             "icon-dictionary"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 77,
@@ -2454,7 +2878,10 @@
           "grid": 16,
           "tags": [
             "icon-folder-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 100,
@@ -2466,7 +2893,10 @@
           "grid": 16,
           "tags": [
             "icon-image"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 130,
@@ -2479,7 +2909,10 @@
           "grid": 16,
           "tags": [
             "icon-layout"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 108,
@@ -2490,7 +2923,10 @@
           "grid": 16,
           "tags": [
             "icon-object"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 76,
@@ -2501,7 +2937,10 @@
           "grid": 16,
           "tags": [
             "icon-object-unknown"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 15,
@@ -2512,7 +2951,10 @@
           "grid": 16,
           "tags": [
             "icon-packet"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 74,
@@ -2524,7 +2966,10 @@
           "grid": 16,
           "tags": [
             "icon-page"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 44,
@@ -2536,7 +2981,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-overlay"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 42,
@@ -2549,7 +2997,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-stacked"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 14,
@@ -2563,7 +3014,10 @@
           "grid": 16,
           "tags": [
             "icon-session-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 9,
@@ -2574,7 +3028,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 11,
@@ -2586,7 +3043,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-lad"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 12,
@@ -2599,7 +3059,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-lad-set"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 54,
@@ -2610,7 +3073,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-realtime-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 66,
@@ -2625,7 +3091,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-scrolling"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 43,
@@ -2637,7 +3106,10 @@
           "grid": 16,
           "tags": [
             "icon-telemetry-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 10,
@@ -2652,7 +3124,10 @@
           "grid": 16,
           "tags": [
             "icon-timeline"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 41,
@@ -2663,7 +3138,10 @@
           "grid": 16,
           "tags": [
             "icon-timer-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 55,
@@ -2677,7 +3155,10 @@
           "grid": 16,
           "tags": [
             "icon-topic-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 45,
@@ -2696,7 +3177,10 @@
           "grid": 16,
           "tags": [
             "icon-box-with-dashed-lines-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 32,
@@ -2707,7 +3191,10 @@
           "grid": 16,
           "tags": [
             "icon-summary-widget"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 30,
@@ -2719,7 +3206,10 @@
           "grid": 16,
           "tags": [
             "icon-notebook"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 0,
@@ -2736,7 +3226,13 @@
             "icon-tabs-view"
           ],
           "isMulticolor": false,
-          "isMulticolor2": false
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 1,
@@ -2751,7 +3247,10 @@
           "grid": 16,
           "tags": [
             "icon-flexible-layout"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 144,
@@ -2772,7 +3271,15 @@
           "grid": 16,
           "tags": [
             "icon-generator-sine"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 143,
@@ -2797,7 +3304,17 @@
           "grid": 16,
           "tags": [
             "icon-generator-event"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 138,
@@ -2812,7 +3329,12 @@
           "grid": 16,
           "tags": [
             "icon-gauge-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 148,
@@ -2831,7 +3353,14 @@
           "grid": 16,
           "tags": [
             "icon-spectra"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 147,
@@ -2850,7 +3379,14 @@
           "grid": 16,
           "tags": [
             "icon-telemetry-spectra"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 146,
@@ -2867,7 +3403,13 @@
           "grid": 16,
           "tags": [
             "icon-pushbutton"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 151,
@@ -2882,7 +3424,12 @@
           "grid": 16,
           "tags": [
             "icon-conditional"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 154,
@@ -2897,7 +3444,16 @@
           "grid": 16,
           "tags": [
             "icon-condition-widget"
+<<<<<<< HEAD
           ]
+=======
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+>>>>>>> new-tree-refactor
         },
         {
           "id": 155,
@@ -2914,11 +3470,59 @@
             "icon-alphanumeric"
           ],
           "isMulticolor": false,
+<<<<<<< HEAD
           "isMulticolor2": false
+=======
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 156,
+          "paths": [
+            "M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM783.6 783.6c-69.581 69.675-165.757 112.776-272 112.776-212.298 0-384.4-172.102-384.4-384.4s172.102-384.4 384.4-384.4c212.298 0 384.4 172.102 384.4 384.4 0 0.008-0 0.017-0 0.025l0-0.001c0.001 0.264 0.001 0.575 0.001 0.887 0 105.769-42.964 201.503-112.391 270.703l-0.010 0.010z",
+            "M704 384l-128 128-192-192-192 192c0 176.731 143.269 320 320 320s320-143.269 320-320v0z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-image-telemetry"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+>>>>>>> new-tree-refactor
         }
       ],
       "invisible": false,
-      "colorThemes": [],
+      "colorThemes": [
+        [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            255,
+            255,
+            255,
+            1
+          ]
+        ]
+      ],
       "colorThemeIdx": 0
     }
   ],

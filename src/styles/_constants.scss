@@ -45,6 +45,7 @@ $overlayOuterMarginFullscreen: 0%;
 $overlayOuterMarginDialog: 20%;
 $overlayInnerMargin: 25px;
 $mainViewPad: 2px;
+$treeNavArrowD: 20px;
 /*************** Items */
 $itemPadLR: 5px;
 $gridItemDesk: 175px;
@@ -82,8 +83,8 @@ $formLabelMinW: 120px;
 $formLabelW: 30%;
 /*************** Wait Spinner */
 $waitSpinnerD: 32px;
-$waitSpinnerTreeD: 20px;
 $waitSpinnerBorderW: 5px;
+$waitSpinnerTreeD: 20px;
 $waitSpinnerTreeBorderW: 3px;
 /*************** Messages */
 $messageIconD: 80px;
@@ -198,6 +199,8 @@ $glyph-icon-export: '\ea2e';
 $glyph-icon-font-size: '\ea2f';
 $glyph-icon-clear-data: '\ea30';
 $glyph-icon-history: '\ea31';
+$glyph-icon-arrow-nav-to-parent: '\ea32';
+$glyph-icon-crosshair-in-circle: '\ea33';
 $glyph-icon-activity: '\eb00';
 $glyph-icon-activity-mode: '\eb01';
 $glyph-icon-autoflow-tabular: '\eb02';
@@ -240,6 +243,7 @@ $glyph-icon-command: '\eb26';
 $glyph-icon-conditional: '\eb27';
 $glyph-icon-condition-widget: '\eb28';
 $glyph-icon-alphanumeric: '\eb29';
+$glyph-icon-image-telemetry: '\eb2a';
 
 /************************** GLYPHS AS DATA URI */
 // Only objects have been converted, for use in Create menu and folder views

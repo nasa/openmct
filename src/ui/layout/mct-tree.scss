@@ -16,12 +16,6 @@
         flex: 0 0 auto;
     }
 
-    &__loading {
-        flex: 1 1 auto;
-        position: absolute;
-        width: 100%;
-    }
-
     &__no-results {
         font-style: italic;
         opacity: 0.6;
@@ -41,16 +35,16 @@
 
             &:hover {
                 background: $hoverBg;
-    
+
                 [class*="__name"] {
                     color: darken($colorKeyFg, 10%);
                 }
             }
-    
+
             &.is-navigated-object,
             &.is-selected {
                 background: none;
-    
+
                 [class*="__name"] {
                     color: $selected;
                 }
@@ -67,6 +61,12 @@
         .scrollable-children {
             .c-tree__item-h {
                 width: 100%;
+                &.empty {
+                    font-style: italic;
+                    color: #666;
+                    display: inline;
+                    vertical-align: middle;
+                }
             }
         }
 
@@ -75,7 +75,7 @@
         }
 
         &__item {
-            border-bottom: 1px solid $colorInteriorBorder;
+            //border-bottom: 1px solid $colorInteriorBorder;
 
             &.is-navigated-object,
             &.is-selected {
@@ -86,32 +86,31 @@
 
             .c-nav {
                 $dimension: 20px;
-                border-radius: 3px;
-    
+
                 &__up, &__down {
                     color: #fff;
                     flex: 0 0 auto;
                     height: $dimension;
                     width: $dimension;
-                    opacity: 0;
+                    visibility: hidden;
                     position: relative;
                     text-align: center;
-    
+
                     &.is-enabled {
-                        opacity: 1;
+                        visibility: visible;
                     }
-    
+
                     &:hover {
                         color: darken($colorKeyFg, 10%);
                     }
-    
+
                     &:before {
                         // Nav arrow
-                        $color: rgba(#999, 0.5);
-                        $dimension: 7px;
+                        $color: rgba(#999, 0.5); // TODO: must make this theme-compliant
+                        $dimension: 9px;
                         $width: 3px;
                         border: solid $color;
-                        border-width: $width;
+                        //border-width: $width;
                         border-width: 0 $width $width 0;
                         content: '';
                         display: block;
@@ -120,18 +119,18 @@
                         height: $dimension;
                         width: $dimension;
                     }
-    
+
                     &:hover:before {
                         border-color: $colorItemTreeHoverFg;
                     }
                 }
-    
+
                 &__up:before {
                     transform: translate(-30%, -50%) rotate(135deg);
                 }
-    
+
                 &__down:before {
-                    transform: translate(-70%, -50%) rotate(-45deg);    
+                    transform: translate(-70%, -50%) rotate(-45deg);
                 }
             }
         }
