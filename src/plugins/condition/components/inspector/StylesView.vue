@@ -127,11 +127,6 @@ export default {
         'openmct',
         'selection'
     ],
-    computed: {
-        allowEditing() {
-            return this.isEditing && !this.locked;
-        }
-    },
     data() {
         return {
             staticStyle: undefined,
@@ -145,6 +140,11 @@ export default {
             navigateToPath: '',
             selectedConditionId: '',
             locked: false
+        }
+    },
+    computed: {
+        allowEditing() {
+            return this.isEditing && !this.locked;
         }
     },
     destroyed() {
@@ -234,7 +234,7 @@ export default {
                 const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
 
-                if (layoutDomainObject.locked) {
+                if (layoutDomainObject && layoutDomainObject.locked) {
                     this.locked = true;
                 }
 

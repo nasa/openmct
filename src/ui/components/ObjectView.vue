@@ -91,7 +91,7 @@ export default {
         },
         invokeEditModeHandler(editMode) {
             let edit;
-            
+
             if (this.currentObject.locked) {
                 edit = false;
             } else {

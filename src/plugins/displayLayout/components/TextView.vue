@@ -24,7 +24,7 @@
 <layout-frame
     :item="item"
     :grid-size="gridSize"
-    :isEditing="isEditing"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >

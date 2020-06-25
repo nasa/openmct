@@ -33,8 +33,9 @@
 >
     <!-- Background grid -->
     <div
-        v-if="isEditing" 
-        class="l-layout__grid-holder c-grid">
+        v-if="isEditing"
+        class="l-layout__grid-holder c-grid"
+    >
         <div
             v-if="gridSize[0] >= 3"
             class="c-grid__x l-grid l-grid-x"
