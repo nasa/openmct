@@ -23,10 +23,16 @@
         <slot name="controls"></slot>
         <button
             v-if="collapsable"
-            class="l-pane__collapse-button c-button"
+            class="l-pane__collapse-button c-icon-button"
             @click="toggleCollapse"
         ></button>
     </div>
+    <button
+        class="l-pane__expand-button"
+        @click="toggleCollapse"
+    >
+        <span class="l-pane__expand-button__label">{{ label }}</span>
+    </button>
     <div class="l-pane__contents">
         <slot></slot>
     </div>

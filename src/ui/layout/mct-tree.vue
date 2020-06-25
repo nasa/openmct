@@ -19,14 +19,6 @@
         No results found
     </div>
 
-    <!-- loading -->
-    <li
-        v-if="isLoading"
-        :style="loadingStyles()"
-        class="c-tree-and-search__loading loading"
-    ></li>
-    <!-- end loading -->
-
     <!-- main tree -->
     <ul
         ref="mainTree"
@@ -40,7 +32,7 @@
                 :node="ancestor"
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
-                :left-offset="index * 10 + 10 + 'px'"
+                :left-offset="index * 10 + 'px'"
                 @resetTree="handleReset"
             />
         </div>
@@ -59,6 +51,16 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
+
+                    <!-- loading -->
+                    <li
+                        v-if="!isLoading"
+                        class="c-tree__item c-tree-and-search__loading loading"
+                    >
+                        <span class="c-tree__item__label">Loading...</span>
+                    </li>
+                    <!-- end loading -->
+
                     <div
                         :style="{ height: childrenHeight + 'px'}"
                     >
@@ -143,7 +145,7 @@ export default {
             return this.activeSearch ? this.searchResultItems : this.allTreeItems;
         },
         itemLeftOffset() {
-            return this.activeSearch ? '0px' : this.ancestors.length * 10 + 10 + 'px';
+            return this.activeSearch ? '0px' : this.ancestors.length * 10 + 'px';
         }
     },
     watch: {
@@ -478,17 +480,6 @@ export default {
                 height: this.availableContainerHeight + 'px',
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             }
-        },
-        loadingStyles() {
-            let styles = {
-                top: '300px'
-            }
-
-            if(this.$refs.mainTree && this.$refs.mainTree.clientHeight !== 0) {
-                styles.top = (this.$refs.mainTree.clientHeight / 2) + 'px';
-            }
-
-            return styles;
         },
         childrenIn(el, done) {
             // more reliable way then nextTick

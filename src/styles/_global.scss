@@ -284,19 +284,23 @@ body.desktop .has-local-controls {
 
         display: flex;
         align-items: center;
-        padding-left: $spinnerL + $d/2 + $interiorMargin;
-        background: $colorLoadingBg;
+        margin-left: $treeNavArrowD + $interiorMargin;
         min-height: 5px + $d;
 
         .c-tree__item__label {
             font-style: italic;
+            margin-left: $interiorMargin;
             opacity: 0.6;
         }
         &:before {
+            left: auto;
+            top: auto;
+            transform: translate(0);
             height: $d;
             width: $d;
-            border-width: 4px;
-            left: $spinnerL;
+            border-width: 3px;
+            //left: $spinnerL;
+            position: relative;
         }
         &:after {
             display: none;

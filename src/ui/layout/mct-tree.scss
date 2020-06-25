@@ -16,12 +16,6 @@
         flex: 0 0 auto;
     }
 
-    &__loading {
-        flex: 1 1 auto;
-        position: absolute;
-        width: 100%;
-    }
-
     &__no-results {
         font-style: italic;
         opacity: 0.6;

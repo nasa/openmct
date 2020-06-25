@@ -47,13 +47,13 @@
             label="Browse"
             collapsable
         >
-            <a
+            <button
                     slot="controls"
-                    class="c-click-icon icon-crosshair-in-circle"
+                    class="c-icon-button icon-crosshair-in-circle"
                     title="Show selected item in tree"
                     @click="handleSyncTreeNavigation"
             >
-            </a>
+            </button>
             <mct-tree
                 :sync-tree-navigation="triggerSync"
                 class="l-shell__tree"
