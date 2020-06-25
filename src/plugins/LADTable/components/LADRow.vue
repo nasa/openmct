@@ -114,7 +114,7 @@ export default {
                 limit;
 
             if(this.shouldUpdate(newTimestamp)) {
-                this.timestamp = this.getParsedTimestamp(datum);
+                this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 if (limit) {
@@ -127,13 +127,10 @@ export default {
         shouldUpdate(newTimestamp) {
             let newTimestampInBounds = this.inBounds(newTimestamp),
                 noExistingTimestamp = this.timestamp === undefined,
-                existingTimestampInBounds = this.inBounds(this.timestamp),
                 newTimestampIsLatest = newTimestamp > this.timestamp;
 
             return newTimestampInBounds &&
-                (noExistingTimestamp ||
-                (existingTimestampInBounds && newTimestampIsLatest) ||
-                !existingTimestampInBounds);
+                (noExistingTimestamp || newTimestampIsLatest);
         },
         requestHistory() {
             this.openmct
