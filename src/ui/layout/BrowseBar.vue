@@ -27,13 +27,6 @@
     </div>
 
     <div class="l-browse-bar__end">
-        <ToggleSwitch
-            v-if="isViewEditable && !isEditing"
-            :id="'edit-lock-toggle'"
-            :checked="domainObject.locked"
-            :label="lockedOrUnlocked"
-            @change="toggleLock"
-        />
         <view-switcher
             v-if="!isEditing"
             :current-view="currentView"
@@ -45,6 +38,13 @@
                               :domain-object="domainObject"
                               :object-path="openmct.router.path"
                               class="c-notebook-snapshot-menubutton"
+        />
+        <ToggleSwitch
+                v-if="isViewEditable && !isEditing"
+                :id="'edit-lock-toggle'"
+                :checked="domainObject.locked"
+                :label="lockedOrUnlocked"
+                @change="toggleLock"
         />
         <div class="l-browse-bar__actions">
             <button
