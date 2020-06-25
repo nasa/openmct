@@ -49,7 +49,7 @@ define(
                 return false;
             }
 
-            return !!(applicableObject &&
+            return Boolean(applicableObject &&
                 applicableObject.hasCapability('context'));
         };
 

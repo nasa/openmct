@@ -223,7 +223,7 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         }
 
         return domainObject !== undefined &&
-            context.domainObject.hasCapability("composition");
+            domainObject.hasCapability("composition");
     };
 
     return ImportAsJSONAction;
