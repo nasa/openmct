@@ -73,7 +73,7 @@ define(['lodash'], function (_) {
                             ]
                         }
                     },
-                    viewTypes = {
+                    VIEW_TYPES = {
                         'telemetry-view': {
                             value: 'telemetry-view',
                             name: 'Alphanumeric',
@@ -95,28 +95,34 @@ define(['lodash'], function (_) {
                             class: 'icon-tabular-realtime'
                         }
                     },
-                    applicableViews = {
+                    APPLICABLE_VIEWS = {
                         'telemetry-view': [
-                            viewTypes['telemetry.plot.overlay'],
-                            viewTypes.table
+                            VIEW_TYPES['telemetry.plot.overlay'],
+                            VIEW_TYPES['telemetry.plot.stacked'],
+                            VIEW_TYPES.table
                         ],
                         'telemetry.plot.overlay': [
-                            viewTypes['telemetry.plot.stacked'],
-                            viewTypes.table,
-                            viewTypes['telemetry-view']
+                            VIEW_TYPES['telemetry.plot.stacked'],
+                            VIEW_TYPES.table,
+                            VIEW_TYPES['telemetry-view']
+                        ],
+                        'telemetry.plot.stacked': [
+                            VIEW_TYPES['telemetry.plot.overlay'],
+                            VIEW_TYPES.table,
+                            VIEW_TYPES['telemetry-view']
                         ],
                         'table': [
-                            viewTypes['telemetry.plot.overlay'],
-                            viewTypes['telemetry.plot.stacked'],
-                            viewTypes['telemetry-view']
+                            VIEW_TYPES['telemetry.plot.overlay'],
+                            VIEW_TYPES['telemetry.plot.stacked'],
+                            VIEW_TYPES['telemetry-view']
                         ],
                         'telemetry-view-multi': [
-                            viewTypes['telemetry.plot.overlay'],
-                            viewTypes['telemetry.plot.stacked'],
-                            viewTypes.table
+                            VIEW_TYPES['telemetry.plot.overlay'],
+                            VIEW_TYPES['telemetry.plot.stacked'],
+                            VIEW_TYPES.table
                         ],
                         'telemetry.plot.overlay-multi': [
-                            viewTypes['telemetry.plot.stacked']
+                            VIEW_TYPES['telemetry.plot.stacked']
                         ]
                     };
 
@@ -510,7 +516,7 @@ define(['lodash'], function (_) {
                             selectedItemType = 'telemetry-view';
                         }
 
-                        let viewOptions = applicableViews[selectedItemType];
+                        let viewOptions = APPLICABLE_VIEWS[selectedItemType];
 
                         if (viewOptions) {
                             return {
@@ -533,7 +539,7 @@ define(['lodash'], function (_) {
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Merge into a telemetry table or plot",
-                                options: applicableViews['telemetry-view-multi'],
+                                options: APPLICABLE_VIEWS['telemetry-view-multi'],
                                 method: function (option) {
                                     displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
                                 }
@@ -546,7 +552,7 @@ define(['lodash'], function (_) {
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Merge into a stacked plot",
-                                options: applicableViews['telemetry.plot.overlay-multi'],
+                                options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
                                 method: function (option) {
                                     displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
                                 }
