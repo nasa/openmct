@@ -1109,21 +1109,12 @@
           "name": "icon-condition-widget",
           "prevSize": 16,
           "code": 60200,
-<<<<<<< HEAD
-          "tempChar": ""
-=======
           "tempChar": ""
->>>>>>> new-tree-refactor
         },
         {
           "order": 180,
           "id": 155,
           "name": "icon-alphanumeric",
-<<<<<<< HEAD
-          "prevSize": 16,
-          "code": 60201,
-          "tempChar": ""
-=======
           "prevSize": 24,
           "code": 60201,
           "tempChar": ""
@@ -1135,7 +1126,6 @@
           "prevSize": 24,
           "code": 60202,
           "tempChar": ""
->>>>>>> new-tree-refactor
         }
       ],
       "id": 0,
@@ -3444,16 +3434,12 @@
           "grid": 16,
           "tags": [
             "icon-condition-widget"
-<<<<<<< HEAD
-          ]
-=======
           ],
           "colorPermutations": {
             "12552552551": [
               {}
             ]
           }
->>>>>>> new-tree-refactor
         },
         {
           "id": 155,
@@ -3470,9 +3456,6 @@
             "icon-alphanumeric"
           ],
           "isMulticolor": false,
-<<<<<<< HEAD
-          "isMulticolor2": false
-=======
           "isMulticolor2": false,
           "colorPermutations": {
             "12552552551": [
@@ -3503,7 +3486,6 @@
               {}
             ]
           }
->>>>>>> new-tree-refactor
         }
       ],
       "invisible": false,
