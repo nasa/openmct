@@ -452,7 +452,7 @@ export default {
             this.layoutItems.forEach(item => {
                 if (item.identifier) {
                     let itemKeyString = this.openmct.objects.makeKeyString(item.identifier);
-                    
+
                     if (itemKeyString === keyString) {
                         found = true;
                         return;
