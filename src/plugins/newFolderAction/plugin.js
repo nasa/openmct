@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,50 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
+import NewFolderAction from './newFolderAction';
 
-export const evaluateResults = (results, trigger) => {
-    if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(results, 1);
-    } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(results, 0);
-    } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(results);
-    } else {
-        return matchAny(results);
-    }
-}
-
-function matchAll(results) {
-    for (const result of results) {
-        if (result !== true) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function matchAny(results) {
-    for (const result of results) {
-        if (result === true) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function matchExact(results, target) {
-    let matches = 0;
-    for (const result of results) {
-        if (result === true) {
-            matches++;
-        }
-        if (matches > target) {
-            return false;
-        }
-    }
-
-    return matches === target;
+export default function () {
+    return function (openmct) {
+        openmct.contextMenu.registerAction(new NewFolderAction(openmct));
+    };
 }
