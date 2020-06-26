@@ -25,7 +25,7 @@
             class="c-tabs-view__tab c-tab c-object-label"
             :class="{
                 'is-current': isCurrent(tab),
-                'is-missing': true
+                'is-missing': tab.domainObject.status === 'missing'
             }"
             @click="showTab(tab, index)"
         >

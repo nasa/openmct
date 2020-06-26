@@ -25,14 +25,14 @@
     :class="{
         'c-so-view--no-frame': !hasFrame,
         'has-complex-content': complexContent,
-        'is-missing': true
+        'is-missing': domainObject.status === 'missing'
     }"
 >
     <div class="c-so-view__header">
         <div class="c-object-label"
              :class="{
                 classList,
-                'is-missing': true
+                'is-missing': domainObject.status === 'missing'
             }"
         >
             <div class="c-object-label__type-icon"

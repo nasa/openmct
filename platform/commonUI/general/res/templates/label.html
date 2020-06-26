@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="c-object-label"
-     ng-class="{ 'is-missing': true }"
+     ng-class="{ 'is-missing': model.status === 'missing' }"
 >
     <div class="c-object-label__type-icon {{type.getCssClass()}}"
          ng-class="{ 'l-icon-link':location.isLink() }"

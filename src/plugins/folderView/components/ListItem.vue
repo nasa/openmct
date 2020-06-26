@@ -6,7 +6,7 @@
 >
     <td class="c-list-item__name">
         <a class="c-object-label"
-           :class="{ 'is-missing': true }"
+           :class="{ 'is-missing': item.status === 'missing' }"
            ref="objectLink"
            :href="objectLink"
         >

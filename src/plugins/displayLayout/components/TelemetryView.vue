@@ -32,7 +32,7 @@
         class="c-telemetry-view"
         :class="{
             styleClass,
-            'is-missing': true
+            'is-missing': domainObject.status === 'missing'
         }"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"

@@ -3,7 +3,7 @@
     class="c-tree__item__label c-object-label"
     :class="{
         classList,
-        'is-missing': true
+        'is-missing': observedObject.status === 'missing'
     }"
     draggable="true"
     :href="objectLink"
