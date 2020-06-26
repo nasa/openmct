@@ -12,7 +12,6 @@
             'is-alias': isAlias,
             'is-navigated-object': navigated
         }"
-        :style="{ paddingLeft: leftOffset }"
     >
         <view-control
             v-model="expanded"
@@ -25,6 +24,7 @@
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigateToPath"
+            :style="{ paddingLeft: leftOffset }"
         />
         <view-control
             v-model="expanded"
