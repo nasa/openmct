@@ -56,6 +56,7 @@ define([
      *                `linear` (points are connected via straight lines), or
      *                `stepAfter` (points are connected by steps).
      * `markers`: boolean, whether or not this series should render with markers.
+     * `markerShape`: string, shape of markers.
      * `markerSize`: number, size in pixels of markers for this series.
      * `alarmMarkers`: whether or not to display alarm markers for this series.
      * `stats`: An object that tracks the min and max y values observed in this
@@ -101,6 +102,7 @@ define([
                 xKey: options.collection.plot.xAxis.get('key'),
                 yKey: range.key,
                 markers: true,
+                markerShape: 'point',
                 markerSize: 2.0,
                 alarmMarkers: true
             };

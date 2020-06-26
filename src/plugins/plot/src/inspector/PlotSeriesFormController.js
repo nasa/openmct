@@ -22,9 +22,11 @@
 
 define([
     './PlotModelFormController',
+    '../draw/DrawShape2D.js',
     'lodash'
 ], function (
     PlotModelFormController,
+    drawShape,
     _
 ) {
 
@@ -93,6 +95,15 @@ define([
                         value: o.key
                     };
                 });
+            // console.log(Object.entries(drawShape));
+            this.$scope.markerShapeOptions = Object.entries(drawShape)
+                .map(([key, obj]) => {
+                    return {
+                        name: obj.label,
+                        value: key
+                    }
+                });
+            // console.log(this.$scope.markerShapeOptions);
         },
 
         fields: [
@@ -107,6 +118,10 @@ define([
             {
                 modelProp: 'markers',
                 objectPath: dynamicPathForKey('markers')
+            },
+            {
+                modelProp: 'markerShape',
+                objectPath: dynamicPathForKey('markerShape')
             },
             {
                 modelProp: 'markerSize',
