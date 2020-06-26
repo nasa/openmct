@@ -1,11 +1,14 @@
 FROM node:latest
 
-RUN git clone https://github.com/nasa/openmct.git
+LABEL maintainer="Haisam.Ido@gmail.com"
 
+RUN mkdir openmct
 WORKDIR /openmct
+ADD . .
+
+RUN rm -rf dist
+RUN rm -rf node_modules
 
 RUN npm install
-
-# npm start
 
 EXPOSE 8080
