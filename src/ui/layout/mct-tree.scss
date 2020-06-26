@@ -61,12 +61,6 @@
         .scrollable-children {
             .c-tree__item-h {
                 width: 100%;
-                &.empty {
-                    font-style: italic;
-                    color: #666;
-                    display: inline;
-                    vertical-align: middle;
-                }
             }
         }
 
@@ -132,6 +126,21 @@
                 &__down:before {
                     transform: translate(-70%, -50%) rotate(-45deg);
                 }
+            }
+        }
+
+        &__item--empty {
+            // Styling for empty tree items
+            // Indent should allow for c-nav view-control width and icon spacing
+            font-style: italic;
+            padding: $interiorMarginSm * 2 1px;
+            opacity: 0.7;
+            pointer-events: none;
+
+            &:before {
+                content: '';
+                display: inline-block;
+                width: $treeNavArrowD + $interiorMarginLg;
             }
         }
     }

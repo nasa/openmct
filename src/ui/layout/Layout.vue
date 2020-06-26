@@ -49,7 +49,7 @@
         >
             <button
                     slot="controls"
-                    class="c-icon-button icon-crosshair-in-circle"
+                    class="c-icon-button l-shell__sync-tree-button icon-target"
                     title="Show selected item in tree"
                     @click="handleSyncTreeNavigation"
             >

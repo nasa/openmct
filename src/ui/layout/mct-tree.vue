@@ -74,10 +74,10 @@
                         />
                         <li
                             v-if="visibleItems.length === 0"
-                            :style="emptyStyles()"
-                            class="c-tree__item-h empty"
+                            :style="{ paddingLeft: ((ancestors.length + 1) * 10) + 'px' }"
+                            class="c-tree__item c-tree__item--empty"
                         >
-                            Empty
+                            No items
                         </li>
                     </div>
                 </ul>
@@ -490,10 +490,9 @@ export default {
             }
         },
         emptyStyles() {
-            let offset = ((this.ancestors.length + 1) * 10) + 20; // extra 20 accounts for up arrow nav space
+            let offset = ((this.ancestors.length + 1) * 10);
             return {
                 paddingLeft: offset + 'px',
-                height: this.itemHeight + 'px'
             };
         },
         childrenIn(el, done) {

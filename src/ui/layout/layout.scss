@@ -52,7 +52,7 @@
                 color: $colorKey !important;
                 position: absolute;
                 right: -18px;
-                top: 0;
+                top: $interiorMarginSm;
                 transform: translateX(100%);
                 width: $mobileMenuIconD;
                 z-index: 2;
@@ -99,6 +99,11 @@
 
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
+
+            [class*="expand-button"],
+            [class*="sync-tree-button"] {
+                display: none;
+            }
 
             &[class*="--collapsed"] {
                 [class*="collapse-button"] {
