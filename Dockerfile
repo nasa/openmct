@@ -6,6 +6,6 @@ WORKDIR /openmct
 
 RUN npm install
 
-RUN npm start
+# npm start
 
-EXPOSE 8080:8080
+EXPOSE 8080

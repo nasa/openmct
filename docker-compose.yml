@@ -1,0 +1,8 @@
+version: '2.1'
+services:
+  openmct:
+    image: "openmct:latest"
+    hostname: openmct
+    command: "npm start"
+    ports:
+      - 8080:8080
