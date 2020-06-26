@@ -3,7 +3,7 @@
 build-openmct:  ## build and configure docker image for openmct
 	docker build -t openmct .
 
-run-openmct: build-openmct ## Run openmct
+run-openmct: build-openmct ## Build and run openmct
 	docker run -i -t --rm -p 8080:8080 openmct
 
 help:
