@@ -357,6 +357,7 @@ $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
+$filterItemTreeSelected: contrast(1.4);
 $colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
 $colorItemTreeEditingBg: pushBack($editUIColor, 20%);
 $colorItemTreeEditingFg: $editUIColor;

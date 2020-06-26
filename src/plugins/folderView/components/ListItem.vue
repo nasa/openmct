@@ -13,7 +13,7 @@
                 class="c-list-item__type-icon"
                 :class="item.type.cssClass"
             ></div>
-            <div class="c-list-item__name-value">{{ item.model.name }}</div>
+            <div class="c-list-item__name">{{ item.model.name }}</div>
         </a>
     </td>
     <td class="c-list-item__type">

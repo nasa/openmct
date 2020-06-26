@@ -1,12 +1,7 @@
 .c-tree-and-search {
-    $hoverBg: rgba(#000, 0.1);
-    $hoverFg: #ccc;
-    $selected: #fff;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    //TODO: Do we need this???
-    //padding-right: $interiorMarginSm;
     width: 100%;
     overflow: auto;
 
@@ -27,31 +22,6 @@
         padding-right: $interiorMarginSm;
     }
 
-    // new tree refactor
-    .c-tree,
-    .c-list {
-        &__item {
-            border-radius: 0;
-
-            &:hover {
-                background: $hoverBg;
-
-                [class*="__name"] {
-                    color: darken($colorKeyFg, 10%);
-                }
-            }
-
-            &.is-navigated-object,
-            &.is-selected {
-                background: none;
-
-                [class*="__name"] {
-                    color: $selected;
-                }
-            }
-        }
-    }
-    // new tree refactor
     .c-tree {
         flex: 1 1 auto;
         overflow-x: hidden;
@@ -61,71 +31,6 @@
         .scrollable-children {
             .c-tree__item-h {
                 width: 100%;
-            }
-        }
-
-        .c-tree {
-            padding-left: 0;
-        }
-
-        &__item {
-            //border-bottom: 1px solid $colorInteriorBorder;
-
-            &.is-navigated-object,
-            &.is-selected {
-                .c-tree__item__type-icon:before {
-                    color: $selected;
-                }
-            }
-
-            .c-nav {
-                $dimension: 20px;
-
-                &__up, &__down {
-                    color: #fff;
-                    flex: 0 0 auto;
-                    height: $dimension;
-                    width: $dimension;
-                    visibility: hidden;
-                    position: relative;
-                    text-align: center;
-
-                    &.is-enabled {
-                        visibility: visible;
-                    }
-
-                    &:hover {
-                        color: darken($colorKeyFg, 10%);
-                    }
-
-                    &:before {
-                        // Nav arrow
-                        $color: rgba(#999, 0.5); // TODO: must make this theme-compliant
-                        $dimension: 9px;
-                        $width: 3px;
-                        border: solid $color;
-                        //border-width: $width;
-                        border-width: 0 $width $width 0;
-                        content: '';
-                        display: block;
-                        position: absolute;
-                        left: 50%; top: 50%;
-                        height: $dimension;
-                        width: $dimension;
-                    }
-
-                    &:hover:before {
-                        border-color: $colorItemTreeHoverFg;
-                    }
-                }
-
-                &__up:before {
-                    transform: translate(-30%, -50%) rotate(135deg);
-                }
-
-                &__down:before {
-                    transform: translate(-70%, -50%) rotate(-45deg);
-                }
             }
         }
 
@@ -161,7 +66,6 @@
     }
 
     &__item {
-        $aPad: $interiorMarginSm;
         border-radius: $controlCr;
         display: flex;
         align-items: center;
@@ -170,71 +74,19 @@
         padding: $interiorMarginSm $interiorMargin;
         transition: background 150ms ease;
 
-        &:hover {
-            background: $colorItemTreeHoverBg;
-
-            [class*="__name"] {
-                color: $colorItemTreeHoverFg;
-            }
-        }
-
-        &.is-navigated-object,
-        &.is-selected {
-            background: $colorItemTreeSelectedBg;
-
-            [class*="__name"] {
-                color: $colorItemTreeSelectedFg;
-            }
-        }
-    }
-}
-
-.c-tree {
-    .c-tree {
-        margin-left: 15px;
-    }
-
-    &__item {
         > * + * {
             margin-left: $interiorMarginSm;
         }
 
-        &:hover {
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
-        }
-
-        &.is-navigated-object,
-        &.is-selected {
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
-        }
-
-        &.is-being-edited {
-            background: $colorItemTreeEditingBg;
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeEditingIcon;
-            }
-
-            .c-tree__item__name {
-                color: $colorItemTreeEditingFg;
-                font-style: italic;
+        @include desktop {
+            &:hover {
+                background: $colorItemTreeHoverBg;
             }
         }
 
         // Object labels in trees
         &__label {
             flex: 1 1 auto;
-        }
-
-        &__name {
-            color: $colorItemTreeFg;
-        }
-
-        &__type-icon {
-            color: $colorItemTreeIcon;
         }
 
         &.is-alias {
@@ -252,6 +104,70 @@
                 width: ceil($mobileTreeItemH * 0.5);
             }
         }
+
+        &.is-navigated-object,
+        &.is-selected {
+            background: $colorItemTreeSelectedBg;
+
+            [class*="__label"],
+            [class*="__type-icon"]:before,
+            [class*="__name"] {
+                //filter: $filterItemTreeSelected;
+                color: $colorItemTreeSelectedFg;
+            }
+        }
+
+        &.is-navigated-object .is-editing & {
+            background: $colorItemTreeEditingBg;
+            pointer-events: none;
+
+            .c-tree__item__type-icon:before {
+                color: $colorItemTreeEditingIcon;
+            }
+
+            .c-tree__item__name {
+                color: $colorItemTreeEditingFg;
+                font-style: italic;
+            }
+        }
+    }
+
+    &__item__label {
+        @include desktop {
+            &:hover {
+                filter: $filterHov;
+            }
+        }
+    }
+}
+
+.is-editing .is-navigated-object {
+    // Disallow clicks on an object being edited
+
+    a[class*="__item__label"] {
+        opacity: 0.4;
+        pointer-events: none;
+
+        [class*="__name"] {
+            font-style: italic;
+        }
+    }
+}
+
+.c-tree {
+    &__item {
+       body.mobile & {
+            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+            height: $mobileTreeItemH;
+            margin-bottom: $interiorMarginSm;
+            [class*="view-control"] {
+                width: ceil($mobileTreeItemH * 0.5);
+            }
+        }
+    }
+
+    .c-tree {
+        margin-left: $treeItemIndent;
     }
 }
 
@@ -265,6 +181,52 @@
             padding-bottom: $p;
             padding-top: $p;
         }
+    }
+}
+
+.c-nav {
+    $dimension: $treeNavArrowD;
+
+    &__up, &__down {
+        color: #fff;
+        flex: 0 0 auto;
+        height: $dimension;
+        width: $dimension;
+        visibility: hidden;
+        position: relative;
+        text-align: center;
+
+        &.is-enabled {
+            visibility: visible;
+        }
+
+        &:before {
+            // Nav arrow
+            $dimension: 9px;
+            $width: 3px;
+            border: solid $colorItemTreeVC;
+            border-width: 0 $width $width 0;
+            content: '';
+            display: block;
+            position: absolute;
+            left: 50%; top: 50%;
+            height: $dimension;
+            width: $dimension;
+        }
+
+        @include desktop {
+            &:hover:before {
+                border-color: $colorItemTreeHoverFg;
+            }
+        }
+    }
+
+    &__up:before {
+        transform: translate(-30%, -50%) rotate(135deg);
+    }
+
+    &__down:before {
+        transform: translate(-70%, -50%) rotate(-45deg);
     }
 }
 

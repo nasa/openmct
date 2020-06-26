@@ -101,6 +101,11 @@ a {
     color: $colorA;
     cursor: pointer;
     text-decoration: none;
+
+    &:focus {
+        outline: none !important;
+    }
+
     &:hover {
         color: $colorAHov;
     }
