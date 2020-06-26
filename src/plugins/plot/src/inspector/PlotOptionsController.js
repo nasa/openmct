@@ -23,13 +23,11 @@
 define([
     '../configuration/configStore',
     '../lib/eventHelpers',
-    'objectUtils',
-    'lodash'
+    'objectUtils'
 ], function (
     configStore,
     eventHelpers,
-    objectUtils,
-    _
+    objectUtils
 ) {
 
     function PlotOptionsController($scope, openmct, $timeout) {
