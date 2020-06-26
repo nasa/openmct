@@ -29,12 +29,23 @@ define([], function () {
                 this.c2d.fillRect(x - offset, y - offset, size, size);
             }
         },
+        circle: {
+            label: 'Circle',
+            method: function (x, y, size) {
+                const radius = size / 2;
+
+                this.c2d.beginPath();
+                this.c2d.arc(x, y, radius, 0, 2 * Math.PI, false);
+                this.c2d.closePath();
+                this.c2d.fill();
+            }
+        },
         cross: {
             label: 'Cross',
-            method: function (originalX, originalY, size) {
+            method: function (xOrigin, yOrigin, size) {
                 const offset = size / 2;
-                const x = originalX - offset;
-                const y = originalY - offset;
+                const x = xOrigin - offset;
+                const y = yOrigin - offset;
 
                 this.c2d.fillRect(x + size, y, size, size);
                 this.c2d.fillRect(x, y + size, size, size);
@@ -44,30 +55,30 @@ define([], function () {
         },
         star: {
             label: 'Star',
-            method: function (cx, cy, size) {
+            method: function (xOrigin, yOrigin, size) {
                 const spikes = 5;
                 const step = Math.PI / spikes;
                 const outerRadius = size * 2;
                 const innerRadius = size;
                 let rot = Math.PI / 2 * 3;
-                let x = cx, y = cy;
+                let x = xOrigin, y = yOrigin;
 
                 this.c2d.beginPath();
-                this.c2d.moveTo(cx, cy - outerRadius)
+                this.c2d.moveTo(xOrigin, yOrigin - outerRadius)
 
                 for (let i = 0; i < spikes; i++) {
-                    x = cx + Math.cos(rot) * outerRadius;
-                    y = cy + Math.sin(rot) * outerRadius;
+                    x = xOrigin + Math.cos(rot) * outerRadius;
+                    y = yOrigin + Math.sin(rot) * outerRadius;
                     this.c2d.lineTo(x, y)
                     rot += step
 
-                    x = cx + Math.cos(rot) * innerRadius;
-                    y = cy + Math.sin(rot) * innerRadius;
+                    x = xOrigin + Math.cos(rot) * innerRadius;
+                    y = yOrigin + Math.sin(rot) * innerRadius;
                     this.c2d.lineTo(x, y)
                     rot += step
                 }
 
-                this.c2d.lineTo(cx, cy - outerRadius)
+                this.c2d.lineTo(xOrigin, yOrigin - outerRadius)
                 this.c2d.closePath();
                 this.c2d.fill();
             }
