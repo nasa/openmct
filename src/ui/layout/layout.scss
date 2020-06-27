@@ -158,7 +158,7 @@
     }
 
     &__head {
-        align-items: stretch;
+        align-items: center;
         background: $colorHeadBg;
         justify-content: space-between;
         padding: $interiorMargin $interiorMargin + 2;
@@ -167,14 +167,21 @@
             margin-left: $interiorMargin;
         }
 
-        [class*='__head__collapse-button'] {
-            align-self: start;
+        .l-shell__head__collapse-button {
+            color: $colorBtnMajorBg;
             flex: 0 0 auto;
-            margin-top: 6px;
+            font-size: 0.9em;
 
-            &:before {
-                content: $glyph-icon-arrow-down;
-                font-size: 1.1em;
+            &--collapse {
+                &:before {
+                    content: $glyph-icon-line-horz;
+                }
+            }
+
+            &--expand {
+                &:before {
+                    content: $glyph-icon-plus;
+                }
             }
         }
 
@@ -188,12 +195,6 @@
         &--expanded {
             .c-indicator__label {
                 transition: none !important;
-            }
-
-            [class*='__head__collapse-button'] {
-                &:before {
-                    transform: rotate(180deg);
-                }
             }
         }
     }
