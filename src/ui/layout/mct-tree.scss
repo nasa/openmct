@@ -110,24 +110,19 @@
             background: $colorItemTreeSelectedBg;
 
             [class*="__label"],
-            [class*="__type-icon"]:before,
             [class*="__name"] {
-                //filter: $filterItemTreeSelected;
                 color: $colorItemTreeSelectedFg;
+            }
+
+            [class*="__type-icon"]:before {
+                color: $colorItemTreeSelectedIcon;
             }
         }
 
-        &.is-navigated-object .is-editing & {
-            background: $colorItemTreeEditingBg;
-            pointer-events: none;
-
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeEditingIcon;
-            }
-
-            .c-tree__item__name {
-                color: $colorItemTreeEditingFg;
-                font-style: italic;
+        &.is-navigated-object  {
+            [class*="__label"],
+            [class*="__name"] {
+                pointer-events: none;
             }
         }
     }
@@ -142,11 +137,8 @@
 }
 
 .is-editing .is-navigated-object {
-    // Disallow clicks on an object being edited
-
     a[class*="__item__label"] {
         opacity: 0.4;
-        pointer-events: none;
 
         [class*="__name"] {
             font-style: italic;

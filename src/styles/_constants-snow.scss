@@ -80,8 +80,8 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
-$filterHov: brightness(1.3); // Tree, location items
-$colorSelectedBg: pushBack($colorKey, 40%);
+$filterHov: saturate(200%) brightness(70%) contrast(110%); // Tree, location items
+$colorSelectedBg: rgba($colorKey, 0.2);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Layout
@@ -90,7 +90,7 @@ $shellPanePad: $interiorMargin, 7px;
 $drawerBg: darken($colorBodyBg, 5%);
 $drawerFg: darken($colorBodyFg, 5%);
 $sideBarBg: $drawerBg;
-$sideBarHeaderBg: rgba(black, 0.25);
+$sideBarHeaderBg: rgba(black, 0.1);
 $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
@@ -358,7 +358,7 @@ $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
 $filterItemTreeSelected: contrast(1.4);
-$colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
+$colorItemTreeSelectedIcon: $colorItemTreeIcon;
 $colorItemTreeEditingBg: pushBack($editUIColor, 20%);
 $colorItemTreeEditingFg: $editUIColor;
 $colorItemTreeEditingIcon: $editUIColor;
