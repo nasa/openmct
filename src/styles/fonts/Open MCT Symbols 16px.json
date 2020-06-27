@@ -800,12 +800,28 @@
           "tempChar": ""
         },
         {
+          "order": 187,
+          "id": 163,
+          "name": "icon-items-collapse",
+          "prevSize": 24,
+          "code": 59957,
+          "tempChar": ""
+        },
+        {
+          "order": 188,
+          "id": 162,
+          "name": "icon-items-expand",
+          "prevSize": 24,
+          "code": 59958,
+          "tempChar": ""
+        },
+        {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
           "prevSize": 24,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -813,7 +829,7 @@
           "name": "icon-activity-mode",
           "prevSize": 24,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -821,7 +837,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 24,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -829,7 +845,7 @@
           "name": "icon-clock",
           "prevSize": 24,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -837,7 +853,7 @@
           "name": "icon-database",
           "prevSize": 24,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -845,7 +861,7 @@
           "name": "icon-database-query",
           "prevSize": 24,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -853,7 +869,7 @@
           "name": "icon-dataset",
           "prevSize": 24,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -861,7 +877,7 @@
           "name": "icon-datatable",
           "prevSize": 24,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -869,7 +885,7 @@
           "name": "icon-dictionary",
           "prevSize": 24,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -877,7 +893,7 @@
           "name": "icon-folder",
           "prevSize": 24,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -885,7 +901,7 @@
           "name": "icon-image",
           "prevSize": 24,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -893,7 +909,7 @@
           "name": "icon-layout",
           "prevSize": 24,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -901,7 +917,7 @@
           "name": "icon-object",
           "prevSize": 24,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -909,7 +925,7 @@
           "name": "icon-object-unknown",
           "prevSize": 24,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -917,7 +933,7 @@
           "name": "icon-packet",
           "prevSize": 24,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -925,7 +941,7 @@
           "name": "icon-page",
           "prevSize": 24,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -933,7 +949,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -941,7 +957,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -949,7 +965,7 @@
           "name": "icon-session",
           "prevSize": 24,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -957,7 +973,7 @@
           "name": "icon-tabular",
           "prevSize": 24,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -965,7 +981,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 24,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -973,7 +989,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 24,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -981,7 +997,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 24,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -989,7 +1005,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 24,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -997,7 +1013,7 @@
           "name": "icon-telemetry",
           "prevSize": 24,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
@@ -1005,7 +1021,7 @@
           "name": "icon-timeline",
           "prevSize": 24,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -1013,7 +1029,7 @@
           "name": "icon-timer",
           "prevSize": 24,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -1021,7 +1037,7 @@
           "name": "icon-topic",
           "prevSize": 24,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -1029,7 +1045,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 24,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -1037,7 +1053,7 @@
           "name": "icon-summary-widget",
           "prevSize": 24,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -1045,7 +1061,7 @@
           "name": "icon-notebook",
           "prevSize": 24,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -1053,7 +1069,7 @@
           "name": "icon-tabs-view",
           "prevSize": 24,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -1061,7 +1077,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 24,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1069,7 +1085,7 @@
           "name": "icon-generator-sine",
           "prevSize": 24,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1077,7 +1093,7 @@
           "name": "icon-generator-event",
           "prevSize": 24,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1085,7 +1101,7 @@
           "name": "icon-gauge-v2",
           "prevSize": 24,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
@@ -1093,7 +1109,7 @@
           "name": "icon-spectra",
           "prevSize": 24,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
@@ -1101,7 +1117,7 @@
           "name": "icon-telemetry-spectra",
           "prevSize": 24,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
@@ -1109,7 +1125,7 @@
           "name": "icon-pushbutton",
           "prevSize": 24,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 174,
@@ -1117,7 +1133,7 @@
           "name": "icon-conditional",
           "prevSize": 24,
           "code": 60199,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 178,
@@ -1125,7 +1141,7 @@
           "name": "icon-condition-widget",
           "prevSize": 24,
           "code": 60200,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 180,
@@ -1133,7 +1149,7 @@
           "name": "icon-alphanumeric",
           "prevSize": 24,
           "code": 60201,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 183,
@@ -1141,7 +1157,7 @@
           "name": "icon-image-telemetry",
           "prevSize": 24,
           "code": 60202,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -2784,6 +2800,52 @@
           "grid": 16,
           "tags": [
             "icon-target"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 163,
+          "paths": [
+            "M45.2 658.8h229.6l-274.8 274.6 90.6 90.6 274.6-274.8v229.6h128v-448h-448v128z",
+            "M1024 90.6l-90.6-90.6-274.6 274.8v-229.6h-128v448h448v-128h-229.6l274.8-274.6z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-items-collapse"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 162,
+          "paths": [
+            "M448 896h-229.4l274.6-274.8-90.4-90.4-274.8 274.6v-229.4h-128v448h448v-128z",
+            "M530.8 402.8l90.4 90.4 274.8-274.6v229.4h128v-448h-448v128h229.4l-274.6 274.8z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-items-expand"
           ],
           "colorPermutations": {
             "12552552551": [
