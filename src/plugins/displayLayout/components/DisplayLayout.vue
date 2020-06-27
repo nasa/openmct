@@ -443,7 +443,27 @@ export default {
         initializeItems() {
             this.telemetryViewMap = {};
             this.objectViewMap = {};
-            this.layoutItems.forEach(this.trackItem);
+            let compositionKeys = this.getCompositionIdentifierKeys();
+            let self = this;
+            this.layoutItems.forEach(function(item){
+                let itemKey = self.openmct.objects.makeKeyString(item.identifier);
+                if(compositionKeys.indexOf(itemKey) === -1) {
+                    //orphaned item found; remove it
+                    self.removeFromConfiguration(itemKey);
+                }else{
+                    self.trackItem(item);
+                }
+            });
+        },
+        getCompositionIdentifierKeys() {
+            let composition = _.get(this.internalDomainObject, 'composition');
+            let keys = [];
+            composition.forEach(function(item) {
+                if(item && item.key) {
+                    keys.push(item.key);
+                }
+            });
+            return keys;
         },
         addChild(child) {
             let keyString = this.openmct.objects.makeKeyString(child.identifier);
