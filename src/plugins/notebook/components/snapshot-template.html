@@ -15,14 +15,32 @@
             <div class="l-browse-bar__snapshot-datetime">
                 SNAPSHOT {{formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss')}}
             </div>
+            <span class="c-button-set c-button-set--strip-h">
+                <button 
+                    class="c-button icon-download"
+                    title="Export This View's Data as PNG"
+                    @click="exportImage('png')"
+                >
+                    <span class="c-button__label">PNG</span>
+                </button>
+                <button 
+                    class="c-button"
+                    title="Export This View's Data as JPG"
+                    @click="exportImage('jpg')"
+                >
+                    <span class="c-button__label">JPG</span>
+                </button>
+            </span>
             <a class="l-browse-bar__annotate-button c-button icon-pencil" title="Annotate" @click="annotateSnapshot">
                 <span class="title-label">Annotate</span>
             </a>
         </div>
     </div>
 
-    <div class="c-notebook-snapshot__image"
-         :style="{ backgroundImage: 'url(' + embed.snapshot.src + ')' }"
+    <div
+        ref="snapshot-image"
+        class="c-notebook-snapshot__image"
+        :style="{ backgroundImage: 'url(' + embed.snapshot.src + ')' }"
     >
     </div>
 </div>
