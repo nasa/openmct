@@ -30,23 +30,39 @@ define([
 ) {
 
     // WebGL shader sources (for drawing plain colors)
-    var FRAGMENT_SHADER = [
-            "precision mediump float;",
-            "uniform vec4 uColor;",
-            "void main(void) {",
-            "gl_FragColor = uColor;",
-            "}"
-        ].join('\n'),
-        VERTEX_SHADER = [
-            "attribute vec2 aVertexPosition;",
-            "uniform vec2 uDimensions;",
-            "uniform vec2 uOrigin;",
-            "uniform float uPointSize;",
-            "void main(void) {",
-            "gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);",
-            "gl_PointSize = uPointSize;",
-            "}"
-        ].join('\n');
+    const FRAGMENT_SHADER = `
+        precision mediump float;
+        uniform vec4 uColor;
+        uniform int uShape;
+        
+        void main(void) {
+            gl_FragColor = uColor;
+            if (uShape == 2) {
+                float distance = length(2.0 * gl_PointCoord - 1.0);
+                if (distance > 1.0) {
+                    discard;
+                }
+            }
+        }
+    `;
+
+    const VERTEX_SHADER = `
+        attribute vec2 aVertexPosition;
+        uniform vec2 uDimensions;
+        uniform vec2 uOrigin;
+        uniform float uPointSize;
+        
+        void main(void) {
+            gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);
+            gl_PointSize = uPointSize;
+        }
+    `;
+
+    const SHAPE_MAP = {
+        none: 0,
+        point: 1,
+        circle: 2
+    };
 
     /**
      * Create a draw api utilizing WebGL.
@@ -90,6 +106,7 @@ define([
         this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
         this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
         this.gl.compileShader(this.vertexShader);
+
         this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
         this.gl.shaderSource(this.fragmentShader, FRAGMENT_SHADER);
         this.gl.compileShader(this.fragmentShader);
@@ -105,6 +122,7 @@ define([
         // shader programs (to pass values into shaders at draw-time)
         this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
+        this.uShape = this.gl.getUniformLocation(this.program, "uShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
@@ -135,7 +153,7 @@ define([
             ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
-    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points) {
+    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shapeCode) {
         if (this.isContextLost) {
             return;
         }
@@ -143,6 +161,7 @@ define([
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
+        this.gl.uniform1i(this.uShape, shapeCode)
         this.gl.drawArrays(drawType, 0, points);
     };
 
@@ -200,19 +219,19 @@ define([
         if (this.isContextLost) {
             return;
         }
-        this.doDraw(this.gl.LINE_STRIP, buf, color, points);
+        this.doDraw(this.gl.LINE_STRIP, buf, color, points, SHAPE_MAP.none);
     };
 
     /**
      * Draw the buffer as points.
      *
      */
-    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize) {
+    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
         if (this.isContextLost) {
             return;
         }
         this.gl.uniform1f(this.uPointSize, pointSize);
-        this.doDraw(this.gl.POINTS, buf, color, points);
+        this.doDraw(this.gl.POINTS, buf, color, points, SHAPE_MAP[shape]);
     };
 
     /**
@@ -230,7 +249,7 @@ define([
         }
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
-        ), color, 4);
+        ), color, 4, SHAPE_MAP.none);
     };
 
     DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {

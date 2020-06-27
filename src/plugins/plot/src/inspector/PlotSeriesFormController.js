@@ -103,7 +103,6 @@ define([
                         value: key
                     }
                 });
-            // console.log(this.$scope.markerShapeOptions);
         },
 
         fields: [
