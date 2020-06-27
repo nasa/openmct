@@ -17,7 +17,7 @@
         <button
             class="l-shell__head__collapse-button c-icon-button"
             :class="headExpanded ? 'l-shell__head__collapse-button--collapse' : 'l-shell__head__collapse-button--expand'"
-            :title="`Click to ${headExpanded ? 'collapse' : 'expand'}`"
+            :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
             @click="toggleShellHead"
         ></button>
         <notification-banner />

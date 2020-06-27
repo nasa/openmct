@@ -174,13 +174,13 @@
 
             &--collapse {
                 &:before {
-                    content: $glyph-icon-line-horz;
+                    content: $glyph-icon-items-collapse;
                 }
             }
 
             &--expand {
                 &:before {
-                    content: $glyph-icon-plus;
+                    content: $glyph-icon-items-expand;
                 }
             }
         }
