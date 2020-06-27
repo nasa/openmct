@@ -445,7 +445,7 @@ export default {
             this.objectViewMap = {};
             let compositionKeys = this.getCompositionIdentifierKeys();
             let self = this;
-            this.layoutItems.forEach(function(item){
+            this.layoutItems.forEach(function (item) {
                 let itemKey = self.openmct.objects.makeKeyString(item.identifier);
                 if(compositionKeys.indexOf(itemKey) === -1) {
                     //orphaned item found; remove it
@@ -458,7 +458,7 @@ export default {
         getCompositionIdentifierKeys() {
             let composition = _.get(this.internalDomainObject, 'composition');
             let keys = [];
-            composition.forEach(function(item) {
+            composition.forEach(function (item) {
                 if(item && item.key) {
                     keys.push(item.key);
                 }
