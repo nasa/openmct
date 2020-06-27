@@ -138,6 +138,8 @@
 .icon-arrow-nav-to-parent {  @include glyphBefore($glyph-icon-arrow-nav-to-parent); }
 .icon-crosshair-in-circle {  @include glyphBefore($glyph-icon-crosshair-in-circle); }
 .icon-target {  @include glyphBefore($glyph-icon-target); }
+.icon-items-collapse {  @include glyphBefore($glyph-icon-items-collapse); }
+.icon-items-expand {  @include glyphBefore($glyph-icon-items-expand); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
