@@ -2,6 +2,7 @@
 <div
     class="c-tree-and-search"
 >
+
     <div class="c-tree-and-search__search">
         <search
             ref="shell-search"
@@ -33,6 +34,8 @@
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
+                :emit-height="getChildHeight"
+                @emittedHeight="setChildHeight"
                 @resetTree="handleReset"
             />
             <!-- loading -->
@@ -95,7 +98,7 @@ import search from '../components/search.vue';
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const ROOT_PATH = '/browse/';
 const ITEM_BUFFER = 5;
-const MAIN_TREE_RECHECK_DELAY = 100;
+const RECHECK_DELAY = 100;
 const RESIZE_FIRE_DELAY_MS = 500;
 let windowResizeId = undefined,
     windowResizing = false;
@@ -114,6 +117,7 @@ export default {
         }
     },
     data() {
+        let isMobile = this.openmct.$injector.get('agentService');
         return {
             isLoading: false,
             searchValue: '',
@@ -130,7 +134,10 @@ export default {
             childrenHeight: 0,
             scrollable: undefined,
             pageThreshold: 50,
-            activeSearch: false
+            activeSearch: false,
+            getChildHeight: false,
+            settingChildrenHeight: false,
+            isMobile: isMobile.mobileName
         }
     },
     computed: {
@@ -185,7 +192,6 @@ export default {
         },
         searchResultItems() {
             this.setContainerHeight();
-            this.setChildrenHeight();
         }
     },
     mounted() {
@@ -211,38 +217,39 @@ export default {
     },
     methods: {
         updatevisibleItems() {
-            if (!this.updatingView) {
-                this.updatingView = true;
-                requestAnimationFrame(()=> {
-                    let start = 0,
-                        end = this.pageThreshold,
-                        allItemsCount = this.focusedItems.length;
-
-                    if (allItemsCount < this.pageThreshold) {
-                        end = allItemsCount;
-                    } else {
-                        let firstVisible = this.calculateFirstVisibleItem(),
-                            lastVisible = this.calculateLastVisibleItem(),
-                            totalVisible = lastVisible - firstVisible,
-                            numberOffscreen = this.pageThreshold - totalVisible;
-
-                        start = firstVisible - Math.floor(numberOffscreen / 2);
-                        end = lastVisible + Math.ceil(numberOffscreen / 2);
-
-                        if (start < 0) {
-                            start = 0;
-                            end = Math.min(this.pageThreshold, allItemsCount);
-                        } else if (end >= allItemsCount) {
-                            end = allItemsCount;
-                            start = end - this.pageThreshold + 1;
-                        }
-                    }
-                    this.itemOffset = start;
-                    this.visibleItems = this.focusedItems.slice(start, end);
-
-                    this.updatingView = false;
-                });
+            if (this.updatingView) {
+                return;
             }
+            this.updatingView = true;
+            requestAnimationFrame(()=> {
+                let start = 0,
+                    end = this.pageThreshold,
+                    allItemsCount = this.focusedItems.length;
+
+                if (allItemsCount < this.pageThreshold) {
+                    end = allItemsCount;
+                } else {
+                    let firstVisible = this.calculateFirstVisibleItem(),
+                        lastVisible = this.calculateLastVisibleItem(),
+                        totalVisible = lastVisible - firstVisible,
+                        numberOffscreen = this.pageThreshold - totalVisible;
+
+                    start = firstVisible - Math.floor(numberOffscreen / 2);
+                    end = lastVisible + Math.ceil(numberOffscreen / 2);
+
+                    if (start < 0) {
+                        start = 0;
+                        end = Math.min(this.pageThreshold, allItemsCount);
+                    } else if (end >= allItemsCount) {
+                        end = allItemsCount;
+                        start = end - this.pageThreshold + 1;
+                    }
+                }
+                this.itemOffset = start;
+                this.visibleItems = this.focusedItems.slice(start, end);
+
+                this.updatingView = false;
+            });
         },
         setContainerHeight() {
             this.$nextTick(() => {
@@ -250,23 +257,25 @@ export default {
                     mainTreeHeight = mainTree.clientHeight;
 
                 if(mainTreeHeight !== 0) {
-                    let ancestorsHeight = this.calculateAncestorHeight(),
-                        allChildrenHeight = this.calculateChildrenHeight();
+                    this.calculateChildHeight(() => {
+                        let ancestorsHeight = this.calculateAncestorHeight(),
+                            allChildrenHeight = this.calculateChildrenHeight();
 
-                    if(this.activeSearch) {
-                        ancestorsHeight = 0;
-                    }
-                    this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
+                        if(this.activeSearch) {
+                            ancestorsHeight = 0;
+                        }
+                        this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
 
-                    if(allChildrenHeight > this.availableContainerHeight) {
-                        this.setPageThreshold();
-                        this.noScroll = false;
-                    } else {
-                        this.noScroll = true;
-                    }
-                    this.updatevisibleItems();
+                        if(allChildrenHeight > this.availableContainerHeight) {
+                            this.setPageThreshold();
+                            this.noScroll = false;
+                        } else {
+                            this.noScroll = true;
+                        }
+                        this.updatevisibleItems();
+                    });
                 } else {
-                    setTimeout(this.setContainerHeight, MAIN_TREE_RECHECK_DELAY);
+                    window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
                 }
             });
         },
@@ -279,8 +288,9 @@ export default {
             return Math.ceil(scrollBottom / this.itemHeight);
         },
         calculateChildrenHeight() {
-            let childrenCount = this.focusedItems.length;
-            return this.itemHeight * childrenCount;
+            let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop'),
+                childrenCount = this.focusedItems.length;
+            return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
         },
         setChildrenHeight() {
             this.childrenHeight = this.calculateChildrenHeight();
@@ -289,11 +299,47 @@ export default {
             let ancestorCount = this.ancestors.length;
             return this.itemHeight * ancestorCount;
         },
+        calculateChildHeight(callback) {
+            if(callback) {
+                this.afterChildHeight = callback;
+            }
+            if(!this.activeSearch) {
+                this.getChildHeight = true;
+            } else if(this.afterChildHeight) {
+                // keep the height from before
+                this.afterChildHeight();
+                delete this.afterChildHeight;
+            }
+        },
+        setChildHeight(item) {
+            if(!this.getChildHeight || this.settingChildrenHeight) {
+                return;
+            }
+
+            this.settingChildrenHeight = true;
+            if(this.isMobile) {
+                item = item.children[0];
+            }
+            this.$nextTick(() => {
+                let topMargin = this.getElementStyleValue(item, 'marginTop'),
+                    bottomMargin = this.getElementStyleValue(item, 'marginBottom'),
+                    totalVerticalMargin = topMargin + bottomMargin;
+
+                this.itemHeight = item.clientHeight + totalVerticalMargin;
+                this.setChildrenHeight();
+                if(this.afterChildHeight) {
+                    this.afterChildHeight();
+                    delete this.afterChildHeight;
+                }
+                this.getChildHeight = false;
+                this.settingChildrenHeight = false;
+            });
+        },
         setPageThreshold() {
             let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
             // all items haven't loaded yet (nextTick not working for this)
             if(threshold === ITEM_BUFFER) {
-                setTimeout(this.setPageThreshold, 100);
+                window.setTimeout(this.setPageThreshold, RECHECK_DELAY);
             } else {
                 this.pageThreshold = threshold;
             }
@@ -342,11 +388,11 @@ export default {
                 .filter(c => c.id !== removeId);
         },
         finishLoading() {
-            this.isLoading = false;
             if(this.jumpPath) {
                 this.jumpToPath();
             }
             this.autoScroll();
+            this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
             let nodes = this.jumpPath.split('/'),
@@ -373,12 +419,17 @@ export default {
             }
         },
         autoScroll() {
-            if(this.scrollTo) {
+            if(!this.scrollTo) {
+                return;
+            }
+            if(this.$refs.scrollable) {
                 let indexOfScroll = this.indexOfItemById(this.scrollTo);
                 this.$nextTick(() => {
                     this.$refs.scrollable.scrollTop = indexOfScroll * this.itemHeight;
                 });
                 this.scrollTo = undefined;
+            } else {
+                window.setTimeout(this.autoScroll, RECHECK_DELAY);
             }
         },
         indexOfItemById(id) {
@@ -389,11 +440,11 @@ export default {
             }
         },
         getSearchResults() {
-            this.searchService.query(this.searchValue).then(children => {
-                this.searchResultItems = children.hits.map(child => {
+            this.searchService.query(this.searchValue).then(results => {
+                this.searchResultItems = results.hits.map(result => {
 
-                    let context = child.object.getCapability('context'),
-                        object = child.object.useCapability('adapter'),
+                    let context = result.object.getCapability('context'),
+                        object = result.object.useCapability('adapter'),
                         objectPath = [],
                         navigateToParent;
 
@@ -430,7 +481,7 @@ export default {
             this.activeSearch = false;
             this.$refs.scrollable.scrollTop = 0;
             this.setContainerHeight();
-            this.setChildrenHeight();
+            // this.setChildrenHeight();
         },
         handleReset(node) {
             this.childrenSlideClass = 'slide-right';
@@ -439,13 +490,14 @@ export default {
             this.setCurrentNavigatedPath();
         },
         handleExpanded(node) {
-            if(!this.activeSearch) {
-                this.childrenSlideClass = 'slide-left';
-                let newParent = this.buildTreeItem(node);
-                this.ancestors.push(newParent);
-                this.getAllChildren(newParent);
-                this.setCurrentNavigatedPath();
+            if(this.activeSearch) {
+                return;
             }
+            this.childrenSlideClass = 'slide-left';
+            let newParent = this.buildTreeItem(node);
+            this.ancestors.push(newParent);
+            this.getAllChildren(newParent);
+            this.setCurrentNavigatedPath();
         },
         getSavedNavigatedPath() {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
@@ -498,8 +550,12 @@ export default {
         childrenIn(el, done) {
             // more reliable way then nextTick
             this.setContainerHeight();
-            this.setChildrenHeight();
             done();
+        },
+        getElementStyleValue(el, style) {
+            let styleString = window.getComputedStyle(el)[style],
+                index = styleString.indexOf('px');
+            return Number(styleString.slice(0, index));
         }
     }
 }

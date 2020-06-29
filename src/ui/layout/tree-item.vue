@@ -1,5 +1,6 @@
 <template>
 <li
+    ref="me"
     :style="{
         'top': virtualScroll ? itemTop : 'auto',
         'position': virtualScroll ? 'absolute' : 'relative'
@@ -82,6 +83,10 @@ export default {
         virtualScroll: {
             type: Boolean,
             default: false
+        },
+        emitHeight: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -108,6 +113,11 @@ export default {
     watch: {
         expanded() {
             this.$emit('expanded', this.domainObject);
+        },
+        emitHeight() {
+            this.$nextTick(() => {
+                this.$emit('emittedHeight', this.$refs.me);
+            });
         }
     },
     mounted() {
@@ -124,7 +134,9 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
-        console.log(this.navigateToPath, this.openmct.router.currentLocation.path);
+        if(this.emitHeight) {
+            this.$emit('emittedHeight', this.$refs.me);
+        }
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
