@@ -22,11 +22,11 @@
 
 define([
     './PlotModelFormController',
-    '../draw/DrawShape2D.js',
+    '../draw/Shapes.js',
     'lodash'
 ], function (
     PlotModelFormController,
-    drawShape,
+    SHAPES,
     _
 ) {
 
@@ -95,8 +95,7 @@ define([
                         value: o.key
                     };
                 });
-            // console.log(Object.entries(drawShape));
-            this.$scope.markerShapeOptions = Object.entries(drawShape)
+            this.$scope.markerShapeOptions = Object.entries(SHAPES)
                 .map(([key, obj]) => {
                     return {
                         name: obj.label,

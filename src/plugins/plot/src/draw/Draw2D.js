@@ -24,11 +24,11 @@
 define([
     'EventEmitter',
     '../lib/eventHelpers',
-    './DrawShape2D'
+    './Shapes'
 ], function (
     EventEmitter,
     eventHelpers,
-    drawShape2d
+    SHAPES
 ) {
 
     /**
@@ -124,14 +124,14 @@ define([
         color,
         points,
         pointSize,
-        shape = 'cross'
+        shape
     ) {
-        const drawShape = drawShape2d[shape].method.bind(this);
+        const drawC2DShape = SHAPES[shape].drawC2D.bind(this);
 
         this.setColor(color);
 
         for (let i = 0; i < points; i++) {
-            drawShape(
+            drawC2DShape(
                 this.x(buf[i * 2]),
                 this.y(buf[i * 2 + 1]),
                 pointSize

@@ -23,10 +23,12 @@
 
 define([
     'EventEmitter',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    './Shapes'
 ], function (
     EventEmitter,
-    eventHelpers
+    eventHelpers,
+    SHAPES
 ) {
 
     // WebGL shader sources (for drawing plain colors)
@@ -57,12 +59,6 @@ define([
             gl_PointSize = uPointSize;
         }
     `;
-
-    const SHAPE_MAP = {
-        none: 0,
-        point: 1,
-        circle: 2
-    };
 
     /**
      * Create a draw api utilizing WebGL.
@@ -219,7 +215,7 @@ define([
         if (this.isContextLost) {
             return;
         }
-        this.doDraw(this.gl.LINE_STRIP, buf, color, points, SHAPE_MAP.none);
+        this.doDraw(this.gl.LINE_STRIP, buf, color, points);
     };
 
     /**
@@ -231,7 +227,7 @@ define([
             return;
         }
         this.gl.uniform1f(this.uPointSize, pointSize);
-        this.doDraw(this.gl.POINTS, buf, color, points, SHAPE_MAP[shape]);
+        this.doDraw(this.gl.POINTS, buf, color, points, SHAPES[shape].drawWebGL);
     };
 
     /**
@@ -249,7 +245,7 @@ define([
         }
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
-        ), color, 4, SHAPE_MAP.none);
+        ), color, 4);
     };
 
     DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {
