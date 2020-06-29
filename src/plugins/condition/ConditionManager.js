@@ -317,6 +317,10 @@ export default class ConditionManager extends EventEmitter {
             condition.getResult(normalizedDatum);
         });
 
+        this.updateCurrentCondition(timestamp);
+    }
+
+    updateCurrentCondition(timestamp) {
         const currentCondition = this.getCurrentCondition();
 
         this.emit('conditionSetResultUpdated',
