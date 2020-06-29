@@ -54,7 +54,8 @@ define([
     './themes/maelstrom',
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
-    './notificationIndicator/plugin'
+    './notificationIndicator/plugin',
+    './newFolderAction/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -89,7 +90,8 @@ define([
     Maelstrom,
     Snow,
     URLTimeSettingsSynchronizer,
-    NotificationIndicator
+    NotificationIndicator,
+    NewFolderAction
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -200,6 +202,7 @@ define([
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
+    plugins.NewFolderAction = NewFolderAction.default;
 
     return plugins;
 });
