@@ -102,7 +102,7 @@ export default {
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            let intSize = parseInt(size.substr(0, size.length - 2));
+            let intSize = parseInt(size.substr(0, size.length - 2), 10);
             if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
                 this.dragCollapse = true;
                 this.end();

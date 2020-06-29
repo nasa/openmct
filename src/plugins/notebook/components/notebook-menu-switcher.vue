@@ -80,7 +80,7 @@ export default {
                 if (domainObject.location) {
                     const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
 
-                    notebookTypes.push({
+                    await notebookTypes.push({
                         cssClass: 'icon-notebook',
                         name: `Save to Notebook ${defaultPath}`,
                         type: NOTEBOOK_DEFAULT
@@ -88,7 +88,7 @@ export default {
                 }
             }
 
-            notebookTypes.push({
+            await notebookTypes.push({
                 cssClass: 'icon-notebook',
                 name: 'Save to Notebook Snapshots',
                 type: NOTEBOOK_SNAPSHOT
