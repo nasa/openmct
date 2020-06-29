@@ -27,13 +27,13 @@
     >
         {{ condition.configuration.name }}
     </span>
-    <span class="c-style__condition-desc__text"
-          v-if="!condition.isDefault"
+    <span v-if="!condition.isDefault"
+          class="c-style__condition-desc__text"
     >
         {{ description }}
     </span>
-    <span class="c-style__condition-desc__text"
-          v-else
+    <span v-else
+          class="c-style__condition-desc__text"
     >
         Match if no other condition is matched
     </span>
