@@ -24,6 +24,7 @@
     :item="item"
     :grid-size="gridSize"
     :title="domainObject && domainObject.name"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
@@ -94,6 +95,10 @@ export default {
         initSelect: Boolean,
         index: {
             type: Number,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
             required: true
         }
     },

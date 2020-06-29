@@ -19,12 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-if="domainObject.getCapability('editor').inEditContext()">
+<div ng-if="!domainObject.model.locked && domainObject.getCapability('editor').inEditContext()">
     <mct-representation key="'plot-options-edit'"
         mct-object="domainObject">
     </mct-representation>
 </div>
-<div ng-if="!domainObject.getCapability('editor').inEditContext()">
+<div ng-if="domainObject.model.locked || !domainObject.getCapability('editor').inEditContext()">
     <mct-representation key="'plot-options-browse'"
         mct-object="domainObject">
     </mct-representation>
