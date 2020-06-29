@@ -149,10 +149,13 @@ define([
             ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
-    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shapeCode) {
+    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
         if (this.isContextLost) {
             return;
         }
+
+        const shapeCode = SHAPES[shape] ? SHAPES[shape].drawWebGL : 0;
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
@@ -227,7 +230,7 @@ define([
             return;
         }
         this.gl.uniform1f(this.uPointSize, pointSize);
-        this.doDraw(this.gl.POINTS, buf, color, points, SHAPES[shape].drawWebGL);
+        this.doDraw(this.gl.POINTS, buf, color, points, shape);
     };
 
     /**
