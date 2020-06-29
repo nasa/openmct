@@ -50,10 +50,10 @@
             collapsable
         >
             <button
-                    slot="controls"
-                    class="c-icon-button l-shell__sync-tree-button icon-target"
-                    title="Show selected item in tree"
-                    @click="handleSyncTreeNavigation"
+                slot="controls"
+                class="c-icon-button l-shell__sync-tree-button icon-target"
+                title="Show selected item in tree"
+                @click="handleSyncTreeNavigation"
             >
             </button>
             <mct-tree

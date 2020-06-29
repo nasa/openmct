@@ -544,7 +544,7 @@ export default {
         emptyStyles() {
             let offset = ((this.ancestors.length + 1) * 10);
             return {
-                paddingLeft: offset + 'px',
+                paddingLeft: offset + 'px'
             };
         },
         childrenIn(el, done) {
