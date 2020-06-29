@@ -391,66 +391,70 @@ describe('the plugin', function () {
     });
 
     describe('the condition check for staleness', () => {
-        const conditionSetDomainObject = {
-            "configuration":{
-                "conditionTestData":[
+        let conditionSetDomainObject;
+
+        beforeEach(()=>{
+            conditionSetDomainObject = {
+                "configuration":{
+                    "conditionTestData":[
+                        {
+                            "telemetry":"",
+                            "metadata":"",
+                            "input":""
+                        }
+                    ],
+                    "conditionCollection":[
+                        {
+                            "id":"39584410-cbf9-499e-96dc-76f27e69885d",
+                            "configuration":{
+                                "name":"Unnamed Condition",
+                                "output":"Any stale telemetry",
+                                "trigger":"all",
+                                "criteria":[
+                                    {
+                                        "id":"35400132-63b0-425c-ac30-8197df7d5862",
+                                        "telemetry":"any",
+                                        "operation":"isStale",
+                                        "input":[
+                                            "1"
+                                        ],
+                                        "metadata":"dataReceived"
+                                    }
+                                ]
+                            },
+                            "summary":"Match if all criteria are met: Any telemetry is stale after 5 seconds"
+                        },
+                        {
+                            "isDefault":true,
+                            "id":"2532d90a-e0d6-4935-b546-3123522da2de",
+                            "configuration":{
+                                "name":"Default",
+                                "output":"Default",
+                                "trigger":"all",
+                                "criteria":[
+                                ]
+                            },
+                            "summary":""
+                        }
+                    ]
+                },
+                "composition":[
                     {
-                        "telemetry":"",
-                        "metadata":"",
-                        "input":""
+                        "namespace":"",
+                        "key":"test-object"
                     }
                 ],
-                "conditionCollection":[
-                    {
-                        "id":"39584410-cbf9-499e-96dc-76f27e69885d",
-                        "configuration":{
-                            "name":"Unnamed Condition",
-                            "output":"Any stale telemetry",
-                            "trigger":"all",
-                            "criteria":[
-                                {
-                                    "id":"35400132-63b0-425c-ac30-8197df7d5862",
-                                    "telemetry":"any",
-                                    "operation":"isStale",
-                                    "input":[
-                                        "1"
-                                    ],
-                                    "metadata":"dataReceived"
-                                }
-                            ]
-                        },
-                        "summary":"Match if all criteria are met: Any telemetry is stale after 5 seconds"
-                    },
-                    {
-                        "isDefault":true,
-                        "id":"2532d90a-e0d6-4935-b546-3123522da2de",
-                        "configuration":{
-                            "name":"Default",
-                            "output":"Default",
-                            "trigger":"all",
-                            "criteria":[
-                            ]
-                        },
-                        "summary":""
-                    }
-                ]
-            },
-            "composition":[
-                {
+                "telemetry":{
+                },
+                "name":"Condition Set",
+                "type":"conditionSet",
+                "identifier":{
                     "namespace":"",
-                    "key":"test-object"
+                    "key":"cf4456a9-296a-4e6b-b182-62ed29cd15b9"
                 }
-            ],
-            "telemetry":{
-            },
-            "name":"Condition Set",
-            "type":"conditionSet",
-            "identifier":{
-                "namespace":"",
-                "key":"cf4456a9-296a-4e6b-b182-62ed29cd15b9"
-            }
 
-        };
+            };
+        });
 
         it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
 
