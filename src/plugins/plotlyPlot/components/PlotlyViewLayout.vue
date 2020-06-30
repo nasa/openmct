@@ -17,7 +17,8 @@ export default {
             outstandingRequests: 0,
             subscriptions: {},
             plotComposition: undefined,
-            timestampKey: this.openmct.time.timeSystem().key
+            timestampKey: this.openmct.time.timeSystem().key,
+            yAxisLabel: ''
         }
     },
     computed: {
@@ -199,7 +200,20 @@ export default {
             this.traceIndices[keyString] = Object.keys(this.traceIndices).length;
             this.recalculateTraceIndices();
 
-            Plotly.addTraces(this.plotElement, {type: "scattergl", x: [], y: []});
+            Plotly.addTraces(this.plotElement, {
+                x: [],
+                y: [],
+                name: telemetryObject.name,
+                type: "scattergl",
+                mode: 'lines+markers',
+                marker: {
+                    size: 5
+                },
+                line: {
+                    shape: 'linear',
+                    width: 1.5
+                }
+            });
 
             const metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
@@ -210,7 +224,10 @@ export default {
             }, {});
             const limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             const valueFormatter = this.openmct.telemetry.getValueFormatter(this.openmct.telemetry.getMetadata(telemetryObject).valuesForHints(['range'])[0]);
-
+            let layout_update = {
+                yaxis: {title: valueFormatter.valueMetadata.name}
+            };
+            Plotly.update(this.plotElement, {}, layout_update)
             this.columnMaps[keyString] = columnMap;
             this.limitEvaluators[keyString] = limitEvaluator;
 
