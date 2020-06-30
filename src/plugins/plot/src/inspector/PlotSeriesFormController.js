@@ -22,10 +22,12 @@
 
 define([
     './PlotModelFormController',
-    '../draw/Shapes.js',
+    '../draw/LineStyles',
+    '../draw/Shapes',
     'lodash'
 ], function (
     PlotModelFormController,
+    LINE_STYLES,
     SHAPES,
     _
 ) {
@@ -95,12 +97,19 @@ define([
                         value: o.key
                     };
                 });
+            this.$scope.lineStyleOptions = Object.entries(LINE_STYLES)
+                .map(([key, obj]) => {
+                    return {
+                        name: obj.label,
+                        value: key
+                    };
+                });
             this.$scope.markerShapeOptions = Object.entries(SHAPES)
                 .map(([key, obj]) => {
                     return {
                         name: obj.label,
                         value: key
-                    }
+                    };
                 });
         },
 
@@ -112,6 +121,10 @@ define([
             {
                 modelProp: 'interpolate',
                 objectPath: dynamicPathForKey('interpolate')
+            },
+            {
+                modelProp: 'lineStyle',
+                objectPath: dynamicPathForKey('lineStyle')
             },
             {
                 modelProp: 'markers',

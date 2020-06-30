@@ -61,6 +61,21 @@
                         </select>
                     </div>
                 </li>
+                <li class="grid-row" ng-show="form.interpolate !== 'none'">
+                    <div class="grid-cell label"
+                         title="The line style for this series.">Line Style</div>
+                    <div class="grid-cell value">
+                        <select ng-model="form.lineStyle">
+                            <option
+                                ng-repeat="option in lineStyleOptions"
+                                value="{{ option.value }}"
+                                ng-selected="option.value === form.lineStyle"
+                            >
+                                {{ option.name }}
+                            </option>
+                        </select>
+                    </div>
+                </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="Whether markers are displayed.">Markers</div>

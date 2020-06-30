@@ -55,6 +55,7 @@ define([
      * `interpolate`: interpolate method, either `undefined` (no interpolation),
      *                `linear` (points are connected via straight lines), or
      *                `stepAfter` (points are connected by steps).
+     * `lineStyle`: string, style of line.
      * `markers`: boolean, whether or not this series should render with markers.
      * `markerShape`: string, shape of markers.
      * `markerSize`: number, size in pixels of markers for this series.
@@ -104,7 +105,8 @@ define([
                 markers: true,
                 markerShape: 'point',
                 markerSize: 2.0,
-                alarmMarkers: true
+                alarmMarkers: true,
+                lineStyle: 'solid'
             };
         },
 
