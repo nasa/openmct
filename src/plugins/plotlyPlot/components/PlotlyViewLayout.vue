@@ -77,6 +77,17 @@ export default {
             let subscription = this.subscribe(telemetryObject);
             this.subscriptions[keyString] = subscription;
         },
+        removeTelemetryObject(identifier) {
+            const keyString = this.openmct.objects.makeKeyString(identifier);
+            const index = this.telemetryObjects.findIndex(object => identifier.key === object.identifier.key);
+            this.unsubscribe(keyString);
+            this.removeTraceForObject(this.telemetryObjects[index]);
+            this.telemetryObjects = this.telemetryObjects.filter(object => !(identifier.key === object.identifier.key));
+            if (!this.telemetryObjects.length) {
+                Plotly.purge(this.plotElement);
+                this.createPlot();
+            }
+        },
         updateDomain(bounds, isTick) {
             let newDomain = {
                 'xaxis.range': [
@@ -114,6 +125,10 @@ export default {
                 let newRow = new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator);
                 this.boundedRows[keyString].add(newRow);
             });
+        },
+        unsubscribe(keyString) {
+            this.subscriptions[keyString]();
+            delete this.subscriptions[keyString];
         },
         createPlot() {
             let timeSystem = this.openmct.time.timeSystem();
