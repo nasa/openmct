@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    './PlotModelFormController',
-    'lodash'
+    './PlotModelFormController'
 ], function (
-    PlotModelFormController,
-    _
+    PlotModelFormController
 ) {
 
     var PlotYAxisFormController = PlotModelFormController.extend({

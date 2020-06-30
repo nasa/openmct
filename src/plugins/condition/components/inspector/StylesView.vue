@@ -37,12 +37,13 @@
             >
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               :mixed-styles="mixedStyles"
                               @persist="updateStaticStyle"
                 />
             </div>
             <button
+                v-if="allowEditing"
                 id="addConditionSet"
                 class="c-button c-button--major c-toggle-styling-button labeled"
                 @click="addConditionSet"
@@ -63,7 +64,7 @@
             >
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </a>
-            <template v-if="isEditing">
+            <template v-if="allowEditing">
                 <button
                     id="changeConditionSet"
                     class="c-button labeled"
@@ -96,7 +97,7 @@
                 />
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="conditionStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               @persist="updateConditionalStyle"
                 />
             </div>
@@ -137,7 +138,13 @@ export default {
             conditions: undefined,
             conditionsLoaded: false,
             navigateToPath: '',
-            selectedConditionId: ''
+            selectedConditionId: '',
+            locked: false
+        }
+    },
+    computed: {
+        allowEditing() {
+            return this.isEditing && !this.locked;
         }
     },
     destroyed() {
@@ -224,7 +231,13 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
+                const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
+
+                if (layoutDomainObject && layoutDomainObject.locked) {
+                    this.locked = true;
+                }
+
                 if (!isChildItem) {
                     domainObject = item;
                     itemStyle = getApplicableStylesForItem(item);
