@@ -47,8 +47,8 @@ define([], function () {
 
         var structure = [];
 
-        providers.map(function (provider) {
-            provider.toolbar(selection).forEach(function (item) {
+        providers.map(provider => {
+            return provider.toolbar(selection).forEach(function (item) {
                 structure.push(item);
             });
         });

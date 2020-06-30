@@ -218,8 +218,9 @@ define([
 
         if (!point) {
             this.$scope.highlights = [];
-            this.$scope.series.map(function (series) {
+            this.$scope.series.map(series => {
                 delete series.closest;
+                return series;
             });
         } else {
             this.$scope.highlights = this.$scope.series

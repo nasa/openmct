@@ -117,6 +117,7 @@ define(
         Selection.prototype.setSelectionStyles = function (selectable) {
             this.selected.map(selectionPath => {
                 this.removeSelectionAttributes(selectionPath);
+                return this.selected;
             });
             this.addSelectionAttributes(selectable);
         };

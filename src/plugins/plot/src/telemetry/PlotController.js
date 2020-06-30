@@ -178,7 +178,7 @@ define([
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
-        this.config.series.map(function (plotSeries) {
+        this.config.series.map(plotSeries => {
             this.startLoading();
             plotSeries.load({
                 size: this.$element[0].offsetWidth,
@@ -189,6 +189,7 @@ define([
             if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);
             }
+            return plotSeries;
         }, this);
     };
 

@@ -177,6 +177,7 @@ export default {
                 } else {
                     values[key].push(this.getPropertyValue(domainObject, toolbarItem, undefined, key));
                 }
+                return toolbarItem.formKeys;
             });
 
             for (const key in values) {
@@ -232,6 +233,7 @@ export default {
                             }
                         });
                     }
+                    return this.structure;
                 });
             } else {
                 if (item.applicableSelectedItems) {
