@@ -39,17 +39,21 @@ export default {
         this.boundedRows = {};
         this.limitEvaluators = {};
         this.columnMaps = {};
-        this.traceIndices = [];
         this.drawBuffers = {};
         this.telemetryObjects = [];
         this.subscriptions = {};
+        this.boundedRowsUnlisteners = {};
+        this.traceIndices = {};
     },
 
     destroyed() {
-        Object.keys(this.subscriptions)
-            .forEach(subscription => this.unsubscribe(subscription));
+        Object.values(this.subscriptions)
+            .forEach(subscription => subscription());
         this.openmct.time.off('bounds', this.updateDomain);
         this.openmct.time.off('bounds', this.updateData);
+        Object.values(this.boundedRowsUnlisteners).forEach((unlisteners) => {
+            unlisteners.forEach(unlistener => unlistener());
+        });
     },
     methods: {
         loadComposition() {
@@ -59,6 +63,7 @@ export default {
             this.plotComposition.load()
         },
         addTelemetryObject(telemetryObject) {
+            this.telemetryObjects.push(telemetryObject);
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.addTraceForObject(telemetryObject);
 
@@ -82,10 +87,7 @@ export default {
             }
         },
         clearData() {
-            let blankTraces = this.traceIndex.map(() => {
-                return {x: [], y: []}
-            });
-            Plotly.update(this.plotElement, blankTraces, undefined, this.traceIndices);
+            this.telemetryObjects.forEach(telemetryObject => this.resetTraceForObject(telemetryObject));
         },
         requestData(telemetryObject) {
             return this.openmct.telemetry.request(telemetryObject)
@@ -171,12 +173,28 @@ export default {
             );
 
         },
+        resetTraceForObject(telemetryObject) {
+            this.removeTraceForObject(telemetryObject);
+            this.addTraceForObject(telemetryObject);
+        },
+        removeTraceForObject(telemetryObject) {
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let index = this.traceIndices[keyString];
+            Plotly.deleteTraces(this.plotElement, index);
+
+            delete this.traceIndices[keyString];
+            this.recalculateTraceIndices();
+
+            this.boundedRowsUnlisteners[keyString].forEach((unlistener) => unlistener());
+        },
         addTraceForObject(telemetryObject) {
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let boundedRows = new BoundedTableRowCollection(this.openmct);
             this.boundedRows[keyString] = boundedRows;
-            let index = this.traceIndices.length;
-            this.traceIndices.push(keyString);
+
+            this.traceIndices[keyString] = Object.keys(this.traceIndices).length;
+            this.recalculateTraceIndices();
+
             Plotly.addTraces(this.plotElement, {type: "scattergl", x: [], y: []});
 
             const metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
@@ -194,14 +212,14 @@ export default {
 
             let timeSystemKey = this.openmct.time.timeSystem().key;
             let drawBuffer = {
-                index,
+                keyString,
                 x: [],
                 y: []
             };
 
             this.drawBuffers[keyString] = drawBuffer;
 
-            boundedRows.on('add', (rows) => {
+            const addRow = (rows) => {
                 if (rows instanceof Array) {
                     rows.forEach(row => {
                         drawBuffer.x.push(row.datum[timeSystemKey]);
@@ -212,11 +230,22 @@ export default {
                     drawBuffer.y.push(valueFormatter.format(rows.datum));
                 }
                 this.scheduleDraw();
-            });
+            }
 
+            boundedRows.on('add', addRow);
+            this.boundedRowsUnlisteners[keyString] = [];
             // boundedRows.on('remove', () => {
             //     console.log("removed rows");
             // });
+
+            this.boundedRowsUnlisteners[keyString].push(() => {
+                boundedRows.off('add', addRow);
+            })
+        },
+        recalculateTraceIndices() {
+            Object.keys(this.traceIndices).forEach((key, indexOfKey) => {
+                this.traceIndices[key] = indexOfKey;
+            });
         },
         scheduleDraw() {
             if (!this.drawing) {
@@ -228,7 +257,7 @@ export default {
                     Object.values(this.drawBuffers).forEach((drawBuffer) => {
                         dataForXAxes.push(drawBuffer.x);
                         dataForYAxes.push(drawBuffer.y);
-                        traceIndices.push(drawBuffer.index);
+                        traceIndices.push(this.traceIndices[drawBuffer.keyString]);
                         drawBuffer.x = [];
                         drawBuffer.y = [];
                     });
