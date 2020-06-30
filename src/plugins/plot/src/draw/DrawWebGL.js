@@ -213,8 +213,9 @@ define([
      *        the line, as an RGBA color where each element
      *        is in the range of 0.0-1.0
      * @param {number} points the number of points to draw
+     * @param {string} style the line style
      */
-    DrawWebGL.prototype.drawLine = function (buf, color, points) {
+    DrawWebGL.prototype.drawLine = function (buf, color, points, style) {
         if (this.isContextLost) {
             return;
         }

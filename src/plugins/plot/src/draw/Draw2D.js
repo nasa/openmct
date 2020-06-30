@@ -24,10 +24,12 @@
 define([
     'EventEmitter',
     '../lib/eventHelpers',
+    './LineStyles',
     './Shapes'
 ], function (
     EventEmitter,
     eventHelpers,
+    LINE_STYLES,
     SHAPES
 ) {
 
@@ -86,9 +88,8 @@ define([
         this.origin = newOrigin;
     };
 
-    Draw2D.prototype.drawLine = function (buf, color, points) {
-        var i;
-
+    Draw2D.prototype.drawLine = function (buf, color, points, style) {
+        const pattern = LINE_STYLES[style].pattern;
         this.setColor(color);
 
         // Configure context to draw two-pixel-thick lines
@@ -97,11 +98,12 @@ define([
         // Start a new path...
         if (buf.length > 1) {
             this.c2d.beginPath();
+            this.c2d.setLineDash(pattern);
             this.c2d.moveTo(this.x(buf[0]), this.y(buf[1]));
         }
 
         // ...and add points to it...
-        for (i = 2; i < points * 2; i = i + 2) {
+        for (let i = 2; i < points * 2; i = i + 2) {
             this.c2d.lineTo(this.x(buf[i]), this.y(buf[i + 1]));
         }
 

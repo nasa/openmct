@@ -380,7 +380,8 @@ function (
         this.drawAPI.drawLine(
             chartElement.getBuffer(),
             chartElement.color().asRGBAArray(),
-            chartElement.count
+            chartElement.count,
+            chartElement.series.get('lineStyle')
         );
     };
 

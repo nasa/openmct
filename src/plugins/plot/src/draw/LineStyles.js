@@ -24,18 +24,25 @@ define([], function () {
     /**
      * @label string (required) display name of shape
      * @drawWebGL integer (unique, required) index provided to WebGL Fragment Shader
-     * @drawC2D function (required) canvas2d draw function
+     * @pattern array
      */
     const LINE_STYLES = {
         solid: {
-            label: 'Solid'
+            label: 'Solid',
+            pattern: []
         },
         dot: {
-            label: 'Dot'
+            label: 'Dot',
+            pattern: [2, 2]
         },
         dash: {
-            label: 'Dash'
+            label: 'Dash',
+            pattern: [5, 2]
         }
+        // dotDashDot: {
+        //     label: 'Dot Dash Dot',
+        //     pattern: [5, 2, 2]
+        // }
     };
 
     return LINE_STYLES;
