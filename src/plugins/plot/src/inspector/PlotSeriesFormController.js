@@ -100,7 +100,7 @@ define([
                     return {
                         name: obj.label,
                         value: key
-                    }
+                    };
                 });
         },
 
