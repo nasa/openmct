@@ -123,7 +123,7 @@ module.exports = {
         // https://eslint.org/docs/rules/array-callback-return
         "array-callback-return": "error",
         // https://eslint.org/docs/rules/no-invalid-this
-        // "no-invalid-this": "error", // Believe this one actually surfaces some bugs
+        "no-invalid-this": "error", // Believe this one actually surfaces some bugs
         // https://eslint.org/docs/rules/func-style
         // "func-style": ["error", "declaration"],
         // https://eslint.org/docs/rules/no-var
