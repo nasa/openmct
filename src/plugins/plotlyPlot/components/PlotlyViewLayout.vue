@@ -33,6 +33,7 @@ export default {
         this.plotElement = document.querySelector('.js-plotly-container');
         this.openmct.time.on('bounds', this.updateDomain);
         this.openmct.time.on('bounds', this.updateData);
+
         this.loadComposition();
         this.createPlot();
 
@@ -49,11 +50,16 @@ export default {
     destroyed() {
         Object.values(this.subscriptions)
             .forEach(subscription => subscription());
+
         this.openmct.time.off('bounds', this.updateDomain);
         this.openmct.time.off('bounds', this.updateData);
+
         Object.values(this.boundedRowsUnlisteners).forEach((unlisteners) => {
             unlisteners.forEach(unlistener => unlistener());
         });
+
+        this.plotComposition.off('add', this.addTelemetryObject);
+        this.plotComposition.off('remove', this.removeTelemetryObject);
     },
     methods: {
         loadComposition() {
