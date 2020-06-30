@@ -432,6 +432,7 @@ mct-plot {
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
         flex: 1 1 auto;
+        overflow: auto; // Prevents collapsed legend from forcing scrollbars on higher parent containers
     }
 
     &__view-control {
