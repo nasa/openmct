@@ -84,6 +84,7 @@
 .icon-flag {  @include glyphBefore($glyph-icon-flag); }
 .icon-eye-disabled {  @include glyphBefore($glyph-icon-eye-disabled); }
 .icon-notebook-page {  @include glyphBefore($glyph-icon-notebook-page); }
+.icon-unlocked {  @include glyphBefore($glyph-icon-unlocked); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -134,6 +135,9 @@
 .icon-font-size {  @include glyphBefore($glyph-icon-font-size); }
 .icon-clear-data {  @include glyphBefore($glyph-icon-clear-data); }
 .icon-history {  @include glyphBefore($glyph-icon-history); }
+.icon-arrow-nav-to-parent {  @include glyphBefore($glyph-icon-arrow-nav-to-parent); }
+.icon-crosshair-in-circle {  @include glyphBefore($glyph-icon-crosshair-in-circle); }
+.icon-target {  @include glyphBefore($glyph-icon-target); }
 .icon-activity {  @include glyphBefore($glyph-icon-activity); }
 .icon-activity-mode {  @include glyphBefore($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyphBefore($glyph-icon-autoflow-tabular); }
@@ -175,6 +179,8 @@
 .icon-command {  @include glyphBefore($glyph-icon-command); }
 .icon-conditional {  @include glyphBefore($glyph-icon-conditional); }
 .icon-condition-widget {  @include glyphBefore($glyph-icon-condition-widget); }
+.icon-alphanumeric {  @include glyphBefore($glyph-icon-alphanumeric); }
+.icon-image-telemetry {  @include glyphBefore($glyph-icon-image-telemetry); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18

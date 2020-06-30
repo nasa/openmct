@@ -22,7 +22,8 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import { evaluateResults } from "../utils/evaluator";
-import { getLatestTimestamp } from '../utils/time';
+import {getLatestTimestamp, subscribeForStaleness} from '../utils/time';
+import { getOperatorText } from "@/plugins/condition/utils/operations";
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
 
@@ -40,15 +41,44 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     initialize() {
         this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
         this.telemetryDataCache = {};
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData(this.telemetryObjects || {});
+        }
+    }
+
+    subscribeForStaleData(telemetryObjects) {
+
+        if (!this.stalenessSubscription) {
+            this.stalenessSubscription = {};
+        }
+        Object.values(telemetryObjects).forEach((telemetryObject) => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (!this.stalenessSubscription[id]) {
+                this.stalenessSubscription[id] = subscribeForStaleness((data) => {
+                    this.handleStaleTelemetry(id, data);
+                }, this.input[0]*1000);
+            }
+        })
+    }
+
+    handleStaleTelemetry(id, data) {
+        if (this.telemetryDataCache) {
+            this.telemetryDataCache[id] = true;
+            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+        }
+        this.emitEvent('telemetryIsStale', data);
     }
 
     isValid() {
         return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
         this.removeTelemetryDataCache();
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData(this.telemetryObjects || {});
+        }
     }
 
     removeTelemetryDataCache() {
@@ -62,6 +92,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         });
         telemetryCacheIds.forEach(id => {
             delete (this.telemetryDataCache[id]);
+            delete (this.stalenessSubscription[id]);
         });
     }
 
@@ -95,7 +126,14 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         const validatedData = this.isValid() ? data : {};
 
         if (validatedData) {
-            this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+            if (this.isStalenessCheck()) {
+                if (this.stalenessSubscription[validatedData.id]) {
+                    this.stalenessSubscription[validatedData.id].update(validatedData);
+                }
+                this.telemetryDataCache[validatedData.id] = false;
+            } else {
+                this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+            }
         }
 
         Object.values(telemetryObjects).forEach(telemetryObject => {
@@ -159,8 +197,31 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             });
     }
 
+    getDescription() {
+        const telemetryDescription = this.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
+        let metadataValue = (this.metadata === 'dataReceived' ? '' : this.metadata);
+        let inputValue = this.input;
+        if (this.metadata) {
+            const telemetryObjects = Object.values(this.telemetryObjects);
+            for (let i=0; i < telemetryObjects.length; i++) {
+                const telemetryObject = telemetryObjects[i];
+                const metadataObject = this.getMetaDataObject(telemetryObject, this.metadata);
+                if (metadataObject) {
+                    metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
+                    inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+                    break;
+                }
+            }
+        }
+        return `${telemetryDescription} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+    }
+
     destroy() {
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
+        if (this.stalenessSubscription) {
+            Object.values(this.stalenessSubscription).forEach((subscription) => subscription.clear);
+            delete this.stalenessSubscription;
+        }
     }
 }

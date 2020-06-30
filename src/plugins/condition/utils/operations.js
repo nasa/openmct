@@ -250,12 +250,12 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'valueIs',
+        name: 'isOneOf',
         operation: function (input) {
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                return values.find((value) => lhsValue === value.toString().trim());
+                return values.some((value) => lhsValue === value.toString().trim());
             }
             return false;
         },
@@ -267,12 +267,12 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'valueIsNot',
+        name: 'isNotOneOf',
         operation: function (input) {
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.find((value) => lhsValue === value.toString().trim());
+                const found = values.some((value) => lhsValue === value.toString().trim());
                 return !found;
             }
             return false;
@@ -283,10 +283,27 @@ export const OPERATIONS = [
         getDescription: function (values) {
             return ' is not one of ' + values[0];
         }
+    },
+    {
+        name: 'isStale',
+        operation: function () {
+            return false;
+        },
+        text: 'is older than',
+        appliesTo: ["number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ` is older than ${values[0] || ''} seconds`;
+        }
     }
 ];
 
 export const INPUT_TYPES = {
     'string': 'text',
     'number': 'number'
+};
+
+export const getOperatorText = (operationName, values) => {
+    const found = OPERATIONS.find((operation) => operation.name === operationName);
+    return found ? found.getDescription(values) : '';
 };
