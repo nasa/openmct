@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1591317448766
+    "created": 1593102875898
   },
   "iconSets": [
     {
@@ -11,7 +11,7 @@
           "order": 77,
           "id": 47,
           "name": "icon-alert-rect-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59648,
           "tempChar": ""
         },
@@ -19,7 +19,7 @@
           "order": 76,
           "id": 48,
           "name": "icon-alert-triangle-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59649,
           "tempChar": ""
         },
@@ -27,7 +27,7 @@
           "order": 20,
           "id": 112,
           "name": "icon-arrow-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59650,
           "tempChar": ""
         },
@@ -35,7 +35,7 @@
           "order": 36,
           "id": 94,
           "name": "icon-arrow-double-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59651,
           "tempChar": ""
         },
@@ -43,7 +43,7 @@
           "order": 143,
           "id": 96,
           "name": "icon-arrow-tall-up",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59652,
           "tempChar": ""
         },
@@ -51,7 +51,7 @@
           "order": 21,
           "id": 111,
           "name": "icon-arrow-right",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59653,
           "tempChar": ""
         },
@@ -59,7 +59,7 @@
           "order": 102,
           "id": 18,
           "name": "icon-arrow-right-equilateral",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59654,
           "tempChar": ""
         },
@@ -67,7 +67,7 @@
           "order": 19,
           "id": 113,
           "name": "icon-arrow-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59655,
           "tempChar": ""
         },
@@ -75,7 +75,7 @@
           "order": 37,
           "id": 93,
           "name": "icon-arrow-double-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59656,
           "tempChar": ""
         },
@@ -83,7 +83,7 @@
           "order": 35,
           "id": 95,
           "name": "icon-arrow-tall-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59657,
           "tempChar": ""
         },
@@ -91,7 +91,7 @@
           "order": 18,
           "id": 114,
           "name": "icon-arrow-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59658,
           "tempChar": ""
         },
@@ -99,7 +99,7 @@
           "order": 17,
           "id": 115,
           "name": "icon-asterisk",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59659,
           "tempChar": ""
         },
@@ -107,7 +107,7 @@
           "order": 128,
           "id": 59,
           "name": "icon-bell",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59660,
           "tempChar": ""
         },
@@ -115,7 +115,7 @@
           "order": 123,
           "id": 103,
           "name": "icon-box-round-corners",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59661,
           "tempChar": ""
         },
@@ -123,7 +123,7 @@
           "order": 129,
           "id": 58,
           "name": "icon-box-with-arrow-cursor",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59662,
           "tempChar": ""
         },
@@ -131,7 +131,7 @@
           "order": 142,
           "id": 120,
           "name": "icon-check",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59663,
           "tempChar": ""
         },
@@ -139,7 +139,7 @@
           "order": 25,
           "id": 107,
           "name": "icon-connectivity",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59664,
           "tempChar": ""
         },
@@ -147,7 +147,7 @@
           "order": 44,
           "id": 84,
           "name": "icon-database-in-brackets",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59665,
           "tempChar": ""
         },
@@ -155,7 +155,7 @@
           "order": 75,
           "id": 49,
           "name": "icon-eye-open",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59666,
           "tempChar": ""
         },
@@ -163,7 +163,7 @@
           "order": 5,
           "id": 129,
           "name": "icon-gear",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59667,
           "tempChar": ""
         },
@@ -171,7 +171,7 @@
           "order": 66,
           "id": 60,
           "name": "icon-hourglass",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59668,
           "tempChar": ""
         },
@@ -179,7 +179,7 @@
           "order": 65,
           "id": 61,
           "name": "icon-info",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59669,
           "tempChar": ""
         },
@@ -187,7 +187,7 @@
           "order": 53,
           "id": 75,
           "name": "icon-link",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59670,
           "tempChar": ""
         },
@@ -195,7 +195,7 @@
           "order": 42,
           "id": 86,
           "name": "icon-lock",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59671,
           "tempChar": ""
         },
@@ -203,7 +203,7 @@
           "order": 49,
           "id": 79,
           "name": "icon-minus",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59672,
           "tempChar": ""
         },
@@ -211,7 +211,7 @@
           "order": 22,
           "id": 110,
           "name": "icon-people",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59673,
           "tempChar": ""
         },
@@ -219,7 +219,7 @@
           "order": 46,
           "id": 82,
           "name": "icon-person",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59674,
           "tempChar": ""
         },
@@ -227,7 +227,7 @@
           "order": 38,
           "id": 92,
           "name": "icon-plus",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59675,
           "tempChar": ""
         },
@@ -235,7 +235,7 @@
           "order": 164,
           "id": 137,
           "name": "icon-plus-in-rect",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59676,
           "tempChar": ""
         },
@@ -243,7 +243,7 @@
           "order": 6,
           "id": 128,
           "name": "icon-trash",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59677,
           "tempChar": ""
         },
@@ -251,7 +251,7 @@
           "order": 140,
           "id": 122,
           "name": "icon-x-heavy",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59678,
           "tempChar": ""
         },
@@ -259,7 +259,7 @@
           "order": 78,
           "id": 46,
           "name": "icon-brackets",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59679,
           "tempChar": ""
         },
@@ -267,7 +267,7 @@
           "order": 93,
           "id": 27,
           "name": "icon-crosshair",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59680,
           "tempChar": ""
         },
@@ -275,7 +275,7 @@
           "order": 91,
           "id": 31,
           "name": "icon-grippy",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59681,
           "tempChar": ""
         },
@@ -283,7 +283,7 @@
           "order": 121,
           "id": 118,
           "name": "icon-grid",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59682,
           "tempChar": ""
         },
@@ -291,7 +291,7 @@
           "order": 154,
           "id": 136,
           "name": "icon-grippy-ew",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59683,
           "tempChar": ""
         },
@@ -299,7 +299,7 @@
           "order": 152,
           "id": 135,
           "name": "icon-columns",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59684,
           "tempChar": ""
         },
@@ -307,7 +307,7 @@
           "order": 153,
           "id": 134,
           "name": "icon-rows",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59685,
           "tempChar": ""
         },
@@ -315,7 +315,7 @@
           "order": 162,
           "id": 140,
           "name": "icon-filter",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59686,
           "tempChar": ""
         },
@@ -323,7 +323,7 @@
           "order": 161,
           "id": 139,
           "name": "icon-filter-outline",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59687,
           "tempChar": ""
         },
@@ -331,7 +331,7 @@
           "order": 155,
           "id": 142,
           "name": "icon-suitcase",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59688,
           "tempChar": ""
         },
@@ -339,7 +339,7 @@
           "order": 169,
           "id": 145,
           "name": "icon-cursor-locked",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59689,
           "tempChar": ""
         },
@@ -347,7 +347,7 @@
           "order": 176,
           "id": 150,
           "name": "icon-flag",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59690,
           "tempChar": ""
         },
@@ -355,7 +355,7 @@
           "order": 177,
           "id": 152,
           "name": "icon-eye-disabled",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59691,
           "tempChar": ""
         },
@@ -363,745 +363,801 @@
           "order": 179,
           "id": 153,
           "name": "icon-notebook-page",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59692,
           "tempChar": ""
+        },
+        {
+          "order": 186,
+          "id": 160,
+          "name": "icon-unlocked",
+          "prevSize": 24,
+          "code": 59693,
+          "tempChar": ""
         },
         {
           "order": 27,
           "id": 105,
           "name": "icon-arrows-right-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59904,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 26,
           "id": 106,
           "name": "icon-arrows-up-down",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59905,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 68,
           "id": 56,
           "name": "icon-bullet",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59906,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 150,
           "id": 133,
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59907,
           "name": "icon-calendar",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 45,
           "id": 83,
           "name": "icon-chain-links",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59908,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 73,
           "id": 51,
           "name": "icon-download",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59909,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 39,
           "id": 91,
           "name": "icon-duplicate",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59910,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 50,
           "id": 78,
           "name": "icon-folder-new",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59911,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 138,
           "id": 124,
           "name": "icon-fullscreen-collapse",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59912,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 139,
           "id": 123,
           "name": "icon-fullscreen-expand",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59913,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 122,
           "id": 104,
           "name": "icon-layers",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59914,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 151,
           "id": 102,
           "name": "icon-line-horz",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59915,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 100,
           "id": 20,
           "name": "icon-magnify",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59916,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 99,
           "id": 21,
           "name": "icon-magnify-in",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59917,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 101,
           "id": 19,
           "name": "icon-magnify-out-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59918,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 103,
           "id": 17,
           "name": "icon-menu",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59919,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 124,
           "id": 89,
           "name": "icon-move",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59920,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 7,
           "id": 127,
           "name": "icon-new-window",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59921,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 63,
           "id": 63,
           "name": "icon-paint-bucket-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59922,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 15,
           "id": 117,
           "name": "icon-pencil",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59923,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 54,
           "id": 72,
           "name": "icon-pencil-edit-in-place",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59924,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 40,
           "id": 90,
           "name": "icon-play",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59925,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 125,
           "id": 88,
           "name": "icon-pause",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59926,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 119,
           "id": 13,
           "name": "icon-plot-resource",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59927,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 48,
           "id": 80,
           "name": "icon-pointer-left",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59928,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 47,
           "id": 81,
           "name": "icon-pointer-right",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59929,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 85,
           "id": 37,
           "name": "icon-refresh",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59930,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 55,
           "id": 71,
           "name": "icon-save",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59931,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 56,
           "id": 70,
           "name": "icon-save-as",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59932,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 58,
           "id": 68,
           "name": "icon-sine",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59933,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 113,
           "id": 5,
           "name": "icon-font",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59934,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 41,
           "id": 87,
           "name": "icon-thumbs-strip",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59935,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 146,
           "id": 99,
           "name": "icon-two-parts-both",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59936,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 145,
           "id": 98,
           "name": "icon-two-parts-one-only",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59937,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 82,
           "id": 40,
           "name": "icon-resync",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59938,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 86,
           "id": 36,
           "name": "icon-reset",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59939,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 61,
           "id": 65,
           "name": "icon-x-in-circle",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59940,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 84,
           "id": 38,
           "name": "icon-brightness",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59941,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 83,
           "id": 39,
           "name": "icon-contrast",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59942,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 87,
           "id": 35,
           "name": "icon-expand",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59943,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 89,
           "id": 33,
           "name": "icon-list-view",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59944,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 133,
           "id": 28,
           "name": "icon-grid-snap-to",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59945,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 132,
           "id": 29,
           "name": "icon-grid-snap-no",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59946,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 94,
           "id": 26,
           "name": "icon-frame-show",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59947,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 95,
           "id": 25,
           "name": "icon-frame-hide",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59948,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 97,
           "id": 23,
           "name": "icon-import",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59949,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 96,
           "id": 24,
           "name": "icon-export",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59950,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 114,
           "id": 4,
           "name": "icon-font-size",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59951,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 163,
           "id": 141,
           "name": "icon-clear-data",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59952,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 173,
           "id": 149,
           "name": "icon-history",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 59953,
-          "tempChar": ""
+          "tempChar": ""
+        },
+        {
+          "order": 181,
+          "id": 158,
+          "name": "icon-arrow-up-to-parent",
+          "prevSize": 24,
+          "code": 59954,
+          "tempChar": ""
+        },
+        {
+          "order": 184,
+          "id": 159,
+          "name": "icon-crosshair-in-circle",
+          "prevSize": 24,
+          "code": 59955,
+          "tempChar": ""
+        },
+        {
+          "order": 185,
+          "id": 161,
+          "name": "icon-target",
+          "prevSize": 24,
+          "code": 59956,
+          "tempChar": ""
+        },
+        {
+          "order": 187,
+          "id": 163,
+          "name": "icon-items-collapse",
+          "prevSize": 24,
+          "code": 59957,
+          "tempChar": ""
+        },
+        {
+          "order": 188,
+          "id": 162,
+          "name": "icon-items-expand",
+          "prevSize": 24,
+          "code": 59958,
+          "tempChar": ""
         },
         {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
           "id": 16,
           "name": "icon-activity-mode",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
           "id": 125,
           "name": "icon-autoflow-tabular",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
           "id": 3,
           "name": "icon-clock",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
           "id": 132,
           "name": "icon-database",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
           "id": 131,
           "name": "icon-database-query",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
           "id": 57,
           "name": "icon-dataset",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
           "id": 67,
           "name": "icon-datatable",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
           "id": 126,
           "name": "icon-dictionary",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
           "id": 77,
           "name": "icon-folder",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
           "id": 100,
           "name": "icon-image",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
           "id": 130,
           "name": "icon-layout",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
           "id": 108,
           "name": "icon-object",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
           "id": 76,
           "name": "icon-object-unknown",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
           "id": 15,
           "name": "icon-packet",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
           "id": 74,
           "name": "icon-page",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
           "id": 44,
           "name": "icon-plot-overlay",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
           "id": 42,
           "name": "icon-plot-stacked",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
           "id": 14,
           "name": "icon-session",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
           "id": 9,
           "name": "icon-tabular",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
           "id": 11,
           "name": "icon-tabular-lad",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
           "id": 12,
           "name": "icon-tabular-lad-set",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
           "id": 54,
           "name": "icon-tabular-realtime",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
           "id": 66,
           "name": "icon-tabular-scrolling",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
           "id": 43,
           "name": "icon-telemetry",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
           "id": 10,
           "name": "icon-timeline",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
           "id": 41,
           "name": "icon-timer",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
           "id": 55,
           "name": "icon-topic",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
           "id": 45,
           "name": "icon-box-with-dashed-lines-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
           "id": 32,
           "name": "icon-summary-widget",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
           "id": 30,
           "name": "icon-notebook",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
           "id": 0,
           "name": "icon-tabs-view",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
           "id": 1,
           "name": "icon-flexible-layout",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
           "id": 144,
           "name": "icon-generator-sine",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
           "id": 143,
           "name": "icon-generator-event",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
           "id": 138,
           "name": "icon-gauge-v2",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
           "id": 148,
           "name": "icon-spectra",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
           "id": 147,
           "name": "icon-telemetry-spectra",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
           "id": 146,
           "name": "icon-pushbutton",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 174,
           "id": 151,
           "name": "icon-conditional",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60199,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 178,
           "id": 154,
           "name": "icon-condition-widget",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60200,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 180,
           "id": 155,
           "name": "icon-alphanumeric",
-          "prevSize": 16,
+          "prevSize": 24,
           "code": 60201,
-          "tempChar": ""
+          "tempChar": ""
+        },
+        {
+          "order": 183,
+          "id": 156,
+          "name": "icon-image-telemetry",
+          "prevSize": 24,
+          "code": 60202,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -1125,7 +1181,10 @@
           "grid": 16,
           "tags": [
             "icon-alert-rect-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 48,
@@ -1136,7 +1195,10 @@
           "grid": 16,
           "tags": [
             "icon-alert-triangle-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 112,
@@ -1147,7 +1209,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 94,
@@ -1159,7 +1224,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-double-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 96,
@@ -1170,7 +1238,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-tall-up"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 111,
@@ -1181,7 +1252,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-right"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 18,
@@ -1192,7 +1266,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-right-equilateral"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 113,
@@ -1203,7 +1280,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 93,
@@ -1215,7 +1295,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-double-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 95,
@@ -1226,7 +1309,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-tall-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 114,
@@ -1237,7 +1323,10 @@
           "grid": 16,
           "tags": [
             "icon-arrow-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 115,
@@ -1248,7 +1337,10 @@
           "grid": 16,
           "tags": [
             "icon-asterisk"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 59,
@@ -1260,7 +1352,10 @@
           "grid": 16,
           "tags": [
             "icon-bell"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 103,
@@ -1271,7 +1366,10 @@
           "grid": 16,
           "tags": [
             "icon-box-round-corners"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 58,
@@ -1283,7 +1381,10 @@
           "grid": 16,
           "tags": [
             "icon-box-with-arrow-cursor"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 120,
@@ -1294,7 +1395,10 @@
           "grid": 16,
           "tags": [
             "icon-check"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 107,
@@ -1307,7 +1411,10 @@
           "grid": 16,
           "tags": [
             "icon-connectivity"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 84,
@@ -1321,7 +1428,10 @@
           "grid": 16,
           "tags": [
             "icon-database-in-brackets"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 49,
@@ -1333,7 +1443,10 @@
           "grid": 16,
           "tags": [
             "icon-eye-open-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 129,
@@ -1344,7 +1457,10 @@
           "grid": 16,
           "tags": [
             "icon-gear"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 60,
@@ -1356,7 +1472,10 @@
           "grid": 16,
           "tags": [
             "icon-hourglass"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 61,
@@ -1367,7 +1486,10 @@
           "grid": 16,
           "tags": [
             "icon-info"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 75,
@@ -1378,18 +1500,31 @@
           "grid": 16,
           "tags": [
             "icon-link-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 86,
           "paths": [
-            "M832 384h-32v-96c0-158.8-129.2-288-288-288s-288 129.2-288 288v96h-32c-70.4 0-128 57.6-128 128v384c0 70.4 57.6 128 128 128h640c70.4 0 128-57.6 128-128v-384c0-70.4-57.6-128-128-128zM416 288c0-53 43-96 96-96s96 43 96 96v96h-192v-96z"
+            "M702 384h-62v-128c0-141.385-114.615-256-256-256s-256 114.615-256 256v0 128h-64c-35.301 0.113-63.887 28.699-64 63.989v512.011c0.113 35.301 28.699 63.887 63.989 64h638.011c35.301-0.113 63.887-28.699 64-63.989v-512.011c-0.113-35.301-28.699-63.887-63.989-64h-0.011zM256 384v-128c0-70.692 57.308-128 128-128s128 57.308 128 128v0 128z"
           ],
-          "attrs": [],
+          "attrs": [
+            {}
+          ],
           "grid": 16,
           "tags": [
             "icon-lock"
-          ]
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          },
+          "width": 768
         },
         {
           "id": 79,
@@ -1400,7 +1535,10 @@
           "grid": 16,
           "tags": [
             "icon-minus"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 110,
@@ -1414,7 +1552,10 @@
           "grid": 16,
           "tags": [
             "icon-people"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 82,
@@ -1426,7 +1567,10 @@
           "grid": 16,
           "tags": [
             "icon-person"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 92,
@@ -1437,7 +1581,10 @@
           "grid": 16,
           "tags": [
             "icon-plus"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 137,
@@ -1452,7 +1599,12 @@
           "grid": 16,
           "tags": [
             "icon-plus-in-rect"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 128,
@@ -1463,7 +1615,10 @@
           "grid": 16,
           "tags": [
             "icon-trash"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 122,
@@ -1474,7 +1629,10 @@
           "grid": 16,
           "tags": [
             "icon-x-heavy"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 46,
@@ -1486,7 +1644,10 @@
           "grid": 16,
           "tags": [
             "icon-brackets"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 27,
@@ -1500,7 +1661,10 @@
           "grid": 16,
           "tags": [
             "icon-crosshair"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 31,
@@ -1523,7 +1687,10 @@
           "grid": 16,
           "tags": [
             "icon-grippy-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 118,
@@ -1537,7 +1704,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 136,
@@ -1556,7 +1726,14 @@
           "grid": 16,
           "tags": [
             "icon-grippy-ew"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 135,
@@ -1575,7 +1752,14 @@
           "grid": 16,
           "tags": [
             "icon-columns"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 134,
@@ -1594,7 +1778,14 @@
           "grid": 16,
           "tags": [
             "icon-rows"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 140,
@@ -1609,7 +1800,12 @@
           "grid": 16,
           "tags": [
             "icon-filter"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 139,
@@ -1624,7 +1820,12 @@
           "grid": 16,
           "tags": [
             "icon-filter-outline"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 142,
@@ -1643,7 +1844,14 @@
           "grid": 16,
           "tags": [
             "icon-suitcase"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 145,
@@ -1659,7 +1867,12 @@
           "grid": 16,
           "tags": [
             "icon-cursor-locked"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 150,
@@ -1674,7 +1887,12 @@
             "icon-flag"
           ],
           "isMulticolor": false,
-          "isMulticolor2": false
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 152,
@@ -1693,7 +1911,14 @@
           "grid": 16,
           "tags": [
             "icon-eye-disabled"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 153,
@@ -1708,7 +1933,32 @@
           "grid": 16,
           "tags": [
             "icon-notebook-page"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 160,
+          "paths": [
+            "M768 0c-141.339 0.114-255.886 114.661-256 255.989l-0 0.011v128h-448c-35.301 0.113-63.887 28.699-64 63.989l-0 0.011v512c0.113 35.301 28.699 63.887 63.989 64l0.011 0h638c35.301-0.113 63.887-28.699 64-63.989l0-0.011v-512c-0.113-35.301-28.699-63.887-63.989-64l-0.011-0h-62v-128c0-70.692 57.308-128 128-128s128 57.308 128 128v0 128h128v-128c-0.114-141.339-114.661-255.886-255.989-256l-0.011-0z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-unlocked"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 105,
@@ -1720,7 +1970,10 @@
           "grid": 16,
           "tags": [
             "icon-arrows-right-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 106,
@@ -1732,7 +1985,10 @@
           "grid": 16,
           "tags": [
             "icon-arrows-up-down"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 56,
@@ -1743,7 +1999,10 @@
           "grid": 16,
           "tags": [
             "icon-bullet"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 133,
@@ -1754,7 +2013,10 @@
           "grid": 16,
           "tags": [
             "icon-calendar"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 83,
@@ -1765,7 +2027,10 @@
           "grid": 16,
           "tags": [
             "icon-chain-links"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 51,
@@ -1777,7 +2042,10 @@
           "grid": 16,
           "tags": [
             "icon-download"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 91,
@@ -1789,7 +2057,10 @@
           "grid": 16,
           "tags": [
             "icon-duplicate"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 78,
@@ -1801,7 +2072,10 @@
           "grid": 16,
           "tags": [
             "icon-folder-new-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 124,
@@ -1815,7 +2089,10 @@
           "grid": 16,
           "tags": [
             "icon-fullscreen-collapse"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 123,
@@ -1829,7 +2106,10 @@
           "grid": 16,
           "tags": [
             "icon-fullscreen-expand"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 104,
@@ -1841,7 +2121,10 @@
           "grid": 16,
           "tags": [
             "icon-layers"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 102,
@@ -1852,7 +2135,10 @@
           "grid": 16,
           "tags": [
             "icon-line-horz"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 20,
@@ -1863,7 +2149,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 21,
@@ -1876,7 +2165,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-in-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 19,
@@ -1888,7 +2180,10 @@
           "grid": 16,
           "tags": [
             "icon-magnify-out-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 17,
@@ -1901,7 +2196,10 @@
           "grid": 16,
           "tags": [
             "icon-menu-v2.2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 89,
@@ -1913,7 +2211,10 @@
           "grid": 16,
           "tags": [
             "icon-move"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 127,
@@ -1925,7 +2226,10 @@
           "grid": 16,
           "tags": [
             "icon-new-window"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 63,
@@ -1938,7 +2242,10 @@
           "grid": 16,
           "tags": [
             "icon-paint-bucket-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 117,
@@ -1949,7 +2256,10 @@
           "grid": 16,
           "tags": [
             "icon-pencil"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 72,
@@ -1962,7 +2272,10 @@
           "grid": 16,
           "tags": [
             "icon-pencil-edit-in-place"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 90,
@@ -1973,7 +2286,10 @@
           "grid": 16,
           "tags": [
             "icon-play"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 88,
@@ -1985,7 +2301,10 @@
           "grid": 16,
           "tags": [
             "icon-pause"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 13,
@@ -1997,7 +2316,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-resource"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 80,
@@ -2008,7 +2330,10 @@
           "grid": 16,
           "tags": [
             "icon-pointer-left"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 81,
@@ -2019,7 +2344,10 @@
           "grid": 16,
           "tags": [
             "icon-pointer-right"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 37,
@@ -2030,7 +2358,10 @@
           "grid": 16,
           "tags": [
             "icon-refresh-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 71,
@@ -2042,7 +2373,10 @@
           "grid": 16,
           "tags": [
             "icon-save-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 70,
@@ -2055,7 +2389,10 @@
           "grid": 16,
           "tags": [
             "icon-save-as"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 68,
@@ -2066,7 +2403,10 @@
           "grid": 16,
           "tags": [
             "icon-sine"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 5,
@@ -2077,7 +2417,10 @@
           "grid": 16,
           "tags": [
             "icon-font"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 87,
@@ -2091,7 +2434,10 @@
           "grid": 16,
           "tags": [
             "icon-thumbs-strip"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 99,
@@ -2102,7 +2448,10 @@
           "grid": 16,
           "tags": [
             "icon-two-parts-both"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 98,
@@ -2113,7 +2462,10 @@
           "grid": 16,
           "tags": [
             "icon-two-parts-one-only"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 40,
@@ -2125,7 +2477,10 @@
           "grid": 16,
           "tags": [
             "icon-resync"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 36,
@@ -2136,7 +2491,10 @@
           "grid": 16,
           "tags": [
             "icon-reset"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 65,
@@ -2150,7 +2508,9 @@
           ],
           "isMulticolor": false,
           "isMulticolor2": false,
-          "colorPermutations": {}
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 38,
@@ -2169,7 +2529,10 @@
           "grid": 16,
           "tags": [
             "icon-brightness"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 39,
@@ -2180,7 +2543,10 @@
           "grid": 16,
           "tags": [
             "icon-contrast"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 35,
@@ -2194,7 +2560,10 @@
           "grid": 16,
           "tags": [
             "icon-expand"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 33,
@@ -2208,7 +2577,10 @@
           "grid": 16,
           "tags": [
             "icon-list-view"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 28,
@@ -2224,7 +2596,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-snap-to"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 29,
@@ -2241,7 +2616,10 @@
           "grid": 16,
           "tags": [
             "icon-grid-snap-no"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 26,
@@ -2253,7 +2631,10 @@
           "grid": 16,
           "tags": [
             "icon-frame-show"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 25,
@@ -2267,7 +2648,10 @@
           "grid": 16,
           "tags": [
             "icon-frame-hide"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 23,
@@ -2279,7 +2663,10 @@
           "grid": 16,
           "tags": [
             "icon-import"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 24,
@@ -2291,7 +2678,10 @@
           "grid": 16,
           "tags": [
             "icon-export"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 4,
@@ -2303,7 +2693,10 @@
           "grid": 16,
           "tags": [
             "icon-font-size-alt1"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 141,
@@ -2320,7 +2713,13 @@
           "grid": 16,
           "tags": [
             "icon-clear-data"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 149,
@@ -2337,7 +2736,123 @@
           "grid": 16,
           "tags": [
             "icon-history"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 158,
+          "paths": [
+            "M643.427 825.261c-81.955-0.697-148.179-67.065-148.642-149.010l-0-0.044v-395.828l296.871 247.393v-197.914l-395.828-329.857-395.828 328.62v197.502l296.871-246.156v396.241c0 190.905 155.239 346.556 346.144 346.968l412.321 0.825 0.412-197.914z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "width": 1056,
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-arrow-up-to-parent"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 159,
+          "paths": [
+            "M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM783.6 783.6c-54.634 54.8-125.77 93.12-205.322 106.874l-2.278 0.326v-250.8h-128v250.8c-161.302-28.062-286.738-153.497-314.468-312.5l-0.332-2.3h250.8v-128h-250.8c28.062-161.302 153.497-286.738 312.5-314.468l2.3-0.332v250.8h128v-250.8c161.302 28.062 286.738 153.497 314.468 312.5l0.332 2.3h-250.8v128h250.8c-14.080 81.83-52.4 152.966-107.191 207.591l-0.009 0.009z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-crosshair-in-circle"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 161,
+          "paths": [
+            "M512 384c70.692 0 128 57.308 128 128s-57.308 128-128 128c-70.692 0-128-57.308-128-128v0c0.114-70.647 57.353-127.886 127.989-128l0.011-0zM512 256c-141.385 0-256 114.615-256 256s114.615 256 256 256c141.385 0 256-114.615 256-256v0c-0.114-141.339-114.661-255.886-255.989-256l-0.011-0z",
+            "M512 128c211.87 0.128 383.575 171.912 383.575 383.8 0 211.967-171.833 383.8-383.8 383.8s-383.8-171.833-383.8-383.8c0-105.99 42.963-201.945 112.425-271.4l-0 0c69.21-69.437 164.944-112.401 270.713-112.401 0.312 0 0.624 0 0.936 0.001l-0.048-0zM512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-target"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 163,
+          "paths": [
+            "M45.2 658.8h229.6l-274.8 274.6 90.6 90.6 274.6-274.8v229.6h128v-448h-448v128z",
+            "M1024 90.6l-90.6-90.6-274.6 274.8v-229.6h-128v448h448v-128h-229.6l274.8-274.6z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-items-collapse"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 162,
+          "paths": [
+            "M448 896h-229.4l274.6-274.8-90.4-90.4-274.8 274.6v-229.4h-128v448h448v-128z",
+            "M530.8 402.8l90.4 90.4 274.8-274.6v229.4h128v-448h-448v128h229.4l-274.6 274.8z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-items-expand"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 97,
@@ -2348,7 +2863,10 @@
           "grid": 16,
           "tags": [
             "icon-activity"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 16,
@@ -2359,7 +2877,10 @@
           "grid": 16,
           "tags": [
             "icon-activity-mode"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 125,
@@ -2372,7 +2893,10 @@
           "grid": 16,
           "tags": [
             "icon-autoflow-tabular"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 3,
@@ -2383,7 +2907,10 @@
           "grid": 16,
           "tags": [
             "icon-clock-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 132,
@@ -2395,7 +2922,10 @@
           "grid": 16,
           "tags": [
             "icon-database"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 131,
@@ -2407,7 +2937,10 @@
           "grid": 16,
           "tags": [
             "icon-database-query"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 57,
@@ -2419,7 +2952,10 @@
           "grid": 16,
           "tags": [
             "icon-dataset"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 67,
@@ -2431,7 +2967,10 @@
           "grid": 16,
           "tags": [
             "icon-datatable"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 126,
@@ -2442,7 +2981,10 @@
           "grid": 16,
           "tags": [
             "icon-dictionary"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 77,
@@ -2454,7 +2996,10 @@
           "grid": 16,
           "tags": [
             "icon-folder-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 100,
@@ -2466,7 +3011,10 @@
           "grid": 16,
           "tags": [
             "icon-image"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 130,
@@ -2479,7 +3027,10 @@
           "grid": 16,
           "tags": [
             "icon-layout"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 108,
@@ -2490,7 +3041,10 @@
           "grid": 16,
           "tags": [
             "icon-object"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 76,
@@ -2501,7 +3055,10 @@
           "grid": 16,
           "tags": [
             "icon-object-unknown"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 15,
@@ -2512,7 +3069,10 @@
           "grid": 16,
           "tags": [
             "icon-packet"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 74,
@@ -2524,7 +3084,10 @@
           "grid": 16,
           "tags": [
             "icon-page"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 44,
@@ -2536,7 +3099,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-overlay"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 42,
@@ -2549,7 +3115,10 @@
           "grid": 16,
           "tags": [
             "icon-plot-stacked"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 14,
@@ -2563,7 +3132,10 @@
           "grid": 16,
           "tags": [
             "icon-session-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 9,
@@ -2574,7 +3146,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 11,
@@ -2586,7 +3161,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-lad"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 12,
@@ -2599,7 +3177,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-lad-set"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 54,
@@ -2610,7 +3191,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-realtime-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 66,
@@ -2625,7 +3209,10 @@
           "grid": 16,
           "tags": [
             "icon-tabular-scrolling"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 43,
@@ -2637,7 +3224,10 @@
           "grid": 16,
           "tags": [
             "icon-telemetry-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 10,
@@ -2652,7 +3242,10 @@
           "grid": 16,
           "tags": [
             "icon-timeline"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 41,
@@ -2663,7 +3256,10 @@
           "grid": 16,
           "tags": [
             "icon-timer-v1.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 55,
@@ -2677,7 +3273,10 @@
           "grid": 16,
           "tags": [
             "icon-topic-v2.5"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 45,
@@ -2696,7 +3295,10 @@
           "grid": 16,
           "tags": [
             "icon-box-with-dashed-lines-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 32,
@@ -2707,7 +3309,10 @@
           "grid": 16,
           "tags": [
             "icon-summary-widget"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 30,
@@ -2719,7 +3324,10 @@
           "grid": 16,
           "tags": [
             "icon-notebook"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 0,
@@ -2736,7 +3344,13 @@
             "icon-tabs-view"
           ],
           "isMulticolor": false,
-          "isMulticolor2": false
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 1,
@@ -2751,7 +3365,10 @@
           "grid": 16,
           "tags": [
             "icon-flexible-layout"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": []
+          }
         },
         {
           "id": 144,
@@ -2772,7 +3389,15 @@
           "grid": 16,
           "tags": [
             "icon-generator-sine"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 143,
@@ -2797,7 +3422,17 @@
           "grid": 16,
           "tags": [
             "icon-generator-event"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 138,
@@ -2812,7 +3447,12 @@
           "grid": 16,
           "tags": [
             "icon-gauge-v2"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 148,
@@ -2831,7 +3471,14 @@
           "grid": 16,
           "tags": [
             "icon-spectra"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 147,
@@ -2850,7 +3497,14 @@
           "grid": 16,
           "tags": [
             "icon-telemetry-spectra"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 146,
@@ -2867,7 +3521,13 @@
           "grid": 16,
           "tags": [
             "icon-pushbutton"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         },
         {
           "id": 151,
@@ -2882,7 +3542,12 @@
           "grid": 16,
           "tags": [
             "icon-conditional"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 154,
@@ -2897,7 +3562,12 @@
           "grid": 16,
           "tags": [
             "icon-condition-widget"
-          ]
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         },
         {
           "id": 155,
@@ -2914,11 +3584,55 @@
             "icon-alphanumeric"
           ],
           "isMulticolor": false,
-          "isMulticolor2": false
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 156,
+          "paths": [
+            "M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM783.6 783.6c-69.581 69.675-165.757 112.776-272 112.776-212.298 0-384.4-172.102-384.4-384.4s172.102-384.4 384.4-384.4c212.298 0 384.4 172.102 384.4 384.4 0 0.008-0 0.017-0 0.025l0-0.001c0.001 0.264 0.001 0.575 0.001 0.887 0 105.769-42.964 201.503-112.391 270.703l-0.010 0.010z",
+            "M704 384l-128 128-192-192-192 192c0 176.731 143.269 320 320 320s320-143.269 320-320v0z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-image-telemetry"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
         }
       ],
       "invisible": false,
-      "colorThemes": [],
+      "colorThemes": [
+        [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            255,
+            255,
+            255,
+            1
+          ]
+        ]
+      ],
       "colorThemeIdx": 0
     }
   ],

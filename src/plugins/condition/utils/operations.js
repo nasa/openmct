@@ -283,6 +283,18 @@ export const OPERATIONS = [
         getDescription: function (values) {
             return ' is not one of ' + values[0];
         }
+    },
+    {
+        name: 'isStale',
+        operation: function () {
+            return false;
+        },
+        text: 'is older than',
+        appliesTo: ["number"],
+        inputCount: 1,
+        getDescription: function (values) {
+            return ` is older than ${values[0] || ''} seconds`;
+        }
     }
 ];
 
