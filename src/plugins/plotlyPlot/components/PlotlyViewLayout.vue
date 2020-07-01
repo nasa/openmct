@@ -171,7 +171,8 @@ export default {
                     showgrid: false,
                     tickwidth: 3,
                     tickcolor: 'transparent',
-                    autorange: true
+                    autorange: true,
+                    visible: false
                 },
                 margin: {
                     l: 40,
@@ -187,8 +188,8 @@ export default {
                 [],
                 layout,
                 {
-                    displayModeBar: false, // turns off hover-activated toolbar
-                    staticPlot: true // turns off hover effects on datapoints
+                    displayModeBar: true, // turns off hover-activated toolbar
+                    staticPlot: false // turns off hover effects on datapoints
                 }
             );
 
@@ -240,7 +241,7 @@ export default {
             const limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             const valueFormatter = this.openmct.telemetry.getValueFormatter(this.openmct.telemetry.getMetadata(telemetryObject).valuesForHints(['range'])[0]);
             let layout_update = {
-                yaxis: {title: valueFormatter.valueMetadata.name}
+                yaxis: {title: valueFormatter.valueMetadata.name, visible: true}
             };
             Plotly.update(this.plotElement, {}, layout_update)
             this.columnMaps[keyString] = columnMap;
@@ -270,9 +271,6 @@ export default {
 
             boundedRows.on('add', addRow);
             this.boundedRowsUnlisteners[keyString] = [];
-            // boundedRows.on('remove', () => {
-            //     console.log("removed rows");
-            // });
 
             this.boundedRowsUnlisteners[keyString].push(() => {
                 boundedRows.off('add', addRow);
