@@ -26,7 +26,7 @@ define([], function () {
      * @drawWebGL integer (unique, required) index provided to WebGL Fragment Shader
      * @drawC2D function (required) canvas2d draw function
      */
-    const SHAPES = {
+    const MARKER_SHAPES = {
         point: {
             label: 'Point',
             drawWebGL: 1,
@@ -47,50 +47,7 @@ define([], function () {
                 this.c2d.fill();
             }
         }
-        // cross: {
-        //     label: 'Cross',
-        //     method: function (xOrigin, yOrigin, size) {
-        //         const offset = size / 2;
-        //         const x = xOrigin - offset;
-        //         const y = yOrigin - offset;
-
-        //         this.c2d.fillRect(x + size, y, size, size);
-        //         this.c2d.fillRect(x, y + size, size, size);
-        //         this.c2d.fillRect(x - size, y, size, size);
-        //         this.c2d.fillRect(x, y - size, size, size);
-        //     }
-        // },
-        // star: {
-        //     label: 'Star',
-        //     method: function (xOrigin, yOrigin, size) {
-        //         const spikes = 5;
-        //         const step = Math.PI / spikes;
-        //         const outerRadius = size * 2;
-        //         const innerRadius = size;
-        //         let rot = Math.PI / 2 * 3;
-        //         let x = xOrigin, y = yOrigin;
-
-        //         this.c2d.beginPath();
-        //         this.c2d.moveTo(xOrigin, yOrigin - outerRadius)
-
-        //         for (let i = 0; i < spikes; i++) {
-        //             x = xOrigin + Math.cos(rot) * outerRadius;
-        //             y = yOrigin + Math.sin(rot) * outerRadius;
-        //             this.c2d.lineTo(x, y)
-        //             rot += step
-
-        //             x = xOrigin + Math.cos(rot) * innerRadius;
-        //             y = yOrigin + Math.sin(rot) * innerRadius;
-        //             this.c2d.lineTo(x, y)
-        //             rot += step
-        //         }
-
-        //         this.c2d.lineTo(xOrigin, yOrigin - outerRadius)
-        //         this.c2d.closePath();
-        //         this.c2d.fill();
-        //     }
-        // }
     };
 
-    return SHAPES;
+    return MARKER_SHAPES;
 });

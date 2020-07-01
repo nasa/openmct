@@ -25,12 +25,14 @@ define([
     'lodash',
     '../configuration/Model',
     '../lib/extend',
-    'EventEmitter'
+    'EventEmitter',
+    '../draw/MarkerShapes'
 ], function (
     _,
     Model,
     extend,
-    EventEmitter
+    EventEmitter,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -412,6 +414,18 @@ define([
             } else {
                 this.filters = deepCopiedFilters;
             }
+        },
+        markerOptionsDisplayText: function () {
+            const showMarkers = this.get('markers');
+            if (!showMarkers) {
+                return "Disabled";
+            }
+
+            const markerShapeKey = this.get('markerShape');
+            const markerShape = MARKER_SHAPES[markerShapeKey].label;
+            const markerSize = this.get('markerSize');
+
+            return `${markerShape}: ${markerSize}px`;
         }
     });
 

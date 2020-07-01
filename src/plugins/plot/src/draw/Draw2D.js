@@ -24,7 +24,7 @@
 define([
     'EventEmitter',
     '../lib/eventHelpers',
-    './Shapes'
+    './markerShapes'
 ], function (
     EventEmitter,
     eventHelpers,
