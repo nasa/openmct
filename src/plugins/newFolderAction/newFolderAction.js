@@ -39,7 +39,9 @@ export default class NewFolderAction {
                             key: "name",
                             control: "textfield",
                             name: "Folder Name",
-                            required: false
+                            pattern: "\\S+",
+                            required: true,
+                            cssClass: "l-input-lg"
                         }
                     ]
                 }
@@ -53,7 +55,7 @@ export default class NewFolderAction {
             dialogService = this._openmct.$injector.get('dialogService'),
             folderType = this._openmct.types.get('folder');
 
-        dialogService.getUserInput(this._dialogForm, {}).then((userInput) => {
+        dialogService.getUserInput(this._dialogForm, {name: 'Unnamed Folder'}).then((userInput) => {
             let name = userInput.name,
                 identifier = {
                     key: uuid(),
