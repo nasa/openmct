@@ -103,6 +103,8 @@ export default class ConditionManager extends EventEmitter {
                         criterion.operation = '';
                         conditionChanged = true;
                     }
+                } else {
+                    conditionChanged = true;
                 }
             });
             if (conditionChanged) {
