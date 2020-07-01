@@ -26,12 +26,14 @@ define([
     '../configuration/Model',
     '../lib/extend',
     'EventEmitter',
+    '../draw/LineStyles',
     '../draw/MarkerShapes'
 ], function (
     _,
     Model,
     extend,
     EventEmitter,
+    LINE_STYLES,
     MARKER_SHAPES
 ) {
 
@@ -416,6 +418,24 @@ define([
             } else {
                 this.filters = deepCopiedFilters;
             }
+        },
+        lineOptionsDisplayText: function () {
+            const lineMethods = {
+                'none': 'None',
+                'linear': 'Linear interpolation',
+                'stepAfter': 'Step After'
+            }
+            const lineMethodKey = this.get('interpolate');
+            const lineMethod = lineMethods[lineMethodKey];
+
+            if (lineMethod === 'None') {
+                return lineMethod;
+            }
+
+            const lineStyleKey = this.get('lineStyle');
+            const lineStyle = LINE_STYLES[lineStyleKey].label;
+
+            return `${lineMethod}: ${lineStyle}`;
         },
         markerOptionsDisplayText: function () {
             const showMarkers = this.get('markers');

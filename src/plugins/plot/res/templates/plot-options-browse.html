@@ -44,18 +44,9 @@
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
-                         title="The line style and rendering method to join lines for this series.">Line Styling</div>
-                    <div class="grid-cell value">{{
-                        {
-                            'none': 'None',
-                            'linear': 'Linear interpolation',
-                            'stepAfter': 'Step After'
-                        }[series.get('interpolate')]
-                        + (
-                            series.get('interpolate') && series.get('interpolate') !== 'none'
-                                ? ": " + series.get('lineStyle')[0].toUpperCase() + series.get('lineStyle').substring(1)
-                                : ""
-                        ) }}
+                         title="The line style and rendering method to join lines for this series.">Line Method and Style</div>
+                    <div class="grid-cell value">
+                        {{ series.lineOptionsDisplayText() }}
                     </div>
                 </li>
                 <li class="grid-row">

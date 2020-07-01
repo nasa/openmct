@@ -22,21 +22,13 @@
 
 define([
     './PlotModelFormController',
-<<<<<<< HEAD
     '../draw/LineStyles',
-    '../draw/Shapes',
-    'lodash'
-], function (
-    PlotModelFormController,
-    LINE_STYLES,
-    SHAPES,
-=======
     '../draw/MarkerShapes',
     'lodash'
 ], function (
     PlotModelFormController,
+    LINE_STYLES,
     MARKER_SHAPES,
->>>>>>> plots/customization
     _
 ) {
 
@@ -105,7 +97,6 @@ define([
                         value: o.key
                     };
                 });
-<<<<<<< HEAD
             this.$scope.lineStyleOptions = Object.entries(LINE_STYLES)
                 .map(([key, obj]) => {
                     return {
@@ -113,10 +104,7 @@ define([
                         value: key
                     };
                 });
-            this.$scope.markerShapeOptions = Object.entries(SHAPES)
-=======
             this.$scope.markerShapeOptions = Object.entries(MARKER_SHAPES)
->>>>>>> plots/customization
                 .map(([key, obj]) => {
                     return {
                         name: obj.label,
