@@ -24,14 +24,14 @@ import uuid from 'uuid';
 
 export default class NewFolderAction {
     constructor(openmct) {
-        this.name = 'New Folder';
+        this.name = 'Add New Folder';
         this.key = 'newFolder';
         this.description = 'Create a new folder';
-        this.cssClass = 'icon-folder';
+        this.cssClass = 'icon-folder-new';
 
         this._openmct = openmct;
         this._dialogForm = {
-            name: "New Folder Name",
+            name: "Add New Folder",
             sections: [
                 {
                     rows: [
