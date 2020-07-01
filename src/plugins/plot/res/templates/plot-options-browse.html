@@ -62,7 +62,7 @@
                     <div class="grid-cell label"
                          title="Whether markers are displayed, and their size.">Markers</div>
                     <div class="grid-cell value">
-                        {{ series.get('markers') ? series.get('markerShape')[0].toUpperCase() + series.get('markerShape').substring(1) + ": " + series.get('markerSize') + "px" : "Disabled" }}
+                        {{ series.markerOptionsDisplayText() }}
                     </div>
                 </li>
                 <li class="grid-row">

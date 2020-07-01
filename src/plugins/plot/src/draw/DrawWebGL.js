@@ -24,11 +24,11 @@
 define([
     'EventEmitter',
     '../lib/eventHelpers',
-    './Shapes'
+    './MarkerShapes'
 ], function (
     EventEmitter,
     eventHelpers,
-    SHAPES
+    MARKER_SHAPES
 ) {
 
     // WebGL shader sources (for drawing plain colors)
@@ -154,7 +154,7 @@ define([
             return;
         }
 
-        const shapeCode = SHAPES[shape] ? SHAPES[shape].drawWebGL : 0;
+        const shapeCode = MARKER_SHAPES[shape] ? MARKER_SHAPES[shape].drawWebGL : 0;
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);

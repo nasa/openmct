@@ -25,12 +25,12 @@ define([
     'EventEmitter',
     '../lib/eventHelpers',
     './LineStyles',
-    './Shapes'
+    './MarkerShapes'
 ], function (
     EventEmitter,
     eventHelpers,
     LINE_STYLES,
-    SHAPES
+    MARKER_SHAPES
 ) {
 
     /**
