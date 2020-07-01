@@ -50,3 +50,26 @@ function updateLatestTimeStamp(timestamp, timeSystems) {
 
     return latest;
 }
+
+export const subscribeForStaleness = (callback, timeout) => {
+    let stalenessTimer = setTimeout(() => {
+        clearTimeout(stalenessTimer);
+        callback();
+    }, timeout);
+    return {
+        update: (data) => {
+            if (stalenessTimer) {
+                clearTimeout(stalenessTimer);
+            }
+            stalenessTimer = setTimeout(() => {
+                clearTimeout(stalenessTimer);
+                callback(data);
+            }, timeout);
+        },
+        clear: () => {
+            if (stalenessTimer) {
+                clearTimeout(stalenessTimer);
+            }
+        }
+    }
+};

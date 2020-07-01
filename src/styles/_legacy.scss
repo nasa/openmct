@@ -893,7 +893,7 @@ body.desktop {
 .grid-row {
     .grid-cell {
         padding: 3px $interiorMarginLg 3px 0;
-        &[title] {
+        &[title]:not([title=""]) {
             // When a cell has a title, assume it's helpful text
             cursor: help;
         }
