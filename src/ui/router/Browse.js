@@ -57,7 +57,7 @@ define([
                 path = path.split('/');
             }
 
-            return pathToObjects(path).then((objects)=>{
+            return pathToObjects(path).then(objects => {
                 isRoutingInProgress = false;
 
                 if (currentNavigation !== navigateCall) {
@@ -72,7 +72,7 @@ define([
                 // API for this.
                 openmct.router.path = objects.reverse();
 
-                unobserve = this.openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
+                unobserve = openmct.objects.observe(openmct.router.path[0], '*', (newObject) => {
                     openmct.router.path[0] = newObject;
                     browseObject = newObject;
                 });

@@ -138,12 +138,12 @@ define([
                 return staticObjectPath;
             };
         }
-        this.listenTo(this.model, 'change:' + prop, function (newVal, oldVal) {
+        this.listenTo(this.model, 'change:' + prop, ((newVal, oldVal) => {
             if (!_.isEqual(coerce(_.get(this.$scope, formPath)), coerce(newVal))) {
                 _.set(this.$scope, formPath, coerce(newVal));
             }
-        }, this);
-        this.model.listenTo(this.$scope, 'change:' + formPath, function (newVal, oldVal) {
+        }), this);
+        this.model.listenTo(this.$scope, 'change:' + formPath, ((newVal, oldVal) => {
             var validationResult = validate(newVal, this.model);
             if (validationResult === true) {
                 delete this.$scope.validation[formProp];
@@ -164,7 +164,7 @@ define([
                     );
                 }
             }
-        }, this);
+        }), this);
         _.set(this.$scope, formPath, coerce(this.model.get(prop)));
     };
 

@@ -28,7 +28,7 @@ define([
 ) {
 
     function extend(props) {
-        /*jshint validthis: true*/
+        // eslint-disable-next-line no-invalid-this
         var parent = this,
             child,
             Surrogate;
@@ -37,6 +37,7 @@ define([
             child = props.constructor;
         } else {
             child = function () {
+                // eslint-disable-next-line no-invalid-this
                 return parent.apply(this, arguments);
             };
         }

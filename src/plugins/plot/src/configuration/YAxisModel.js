@@ -60,14 +60,14 @@ define([
         },
         listenToSeriesCollection: function (seriesCollection) {
             this.seriesCollection = seriesCollection;
-            this.listenTo(this.seriesCollection, 'add', function (series) {
+            this.listenTo(this.seriesCollection, 'add', (series => {
                 this.trackSeries(series);
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
-            this.listenTo(this.seriesCollection, 'remove', function (series) {
+            }), this);
+            this.listenTo(this.seriesCollection, 'remove', (series => {
                 this.untrackSeries(series);
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
+            }), this);
             this.seriesCollection.forEach(this.trackSeries, this);
             this.updateFromSeries(this.seriesCollection);
         },
@@ -139,14 +139,14 @@ define([
             }, this);
         },
         trackSeries: function (series) {
-            this.listenTo(series, 'change:stats', function (seriesStats) {
+            this.listenTo(series, 'change:stats', (seriesStats => {
                 if (!seriesStats) {
                     this.resetStats();
                 } else {
                     this.updateStats(seriesStats);
                 }
-            }, this);
-            this.listenTo(series, 'change:yKey', function () {
+            }), this);
+            this.listenTo(series, 'change:yKey', () => {
                 this.updateFromSeries(this.seriesCollection);
             }, this);
         },

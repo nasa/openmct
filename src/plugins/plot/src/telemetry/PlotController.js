@@ -130,11 +130,11 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
-        this.listenTo(series, 'change:yKey', function () {
+        this.listenTo(series, 'change:yKey', () => {
             this.loadSeriesData(series);
         }, this);
 
-        this.listenTo(series, 'change:interpolate', function () {
+        this.listenTo(series, 'change:interpolate', () => {
             this.loadSeriesData(series);
         }, this);
 

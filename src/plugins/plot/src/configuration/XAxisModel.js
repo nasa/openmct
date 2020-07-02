@@ -38,11 +38,11 @@ define([
                 }
             });
 
-            this.on('change:frozen', function (frozen, oldValue, model) {
+            this.on('change:frozen', ((frozen, oldValue, model) => {
                 if (!frozen) {
                     model.set('range', this.get('range'));
                 }
-            });
+            }));
 
             if (this.get('range')) {
                 this.set('range', this.get('range'));
