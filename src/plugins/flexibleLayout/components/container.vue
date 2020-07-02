@@ -53,6 +53,7 @@
                 :index="i"
                 :container-index="index"
                 :is-editing="isEditing"
+                :object-path="objectPath"
             />
 
             <drop-hint
@@ -105,6 +106,14 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        locked: {
+            type: Boolean,
+            default: false
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     computed: {
@@ -130,6 +139,10 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
+            if (this.locked) {
+                return false;
+            }
+
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }
