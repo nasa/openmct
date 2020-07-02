@@ -41,7 +41,7 @@ define([], function () {
         this.timeFormat = 'local-format';
         this.durationFormat = 'duration';
 
-        this.isUTCBased = false;
+        this.isUTCBased = true;
     }
 
     return LocalTimeSystem;

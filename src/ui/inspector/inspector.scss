@@ -143,7 +143,7 @@
     &__label {
         color: $colorInspectorPropName;
 
-        &[title] {
+        &[title]:not([title=""]) {
             // When a cell has a title, assume it's helpful text
             cursor: help;
         }

@@ -24,14 +24,18 @@
 <div
     class="l-layout"
     :class="{
-        'is-multi-selected': selectedLayoutItems.length > 1
+        'is-multi-selected': selectedLayoutItems.length > 1,
+        'allow-editing': isEditing
     }"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"
 >
     <!-- Background grid -->
-    <div class="l-layout__grid-holder c-grid">
+    <div
+        v-if="isEditing"
+        class="l-layout__grid-holder c-grid"
+    >
         <div
             v-if="gridSize[0] >= 3"
             class="c-grid__x l-grid l-grid-x"
@@ -53,6 +57,7 @@
         :init-select="initSelectIndex === index"
         :index="index"
         :multi-select="selectedLayoutItems.length > 1"
+        :is-editing="isEditing"
         @move="move"
         @endMove="endMove"
         @endLineResize="endLineResize"
@@ -138,6 +143,10 @@ export default {
         domainObject: {
             type: Object,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -164,7 +173,7 @@ export default {
             let selectionPath = this.selection[0];
             let singleSelectedLine = this.selection.length === 1 &&
                     selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
-            return selectionPath && selectionPath.length > 1 && !singleSelectedLine;
+            return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
     inject: ['openmct', 'options', 'objectPath'],
@@ -352,6 +361,9 @@ export default {
                 .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
         },
         handleDragOver($event) {
+            if (this.internalDomainObject.locked) {
+                return;
+            }
             // Get the ID of the dragged object
             let draggedKeyString = $event.dataTransfer.types
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
@@ -582,7 +594,7 @@ export default {
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
                     key: uuid(),
-                    namespace: domainObject.identifier.namespace
+                    namespace: this.internalDomainObject.identifier.namespace
                 },
                 type = this.openmct.types.get(viewType),
                 parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
