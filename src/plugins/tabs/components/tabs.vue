@@ -32,7 +32,7 @@
             <span class="c-button__label c-tabs-view__tab__label-with-icon">{{ tab.domainObject.name }}</span>
             <span v-if="openmct.editor.isEditing()"
                   class="icon-x c-tabs-view__tab__icon"
-                  @click="showRemoveDialog(tab, index)"
+                  @click="showRemoveDialog(index)"
             ></span>
         </button>
     </div>
@@ -62,7 +62,6 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import RemoveDialog from './removeDialog';
 import RemoveAction from '../../remove/RemoveAction.js';
 
 var unknownObjectType = {
@@ -125,26 +124,38 @@ export default {
 
             this.currentTab = tab;
         },
-        showRemoveDialog(tab, index) {
+        showRemoveDialog(index) {
             if(!this.tabsList[index]) {
                 return;
             }
 
             let activeTab = this.tabsList[index];
-            let identifier = activeTab.domainObject.identifier;
-            let tabName = activeTab.domainObject.name;
+            let childDomainObject = activeTab.domainObject
 
             let self = this;
-            const options = {
-                name: tabName,
-                callback: function (deleteConfirmed) {
-                    if(deleteConfirmed) {
-                        self.removeItem(identifier);
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: 'true',
+                        callback: function () {
+                            self.removeFromComposition(childDomainObject);
+                            prompt.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: function () {
+                            prompt.dismiss();
+                        }
                     }
-                }
-            }
-            const removeDialog = new RemoveDialog(this.openmct, options);
-            removeDialog.show();
+                ]
+            });
+        },
+        removeFromComposition(childDomainObject) {
+            this.composition.remove(childDomainObject);
         },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
@@ -163,23 +174,15 @@ export default {
         },
         removeItem(identifier) {
             let pos = this.tabsList.findIndex(tab =>
-                tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
-            );
+                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
+                ),
+                tabToBeRemoved = this.tabsList[pos];
 
-            if(pos < 0) {
-                return;
-            }
-
-            let tabToBeRemoved = this.tabsList[pos];
             this.tabsList.splice(pos, 1);
 
             if (this.isCurrent(tabToBeRemoved)) {
                 this.showTab(this.tabsList[this.tabsList.length - 1], this.tabsList.length - 1);
             }
-
-            this.openmct.objects.get(identifier).then((childDomainObject) => {
-                this.RemoveAction.removeFromComposition(this.internalDomainObject, childDomainObject);
-            });
         },
         onReorder(reorderPlan) {
             let oldTabs = this.tabsList.slice();
