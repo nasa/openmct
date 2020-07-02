@@ -42,7 +42,17 @@
         />
         <div class="l-browse-bar__actions">
             <button
-                v-if="isViewEditable & !isEditing"
+                v-if="isViewEditable && !isEditing"
+                :title="lockedOrUnlocked"
+                class="c-button"
+                :class="{
+                    'icon-lock': domainObject.locked,
+                    'icon-unlocked': !domainObject.locked
+                }"
+                @click="toggleLock(!domainObject.locked)"
+            ></button>
+            <button
+                v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
@@ -162,6 +172,13 @@ export default {
                 return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
             }
             return false;
+        },
+        lockedOrUnlocked() {
+            if (this.domainObject.locked) {
+                return 'Locked for editing - click to unlock.';
+            } else {
+                return 'Unlocked for editing - click to lock.';
+            }
         }
     },
     watch: {
@@ -272,6 +289,9 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
+        },
+        toggleLock(flag) {
+            this.openmct.objects.mutate(this.domainObject, 'locked', flag);
         }
     }
 }
