@@ -29,7 +29,11 @@
             ]"
             @click="showTab(tab, index)"
         >
-            <span class="c-button__label">{{ tab.domainObject.name }}</span>
+            <span class="c-button__label c-tabs-view__tab__label-with-icon">{{ tab.domainObject.name }}</span>
+            <span v-if="openmct.editor.isEditing()"
+                  class="icon-x c-tabs-view__tab__icon"
+                  @click="showRemoveDialog(tab, index)"
+            ></span>
         </button>
     </div>
     <div
@@ -58,6 +62,8 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
+import RemoveDialog from './removeDialog';
+import RemoveAction from '../../remove/RemoveAction.js';
 
 var unknownObjectType = {
     definition: {
@@ -97,6 +103,7 @@ export default {
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
+        this.RemoveAction = new RemoveAction(this.openmct);
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
     },
@@ -118,6 +125,27 @@ export default {
 
             this.currentTab = tab;
         },
+        showRemoveDialog(tab, index) {
+            if(!this.tabsList[index]) {
+                return;
+            }
+
+            let activeTab = this.tabsList[index];
+            let identifier = activeTab.domainObject.identifier;
+            let tabName = activeTab.domainObject.name;
+
+            let self = this;
+            const options = {
+                name: tabName,
+                callback: function (deleteConfirmed) {
+                    if(deleteConfirmed) {
+                        self.removeItem(identifier);
+                    }
+                }
+            }
+            const removeDialog = new RemoveDialog(this.openmct, options);
+            removeDialog.show();
+        },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
                 tabItem = {
@@ -135,15 +163,23 @@ export default {
         },
         removeItem(identifier) {
             let pos = this.tabsList.findIndex(tab =>
-                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
-                ),
-                tabToBeRemoved = this.tabsList[pos];
+                tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
+            );
 
+            if(pos < 0) {
+                return;
+            }
+
+            let tabToBeRemoved = this.tabsList[pos];
             this.tabsList.splice(pos, 1);
 
             if (this.isCurrent(tabToBeRemoved)) {
                 this.showTab(this.tabsList[this.tabsList.length - 1], this.tabsList.length - 1);
             }
+
+            this.openmct.objects.get(identifier).then((childDomainObject) => {
+                this.RemoveAction.removeFromComposition(this.internalDomainObject, childDomainObject);
+            });
         },
         onReorder(reorderPlan) {
             let oldTabs = this.tabsList.slice();
