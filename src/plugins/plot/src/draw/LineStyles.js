@@ -29,19 +29,23 @@ define([], function () {
     const LINE_STYLES = {
         solid: {
             label: 'Solid',
-            pattern: []
+            drawWebGL: 1,
+            drawC2D: []
         },
         dot: {
             label: 'Dot',
-            pattern: [2, 2]
-        },
-        dash: {
-            label: 'Dash',
-            pattern: [5, 2]
+            drawWebGL: 2,
+            drawC2D: [2, 2]
         }
+        // dash: {
+        //     label: 'Dash',
+        //     drawWebGL: 3,
+        //     drawC2D: [5, 2]
+        // }
         // dotDashDot: {
         //     label: 'Dot Dash Dot',
-        //     pattern: [5, 2, 2]
+        //     drawWebGL: 4,
+        //     drawC2D: [5, 2, 2]
         // }
     };
 

@@ -24,10 +24,12 @@
 define([
     'EventEmitter',
     '../lib/eventHelpers',
+    './LineStyles',
     './MarkerShapes'
 ], function (
     EventEmitter,
     eventHelpers,
+    LINE_STYLES,
     MARKER_SHAPES
 ) {
 
@@ -35,13 +37,22 @@ define([
     const FRAGMENT_SHADER = `
         precision mediump float;
         uniform vec4 uColor;
+        uniform int uLineStyle;
         uniform int uShape;
+        varying float vLengthSoFar;
         
         void main(void) {
-            gl_FragColor = uColor;
             if (uShape == 2) {
                 float distance = length(2.0 * gl_PointCoord - 1.0);
                 if (distance > 1.0) {
+                    discard;
+                }
+            }
+            gl_FragColor = uColor;
+
+            if (uLineStyle == 2) {
+                float alpha = floor(2.0 * fract(vLengthSoFar * 10.0));
+                if (alpha < .5) {
                     discard;
                 }
             }
@@ -50,13 +61,16 @@ define([
 
     const VERTEX_SHADER = `
         attribute vec2 aVertexPosition;
+        attribute float aLengthSoFar;
         uniform vec2 uDimensions;
         uniform vec2 uOrigin;
         uniform float uPointSize;
+        varying float vLengthSoFar;
         
         void main(void) {
             gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);
             gl_PointSize = uPointSize;
+            vLengthSoFar = aLengthSoFar;
         }
     `;
 
@@ -117,13 +131,16 @@ define([
         // Get locations for attribs/uniforms from the
         // shader programs (to pass values into shaders at draw-time)
         this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
+        this.aLengthSoFar = this.gl.getAttribLocation(this.program, "aLengthSoFar");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
+        this.uLineStyle = this.gl.getUniformLocation(this.program, "uLineStyle");
         this.uShape = this.gl.getUniformLocation(this.program, "uShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
 
         this.gl.enableVertexAttribArray(this.aVertexPosition);
+        this.gl.enableVertexAttribArray(this.aLengthSoFar);
 
         // Create a buffer to holds points which will be drawn
         this.buffer = this.gl.createBuffer();
@@ -153,14 +170,36 @@ define([
         if (this.isContextLost) {
             return;
         }
-
+        const lineStyle = LINE_STYLES[shape] ? LINE_STYLES[shape].drawWebGL : 0;
         const shapeCode = MARKER_SHAPES[shape] ? MARKER_SHAPES[shape].drawWebGL : 0;
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
-        this.gl.uniform1i(this.uShape, shapeCode)
+        this.gl.uniform1i(this.uLineStyle, lineStyle);
+        this.gl.uniform1i(this.uShape, shapeCode);
+
+
+        const lengthSoFar = [0];
+        for (let i = 1; i < points; i++) {
+            const lastX = (i - 1) * 2;
+            const currentX = i * 2;
+            const xDelta = buf[lastX] - buf[currentX];
+            const yDelta = buf[lastX + 1] - buf[currentX + 1];
+            const distance = Math.sqrt(
+                Math.pow(xDelta, 2)
+                + Math.pow(yDelta, 2)
+            );
+
+            lengthSoFar.push(lengthSoFar[i - 1] + distance);
+        }
+
+        let lineBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, lineBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(lengthSoFar), this.gl.DYNAMIC_DRAW);
+        this.gl.vertexAttribPointer(this.aLengthSoFar, 1, this.gl.FLOAT, false, 0, 0);
+
         this.gl.drawArrays(drawType, 0, points);
     };
 
@@ -219,7 +258,8 @@ define([
         if (this.isContextLost) {
             return;
         }
-        this.doDraw(this.gl.LINE_STRIP, buf, color, points);
+
+        this.doDraw(this.gl.LINE_STRIP, buf, color, points, style);
     };
 
     /**
