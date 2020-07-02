@@ -174,7 +174,7 @@ export default {
 
             if(jumpAndScroll) {
                 this.scrollTo = this.currentlyViewedObjectId();
-                this.allChildren = [];
+                this.allTreeItems = [];
                 this.ancestors = [];
                 this.jumpPath = this.currentlyViewedObjectParentPath();
                 this.jumpToPath(AND_SAVE_PATH);
@@ -381,11 +381,15 @@ export default {
         },
         addChild(child) {
             this.allTreeItems.push(this.buildTreeItem(child));
+            if(!this.isLoading) {
+                this.setContainerHeight();
+            }
         },
         removeChild(identifier) {
             let removeId = this.openmct.objects.makeKeyString(identifier);
-            this.allChildren = this.children
+            this.allTreeItems = this.allTreeItems
                 .filter(c => c.id !== removeId);
+            this.setContainerHeight();
         },
         finishLoading() {
             if(this.jumpPath) {
