@@ -142,6 +142,9 @@ $colorTimeHov: pullForward($colorTime, 10%);
 $colorTimeSubtle: pushBack($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$timeConductorAxisHoverFilter: brightness(1.2);
+$timeConductorActiveBg: $colorKey;
+$timeConductorActivePanBg: #226074;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
