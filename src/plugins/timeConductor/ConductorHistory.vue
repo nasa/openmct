@@ -142,12 +142,13 @@ export default {
                 end: this.bounds.end
             };
 
-            const isNotEqual = function (entry) {
+            function isNotEqual(entry) {
                 const start = entry.start !== this.start;
                 const end = entry.end !== this.end;
 
                 return start || end;
-            };
+            }
+
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {

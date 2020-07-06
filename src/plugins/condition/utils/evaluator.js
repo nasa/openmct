@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { TRIGGER } from "./constants";
 
-export const evaluateResults = (results, trigger) => {
+export function evaluateResults(results, trigger) {
     if (trigger && trigger === TRIGGER.XOR) {
         return matchExact(results, 1);
     } else if (trigger && trigger === TRIGGER.NOT) {

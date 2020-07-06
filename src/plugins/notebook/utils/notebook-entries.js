@@ -7,7 +7,7 @@ const TIME_BOUNDS = {
     END_DELTA: 'tc.endDelta'
 }
 
-export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
+export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
     if (historicLink.includes('tc.mode=fixed')) {
         return historicLink;
     }
@@ -37,7 +37,7 @@ export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
     return params.join('&');
 }
 
-export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
+export function getNotebookDefaultEntries(notebookStorage, domainObject) {
     if (!notebookStorage || !domainObject) {
         return null;
     }
@@ -66,7 +66,7 @@ export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
     return entries[defaultSection.id][defaultPage.id];
 }
 
-export const createNewEmbed = (snapshotMeta, snapshot = '') => {
+export function createNewEmbed(snapshotMeta, snapshot = '') {
     const {
         bounds,
         link,
@@ -100,7 +100,7 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
     };
 }
 
-export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed = null) => {
+export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null) {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -131,7 +131,7 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed =
     return id;
 }
 
-export const getNotebookEntries = (domainObject, selectedSection, selectedPage) => {
+export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return null;
     }
@@ -152,7 +152,7 @@ export const getNotebookEntries = (domainObject, selectedSection, selectedPage) 
     return entries[selectedSection.id][selectedPage.id];
 }
 
-export const getEntryPosById = (entryId, domainObject, selectedSection, selectedPage) => {
+export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return;
     }
@@ -170,7 +170,7 @@ export const getEntryPosById = (entryId, domainObject, selectedSection, selected
     return foundId;
 }
 
-export const deleteNotebookEntries = (openmct, domainObject, selectedSection, selectedPage) => {
+export function deleteNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection) {
         return;
     }
