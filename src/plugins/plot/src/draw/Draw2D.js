@@ -128,7 +128,7 @@ define([
         pointSize,
         shape
     ) {
-        const drawC2DShape = SHAPES[shape].drawC2D.bind(this);
+        const drawC2DShape = MARKER_SHAPES[shape].drawC2D.bind(this);
 
         this.setColor(color);
 
