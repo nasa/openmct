@@ -185,8 +185,8 @@ define([
         for (let i = 1; i < points; i++) {
             const lastX = (i - 1) * 2;
             const currentX = i * 2;
-            const xDelta = buf[lastX] - buf[currentX];
-            const yDelta = buf[lastX + 1] - buf[currentX + 1];
+            const xDelta = this.x(buf[lastX]) - this.x(buf[currentX]);
+            const yDelta = this.y(buf[lastX + 1]) - this.y(buf[currentX + 1]);
             const distance = Math.sqrt(
                 Math.pow(xDelta, 2)
                 + Math.pow(yDelta, 2)
