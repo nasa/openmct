@@ -27,7 +27,7 @@ define(
     ["../../src/creation/CreateWizard"],
     function (CreateWizard) {
 
-        describe("The create wizard", function () {
+        xdescribe("The create wizard", function () {
             var mockType,
                 mockParent,
                 mockProperties,
@@ -154,7 +154,7 @@ define(
                 expect(mockDomainObject.useCapability.calls.mostRecent().args[1]()).toEqual(compareModel);
             });
 
-            xit("validates selection types using policy", function () {
+            it("validates selection types using policy", function () {
                 var mockDomainObj = jasmine.createSpyObj(
                         'domainObject',
                         ['getCapability']
