@@ -19,16 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RemoveAction from './plugin.js';
+import RemoveActionPlugin from './plugin.js';
+import RemoveAction from './RemoveAction.js';
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationState,
+    getMockObjects
 } from 'utils/testing';
 
 fdescribe("The Remove Action plugin", () => {
 
     let openmct,
-        removeActionPlugin;
+        removeAction,
+        childObject,
+        parentObject;
 
     // this setups up the app
     beforeEach((done) => {
@@ -38,11 +42,27 @@ fdescribe("The Remove Action plugin", () => {
 
         openmct = createOpenMct();
 
-        spyOn(openmct.objects, 'mutate')
+        childObject = getMockObjects({
+            objectKeyStrings: ['folder'],
+            overwrite: {
+                folder: {
+                    name: "Child Folder",
+                    identifier: { namespace: "", key: "child-folder-object" }
+                }
+            }
+        }).folder;
+        parentObject = getMockObjects({
+            objectKeyStrings: ['folder'],
+            overwrite: {
+                folder: {
+                    name: "Parent Folder",
+                    composition: [childObject.identifier]
+                }
+            }
+        }).folder;
 
-        // already installed by default, but never hurts
-        removeActionPlugin = new RemoveAction(openmct);
-        openmct.install(removeActionPlugin());
+        // already installed by default, but never hurts, just adds to context menu
+        openmct.install(RemoveActionPlugin());
 
         openmct.on('start', done);
         openmct.startHeadless(appHolder);
@@ -53,11 +73,46 @@ fdescribe("The Remove Action plugin", () => {
     });
 
     it("should be definied", () => {
-        expect(removeActionPlugin).toBeDefined();
+        expect(RemoveActionPlugin).toBeDefined();
     });
 
-    it("should remove a child from parent composition", () => {
-        
-        expect(true).toBe(true);
+    describe("when removeFromComposition is invoked", () => {
+
+        beforeEach(() => {
+            removeAction = new RemoveAction(openmct);
+            spyOn(removeAction, 'removeFromComposition').and.callThrough();
+            spyOn(removeAction, 'inNavigationPath').and.returnValue(false);
+            spyOn(openmct.objects, 'mutate').and.callThrough();
+            removeAction.removeFromComposition(parentObject, childObject);
+        });
+
+        it("it should be called", () => {
+            expect(removeAction.removeFromComposition).toHaveBeenCalled();
+            expect(removeAction.removeFromComposition).toHaveBeenCalledWith(parentObject, childObject);
+        });
+
+        it("it should mutate the parent object", () => {
+            expect(openmct.objects.mutate).toHaveBeenCalled();
+            expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(parentObject);
+        });
+    });
+
+    describe("when appliesTo is called", () => {
+
+        beforeEach(() => {
+            removeAction = new RemoveAction(openmct);
+            spyOn(removeAction, 'appliesTo').and.callThrough();
+        });
+
+        it("should be true when the parent is creatable and has composition", () => {
+            let applies = removeAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
+        });
+
+        it("should be false when the child is locked", () => {
+            childObject.locked = true;
+            let applies = removeAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(false);
+        });
     });
 });

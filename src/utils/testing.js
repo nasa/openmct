@@ -227,6 +227,13 @@ function copyObj(obj) {
 function setMockObjects() {
     return {
         default: {
+            folder: {
+                identifier: { namespace: "", key: "folder-object" },
+                name: "Test Folder Object",
+                type: "folder",
+                composition: [],
+                location: "mine"
+            },
             ladTable: {
                 identifier: { namespace: "", key: "lad-object"},
                 type: 'LadTable',
