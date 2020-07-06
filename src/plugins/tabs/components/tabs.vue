@@ -19,7 +19,7 @@
         >
             Drag objects here to add them to this view.
         </div>
-        <button
+        <div
             v-for="(tab,index) in tabsList"
             :key="index"
             class="c-tabs-view__tab c-tab"
@@ -29,12 +29,12 @@
             ]"
             @click="showTab(tab, index)"
         >
-            <span class="c-button__label c-tabs-view__tab__label-with-icon">{{ tab.domainObject.name }}</span>
-            <span v-if="openmct.editor.isEditing()"
-                  class="icon-x c-tabs-view__tab__icon"
-                  @click="showRemoveDialog(index)"
-            ></span>
-        </button>
+            <span class="c-button__label c-tabs-view__tab__label">{{ tab.domainObject.name }}</span>
+            <button v-if="openmct.editor.isEditing()"
+                    class="icon-x c-click-icon c-tabs-view__tab__close-btn"
+                    @click="showRemoveDialog(index)"
+            ></button>
+        </div>
     </div>
     <div
         v-for="(tab, index) in tabsList"
