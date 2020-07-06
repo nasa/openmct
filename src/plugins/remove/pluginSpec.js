@@ -27,7 +27,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-fdescribe("The Remove Action plugin", () => {
+describe("The Remove Action plugin", () => {
 
     let openmct,
         removeAction,
