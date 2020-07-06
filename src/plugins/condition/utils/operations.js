@@ -30,7 +30,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + joinValues(values, 1);
+            return ' is ' + values.slice(0, 1);
         }
     },
     {
@@ -42,7 +42,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + joinValues(values, 1);
+            return ' is not ' + values.slice(0, 1);
         }
     },
     {
@@ -54,7 +54,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' > ' + joinValues(values, 1);
+            return ' > ' + values.slice(0, 1);
         }
     },
     {
@@ -66,7 +66,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' < ' + joinValues(values, 1);
+            return ' < ' + values.slice(0, 1);
         }
     },
     {
@@ -78,7 +78,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' >= ' + joinValues(values, 1);
+            return ' >= ' + values.slice(0, 1);
         }
     },
     {
@@ -90,7 +90,7 @@ export const OPERATIONS = [
         appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' <= ' + joinValues(values, 1);
+            return ' <= ' + values.slice(0, 1);
         }
     },
     {
@@ -132,7 +132,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' contains ' + joinValues(values, 1);
+            return ' contains ' + values.slice(0, 1);
         }
     },
     {
@@ -144,7 +144,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' does not contain ' + joinValues(values, 1);
+            return ' does not contain ' + values.slice(0, 1);
         }
     },
     {
@@ -156,7 +156,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' starts with ' + joinValues(values, 1);
+            return ' starts with ' + values.slice(0, 1);
         }
     },
     {
@@ -168,7 +168,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' ends with ' + joinValues(values, 1);
+            return ' ends with ' + values.slice(0, 1);
         }
     },
     {
@@ -180,7 +180,7 @@ export const OPERATIONS = [
         appliesTo: ['string'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is exactly ' + joinValues(values, 1);
+            return ' is exactly ' + values.slice(0, 1);
         }
     },
     {
@@ -217,7 +217,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is ' + joinValues(values, 1);
+            return ' is ' + values.slice(0, 1);
         }
     },
     {
@@ -230,7 +230,7 @@ export const OPERATIONS = [
         appliesTo: ['enum'],
         inputCount: 1,
         getDescription: function (values) {
-            return ' is not ' + joinValues(values, 1);
+            return ' is not ' + values.slice(0, 1);
         }
     },
     {
@@ -281,21 +281,19 @@ export const OPERATIONS = [
         }
     }
 ];
-
-function convertToNumbers(input) {
+// cast each value in inputArr to number
+function convertToNumbers(inputArr) {
     let numberInputs = [];
-    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+    inputArr.forEach(inputValue => numberInputs.push(Number(inputValue)));
     return numberInputs;
 }
 
-function convertToStrings(input) {
-    let stringInputs = [];
-    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
-    return stringInputs;
-}
 
-function joinValues(values, length) {
-    return values.slice(0, length).join(', ');
+// cast each value in inputArr to string, or empty string if undefined
+function convertToStrings(inputArr) {
+    let stringInputs = [];
+    inputArr.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+    return stringInputs;
 }
 
 export const INPUT_TYPES = {
