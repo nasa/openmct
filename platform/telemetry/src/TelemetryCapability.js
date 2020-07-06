@@ -33,14 +33,15 @@ define(
         _
     ) {
 
-        var ZERO = function () {
-                return 0;
-            },
-            EMPTY_SERIES = {
-                getPointCount: ZERO,
-                getDomainValue: ZERO,
-                getRangeValue: ZERO
-            };
+        function ZERO() {
+            return 0;
+        }
+
+        const EMPTY_SERIES = {
+            getPointCount: ZERO,
+            getDomainValue: ZERO,
+            getRangeValue: ZERO
+        };
 
         /**
          * Provides metadata about telemetry associated with a

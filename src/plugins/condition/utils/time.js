@@ -20,12 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const getLatestTimestamp = (
+function updateLatestTimeStamp(timestamp, timeSystems) {
+    let latest = {};
+
+    timeSystems.forEach(timeSystem => {
+        latest[timeSystem.key] = timestamp[timeSystem.key];
+    });
+
+    return latest;
+}
+
+export function getLatestTimestamp(
     currentTimestamp,
     compareTimestamp,
     timeSystems,
     currentTimeSystem
-) => {
+) {
     let latest = { ...currentTimestamp };
     const compare = { ...compareTimestamp };
     const key = currentTimeSystem.key;
@@ -41,17 +51,7 @@ export const getLatestTimestamp = (
     return latest;
 }
 
-function updateLatestTimeStamp(timestamp, timeSystems) {
-    let latest = {};
-
-    timeSystems.forEach(timeSystem => {
-        latest[timeSystem.key] = timestamp[timeSystem.key];
-    });
-
-    return latest;
-}
-
-export const subscribeForStaleness = (callback, timeout) => {
+export function subscribeForStaleness(callback, timeout) {
     let stalenessTimer = setTimeout(() => {
         clearTimeout(stalenessTimer);
         callback();
@@ -72,4 +72,4 @@ export const subscribeForStaleness = (callback, timeout) => {
             }
         }
     }
-};
+}

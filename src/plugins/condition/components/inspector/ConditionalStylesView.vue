@@ -217,11 +217,11 @@ export default {
         },
         addConditionSet() {
             let conditionSetDomainObject;
-            const handleItemSelection = (item) => {
+            function handleItemSelection(item) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
-            };
+            }
             const dismissDialog = (overlay, initialize) => {
                 overlay.dismiss();
                 if (initialize && conditionSetDomainObject) {

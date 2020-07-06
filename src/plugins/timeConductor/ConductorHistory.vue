@@ -148,6 +148,7 @@ export default {
 
                 return start || end;
             });
+
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {

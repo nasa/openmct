@@ -20,22 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const convertToNumbers = (input) => {
-    let numberInputs = [];
-    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
-    return numberInputs;
-};
-
-const convertToStrings = (input) => {
-    let stringInputs = [];
-    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
-    return stringInputs;
-};
-
-const joinValues = (values, length) => {
-    return values.slice(0, length).join(', ');
-};
-
 export const OPERATIONS = [
     {
         name: 'equalTo',
@@ -298,12 +282,28 @@ export const OPERATIONS = [
     }
 ];
 
+function convertToNumbers(input) {
+    let numberInputs = [];
+    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+    return numberInputs;
+}
+
+function convertToStrings(input) {
+    let stringInputs = [];
+    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+    return stringInputs;
+}
+
+function joinValues(values, length) {
+    return values.slice(0, length).join(', ');
+}
+
 export const INPUT_TYPES = {
     'string': 'text',
     'number': 'number'
 };
 
-export const getOperatorText = (operationName, values) => {
+export function getOperatorText(operationName, values) {
     const found = OPERATIONS.find((operation) => operation.name === operationName);
     return found ? found.getDescription(values) : '';
-};
+}

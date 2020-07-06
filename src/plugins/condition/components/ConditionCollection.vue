@@ -168,7 +168,7 @@ export default {
         },
         dropCondition(targetIndex) {
             const oldIndexArr = Object.keys(this.conditionCollection);
-            const move = function (arr, old_index, new_index) {
+            function move(arr, old_index, new_index) {
                 while (old_index < 0) {
                     old_index += arr.length;
                 }
