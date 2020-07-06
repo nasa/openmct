@@ -114,25 +114,6 @@ mct-plot {
     .plot-wrapper-axis-and-display-area {
         position: relative;
         flex: 1 1 auto;
-
-        .l-state-indicators {
-            color: $colorPausedBg;
-            position: absolute;
-            display: block;
-            font-size: 1.5em;
-            pointer-events: none;
-            top: $interiorMarginSm;
-            left: $interiorMarginSm;
-            z-index: 2;
-
-            > * + * {
-                margin-left: $interiorMarginSm;
-            }
-
-            .t-alert-unsynced {
-                display: none;
-            }
-        }
     }
 
     .gl-plot-wrapper-display-area-and-x-axis {
@@ -294,6 +275,25 @@ mct-plot {
             right: $m;
         }
     }
+
+    .l-state-indicators {
+        color: $colorPausedBg;
+        position: absolute;
+        display: block;
+        font-size: 1.5em;
+        pointer-events: none;
+        top: $interiorMarginSm;
+        left: $interiorMarginSm;
+        z-index: 2;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        .t-alert-unsynced {
+            display: none;
+        }
+    }
 }
 
 .gl-plot-display-area,
@@ -432,6 +432,7 @@ mct-plot {
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
         flex: 1 1 auto;
+        overflow: auto; // Prevents collapsed legend from forcing scrollbars on higher parent containers
     }
 
     &__view-control {

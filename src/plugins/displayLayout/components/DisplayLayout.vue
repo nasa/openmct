@@ -566,7 +566,7 @@ export default {
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
                     key: uuid(),
-                    namespace: domainObject.identifier.namespace
+                    namespace: this.internalDomainObject.identifier.namespace
                 },
                 type = this.openmct.types.get(viewType),
                 parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
