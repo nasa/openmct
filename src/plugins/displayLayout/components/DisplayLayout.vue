@@ -457,15 +457,43 @@ export default {
             this.objectViewMap = {};
             this.layoutItems.forEach(this.trackItem);
         },
-        addChild(child) {
-            let keyString = this.openmct.objects.makeKeyString(child.identifier);
-            if (this.isTelemetry(child)) {
-                if (!this.telemetryViewMap[keyString] && !this.objectViewMap[keyString]) {
-                    this.addItem('telemetry-view', child);
+        isItemAlreadyTracked(child) {
+            let found = false,
+                keyString = this.openmct.objects.makeKeyString(child.identifier);
+
+            this.layoutItems.forEach(item => {
+                if (item.identifier) {
+                    let itemKeyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                    if (itemKeyString === keyString) {
+                        found = true;
+                        return;
+                    }
                 }
-            } else if (!this.objectViewMap[keyString]) {
-                this.addItem('subobject-view', child);
+            });
+
+            if (found) {
+                return true;
+            } else if (this.isTelemetry(child)) {
+                return this.telemetryViewMap[keyString] && this.objectViewMap[keyString];
+            } else {
+                return this.objectViewMap[keyString];
             }
+        },
+        addChild(child) {
+            if (this.isItemAlreadyTracked(child)) {
+                return;
+            }
+
+            let type;
+
+            if (this.isTelemetry(child)) {
+                type = 'telemetry-view';
+            } else {
+                type = 'subobject-view';
+            }
+
+            this.addItem(type, child);
         },
         removeChild(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
