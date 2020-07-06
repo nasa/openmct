@@ -76,7 +76,7 @@ fdescribe("The Remove Action plugin", () => {
         expect(RemoveActionPlugin).toBeDefined();
     });
 
-    describe("when removeFromComposition is invoked", () => {
+    describe("when removing an object from a parent composition", () => {
 
         beforeEach(() => {
             removeAction = new RemoveAction(openmct);
@@ -86,7 +86,7 @@ fdescribe("The Remove Action plugin", () => {
             removeAction.removeFromComposition(parentObject, childObject);
         });
 
-        it("it should be called", () => {
+        it("removeFromComposition should be called with the parent and child", () => {
             expect(removeAction.removeFromComposition).toHaveBeenCalled();
             expect(removeAction.removeFromComposition).toHaveBeenCalledWith(parentObject, childObject);
         });
@@ -97,7 +97,7 @@ fdescribe("The Remove Action plugin", () => {
         });
     });
 
-    describe("when appliesTo is called", () => {
+    describe("when determining the object is applicable", () => {
 
         beforeEach(() => {
             removeAction = new RemoveAction(openmct);
