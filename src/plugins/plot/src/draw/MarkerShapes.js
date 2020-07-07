@@ -32,6 +32,7 @@ define([], function () {
             drawWebGL: 1,
             drawC2D: function (x, y, size) {
                 const offset = size / 2;
+
                 this.c2d.fillRect(x - offset, y - offset, size, size);
             }
         },
@@ -43,6 +44,25 @@ define([], function () {
 
                 this.c2d.beginPath();
                 this.c2d.arc(x, y, radius, 0, 2 * Math.PI, false);
+                this.c2d.closePath();
+                this.c2d.fill();
+            }
+        },
+        diamond: {
+            label: 'Diamond',
+            drawWebGL: 3,
+            drawC2D: function (x, y, size) {
+                const offset = size / 2;
+                const top = [x, y + offset];
+                const right = [x + offset, y];
+                const bottom = [x, y - offset];
+                const left = [x - offset, y];
+
+                this.c2d.beginPath();
+                this.c2d.moveTo(...top);
+                this.c2d.lineTo(...right);
+                this.c2d.lineTo(...bottom);
+                this.c2d.lineTo(...left);
                 this.c2d.closePath();
                 this.c2d.fill();
             }

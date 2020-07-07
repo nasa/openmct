@@ -45,6 +45,13 @@ define([
                     discard;
                 }
             }
+            if (uShape == 3) {
+                vec2 pointCoordClipSpace = 2.0 * gl_PointCoord - 1.0;
+                float distance = abs(pointCoordClipSpace.x) + abs(pointCoordClipSpace.y);
+                if (distance > 1.0) {
+                    discard;
+                }
+            }
         }
     `;
 
