@@ -38,11 +38,13 @@ define([
         precision mediump float;
         uniform vec4 uColor;
         uniform int uLineStyle;
-        uniform int uShape;
+        uniform int uMarkerShape;
+        uniform sampler2D uPattern;
+        uniform float uPointCount;
         varying float vLengthSoFar;
         
         void main(void) {
-            if (uShape == 2) {
+            if (uMarkerShape == 2) {
                 float distance = length(2.0 * gl_PointCoord - 1.0);
                 if (distance > 1.0) {
                     discard;
@@ -51,10 +53,10 @@ define([
             gl_FragColor = uColor;
 
             if (uLineStyle == 2) {
-                float alpha = floor(2.0 * fract(vLengthSoFar * 10.0));
-                if (alpha < .5) {
-                    discard;
-                }
+                gl_FragColor = texture2D(
+                    uPattern,
+                    vec2(fract(vLengthSoFar * 10.0))
+                );
             }
         }
     `;
@@ -134,10 +136,11 @@ define([
         this.aLengthSoFar = this.gl.getAttribLocation(this.program, "aLengthSoFar");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
         this.uLineStyle = this.gl.getUniformLocation(this.program, "uLineStyle");
-        this.uShape = this.gl.getUniformLocation(this.program, "uShape");
+        this.uMarkerShape = this.gl.getUniformLocation(this.program, "uMarkerShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
+        this.uPointCount = this.gl.getUniformLocation(this.program, "uPointCount");
 
         this.gl.enableVertexAttribArray(this.aVertexPosition);
         this.gl.enableVertexAttribArray(this.aLengthSoFar);
@@ -178,7 +181,8 @@ define([
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
         this.gl.uniform1i(this.uLineStyle, lineStyle);
-        this.gl.uniform1i(this.uShape, shapeCode);
+        this.gl.uniform1i(this.uMarkerShape, shapeCode);
+        this.gl.uniform1f(this.uPointCount, points);
 
 
         const lengthSoFar = [0];
@@ -199,6 +203,27 @@ define([
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, lineBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(lengthSoFar), this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aLengthSoFar, 1, this.gl.FLOAT, false, 0, 0);
+
+        const mappedColor = color.map(function (c, i) {
+            return Math.floor(c * 255);
+        });
+
+        const dots = [
+            ...mappedColor,
+            0,0,0,0,
+            0,0,0,0,
+            0,0,0,0,
+        ];
+
+        var texture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texImage2D(
+            this.gl.TEXTURE_2D, 0, this.gl.RGBA, dots.length / 4, 1, 0,
+            this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(dots));
+        this.gl.texParameteri(
+            this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(
+            this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
 
         this.gl.drawArrays(drawType, 0, points);
     };
