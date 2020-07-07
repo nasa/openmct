@@ -27,10 +27,10 @@ define(
         var TEST_TIMESTAMP = 1433354174000;
 
         describe("The ticker service", function () {
-            var mockTimeout,
-                mockNow,
-                mockCallback,
-                tickerService;
+            var mockTimeout;
+            var mockNow;
+            var mockCallback;
+            var tickerService;
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');

@@ -26,10 +26,10 @@ define(
     function (TemplatePrefetcher) {
 
         describe("TemplatePrefetcher", function () {
-            var mockTemplateLinker,
-                testExtensions,
-                testPathPrefix,
-                prefetcher; // eslint-disable-line
+            var mockTemplateLinker;
+            var testExtensions;
+            var testPathPrefix;
+            var prefetcher; // eslint-disable-line
 
             beforeEach(function () {
                 testPathPrefix = "some/path/";

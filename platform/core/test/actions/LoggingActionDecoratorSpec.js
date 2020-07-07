@@ -28,10 +28,10 @@ define(
     function (LoggingActionDecorator) {
 
         describe("The logging action decorator", function () {
-            var mockLog,
-                mockAction,
-                mockActionService,
-                decorator;
+            var mockLog;
+            var mockAction;
+            var mockActionService;
+            var decorator;
 
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(

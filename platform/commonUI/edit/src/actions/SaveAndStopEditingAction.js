@@ -50,8 +50,8 @@ define(
          * @memberof platform/commonUI/edit.SaveAndStopEditingAction#
          */
         SaveAndStopEditingAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
-                saveAction = new SaveAction(this.dialogService, this.notificationService, this.context);
+            var domainObject = this.domainObject;
+            var saveAction = new SaveAction(this.dialogService, this.notificationService, this.context);
 
             function closeEditor() {
                 return domainObject.getCapability("editor").finish();

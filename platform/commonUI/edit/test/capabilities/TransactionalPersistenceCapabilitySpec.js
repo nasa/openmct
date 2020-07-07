@@ -36,12 +36,12 @@ define(
         }
 
         describe("The transactional persistence decorator", function () {
-            var mockQ,
-                mockTransactionManager,
-                mockPersistence,
-                mockDomainObject,
-                testId,
-                capability;
+            var mockQ;
+            var mockTransactionManager;
+            var mockPersistence;
+            var mockDomainObject;
+            var testId;
+            var capability;
 
             beforeEach(function () {
                 testId = "test-id";

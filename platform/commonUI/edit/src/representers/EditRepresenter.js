@@ -58,9 +58,9 @@ define(
          * @param {String} message a message to log with the commit message.
          */
         EditRepresenter.prototype.commit = function (message) {
-            var model = this.$scope.model,
-                configuration = this.$scope.configuration,
-                domainObject = this.domainObject;
+            var model = this.$scope.model;
+            var configuration = this.$scope.configuration;
+            var domainObject = this.domainObject;
 
             this.$log.debug([
                 "Committing ",

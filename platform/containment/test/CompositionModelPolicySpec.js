@@ -4,9 +4,9 @@ define(
     function (CompositionModelPolicy) {
 
         describe("The composition model policy", function () {
-            var mockObject,
-                mockType,
-                policy;
+            var mockObject;
+            var mockType;
+            var policy;
 
             beforeEach(function () {
                 mockType = jasmine.createSpyObj('type', ['getInitialModel']);

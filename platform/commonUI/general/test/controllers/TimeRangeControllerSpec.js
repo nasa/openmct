@@ -24,19 +24,19 @@ define(
     ["../../src/controllers/TimeRangeController", "moment"],
     function (TimeRangeController, moment) {
 
-        var SEC = 1000,
-            MIN = 60 * SEC,
-            HOUR = 60 * MIN,
-            DAY = 24 * HOUR;
+        var SEC = 1000;
+        var MIN = 60 * SEC;
+        var HOUR = 60 * MIN;
+        var DAY = 24 * HOUR;
 
         describe("The TimeRangeController", function () {
-            var mockScope,
-                mockFormatService,
-                testDefaultFormat,
-                mockTimeout,
-                mockNow,
-                mockFormat,
-                controller;
+            var mockScope;
+            var mockFormatService;
+            var testDefaultFormat;
+            var mockTimeout;
+            var mockNow;
+            var mockFormat;
+            var controller;
 
             function fireWatch(expr, value) {
                 mockScope.$watch.calls.all().forEach(function (call) {

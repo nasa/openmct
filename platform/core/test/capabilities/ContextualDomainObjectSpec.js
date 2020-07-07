@@ -37,10 +37,10 @@ define(
         ];
 
         describe("A contextual domain object", function () {
-            var mockParent,
-                mockDomainObject,
-                model,
-                contextualDomainObject;
+            var mockParent;
+            var mockDomainObject;
+            var model;
+            var contextualDomainObject;
 
 
             beforeEach(function () {

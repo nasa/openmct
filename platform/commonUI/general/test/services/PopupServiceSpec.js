@@ -26,11 +26,11 @@ define(
     function (PopupService) {
 
         describe("PopupService", function () {
-            var mockDocument,
-                testWindow,
-                mockBody,
-                mockElement,
-                popupService;
+            var mockDocument;
+            var testWindow;
+            var mockBody;
+            var mockElement;
+            var popupService;
 
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj('$document', ['find']);

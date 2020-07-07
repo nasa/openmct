@@ -36,10 +36,10 @@ define(
         ];
 
         describe("The relationship capability", function () {
-            var mockDomainObject,
-                mockInjector,
-                mockObjectService,
-                relationship;
+            var mockDomainObject;
+            var mockInjector;
+            var mockObjectService;
+            var relationship;
 
             // Composition Capability makes use of promise chaining,
             // so support that, but don't introduce complication of

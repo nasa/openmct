@@ -25,13 +25,13 @@ define(
     function (TransactingMutationListener) {
 
         describe("TransactingMutationListener", function () {
-            var mockTopic,
-                mockMutationTopic,
-                mockCacheService,
-                mockTransactionService,
-                mockDomainObject,
-                mockModel,
-                mockPersistence;
+            var mockTopic;
+            var mockMutationTopic;
+            var mockCacheService;
+            var mockTransactionService;
+            var mockDomainObject;
+            var mockModel;
+            var mockPersistence;
 
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');

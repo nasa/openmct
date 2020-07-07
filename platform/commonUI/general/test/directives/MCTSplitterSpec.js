@@ -40,10 +40,10 @@ define(
             });
 
             describe("when linked", function () {
-                var mockScope,
-                    mockElement,
-                    testAttrs,
-                    mockSplitPane;
+                var mockScope;
+                var mockElement;
+                var testAttrs;
+                var mockSplitPane;
 
                 beforeEach(function () {
                     mockScope = jasmine.createSpyObj(

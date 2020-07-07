@@ -59,8 +59,8 @@ define(
          * @constructor
          */
         function TreeNodeController($scope, $timeout) {
-            var self = this,
-                selectedObject = ($scope.ngModel || {}).selectedObject;
+            var self = this;
+            var selectedObject = ($scope.ngModel || {}).selectedObject;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.
@@ -86,14 +86,14 @@ define(
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
-                var nodeObject = $scope.domainObject,
-                    navObject = selectedObject,
-                    nodeContext = nodeObject &&
-                        nodeObject.getCapability('context'),
-                    navContext = navObject &&
-                        navObject.getCapability('context'),
-                    nodePath,
-                    navPath;
+                var nodeObject = $scope.domainObject;
+                var navObject = selectedObject;
+                var nodeContext = nodeObject &&
+                        nodeObject.getCapability('context');
+                var navContext = navObject &&
+                        navObject.getCapability('context');
+                var nodePath;
+                var navPath;
 
                 // Deselect; we will reselect below, iff we are
                 // exactly at the end of the path.

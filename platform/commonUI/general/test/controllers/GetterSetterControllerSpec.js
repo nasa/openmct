@@ -25,9 +25,9 @@ define(
     function (GetterSetterController) {
 
         describe("The getter-setter controller", function () {
-            var mockScope,
-                mockModel,
-                controller;
+            var mockScope;
+            var mockModel;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);

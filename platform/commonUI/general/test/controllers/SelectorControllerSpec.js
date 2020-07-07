@@ -25,12 +25,12 @@ define(
     function (SelectorController) {
 
         describe("The controller for the 'selector' control", function () {
-            var mockObjectService,
-                mockScope,
-                mockDomainObject,
-                mockType,
-                mockDomainObjects,
-                controller;
+            var mockObjectService;
+            var mockScope;
+            var mockDomainObject;
+            var mockType;
+            var mockDomainObjects;
+            var controller;
 
             function promiseOf(v) {
                 return (v || {}).then ? v : {

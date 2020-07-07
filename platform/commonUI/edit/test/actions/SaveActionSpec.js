@@ -26,14 +26,14 @@ define(
     function (SaveAction) {
 
         describe("The Save action", function () {
-            var mockDomainObject,
-                mockEditorCapability,
-                actionContext,
-                mockDialogService,
-                mockNotificationService,
-                mockActionCapability,
-                capabilities = {},
-                action;
+            var mockDomainObject;
+            var mockEditorCapability;
+            var actionContext;
+            var mockDialogService;
+            var mockNotificationService;
+            var mockActionCapability;
+            var capabilities = {};
+            var action;
 
             function mockPromise(value) {
                 return {

@@ -25,15 +25,15 @@ define(
     function (EditAction) {
 
         describe("The Edit action", function () {
-            var mockLocation,
-                mockNavigationService,
-                mockLog,
-                mockDomainObject,
-                mockType,
-                mockEditor,
-                actionContext,
-                capabilities,
-                action;
+            var mockLocation;
+            var mockNavigationService;
+            var mockLog;
+            var mockDomainObject;
+            var mockType;
+            var mockEditor;
+            var actionContext;
+            var capabilities;
+            var action;
 
             beforeEach(function () {
                 mockLocation = jasmine.createSpyObj(

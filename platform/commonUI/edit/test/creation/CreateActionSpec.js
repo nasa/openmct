@@ -28,13 +28,13 @@ define(
     function (CreateAction) {
 
         xdescribe("The create action", function () {
-            var mockType,
-                mockParent,
-                mockContext,
-                mockDomainObject,
-                capabilities = {},
-                mockEditAction,
-                action;
+            var mockType;
+            var mockParent;
+            var mockContext;
+            var mockDomainObject;
+            var capabilities = {};
+            var mockEditAction;
+            var action;
 
             function mockPromise(value) {
                 return {

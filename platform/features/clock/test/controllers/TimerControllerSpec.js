@@ -28,16 +28,16 @@ define(
         var TEST_TIMESTAMP = 1433354174000;
 
         describe("A timer view's controller", function () {
-            var mockScope,
-                mockWindow,
-                mockNow,
-                mockDomainObject,
-                mockActionCapability,
-                mockStart,
-                mockPause,
-                mockStop,
-                testModel,
-                controller;
+            var mockScope;
+            var mockWindow;
+            var mockNow;
+            var mockDomainObject;
+            var mockActionCapability;
+            var mockStart;
+            var mockPause;
+            var mockStop;
+            var testModel;
+            var controller;
 
             function invokeWatch(expr, value) {
                 mockScope.$watch.calls.all().forEach(function (call) {

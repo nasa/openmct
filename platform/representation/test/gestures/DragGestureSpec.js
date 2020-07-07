@@ -27,22 +27,22 @@ define(
     ["../../src/gestures/DragGesture", "../../src/gestures/GestureConstants"],
     function (DragGesture, GestureConstants) {
 
-        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
-            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
-            DND_FUNCTIONS = ["setData", "getData", "removeData"],
-            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
-            TEST_ID = "test-id";
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"];
+        var LOG_FUNCTIONS = ["error", "warn", "info", "debug"];
+        var DND_FUNCTIONS = ["setData", "getData", "removeData"];
+        var DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var TEST_ID = "test-id";
 
 
 
         describe("The drag gesture", function () {
-            var mockLog,
-                mockDndService,
-                mockElement,
-                mockDomainObject,
-                mockDataTransfer,
-                handlers,
-                gesture;
+            var mockLog;
+            var mockDndService;
+            var mockElement;
+            var mockDomainObject;
+            var mockDataTransfer;
+            var handlers;
+            var gesture;
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);

@@ -27,14 +27,14 @@ define(
         var JQLITE_METHODS = ["on", "off", "find", "parent"];
 
         describe("The mct-click-elsewhere directive", function () {
-            var mockDocument,
-                mockScope,
-                mockElement,
-                testAttrs,
-                mockBody,
-                mockPlainEl,
-                testRect,
-                mctClickElsewhere;
+            var mockDocument;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
+            var mockBody;
+            var mockPlainEl;
+            var testRect;
+            var mctClickElsewhere;
 
             function testEvent(x, y) {
                 return {

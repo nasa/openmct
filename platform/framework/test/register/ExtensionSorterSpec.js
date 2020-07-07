@@ -25,8 +25,8 @@ define(
     function (ExtensionSorter) {
 
         describe("The extension sorter", function () {
-            var mockLog,
-                sorter;
+            var mockLog;
+            var sorter;
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj(
@@ -38,19 +38,19 @@ define(
             });
 
             it("sorts extensions in priority order", function () {
-                var a = { priority: 10 },
-                    b = {},
-                    c = { priority: 'mandatory' }; // Should be +Inf
+                var a = { priority: 10 };
+                var b = {};
+                var c = { priority: 'mandatory' }; // Should be +Inf
                 expect(sorter.sort([a, b, c])).toEqual([c, a, b]);
             });
 
             it("warns about unrecognized priorities", function () {
-                var a = { priority: 10 },
-                    b = {},
-                    c = { priority: 'mandatory' }, // Should be +Inf
-                    d = { priority: 'GARBAGE-TEXT' },
-                    e = { priority: { mal: "formed"} },
-                    f = { priority: 3 };
+                var a = { priority: 10 };
+                var b = {};
+                var c = { priority: 'mandatory' }; // Should be +Inf
+                var d = { priority: 'GARBAGE-TEXT' };
+                var e = { priority: { mal: "formed"} };
+                var f = { priority: 3 };
 
                 // Sorting should use default order (note we assume
                 // a stable sort here as well)

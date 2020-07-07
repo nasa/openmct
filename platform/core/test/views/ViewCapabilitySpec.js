@@ -28,10 +28,10 @@ define(
     function (ViewCapability) {
 
         describe("A view capability", function () {
-            var mockViewService,
-                mockDomainObject,
-                views = [{key: "someView"}],
-                view;
+            var mockViewService;
+            var mockDomainObject;
+            var views = [{key: "someView"}];
+            var view;
 
             beforeEach(function () {
                 mockViewService = jasmine.createSpyObj(

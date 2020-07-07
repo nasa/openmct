@@ -24,13 +24,13 @@ define(
     ["../src/ComposeActionPolicy"],
     function (ComposeActionPolicy) {
         xdescribe("The compose action policy", function () {
-            var mockInjector,
-                mockPolicyService,
-                mockTypes,
-                mockDomainObjects,
-                mockAction,
-                testContext,
-                policy;
+            var mockInjector;
+            var mockPolicyService;
+            var mockTypes;
+            var mockDomainObjects;
+            var mockAction;
+            var testContext;
+            var policy;
 
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj('$injector', ['get']);

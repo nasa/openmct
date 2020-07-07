@@ -28,15 +28,15 @@ define(
     function (OverlayService) {
 
         describe("The overlay service", function () {
-            var mockDocument,
-                mockCompile,
-                mockRootScope,
-                mockBody,
-                mockTemplate,
-                mockElement,
-                mockScope,
-                mockTimeout,
-                overlayService;
+            var mockDocument;
+            var mockCompile;
+            var mockRootScope;
+            var mockBody;
+            var mockTemplate;
+            var mockElement;
+            var mockScope;
+            var mockTimeout;
+            var overlayService;
 
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj("$document", ["find"]);

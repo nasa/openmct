@@ -28,10 +28,10 @@ define(
     function (TypeCapability) {
 
         describe("The type capability", function () {
-            var mockTypeService,
-                mockDomainObject,
-                mockType,
-                type;
+            var mockTypeService;
+            var mockDomainObject;
+            var mockType;
+            var type;
 
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(

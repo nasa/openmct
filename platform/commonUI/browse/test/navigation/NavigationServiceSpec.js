@@ -28,8 +28,8 @@ define(
     function (NavigationService) {
 
         describe("The navigation service", function () {
-            var $window,
-                navigationService;
+            let $window;
+            let navigationService;
 
             beforeEach(function () {
                 $window = jasmine.createSpyObj('$window', ['confirm']);
@@ -37,8 +37,8 @@ define(
             });
 
             it("stores navigation state", function () {
-                var testObject = { someKey: 42 },
-                    otherObject = { someKey: "some value" };
+                var testObject = { someKey: 42 };
+                var otherObject = { someKey: "some value" };
                 expect(navigationService.getNavigation())
                     .toBeUndefined();
                 navigationService.setNavigation(testObject);
@@ -52,8 +52,8 @@ define(
             });
 
             it("notifies listeners on change", function () {
-                var testObject = { someKey: 42 },
-                    callback = jasmine.createSpy("callback");
+                var testObject = { someKey: 42 };
+                var callback = jasmine.createSpy("callback");
 
                 navigationService.addListener(callback);
                 expect(callback).not.toHaveBeenCalled();
@@ -63,8 +63,8 @@ define(
             });
 
             it("does not notify listeners when no changes occur", function () {
-                var testObject = { someKey: 42 },
-                    callback = jasmine.createSpy("callback");
+                var testObject = { someKey: 42 };
+                var callback = jasmine.createSpy("callback");
 
                 navigationService.addListener(callback);
                 navigationService.setNavigation(testObject);
@@ -73,8 +73,8 @@ define(
             });
 
             it("stops notifying listeners after removal", function () {
-                var testObject = { someKey: 42 },
-                    callback = jasmine.createSpy("callback");
+                var testObject = { someKey: 42 };
+                var callback = jasmine.createSpy("callback");
 
                 navigationService.addListener(callback);
                 navigationService.removeListener(callback);

@@ -28,11 +28,11 @@ define(
     function (IdentityCreationDecorator) {
 
         describe("IdentityCreationDecorator", function () {
-            var mockIdentityService,
-                mockCreationService,
-                mockParent,
-                mockCreatedObject,
-                decorator;
+            var mockIdentityService;
+            var mockCreationService;
+            var mockParent;
+            var mockCreatedObject;
+            var decorator;
 
             beforeEach(function () {
                 mockIdentityService = jasmine.createSpyObj(

@@ -42,13 +42,13 @@ define(
                 var body = $document.find('body');
 
                 function clickBody(event) {
-                    var x = event.clientX,
-                        y = event.clientY,
-                        rect = element[0].getBoundingClientRect(),
-                        xMin = rect.left,
-                        xMax = xMin + rect.width,
-                        yMin = rect.top,
-                        yMax = yMin + rect.height;
+                    var x = event.clientX;
+                    var y = event.clientY;
+                    var rect = element[0].getBoundingClientRect();
+                    var xMin = rect.left;
+                    var xMax = xMin + rect.width;
+                    var yMin = rect.top;
+                    var yMax = yMin + rect.height;
 
                     if (x < xMin || x > xMax || y < yMin || y > yMax) {
                         scope.$apply(function () {

@@ -25,9 +25,9 @@ define(
     function (DateTimePickerController, moment) {
 
         describe("The DateTimePickerController", function () {
-            var mockScope,
-                mockNow,
-                controller;
+            var mockScope;
+            var mockNow;
+            var controller;
 
             function fireWatch(expr, value) {
                 mockScope.$watch.calls.all().forEach(function (call) {
@@ -143,7 +143,8 @@ define(
                     // Around the edges of the displayed calendar we
                     // may be in previous or subsequent month, so
                     // test around the middle.
-                    var i, originalMonth = mockScope.table[2][0].month;
+                    var i;
+                    var originalMonth = mockScope.table[2][0].month;
 
                     function mod12(month) {
                         return ((month % 12) + 12) % 12;

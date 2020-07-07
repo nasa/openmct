@@ -48,9 +48,9 @@ define(
                 }
             }
 
-            var mockScope,
-                mockActions,
-                controller;
+            var mockScope;
+            var mockActions;
+            var controller;
 
             beforeEach(function () {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);

@@ -25,12 +25,12 @@ define(
     function (CancelAction) {
 
         describe("The Cancel action", function () {
-            var mockDomainObject,
-                mockParentObject,
-                capabilities = {},
-                parentCapabilities = {},
-                actionContext,
-                action;
+            var mockDomainObject;
+            var mockParentObject;
+            var capabilities = {};
+            var parentCapabilities = {};
+            var actionContext;
+            var action;
 
             function mockPromise(value) {
                 return {

@@ -28,9 +28,9 @@ define(
     function (ActionProvider) {
 
         describe("The action provider", function () {
-            var mockLog,
-                actions,
-                actionProvider;
+            var mockLog;
+            var actions;
+            var actionProvider;
 
             function SimpleAction() {
                 return { perform: function () {

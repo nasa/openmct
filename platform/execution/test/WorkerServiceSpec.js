@@ -25,11 +25,11 @@ define(
     function (WorkerService) {
 
         describe("The worker service", function () {
-            var mockWindow,
-                testWorkers,
-                mockWorker,
-                mockSharedWorker,
-                service;
+            var mockWindow;
+            var testWorkers;
+            var mockWorker;
+            var mockSharedWorker;
+            var service;
 
             beforeEach(function () {
                 mockWindow = jasmine.createSpyObj(

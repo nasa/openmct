@@ -61,8 +61,8 @@ define([
     };
 
     TreeView.prototype.loadComposition = function () {
-        var self = this,
-            domainObject = this.activeObject;
+        var self = this;
+        var domainObject = this.activeObject;
 
         function addNode(domainObj, index) {
             self.nodeViews[index].model(domainObj);

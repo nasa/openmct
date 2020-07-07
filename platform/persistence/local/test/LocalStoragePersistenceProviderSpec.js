@@ -26,11 +26,11 @@ define(
     function (LocalStoragePersistenceProvider) {
 
         describe("The local storage persistence provider", function () {
-            var mockQ,
-                testSpace = "testSpace",
-                mockCallback,
-                testLocalStorage,
-                provider;
+            var mockQ;
+            var testSpace = "testSpace";
+            var mockCallback;
+            var testLocalStorage;
+            var provider;
 
             function mockPromise(value) {
                 return (value || {}).then ? value : {

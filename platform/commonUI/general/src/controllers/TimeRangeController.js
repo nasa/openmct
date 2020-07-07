@@ -101,7 +101,12 @@ define([
     };
 
     TimeRangeController.prototype.updateTicks = function () {
-        var i, p, ts, start, end, span;
+        var i;
+        var p;
+        var ts;
+        var start;
+        var end;
+        var span;
         end = this.$scope.ngModel.outer.end;
         start = this.$scope.ngModel.outer.start;
         span = end - start;
@@ -197,9 +202,9 @@ define([
     };
 
     TimeRangeController.prototype.middleDrag = function (pixels) {
-        var delta = this.toMillis(pixels),
-            edge = delta < 0 ? 'start' : 'end',
-            opposite = delta < 0 ? 'end' : 'start';
+        var delta = this.toMillis(pixels);
+        var edge = delta < 0 ? 'start' : 'end';
+        var opposite = delta < 0 ? 'end' : 'start';
 
         // Adjust the position of the edge in the direction of drag
         this.$scope.ngModel.inner[edge] = clamp(

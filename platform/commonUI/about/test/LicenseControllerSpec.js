@@ -25,8 +25,8 @@ define(
     function (LicenseController) {
 
         describe("The License controller", function () {
-            var testLicenses,
-                controller;
+            var testLicenses;
+            var controller;
 
             beforeEach(function () {
                 testLicenses = [

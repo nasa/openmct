@@ -25,10 +25,10 @@ define(
     function (Topic) {
 
         describe("The 'topic' service", function () {
-            var topic,
-                mockLog,
-                testMessage,
-                mockCallback;
+            var topic;
+            var mockLog;
+            var testMessage;
+            var mockCallback;
 
             beforeEach(function () {
                 testMessage = { someKey: "some value"};
@@ -69,8 +69,8 @@ define(
             });
 
             it("is robust against errors thrown by listeners", function () {
-                var mockBadCallback = jasmine.createSpy("bad-callback"),
-                    t = topic();
+                var mockBadCallback = jasmine.createSpy("bad-callback");
+                var t = topic();
 
                 mockBadCallback.and.callFake(function () {
                     throw new Error("I'm afraid I can't do that.");

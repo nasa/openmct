@@ -28,14 +28,14 @@ define(
     function (DialogService) {
 
         describe("The dialog service", function () {
-            var mockOverlayService,
-                mockQ,
-                mockLog,
-                mockOverlay,
-                mockDeferred,
-                mockDocument,
-                mockBody,
-                dialogService;
+            var mockOverlayService;
+            var mockQ;
+            var mockLog;
+            var mockOverlay;
+            var mockDeferred;
+            var mockDocument;
+            var mockBody;
+            var dialogService;
 
             beforeEach(function () {
                 mockOverlayService = jasmine.createSpyObj(
@@ -188,8 +188,8 @@ define(
                 });
 
                 it("individual dialogs can be dismissed", function () {
-                    var secondDialogHandle,
-                        secondMockOverlay;
+                    var secondDialogHandle;
+                    var secondMockOverlay;
 
                     dialogHandle.dismiss();
 

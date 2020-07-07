@@ -25,16 +25,16 @@ define(
     function (EditObjectController) {
 
         describe("The Edit Object controller", function () {
-            var mockScope,
-                mockObject,
-                testViews,
-                mockEditorCapability,
-                mockLocation,
-                mockNavigationService,
-                removeCheck,
-                mockStatusCapability,
-                mockCapabilities,
-                controller;
+            var mockScope;
+            var mockObject;
+            var testViews;
+            var mockEditorCapability;
+            var mockLocation;
+            var mockNavigationService;
+            var removeCheck;
+            var mockStatusCapability;
+            var mockCapabilities;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(

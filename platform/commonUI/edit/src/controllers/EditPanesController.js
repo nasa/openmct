@@ -34,12 +34,12 @@ define(
 
             // Update root object based on represented object
             function updateRoot(domainObject) {
-                var root = self.rootDomainObject,
-                    context = domainObject &&
-                        domainObject.getCapability('context'),
-                    newRoot = context && context.getTrueRoot(),
-                    oldId = root && root.getId(),
-                    newId = newRoot && newRoot.getId();
+                var root = self.rootDomainObject;
+                var context = domainObject &&
+                        domainObject.getCapability('context');
+                var newRoot = context && context.getTrueRoot();
+                var oldId = root && root.getId();
+                var newId = newRoot && newRoot.getId();
 
                 // Only update if this has actually changed,
                 // to avoid excessive refreshing.

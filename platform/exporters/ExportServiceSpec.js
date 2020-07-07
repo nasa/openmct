@@ -25,11 +25,11 @@ define(
     function (ExportService, CSV) {
 
         describe("ExportService", function () {
-            var mockSaveAs,
-                testRows,
-                csvContents,
-                readCSVPromise,
-                exportService;
+            var mockSaveAs;
+            var testRows;
+            var csvContents;
+            var readCSVPromise;
+            var exportService;
 
             beforeEach(function () {
                 var resolveFunction;
@@ -73,12 +73,12 @@ define(
                 });
 
                 it("includes data from the data set", function () {
-                    var headers = csvContents[0],
-                        expectedData = testRows.map(function (row) {
-                            return headers.map(function (key) {
-                                return String(row[key]);
-                            });
+                    var headers = csvContents[0];
+                    var expectedData = testRows.map(function (row) {
+                        return headers.map(function (key) {
+                            return String(row[key]);
                         });
+                    });
                     // Everything after header should be data
                     expect(csvContents.slice(1)).toEqual(expectedData);
                 });
@@ -110,12 +110,12 @@ define(
                 });
 
                 it("includes a subset data from the data set", function () {
-                    var headers = testHeaders,
-                        expectedData = testRows.map(function (row) {
-                            return headers.map(function (key) {
-                                return String(row[key]);
-                            });
+                    var headers = testHeaders;
+                    var expectedData = testRows.map(function (row) {
+                        return headers.map(function (key) {
+                            return String(row[key]);
                         });
+                    });
                     expect(csvContents.slice(1)).toEqual(expectedData);
                 });
             });

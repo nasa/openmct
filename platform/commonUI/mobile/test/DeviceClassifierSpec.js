@@ -26,26 +26,26 @@ define(
     function (DeviceClassifier, DeviceMatchers) {
 
         var AGENT_SERVICE_METHODS = [
-                'isMobile',
-                'isPhone',
-                'isTablet',
-                'isPortrait',
-                'isLandscape',
-                'isTouch'
-            ],
-            TEST_PERMUTATIONS = [
-                ['isMobile', 'isPhone', 'isTouch', 'isPortrait'],
-                ['isMobile', 'isPhone', 'isTouch', 'isLandscape'],
-                ['isMobile', 'isTablet', 'isTouch', 'isPortrait'],
-                ['isMobile', 'isTablet', 'isTouch', 'isLandscape'],
-                ['isTouch'],
-                []
-            ];
+            'isMobile',
+            'isPhone',
+            'isTablet',
+            'isPortrait',
+            'isLandscape',
+            'isTouch'
+        ];
+        var TEST_PERMUTATIONS = [
+            ['isMobile', 'isPhone', 'isTouch', 'isPortrait'],
+            ['isMobile', 'isPhone', 'isTouch', 'isLandscape'],
+            ['isMobile', 'isTablet', 'isTouch', 'isPortrait'],
+            ['isMobile', 'isTablet', 'isTouch', 'isLandscape'],
+            ['isTouch'],
+            []
+        ];
 
         describe("DeviceClassifier", function () {
-            var mockAgentService,
-                mockDocument,
-                mockBody;
+            var mockAgentService;
+            var mockDocument;
+            var mockBody;
 
             beforeEach(function () {
                 mockAgentService = jasmine.createSpyObj(

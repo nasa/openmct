@@ -27,13 +27,13 @@ define([
 ], function (TreeView, $) {
 
     xdescribe("TreeView", function () {
-        var mockGestureService,
-            mockGestureHandle,
-            mockDomainObject,
-            mockMutation,
-            mockUnlisten,
-            testCapabilities,
-            treeView;
+        var mockGestureService;
+        var mockGestureHandle;
+        var mockDomainObject;
+        var mockMutation;
+        var mockUnlisten;
+        var testCapabilities;
+        var treeView;
 
         function makeMockDomainObject(id, model, capabilities) {
             var mockDomainObj = jasmine.createSpyObj(
@@ -115,8 +115,8 @@ define([
 
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
-                    var testCaps = makeGenericCapabilities(),
-                        mockChild =
+                    var testCaps = makeGenericCapabilities();
+                    var mockChild =
                             makeMockDomainObject(id, {}, testCaps);
 
                     testCaps.context.getPath
@@ -189,8 +189,8 @@ define([
 
             describe("when a context-less object is selected", function () {
                 beforeEach(function () {
-                    var testCaps = makeGenericCapabilities(),
-                        mockDomainObj =
+                    var testCaps = makeGenericCapabilities();
+                    var mockDomainObj =
                             makeMockDomainObject('xyz', {}, testCaps);
                     delete testCaps.context;
                     treeView.value(mockDomainObj);
@@ -204,11 +204,11 @@ define([
 
             describe("when children contain children", function () {
                 beforeEach(function () {
-                    var newCapabilities = makeGenericCapabilities(),
-                        gcCapabilities = makeGenericCapabilities(),
-                        mockNewChild =
-                            makeMockDomainObject('d', {}, newCapabilities),
-                        mockGrandchild =
+                    var newCapabilities = makeGenericCapabilities();
+                    var gcCapabilities = makeGenericCapabilities();
+                    var mockNewChild =
+                            makeMockDomainObject('d', {}, newCapabilities);
+                    var mockGrandchild =
                             makeMockDomainObject('gc', {}, gcCapabilities);
 
                     newCapabilities.composition =
@@ -262,8 +262,8 @@ define([
         });
 
         describe("observe", function () {
-            var mockCallback,
-                unobserve;
+            var mockCallback;
+            var unobserve;
 
             beforeEach(function () {
                 mockCallback = jasmine.createSpy('callback');

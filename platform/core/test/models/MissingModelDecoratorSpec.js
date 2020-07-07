@@ -25,9 +25,9 @@ define(
     function (MissingModelDecorator) {
 
         describe("The missing model decorator", function () {
-            var mockModelService,
-                testModels,
-                decorator;
+            var mockModelService;
+            var testModels;
+            var decorator;
 
             function asPromise(value) {
                 return (value || {}).then ? value : {

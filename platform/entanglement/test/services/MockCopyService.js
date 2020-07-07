@@ -62,9 +62,9 @@ define(
 
             /** @this MockCopyService */
             mockCopyService.perform.and.callFake(() => {
-                var performPromise,
-                    callExtensions,
-                    spy;
+                var performPromise;
+                var callExtensions;
+                var spy;
 
                 performPromise = jasmine.createSpyObj(
                     'performPromise',

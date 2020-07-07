@@ -63,17 +63,17 @@ define(
          *         object has been created
          */
         CreationService.prototype.createObject = function (model, parent) {
-            var persistence = parent.getCapability("persistence"),
-                newObject = parent.useCapability("instantiation", model),
-                newObjectPersistence = newObject.getCapability("persistence"),
-                self = this;
+            var persistence = parent.getCapability("persistence");
+            var newObject = parent.useCapability("instantiation", model);
+            var newObjectPersistence = newObject.getCapability("persistence");
+            var self = this;
 
             // Add the newly-created object's id to the parent's
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
             function addToComposition() {
-                var compositionCapability = parent.getCapability('composition'),
-                    addResult = compositionCapability &&
+                var compositionCapability = parent.getCapability('composition');
+                var addResult = compositionCapability &&
                         compositionCapability.add(newObject);
 
                 return self.$q.when(addResult).then(function (result) {

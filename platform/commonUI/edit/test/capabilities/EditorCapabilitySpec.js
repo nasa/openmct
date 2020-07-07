@@ -25,14 +25,14 @@ define(
     function (EditorCapability) {
 
         xdescribe("The editor capability", function () {
-            var mockDomainObject,
-                capabilities,
-                mockParentObject,
-                mockTransactionService,
-                mockStatusCapability,
-                mockParentStatus,
-                mockContextCapability,
-                capability;
+            var mockDomainObject;
+            var capabilities;
+            var mockParentObject;
+            var mockTransactionService;
+            var mockStatusCapability;
+            var mockParentStatus;
+            var mockContextCapability;
+            var capability;
 
             function fastPromise(val) {
                 return {

@@ -27,9 +27,9 @@ define(
         var KEYS = ['a', 'b', 'c'];
 
         describe("The FormatProvider", function () {
-            var mockFormats,
-                mockFormatInstances,
-                provider;
+            var mockFormats;
+            var mockFormatInstances;
+            var provider;
 
             beforeEach(function () {
                 mockFormatInstances = KEYS.map(function (k) {

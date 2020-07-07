@@ -25,13 +25,13 @@ define(
     ["../../src/services/TransactionManager"],
     function (TransactionManager) {
         describe("TransactionManager", function () {
-            var mockTransactionService,
-                testId,
-                mockOnCommit,
-                mockOnCancel,
-                mockRemoves,
-                mockPromise,
-                manager;
+            var mockTransactionService;
+            var testId;
+            var mockOnCommit;
+            var mockOnCancel;
+            var mockRemoves;
+            var mockPromise;
+            var manager;
 
             beforeEach(function () {
                 mockRemoves = [];

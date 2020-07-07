@@ -25,8 +25,8 @@ define(
     function (DateTimeController) {
 
         describe("The date-time controller", function () {
-            var mockScope,
-                controller;
+            var mockScope;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);

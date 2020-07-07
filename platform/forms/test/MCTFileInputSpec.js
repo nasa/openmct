@@ -26,12 +26,12 @@ define(
 
         xdescribe("The mct-file-input directive", function () {
 
-            var mockScope,
-                mockFileInputService,
-                mctFileInput,
-                element,
-                attrs,
-                control;
+            var mockScope;
+            var mockFileInputService;
+            var mctFileInput;
+            var element;
+            var attrs;
+            var control;
 
             beforeEach(function () {
                 attrs = [];

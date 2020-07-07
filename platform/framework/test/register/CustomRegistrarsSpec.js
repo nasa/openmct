@@ -28,9 +28,9 @@ define(
     function (CustomRegistrars) {
 
         describe("Custom registrars", function () {
-            var mockLog,
-                mockApp,
-                customRegistrars;
+            var mockLog;
+            var mockApp;
+            var customRegistrars;
 
             // Set up mock test dependencies
             beforeEach(function () {
@@ -132,21 +132,21 @@ define(
 
             it("allows routes to be registered", function () {
                 var mockRouteProvider = jasmine.createSpyObj(
-                        "$routeProvider",
-                        ["when", "otherwise"]
-                    ),
-                    bundle = { path: "test/bundle", resources: "res" },
-                    routes = [
-                        {
-                            when: "foo",
-                            templateUrl: "templates/test.html",
-                            bundle: bundle
-                        },
-                        {
-                            templateUrl: "templates/default.html",
-                            bundle: bundle
-                        }
-                    ];
+                    "$routeProvider",
+                    ["when", "otherwise"]
+                );
+                var bundle = { path: "test/bundle", resources: "res" };
+                var routes = [
+                    {
+                        when: "foo",
+                        templateUrl: "templates/test.html",
+                        bundle: bundle
+                    },
+                    {
+                        templateUrl: "templates/default.html",
+                        bundle: bundle
+                    }
+                ];
 
                 customRegistrars.routes(routes);
 

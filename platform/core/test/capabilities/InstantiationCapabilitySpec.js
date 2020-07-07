@@ -25,13 +25,13 @@ define(
     function (InstantiationCapability) {
 
         describe("The 'instantiation' capability", function () {
-            var mockInjector,
-                mockIdentifierService,
-                mockInstantiate,
-                mockIdentifier,
-                mockNow,
-                mockDomainObject,
-                instantiation;
+            var mockInjector;
+            var mockIdentifierService;
+            var mockInstantiate;
+            var mockIdentifier;
+            var mockNow;
+            var mockDomainObject;
+            var instantiation;
 
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
@@ -75,12 +75,13 @@ define(
 
             it("uses instantiate and contextualize to create domain objects", function () {
                 var mockDomainObj = jasmine.createSpyObj('domainObject', [
-                        'getId',
-                        'getModel',
-                        'getCapability',
-                        'useCapability',
-                        'hasCapability'
-                    ]), testModel = { someKey: "some value" };
+                    'getId',
+                    'getModel',
+                    'getCapability',
+                    'useCapability',
+                    'hasCapability'
+                ]);
+                var testModel = { someKey: "some value" };
                 mockInstantiate.and.returnValue(mockDomainObj);
                 instantiation.instantiate(testModel);
                 expect(mockInstantiate)

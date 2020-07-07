@@ -26,13 +26,13 @@ define(
     function (ElasticPersistenceProvider) {
 
         describe("The ElasticSearch persistence provider", function () {
-            var mockHttp,
-                mockQ,
-                testSpace = "testSpace",
-                testRoot = "/test",
-                testPath = "db",
-                capture,
-                provider;
+            var mockHttp;
+            var mockQ;
+            var testSpace = "testSpace";
+            var testRoot = "/test";
+            var testPath = "db";
+            var capture;
+            var provider;
 
             function mockPromise(value) {
                 return (value || {}).then ? value : {
@@ -168,8 +168,8 @@ define(
             });
 
             it("handles rejection due to _seq_no", function () {
-                var model = { someKey: "some value" },
-                    mockErrorCallback = jasmine.createSpy('error');
+                var model = { someKey: "some value" };
+                var mockErrorCallback = jasmine.createSpy('error');
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
@@ -191,8 +191,8 @@ define(
             });
 
             it("handles rejection due to unknown reasons", function () {
-                var model = { someKey: "some value" },
-                    mockErrorCallback = jasmine.createSpy('error');
+                var model = { someKey: "some value" };
+                var mockErrorCallback = jasmine.createSpy('error');
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({

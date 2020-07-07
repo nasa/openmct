@@ -25,9 +25,9 @@ define(
     function (ClickAwayController) {
 
         describe("The click-away controller", function () {
-            var mockDocument,
-                mockTimeout,
-                controller;
+            var mockDocument;
+            var mockTimeout;
+            var controller;
 
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj(
@@ -77,7 +77,8 @@ define(
             });
 
             it("deactivates and detaches listener on document click", function () {
-                var callback, timeout;
+                var callback;
+                var timeout;
                 controller.setState(true);
                 callback = mockDocument.on.calls.mostRecent().args[1];
                 callback();

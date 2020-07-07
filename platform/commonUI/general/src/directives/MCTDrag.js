@@ -54,12 +54,12 @@ define(
                 // mouse event handlers; mousedown and mouseup cannot
                 // only be attached to the element being linked, as the
                 // mouse may leave this element during the drag.
-                var body = $document.find('body'),
-                    isMobile = agentService.isMobile(),
-                    touchEvents,
-                    initialPosition,
-                    $event,
-                    delta;
+                var body = $document.find('body');
+                var isMobile = agentService.isMobile();
+                var touchEvents;
+                var initialPosition;
+                var $event;
+                var delta;
 
                 if (isMobile) {
                     touchEvents = {

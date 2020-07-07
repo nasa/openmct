@@ -27,13 +27,13 @@ define(
         var JQLITE_METHODS = ["on", "off", "find"];
 
         describe("The mct-drag directive in Mobile", function () {
-            var mockDocument,
-                mockAgentService,
-                mockScope,
-                mockElement,
-                testAttrs,
-                mockBody,
-                mctDrag;
+            var mockDocument;
+            var mockAgentService;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
+            var mockBody;
+            var mctDrag;
 
             function testEvent(x, y) {
                 return {
@@ -155,13 +155,13 @@ define(
         });
 
         describe("The mct-drag directive in Desktop", function () {
-            var mockDocument,
-                mockAgentService,
-                mockScope,
-                mockElement,
-                testAttrs,
-                mockBody,
-                mctDrag;
+            var mockDocument;
+            var mockAgentService;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
+            var mockBody;
+            var mctDrag;
 
             function testEvent(x, y) {
                 return {

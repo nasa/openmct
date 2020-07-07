@@ -28,9 +28,9 @@ define(
     function (BundleResolver, Bundle) {
 
         describe("The bundle resolver", function () {
-            var mockExtensionResolver,
-                mockLog,
-                resolver;
+            var mockExtensionResolver;
+            var mockLog;
+            var resolver;
 
             beforeEach(function () {
                 mockExtensionResolver = jasmine.createSpyObj(

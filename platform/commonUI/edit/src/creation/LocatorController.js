@@ -39,8 +39,8 @@ define(
             //              used for bi-directional object selection.
             function setLocatingObject(domainObject, priorObject) {
                 var context = domainObject &&
-                    domainObject.getCapability("context"),
-                    contextRoot = context && context.getRoot();
+                    domainObject.getCapability("context");
+                var contextRoot = context && context.getRoot();
 
                 if (contextRoot && contextRoot !== $scope.rootObject) {
                     $scope.rootObject = undefined;

@@ -25,11 +25,11 @@ define(
     function (PolicyViewDecorator) {
 
         describe("The policy view decorator", function () {
-            var mockPolicyService,
-                mockViewService,
-                mockDomainObject,
-                testViews,
-                decorator;
+            var mockPolicyService;
+            var mockViewService;
+            var mockDomainObject;
+            var testViews;
+            var decorator;
 
             beforeEach(function () {
                 mockPolicyService = jasmine.createSpyObj(

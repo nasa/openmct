@@ -37,8 +37,8 @@ define(
         }
 
         EditAndComposeAction.prototype.perform = function () {
-            var self = this,
-                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
+            var self = this;
+            var editAction = this.domainObject.getCapability('action').getActions("edit")[0];
 
             // Link these objects
             function doLink() {

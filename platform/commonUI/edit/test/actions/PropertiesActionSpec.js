@@ -25,7 +25,13 @@ define(
     function (PropertiesAction) {
 
         describe("Properties action", function () {
-            var capabilities, model, object, context, input, dialogService, action;
+            var capabilities;
+            var model;
+            var object;
+            var context;
+            var input;
+            var dialogService;
+            var action;
 
             function mockPromise(value) {
                 return {

@@ -25,17 +25,17 @@ define(
     function (EditAndComposeAction) {
 
         describe("The Link action", function () {
-            var mockDomainObject,
-                mockParent,
-                mockContext,
-                mockComposition,
-                mockActionCapability,
-                mockEditAction,
-                mockType,
-                actionContext,
-                model,
-                capabilities,
-                action;
+            var mockDomainObject;
+            var mockParent;
+            var mockContext;
+            var mockComposition;
+            var mockActionCapability;
+            var mockEditAction;
+            var mockType;
+            var actionContext;
+            var model;
+            var capabilities;
+            var action;
 
             function mockPromise(value) {
                 return {

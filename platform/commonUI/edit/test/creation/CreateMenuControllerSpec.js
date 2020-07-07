@@ -28,9 +28,9 @@ define(
     function (CreateMenuController) {
 
         describe("The create menu controller", function () {
-            var mockScope,
-                mockActions,
-                controller;
+            var mockScope;
+            var mockActions;
+            var controller;
 
             beforeEach(function () {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);

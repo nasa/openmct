@@ -27,10 +27,10 @@ define(
         var TEST_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
         describe("The DateTimeFieldController", function () {
-            var mockScope,
-                mockFormatService,
-                mockFormat,
-                controller;
+            var mockScope;
+            var mockFormatService;
+            var mockFormat;
+            var controller;
 
             function fireWatch(expr, value) {
                 mockScope.$watch.calls.all().forEach(function (call) {
@@ -124,7 +124,9 @@ define(
             });
 
             describe("when user input is invalid", function () {
-                var newText, oldText, oldValue;
+                var newText
+                var oldText;
+                var oldValue;
 
                 beforeEach(function () {
                     newText = "Not a date";
@@ -156,8 +158,8 @@ define(
                 // Don't want the controller "fixing" bad or
                 // irregularly-formatted input out from under
                 // the user's fingertips.
-                var newText = "2015-3-3 01:02:04",
-                    oldValue = mockScope.ngModel.testField;
+                var newText = "2015-3-3 01:02:04";
+                var oldValue = mockScope.ngModel.testField;
 
                 mockFormat.validate.and.returnValue(true);
                 mockFormat.parse.and.returnValue(42);
@@ -183,8 +185,8 @@ define(
             });
 
             describe("using the obtained format", function () {
-                var testValue = 1234321,
-                    testText = "some text";
+                var testValue = 1234321;
+                var testText = "some text";
 
                 beforeEach(function () {
                     mockFormat.validate.and.returnValue(true);

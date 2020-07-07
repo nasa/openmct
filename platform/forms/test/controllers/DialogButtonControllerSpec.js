@@ -25,11 +25,11 @@ define(
     function (DialogButtonController) {
 
         describe("A dialog button controller", function () {
-            var mockScope,
-                mockDialogService,
-                mockPromise,
-                testStructure,
-                controller;
+            var mockScope;
+            var mockDialogService;
+            var mockPromise;
+            var testStructure;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -100,7 +100,8 @@ define(
             });
 
             it("stores user input to the model", function () {
-                var key, input = {};
+                var key;
+                var input = {};
                 // Show dialog, click...
                 mockScope.$watch.calls.mostRecent().args[1](testStructure);
                 controller.getButtonStructure().click();
@@ -119,7 +120,8 @@ define(
             });
 
             it("supplies initial model state to the dialog", function () {
-                var key, state;
+                var key;
+                var state;
                 mockScope.$watch.calls.mostRecent().args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Find the key that the dialog should return

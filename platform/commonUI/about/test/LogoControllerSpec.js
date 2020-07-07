@@ -25,8 +25,8 @@ define(
     function (LogoController) {
 
         describe("The About controller", function () {
-            var mockOverlayService,
-                controller;
+            var mockOverlayService;
+            var controller;
 
             beforeEach(function () {
                 mockOverlayService = jasmine.createSpyObj(

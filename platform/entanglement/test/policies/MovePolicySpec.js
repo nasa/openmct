@@ -26,14 +26,14 @@ define([
 ], function (MovePolicy, domainObjectFactory) {
 
     describe("MovePolicy", function () {
-        var testMetadata,
-            testContext,
-            mockDomainObject,
-            mockParent,
-            mockParentType,
-            mockType,
-            mockAction,
-            policy;
+        var testMetadata;
+        var testContext;
+        var mockDomainObject;
+        var mockParent;
+        var mockParentType;
+        var mockType;
+        var mockAction;
+        var policy;
 
         beforeEach(function () {
             var mockContextCapability =

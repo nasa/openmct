@@ -26,10 +26,10 @@ define(
     function (PersistenceQueue) {
 
         describe("The persistence queue", function () {
-            var mockQ,
-                mockTimeout,
-                mockDialogService,
-                queue;
+            var mockQ;
+            var mockTimeout;
+            var mockDialogService;
+            var queue;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ['defer']);

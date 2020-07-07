@@ -25,12 +25,12 @@ define(
     function (NewTabAction) {
 
         describe("The new tab action", function () {
-            var actionSelected,
-                actionCurrent,
-                mockWindow,
-                mockContextCurrent,
-                mockContextSelected,
-                mockUrlService;
+            var actionSelected;
+            var actionCurrent;
+            var mockWindow;
+            var mockContextCurrent;
+            var mockContextSelected;
+            var mockUrlService;
 
             beforeEach(function () {
                 mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);

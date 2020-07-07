@@ -28,14 +28,14 @@ define(
     function (LocatorController) {
 
         describe("The locator controller", function () {
-            var mockScope,
-                mockTimeout,
-                mockDomainObject,
-                mockRootObject,
-                mockContext,
-                mockObjectService,
-                getObjectsPromise,
-                controller;
+            var mockScope;
+            var mockTimeout;
+            var mockDomainObject;
+            var mockRootObject;
+            var mockContext;
+            var mockObjectService;
+            var getObjectsPromise;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(

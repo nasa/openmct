@@ -30,18 +30,18 @@ define([
 ) {
 
     xdescribe('GenericSearchProvider', function () {
-        var $q,
-            $log,
-            modelService,
-            models,
-            workerService,
-            worker,
-            topic,
-            mutationTopic,
-            ROOTS,
-            compositionProvider,
-            openmct,
-            provider;
+        var $q;
+        var $log;
+        var modelService;
+        var models;
+        var workerService;
+        var worker;
+        var topic;
+        var mutationTopic;
+        var ROOTS;
+        var compositionProvider;
+        var openmct;
+        var provider;
 
         beforeEach(function () {
             $q = jasmine.createSpyObj(
@@ -120,8 +120,8 @@ define([
                         'getId',
                         'getModel',
                         'getCapability'
-                    ]),
-                testModel = { some: 'model' };
+                    ]);
+            var testModel = { some: 'model' };
             mockDomainObject.getId.and.returnValue("some-id");
             mockDomainObject.getModel.and.returnValue(testModel);
             spyOn(provider, 'index').and.callThrough();
@@ -213,8 +213,8 @@ define([
 
         describe('index', function () {
             it('sends index message to worker', function () {
-                var id = 'anId',
-                    model = {};
+                var id = 'anId';
+                var model = {};
 
                 provider.index(id, model);
                 expect(worker.postMessage).toHaveBeenCalledWith({
@@ -225,12 +225,12 @@ define([
             });
 
             it('schedules composed ids for indexing', function () {
-                var id = 'anId',
-                    model = {composition: ['abc', 'def']},
-                    resolve,
-                    promise = new Promise(function (r) {
-                        resolve = r;
-                    });
+                var id = 'anId';
+                var model = {composition: ['abc', 'def']};
+                var resolve;
+                var promise = new Promise(function (r) {
+                    resolve = r;
+                });
 
                 provider.scheduleForIndexing.and.callFake(resolve);
 
@@ -256,8 +256,8 @@ define([
             });
 
             it('does not index ROOT, but checks composition', function () {
-                var id = 'ROOT',
-                    model = {};
+                var id = 'ROOT';
+                var model = {};
 
                 provider.index(id, model);
                 expect(worker.postMessage).not.toHaveBeenCalled();

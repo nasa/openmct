@@ -48,12 +48,12 @@ define(
             // Separate out the actions that have been retrieved
             // into groups, and populate scope with this.
             function groupActions(actions) {
-                var groups = {},
-                    ungrouped = [];
+                var groups = {};
+                var ungrouped = [];
 
                 function assignToGroup(action) {
-                    var metadata = action.getMetadata(),
-                        group = metadata.group;
+                    var metadata = action.getMetadata();
+                    var group = metadata.group;
                     if (group) {
                         groups[group] = groups[group] || [];
                         groups[group].push(action);
@@ -73,9 +73,9 @@ define(
             // Callback for when state which might influence action groupings
             // changes.
             function updateGroups() {
-                var actionCapability = $scope.action,
-                    params = $scope.parameters || {},
-                    category = params.category;
+                var actionCapability = $scope.action;
+                var params = $scope.parameters || {};
+                var category = params.category;
 
                 if (actionCapability && category) {
                     // Get actions by capability, and group them

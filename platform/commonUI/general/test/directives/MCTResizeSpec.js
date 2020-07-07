@@ -25,11 +25,11 @@ define(
     function (MCTResize) {
 
         describe("The mct-resize directive", function () {
-            var mockTimeout,
-                mockScope,
-                testElement,
-                testAttrs,
-                mctResize;
+            var mockTimeout;
+            var mockScope;
+            var testElement;
+            var testAttrs;
+            var mctResize;
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");

@@ -28,18 +28,18 @@ define(
     function (CreationService) {
 
         describe("The creation service", function () {
-            var mockQ,
-                mockLog,
-                mockParentObject,
-                mockNewObject,
-                mockMutationCapability,
-                mockPersistenceCapability,
-                mockCompositionCapability,
-                mockContextCapability,
-                mockCreationCapability,
-                mockCapabilities,
-                mockNewPersistenceCapability,
-                creationService;
+            var mockQ;
+            var mockLog;
+            var mockParentObject;
+            var mockNewObject;
+            var mockMutationCapability;
+            var mockPersistenceCapability;
+            var mockCompositionCapability;
+            var mockContextCapability;
+            var mockCreationCapability;
+            var mockCapabilities;
+            var mockNewPersistenceCapability;
+            var creationService;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {
@@ -157,10 +157,10 @@ define(
 
             it("provides the newly-created object", function () {
                 var mockDomainObject = jasmine.createSpyObj(
-                        'newDomainObject',
-                        ['getId', 'getModel', 'getCapability']
-                    ),
-                    mockCallback = jasmine.createSpy('callback');
+                    'newDomainObject',
+                    ['getId', 'getModel', 'getCapability']
+                );
+                var mockCallback = jasmine.createSpy('callback');
 
                 // Act as if the object had been created
                 mockCompositionCapability.add.and.callFake(function (id) {
@@ -180,8 +180,8 @@ define(
 
             it("warns if parent has no persistence capability", function () {
                 // Callbacks
-                var success = jasmine.createSpy("success"),
-                    failure = jasmine.createSpy("failure");
+                var success = jasmine.createSpy("success");
+                var failure = jasmine.createSpy("failure");
 
                 mockCapabilities.persistence = undefined;
                 creationService.createObject({}, mockParentObject).then(

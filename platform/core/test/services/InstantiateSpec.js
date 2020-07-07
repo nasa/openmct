@@ -26,15 +26,15 @@ define(
 
         describe("The 'instantiate' service", function () {
 
-            var mockCapabilityService,
-                mockIdentifierService,
-                mockCapabilityConstructor,
-                mockCapabilityInstance,
-                mockCacheService,
-                idCounter,
-                testModel,
-                instantiate,
-                domainObject;
+            var mockCapabilityService;
+            var mockIdentifierService;
+            var mockCapabilityConstructor;
+            var mockCapabilityInstance;
+            var mockCacheService;
+            var idCounter;
+            var testModel;
+            var instantiate;
+            var domainObject;
 
             beforeEach(function () {
                 idCounter = 0;

@@ -62,10 +62,10 @@ define(
                 // Populate initial scope based on attributes requested
                 // by the container definition
                 link: function (scope, element, attrs) {
-                    var key = attrs.key,
-                        container = containerMap[key],
-                        alias = "container",
-                        copiedAttributes = {};
+                    var key = attrs.key;
+                    var container = containerMap[key];
+                    var alias = "container";
+                    var copiedAttributes = {};
 
                     if (container) {
                         alias = container.alias || alias;
@@ -78,8 +78,8 @@ define(
                 },
 
                 template: function (element, attrs) {
-                    var key = attrs.key,
-                        container = containerMap[key];
+                    var key = attrs.key;
+                    var container = containerMap[key];
                     return container ? container.template : "";
                 }
             };

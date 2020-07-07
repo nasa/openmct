@@ -31,9 +31,9 @@ define(
     function (DomainObjectProvider, DomainObjectImpl) {
 
         describe("The domain object provider", function () {
-            var mockModelService,
-                mockInstantiate,
-                provider;
+            var mockModelService;
+            var mockInstantiate;
+            var provider;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {
@@ -72,9 +72,9 @@ define(
 
 
             it("instantiates objects with provided models", function () {
-                var ids = ["a", "b", "c"],
-                    model = { someKey: "some value"},
-                    result;
+                var ids = ["a", "b", "c"];
+                var model = { someKey: "some value"};
+                var result;
                 mockModelService.getModels.and.returnValue(mockPromise({ a: model }));
                 result = provider.getObjects(ids).testValue;
                 expect(mockInstantiate).toHaveBeenCalledWith(model, 'a');

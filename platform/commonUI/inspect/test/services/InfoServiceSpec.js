@@ -25,14 +25,14 @@ define(
     function (InfoService) {
 
         describe("The info service", function () {
-            var mockCompile,
-                mockRootScope,
-                mockPopupService,
-                mockAgentService,
-                mockScope,
-                mockElements,
-                mockPopup,
-                service;
+            var mockCompile;
+            var mockRootScope;
+            var mockPopupService;
+            var mockAgentService;
+            var mockScope;
+            var mockElements;
+            var mockPopup;
+            var service;
 
             beforeEach(function () {
                 mockCompile = jasmine.createSpy('$compile');
@@ -55,12 +55,12 @@ define(
 
                 mockPopupService.display.and.returnValue(mockPopup);
                 mockCompile.and.callFake(function () {
-                    var mockCompiledTemplate = jasmine.createSpy('template'),
-                        mockElement = jasmine.createSpyObj('element', [
-                            'css',
-                            'remove',
-                            'append'
-                        ]);
+                    var mockCompiledTemplate = jasmine.createSpy('template');
+                    var mockElement = jasmine.createSpyObj('element', [
+                        'css',
+                        'remove',
+                        'append'
+                    ]);
                     mockCompiledTemplate.and.returnValue(mockElement);
                     mockElements.push(mockElement);
                     return mockCompiledTemplate;
@@ -109,9 +109,9 @@ define(
 
             [false, true].forEach(function (goesLeft) {
                 [false, true].forEach(function (goesUp) {
-                    var vertical = goesUp ? "up" : "down",
-                        horizontal = goesLeft ? "left" : "right",
-                        location = [vertical, horizontal].join('-');
+                    var vertical = goesUp ? "up" : "down";
+                    var horizontal = goesLeft ? "left" : "right";
+                    var location = [vertical, horizontal].join('-');
                     describe("when bubble goes " + location, function () {
                         var expectedLocation = [
                             goesUp ? "bottom" : "top",

@@ -28,11 +28,11 @@ define(
     function (ActionCapability) {
 
         describe("The action capability", function () {
-            var mockQ,
-                mockAction,
-                mockActionService,
-                mockDomainObject,
-                capability;
+            var mockQ;
+            var mockAction;
+            var mockActionService;
+            var mockDomainObject;
+            var capability;
 
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(

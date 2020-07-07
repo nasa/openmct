@@ -25,9 +25,9 @@ define(
     function (AboutController) {
 
         describe("The About controller", function () {
-            var testVersions,
-                mockWindow,
-                controller;
+            var testVersions;
+            var mockWindow;
+            var controller;
 
             beforeEach(function () {
                 testVersions = [

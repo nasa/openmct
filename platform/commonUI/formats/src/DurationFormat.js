@@ -26,10 +26,10 @@ define([
     moment
 ) {
 
-    var DATE_FORMAT = "HH:mm:ss",
-        DATE_FORMATS = [
-            DATE_FORMAT
-        ];
+    var DATE_FORMAT = "HH:mm:ss";
+    var DATE_FORMATS = [
+        DATE_FORMAT
+    ];
 
 
     /**

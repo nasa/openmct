@@ -25,10 +25,10 @@ define(
     function (TreeNodeController) {
 
         describe("The tree node controller", function () {
-            var mockScope,
-                mockTimeout,
-                mockDomainObject,
-                controller;
+            var mockScope;
+            var mockTimeout;
+            var mockDomainObject;
+            var controller;
 
             function TestObject(id, context) {
                 return {
@@ -72,10 +72,10 @@ define(
             it("tracks whether or not the represented object is currently navigated-to", function () {
                 // This is needed to highlight the current selection
                 var mockContext = jasmine.createSpyObj(
-                        "context",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    obj = new TestObject("test-object", mockContext);
+                    "context",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var obj = new TestObject("test-object", mockContext);
 
                 mockContext.getPath.and.returnValue([obj]);
 
@@ -93,15 +93,15 @@ define(
 
             it("expands a node if it is on the navigation path", function () {
                 var mockParentContext = jasmine.createSpyObj(
-                        "parentContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    mockChildContext = jasmine.createSpyObj(
-                        "childContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    parent = new TestObject("parent", mockParentContext),
-                    child = new TestObject("child", mockChildContext);
+                    "parentContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var mockChildContext = jasmine.createSpyObj(
+                    "childContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var parent = new TestObject("parent", mockParentContext);
+                var child = new TestObject("child", mockChildContext);
 
                 mockChildContext.getParent.and.returnValue(parent);
                 mockChildContext.getPath.and.returnValue([parent, child]);
@@ -129,15 +129,15 @@ define(
 
             it("does not expand a node if it is not on the navigation path", function () {
                 var mockParentContext = jasmine.createSpyObj(
-                        "parentContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    mockChildContext = jasmine.createSpyObj(
-                        "childContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    parent = new TestObject("parent", mockParentContext),
-                    child = new TestObject("child", mockChildContext);
+                    "parentContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var mockChildContext = jasmine.createSpyObj(
+                    "childContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var parent = new TestObject("parent", mockParentContext);
+                var child = new TestObject("child", mockChildContext);
 
                 mockChildContext.getParent.and.returnValue(parent);
                 mockChildContext.getPath.and.returnValue([child, child]);
@@ -162,15 +162,15 @@ define(
 
             it("does not expand a node if no context is available", function () {
                 var mockParentContext = jasmine.createSpyObj(
-                        "parentContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    mockChildContext = jasmine.createSpyObj(
-                        "childContext",
-                        ["getParent", "getPath", "getRoot"]
-                    ),
-                    parent = new TestObject("parent", mockParentContext),
-                    child = new TestObject("child", undefined);
+                    "parentContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var mockChildContext = jasmine.createSpyObj(
+                    "childContext",
+                    ["getParent", "getPath", "getRoot"]
+                );
+                var parent = new TestObject("parent", mockParentContext);
+                var child = new TestObject("child", undefined);
 
                 mockChildContext.getParent.and.returnValue(parent);
                 mockChildContext.getPath.and.returnValue([parent, child]);

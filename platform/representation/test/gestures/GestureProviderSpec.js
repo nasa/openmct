@@ -27,16 +27,16 @@ define(
     ["../../src/gestures/GestureProvider"],
     function (GestureProvider) {
 
-        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
-            GESTURE_KEYS = ["a", "b", "c", "d", "e"],
-            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"];
+        var GESTURE_KEYS = ["a", "b", "c", "d", "e"];
+        var DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
         describe("The gesture provider", function () {
-            var mockGestures,
-                mockDestroys,
-                mockElement,
-                mockDomainObject,
-                provider;
+            var mockGestures;
+            var mockDestroys;
+            var mockElement;
+            var mockDomainObject;
+            var provider;
 
             beforeEach(function () {
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);

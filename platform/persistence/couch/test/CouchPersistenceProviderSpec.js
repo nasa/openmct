@@ -28,12 +28,12 @@ define(
     function (CouchPersistenceProvider) {
 
         describe("The couch persistence provider", function () {
-            var mockHttp,
-                mockQ,
-                testSpace = "testSpace",
-                testPath = "/test/db",
-                capture,
-                provider;
+            var mockHttp;
+            var  mockQ;
+            var testSpace = "testSpace";
+            var testPath = "/test/db";
+            var capture;
+            var provider;
 
             function mockPromise(value) {
                 return {

@@ -126,7 +126,9 @@ module.exports = {
         "no-invalid-this": "error", // Believe this one actually surfaces some bugs
         // https://eslint.org/docs/rules/func-style
         "func-style": ["error", "declaration"],
-
+        // https://eslint.org/docs/rules/one-var
+        "one-var": ["error", "never"],
+        
         "vue/html-indent": [
             "error",
             4,

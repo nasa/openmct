@@ -29,8 +29,8 @@ define(
     function () {
 
         function cancelEditing(domainObject) {
-            var navigatedObject = domainObject,
-                editorCapability = navigatedObject &&
+            var navigatedObject = domainObject;
+            var editorCapability = navigatedObject &&
                     navigatedObject.getCapability("editor");
 
             return editorCapability &&

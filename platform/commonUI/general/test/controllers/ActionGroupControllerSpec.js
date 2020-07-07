@@ -25,9 +25,9 @@ define(
     function (ActionGroupController) {
 
         describe("The action group controller", function () {
-            var mockScope,
-                mockActions,
-                controller;
+            var mockScope;
+            var mockActions;
+            var controller;
 
             function mockAction(metadata, index) {
                 var action = jasmine.createSpyObj(

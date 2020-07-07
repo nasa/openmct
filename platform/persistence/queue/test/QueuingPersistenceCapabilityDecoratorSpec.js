@@ -26,14 +26,14 @@ define(
     function (QueuingPersistenceCapabilityDecorator) {
 
         describe("A queuing persistence capability decorator", function () {
-            var mockQueue,
-                mockCapabilityService,
-                mockPersistenceConstructor,
-                mockPersistence,
-                mockDomainObject,
-                testModel,
-                testId,
-                decorator;
+            var mockQueue;
+            var mockCapabilityService;
+            var mockPersistenceConstructor;
+            var mockPersistence;
+            var mockDomainObject;
+            var testModel;
+            var testId;
+            var decorator;
 
             beforeEach(function () {
                 mockQueue = jasmine.createSpyObj('queue', ['put']);

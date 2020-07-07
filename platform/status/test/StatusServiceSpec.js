@@ -25,13 +25,13 @@ define(
     function (StatusService) {
 
         describe("The status service", function () {
-            var mockTopic,
-                mockTopicInstance,
-                mockUnlisten,
-                mockCallback,
-                testId,
-                testStatus,
-                statusService;
+            var mockTopic;
+            var mockTopicInstance;
+            var mockUnlisten;
+            var mockCallback;
+            var testId;
+            var testStatus;
+            var statusService;
 
             beforeEach(function () {
                 testId = "some-domain-object-identifier";

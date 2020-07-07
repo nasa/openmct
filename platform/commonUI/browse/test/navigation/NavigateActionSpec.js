@@ -30,9 +30,9 @@ define([
 ) {
 
     describe("The navigate action", function () {
-        var mockNavigationService,
-            mockDomainObject,
-            action;
+        var mockNavigationService;
+        var mockDomainObject;
+        var action;
 
         beforeEach(function () {
             mockNavigationService = jasmine.createSpyObj(

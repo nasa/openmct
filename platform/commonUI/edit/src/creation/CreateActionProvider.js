@@ -50,10 +50,10 @@ define(
         }
 
         CreateActionProvider.prototype.getActions = function (actionContext) {
-            var context = actionContext || {},
-                key = context.key,
-                destination = context.domainObject,
-                self = this;
+            var context = actionContext || {};
+            var key = context.key;
+            var destination = context.domainObject;
+            var self = this;
 
             // We only provide Create actions, and we need a
             // domain object to serve as the container for the

@@ -26,14 +26,14 @@ define([
     moment
 ) {
 
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
-        DATE_FORMATS = [
-            DATE_FORMAT,
-            DATE_FORMAT + "Z",
-            "YYYY-MM-DD HH:mm:ss",
-            "YYYY-MM-DD HH:mm",
-            "YYYY-MM-DD"
-        ];
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
+    var DATE_FORMATS = [
+        DATE_FORMAT,
+        DATE_FORMAT + "Z",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD HH:mm",
+        "YYYY-MM-DD"
+    ];
 
     /**
      * @typedef Scale

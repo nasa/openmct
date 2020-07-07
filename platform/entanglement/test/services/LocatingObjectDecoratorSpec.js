@@ -29,13 +29,13 @@ define(
     function (LocatingObjectDecorator, ContextualDomainObject) {
 
         describe("LocatingObjectDecorator", function () {
-            var mockQ,
-                mockLog,
-                mockObjectService,
-                mockCallback,
-                testObjects,
-                testModels,
-                decorator;
+            var mockQ;
+            var mockLog;
+            var mockObjectService;
+            var mockCallback;
+            var testObjects;
+            var testModels;
+            var decorator;
 
             function testPromise(v) {
                 return (v || {}).then ? v : {
@@ -65,7 +65,7 @@ define(
 
                 mockQ.when.and.callFake(testPromise);
                 mockQ.all.and.callFake(function (promises) {
-                    var result = {};
+                    ; result = {};
                     Object.keys(promises).forEach(function (k) {
                         promises[k].then(function (v) {
                             result[k] = v;

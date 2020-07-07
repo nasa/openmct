@@ -23,9 +23,9 @@ define(
     ['../../src/directives/MCTScroll'],
     function (MCTScroll) {
 
-        var EVENT_PROPERTY = "testProperty",
-            ATTRIBUTE = "testAttribute",
-            EXPRESSION = "some.expression";
+        var EVENT_PROPERTY = "testProperty";
+        var ATTRIBUTE = "testAttribute";
+        var EXPRESSION = "some.expression";
 
 
         // MCTScroll is the commonality between mct-scroll-x and
@@ -33,12 +33,12 @@ define(
         // the attribute which contains the associated assignable
         // expression.
         describe("An mct-scroll-* directive", function () {
-            var mockParse,
-                mockParsed,
-                mockScope,
-                mockElement,
-                testAttrs,
-                mctScroll;
+            var mockParse;
+            var mockParsed;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
+            var mctScroll;
 
             beforeEach(function () {
                 mockParse = jasmine.createSpy('$parse');

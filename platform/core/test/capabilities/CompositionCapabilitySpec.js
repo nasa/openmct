@@ -39,10 +39,10 @@ define(
         ];
 
         describe("The composition capability", function () {
-            var mockDomainObject,
-                mockInjector,
-                mockObjectService,
-                composition;
+            var mockDomainObject;
+            var mockInjector;
+            var mockObjectService;
+            var composition;
 
             // Composition Capability makes use of promise chaining,
             // so support that, but don't introduce complication of
@@ -98,8 +98,8 @@ define(
             });
 
             it("adds a context capability to returned domain objects", function () {
-                var result,
-                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+                var result;
+                var mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.and.returnValue({ composition: ["x"] });
                 mockObjectService.getObjects.and.returnValue(mockPromise({x: mockChild}));
@@ -115,9 +115,9 @@ define(
             });
 
             it("allows domain objects to be added", function () {
-                var result,
-                    testModel = { composition: [] },
-                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+                var result;
+                var testModel = { composition: [] };
+                var mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.and.returnValue(testModel);
                 mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));
@@ -145,9 +145,9 @@ define(
             });
 
             it("does not re-add IDs which are already present", function () {
-                var result,
-                    testModel = { composition: ['a'] },
-                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+                var result;
+                var testModel = { composition: ['a'] };
+                var mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.and.returnValue(testModel);
                 mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));
@@ -176,9 +176,9 @@ define(
             });
 
             it("can add objects at a specified index", function () {
-                var result,
-                    testModel = { composition: ['a', 'b', 'c'] },
-                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+                var result;
+                var testModel = { composition: ['a', 'b', 'c'] };
+                var mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.and.returnValue(testModel);
                 mockObjectService.getObjects.and.returnValue(mockPromise({a: mockChild}));

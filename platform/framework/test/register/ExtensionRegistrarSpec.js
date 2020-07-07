@@ -28,11 +28,11 @@ define(
     function (ExtensionRegistrar) {
 
         describe("The extension registrar", function () {
-            var mockApp,
-                mockLog,
-                mockSorter,
-                customRegistrars,
-                registrar;
+            var mockApp;
+            var mockLog;
+            var mockSorter;
+            var customRegistrars;
+            var registrar;
 
             beforeEach(function () {
                 mockApp = jasmine.createSpyObj("app", ["factory"]);
@@ -97,7 +97,9 @@ define(
 
             it("sorts extensions before registering", function () {
                 // Some extension definitions to sort
-                var a = { a: 'a' }, b = { b: 'b' }, c = { c: 'c' };
+                var a = { a: 'a' };
+                var b = { b: 'b' };
+                var c = { c: 'c' };
 
                 // Fake sorting; just reverse the array
                 mockSorter.sort.and.callFake(function (v) {

@@ -25,22 +25,22 @@ define(
     function (moment) {
 
         var TIME_NAMES = {
-                'hours': "Hour",
-                'minutes': "Minute",
-                'seconds': "Second"
-            },
-            MONTHS = moment.months(),
-            TIME_OPTIONS = (function makeRanges() {
-                var arr = [];
-                while (arr.length < 60) {
-                    arr.push(arr.length);
-                }
-                return {
-                    hours: arr.slice(0, 24),
-                    minutes: arr,
-                    seconds: arr
-                };
-            }());
+            'hours': "Hour",
+            'minutes': "Minute",
+            'seconds': "Second"
+        };
+        var MONTHS = moment.months();
+        var TIME_OPTIONS = (function makeRanges() {
+            var arr = [];
+            while (arr.length < 60) {
+                arr.push(arr.length);
+            }
+            return {
+                hours: arr.slice(0, 24),
+                minutes: arr,
+                seconds: arr
+            };
+        }());
 
         /**
          * Controller to support the date-time picker.
@@ -65,15 +65,15 @@ define(
          * Months are zero-indexed, day-of-months are one-indexed.
          */
         function DateTimePickerController($scope, now) {
-            var year,
-                month, // For picker state, not model state
-                interacted = false;
+            var year;
+            var month; // For picker state, not model state
+            var interacted = false;
 
             function generateTable() {
-                var m = moment.utc({ year: year, month: month }).day(0),
-                    table = [],
-                    row,
-                    col;
+                var m = moment.utc({ year: year, month: month }).day(0);
+                var table = [];
+                var row;
+                var col;
 
                 for (row = 0; row < 6; row += 1) {
                     table.push([]);

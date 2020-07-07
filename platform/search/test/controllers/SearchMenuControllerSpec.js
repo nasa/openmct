@@ -28,9 +28,9 @@ define(
     function (SearchMenuController) {
 
         describe("The search menu controller", function () {
-            var mockScope,
-                mockTypes,
-                controller;
+            var mockScope;
+            var mockTypes;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(

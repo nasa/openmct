@@ -25,22 +25,22 @@ define(
     ["../src/TemplateLinker"],
     function (TemplateLinker) {
 
-        var JQLITE_METHODS = ['replaceWith', 'empty', 'html', 'contents'],
-            SCOPE_METHODS = ['$on', '$new', '$destroy'];
+        var JQLITE_METHODS = ['replaceWith', 'empty', 'html', 'contents'];
+        var SCOPE_METHODS = ['$on', '$new', '$destroy'];
 
         describe("TemplateLinker", function () {
-            var mockTemplateRequest,
-                mockSce,
-                mockCompile,
-                mockLog,
-                mockScope,
-                mockElement,
-                mockTemplates,
-                mockElements,
-                mockContents,
-                mockNewScope,
-                mockPromise,
-                linker;
+            var mockTemplateRequest;
+            var mockSce;
+            var mockCompile;
+            var mockLog;
+            var mockScope;
+            var mockElement;
+            var mockTemplates;
+            var mockElements;
+            var mockContents;
+            var mockNewScope;
+            var mockPromise;
+            var linker;
 
             function testExtension(path, res, templatePath) {
                 return {
@@ -104,8 +104,8 @@ define(
             });
 
             describe("when linking elements", function () {
-                var changeTemplate,
-                    commentElement;
+                var changeTemplate;
+                var commentElement;
 
                 function findCommentElement() {
                     mockCompile.calls.all().forEach(function (call) {
@@ -135,9 +135,9 @@ define(
                 });
 
                 describe("and then changing templates", function () {
-                    var testExt,
-                        testUrl,
-                        testTemplate;
+                    var testExt;
+                    var testUrl;
+                    var testTemplate;
 
                     beforeEach(function () {
                         testExt = testExtension('some', 'url', 'template.html');
@@ -213,8 +213,8 @@ define(
             });
 
             describe("when an initial template URL is provided", function () {
-                var testExt,
-                    testUrl;
+                var testExt;
+                var testUrl;
 
                 beforeEach(function () {
                     testExt = testExtension('some', 'test', 'template.html');

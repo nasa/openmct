@@ -28,13 +28,13 @@ define(
     function (ObjectInspectorController) {
 
         describe("The object inspector controller ", function () {
-            var mockScope,
-                mockObjectService,
-                mockPromise,
-                mockDomainObject,
-                mockContextCapability,
-                mockLocationCapability,
-                controller;
+            var mockScope;
+            var mockObjectService;
+            var mockPromise;
+            var mockDomainObject;
+            var mockContextCapability;
+            var mockLocationCapability;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(

@@ -46,9 +46,9 @@ define(
         }
 
         PropertiesAction.prototype.perform = function () {
-            var type = this.domainObject.getCapability('type'),
-                domainObject = this.domainObject,
-                dialogService = this.dialogService;
+            var type = this.domainObject.getCapability('type');
+            var domainObject = this.domainObject;
+            var dialogService = this.dialogService;
 
             // Update the domain object model based on user input
             function updateModel(userInput, dialog) {
@@ -82,9 +82,9 @@ define(
          */
         PropertiesAction.appliesTo = function (context) {
 
-            var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type'),
-                creatable = type && type.hasFeature('creation');
+            var domainObject = (context || {}).domainObject;
+            var type = domainObject && domainObject.getCapability('type');
+            var creatable = type && type.hasFeature('creation');
 
             if (domainObject && domainObject.model && domainObject.model.locked) {
                 return false;

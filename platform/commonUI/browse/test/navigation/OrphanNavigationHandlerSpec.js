@@ -24,18 +24,18 @@ define([
     '../../src/navigation/OrphanNavigationHandler'
 ], function (OrphanNavigationHandler) {
     describe("OrphanNavigationHandler", function () {
-        var mockTopic,
-            mockThrottle,
-            mockMutationTopic,
-            mockNavigationService,
-            mockDomainObject,
-            mockParentObject,
-            mockContext,
-            mockActionCapability,
-            mockEditor,
-            testParentComposition,
-            testId,
-            mockThrottledFns;
+        var mockTopic;
+        var mockThrottle;
+        var mockMutationTopic;
+        var mockNavigationService;
+        var mockDomainObject;
+        var mockParentObject;
+        var mockContext;
+        var mockActionCapability;
+        var mockEditor;
+        var testParentComposition;
+        var testId;
+        var mockThrottledFns;
 
         beforeEach(function () {
             testId = 'some-identifier';

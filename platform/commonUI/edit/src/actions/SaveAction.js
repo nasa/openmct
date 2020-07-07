@@ -49,9 +49,9 @@ define(
          * @memberof platform/commonUI/edit.SaveAction#
          */
         SaveAction.prototype.perform = function () {
-            var self = this,
-                domainObject = this.domainObject,
-                dialog = new SaveInProgressDialog(this.dialogService);
+            var self = this;
+            var domainObject = this.domainObject;
+            var dialog = new SaveInProgressDialog(this.dialogService);
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is

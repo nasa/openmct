@@ -25,15 +25,15 @@ define(
     function (StatusRepresenter, StatusConstants) {
 
         describe("The status representer", function () {
-            var mockScope,
-                mockElement,
-                testRepresentation,
-                mockDomainObject,
-                mockStatusCapability,
-                mockUnlisten,
-                elementClasses,
-                testStatusFlags,
-                representer;
+            var mockScope;
+            var mockElement;
+            var testRepresentation;
+            var mockDomainObject;
+            var mockStatusCapability;
+            var mockUnlisten;
+            var elementClasses;
+            var testStatusFlags;
+            var representer;
 
             function verifyClasses() {
                 expect(Object.keys(elementClasses).sort())

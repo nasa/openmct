@@ -37,8 +37,8 @@ define(
          */
         function MCTSplitter() {
             function link(scope, element, attrs, mctSplitPane) {
-                var initialPosition,
-                    newPosition;
+                var initialPosition;
+                var newPosition;
 
                 element.addClass("splitter");
 
@@ -50,9 +50,9 @@ define(
                     },
                     // Handle user changes to splitter position
                     move: function (delta) {
-                        var anchor = mctSplitPane.anchor(),
-                            index = anchor.orientation === "vertical" ? 0 : 1,
-                            pixelDelta = delta[index] *
+                        var anchor = mctSplitPane.anchor();
+                        var index = anchor.orientation === "vertical" ? 0 : 1;
+                        var pixelDelta = delta[index] *
                                 (anchor.reversed ? -1 : 1);
 
                         // Update the position of this splitter

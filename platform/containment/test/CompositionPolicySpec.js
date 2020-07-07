@@ -24,12 +24,12 @@ define(
     ["../src/CompositionPolicy"],
     function (CompositionPolicy) {
         describe("Composition policy", function () {
-            var mockParentObject,
-                typeA,
-                typeB,
-                typeC,
-                mockChildObject,
-                policy;
+            var mockParentObject;
+            var typeA;
+            var typeB;
+            var typeC;
+            var mockChildObject;
+            var policy;
 
             beforeEach(function () {
                 mockParentObject = jasmine.createSpyObj('domainObject', [

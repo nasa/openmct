@@ -32,14 +32,14 @@ define(
             // depends on is not mocked, so we mock some
             // of SaveAction's own dependencies to make
             // it run.
-            var mockDomainObject,
-                mockEditorCapability,
-                actionContext,
-                dialogService,
-                notificationService,
-                mockActionCapability,
-                capabilities = {},
-                action;
+            var mockDomainObject;
+            var mockEditorCapability;
+            var actionContext;
+            var dialogService;
+            var notificationService;
+            var mockActionCapability;
+            var capabilities = {};
+            var action;
 
             function mockPromise(value) {
                 return {

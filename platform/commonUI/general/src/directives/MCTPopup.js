@@ -44,10 +44,10 @@ define(
          */
         function MCTPopup($compile, popupService) {
             function link(scope, element, attrs, ctrl, transclude) {
-                var div = $compile(TEMPLATE)(scope),
-                    rect = element.parent()[0].getBoundingClientRect(),
-                    position = [rect.left, rect.top],
-                    popup = popupService.display(div, position);
+                var div = $compile(TEMPLATE)(scope);
+                var rect = element.parent()[0].getBoundingClientRect();
+                var position = [rect.left, rect.top];
+                var popup = popupService.display(div, position);
 
                 div.addClass('t-popup');
                 transclude(function (clone) {

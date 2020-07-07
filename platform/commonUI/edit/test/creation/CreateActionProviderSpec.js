@@ -28,12 +28,12 @@ define(
     function (CreateActionProvider) {
 
         describe("The create action provider", function () {
-            var mockTypeService,
-                mockPolicyService,
-                mockCreationPolicy,
-                mockPolicyMap = {},
-                mockTypes,
-                provider;
+            var mockTypeService;
+            var mockPolicyService;
+            var mockCreationPolicy;
+            var mockPolicyMap = {};
+            var mockTypes;
+            var provider;
 
             function createMockType(name) {
                 var mockType = jasmine.createSpyObj(

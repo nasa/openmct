@@ -25,11 +25,11 @@ define(
     function (IdentityAggregator) {
 
         describe("The identity aggregator", function () {
-            var mockProviders,
-                mockQ,
-                resolves,
-                testUsers,
-                aggregator;
+            var mockProviders;
+            var mockQ;
+            var resolves;
+            var testUsers;
+            var aggregator;
 
             function resolveProviderPromises() {
                 ['a', 'b', 'c'].forEach(function (id, i) {

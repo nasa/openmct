@@ -25,9 +25,9 @@ define(
     function (IdentityIndicator) {
 
         describe("The identity indicator", function () {
-            var mockPromise,
-                mockIdentityService,
-                indicator;
+            var mockPromise;
+            var mockIdentityService;
+            var indicator;
 
             beforeEach(function () {
                 mockPromise = jasmine.createSpyObj('promise', ['then']);

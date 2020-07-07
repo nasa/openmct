@@ -25,8 +25,8 @@ define(
     function (MCTForm) {
 
         describe("The mct-form directive", function () {
-            var mockScope,
-                mctForm;
+            var mockScope;
+            var mctForm;
 
             function installController() {
                 var Controller = mctForm.controller[1];
@@ -77,8 +77,8 @@ define(
 
             it("returns the same regexp instance for the same string", function () {
                 // Don't want new instances each digest cycle, for performance
-                var strRegExp = "^[a-z]\\d+$",
-                    regExp;
+                var strRegExp = "^[a-z]\\d+$";
+                var regExp;
 
                 // Add getRegExp to scope
                 installController();

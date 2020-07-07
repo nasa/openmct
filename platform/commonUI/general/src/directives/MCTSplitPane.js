@@ -25,47 +25,47 @@ define(
     function () {
 
         // Pixel width to allocate for the splitter itself
-        var DEFAULT_ANCHOR = 'left',
-            POLLING_INTERVAL = 15, // milliseconds
-            CHILDREN_WARNING_MESSAGE = [
-                "Invalid mct-split-pane contents.",
-                "This element should contain exactly three",
-                "child elements, where the middle-most element",
-                "is an mct-splitter."
-            ].join(" "),
-            ANCHOR_WARNING_MESSAGE = [
-                "Unknown anchor provided to mct-split-pane,",
-                "defaulting to",
-                DEFAULT_ANCHOR + "."
-            ].join(" "),
-            ANCHORS = {
-                left: {
-                    edge: "left",
-                    opposite: "right",
-                    dimension: "width",
-                    orientation: "vertical"
-                },
-                right: {
-                    edge: "right",
-                    opposite: "left",
-                    dimension: "width",
-                    orientation: "vertical",
-                    reversed: true
-                },
-                top: {
-                    edge: "top",
-                    opposite: "bottom",
-                    dimension: "height",
-                    orientation: "horizontal"
-                },
-                bottom: {
-                    edge: "bottom",
-                    opposite: "top",
-                    dimension: "height",
-                    orientation: "horizontal",
-                    reversed: true
-                }
-            };
+        var DEFAULT_ANCHOR = 'left';
+        var POLLING_INTERVAL = 15; // milliseconds
+        var CHILDREN_WARNING_MESSAGE = [
+            "Invalid mct-split-pane contents.",
+            "This element should contain exactly three",
+            "child elements, where the middle-most element",
+            "is an mct-splitter."
+        ].join(" ");
+        var ANCHOR_WARNING_MESSAGE = [
+            "Unknown anchor provided to mct-split-pane;",
+            "defaulting to",
+            DEFAULT_ANCHOR + "."
+        ].join(" ");
+        var ANCHORS = {
+            left: {
+                edge: "left",
+                opposite: "right",
+                dimension: "width",
+                orientation: "vertical"
+            },
+            right: {
+                edge: "right",
+                opposite: "left",
+                dimension: "width",
+                orientation: "vertical",
+                reversed: true
+            },
+            top: {
+                edge: "top",
+                opposite: "bottom",
+                dimension: "height",
+                orientation: "horizontal"
+            },
+            bottom: {
+                edge: "bottom",
+                opposite: "top",
+                dimension: "height",
+                orientation: "horizontal",
+                reversed: true
+            }
+        };
 
         /**
          * Implements `mct-split-pane` directive.
@@ -95,19 +95,19 @@ define(
          */
         function MCTSplitPane($parse, $log, $interval, $window) {
             function controller($scope, $element, $attrs) {
-                var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
-                    positionParsed = $parse($attrs.position),
-                    anchor,
-                    activeInterval,
-                    position,
-                    splitterSize,
+                var anchorKey = $attrs.anchor || DEFAULT_ANCHOR;
+                var positionParsed = $parse($attrs.position);
+                var anchor;
+                var activeInterval;
+                var position;
+                var splitterSize;
 
-                    alias = $attrs.alias !== undefined ?
-                        "mctSplitPane-" + $attrs.alias : undefined,
+                var alias = $attrs.alias !== undefined ?
+                    "mctSplitPane-" + $attrs.alias : undefined;
 
-                    //convert string to number from localStorage
-                    userWidthPreference = $window.localStorage.getItem(alias) === null ?
-                        undefined : Number($window.localStorage.getItem(alias));
+                //convert string to number from localStorage
+                var userWidthPreference = $window.localStorage.getItem(alias) === null ?
+                    undefined : Number($window.localStorage.getItem(alias));
 
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
@@ -121,10 +121,10 @@ define(
 
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
-                    var first = children.eq(anchor.reversed ? 2 : 0),
-                        splitter = children.eq(1),
-                        last = children.eq(anchor.reversed ? 0 : 2),
-                        firstSize;
+                    var first = children.eq(anchor.reversed ? 2 : 0);
+                    var splitter = children.eq(1);
+                    var last = children.eq(anchor.reversed ? 0 : 2);
+                    var firstSize;
 
                     splitterSize = getSize(splitter[0]);
                     first.css(anchor.edge, "0px");

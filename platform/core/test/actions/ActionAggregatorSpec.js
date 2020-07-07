@@ -28,8 +28,8 @@ define(
     function (ActionAggregator) {
 
         describe("Action aggregator", function () {
-            var mockAggregators,
-                aggregator;
+            var mockAggregators;
+            var aggregator;
 
             function createMockActionProvider(actions, i) {
                 var spy = jasmine.createSpyObj("agg" + i, ["getActions"]);

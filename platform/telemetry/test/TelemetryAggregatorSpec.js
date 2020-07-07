@@ -25,10 +25,10 @@ define(
     function (TelemetryAggregator) {
 
         describe("The telemetry aggregator", function () {
-            var mockQ,
-                mockProviders,
-                mockUnsubscribes,
-                aggregator;
+            var mockQ;
+            var mockProviders;
+            var mockUnsubscribes;
+            var aggregator;
 
             function mockPromise(value) {
                 return {
@@ -40,10 +40,10 @@ define(
 
             function makeMockProvider(key, index) {
                 var provider = jasmine.createSpyObj(
-                        "provider" + index,
-                        ["requestTelemetry", "subscribe"]
-                    ),
-                    unsubscribe = jasmine.createSpy("unsubscribe" + index);
+                    "provider" + index,
+                    ["requestTelemetry", "subscribe"]
+                );
+                var unsubscribe = jasmine.createSpy("unsubscribe" + index);
                 provider.requestTelemetry.and.returnValue({ someKey: key });
                 provider.subscribe.and.returnValue(unsubscribe);
 
@@ -101,8 +101,8 @@ define(
             });
 
             it("broadcasts subscriptions from all providers", function () {
-                var mockCallback = jasmine.createSpy("callback"),
-                    subscription = aggregator.subscribe(mockCallback);
+                var mockCallback = jasmine.createSpy("callback");
+                var subscription = aggregator.subscribe(mockCallback);
 
                 // Make sure all providers got subscribed to
                 mockProviders.forEach(function (mockProvider) {

@@ -28,11 +28,11 @@ define(
     function (CrossSpacePolicy, domainObjectFactory) {
 
         describe("CrossSpacePolicy", function () {
-            var mockAction,
-                testActionMetadata,
-                sameSpaceContext,
-                crossSpaceContext,
-                policy;
+            var mockAction;
+            var testActionMetadata;
+            var sameSpaceContext;
+            var crossSpaceContext;
+            var policy;
 
             function makeObject(space) {
                 var mockPersistence = jasmine.createSpyObj(

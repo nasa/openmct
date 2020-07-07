@@ -251,10 +251,10 @@ define(
             });
 
             describe("when a domain object has been observed", function () {
-                var mockContext,
-                    mockContext2,
-                    mockLink,
-                    mockParent;
+                var mockContext;
+                var mockContext2;
+                var mockLink;
+                var mockParent;
 
                 beforeEach(function () {
                     mockContext = jasmine.createSpyObj('context', ['getPath']);

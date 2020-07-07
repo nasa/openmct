@@ -49,10 +49,10 @@ define(
          * transaction is in progress.
          */
         TransactionCapabilityDecorator.prototype.getCapabilities = function () {
-            var self = this,
-                capabilities = this.capabilityService.getCapabilities
-                    .apply(this.capabilityService, arguments),
-                persistenceCapability = capabilities.persistence;
+            var self = this;
+            var capabilities = this.capabilityService.getCapabilities
+                .apply(this.capabilityService, arguments);
+            var persistenceCapability = capabilities.persistence;
 
             capabilities.persistence = function (domainObject) {
                 var original =

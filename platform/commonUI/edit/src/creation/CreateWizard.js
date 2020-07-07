@@ -55,9 +55,9 @@ define(
          *         show in the create dialog
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
-            var sections = [],
-                domainObject = this.domainObject,
-                self = this;
+            var sections = [];
+            var domainObject = this.domainObject;
+            var self = this;
 
             function validateLocation(parent) {
                 return parent && self.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
@@ -108,8 +108,8 @@ define(
          * @returns {DomainObject}
          */
         CreateWizard.prototype.populateObjectFromInput = function (formValue) {
-            var parent = this.getLocation(formValue),
-                formModel = this.createModel(formValue);
+            var parent = this.getLocation(formValue);
+            var formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
             this.domainObject.useCapability("mutation", function () {
@@ -127,10 +127,10 @@ define(
          */
         CreateWizard.prototype.getInitialFormValue = function () {
             // Start with initial values for properties
-            var model = this.model,
-                formValue = this.properties.map(function (property) {
-                    return property.getValue(model);
-                });
+            var model = this.model;
+            var formValue = this.properties.map(function (property) {
+                return property.getValue(model);
+            });
 
             // Include the createParent
             formValue.createParent = this.parent;

@@ -28,10 +28,10 @@ define(
     function (CachingModelDecorator, ModelCacheService) {
 
         xdescribe("The caching model decorator", function () {
-            var mockModelService,
-                mockCallback,
-                testModels,
-                decorator;
+            var mockModelService;
+            var mockCallback;
+            var testModels;
+            var decorator;
 
             function asPromise(value) {
                 return (value || {}).then ? value : {
@@ -42,8 +42,8 @@ define(
             }
 
             function fakePromise() {
-                var chains = [],
-                    callbacks = [];
+                var chains = [];
+                var callbacks = [];
 
                 return {
                     then: function (callback) {
@@ -126,7 +126,8 @@ define(
             });
 
             it("is robust against updating with undefined values", function () {
-                var promiseA, promiseB;
+                var promiseA;
+                var promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();

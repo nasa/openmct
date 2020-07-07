@@ -55,9 +55,9 @@ define(
 
             // Link; start listening for changes to an element's size
             function link(scope, element, attrs) {
-                var lastBounds,
-                    linking = true,
-                    active = true;
+                var lastBounds;
+                var linking = true;
+                var active = true;
 
                 // Determine how long to wait before the next update
                 function currentInterval() {

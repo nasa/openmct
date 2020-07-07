@@ -25,16 +25,16 @@ define(
     function (PersistenceAggregator) {
 
         var PERSISTENCE_SERVICE_METHODS = [
-                'listSpaces',
-                'listObjects',
-                'createObject',
-                'readObject',
-                'updateObject',
-                'deleteObject'
-            ],
-            WRAPPED_METHODS = PERSISTENCE_SERVICE_METHODS.filter(function (m) {
-                return m !== 'listSpaces';
-            });
+            'listSpaces',
+            'listObjects',
+            'createObject',
+            'readObject',
+            'updateObject',
+            'deleteObject'
+        ];
+        var WRAPPED_METHODS = PERSISTENCE_SERVICE_METHODS.filter(function (m) {
+            return m !== 'listSpaces';
+        });
 
         function fakePromise(value) {
             return (value || {}).then ? value : {
@@ -45,11 +45,11 @@ define(
         }
 
         describe("PersistenceAggregator", function () {
-            var mockQ,
-                mockProviders,
-                mockCallback,
-                testSpaces,
-                aggregator;
+            var mockQ;
+            var mockProviders;
+            var mockCallback;
+            var testSpaces;
+            var aggregator;
 
             beforeEach(function () {
                 testSpaces = ['a', 'b', 'c'];
@@ -88,8 +88,8 @@ define(
             WRAPPED_METHODS.forEach(function (m) {
                 it("redirects " + m + " calls to an appropriate provider", function () {
                     testSpaces.forEach(function (space, index) {
-                        var key = 'key-' + space,
-                            value = 'val-' + space;
+                        var key = 'key-' + space;
+                        var value = 'val-' + space;
                         expect(aggregator[m](space, key, value))
                             .toEqual(mockProviders[index][m]());
                         expect(mockProviders[index][m])

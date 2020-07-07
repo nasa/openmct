@@ -25,14 +25,14 @@ define(
     function (EditPersistableObjectsPolicy) {
 
         describe("The Edit persistable objects policy", function () {
-            var mockDomainObject,
-                mockEditAction,
-                mockPropertiesAction,
-                mockOtherAction,
-                mockAPI,
-                mockObjectAPI,
-                testContext,
-                policy;
+            var mockDomainObject;
+            var mockEditAction;
+            var mockPropertiesAction;
+            var mockOtherAction;
+            var mockAPI;
+            var mockObjectAPI;
+            var testContext;
+            var policy;
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(

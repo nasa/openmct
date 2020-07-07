@@ -26,10 +26,10 @@ define(
     function (QueuingPersistenceCapability) {
 
         describe("A queuing persistence capability", function () {
-            var mockQueue,
-                mockPersistence,
-                mockDomainObject,
-                persistence;
+            var mockQueue;
+            var mockPersistence;
+            var mockDomainObject;
+            var persistence;
 
             beforeEach(function () {
                 mockQueue = jasmine.createSpyObj('queue', ['put']);

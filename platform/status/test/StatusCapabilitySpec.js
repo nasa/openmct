@@ -25,12 +25,12 @@ define(
     function (StatusCapability) {
 
         describe("The status capability", function () {
-            var mockStatusService,
-                mockDomainObject,
-                mockUnlisten,
-                testId,
-                testStatusFlags,
-                capability;
+            var mockStatusService;
+            var mockDomainObject;
+            var mockUnlisten;
+            var testId;
+            var testStatusFlags;
+            var capability;
 
             beforeEach(function () {
                 testId = "some-id";

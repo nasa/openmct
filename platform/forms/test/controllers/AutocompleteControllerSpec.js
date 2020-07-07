@@ -29,9 +29,9 @@ define([
 ) {
 
     describe("The autocomplete controller", function () {
-        var mockScope,
-            mockElement,
-            controller;
+        var mockScope;
+        var mockElement;
+        var controller;
 
         beforeEach(function () {
             mockScope = jasmine.createSpyObj("$scope", ["$watch"]);

@@ -26,9 +26,9 @@ define(
     function (TransactionService) {
 
         describe("The Transaction Service", function () {
-            var mockQ,
-                mockLog,
-                transactionService;
+            var mockQ;
+            var mockLog;
+            var transactionService;
 
             function fastPromise(val) {
                 return {
@@ -52,8 +52,8 @@ define(
             });
 
             it("addToTransaction queues onCommit and onCancel functions", function () {
-                var onCommit = jasmine.createSpy('onCommit'),
-                    onCancel = jasmine.createSpy('onCancel');
+                var onCommit = jasmine.createSpy('onCommit');
+                var onCancel = jasmine.createSpy('onCancel');
 
                 transactionService.startTransaction();
                 transactionService.addToTransaction(onCommit, onCancel);
@@ -61,8 +61,8 @@ define(
             });
 
             it("size function returns size of commit and cancel queues", function () {
-                var onCommit = jasmine.createSpy('onCommit'),
-                    onCancel = jasmine.createSpy('onCancel');
+                var onCommit = jasmine.createSpy('onCommit');
+                var onCancel = jasmine.createSpy('onCancel');
 
                 transactionService.startTransaction();
                 transactionService.addToTransaction(onCommit, onCancel);

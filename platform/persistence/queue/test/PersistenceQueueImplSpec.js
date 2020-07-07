@@ -28,12 +28,12 @@ define(
         var TEST_DELAY = 42;
 
         describe("The implemented persistence queue", function () {
-            var mockQ,
-                mockTimeout,
-                mockHandler,
-                mockDeferred,
-                mockPromise,
-                queue;
+            var mockQ;
+            var mockTimeout;
+            var mockHandler;
+            var mockDeferred;
+            var mockPromise;
+            var queue;
 
             function makeMockDomainObject(id) {
                 var mockDomainObject = jasmine.createSpyObj(

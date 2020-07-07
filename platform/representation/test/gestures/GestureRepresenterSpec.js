@@ -25,10 +25,10 @@ define(
     function (GestureRepresenter) {
 
         describe("A gesture representer", function () {
-            var mockGestureService,
-                mockGestureHandle,
-                mockElement,
-                representer;
+            var mockGestureService;
+            var mockGestureHandle;
+            var mockElement;
+            var representer;
 
             beforeEach(function () {
                 mockGestureService = jasmine.createSpyObj(
@@ -54,8 +54,8 @@ define(
             it("attaches declared gestures, and detaches on request", function () {
                 // Pass in some objects, which we expect to be passed into the
                 // gesture service accordingly.
-                var domainObject = { someOtherKey: "some other value" },
-                    representation = { gestures: ["a", "b", "c"] };
+                var domainObject = { someOtherKey: "some other value" };
+                var representation = { gestures: ["a", "b", "c"] };
 
                 representer.represent(representation, domainObject);
 

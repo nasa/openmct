@@ -25,11 +25,11 @@ define(
     function (PauseTimerAction) {
 
         describe("A timer's Pause action", function () {
-            var mockNow,
-                mockDomainObject,
-                testModel,
-                testContext,
-                action;
+            var mockNow;
+            var mockDomainObject;
+            var testModel;
+            var testContext;
+            var action;
 
             function asPromise(value) {
                 return (value || {}).then ? value : {

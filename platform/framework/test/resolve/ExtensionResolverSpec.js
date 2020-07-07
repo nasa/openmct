@@ -28,9 +28,9 @@ define(
     function (ExtensionResolver, Bundle) {
 
         describe("", function () {
-            var mockLoader,
-                mockLog,
-                resolver;
+            var mockLoader;
+            var mockLog;
+            var resolver;
 
             // Test implementation, to load from the mock loader
             function Constructor() {
@@ -53,10 +53,10 @@ define(
 
             it("requests implementations from the implementation loader", function () {
                 var bundle = new Bundle("w", {
-                        sources: "x",
-                        extensions: { tests: [{ implementation: "y/z.js" }] }
-                    }),
-                    extension = bundle.getExtensions("tests")[0];
+                    sources: "x",
+                    extensions: { tests: [{ implementation: "y/z.js" }] }
+                });
+                var extension = bundle.getExtensions("tests")[0];
 
                 return resolver.resolve(extension).then(function (result) {
                     // Verify that the right file was requested
@@ -71,13 +71,13 @@ define(
 
             it("issues a warning and defaults to plain definition if load fails", function () {
                 var bundle = new Bundle("w", {
-                        sources: "x",
-                        extensions: { tests: [{
-                            someOtherKey: "some other value",
-                            implementation: "y/z.js"
-                        }] }
-                    }),
-                    extension = bundle.getExtensions("tests")[0];
+                    sources: "x",
+                    extensions: { tests: [{
+                        someOtherKey: "some other value",
+                        implementation: "y/z.js"
+                    }] }
+                });
+                var extension = bundle.getExtensions("tests")[0];
 
                 mockLoader.load.and.returnValue(Promise.reject(new Error("test error")));
 
@@ -92,10 +92,10 @@ define(
 
             it("ensures implementation properties are exposed", function () {
                 var bundle = new Bundle("w", {
-                        sources: "x",
-                        extensions: { tests: [{ implementation: "y/z.js" }] }
-                    }),
-                    extension = bundle.getExtensions("tests")[0];
+                    sources: "x",
+                    extensions: { tests: [{ implementation: "y/z.js" }] }
+                });
+                var extension = bundle.getExtensions("tests")[0];
 
                 return resolver.resolve(extension).then(function (result) {
                     // Verify that the right file was requested

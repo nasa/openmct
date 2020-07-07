@@ -99,11 +99,11 @@ function (
          * @private
          */
     SaveAsAction.prototype.save = function () {
-        var self = this,
-            domainObject = this.domainObject,
-            copyService = this.copyService,
-            dialog = new SaveInProgressDialog(this.dialogService),
-            toUndirty = [];
+        var self = this;
+        var domainObject = this.domainObject;
+        var copyService = this.copyService;
+        var dialog = new SaveInProgressDialog(this.dialogService);
+        var toUndirty = [];
 
         function doWizardSave(parent) {
             var wizard = self.createWizard(parent);

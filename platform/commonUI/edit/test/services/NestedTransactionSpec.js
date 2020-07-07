@@ -25,8 +25,8 @@ define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
     var TRANSACTION_METHODS = ['add', 'commit', 'cancel', 'size'];
 
     describe("A NestedTransaction", function () {
-        var mockTransaction,
-            nestedTransaction;
+        var mockTransaction;
+        var nestedTransaction;
 
         beforeEach(function () {
             mockTransaction =
@@ -42,8 +42,8 @@ define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
         });
 
         describe("when callbacks are added", function () {
-            var mockCommit,
-                mockCancel;
+            var mockCommit;
+            var mockCancel;
 
             beforeEach(function () {
                 mockCommit = jasmine.createSpy('commit');

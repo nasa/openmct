@@ -26,21 +26,21 @@ define(
     function (PersistenceFailureHandler, Constants) {
 
         describe("The persistence failure handler", function () {
-            var mockQ,
-                mockDialogService,
-                mockFailures,
-                mockPromise,
-                handler;
+            var mockQ;
+            var mockDialogService;
+            var mockFailures;
+            var mockPromise;
+            var handler;
 
             function makeMockFailure(id, index) {
                 var mockFailure = jasmine.createSpyObj(
-                        'failure-' + id,
-                        ['requeue']
-                    ),
-                    mockPersistence = jasmine.createSpyObj(
-                        'persistence-' + id,
-                        ['refresh', 'persist']
-                    );
+                    'failure-' + id,
+                    ['requeue']
+                );
+                var mockPersistence = jasmine.createSpyObj(
+                    'persistence-' + id,
+                    ['refresh', 'persist']
+                );
                 mockFailure.domainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getCapability', 'useCapability', 'getModel']

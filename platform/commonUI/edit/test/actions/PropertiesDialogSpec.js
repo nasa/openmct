@@ -26,7 +26,10 @@ define(
 
         describe("Properties dialog", function () {
 
-            var type, properties, model, dialog;
+            var type;
+            var properties;
+            var model;
+            var dialog;
 
             beforeEach(function () {
                 type = {

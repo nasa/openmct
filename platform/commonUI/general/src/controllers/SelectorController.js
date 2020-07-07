@@ -35,10 +35,10 @@ define(
          * @param $scope Angular scope for this controller
          */
         function SelectorController(objectService, $scope) {
-            var treeModel = {},
-                listModel = {},
-                previousSelected,
-                self = this;
+            var treeModel = {};
+            var listModel = {};
+            var previousSelected;
+            var self = this;
 
             // For watch; look at the user's selection in the tree
             function getTreeSelection() {
@@ -126,8 +126,8 @@ define(
          * @param {DomainObject} the domain object to select
          */
         SelectorController.prototype.select = function (domainObject) {
-            var id = domainObject && domainObject.getId(),
-                list = this.getField() || [];
+            var id = domainObject && domainObject.getId();
+            var list = this.getField() || [];
             // Only select if we have a valid id,
             // and it isn't already selected
             if (id && list.indexOf(id) === -1) {
@@ -140,8 +140,8 @@ define(
          * @param {DomainObject} the domain object to select
          */
         SelectorController.prototype.deselect = function (domainObject) {
-            var id = domainObject && domainObject.getId(),
-                list = this.getField() || [];
+            var id = domainObject && domainObject.getId();
+            var list = this.getField() || [];
             // Only change if this was a valid id,
             // for an object which was already selected
             if (id && list.indexOf(id) !== -1) {

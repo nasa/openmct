@@ -41,19 +41,19 @@ define(
          *        stylesheets will be found
          */
         function StyleSheetLoader(stylesheets, $document, activeTheme, assetPath) {
-            var head = $document.find('head'),
-                document = $document[0];
+            var head = $document.find('head');
+            var document = $document[0];
 
             // Procedure for adding a single stylesheet
             function addStyleSheet(stylesheet) {
                 // Create a link element, and construct full path
-                var link = document.createElement('link'),
-                    path = [
-                        assetPath,
-                        stylesheet.bundle.path,
-                        stylesheet.bundle.resources,
-                        stylesheet.stylesheetUrl
-                    ].join("/");
+                var link = document.createElement('link');
+                var path = [
+                    assetPath,
+                    stylesheet.bundle.path,
+                    stylesheet.bundle.resources,
+                    stylesheet.stylesheetUrl
+                ].join("/");
 
                 // Initialize attributes on the link
                 link.setAttribute("rel", "stylesheet");

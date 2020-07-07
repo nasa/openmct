@@ -25,11 +25,11 @@ define(
     function (PolicyActionDecorator) {
 
         describe("The policy action decorator", function () {
-            var mockPolicyService,
-                mockActionService,
-                testContext,
-                testActions,
-                decorator;
+            var mockPolicyService;
+            var mockActionService;
+            var testContext;
+            var testActions;
+            var decorator;
 
             beforeEach(function () {
                 mockPolicyService = jasmine.createSpyObj(

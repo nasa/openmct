@@ -25,17 +25,17 @@ define(
     function (TelemetryCapability) {
 
         describe("The telemetry capability", function () {
-            var mockInjector,
-                mockQ,
-                mockLog,
-                mockDomainObject,
-                mockTelemetryService,
-                mockReject,
-                mockUnsubscribe,
-                telemetry,
-                mockTelemetryAPI,
-                mockMetadata,
-                mockAPI;
+            var mockInjector;
+            var mockQ;
+            var mockLog;
+            var mockDomainObject;
+            var mockTelemetryService;
+            var mockReject;
+            var mockUnsubscribe;
+            var telemetry;
+            var mockTelemetryAPI;
+            var mockMetadata;
+            var mockAPI;
 
             function mockPromise(value) {
                 return {
@@ -291,8 +291,8 @@ define(
             });
 
             it("allows subscriptions to updates", function () {
-                var mockCallback = jasmine.createSpy("callback"),
-                    subscription = telemetry.subscribe(mockCallback);
+                var mockCallback = jasmine.createSpy("callback");
+                var subscription = telemetry.subscribe(mockCallback);
 
                 // Verify subscription to the appropriate object
                 expect(mockTelemetryService.subscribe).toHaveBeenCalledWith(

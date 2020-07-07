@@ -116,8 +116,8 @@ define([
     }
 
     TreeNodeView.prototype.value = function (domainObject) {
-        var activeIdPath = getIdPath(this.activeObject),
-            selectedIdPath = getIdPath(domainObject);
+        var activeIdPath = getIdPath(this.activeObject);
+        var selectedIdPath = getIdPath(domainObject);
 
         if (this.onSelectionPath) {
             this.li.find('.js-tree__item').eq(0).removeClass('is-selected');

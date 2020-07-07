@@ -27,12 +27,12 @@ define(
         var JQLITE_METHODS = ['replaceWith'];
 
         describe("The mct-device directive", function () {
-            var mockAgentService,
-                mockTransclude,
-                mockElement,
-                mockClone,
-                testAttrs,
-                directive;
+            var mockAgentService;
+            var mockTransclude;
+            var mockElement;
+            var mockClone;
+            var testAttrs;
+            var directive;
 
             function link() {
                 directive.link(null, mockElement, testAttrs, null, mockTransclude);

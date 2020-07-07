@@ -75,13 +75,13 @@ define(
          * @returns {platform/commonUI/general.Popup} the popup
          */
         PopupService.prototype.display = function (element, position, options) {
-            var $document = this.$document,
-                $window = this.$window,
-                body = $document.find('body'),
-                winDim = [$window.innerWidth, $window.innerHeight],
-                styles = { position: 'absolute' },
-                margin,
-                offset;
+            var $document = this.$document;
+            var $window = this.$window;
+            var body = $document.find('body');
+            var winDim = [$window.innerWidth, $window.innerHeight];
+            var styles = { position: 'absolute' };
+            var margin;
+            var offset;
 
             function adjustNegatives(value, index) {
                 return value < 0 ? (value + winDim[index]) : value;

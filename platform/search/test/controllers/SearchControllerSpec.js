@@ -30,17 +30,17 @@ define([
 ) {
 
     describe('The search controller', function () {
-        var mockScope,
-            mockSearchService,
-            mockPromise,
-            mockSearchResult,
-            mockDomainObject,
-            mockTypes,
-            controller;
+        var mockScope;
+        var mockSearchService;
+        var mockPromise;
+        var mockSearchResult;
+        var mockDomainObject;
+        var mockTypes;
+        var controller;
 
         function bigArray(size) {
-            var array = [],
-                i;
+            var array = [];
+            var i;
             for (i = 0; i < size; i += 1) {
                 array.push(mockSearchResult);
             }

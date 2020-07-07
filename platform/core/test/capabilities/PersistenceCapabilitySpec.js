@@ -28,19 +28,19 @@ define(
     function (PersistenceCapability) {
 
         describe("The persistence capability", function () {
-            var mockPersistenceService,
-                mockIdentifierService,
-                mockDomainObject,
-                mockIdentifier,
-                mockNofificationService,
-                mockCacheService,
-                mockQ,
-                key = "persistence key",
-                id = "object identifier",
-                model,
-                SPACE = "some space",
-                persistence,
-                happyPromise;
+            var mockPersistenceService;
+            var mockIdentifierService;
+            var mockDomainObject;
+            var mockIdentifier;
+            var mockNofificationService;
+            var mockCacheService;
+            var mockQ;
+            var key = "persistence key";
+            var id = "object identifier";
+            var model;
+            var SPACE = "some space";
+            var persistence;
+            var happyPromise;
 
             function asPromise(value, doCatch) {
                 return (value || {}).then ? value : {

@@ -34,12 +34,12 @@ define(
         ];
 
         describe("The mct-split-pane directive", function () {
-            var mockParse,
-                mockLog,
-                mockInterval,
-                mockParsed,
-                mctSplitPane,
-                mockWindow = {};
+            var mockParse;
+            var mockLog;
+            var mockInterval;
+            var mockParsed;
+            var mctSplitPane;
+            var mockWindow = {};
 
             beforeEach(function () {
                 mockParse = jasmine.createSpy('$parse');
@@ -74,14 +74,14 @@ define(
             });
 
             describe("when its controller is applied", function () {
-                var mockScope,
-                    mockElement,
-                    testAttrs,
-                    mockChildren,
-                    mockFirstPane,
-                    mockSplitter,
-                    mockSecondPane,
-                    controller;
+                var mockScope;
+                var mockElement;
+                var testAttrs;
+                var mockChildren;
+                var mockFirstPane;
+                var mockSplitter;
+                var mockSecondPane;
+                var controller;
 
                 function fireOn(eventType) {
                     mockScope.$on.calls.all().forEach(function (call) {

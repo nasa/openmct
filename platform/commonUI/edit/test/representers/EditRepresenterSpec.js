@@ -26,9 +26,9 @@ define([
     EditRepresenter
 ) {
     describe('EditRepresenter', function () {
-        var $log,
-            $scope,
-            representer;
+        var $log;
+        var $scope;
+        var representer;
 
 
         beforeEach(function () {
@@ -42,8 +42,8 @@ define([
         });
 
         describe('representation', function () {
-            var domainObject,
-                representation;
+            var domainObject;
+            var representation;
 
             beforeEach(function () {
                 domainObject = jasmine.createSpyObj('domainObject', [

@@ -40,9 +40,9 @@ define(
 
             // Gets an array of the contextual parents/ancestors of the selected object
             function getContextualPath() {
-                var currentObj = $scope.domainObject,
-                    currentParent,
-                    parents = [];
+                var currentObj = $scope.domainObject;
+                var currentParent;
+                var parents = [];
 
                 currentParent = currentObj &&
                     currentObj.hasCapability('context') &&

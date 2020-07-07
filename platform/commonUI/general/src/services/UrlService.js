@@ -48,11 +48,11 @@ define(
          */
         UrlService.prototype.urlForLocation = function (mode, domainObject) {
             var context = domainObject &&
-                    domainObject.getCapability('context'),
-                objectPath = context ? context.getPath() : [],
-                ids = objectPath.map(function (domainObj) {
-                    return domainObj.getId();
-                });
+                    domainObject.getCapability('context');
+            var objectPath = context ? context.getPath() : [];
+            var ids = objectPath.map(function (domainObj) {
+                return domainObj.getId();
+            });
 
             // Parses the path together. Starts with the
             // default index.html file, then the mode passed
@@ -73,15 +73,15 @@ define(
          * @returns {string} URL for the domain object
          */
         UrlService.prototype.urlForNewTab = function (mode, domainObject) {
-            var search = this.$location.search(),
-                arr = [];
+            var search = this.$location.search();
+            var arr = [];
             for (var key in search) {
                 if (search.hasOwnProperty(key)) {
                     arr.push(key + '=' + search[key]);
                 }
             }
-            var searchPath = "?" + arr.join('&'),
-                newTabPath =
+            var searchPath = "?" + arr.join('&');
+            var newTabPath =
                     "#" + this.urlForLocation(mode, domainObject) +
                             searchPath;
             return newTabPath;

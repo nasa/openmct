@@ -25,12 +25,12 @@ define(
     function (PolicyProvider) {
 
         describe("The policy provider", function () {
-            var testPolicies,
-                mockPolicies,
-                mockPolicyConstructors,
-                testCandidate,
-                testContext,
-                provider;
+            var testPolicies;
+            var mockPolicies;
+            var mockPolicyConstructors;
+            var testCandidate;
+            var testContext;
+            var provider;
 
             beforeEach(function () {
                 testPolicies = [

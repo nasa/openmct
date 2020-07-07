@@ -31,18 +31,18 @@ define(
     function (MutationCapability, Topic) {
 
         describe("The mutation capability", function () {
-            var testModel,
-                topic,
-                mockNow,
-                domainObject = {
-                    getId: function () {
-                        return "test-id";
-                    },
-                    getModel: function () {
-                        return testModel;
-                    }
+            var testModel;
+            var topic;
+            var mockNow;
+            var domainObject = {
+                getId: function () {
+                    return "test-id";
                 },
-                mutation;
+                getModel: function () {
+                    return testModel;
+                }
+            };
+            var mutation;
 
             beforeEach(function () {
                 testModel = { number: 6 };
@@ -119,12 +119,12 @@ define(
             });
 
             it("shares listeners across instances", function () {
-                var mockCallback = jasmine.createSpy('callback'),
-                    otherMutation = new MutationCapability(
-                        topic,
-                        mockNow,
-                        domainObject
-                    );
+                var mockCallback = jasmine.createSpy('callback');
+                var otherMutation = new MutationCapability(
+                    topic,
+                    mockNow,
+                    domainObject
+                );
                 mutation.listen(mockCallback);
                 otherMutation.invoke(function (m) {
                     m.number = 8;

@@ -44,8 +44,8 @@ define(
          */
         function MCTScroll($parse, property, attribute) {
             function link(scope, element, attrs) {
-                var expr = attrs[attribute],
-                    parsed = $parse(expr);
+                var expr = attrs[attribute];
+                var parsed = $parse(expr);
 
                 // Set the element's scroll to match the scope's state
                 function updateElement(value) {

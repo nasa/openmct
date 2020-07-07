@@ -25,13 +25,13 @@ define(
     function (ClockIndicator) {
 
         // Wed, 03 Jun 2015 17:56:14 GMT
-        var TEST_TIMESTAMP = 1433354174000,
-            TEST_FORMAT = "YYYY-DDD HH:mm:ss";
+        var TEST_TIMESTAMP = 1433354174000;
+        var TEST_FORMAT = "YYYY-DDD HH:mm:ss";
 
         describe("The clock indicator", function () {
-            var mockTicker,
-                mockUnticker,
-                indicator;
+            var mockTicker;
+            var mockUnticker;
+            var indicator;
 
             beforeEach(function () {
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);

@@ -28,8 +28,8 @@ define(
     function (CoreCapabilityProvider) {
 
         describe("The core capability provider", function () {
-            var mockLog,
-                provider;
+            var mockLog;
+            var provider;
 
             function BasicCapability() {
                 return;

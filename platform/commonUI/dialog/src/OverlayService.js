@@ -76,8 +76,8 @@ define(
          */
         OverlayService.prototype.createOverlay = function (key, overlayModel, typeClass) {
             // Create a new scope for this overlay
-            var scope = this.newScope(),
-                element;
+            var scope = this.newScope();
+            var element;
 
             // Stop showing the overlay; additionally, release the scope
             // that it uses.

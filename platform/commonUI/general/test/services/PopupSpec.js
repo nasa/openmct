@@ -26,9 +26,9 @@ define(
     function (Popup) {
 
         describe("Popup", function () {
-            var mockElement,
-                testStyles,
-                popup;
+            var mockElement;
+            var testStyles;
+            var popup;
 
             beforeEach(function () {
                 mockElement =
@@ -44,10 +44,10 @@ define(
 
             it("reports the orientation of the popup", function () {
                 var otherStyles = {
-                        right: '12px',
-                        bottom: '14px'
-                    },
-                    otherPopup = new Popup(mockElement, otherStyles);
+                    right: '12px',
+                    bottom: '14px'
+                };
+                var otherPopup = new Popup(mockElement, otherStyles);
 
                 expect(popup.goesLeft()).toBeFalsy();
                 expect(popup.goesRight()).toBeTruthy();

@@ -25,16 +25,16 @@ define(
     function (InspectorController) {
 
         describe("The inspector controller ", function () {
-            var mockScope,
-                mockDomainObject,
-                mockOpenMCT,
-                mockSelection,
-                mockInspectorViews,
-                mockTypeDef,
-                controller,
-                container,
-                $document = [],
-                selectable = [];
+            var mockScope;
+            var mockDomainObject;
+            var mockOpenMCT;
+            var mockSelection;
+            var mockInspectorViews;
+            var mockTypeDef;
+            var controller;
+            var container;
+            var $document = [];
+            var selectable = [];
 
             beforeEach(function () {
                 mockTypeDef = {

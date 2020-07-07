@@ -25,20 +25,20 @@ define(
     function (InfoButtonGesture) {
 
         describe("The info button gesture", function () {
-            var mockDocument,
-                mockBody,
-                mockAgentService,
-                mockInfoService,
-                mockElement,
-                mockDomainObject,
-                mockEvent,
-                mockScope,
-                mockOff,
-                testMetadata,
-                mockHide,
-                gesture,
-                fireGesture,
-                fireDismissGesture;
+            var mockDocument;
+            var mockBody;
+            var mockAgentService;
+            var mockInfoService;
+            var mockElement;
+            var mockDomainObject;
+            var mockEvent;
+            var mockScope;
+            var mockOff;
+            var testMetadata;
+            var mockHide;
+            var gesture;
+            var fireGesture;
+            var fireDismissGesture;
 
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj('$document', ['find']);

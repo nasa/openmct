@@ -26,10 +26,10 @@ define([
     '../../src/ui/TreeView'
 ], function (MCTTree, TreeView) {
     describe("The mct-tree directive", function () {
-        var mockParse,
-            mockGestureService,
-            mockExpr,
-            mctTree;
+        var mockParse;
+        var mockGestureService;
+        var mockExpr;
+        var mctTree;
 
         function makeMockDomainObject(id) {
             var mockDomainObject = jasmine.createSpyObj('domainObject-' + id, [
@@ -71,9 +71,9 @@ define([
         });
 
         describe("link", function () {
-            var mockScope,
-                mockElement,
-                testAttrs;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
 
             beforeEach(function () {
                 mockScope =

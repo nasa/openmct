@@ -28,8 +28,8 @@ define(
     ],
     function (CopyTask, domainObjectFactory) {
 
-        var ID_A = "some-string-with-vaguely-uuidish-uniqueness",
-            ID_B = "some-other-similarly-unique-string";
+        var ID_A = "some-string-with-vaguely-uuidish-uniqueness";
+        var ID_B = "some-other-similarly-unique-string";
 
         function synchronousPromise(value) {
             return (value && value.then) ? value : {
@@ -40,38 +40,38 @@ define(
         }
 
         describe("CopyTask", function () {
-            var mockDomainObject,
-                mockParentObject,
-                mockFilter,
-                mockQ,
-                mockDeferred,
-                testModel,
-                counter,
-                cloneIds,
-                task;
+            var mockDomainObject;
+            var mockParentObject;
+            var mockFilter;
+            var mockQ;
+            var mockDeferred;
+            var testModel;
+            var counter;
+            var cloneIds;
+            var task;
 
             function makeMockCapabilities(childIds) {
                 var mockCapabilities = {
-                        persistence: jasmine.createSpyObj(
-                            'persistence',
-                            ['persist']
-                        ),
-                        composition: jasmine.createSpyObj(
-                            'composition',
-                            ['add', 'invoke']
-                        ),
-                        instantiation: jasmine.createSpyObj(
-                            'instantiation',
-                            ['instantiate', 'invoke']
-                        )
-                    },
-                    mockChildren = (childIds || []).map(function (id) {
-                        return domainObjectFactory({
-                            id: id,
-                            capabilities: makeMockCapabilities([]),
-                            model: { originalId: id }
-                        });
+                    persistence: jasmine.createSpyObj(
+                        'persistence',
+                        ['persist']
+                    ),
+                    composition: jasmine.createSpyObj(
+                        'composition',
+                        ['add', 'invoke']
+                    ),
+                    instantiation: jasmine.createSpyObj(
+                        'instantiation',
+                        ['instantiate', 'invoke']
+                    )
+                };
+                var mockChildren = (childIds || []).map(function (id) {
+                    return domainObjectFactory({
+                        id: id,
+                        capabilities: makeMockCapabilities([]),
+                        model: { originalId: id }
                     });
+                });
 
                 mockCapabilities.persistence.persist
                     .and.returnValue(synchronousPromise(true));
@@ -189,11 +189,11 @@ define(
 
             describe("copies object trees with multiple references to the" +
                 " same object", function () {
-                var mockDomainObjectB,
-                    mockComposingObject,
-                    composingObjectModel,
-                    domainObjectClone,
-                    domainObjectBClone;
+                var mockDomainObjectB;
+                var mockComposingObject;
+                var composingObjectModel;
+                var domainObjectClone;
+                var domainObjectBClone;
 
                 beforeEach(function () {
                     mockDomainObjectB = domainObjectFactory({
@@ -230,10 +230,10 @@ define(
                  * objects. This tests the issue reported in #428
                  */
                 it(" and correctly updates child identifiers in models ", function () {
-                    var childA_ID = task.clones[0].getId(),
-                        childB_ID = task.clones[1].getId(),
-                        childC_ID = task.clones[3].getId(),
-                        childD_ID = task.clones[4].getId();
+                    var childA_ID = task.clones[0].getId();
+                    var childB_ID = task.clones[1].getId();
+                    var childC_ID = task.clones[3].getId();
+                    var childD_ID = task.clones[4].getId();
 
                     expect(domainObjectClone.model.someArr[0]).not.toBe(domainObjectBClone.model.someArr[0]);
                     expect(domainObjectClone.model.someArr[0]).toBe(childA_ID);
@@ -252,8 +252,8 @@ define(
                  */
                 it(" and correctly updates child identifiers in object" +
                     " arrays within models ", function () {
-                    var childA_ID = task.clones[0].getId(),
-                        childB_ID = task.clones[1].getId();
+                    var childA_ID = task.clones[0].getId();
+                    var childB_ID = task.clones[1].getId();
 
                     expect(domainObjectClone.model.objArr[0].id).not.toBe(ID_A);
                     expect(domainObjectClone.model.objArr[0].id).toBe(childA_ID);

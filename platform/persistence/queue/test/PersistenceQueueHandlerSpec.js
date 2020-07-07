@@ -28,13 +28,13 @@ define(
         var TEST_ERROR = { someKey: "some value" };
 
         describe("The persistence queue handler", function () {
-            var mockQ,
-                mockFailureHandler,
-                mockPersistences,
-                mockDomainObjects,
-                mockQueue,
-                mockRejection,
-                handler;
+            var mockQ;
+            var mockFailureHandler;
+            var mockPersistences;
+            var mockDomainObjects;
+            var mockQueue;
+            var mockRejection;
+            var handler;
 
             function asPromise(value) {
                 return (value || {}).then ? value : {

@@ -25,18 +25,18 @@ define(
     function (InfoGesture) {
 
         describe("The info gesture", function () {
-            var mockTimeout,
-                mockAgentService,
-                mockInfoService,
-                testDelay = 12321,
-                mockElement,
-                mockDomainObject,
-                mockScope,
-                mockOff,
-                testMetadata,
-                mockPromise,
-                mockHide,
-                gesture;
+            var mockTimeout;
+            var mockAgentService;
+            var mockInfoService;
+            var testDelay = 12321;
+            var mockElement;
+            var mockDomainObject;
+            var mockScope;
+            var mockOff;
+            var testMetadata;
+            var mockPromise;
+            var mockHide;
+            var gesture;
 
             function fireEvent(evt, value) {
                 mockElement.on.calls.all().forEach(function (call) {

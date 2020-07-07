@@ -28,10 +28,10 @@ define(
     function (TransactionalPersistenceCapability, TransactionCapabilityDecorator) {
 
         describe("The transaction capability decorator", function () {
-            var mockQ,
-                mockTransactionService,
-                mockCapabilityService,
-                provider;
+            var mockQ;
+            var mockTransactionService;
+            var mockCapabilityService;
+            var provider;
 
             beforeEach(function () {
                 mockQ = {};

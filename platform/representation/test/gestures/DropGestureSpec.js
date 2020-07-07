@@ -29,27 +29,27 @@ define(
 
 
         // Methods to mock
-        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr", "scope"],
-            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
-            TEST_ID = "test-id",
-            DROP_ID = "drop-id";
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr", "scope"];
+        var DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var TEST_ID = "test-id";
+        var DROP_ID = "drop-id";
 
         describe("The drop gesture", function () {
-            var mockDndService,
-                mockQ,
-                mockElement,
-                mockDomainObject,
-                mockPersistence,
-                mockAction,
-                mockEvent,
-                mockScope,
-                mockUnwrappedElement,
-                mockDraggedObject,
-                mockCompose,
-                testModel,
-                testRect,
-                gesture,
-                callbacks;
+            var mockDndService;
+            var mockQ;
+            var mockElement;
+            var mockDomainObject;
+            var mockPersistence;
+            var mockAction;
+            var mockEvent;
+            var mockScope;
+            var mockUnwrappedElement;
+            var mockDraggedObject;
+            var mockCompose;
+            var testModel;
+            var testRect;
+            var gesture;
+            var callbacks;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {

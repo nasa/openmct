@@ -36,11 +36,11 @@ define(
         ];
 
         describe("The context capability", function () {
-            var mockDomainObject,
-                mockParent,
-                mockGrandparent,
-                mockContext,
-                context;
+            var mockDomainObject;
+            var mockParent;
+            var mockGrandparent;
+            var mockContext;
+            var context;
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);

@@ -63,9 +63,9 @@ define(
          * This will prompt for user input first.
          */
         CreateAction.prototype.perform = function () {
-            var newModel = this.type.getInitialModel(),
-                openmct = this.openmct,
-                newObject;
+            var newModel = this.type.getInitialModel();
+            var openmct = this.openmct;
+            var newObject;
 
             function onCancel() {
                 openmct.editor.cancel();
@@ -78,13 +78,13 @@ define(
             }
 
             function navigateAndEdit(object) {
-                let objectPath = object.getCapability('context').getPath(),
-                    url = '#/browse/' + objectPath
-                        .slice(1)
-                        .map(function (o) {
-                            return o && openmct.objects.makeKeyString(o.getId());
-                        })
-                        .join('/');
+                let objectPath = object.getCapability('context').getPath();
+                let url = '#/browse/' + objectPath
+                    .slice(1)
+                    .map(function (o) {
+                        return o && openmct.objects.makeKeyString(o.getId());
+                    })
+                    .join('/');
 
                 window.location.href = url;
 

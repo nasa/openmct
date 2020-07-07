@@ -26,19 +26,19 @@ define(
 
         describe("The mct-container directive", function () {
             var testContainers = [
-                    {
-                        bundle: { path: "a", resources: "b" },
-                        template: "<div>foo</div>",
-                        key: "abc"
-                    },
-                    {
-                        bundle: { path: "x", resources: "y" },
-                        template: "<span>bar</span>",
-                        key: "xyz",
-                        attributes: ["someAttr", "someOtherAttr"]
-                    }
-                ],
-                mctContainer;
+                {
+                    bundle: { path: "a", resources: "b" },
+                    template: "<div>foo</div>",
+                    key: "abc"
+                },
+                {
+                    bundle: { path: "x", resources: "y" },
+                    template: "<span>bar</span>",
+                    key: "xyz",
+                    attributes: ["someAttr", "someOtherAttr"]
+                }
+            ];
+            var mctContainer;
 
             beforeEach(function () {
                 mctContainer = new MCTContainer(testContainers);

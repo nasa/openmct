@@ -54,10 +54,10 @@ define(
 
             describe("validate", function () {
 
-                var copyService,
-                    object,
-                    parentCandidate,
-                    validate;
+                var copyService;
+                var object;
+                var parentCandidate;
+                var validate;
 
                 beforeEach(function () {
                     copyService = new CopyService(
@@ -122,19 +122,19 @@ define(
 
             describe("perform", function () {
 
-                var mockQ,
-                    mockDeferred,
-                    copyService,
-                    object,
-                    newParent,
-                    copyResult,
-                    copyFinished,
-                    persistObjectPromise,
-                    persistenceCapability,
-                    instantiationCapability,
-                    compositionCapability,
-                    locationCapability,
-                    resolvedValue;
+                var mockQ;
+                var mockDeferred;
+                var copyService;
+                var object;
+                var newParent;
+                var copyResult;
+                var copyFinished;
+                var persistObjectPromise;
+                var persistenceCapability;
+                var instantiationCapability;
+                var compositionCapability;
+                var locationCapability;
+                var resolvedValue;
 
                 beforeEach(function () {
                     policyService.allow.and.returnValue(true);
@@ -271,13 +271,13 @@ define(
                 });
 
                 describe("on domainObject with composition", function () {
-                    var childObject,
-                        objectClone,
-                        childObjectClone;
+                    var childObject;
+                    var objectClone;
+                    var childObjectClone;
 
                     beforeEach(function () {
-                        var invocationCount = 0,
-                            objectClones;
+                        var invocationCount = 0;
+                        var objectClones;
 
                         instantiationCapability.invoke.and.callFake(
                             function (model) {

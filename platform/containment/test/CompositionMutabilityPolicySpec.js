@@ -25,9 +25,9 @@ define(
     function (CompositionMutabilityPolicy) {
 
         describe("The composition mutability policy", function () {
-            var mockObject,
-                mockType,
-                policy;
+            var mockObject;
+            var mockType;
+            var policy;
 
             beforeEach(function () {
                 mockType = jasmine.createSpyObj('type', ['hasFeature']);

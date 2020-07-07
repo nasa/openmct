@@ -28,13 +28,13 @@ define(
     function (CreateWizard) {
 
         xdescribe("The create wizard", function () {
-            var mockType,
-                mockParent,
-                mockProperties,
-                mockPolicyService,
-                testModel,
-                mockDomainObject,
-                wizard;
+            var mockType;
+            var mockParent;
+            var mockProperties;
+            var mockPolicyService;
+            var testModel;
+            var mockDomainObject;
+            var wizard;
 
             function createMockProperty(name) {
                 var mockProperty = jasmine.createSpyObj(
@@ -142,11 +142,11 @@ define(
 
             it("populates the model on the associated object", function () {
                 var formValue = {
-                        "A": "ValueA",
-                        "B": "ValueB",
-                        "C": "ValueC"
-                    },
-                    compareModel = wizard.createModel(formValue);
+                    "A": "ValueA",
+                    "B": "ValueB",
+                    "C": "ValueC"
+                };
+                var compareModel = wizard.createModel(formValue);
                 //populateObjectFromInput adds a .location attribute that is not added by createModel.
                 compareModel.location = undefined;
                 wizard.populateObjectFromInput(formValue);
@@ -156,19 +156,19 @@ define(
 
             it("validates selection types using policy", function () {
                 var mockDomainObj = jasmine.createSpyObj(
-                        'domainObject',
-                        ['getCapability']
-                    ),
-                    mockOtherType = jasmine.createSpyObj(
-                        'otherType',
-                        ['getKey']
-                    ),
+                    'domainObject',
+                    ['getCapability']
+                );
+                var mockOtherType = jasmine.createSpyObj(
+                    'otherType',
+                    ['getKey']
+                );
 
-                    //Create a form structure with location
-                    structure = wizard.getFormStructure(true),
-                    sections = structure.sections,
-                    rows = structure.sections[sections.length - 1].rows,
-                    locationRow = rows[rows.length - 1];
+                //Create a form structure with location
+                var structure = wizard.getFormStructure(true);
+                var sections = structure.sections;
+                var rows = structure.sections[sections.length - 1].rows;
+                var locationRow = rows[rows.length - 1];
 
                 mockDomainObj.getCapability.and.returnValue(mockOtherType);
                 locationRow.validate(mockDomainObj);

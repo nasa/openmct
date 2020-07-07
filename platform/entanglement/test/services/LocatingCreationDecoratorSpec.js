@@ -28,10 +28,10 @@ define(
     function (LocatingCreationDecorator) {
 
         describe("LocatingCreationDecorator", function () {
-            var mockCreationService,
-                mockPromise,
-                mockParent,
-                decorator;
+            var mockCreationService;
+            var mockPromise;
+            var mockParent;
+            var decorator;
 
             beforeEach(function () {
                 mockCreationService = jasmine.createSpyObj(

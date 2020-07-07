@@ -28,10 +28,10 @@ define(
         var TEST_TIMESTAMP = 1433354174000;
 
         describe("A clock view's controller", function () {
-            var mockScope,
-                mockTicker,
-                mockUnticker,
-                controller;
+            var mockScope;
+            var mockTicker;
+            var mockUnticker;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);

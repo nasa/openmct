@@ -28,9 +28,9 @@ define(
     function (ViewSwitcherController) {
 
         describe("The view switcher controller", function () {
-            var mockScope,
-                mockTimeout,
-                controller;
+            var mockScope;
+            var mockTimeout;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);

@@ -27,10 +27,10 @@ define(
 
 
         describe("The refreshing controller", function () {
-            var mockScope,
-                mockTicker,
-                mockUnticker,
-                controller;
+            var mockScope;
+            var mockTicker;
+            var mockUnticker;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
@@ -44,13 +44,13 @@ define(
 
             it("refreshes the represented object on every tick", function () {
                 var mockDomainObject = jasmine.createSpyObj(
-                        'domainObject',
-                        ['getCapability']
-                    ),
-                    mockPersistence = jasmine.createSpyObj(
-                        'persistence',
-                        ['persist', 'refresh']
-                    );
+                    'domainObject',
+                    ['getCapability']
+                );
+                var mockPersistence = jasmine.createSpyObj(
+                    'persistence',
+                    ['persist', 'refresh']
+                );
 
                 mockDomainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;

@@ -25,8 +25,8 @@ define(
     function (CreationPolicy) {
 
         describe("The creation policy", function () {
-            var mockType,
-                policy;
+            var mockType;
+            var policy;
 
             beforeEach(function () {
                 mockType = jasmine.createSpyObj(

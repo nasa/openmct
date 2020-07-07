@@ -47,8 +47,8 @@ define([
     }
 
     TreeLabelView.prototype.updateView = function (domainObject) {
-        var titleEl = this.el.find('.t-title-label'),
-            iconEl = this.el.find('.t-item-icon');
+        var titleEl = this.el.find('.t-title-label');
+        var iconEl = this.el.find('.t-item-icon');
 
         removePreviousIconClass(iconEl);
 

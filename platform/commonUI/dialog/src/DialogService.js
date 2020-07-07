@@ -62,10 +62,10 @@ define(
         DialogService.prototype.getDialogResponse = function (key, model, resultGetter, typeClass) {
             // We will return this result as a promise, because user
             // input is asynchronous.
-            var deferred = this.$q.defer(),
-                self = this,
-                overlay,
-                handleEscKeydown;
+            var deferred = this.$q.defer();
+            var self = this;
+            var overlay;
+            var handleEscKeydown;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -247,12 +247,12 @@ define(
             if (this.canShowDialog(dialogModel)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
-                var self = this,
-                    overlay = this.overlayService.createOverlay(
-                        "overlay-blocking-message",
-                        dialogModel,
-                        "t-dialog-sm"
-                    );
+                var self = this;
+                var overlay = this.overlayService.createOverlay(
+                    "overlay-blocking-message",
+                    dialogModel,
+                    "t-dialog-sm"
+                );
 
                 this.activeOverlay = overlay;
 

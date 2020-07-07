@@ -25,12 +25,12 @@ define(
     function (CouchIndicator) {
 
         xdescribe("The CouchDB status indicator", function () {
-            var mockHttp,
-                mockInterval,
-                testPath,
-                testInterval,
-                mockPromise,
-                indicator;
+            var mockHttp;
+            var mockInterval;
+            var testPath;
+            var testInterval;
+            var mockPromise;
+            var indicator;
 
             beforeEach(function () {
                 mockHttp = jasmine.createSpyObj("$http", ["get"]);
@@ -65,9 +65,9 @@ define(
             });
 
             it("changes when the database connection is nominal", function () {
-                var initialText = indicator.getText(),
-                    initialDescrption = indicator.getDescription(),
-                    initialGlyphClass = indicator.getGlyphClass();
+                var initialText = indicator.getText();
+                var initialDescrption = indicator.getDescription();
+                var initialGlyphClass = indicator.getGlyphClass();
 
                 // Nominal just means getting back an object, without
                 // an error field.
@@ -84,9 +84,9 @@ define(
             });
 
             it("changes when the server reports an error", function () {
-                var initialText = indicator.getText(),
-                    initialDescrption = indicator.getDescription(),
-                    initialGlyphClass = indicator.getGlyphClass();
+                var initialText = indicator.getText();
+                var initialDescrption = indicator.getDescription();
+                var initialGlyphClass = indicator.getGlyphClass();
 
                 // Nominal just means getting back an object, with
                 // an error field.
@@ -106,9 +106,9 @@ define(
             });
 
             it("changes when the server cannot be reached", function () {
-                var initialText = indicator.getText(),
-                    initialDescrption = indicator.getDescription(),
-                    initialGlyphClass = indicator.getGlyphClass();
+                var initialText = indicator.getText();
+                var initialDescrption = indicator.getDescription();
+                var initialGlyphClass = indicator.getGlyphClass();
 
                 // Nominal just means getting back an object, without
                 // an error field.

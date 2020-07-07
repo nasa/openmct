@@ -26,18 +26,18 @@ define(
     function (SaveAsAction) {
 
         xdescribe("The Save As action", function () {
-            var mockDomainObject,
-                mockClonedObject,
-                mockEditorCapability,
-                mockActionCapability,
-                mockObjectService,
-                mockDialogService,
-                mockCopyService,
-                mockNotificationService,
-                mockParent,
-                actionContext,
-                capabilities = {},
-                action;
+            var mockDomainObject;
+            var mockClonedObject;
+            var mockEditorCapability;
+            var mockActionCapability;
+            var mockObjectService;
+            var mockDialogService;
+            var mockCopyService;
+            var mockNotificationService;
+            var mockParent;
+            var actionContext;
+            var capabilities = {};
+            var action;
 
             function noop() {}
 

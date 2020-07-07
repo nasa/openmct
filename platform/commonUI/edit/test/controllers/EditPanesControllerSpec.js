@@ -25,10 +25,10 @@ define(
     function (EditPanesController) {
 
         describe("The Edit Panes controller", function () {
-            var mockScope,
-                mockDomainObject,
-                mockContext,
-                controller;
+            var mockScope;
+            var mockDomainObject;
+            var mockContext;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);

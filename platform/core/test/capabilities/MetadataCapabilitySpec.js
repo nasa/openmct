@@ -25,11 +25,11 @@ define(
     function (MetadataCapability) {
 
         describe("The metadata capability", function () {
-            var mockDomainObject,
-                mockType,
-                mockProperties,
-                testModel,
-                metadata;
+            var mockDomainObject;
+            var mockType;
+            var mockProperties;
+            var testModel;
+            var metadata;
 
             function getCapability(key) {
                 return key === 'type' ? mockType : undefined;

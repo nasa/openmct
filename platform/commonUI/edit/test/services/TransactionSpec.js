@@ -26,8 +26,8 @@ define(
     function (Transaction) {
 
         describe("A Transaction", function () {
-            var mockLog,
-                transaction;
+            var mockLog;
+            var transaction;
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj(
@@ -42,9 +42,9 @@ define(
             });
 
             describe("when callbacks are added", function () {
-                var mockCommit,
-                    mockCancel,
-                    remove;
+                var mockCommit;
+                var mockCancel;
+                var remove;
 
                 beforeEach(function () {
                     mockCommit = jasmine.createSpy('commit');

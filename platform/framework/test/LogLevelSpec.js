@@ -33,10 +33,10 @@ define(
         ];
 
         describe("The logging level handler", function () {
-            var mockLog,
-                mockApp,
-                mockDelegate,
-                mockMethods;
+            var mockLog;
+            var mockApp;
+            var mockDelegate;
+            var mockMethods;
 
             function logAll(v) {
                 LOG_METHODS.forEach(function (m) {
@@ -84,8 +84,8 @@ define(
                 it("supports log level '" + m + "'", function () {
                     // Note: This is sensitive to ordering of LOG_METHODS,
                     // which needs to be highest-level-first above.
-                    var expected = LOG_METHODS.slice(0, i + 1),
-                        message = "test " + m;
+                    var expected = LOG_METHODS.slice(0, i + 1);
+                    var message = "test " + m;
 
                     new LogLevel(m).configure(mockApp, mockLog);
                     logAll(message);

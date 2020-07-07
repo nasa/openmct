@@ -86,8 +86,8 @@ define(
          *        will be performed; should contain a `domainObject` property
          */
         EditAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type');
+            var domainObject = (context || {}).domainObject;
+            var type = domainObject && domainObject.getCapability('type');
 
             // Only allow editing of types that support it and are not already
             // being edited

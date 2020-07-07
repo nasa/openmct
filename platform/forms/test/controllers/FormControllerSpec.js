@@ -25,8 +25,8 @@ define(
     function (FormController) {
 
         describe("The form controller", function () {
-            var mockScope,
-                controller;
+            var mockScope;
+            var controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
@@ -56,8 +56,8 @@ define(
 
             it("returns the same regexp instance for the same string", function () {
                 // Don't want new instances each digest cycle, for performance
-                var strRegExp = "^[a-z]\\d+$",
-                    regExp;
+                var strRegExp = "^[a-z]\\d+$";
+                var regExp;
 
                 // Add getRegExp to scope
                 regExp = mockScope.getRegExp(strRegExp);
