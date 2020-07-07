@@ -55,14 +55,14 @@ define(
          * @returns {Promise} a promise for the resolved extension
          */
         ExtensionResolver.prototype.resolve = function (extension) {
-            var loader = this.loader,
-                $log = this.$log;
+            var loader = this.loader;
+            var $log = this.$log;
 
             function loadImplementation(ext) {
                 var implPromise = ext.hasImplementationValue() ?
-                        Promise.resolve(ext.getImplementationValue()) :
-                        loader.load(ext.getImplementationPath()),
-                    definition = ext.getDefinition();
+                    Promise.resolve(ext.getImplementationValue()) :
+                    loader.load(ext.getImplementationPath());
+                var definition = ext.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)
                 function constructorFor(impl) {

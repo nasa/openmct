@@ -68,9 +68,9 @@ define(
 
             // Look up a matching representation for this domain object
             function lookup(key, domainObject) {
-                var candidates = representationMap[key] || [],
-                    type,
-                    i;
+                var candidates = representationMap[key] || [];
+                var type;
+                var i;
                 // Filter candidates by object type
                 for (i = 0; i < candidates.length; i += 1) {
                     type = candidates[i].type;
@@ -83,23 +83,23 @@ define(
 
             function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
-                        return new Representer($scope, element, attrs);
-                    }),
-                    toClear = [], // Properties to clear out of scope on change
-                    counter = 0,
-                    couldRepresent = false,
-                    lastIdPath = [],
-                    lastKey,
-                    mutationListener,
-                    changeTemplate = templateLinker.link($scope, element);
+                    return new Representer($scope, element, attrs);
+                });
+                var toClear = []; // Properties to clear out of scope on change
+                var counter = 0;
+                var couldRepresent = false;
+                var lastIdPath = [];
+                var lastKey;
+                var mutationListener;
+                var changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
                 function refreshCapabilities() {
-                    var domainObject = $scope.domainObject,
-                        representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []),
-                        myCounter = counter;
+                    var domainObject = $scope.domainObject;
+                    var representation = lookup($scope.key, domainObject);
+                    var uses = ((representation || {}).uses || []);
+                    var myCounter = counter;
 
                     if (mutationListener) {
                         mutationListener();
@@ -171,12 +171,12 @@ define(
                 // as appropriate for current representation key and
                 // domain object.
                 function refresh() {
-                    var domainObject = $scope.domainObject,
-                        representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []),
-                        canRepresent = !!(representation && domainObject),
-                        idPath = getIdPath(domainObject),
-                        key = $scope.key;
+                    var domainObject = $scope.domainObject;
+                    var representation = lookup($scope.key, domainObject);
+                    var uses = ((representation || {}).uses || []);
+                    var canRepresent = !!(representation && domainObject);
+                    var idPath = getIdPath(domainObject);
+                    var key = $scope.key;
 
                     if (unchanged(canRepresent, idPath, key)) {
                         return;

@@ -44,9 +44,9 @@ define(
          */
         PersistenceFailureHandler.prototype.handle = function handleFailures(failures) {
 
-            var dialogModel = new PersistenceFailureDialog(failures),
-                revisionErrors = dialogModel.model.revised,
-                $q = this.$q;
+            var dialogModel = new PersistenceFailureDialog(failures);
+            var revisionErrors = dialogModel.model.revised;
+            var $q = this.$q;
 
             // Discard changes for a failed refresh
             function discard(failure) {

@@ -79,10 +79,10 @@ define(
 
             it("allows its definition to be retrieved", function () {
                 var definition = {
-                        key: "someKey",
-                        implementation: "SomeImplementation.js"
-                    },
-                    reported = new Extension(bundle, "tests", definition).getDefinition();
+                    key: "someKey",
+                    implementation: "SomeImplementation.js"
+                };
+                var reported = new Extension(bundle, "tests", definition).getDefinition();
 
                 // Bundle is added, so we can't do a normal toEqual; check that
                 // all keys are still there, though.
@@ -95,10 +95,10 @@ define(
                 // Bundle is needed by some registrars in the the registration phase,
                 // so make sure it gets attached to the definition.
                 var definition = {
-                        key: "someKey",
-                        implementation: "SomeImplementation.js"
-                    },
-                    reported = new Extension(bundle, "tests", definition).getDefinition();
+                    key: "someKey",
+                    implementation: "SomeImplementation.js"
+                };
+                var reported = new Extension(bundle, "tests", definition).getDefinition();
 
                 expect(reported.bundle).toEqual(bundle.getDefinition());
             });

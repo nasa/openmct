@@ -29,10 +29,10 @@ define(
     function (SetPrimaryLocation, domainObjectFactory) {
 
         describe("The 'set primary location' action", function () {
-            var testContext,
-                testModel,
-                testId,
-                mockLocationCapability;
+            var testContext;
+            var testModel;
+            var testId;
+            var mockLocationCapability;
 
             beforeEach(function () {
                 testId = "some-id";

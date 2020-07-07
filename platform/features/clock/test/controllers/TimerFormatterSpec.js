@@ -24,10 +24,10 @@ define(
     ["../../src/controllers/TimerFormatter"],
     function (TimerFormatter) {
 
-        var MS_IN_SEC = 1000,
-            MS_IN_MIN = MS_IN_SEC * 60,
-            MS_IN_HR = MS_IN_MIN * 60,
-            MS_IN_DAY = MS_IN_HR * 24;
+        var MS_IN_SEC = 1000;
+        var MS_IN_MIN = MS_IN_SEC * 60;
+        var MS_IN_HR = MS_IN_MIN * 60;
+        var MS_IN_DAY = MS_IN_HR * 24;
 
         describe("The timer value formatter", function () {
             var formatter = new TimerFormatter();

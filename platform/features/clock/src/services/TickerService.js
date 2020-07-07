@@ -36,8 +36,8 @@ define(
             var self = this;
 
             function tick() {
-                var timestamp = now(),
-                    millis = timestamp % 1000;
+                var timestamp = now();
+                var millis = timestamp % 1000;
 
                 // Only update callbacks if a second has actually passed.
                 if (timestamp >= self.last + 1000) {

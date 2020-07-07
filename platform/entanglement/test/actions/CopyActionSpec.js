@@ -31,24 +31,24 @@ define(
 
         describe("Copy Action", function () {
 
-            var copyAction,
-                policyService,
-                locationService,
-                locationServicePromise,
-                copyService,
-                context,
-                selectedObject,
-                selectedObjectContextCapability,
-                currentParent,
-                newParent,
-                notificationService,
-                notification,
-                dialogService,
-                mockDialog,
-                mockLog,
-                abstractComposePromise,
-                domainObject = {model: {name: "mockObject"}},
-                progress = {phase: "copying", totalObjects: 10, processed: 1};
+            var copyAction;
+            var policyService;
+            var locationService;
+            var locationServicePromise;
+            var copyService;
+            var context;
+            var selectedObject;
+            var selectedObjectContextCapability;
+            var currentParent;
+            var newParent;
+            var notificationService;
+            var notification;
+            var dialogService;
+            var mockDialog;
+            var mockLog;
+            var abstractComposePromise;
+            var domainObject = {model: {name: "mockObject"}};
+            var progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(

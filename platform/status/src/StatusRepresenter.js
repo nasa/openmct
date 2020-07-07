@@ -58,8 +58,8 @@ define(
         };
 
         StatusRepresenter.prototype.represent = function (representation, domainObject) {
-            var self = this,
-                statusCapability = domainObject.getCapability('status');
+            var self = this;
+            var statusCapability = domainObject.getCapability('status');
 
             function updateStatus(flags) {
                 var newClasses = flags.map(function (flag) {

@@ -29,9 +29,9 @@ define(
 
         // JSLint doesn't like dangling _'s, but CouchDB uses these, so
         // hide this behind variables.
-        var REV = "_rev",
-            ID = "_id",
-            DELETED = "_deleted";
+        var REV = "_rev";
+        var ID = "_id";
+        var DELETED = "_deleted";
 
         describe("A couch document", function () {
             it("includes an id", function () {

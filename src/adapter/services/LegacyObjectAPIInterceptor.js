@@ -57,8 +57,8 @@ define([
         }.bind(this);
 
         handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
-                keystring = utils.makeKeyString(newStyleObject.identifier);
+            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+            var keystring = utils.makeKeyString(newStyleObject.identifier);
 
             this.eventEmitter.emit(keystring + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
@@ -97,15 +97,15 @@ define([
         var eventEmitter = openmct.objects.eventEmitter;
 
         this.getObjects = function (keys) {
-            var results = {},
-                promises = keys.map(function (keyString) {
-                    var key = utils.parseKeyString(keyString);
-                    return openmct.objects.get(key)
-                        .then(function (object) {
-                            object = utils.toOldFormat(object);
-                            results[keyString] = instantiate(object, keyString);
-                        });
-                });
+            var results = {};
+            var promises = keys.map(function (keyString) {
+                var key = utils.parseKeyString(keyString);
+                return openmct.objects.get(key)
+                    .then(function (object) {
+                        object = utils.toOldFormat(object);
+                        results[keyString] = instantiate(object, keyString);
+                    });
+            });
 
             return Promise.all(promises)
                 .then(function () {

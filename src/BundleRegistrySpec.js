@@ -23,8 +23,8 @@
 define(['./BundleRegistry'], function (BundleRegistry) {
 
     describe("BundleRegistry", function () {
-        var testPath,
-            bundleRegistry;
+        var testPath;
+        var bundleRegistry;
 
         beforeEach(function () {
             testPath = 'some/bundle';

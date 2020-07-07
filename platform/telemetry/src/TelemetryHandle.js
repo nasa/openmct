@@ -36,14 +36,14 @@ define(
          * @memberof platform/telemetry
          */
         function TelemetryHandle($q, subscription) {
-            var seriesMap = {},
-                active = true,
-                self = Object.create(subscription);
+            var seriesMap = {};
+            var active = true;
+            var self = Object.create(subscription);
 
             // Request a telemetry series for this specific object
             function requestSeries(telemetryObject, request, callback) {
-                var id = telemetryObject.getId(),
-                    telemetry = telemetryObject.getCapability('telemetry');
+                var id = telemetryObject.getId();
+                var telemetry = telemetryObject.getCapability('telemetry');
 
                 function receiveSeries(series) {
                     // Store it for subsequent lookup

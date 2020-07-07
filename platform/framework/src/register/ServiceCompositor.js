@@ -55,10 +55,10 @@ define(
          * @param {Array} components extensions of category component
          */
         ServiceCompositor.prototype.registerCompositeServices = function (components) {
-            var latest = this.latest,
-                providerLists = this.providerLists,
-                app = this.app,
-                $log = this.$log;
+            var latest = this.latest;
+            var providerLists = this.providerLists;
+            var app = this.app;
+            var $log = this.$log;
 
             // Log a warning; defaults to "no service provided by"
             function warn(extension, category, message) {
@@ -127,9 +127,9 @@ define(
             // Register a specific provider instance with Angular, and
             // record its name for subsequent stages.
             function registerProvider(provider, index) {
-                var service = provider.provides,
-                    dependencies = provider.depends || [],
-                    name = makeName("provider", service, index);
+                var service = provider.provides;
+                var dependencies = provider.depends || [];
+                var name = makeName("provider", service, index);
 
                 if (!service) {
                     return warn(provider, "provider");
@@ -152,8 +152,8 @@ define(
             // aggregated providers as a single dependency.
             function registerProviderSets() {
                 Object.keys(providerLists).forEach(function (service) {
-                    var name = makeName("provider", service, "*"),
-                        list = providerLists[service];
+                    var name = makeName("provider", service, "*");
+                    var list = providerLists[service];
 
                     $log.info([
                         "Compositing",
@@ -170,10 +170,10 @@ define(
             // its declared dependencies and the additional, implicit
             // dependency upon the array of all providers.
             function registerAggregator(aggregator, index) {
-                var service = aggregator.provides,
-                    dependencies = aggregator.depends || [],
-                    providerSetName = makeName("provider", service, "*"),
-                    name = makeName("aggregator", service, index);
+                var service = aggregator.provides;
+                var dependencies = aggregator.depends || [];
+                var providerSetName = makeName("provider", service, "*");
+                var name = makeName("aggregator", service, index);
 
                 if (!service) {
                     return info(aggregator, "aggregator");
@@ -199,9 +199,9 @@ define(
             // dependency on the latest service component which has come
             // before it.
             function registerDecorator(decorator, index) {
-                var service = decorator.provides,
-                    dependencies = decorator.depends || [],
-                    name = makeName("decorator", service, index);
+                var service = decorator.provides;
+                var dependencies = decorator.depends || [];
+                var name = makeName("decorator", service, index);
 
                 if (!service) {
                     return warn(decorator, "decorator");

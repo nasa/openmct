@@ -31,22 +31,22 @@ define([
 
     // WebGL shader sources (for drawing plain colors)
     var FRAGMENT_SHADER = [
-            "precision mediump float;",
-            "uniform vec4 uColor;",
-            "void main(void) {",
-            "gl_FragColor = uColor;",
-            "}"
-        ].join('\n'),
-        VERTEX_SHADER = [
-            "attribute vec2 aVertexPosition;",
-            "uniform vec2 uDimensions;",
-            "uniform vec2 uOrigin;",
-            "uniform float uPointSize;",
-            "void main(void) {",
-            "gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);",
-            "gl_PointSize = uPointSize;",
-            "}"
-        ].join('\n');
+        "precision mediump float;",
+        "uniform vec4 uColor;",
+        "void main(void) {",
+        "gl_FragColor = uColor;",
+        "}"
+    ].join('\n');
+    var VERTEX_SHADER = [
+        "attribute vec2 aVertexPosition;",
+        "uniform vec2 uDimensions;",
+        "uniform vec2 uOrigin;",
+        "uniform float uPointSize;",
+        "void main(void) {",
+        "gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);",
+        "gl_PointSize = uPointSize;",
+        "}"
+    ].join('\n');
 
     /**
      * Create a draw api utilizing WebGL.

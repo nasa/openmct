@@ -80,8 +80,8 @@ define(
         }
 
         IdentityAggregator.prototype.getUser = function () {
-            var $q = this.$q,
-                promises = this.providers.map(delegateGetUser);
+            var $q = this.$q;
+            var promises = this.providers.map(delegateGetUser);
 
             return $q.all(promises).then(giveFirst);
         };

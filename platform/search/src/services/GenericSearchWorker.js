@@ -29,8 +29,8 @@
 
     // An array of objects composed of domain object IDs and models
     // {id: domainObject's ID, model: domainObject's model}
-    var indexedItems = [],
-        TERM_SPLITTER = /[ _*]/;
+    var indexedItems = [];
+    var TERM_SPLITTER = /[ _*]/;
 
     function indexItem(id, model) {
         var vector = {
@@ -71,16 +71,16 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        var results,
-            input = data.input,
-            query = convertToTerms(input),
-            message = {
-                request: 'search',
-                results: {},
-                total: 0,
-                queryId: data.queryId
-            },
-            matches = {};
+        var results;
+        var input = data.input;
+        var query = convertToTerms(input);
+        var message = {
+            request: 'search',
+            results: {},
+            total: 0,
+            queryId: data.queryId
+        };
+        var matches = {};
 
         if (!query.inputClean) {
             // No search terms, no results;

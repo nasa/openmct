@@ -71,14 +71,14 @@ define([
      * @return {string} The ID of the rule whose drag indicator should be displayed
      */
     WidgetDnD.prototype.getDropLocation = function (event) {
-        var ruleOrder = this.ruleOrder,
-            rulesById = this.rulesById,
-            draggingId = this.draggingId,
-            offset,
-            y,
-            height,
-            dropY = event.pageY,
-            target = '';
+        var ruleOrder = this.ruleOrder;
+        var rulesById = this.rulesById;
+        var draggingId = this.draggingId;
+        var offset;
+        var y;
+        var height;
+        var dropY = event.pageY;
+        var target = '';
 
         ruleOrder.forEach(function (ruleId, index) {
             offset = rulesById[ruleId].getDOM().offset();
@@ -146,8 +146,8 @@ define([
      * @param {Event} event The mouseup event that triggered this callback
      */
     WidgetDnD.prototype.drop = function (event) {
-        var dropTarget = this.getDropLocation(event),
-            draggingId = this.draggingId;
+        var dropTarget = this.getDropLocation(event);
+        var draggingId = this.draggingId;
 
         if (this.draggingId && this.draggingId !== '') {
             if (!this.rulesById[dropTarget]) {

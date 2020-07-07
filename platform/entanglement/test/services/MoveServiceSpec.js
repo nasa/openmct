@@ -36,13 +36,13 @@ define(
 
         xdescribe("MoveService", function () {
 
-            var moveService,
-                policyService,
-                object,
-                objectContextCapability,
-                currentParent,
-                parentCandidate,
-                linkService;
+            var moveService;
+            var policyService;
+            var object;
+            var objectContextCapability;
+            var currentParent;
+            var parentCandidate;
+            var linkService;
 
             beforeEach(function () {
                 objectContextCapability = jasmine.createSpyObj(
@@ -142,11 +142,11 @@ define(
 
             describe("perform", function () {
 
-                var actionCapability,
-                    locationCapability,
-                    locationPromise,
-                    newParent,
-                    moveResult;
+                var actionCapability;
+                var locationCapability;
+                var locationPromise;
+                var newParent;
+                var moveResult;
 
                 beforeEach(function () {
                     newParent = parentCandidate;

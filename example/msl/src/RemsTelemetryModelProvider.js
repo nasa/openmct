@@ -25,12 +25,12 @@ define(
     function () {
         "use strict";
 
-        var PREFIX = "msl_tlm:",
-            FORMAT_MAPPINGS = {
-                float: "number",
-                integer: "number",
-                string: "string"
-            };
+        var PREFIX = "msl_tlm:";
+        var FORMAT_MAPPINGS = {
+            float: "number",
+            integer: "number",
+            string: "string"
+        };
 
         function RemsTelemetryModelProvider(adapter) {
 
@@ -64,8 +64,8 @@ define(
                 }
 
                 function addInstrument(subsystem, spacecraftId) {
-                    var measurements = (subsystem.measurements || []),
-                        instrumentId = makeId(subsystem);
+                    var measurements = (subsystem.measurements || []);
+                    var instrumentId = makeId(subsystem);
 
                     models[instrumentId] = {
                         type: "msl.instrument",

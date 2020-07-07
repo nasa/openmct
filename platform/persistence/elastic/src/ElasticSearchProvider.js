@@ -29,9 +29,9 @@ define([
 
 ) {
 
-    var ID_PROPERTY = '_id',
-        SOURCE_PROPERTY = '_source',
-        SCORE_PROPERTY = '_score';
+    var ID_PROPERTY = '_id';
+    var SOURCE_PROPERTY = '_source';
+    var SCORE_PROPERTY = '_score';
 
     /**
      * A search service which searches through domain objects in
@@ -55,9 +55,9 @@ define([
      * @returns {Promise} promise for a modelResults object.
      */
     ElasticSearchProvider.prototype.query = function (searchTerm, maxResults) {
-        var searchUrl = this.root + '/_search/',
-            params = {},
-            provider = this;
+        var searchUrl = this.root + '/_search/';
+        var params = {};
+        var provider = this;
 
         searchTerm = this.cleanTerm(searchTerm);
         searchTerm = this.fuzzyMatchUnquotedTerms(searchTerm);
@@ -106,8 +106,8 @@ define([
      * @private
      */
     ElasticSearchProvider.prototype.fuzzyMatchUnquotedTerms = function (query) {
-        var matchUnquotedSpaces = '\\s+(?=([^"]*"[^"]*")*[^"]*$)',
-            matcher = new RegExp(matchUnquotedSpaces, 'g');
+        var matchUnquotedSpaces = '\\s+(?=([^"]*"[^"]*")*[^"]*$)';
+        var matcher = new RegExp(matchUnquotedSpaces, 'g');
 
         return query
             .replace(matcher, '~ ')
@@ -124,14 +124,14 @@ define([
      * @returns modelResults
      */
     ElasticSearchProvider.prototype.parseResponse = function (response) {
-        var results = response.data.hits.hits,
-            searchResults = results.map(function (result) {
-                return {
-                    id: result[ID_PROPERTY],
-                    model: result[SOURCE_PROPERTY],
-                    score: result[SCORE_PROPERTY]
-                };
-            });
+        var results = response.data.hits.hits;
+        var searchResults = results.map(function (result) {
+            return {
+                id: result[ID_PROPERTY],
+                model: result[SOURCE_PROPERTY],
+                score: result[SCORE_PROPERTY]
+            };
+        });
 
         return {
             hits: searchResults,

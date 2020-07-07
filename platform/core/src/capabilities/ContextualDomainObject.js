@@ -47,8 +47,8 @@ define(
         function ContextualDomainObject(domainObject, parentObject) {
             // Prototypally inherit from the domain object, and
             // instantiate its context capability ahead of time.
-            var contextualObject = Object.create(domainObject),
-                contextCapability =
+            var contextualObject = Object.create(domainObject);
+            var contextCapability =
                     new ContextCapability(parentObject, domainObject);
 
             // Intercept requests for a context capability.

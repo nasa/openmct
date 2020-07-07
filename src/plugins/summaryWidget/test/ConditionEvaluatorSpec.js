@@ -1,19 +1,19 @@
 define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
     describe('A Summary Widget Rule Evaluator', function () {
-        var evaluator,
-            testEvaluator,
-            testOperation,
-            mockCache,
-            mockTestCache,
-            mockComposition,
-            mockConditions,
-            mockConditionsEmpty,
-            mockConditionsUndefined,
-            mockConditionsAnyTrue,
-            mockConditionsAllTrue,
-            mockConditionsAnyFalse,
-            mockConditionsAllFalse,
-            mockOperations;
+        var evaluator;
+        var testEvaluator;
+        var testOperation;
+        var mockCache;
+        var mockTestCache;
+        var mockComposition;
+        var mockConditions;
+        var mockConditionsEmpty;
+        var mockConditionsUndefined;
+        var mockConditionsAnyTrue;
+        var mockConditionsAllTrue;
+        var mockConditionsAnyFalse;
+        var mockConditionsAllFalse;
+        var mockOperations;
 
         beforeEach(function () {
             mockCache = {

@@ -48,8 +48,8 @@ define([
         this.palette.setNullOption(' ');
         this.oldIcon = this.palette.current || ' ';
 
-        var domElement = $(this.palette.getDOM()),
-            self = this;
+        var domElement = $(this.palette.getDOM());
+        var self = this;
 
         $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('icon-swatch');

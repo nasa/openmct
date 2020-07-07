@@ -120,8 +120,8 @@ define(
          * @memberof platform/core
          */
         function TypeImpl(typeDef) {
-            var inheritList = typeDef.inherits || [],
-                featureSet = {};
+            var inheritList = typeDef.inherits || [];
+            var featureSet = {};
 
             (typeDef.features || []).forEach(function (feature) {
                 featureSet[feature] = true;
@@ -170,8 +170,8 @@ define(
         };
 
         TypeImpl.prototype.instanceOf = function instanceOf(key) {
-            var typeDef = this.typeDef,
-                inheritList = this.inheritList;
+            var typeDef = this.typeDef;
+            var inheritList = this.inheritList;
 
             if (key === typeDef.key) {
                 return true;

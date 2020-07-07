@@ -39,17 +39,17 @@ define(
         }
 
         LocatingObjectDecorator.prototype.getObjects = function (ids) {
-            var $q = this.$q,
-                $log = this.$log,
-                objectService = this.objectService,
-                result = {};
+            var $q = this.$q;
+            var $log = this.$log;
+            var objectService = this.objectService;
+            var result = {};
 
             // Load a single object using location to establish a context
             function loadObjectInContext(id, exclude) {
                 function attachContext(objects) {
-                    var domainObject = (objects || {})[id],
-                        model = domainObject && domainObject.getModel(),
-                        location = (model || {}).location;
+                    var domainObject = (objects || {})[id];
+                    var model = domainObject && domainObject.getModel();
+                    var location = (model || {}).location;
 
                     // If no location is defined, we can't look up a context.
                     if (!location) {

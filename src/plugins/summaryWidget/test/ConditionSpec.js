@@ -22,15 +22,15 @@
 
 define(['../src/Condition', 'zepto'], function (Condition, $) {
     xdescribe('A summary widget condition', function () {
-        var testCondition,
-            mockConfig,
-            mockConditionManager,
-            mockContainer,
-            mockEvaluator,
-            changeSpy,
-            duplicateSpy,
-            removeSpy,
-            generateValuesSpy;
+        var testCondition;
+        var mockConfig;
+        var mockConditionManager;
+        var mockContainer;
+        var mockEvaluator;
+        var changeSpy;
+        var duplicateSpy;
+        var removeSpy;
+        var generateValuesSpy;
 
         beforeEach(function () {
             mockContainer = $(document.createElement('div'));

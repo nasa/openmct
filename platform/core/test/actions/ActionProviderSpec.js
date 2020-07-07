@@ -153,8 +153,8 @@ define(
             });
 
             describe("when actions throw errors during instantiation", function () {
-                var errorText,
-                    provided;
+                var errorText;
+                var provided;
 
                 beforeEach(function () {
                     errorText = "some error text";

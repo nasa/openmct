@@ -423,9 +423,9 @@ export default {
                 return;
             }
 
-            let keyString = this.openmct.objects.makeKeyString(item.identifier),
-                telemetryViewCount = this.telemetryViewMap[keyString],
-                objectViewCount = this.objectViewMap[keyString];
+            let keyString = this.openmct.objects.makeKeyString(item.identifier);
+            let telemetryViewCount = this.telemetryViewMap[keyString];
+            let objectViewCount = this.objectViewMap[keyString];
 
             if (item.type === 'telemetry-view') {
                 telemetryViewCount = --this.telemetryViewMap[keyString];
@@ -458,8 +458,8 @@ export default {
             this.layoutItems.forEach(this.trackItem);
         },
         isItemAlreadyTracked(child) {
-            let found = false,
-                keyString = this.openmct.objects.makeKeyString(child.identifier);
+            let found = false;
+            let keyString = this.openmct.objects.makeKeyString(child.identifier);
 
             this.layoutItems.forEach(item => {
                 if (item.identifier) {
@@ -593,13 +593,13 @@ export default {
         },
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
-                    key: uuid(),
-                    namespace: this.internalDomainObject.identifier.namespace
-                },
-                type = this.openmct.types.get(viewType),
-                parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
-                objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name,
-                object = {};
+                key: uuid(),
+                namespace: this.internalDomainObject.identifier.namespace
+            };
+            let type = this.openmct.types.get(viewType);
+            let parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            let objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name;
+            let object = {};
 
             if (model) {
                 object = _.cloneDeep(model);
@@ -632,8 +632,8 @@ export default {
             })
 
             selectItemsArray.forEach((id) => {
-                let refId = `layout-item-${id}`,
-                    component = this.$refs[refId] && this.$refs[refId][0];
+                let refId = `layout-item-${id}`;
+                let component = this.$refs[refId] && this.$refs[refId][0];
 
                 if (component) {
                     component.immediatelySelect = event;
@@ -642,15 +642,15 @@ export default {
             });
         },
         duplicateItem(selectedItems) {
-            let objectStyles = this.internalDomainObject.configuration.objectStyles || {},
-                selectItemsArray = [],
-                newDomainObjectsArray = [];
+            let objectStyles = this.internalDomainObject.configuration.objectStyles || {};
+            let selectItemsArray = [];
+            let newDomainObjectsArray = [];
 
             selectedItems.forEach(selectedItem => {
-                let layoutItem = selectedItem[0].context.layoutItem,
-                    domainObject = selectedItem[0].context.item,
-                    layoutItemStyle = objectStyles[layoutItem.id],
-                    copy = _.cloneDeep(layoutItem);
+                let layoutItem = selectedItem[0].context.layoutItem;
+                let domainObject = selectedItem[0].context.item;
+                let layoutItemStyle = objectStyles[layoutItem.id];
+                let copy = _.cloneDeep(layoutItem);
 
                 copy.id = uuid();
                 selectItemsArray.push(copy.id);
@@ -693,16 +693,16 @@ export default {
         },
         mergeMultipleTelemetryViews(selection, viewType) {
             let identifiers = selection.map(selectedItem => {
-                    return selectedItem[0].context.layoutItem.identifier;
-                }),
-                firstDomainObject = selection[0][0].context.item,
-                firstLayoutItem = selection[0][0].context.layoutItem,
-                position = [firstLayoutItem.x, firstLayoutItem.y],
-                mockDomainObject = {
-                    name: 'Merged Telemetry Views',
-                    identifier: firstDomainObject.identifier
-                },
-                newDomainObject = this.createNewDomainObject(mockDomainObject, identifiers, viewType);
+                return selectedItem[0].context.layoutItem.identifier;
+            });
+            let firstDomainObject = selection[0][0].context.item;
+            let firstLayoutItem = selection[0][0].context.layoutItem;
+            let position = [firstLayoutItem.x, firstLayoutItem.y];
+            let mockDomainObject = {
+                name: 'Merged Telemetry Views',
+                identifier: firstDomainObject.identifier
+            };
+            let newDomainObject = this.createNewDomainObject(mockDomainObject, identifiers, viewType);
 
             this.composition.add(newDomainObject);
             this.addItem('subobject-view', newDomainObject, position);
@@ -710,18 +710,18 @@ export default {
             this.initSelectIndex = this.layoutItems.length - 1;
         },
         mergeMultipleOverlayPlots(selection, viewType) {
-            let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item),
-                overlayPlotIdentifiers = overlayPlots.map(overlayPlot => overlayPlot.identifier),
-                firstOverlayPlot = overlayPlots[0],
-                firstLayoutItem = selection[0][0].context.layoutItem,
-                position = [firstLayoutItem.x, firstLayoutItem.y],
-                mockDomainObject = {
-                    name: 'Merged Overlay Plots',
-                    identifier: firstOverlayPlot.identifier
-                },
-                newDomainObject = this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType),
-                newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier),
-                internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item);
+            let overlayPlotIdentifiers = overlayPlots.map(overlayPlot => overlayPlot.identifier);
+            let firstOverlayPlot = overlayPlots[0];
+            let firstLayoutItem = selection[0][0].context.layoutItem;
+            let position = [firstLayoutItem.x, firstLayoutItem.y];
+            let mockDomainObject = {
+                name: 'Merged Overlay Plots',
+                identifier: firstOverlayPlot.identifier
+            };
+            let newDomainObject = this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType);
+            let newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier);
+            let internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
 
             this.composition.add(newDomainObject);
             this.addItem('subobject-view', newDomainObject, position);
@@ -745,10 +745,10 @@ export default {
             }
         },
         switchViewType(context, viewType, selection) {
-            let domainObject = context.item,
-                layoutItem = context.layoutItem,
-                position = [layoutItem.x, layoutItem.y],
-                layoutType = 'subobject-view';
+            let domainObject = context.item;
+            let layoutItem = context.layoutItem;
+            let position = [layoutItem.x, layoutItem.y];
+            let layoutType = 'subobject-view';
 
             if (layoutItem.type === 'telemetry-view') {
                 let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
@@ -759,8 +759,8 @@ export default {
                 this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
                     if (viewType === 'telemetry-view') {
                         identifiers.forEach((identifier, index) => {
-                            let positionX = position[0] + (index * DUPLICATE_OFFSET),
-                                positionY = position[1] + (index * DUPLICATE_OFFSET);
+                            let positionX = position[0] + (index * DUPLICATE_OFFSET);
+                            let positionY = position[1] + (index * DUPLICATE_OFFSET);
 
                             this.convertToTelemetryView(identifier, [positionX, positionY]);
                         });

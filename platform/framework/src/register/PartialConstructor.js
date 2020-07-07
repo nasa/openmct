@@ -50,8 +50,8 @@ define(
                 var dependencies = Array.prototype.slice.call(arguments);
 
                 function InnerConstructor() { // Bind everything else
-                    var other = Array.prototype.slice.call(arguments),
-                        instance = Object.create(Constructor.prototype);
+                    var other = Array.prototype.slice.call(arguments);
+                    var instance = Object.create(Constructor.prototype);
 
                     // Mimic "new" behavior with apply.
                     instance = Constructor.apply(

@@ -25,8 +25,8 @@ define(
     function (IdentifierProvider) {
 
         describe("IdentifierProvider", function () {
-            var defaultSpace,
-                provider;
+            var defaultSpace;
+            var provider;
 
             beforeEach(function () {
                 defaultSpace = "some-default-space";
@@ -39,8 +39,8 @@ define(
             });
 
             it("allows spaces to be specified for generated identifiers", function () {
-                var specificSpace = "some-specific-space",
-                    id = provider.generate(specificSpace);
+                var specificSpace = "some-specific-space";
+                var id = provider.generate(specificSpace);
                 expect(id).toEqual(jasmine.any(String));
                 expect(provider.parse(id).getDefinedSpace())
                     .toEqual(specificSpace);

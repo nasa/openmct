@@ -67,8 +67,8 @@ define([
          * @private
          */
         function handleItemClick(event) {
-            var elem = event.currentTarget,
-                item = elem.dataset.item;
+            var elem = event.currentTarget;
+            var item = elem.dataset.item;
             self.set(item);
             $('.c-menu', self.domElement).hide();
         }

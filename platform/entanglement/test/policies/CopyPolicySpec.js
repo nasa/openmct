@@ -26,12 +26,12 @@ define([
 ], function (CopyPolicy, domainObjectFactory) {
 
     describe("CopyPolicy", function () {
-        var testMetadata,
-            testContext,
-            mockDomainObject,
-            mockType,
-            mockAction,
-            policy;
+        var testMetadata;
+        var testContext;
+        var mockDomainObject;
+        var mockType;
+        var mockAction;
+        var policy;
 
         beforeEach(function () {
             mockType =

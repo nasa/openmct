@@ -103,9 +103,9 @@ define(function () {
      * @private
      */
     SearchController.prototype.dispatchSearch = function () {
-        var inputText = this.$scope.ngModel.input,
-            controller = this,
-            queryId = inputText + this.numberToDisplay;
+        var inputText = this.$scope.ngModel.input;
+        var controller = this;
+        var queryId = inputText + this.numberToDisplay;
 
         if (this.pendingQuery === queryId) {
             return; // don't issue multiple queries for the same term.

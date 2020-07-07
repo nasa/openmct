@@ -24,8 +24,8 @@ define(
     ['moment', 'moment-duration-format'],
     function (moment) {
 
-        var SHORT_FORMAT = "HH:mm:ss",
-            LONG_FORMAT = "d[D] HH:mm:ss";
+        var SHORT_FORMAT = "HH:mm:ss";
+        var LONG_FORMAT = "d[D] HH:mm:ss";
 
         /**
          * Provides formatting functions for Timers.

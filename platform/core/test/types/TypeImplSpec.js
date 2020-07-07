@@ -25,8 +25,8 @@ define(
     function (TypeImpl) {
 
         describe("Type definition wrapper", function () {
-            var testTypeDef,
-                type;
+            var testTypeDef;
+            var type;
 
             beforeEach(function () {
                 testTypeDef = {

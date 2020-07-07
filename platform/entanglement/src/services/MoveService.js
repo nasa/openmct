@@ -62,9 +62,9 @@ define(
         MoveService.prototype.perform = function (object, parentObject) {
             function relocate(objectInNewContext) {
                 var newLocationCapability = objectInNewContext
-                        .getCapability('location'),
-                    oldLocationCapability = object
-                        .getCapability('location');
+                    .getCapability('location');
+                var oldLocationCapability = object
+                    .getCapability('location');
 
                 if (!newLocationCapability ||
                         !oldLocationCapability) {

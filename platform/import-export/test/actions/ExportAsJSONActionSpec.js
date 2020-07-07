@@ -31,16 +31,16 @@ define(
 
         xdescribe("The export JSON action", function () {
 
-            var context,
-                action,
-                exportService,
-                identifierService,
-                typeService,
-                openmct,
-                policyService,
-                mockType,
-                mockObjectProvider,
-                exportedTree;
+            var context;
+            var action;
+            var exportService;
+            var identifierService;
+            var typeService;
+            var openmct;
+            var policyService;
+            var mockType;
+            var mockObjectProvider;
+            var exportedTree;
 
             beforeEach(function () {
                 openmct = new MCT();

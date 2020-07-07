@@ -90,16 +90,16 @@ define(
             // Look up the desired gestures, filter for applicability,
             // and instantiate them. Maintain a reference to allow them
             // to be destroyed as a group later.
-            var gestureMap = this.gestureMap,
-                attachedGestures = gestureKeys.map(function (key) {
-                    return gestureMap[key];
-                }).filter(function (Gesture) {
-                    return Gesture !== undefined && (Gesture.appliesTo ?
-                        Gesture.appliesTo(domainObject) :
-                        true);
-                }).map(function (Gesture) {
-                    return new Gesture(element, domainObject);
-                });
+            var gestureMap = this.gestureMap;
+            var attachedGestures = gestureKeys.map(function (key) {
+                return gestureMap[key];
+            }).filter(function (Gesture) {
+                return Gesture !== undefined && (Gesture.appliesTo ?
+                    Gesture.appliesTo(domainObject) :
+                    true);
+            }).map(function (Gesture) {
+                return new Gesture(element, domainObject);
+            });
 
             return {
                 destroy: function () {

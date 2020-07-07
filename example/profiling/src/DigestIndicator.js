@@ -34,13 +34,13 @@ define(
          * @implements {Indicator}
          */
         function DigestIndicator($interval, $rootScope) {
-            var digests = 0,
-                displayed = 0,
-                start = Date.now();
+            var digests = 0;
+            var displayed = 0;
+            var start = Date.now();
 
             function update() {
-                var now = Date.now(),
-                    secs = (now - start) / 1000;
+                var now = Date.now();
+                var secs = (now - start) / 1000;
                 displayed = Math.round(digests / secs);
                 start = now;
                 digests = 0;

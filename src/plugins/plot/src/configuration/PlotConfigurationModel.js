@@ -105,8 +105,8 @@ define([
          * Retrieve the persisted filters for a given identifier.
          */
         getPersistedFilters: function (identifier) {
-            var domainObject = this.get('domainObject'),
-                keystring = this.openmct.objects.makeKeyString(identifier);
+            var domainObject = this.get('domainObject');
+            var keystring = this.openmct.objects.makeKeyString(identifier);
 
             if (!domainObject.configuration || !domainObject.configuration.filters) {
                 return;

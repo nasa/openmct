@@ -88,13 +88,14 @@ define(
         };
 
         TelemetryQueue.prototype.put = function (key, value) {
-            var queue = this.queue,
-                counts = this.counts;
+            var queue = this.queue;
+            var counts = this.counts;
 
             // Look up an object in the queue that does not have a value
             // assigned to this key (or, add a new one)
             function getFreeObject(k) {
-                var index = counts[k] || 0, object;
+                var index = counts[k] || 0;
+                var object;
 
                 // Track the largest free position for this key
                 counts[k] = index + 1;

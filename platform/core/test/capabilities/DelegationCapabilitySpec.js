@@ -28,13 +28,13 @@ define(
     function (DelegationCapability) {
 
         describe("The delegation capability", function () {
-            var captured,
-                typeDef = {},
-                type,
-                capabilities,
-                children = [],
-                object = {},
-                delegation;
+            var captured;
+            var typeDef = {};
+            var type;
+            var capabilities;
+            var children = [];
+            var object = {};
+            var delegation;
 
             function capture(k) {
                 return function (v) {

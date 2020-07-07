@@ -31,8 +31,8 @@ define(
 
         xdescribe("LinkService", function () {
 
-            var linkService,
-                mockPolicyService;
+            var linkService;
+            var mockPolicyService;
 
             beforeEach(function () {
                 mockPolicyService = jasmine.createSpyObj(
@@ -45,9 +45,9 @@ define(
 
             describe("validate", function () {
 
-                var object,
-                    parentCandidate,
-                    validate;
+                var object;
+                var parentCandidate;
+                var validate;
 
                 beforeEach(function () {
                     object = domainObjectFactory({
@@ -134,13 +134,13 @@ define(
 
             describe("perform", function () {
 
-                var object,
-                    linkedObject,
-                    parentModel,
-                    parentObject,
-                    compositionPromise,
-                    addPromise,
-                    compositionCapability;
+                var object;
+                var linkedObject;
+                var parentModel;
+                var parentObject;
+                var compositionPromise;
+                var addPromise;
+                var compositionCapability;
 
                 beforeEach(function () {
                     compositionPromise = new ControlledPromise();
@@ -189,7 +189,8 @@ define(
                 });
 
                 it("returns object representing new link", function () {
-                    var returnPromise, whenComplete;
+                    var returnPromise;
+                    var whenComplete;
                     returnPromise = linkService.perform(object, parentObject);
                     whenComplete = jasmine.createSpy('whenComplete');
                     returnPromise.then(whenComplete);

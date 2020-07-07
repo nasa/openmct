@@ -238,17 +238,17 @@ define([
          * Return the point closest to a given x value.
          */
         nearestPoint: function (xValue) {
-            var insertIndex = this.sortedIndex(xValue),
-                lowPoint = this.data[insertIndex - 1],
-                highPoint = this.data[insertIndex],
-                indexVal = this.getXVal(xValue),
-                lowDistance = lowPoint ?
-                    indexVal - this.getXVal(lowPoint) :
-                    Number.POSITIVE_INFINITY,
-                highDistance = highPoint ?
-                    this.getXVal(highPoint) - indexVal :
-                    Number.POSITIVE_INFINITY,
-                nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
+            var insertIndex = this.sortedIndex(xValue);
+            var lowPoint = this.data[insertIndex - 1];
+            var highPoint = this.data[insertIndex];
+            var indexVal = this.getXVal(xValue);
+            var lowDistance = lowPoint ?
+                indexVal - this.getXVal(lowPoint) :
+                Number.POSITIVE_INFINITY;
+            var highDistance = highPoint ?
+                this.getXVal(highPoint) - indexVal :
+                Number.POSITIVE_INFINITY;
+            var nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
             return nearestPoint;
         },
@@ -324,9 +324,9 @@ define([
          *                  a point to the end without dupe checking.
          */
         add: function (point, appendOnly) {
-            var insertIndex = this.data.length,
-                currentYVal = this.getYVal(point),
-                lastYVal = this.getYVal(this.data[insertIndex - 1]);
+            var insertIndex = this.data.length;
+            var currentYVal = this.getYVal(point);
+            var lastYVal = this.getYVal(this.data[insertIndex - 1]);
 
             if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
                 console.warn('[Plot] Invalid Y Values detected');

@@ -50,14 +50,14 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        var results,
-            input = data.input.trim().toLowerCase(),
-            message = {
-                request: 'search',
-                results: {},
-                total: 0,
-                queryId: data.queryId
-            };
+        var results;
+        var input = data.input.trim().toLowerCase();
+        var message = {
+            request: 'search',
+            results: {},
+            total: 0,
+            queryId: data.queryId
+        };
 
         results = indexedItems.filter((indexedItem) => {
             return indexedItem.name.includes(input);

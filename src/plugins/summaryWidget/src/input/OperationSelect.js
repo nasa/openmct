@@ -84,10 +84,10 @@ define([
      * Populate this select with options based on its current composition
      */
     OperationSelect.prototype.generateOptions = function () {
-        var self = this,
-            items = this.operationKeys.map(function (operation) {
-                return [operation, self.evaluator.getOperationText(operation)];
-            });
+        var self = this;
+        var items = this.operationKeys.map(function (operation) {
+            return [operation, self.evaluator.getOperationText(operation)];
+        });
         items.splice(0, 0, ['', NULLVALUE]);
         this.select.setOptions(items);
 
@@ -104,9 +104,9 @@ define([
      * @param {string} key The telemetry property to load operations for
      */
     OperationSelect.prototype.loadOptions = function (key) {
-        var self = this,
-            operations = self.evaluator.getOperationKeys(),
-            type;
+        var self = this;
+        var operations = self.evaluator.getOperationKeys();
+        var type;
 
         type = self.manager.getTelemetryPropertyType(self.config.object, key);
 

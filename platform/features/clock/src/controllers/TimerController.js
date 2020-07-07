@@ -38,12 +38,12 @@ define(
          *        time (typically wrapping `Date.now`)
          */
         function TimerController($scope, $window, now) {
-            var formatter,
-                active = true,
-                relativeTimestamp,
-                lastTimestamp,
-                relativeTimerState,
-                self = this;
+            var formatter;
+            var active = true;
+            var relativeTimestamp;
+            var lastTimestamp;
+            var relativeTimerState;
+            var self = this;
 
             function update() {
                 var timeDelta = lastTimestamp - relativeTimestamp;
@@ -97,12 +97,12 @@ define(
                 var model = domainObject.getModel();
                 handleLegacyTimer(model);
 
-                var timestamp = model.timestamp,
-                    formatKey = model.timerFormat,
-                    timerState = model.timerState,
-                    actionCapability = domainObject.getCapability('action'),
-                    actionKey = (timerState !== 'started') ?
-                        'timer.start' : 'timer.pause';
+                var timestamp = model.timestamp;
+                var formatKey = model.timerFormat;
+                var timerState = model.timerState;
+                var actionCapability = domainObject.getCapability('action');
+                var actionKey = (timerState !== 'started') ?
+                    'timer.start' : 'timer.pause';
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
@@ -128,8 +128,8 @@ define(
             }
 
             function tick() {
-                var lastSign = self.signValue,
-                    lastText = self.textValue;
+                var lastSign = self.signValue;
+                var lastText = self.textValue;
 
                 if (!isPaused()) {
                     lastTimestamp = now();

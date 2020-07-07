@@ -58,10 +58,10 @@ define(['csv'], function (CSV) {
      */
     ExportService.prototype.exportCSV = function (rows, options) {
         var headers = (options && options.headers) ||
-                (Object.keys((rows[0] || {})).sort()),
-            filename = (options && options.filename) || "export.csv",
-            csvText = new CSV(rows, { header: headers }).encode(),
-            blob = new Blob([csvText], { type: "text/csv" });
+                (Object.keys((rows[0] || {})).sort());
+        var filename = (options && options.filename) || "export.csv";
+        var csvText = new CSV(rows, { header: headers }).encode();
+        var blob = new Blob([csvText], { type: "text/csv" });
         this.saveAs(blob, filename);
     };
 

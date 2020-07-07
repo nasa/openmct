@@ -39,14 +39,14 @@ define(
 
             // Update the
             function update() {
-                var date = $scope.datetime.date,
-                    hour = $scope.datetime.hour,
-                    min = $scope.datetime.min,
-                    sec = $scope.datetime.sec,
-                    fullDateTime = moment.utc(date, DATE_FORMAT)
-                        .hour(hour || 0)
-                        .minute(min || 0)
-                        .second(sec || 0);
+                var date = $scope.datetime.date;
+                var hour = $scope.datetime.hour;
+                var min = $scope.datetime.min;
+                var sec = $scope.datetime.sec;
+                var fullDateTime = moment.utc(date, DATE_FORMAT)
+                    .hour(hour || 0)
+                    .minute(min || 0)
+                    .second(sec || 0);
 
                 if (fullDateTime.isValid()) {
                     $scope.ngModel[$scope.field] = fullDateTime.valueOf();

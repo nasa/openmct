@@ -53,8 +53,8 @@ define(
          */
         function Bundle(path, bundleDefinition) {
             // Start with defaults
-            var definition = Object.create(Constants.DEFAULT_BUNDLE),
-                logName = path;
+            var definition = Object.create(Constants.DEFAULT_BUNDLE);
+            var logName = path;
 
             // Override defaults with specifics from bundle definition
             Object.keys(bundleDefinition).forEach(function (k) {
@@ -177,8 +177,8 @@ define(
          * @returns {Array} extension definitions of that category
          */
         Bundle.prototype.getExtensions = function (category) {
-            var extensions = this.definition.extensions[category] || [],
-                self = this;
+            var extensions = this.definition.extensions[category] || [];
+            var self = this;
 
             return extensions.map(function objectify(extDefinition) {
                 return new Extension(self, category, extDefinition);

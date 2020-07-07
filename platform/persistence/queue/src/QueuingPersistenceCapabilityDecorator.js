@@ -51,8 +51,8 @@ define(
         }
 
         QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model, id) {
-            var capabilityService = this.capabilityService,
-                persistenceQueue = this.persistenceQueue;
+            var capabilityService = this.capabilityService;
+            var persistenceQueue = this.persistenceQueue;
 
             function decoratePersistence(capabilities) {
                 var originalPersistence = capabilities.persistence;

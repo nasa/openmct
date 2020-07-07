@@ -40,11 +40,11 @@ define(
 
         CachingModelDecorator.prototype.getModels = function (ids) {
             var loadFromCache = ids.filter(function cached(id) {
-                    return this.cacheService.has(id);
-                }, this),
-                loadFromService = ids.filter(function notCached(id) {
-                    return !this.cacheService.has(id);
-                }, this);
+                return this.cacheService.has(id);
+            }, this);
+            var loadFromService = ids.filter(function notCached(id) {
+                return !this.cacheService.has(id);
+            }, this);
 
             if (!loadFromCache.length) {
                 return this.modelService.getModels(loadFromService);

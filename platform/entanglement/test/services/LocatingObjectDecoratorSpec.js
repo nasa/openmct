@@ -65,7 +65,7 @@ define(
 
                 mockQ.when.and.callFake(testPromise);
                 mockQ.all.and.callFake(function (promises) {
-                    ; result = {};
+                    var result = {};
                     Object.keys(promises).forEach(function (k) {
                         promises[k].then(function (v) {
                             result[k] = v;

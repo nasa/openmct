@@ -73,13 +73,13 @@ define([
      *                          this rule from, optional
      */
     TestDataManager.prototype.initItem = function (config) {
-        var sourceIndex = config && config.index,
-            defaultItem = {
-                object: '',
-                key: '',
-                value: ''
-            },
-            newItem;
+        var sourceIndex = config && config.index;
+        var defaultItem = {
+            object: '',
+            key: '',
+            value: ''
+        };
+        var newItem;
 
         newItem = (config !== undefined ? config.sourceItem : defaultItem);
         if (sourceIndex !== undefined) {
@@ -165,10 +165,10 @@ define([
      * as expected by a {ConditionEvaluator}
      */
     TestDataManager.prototype.generateTestCache = function () {
-        var testCache = this.testCache,
-            manager = this.manager,
-            compositionObjs = manager.getComposition(),
-            metadata;
+        var testCache = this.testCache;
+        var manager = this.manager;
+        var compositionObjs = manager.getComposition();
+        var metadata;
 
         testCache = {};
         Object.keys(compositionObjs).forEach(function (id) {

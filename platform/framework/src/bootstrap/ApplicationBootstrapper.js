@@ -52,9 +52,9 @@ define(
          *        bootstrap
          */
         ApplicationBootstrapper.prototype.bootstrap = function (app) {
-            var angular = this.angular,
-                document = this.document,
-                $log = this.$log;
+            var angular = this.angular;
+            var document = this.document;
+            var $log = this.$log;
             return new Promise(function (resolve, reject) {
                 $log.info("Bootstrapping application " + (app || {}).name);
                 angular.element(document).ready(function () {

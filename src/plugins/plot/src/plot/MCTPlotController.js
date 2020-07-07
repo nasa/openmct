@@ -129,8 +129,8 @@ define([
 
             //  set yAxisLabel if none is set yet
             if (this.$scope.yAxisLabel === 'none') {
-                let yKey = this.$scope.series[0].model.yKey,
-                    yKeyModel = this.$scope.yKeyOptions.filter(o => o.key === yKey)[0];
+                let yKey = this.$scope.series[0].model.yKey;
+                let yKeyModel = this.$scope.yKeyOptions.filter(o => o.key === yKey)[0];
 
                 this.$scope.yAxisLabel = yKeyModel.name;
             }
@@ -333,8 +333,8 @@ define([
     };
 
     MCTPlotController.prototype.zoom = function (zoomDirection, zoomFactor) {
-        var currentXaxis = this.$scope.xAxis.get('displayRange'),
-            currentYaxis = this.$scope.yAxis.get('displayRange');
+        var currentXaxis = this.$scope.xAxis.get('displayRange');
+        var currentYaxis = this.$scope.yAxis.get('displayRange');
 
         // when there is no plot data, the ranges can be undefined
         // in which case we should not perform zoom
@@ -345,8 +345,8 @@ define([
         this.freeze();
         this.trackHistory();
 
-        var xAxisDist= (currentXaxis.max - currentXaxis.min) * zoomFactor,
-            yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
+        var xAxisDist= (currentXaxis.max - currentXaxis.min) * zoomFactor;
+        var yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
         if (zoomDirection === 'in') {
             this.$scope.xAxis.set('displayRange', {
@@ -381,8 +381,8 @@ define([
             return;
         }
 
-        let xDisplayRange = this.$scope.xAxis.get('displayRange'),
-            yDisplayRange = this.$scope.yAxis.get('displayRange');
+        let xDisplayRange = this.$scope.xAxis.get('displayRange');
+        let yDisplayRange = this.$scope.yAxis.get('displayRange');
 
         // when there is no plot data, the ranges can be undefined
         // in which case we should not perform zoom
@@ -393,16 +393,16 @@ define([
         this.freeze();
         window.clearTimeout(this.stillZooming);
 
-        let xAxisDist = (xDisplayRange.max - xDisplayRange.min),
-            yAxisDist = (yDisplayRange.max - yDisplayRange.min),
-            xDistMouseToMax = xDisplayRange.max - this.positionOverPlot.x,
-            xDistMouseToMin = this.positionOverPlot.x - xDisplayRange.min,
-            yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y,
-            yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min,
-            xAxisMaxDist = xDistMouseToMax / xAxisDist,
-            xAxisMinDist = xDistMouseToMin / xAxisDist,
-            yAxisMaxDist = yDistMouseToMax / yAxisDist,
-            yAxisMinDist = yDistMouseToMin / yAxisDist;
+        let xAxisDist = (xDisplayRange.max - xDisplayRange.min);
+        let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
+        let xDistMouseToMax = xDisplayRange.max - this.positionOverPlot.x;
+        let xDistMouseToMin = this.positionOverPlot.x - xDisplayRange.min;
+        let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y;
+        let yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min;
+        let xAxisMaxDist = xDistMouseToMax / xAxisDist;
+        let xAxisMinDist = xDistMouseToMin / xAxisDist;
+        let yAxisMaxDist = yDistMouseToMax / yAxisDist;
+        let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
         let plotHistoryStep;
 
@@ -460,10 +460,10 @@ define([
         if (!this.pan) {
             return;
         }
-        var dX = this.pan.start.x - this.positionOverPlot.x,
-            dY = this.pan.start.y - this.positionOverPlot.y,
-            xRange = this.config.xAxis.get('displayRange'),
-            yRange = this.config.yAxis.get('displayRange');
+        var dX = this.pan.start.x - this.positionOverPlot.x;
+        var dY = this.pan.start.y - this.positionOverPlot.y;
+        var xRange = this.config.xAxis.get('displayRange');
+        var yRange = this.config.yAxis.get('displayRange');
 
         this.config.xAxis.set('displayRange', {
             min: xRange.min + dX,

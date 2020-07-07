@@ -28,8 +28,8 @@ define(
     function (PartialConstructor) {
 
         describe("A partial constructor", function () {
-            var result,
-                PartializedConstructor;
+            var result;
+            var PartializedConstructor;
 
             function RegularConstructor(a, b, c, d) {
                 result = {
@@ -53,8 +53,8 @@ define(
             });
 
             it("splits a constructor call into two stages", function () {
-                var RemainingConstructor = new PartializedConstructor("test"),
-                    instance;
+                var RemainingConstructor = new PartializedConstructor("test");
+                var instance;
                 // first call should not have hit constructor
                 expect(result).toBeUndefined();
 
@@ -72,9 +72,9 @@ define(
             });
 
             it("handles this-style constructors", function () {
-                var Partialized = new PartialConstructor(ThisStyleConstructor),
-                    Remaining = new Partialized("this"),
-                    instance = new Remaining("is", "correct");
+                var Partialized = new PartialConstructor(ThisStyleConstructor);
+                var Remaining = new Partialized("this");
+                var instance = new Remaining("is", "correct");
 
                 // We should have everything we put in "this", and we
                 // should still pass an instanceof test.g

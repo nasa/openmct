@@ -25,16 +25,17 @@ define(
     function (Identifier) {
 
         describe("A parsed domain object identifier", function () {
-            var id,
-                defaultSpace,
-                identifier;
+            var id;
+            var defaultSpace;
+            var identifier;
 
             beforeEach(function () {
                 defaultSpace = "someDefaultSpace";
             });
 
             describe("when space is encoded", function () {
-                var idSpace, idKey;
+                var idSpace;
+                var idKey;
 
                 beforeEach(function () {
                     idSpace = "a-specific-space";

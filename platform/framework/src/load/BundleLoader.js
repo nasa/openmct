@@ -28,9 +28,9 @@ define(
     function (Constants, Bundle) {
 
         var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; " +
-            "expected string or array",
-            BAD_CONTENTS_PREFIX = "Invalid bundle contents for ",
-            LOAD_ERROR_PREFIX = "Failed to load bundle ";
+            "expected string or array";
+        var BAD_CONTENTS_PREFIX = "Invalid bundle contents for ";
+        var LOAD_ERROR_PREFIX = "Failed to load bundle ";
 
         /**
          * Loads bundle definitions and wraps them in interfaces which are
@@ -57,9 +57,9 @@ define(
          * @returns {Promise.<Bundle[]>} a promise for the loaded bundles
          */
         BundleLoader.prototype.loadBundles = function (bundles) {
-            var $http = this.$http,
-                $log = this.$log,
-                legacyRegistry = this.legacyRegistry;
+            var $http = this.$http;
+            var $log = this.$log;
+            var legacyRegistry = this.legacyRegistry;
 
             // Utility function; load contents of JSON file using $http
             function getJSON(file) {

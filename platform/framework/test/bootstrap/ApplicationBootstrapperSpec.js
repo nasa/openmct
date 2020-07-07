@@ -29,12 +29,12 @@ define(
 
         describe("The application bootstrapper", function () {
             // Test support variables
-            var bootstrapper,
-                captured,
-                mockAngular,
-                mockDocument,
-                mockLog,
-                mockApp;
+            var bootstrapper;
+            var captured;
+            var mockAngular;
+            var mockDocument;
+            var mockLog;
+            var mockApp;
 
             // Used to capture arguments to mocks
             function capture() {

@@ -22,14 +22,14 @@
 
 define(['./TimeAPI'], function (TimeAPI) {
     describe("The Time API", function () {
-        var api,
-            timeSystemKey,
-            timeSystem,
-            clockKey,
-            clock,
-            bounds,
-            eventListener,
-            toi;
+        var api;
+        var timeSystemKey;
+        var timeSystem;
+        var clockKey;
+        var clock;
+        var bounds;
+        var eventListener;
+        var toi;
 
         beforeEach(function () {
             api = new TimeAPI();

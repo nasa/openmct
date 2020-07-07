@@ -58,11 +58,11 @@ define(
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {
-            var persistenceService = this.persistenceService,
-                $q = this.$q,
-                now = this.now,
-                defaultSpace = this.defaultSpace,
-                parsedIds;
+            var persistenceService = this.persistenceService;
+            var $q = this.$q;
+            var now = this.now;
+            var defaultSpace = this.defaultSpace;
+            var parsedIds;
 
             // Load a single object model from any persistence spaces
             function loadModel(parsedId) {

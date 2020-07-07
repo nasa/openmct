@@ -1,6 +1,8 @@
 define(['../../src/input/Palette'], function (Palette) {
     describe('A generic Open MCT palette input', function () {
-        var palette, callbackSpy1, callbackSpy2;
+        var palette;
+        var callbackSpy1;
+        var callbackSpy2;
 
         beforeEach(function () {
             palette = new Palette('someClass', 'someContainer', ['item1', 'item2', 'item3']);

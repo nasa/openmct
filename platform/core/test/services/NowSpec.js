@@ -28,9 +28,9 @@ define(
             var now = new Now();
 
             it("reports system time", function () {
-                var a = Date.now(),
-                    b = now(),
-                    c = Date.now();
+                var a = Date.now();
+                var b = now();
+                var c = Date.now();
 
                 // Clock could, in principle, tick between evaluating the
                 // expressions above. We can't predict or prevent this but

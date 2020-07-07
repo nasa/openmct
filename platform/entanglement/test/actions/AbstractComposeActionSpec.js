@@ -31,16 +31,16 @@ define(
 
         describe("Move/copy/link Actions", function () {
 
-            var action,
-                policyService,
-                locationService,
-                locationServicePromise,
-                composeService,
-                context,
-                selectedObject,
-                selectedObjectContextCapability,
-                currentParent,
-                newParent;
+            var action;
+            var policyService;
+            var locationService;
+            var locationServicePromise;
+            var composeService;
+            var context;
+            var selectedObject;
+            var selectedObjectContextCapability;
+            var currentParent;
+            var newParent;
 
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(

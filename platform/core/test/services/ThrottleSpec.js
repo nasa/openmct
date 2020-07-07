@@ -25,10 +25,10 @@ define(
     function (Throttle) {
 
         describe("The 'throttle' service", function () {
-            var throttle,
-                mockTimeout,
-                mockFn,
-                mockPromise;
+            var throttle;
+            var mockTimeout;
+            var mockFn;
+            var mockPromise;
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");

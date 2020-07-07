@@ -25,10 +25,10 @@ define([
     RootRegistry
 ) {
     describe('RootRegistry', function () {
-        var idA,
-            idB,
-            idC,
-            registry;
+        var idA;
+        var idB;
+        var idC;
+        var registry;
 
         beforeEach(function () {
             idA = {key: 'keyA', namespace: 'something'};

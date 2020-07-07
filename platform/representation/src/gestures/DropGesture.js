@@ -39,13 +39,13 @@ define(
          *        composition should be modified as a result of the drop.
          */
         function DropGesture(dndService, $q, element, domainObject) {
-            var actionCapability = domainObject.getCapability('action'),
-                action; // Action for the drop, when it occurs
+            var actionCapability = domainObject.getCapability('action');
+            var action; // Action for the drop, when it occurs
 
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
-                var rect,
-                    scope = element.scope && element.scope();
+                var rect;
+                var scope = element.scope && element.scope();
 
                 if (scope && scope.$broadcast) {
                     // Get the representation's bounds, to convert
@@ -67,10 +67,10 @@ define(
             }
 
             function dragOver(e) {
-                var event = (e || {}).originalEvent || e,
-                    selectedObject = dndService.getData(
-                        GestureConstants.MCT_EXTENDED_DRAG_TYPE
-                    );
+                var event = (e || {}).originalEvent || e;
+                var selectedObject = dndService.getData(
+                    GestureConstants.MCT_EXTENDED_DRAG_TYPE
+                );
 
                 if (selectedObject) {
                     // TODO: Vary this based on modifier keys
@@ -89,8 +89,8 @@ define(
             }
 
             function drop(e) {
-                var event = (e || {}).originalEvent || e,
-                    id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE);
+                var event = (e || {}).originalEvent || e;
+                var id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE);
 
                 // Handle the drop; add the dropped identifier to the
                 // destination domain object's composition, and persist

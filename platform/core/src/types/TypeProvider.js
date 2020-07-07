@@ -45,8 +45,8 @@ define(
          * @returns {Type[]} all known types
          */
 
-        var TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
-            TO_MERGE = ['model'];
+        var TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'];
+        var TO_MERGE = ['model'];
 
         function copyKeys(a, b) {
             Object.keys(b).forEach(function (k) {
@@ -111,17 +111,17 @@ define(
          * @constructor
          */
         function TypeProvider(types) {
-            var rawTypeDefinitions = types,
-                typeDefinitions = (function (typeDefArray) {
-                    var result = {};
-                    typeDefArray.forEach(function (typeDef) {
-                        var k = typeDef.key;
-                        if (k) {
-                            result[k] = (result[k] || []).concat(typeDef);
-                        }
-                    });
-                    return result;
-                }(rawTypeDefinitions));
+            var rawTypeDefinitions = types;
+            var typeDefinitions = (function (typeDefArray) {
+                var result = {};
+                typeDefArray.forEach(function (typeDef) {
+                    var k = typeDef.key;
+                    if (k) {
+                        result[k] = (result[k] || []).concat(typeDef);
+                    }
+                });
+                return result;
+            }(rawTypeDefinitions));
 
 
             this.typeMap = {};
@@ -143,8 +143,8 @@ define(
         };
 
         TypeProvider.prototype.getType = function (key) {
-            var typeDefinitions = this.typeDefinitions,
-                self = this;
+            var typeDefinitions = this.typeDefinitions;
+            var self = this;
 
             function getUndefinedType() {
                 return (self.undefinedType = self.undefinedType || collapse(
@@ -160,17 +160,17 @@ define(
 
             function lookupTypeDef(typeKey) {
                 function buildTypeDef(typeKeyToBuild) {
-                    var typeDefs = typeDefinitions[typeKeyToBuild] || [],
-                        inherits = typeDefs.map(function (typeDef) {
-                            return asArray(typeDef.inherits || []);
-                        }).reduce(function (a, b) {
-                            return a.concat(b);
-                        }, []),
-                        def = collapse(
-                            [getUndefinedType()].concat(
-                                inherits.map(lookupTypeDef)
-                            ).concat(typeDefs)
-                        );
+                    var typeDefs = typeDefinitions[typeKeyToBuild] || [];
+                    var inherits = typeDefs.map(function (typeDef) {
+                        return asArray(typeDef.inherits || []);
+                    }).reduce(function (a, b) {
+                        return a.concat(b);
+                    }, []);
+                    var def = collapse(
+                        [getUndefinedType()].concat(
+                            inherits.map(lookupTypeDef)
+                        ).concat(typeDefs)
+                    );
 
                     // Always provide a default name
                     def.model = def.model || {};

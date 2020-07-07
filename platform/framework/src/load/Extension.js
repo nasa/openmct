@@ -54,8 +54,8 @@ define(
          * @constructor
          */
         function Extension(bundle, category, definition) {
-            var logName = category,
-                extensionDefinition = {};
+            var logName = category;
+            var extensionDefinition = {};
 
             // Build up the log-friendly name for this bundle
             if (definition.key || definition.name) {

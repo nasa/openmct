@@ -30,14 +30,14 @@ define(
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                statusClass: "s-status-on"
-            },
-            PENDING = {
-                statusClass: "s-status-warning-lo"
-            },
-            DISCONNECTED = {
-                statusClass: "s-status-warning-hi"
-            };
+            statusClass: "s-status-on"
+        };
+        var PENDING = {
+            statusClass: "s-status-warning-lo"
+        };
+        var DISCONNECTED = {
+            statusClass: "s-status-warning-hi"
+        };
         function URLIndicator(options, simpleIndicator) {
             this.bindMethods();
             this.count = 0;

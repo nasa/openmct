@@ -228,8 +228,8 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
-                        bounds = this.openmct.time.bounds();
+                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]);
+                    let bounds = this.openmct.time.bounds();
 
                     if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);

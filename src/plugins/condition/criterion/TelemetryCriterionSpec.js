@@ -22,11 +22,11 @@
 
 import TelemetryCriterion from "./TelemetryCriterion";
 
-let openmct = {},
-    mockListener,
-    testCriterionDefinition,
-    testTelemetryObject,
-    telemetryCriterion;
+let openmct = {};
+let mockListener;
+let testCriterionDefinition;
+let testTelemetryObject;
+let telemetryCriterion;
 
 describe("The telemetry criterion", function () {
 

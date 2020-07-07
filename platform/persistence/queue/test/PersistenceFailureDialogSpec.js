@@ -26,8 +26,8 @@ define(
     function (PersistenceFailureDialog, Constants) {
 
         describe("The persistence failure dialog", function () {
-            var testFailures,
-                dialog;
+            var testFailures;
+            var dialog;
 
             beforeEach(function () {
                 testFailures = [

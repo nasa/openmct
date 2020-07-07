@@ -28,7 +28,8 @@ define(
     function (IdentityProvider) {
 
         describe("IdentityProvider", function () {
-            var mockQ, provider;
+            var mockQ;
+            var provider;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj('$q', ['when']);

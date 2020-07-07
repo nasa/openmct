@@ -28,21 +28,21 @@ define(
     function (DomainObject) {
 
         describe("A domain object", function () {
-            var testId = "test id",
-                testModel = { someKey: "some value"},
-                testCapabilities = {
-                    "static": "some static capability",
-                    "dynamic": function (domainObject) {
-                        return "Dynamically generated for " +
-                                    domainObject.getId();
-                    },
-                    "invokable": {
-                        invoke: function (arg) {
-                            return "invoked with " + arg;
-                        }
-                    }
+            var testId = "test id";
+            var testModel = { someKey: "some value"};
+            var testCapabilities = {
+                "static": "some static capability",
+                "dynamic": function (domainObject) {
+                    return "Dynamically generated for " +
+                                domainObject.getId();
                 },
-                domainObject;
+                "invokable": {
+                    invoke: function (arg) {
+                        return "invoked with " + arg;
+                    }
+                }
+            };
+            var domainObject;
 
             beforeEach(function () {
                 domainObject = new DomainObject(

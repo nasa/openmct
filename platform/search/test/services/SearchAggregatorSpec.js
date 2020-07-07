@@ -28,10 +28,10 @@ define([
 ], function (SearchAggregator) {
 
     describe("SearchAggregator", function () {
-        var $q,
-            objectService,
-            providers,
-            aggregator;
+        var $q;
+        var objectService;
+        var providers;
+        var aggregator;
 
         beforeEach(function () {
             $q = jasmine.createSpyObj(
@@ -57,13 +57,13 @@ define([
 
         it("can order model results by score", function () {
             var modelResults = {
-                    hits: [
-                        {score: 1},
-                        {score: 23},
-                        {score: 11}
-                    ]
-                },
-                sorted = aggregator.orderByScore(modelResults);
+                hits: [
+                    {score: 1},
+                    {score: 23},
+                    {score: 11}
+                ]
+            };
+            var sorted = aggregator.orderByScore(modelResults);
 
             expect(sorted.hits).toEqual([
                 {score: 23},
@@ -74,13 +74,13 @@ define([
 
         it('filters results without a function', function () {
             var modelResults = {
-                    hits: [
-                        {thing: 1},
-                        {thing: 2}
-                    ],
-                    total: 2
-                },
-                filtered = aggregator.applyFilter(modelResults);
+                hits: [
+                    {thing: 1},
+                    {thing: 2}
+                ],
+                total: 2
+            };
+            var filtered = aggregator.applyFilter(modelResults);
 
             expect(filtered.hits).toEqual([
                 {thing: 1},
@@ -113,15 +113,15 @@ define([
 
         it('can remove duplicates', function () {
             var modelResults = {
-                    hits: [
-                        {id: 15},
-                        {id: 23},
-                        {id: 14},
-                        {id: 23}
-                    ],
-                    total: 4
-                },
-                deduped = aggregator.removeDuplicates(modelResults);
+                hits: [
+                    {id: 15},
+                    {id: 23},
+                    {id: 14},
+                    {id: 23}
+                ],
+                total: 4
+            };
+            var deduped = aggregator.removeDuplicates(modelResults);
 
             expect(deduped.hits).toEqual([
                 {id: 15},
@@ -133,16 +133,16 @@ define([
 
         it('can convert model results to object results', function () {
             var modelResults = {
-                    hits: [
-                        {id: 123, score: 5},
-                        {id: 234, score: 1}
-                    ],
-                    total: 2
-                },
-                objects = {
-                    123: '123-object-hey',
-                    234: '234-object-hello'
-                };
+                hits: [
+                    {id: 123, score: 5},
+                    {id: 234, score: 1}
+                ],
+                total: 2
+            };
+            var objects = {
+                123: '123-object-hey',
+                234: '234-object-hello'
+            };
 
             objectService.getObjects.and.returnValue(Promise.resolve(objects));
 

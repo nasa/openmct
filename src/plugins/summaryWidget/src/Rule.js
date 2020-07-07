@@ -328,9 +328,9 @@ define([
      * registered remove callbacks
      */
     Rule.prototype.remove = function () {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            self = this;
+        var ruleOrder = this.domainObject.configuration.ruleOrder;
+        var ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        var self = this;
 
         ruleConfigById[self.config.id] = undefined;
         _.remove(ruleOrder, function (ruleId) {
@@ -362,15 +362,15 @@ define([
      *                          consisting of sourceCondition and index fields
      */
     Rule.prototype.initCondition = function (config) {
-        var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            newConfig,
-            sourceIndex = config && config.index,
-            defaultConfig = {
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            };
+        var ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        var newConfig;
+        var sourceIndex = config && config.index;
+        var defaultConfig = {
+            object: '',
+            key: '',
+            operation: '',
+            values: []
+        };
 
         newConfig = (config !== undefined ? config.sourceCondition : defaultConfig);
         if (sourceIndex !== undefined) {
@@ -388,10 +388,10 @@ define([
      * Build {Condition} objects from configuration and rebuild associated view
      */
     Rule.prototype.refreshConditions = function () {
-        var self = this,
-            $condition = null,
-            loopCnt = 0,
-            triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
+        var self = this;
+        var $condition = null;
+        var loopCnt = 0;
+        var triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
         $('.t-condition', this.domElement).remove();
@@ -431,8 +431,8 @@ define([
      * @param {number} removeIndex The index of the condition to remove
      */
     Rule.prototype.removeCondition = function (removeIndex) {
-        var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            conditions = ruleConfigById[this.config.id].conditions;
+        var ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        var conditions = ruleConfigById[this.config.id].conditions;
 
         _.remove(conditions, function (condition, index) {
             return index === removeIndex;
@@ -449,13 +449,13 @@ define([
      * Build a human-readable description from this rule's conditions
      */
     Rule.prototype.generateDescription = function () {
-        var description = '',
-            manager = this.conditionManager,
-            evaluator = manager.getEvaluator(),
-            name,
-            property,
-            operation,
-            self = this;
+        var description = '';
+        var manager = this.conditionManager;
+        var evaluator = manager.getEvaluator();
+        var name;
+        var property;
+        var operation;
+        var self = this;
 
         if (this.config.conditions && this.config.id !== 'default') {
             if (self.config.trigger === 'js') {

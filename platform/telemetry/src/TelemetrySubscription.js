@@ -76,10 +76,10 @@ define(
          *        the callback once, with access to the latest data
          */
         function TelemetrySubscription($q, $timeout, domainObject, callback, lossless) {
-            var self = this,
-                delegator = new TelemetryDelegator($q),
-                pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
-                updatePending;
+            var self = this;
+            var delegator = new TelemetryDelegator($q);
+            var pool = lossless ? new TelemetryQueue() : new TelemetryTable();
+            var updatePending;
 
             // Look up domain objects which have telemetry capabilities.
             // This will either be the object in view, or object that
@@ -232,9 +232,9 @@ define(
          * @private
          */
         TelemetrySubscription.prototype.makeDatum = function (domainObject, series, index) {
-            var id = domainObject && domainObject.getId(),
-                metadata = (id && this.metadataById[id]) || {},
-                result = {};
+            var id = domainObject && domainObject.getId();
+            var metadata = (id && this.metadataById[id]) || {};
+            var result = {};
 
             (metadata.domains || []).forEach(function (domain) {
                 result[domain.key] =
@@ -289,8 +289,8 @@ define(
          * @returns the most recent domain value observed
          */
         TelemetrySubscription.prototype.getDomainValue = function (domainObject, key) {
-            var id = domainObject.getId(),
-                latestValue = this.latestValues[id];
+            var id = domainObject.getId();
+            var latestValue = this.latestValues[id];
             return latestValue && (key ?
                 latestValue.datum[key] :
                 latestValue.domain);
@@ -312,8 +312,8 @@ define(
          * @returns the most recent range value observed
          */
         TelemetrySubscription.prototype.getRangeValue = function (domainObject, key) {
-            var id = domainObject.getId(),
-                latestValue = this.latestValues[id];
+            var id = domainObject.getId();
+            var latestValue = this.latestValues[id];
             return latestValue && (key ?
                 latestValue.datum[key] :
                 latestValue.range);

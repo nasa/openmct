@@ -28,10 +28,10 @@ define(
     function (LocationService) {
 
         describe("LocationService", function () {
-            var dialogService,
-                locationService,
-                dialogServicePromise,
-                chainedPromise;
+            var dialogService;
+            var locationService;
+            var dialogServicePromise;
+            var chainedPromise;
 
             beforeEach(function () {
                 dialogService = jasmine.createSpyObj(
@@ -52,13 +52,13 @@ define(
             });
 
             describe("getLocationFromUser", function () {
-                var title,
-                    label,
-                    validate,
-                    initialLocation,
-                    locationResult,
-                    formStructure,
-                    formState;
+                var title;
+                var label;
+                var validate;
+                var initialLocation;
+                var locationResult;
+                var formStructure;
+                var formState;
 
                 beforeEach(function () {
                     title = "Get a location to do something";
@@ -96,8 +96,8 @@ define(
                 });
 
                 describe("formStructure", function () {
-                    var locationSection,
-                        inputRow;
+                    var locationSection;
+                    var inputRow;
 
                     beforeEach(function () {
                         locationSection = formStructure.sections[0];
@@ -124,10 +124,10 @@ define(
                 });
 
                 describe("resolution of dialog service promise", function () {
-                    var resolution,
-                        resolver,
-                        dialogResult,
-                        selectedLocation;
+                    var resolution;
+                    var resolver;
+                    var dialogResult;
+                    var selectedLocation;
 
                     beforeEach(function () {
                         resolver =

@@ -33,8 +33,8 @@ function (
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 
-        var domElement = $(this.palette.getDOM()),
-            self = this;
+        var domElement = $(this.palette.getDOM());
+        var self = this;
 
         $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('color-swatch');

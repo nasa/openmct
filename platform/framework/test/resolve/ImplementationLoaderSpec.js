@@ -28,8 +28,8 @@ define(
     function (ImplementationLoader) {
 
         describe("The implementation loader", function () {
-            var required,
-                loader;
+            var required;
+            var loader;
 
             function mockRequire(names, fulfill, reject) {
                 required = {
@@ -61,8 +61,8 @@ define(
             });
 
             it("wraps require results in a Promise that can reject", function () {
-                var result,
-                    rejection;
+                var result;
+                var rejection;
 
                 // Load and get the result
                 var promise = loader.load("xyz.js").then(

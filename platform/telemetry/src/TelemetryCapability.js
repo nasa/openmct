@@ -136,18 +136,18 @@ define(
         TelemetryCapability.prototype.buildRequest = function (request) {
             // Start with any "telemetry" field in type; use that as a
             // basis for the request.
-            var domainObject = this.domainObject,
-                type = domainObject.getCapability("type"),
-                typeRequest = (type && type.getDefinition().telemetry) || {},
-                modelTelemetry = domainObject.getModel().telemetry,
-                fullRequest = Object.create(typeRequest),
-                newObject = objectUtils.toNewFormat(
-                    domainObject.getModel(),
-                    domainObject.getId()
-                ),
-                metadata = this.openmct.telemetry.getMetadata(newObject),
-                bounds,
-                timeSystem;
+            var domainObject = this.domainObject;
+            var type = domainObject.getCapability("type");
+            var typeRequest = (type && type.getDefinition().telemetry) || {};
+            var modelTelemetry = domainObject.getModel().telemetry;
+            var fullRequest = Object.create(typeRequest);
+            var newObject = objectUtils.toNewFormat(
+                domainObject.getModel(),
+                domainObject.getId()
+            );
+            var metadata = this.openmct.telemetry.getMetadata(newObject);
+            var bounds;
+            var timeSystem;
 
             // Add properties from the telemetry field of this
             // specific domain object.
@@ -312,9 +312,10 @@ define(
 
             // Unpack the relevant telemetry series
             function updateLegacy(telemetries) {
-                var source = fullRequest.source,
-                    key = fullRequest.key,
-                    result = ((telemetries || {})[source] || {})[key];
+                var source = fullRequest.source;
+                var key = fullRequest.key;
+                var result = ((telemetries || {})[source] || {})[key];
+
                 if (result) {
                     callback(result);
                 }

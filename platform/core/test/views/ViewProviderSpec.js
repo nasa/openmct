@@ -29,23 +29,23 @@ define(
 
         describe("The view provider", function () {
             var viewA = {
-                    key: "a"
-                },
-                viewB = {
-                    key: "b",
-                    needs: ["someCapability"]
-                },
-                viewC = {
-                    key: "c",
-                    needs: ["someCapability"],
-                    delegation: true
-                },
-                capabilities = {},
-                delegates = {},
-                delegation,
-                mockDomainObject = {},
-                mockLog,
-                provider;
+                key: "a"
+            };
+            var viewB = {
+                key: "b",
+                needs: ["someCapability"]
+            };
+            var viewC = {
+                key: "c",
+                needs: ["someCapability"],
+                delegation: true
+            };
+            var capabilities = {};
+            var delegates = {};
+            var delegation;
+            var mockDomainObject = {};
+            var mockLog;
+            var provider;
 
             beforeEach(function () {
                 // Simulate the expected API
@@ -107,9 +107,9 @@ define(
             });
 
             it("restricts typed views to matching types", function () {
-                var testType = "testType",
-                    testView = { key: "x", type: testType },
-                    viewProvider = new ViewProvider([testView], mockLog);
+                var testType = "testType";
+                var testView = { key: "x", type: testType };
+                var viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(
@@ -133,8 +133,8 @@ define(
             });
 
             it("enforces view restrictions from types", function () {
-                var testView = { key: "x" },
-                    viewProvider = new ViewProvider([testView], mockLog);
+                var testView = { key: "x" };
+                var viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(

@@ -124,19 +124,19 @@ define(
                     return;
                 }
 
-                var errorDialog,
-                    errorMessage = {
-                        title: "Error copying objects.",
-                        severity: "error",
-                        hint: errorDetails.message,
-                        minimized: true, // want the notification to be minimized initially (don't show banner)
-                        options: [{
-                            label: "OK",
-                            callback: function () {
-                                errorDialog.dismiss();
-                            }
-                        }]
-                    };
+                var errorDialog;
+                var errorMessage = {
+                    title: "Error copying objects.",
+                    severity: "error",
+                    hint: errorDetails.message,
+                    minimized: true, // want the notification to be minimized initially (don't show banner)
+                    options: [{
+                        label: "OK",
+                        callback: function () {
+                            errorDialog.dismiss();
+                        }
+                    }]
+                };
 
                 self.dialog.dismiss();
                 if (self.notification) {

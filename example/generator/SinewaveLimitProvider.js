@@ -28,39 +28,39 @@ define([
 ) {
 
     var RED = {
-            sin: 0.9,
-            cos: 0.9
+        sin: 0.9,
+        cos: 0.9
+    };
+    var YELLOW = {
+        sin: 0.5,
+        cos: 0.5
+    };
+    var LIMITS = {
+        rh: {
+            cssClass: "is-limit--upr is-limit--red",
+            low: RED,
+            high: Number.POSITIVE_INFINITY,
+            name: "Red High"
         },
-        YELLOW = {
-            sin: 0.5,
-            cos: 0.5
+        rl: {
+            cssClass: "is-limit--lwr is-limit--red",
+            high: -RED,
+            low: Number.NEGATIVE_INFINITY,
+            name: "Red Low"
         },
-        LIMITS = {
-            rh: {
-                cssClass: "is-limit--upr is-limit--red",
-                low: RED,
-                high: Number.POSITIVE_INFINITY,
-                name: "Red High"
-            },
-            rl: {
-                cssClass: "is-limit--lwr is-limit--red",
-                high: -RED,
-                low: Number.NEGATIVE_INFINITY,
-                name: "Red Low"
-            },
-            yh: {
-                cssClass: "is-limit--upr is-limit--yellow",
-                low: YELLOW,
-                high: RED,
-                name: "Yellow High"
-            },
-            yl: {
-                cssClass: "is-limit--lwr is-limit--yellow",
-                low: -RED,
-                high: -YELLOW,
-                name: "Yellow Low"
-            }
-        };
+        yh: {
+            cssClass: "is-limit--upr is-limit--yellow",
+            low: YELLOW,
+            high: RED,
+            name: "Yellow High"
+        },
+        yl: {
+            cssClass: "is-limit--lwr is-limit--yellow",
+            low: -RED,
+            high: -YELLOW,
+            name: "Yellow Low"
+        }
+    };
 
     function SinewaveLimitProvider() {
 

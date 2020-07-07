@@ -34,8 +34,8 @@ define(
          *        for user input
          */
         function DialogButtonController($scope, dialogService) {
-            var self = this,
-                buttonForm;
+            var self = this;
+            var buttonForm;
 
             // Store the result of user input to the model
             function storeResult(result) {

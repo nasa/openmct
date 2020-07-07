@@ -40,23 +40,23 @@ define([], function () {
     }
 
     ExportTelemetryAsCSVAction.prototype.perform = function () {
-        var context = this.context,
-            domainObject = context.domainObject,
-            telemetry = domainObject.getCapability("telemetry"),
-            metadata = telemetry.getMetadata(),
-            domains = metadata.domains,
-            ranges = metadata.ranges,
-            exportService = this.exportService;
+        var context = this.context;
+        var domainObject = context.domainObject;
+        var telemetry = domainObject.getCapability("telemetry");
+        var metadata = telemetry.getMetadata();
+        var domains = metadata.domains;
+        var ranges = metadata.ranges;
+        var exportService = this.exportService;
 
         function getName(domainOrRange) {
             return domainOrRange.name;
         }
 
         telemetry.requestData({}).then(function (series) {
-            var headers = domains.map(getName).concat(ranges.map(getName)),
-                rows = [],
-                row,
-                i;
+            var headers = domains.map(getName).concat(ranges.map(getName));
+            var rows = [];
+            var row;
+            var i;
 
             function copyDomainsToRow(telemetryRow, index) {
                 domains.forEach(function (domain) {

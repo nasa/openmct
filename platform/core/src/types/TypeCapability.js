@@ -42,8 +42,8 @@ define(
          *        which exposes the type capability
          */
         function TypeCapability(typeService, domainObject) {
-            var typeKey = domainObject.getModel().type,
-                type = typeService.getType(typeKey);
+            var typeKey = domainObject.getModel().type;
+            var type = typeService.getType(typeKey);
 
             // Simply return the type, but wrap with Object.create
             // to avoid exposing the type object directly.

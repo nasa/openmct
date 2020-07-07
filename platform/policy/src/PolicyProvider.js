@@ -114,8 +114,8 @@ define(
         }
 
         PolicyProvider.prototype.allow = function (category, candidate, context, callback) {
-            var policyList = this.policyMap[category] || [],
-                i;
+            var policyList = this.policyMap[category] || [];
+            var i;
 
             // Iterate through policies. We do this instead of map or
             // forEach so that we can return immediately if a policy

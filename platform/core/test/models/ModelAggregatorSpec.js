@@ -28,13 +28,13 @@ define(
     function (ModelAggregator) {
 
         describe("The model aggregator", function () {
-            var mockQ,
-                mockProviders,
-                modelList = [
-                    { "a": { someKey: "some value" }, "b": undefined },
-                    { "b": { someOtherKey: "some other value" }, "a": undefined }
-                ],
-                aggregator;
+            var mockQ;
+            var mockProviders;
+            var modelList = [
+                { "a": { someKey: "some value" }, "b": undefined },
+                { "b": { someOtherKey: "some other value" }, "a": undefined }
+            ];
+            var aggregator;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);

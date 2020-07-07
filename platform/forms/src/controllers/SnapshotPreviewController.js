@@ -52,9 +52,9 @@ define(
             $scope.annotateImage = function (ngModel, field, imageUrl) {
                 $scope.imageUrl = imageUrl;
 
-                let div = document.createElement('div'),
-                    painterroInstance = {},
-                    save = false;
+                let div = document.createElement('div');
+                let painterroInstance = {};
+                let save = false;
 
                 div.id = 'snap-annotation';
 
@@ -108,8 +108,8 @@ define(
                     },
                     saveHandler: function (image, done) {
                         if (save) {
-                            let url = image.asBlob(),
-                                reader = new window.FileReader();
+                            let url = image.asBlob();
+                            let reader = new window.FileReader();
 
                             reader.readAsDataURL(url);
                             reader.onloadend = function () {

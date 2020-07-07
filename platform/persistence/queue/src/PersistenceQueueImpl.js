@@ -59,10 +59,10 @@ define(
         // Schedule a flushing of the queue (that is, plan to flush
         // all objects in the queue)
         PersistenceQueueImpl.prototype.scheduleFlush = function () {
-            var self = this,
-                $timeout = this.$timeout,
-                $q = this.$q,
-                handler = this.handler;
+            var self = this;
+            var $timeout = this.$timeout;
+            var $q = this.$q;
+            var handler = this.handler;
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {

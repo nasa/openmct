@@ -30,9 +30,9 @@ define([
 ) {
 
     describe('ElasticSearchProvider', function () {
-        var $http,
-            ROOT,
-            provider;
+        var $http;
+        var ROOT;
+        var provider;
 
         beforeEach(function () {
             $http = jasmine.createSpy('$http');

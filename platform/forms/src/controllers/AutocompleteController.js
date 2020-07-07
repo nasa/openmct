@@ -33,11 +33,11 @@ define(
         function AutocompleteController($scope, $element) {
 
             var key = {
-                    down: 40,
-                    up: 38,
-                    enter: 13
-                },
-                autocompleteInputElement = $element[0].getElementsByClassName('autocompleteInput')[0];
+                down: 40,
+                up: 38,
+                enter: 13
+            };
+            var autocompleteInputElement = $element[0].getElementsByClassName('autocompleteInput')[0];
 
             if ($scope.options[0].name) {
                 // If "options" include name, value pair

@@ -51,8 +51,8 @@ define(
                  * @memberof platform/entanglement.LocationService#
                  */
                 getLocationFromUser: function (title, label, validate, initialLocation) {
-                    var formStructure,
-                        formState;
+                    var formStructure;
+                    var formState;
 
                     formStructure = {
                         sections: [

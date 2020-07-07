@@ -52,9 +52,9 @@ define(
          * @memberof platform/persistence/queue.PersistenceQueueHandler#
          */
         PersistenceQueueHandler.prototype.persist = function (persistences, domainObjects, queue) {
-            var ids = Object.keys(persistences),
-                $q = this.$q,
-                failureHandler = this.failureHandler;
+            var ids = Object.keys(persistences);
+            var $q = this.$q;
+            var failureHandler = this.failureHandler;
 
             // Handle a group of persistence invocations
             function persistGroup(groupIds, persistenceCaps, domainObjs, pQueue) {
@@ -64,8 +64,8 @@ define(
                 function tryPersist(id) {
                     // Look up its persistence capability from the provided
                     // id->persistence object.
-                    var persistence = persistenceCaps[id],
-                        domainObject = domainObjs[id];
+                    var persistence = persistenceCaps[id];
+                    var domainObject = domainObjs[id];
 
                     // Put a domain object back in the queue
                     // (e.g. after Overwrite)

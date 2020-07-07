@@ -78,8 +78,8 @@ define([
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
-        var id = objectUtils.makeKeyString(this.domainObject.identifier),
-            self = this;
+        var id = objectUtils.makeKeyString(this.domainObject.identifier);
+        var self = this;
 
         /**
          * Toggles the configuration area for test data in the view
@@ -186,9 +186,9 @@ define([
      * Update the view from the current rule configuration and order
      */
     SummaryWidget.prototype.refreshRules = function () {
-        var self = this,
-            ruleOrder = self.domainObject.configuration.ruleOrder,
-            rules = self.rulesById;
+        var self = this;
+        var ruleOrder = self.domainObject.configuration.ruleOrder;
+        var rules = self.rulesById;
         self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.ruleArea.append(rules[ruleId].getDOM());
@@ -238,9 +238,9 @@ define([
      * Add a new rule to this widget
      */
     SummaryWidget.prototype.addRule = function () {
-        var ruleCount = 0,
-            ruleId,
-            ruleOrder = this.domainObject.configuration.ruleOrder;
+        var ruleCount = 0;
+        var ruleId;
+        var ruleOrder = this.domainObject.configuration.ruleOrder;
 
         while (Object.keys(this.rulesById).includes('rule' + ruleCount)) {
             ruleCount++;
@@ -263,11 +263,11 @@ define([
      *                              instantiated
      */
     SummaryWidget.prototype.duplicateRule = function (sourceConfig) {
-        var ruleCount = 0,
-            ruleId,
-            sourceRuleId = sourceConfig.id,
-            ruleOrder = this.domainObject.configuration.ruleOrder,
-            ruleIds = Object.keys(this.rulesById);
+        var ruleCount = 0;
+        var ruleId;
+        var sourceRuleId = sourceConfig.id;
+        var ruleOrder = this.domainObject.configuration.ruleOrder;
+        var ruleIds = Object.keys(this.rulesById);
 
         while (ruleIds.includes('rule' + ruleCount)) {
             ruleCount = ++ruleCount;
@@ -292,8 +292,8 @@ define([
      * @param {string} ruleName The initial human-readable name of this rule
      */
     SummaryWidget.prototype.initRule = function (ruleId, ruleName) {
-        var ruleConfig,
-            styleObj = {};
+        var ruleConfig;
+        var styleObj = {};
 
         Object.assign(styleObj, DEFAULT_PROPS);
         if (!this.domainObject.configuration.ruleConfigById[ruleId]) {
@@ -333,9 +333,9 @@ define([
      *                       and dropTarget fields
      */
     SummaryWidget.prototype.reorder = function (event) {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            sourceIndex = ruleOrder.indexOf(event.draggingId),
-            targetIndex;
+        var ruleOrder = this.domainObject.configuration.ruleOrder;
+        var sourceIndex = ruleOrder.indexOf(event.draggingId);
+        var targetIndex;
 
         if (event.draggingId !== event.dropTarget) {
             ruleOrder.splice(sourceIndex, 1);

@@ -22,16 +22,16 @@
 
 define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
     xdescribe('The Summary Widget', function () {
-        var summaryWidget,
-            mockDomainObject,
-            mockOldDomainObject,
-            mockOpenMCT,
-            mockObjectService,
-            mockStatusCapability,
-            mockComposition,
-            mockContainer,
-            listenCallback,
-            listenCallbackSpy;
+        var summaryWidget;
+        var mockDomainObject;
+        var mockOldDomainObject;
+        var mockOpenMCT;
+        var mockObjectService;
+        var mockStatusCapability;
+        var mockComposition;
+        var mockContainer;
+        var listenCallback;
+        var listenCallbackSpy;
 
         beforeEach(function () {
             mockDomainObject = {

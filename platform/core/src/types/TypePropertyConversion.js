@@ -25,23 +25,23 @@ define(
 
 
         var conversions = {
-                number: {
-                    toModelValue: parseFloat,
-                    toFormValue: function (modelValue) {
-                        return (typeof modelValue === 'number') ?
-                            modelValue.toString(10) : undefined;
-                    }
-                },
-                identity: {
-                    toModelValue: function (v) {
-                        return v;
-                    },
-                    toFormValue: function (v) {
-                        return v;
-                    }
+            number: {
+                toModelValue: parseFloat,
+                toFormValue: function (modelValue) {
+                    return (typeof modelValue === 'number') ?
+                        modelValue.toString(10) : undefined;
                 }
             },
-            ARRAY_SUFFIX = '[]';
+            identity: {
+                toModelValue: function (v) {
+                    return v;
+                },
+                toFormValue: function (v) {
+                    return v;
+                }
+            }
+        };
+        var ARRAY_SUFFIX = '[]';
 
         // Utility function to handle arrays of conversions
         function ArrayConversion(conversion) {

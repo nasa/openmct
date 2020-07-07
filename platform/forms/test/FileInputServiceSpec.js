@@ -25,8 +25,8 @@ define(
     function (FileInputService) {
 
         describe("The FileInputService", function () {
-            var fileInputService,
-                mockInput;
+            var fileInputService;
+            var mockInput;
 
             beforeEach(function () {
                 fileInputService = new FileInputService();

@@ -101,7 +101,8 @@ define(
         }
 
         AbstractComposeAction.prototype.cloneContext = function () {
-            var clone = {}, original = this.context;
+            var clone = {};
+            var original = this.context;
             Object.keys(original).forEach(function (k) {
                 clone[k] = original[k];
             });
@@ -109,15 +110,15 @@ define(
         };
 
         AbstractComposeAction.prototype.perform = function () {
-            var dialogTitle,
-                label,
-                validateLocation,
-                self = this,
-                locationService = this.locationService,
-                composeService = this.composeService,
-                currentParent = this.currentParent,
-                newParent = this.newParent,
-                object = this.object;
+            var dialogTitle;
+            var label;
+            var validateLocation;
+            var self = this;
+            var locationService = this.locationService;
+            var composeService = this.composeService;
+            var currentParent = this.currentParent;
+            var newParent = this.newParent;
+            var object = this.object;
 
             if (newParent) {
                 return composeService.perform(object, newParent);

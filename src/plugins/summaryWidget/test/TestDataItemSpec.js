@@ -1,14 +1,14 @@
 define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
     describe('A summary widget test data item', function () {
-        var testDataItem,
-            mockConfig,
-            mockConditionManager,
-            mockContainer,
-            mockEvaluator,
-            changeSpy,
-            duplicateSpy,
-            removeSpy,
-            generateValueSpy;
+        var testDataItem;
+        var mockConfig;
+        var mockConditionManager;
+        var mockContainer;
+        var mockEvaluator;
+        var changeSpy;
+        var duplicateSpy;
+        var removeSpy;
+        var generateValueSpy;
 
         beforeEach(function () {
             mockContainer = $(document.createElement('div'));

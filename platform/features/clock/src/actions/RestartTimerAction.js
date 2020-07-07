@@ -53,8 +53,8 @@ define(
         };
 
         RestartTimerAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
-                now = this.now;
+            var domainObject = this.domainObject;
+            var now = this.now;
 
             function updateModel(model) {
                 model.timestamp = now();

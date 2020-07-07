@@ -83,10 +83,10 @@ define ([
      * @return {string} The ID of the rule to display on the widget
      */
     ConditionManager.prototype.executeRules = function (ruleOrder, rules) {
-        var self = this,
-            activeId = ruleOrder[0],
-            rule,
-            conditions;
+        var self = this;
+        var activeId = ruleOrder[0];
+        var rule;
+        var conditions;
 
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
@@ -185,11 +185,11 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionAdd = function (obj) {
-        var compositionKeys,
-            telemetryAPI = this.openmct.telemetry,
-            objId = objectUtils.makeKeyString(obj.identifier),
-            telemetryMetadata,
-            self = this;
+        var compositionKeys;
+        var telemetryAPI = this.openmct.telemetry;
+        var objId = objectUtils.makeKeyString(obj.identifier);
+        var telemetryMetadata;
+        var self = this;
 
         if (telemetryAPI.isTelemetryObject(obj)) {
             self.compositionObjs[objId] = obj;

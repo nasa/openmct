@@ -99,9 +99,9 @@ define(
             // Issue a request for new telemetry for one of the
             // objects being tracked by this controller
             function requestTelemetryForId(id, trackPending) {
-                var responseObject = self.response[id],
-                    domainObject = responseObject.domainObject,
-                    telemetry = domainObject.getCapability('telemetry');
+                var responseObject = self.response[id];
+                var domainObject = responseObject.domainObject;
+                var telemetry = domainObject.getCapability('telemetry');
 
                 // Callback for when data comes back
                 function storeData(data) {
@@ -176,8 +176,8 @@ define(
                     "telemetry"
                 )).then(function (result) {
                     var head = domainObject.hasCapability("telemetry") ?
-                            [domainObject] : [],
-                        tail = result || [];
+                        [domainObject] : [];
+                    var tail = result || [];
                     return head.concat(tail);
                 });
             }
@@ -187,9 +187,9 @@ define(
             // a given domain object.
             function buildResponseContainer(domainObject) {
                 var telemetry = domainObject &&
-                        domainObject.getCapability("telemetry"),
-                    id,
-                    metadata;
+                        domainObject.getCapability("telemetry");
+                var id;
+                var metadata;
 
                 if (telemetry) {
                     id = domainObject.getId();

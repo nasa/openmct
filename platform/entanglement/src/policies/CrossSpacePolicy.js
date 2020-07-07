@@ -44,8 +44,8 @@ define(
         }
 
         function isCrossSpace(context) {
-            var domainObject = context.domainObject,
-                selectedObject = context.selectedObject;
+            var domainObject = context.domainObject;
+            var selectedObject = context.selectedObject;
             return selectedObject !== undefined &&
                 domainObject !== undefined &&
                 lookupSpace(domainObject) !== lookupSpace(selectedObject);

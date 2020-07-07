@@ -25,24 +25,24 @@ define(
     function () {
         "use strict";
 
-        var DEFAULT_IDENTITY = { key: "user", name: "Example User" },
-            DIALOG_STRUCTURE = {
-                name: "Identify Yourself",
-                sections: [{ rows: [
-                    {
-                        name: "User ID",
-                        control: "textfield",
-                        key: "key",
-                        required: true
-                    },
-                    {
-                        name: "Human name",
-                        control: "textfield",
-                        key: "name",
-                        required: true
-                    }
-                ]}]
-            };
+        var DEFAULT_IDENTITY = { key: "user", name: "Example User" };
+        var DIALOG_STRUCTURE = {
+            name: "Identify Yourself",
+            sections: [{ rows: [
+                {
+                    name: "User ID",
+                    control: "textfield",
+                    key: "key",
+                    required: true
+                },
+                {
+                    name: "Human name",
+                    control: "textfield",
+                    key: "name",
+                    required: true
+                }
+            ]}]
+        };
 
 
         /**

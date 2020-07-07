@@ -38,8 +38,8 @@ define(
          * @returns {MetadataProperty[]} metadata about this object
          */
         MetadataCapability.prototype.invoke = function () {
-            var domainObject = this.domainObject,
-                model = domainObject.getModel();
+            var domainObject = this.domainObject;
+            var model = domainObject.getModel();
 
             function hasDisplayableValue(metadataProperty) {
                 var t = typeof metadataProperty.value;

@@ -26,41 +26,41 @@ define(
 
         describe("Type provider", function () {
 
-            var captured = {},
-                testTypeDefinitions = [
-                    {
-                        key: 'basic',
-                        cssClass: "icon-magnify-in",
-                        name: "Basic Type"
-                    },
-                    {
-                        key: 'multi1',
-                        cssClass: "icon-trash",
-                        description: "Multi1 Description",
-                        capabilities: ['a1', 'b1']
-                    },
-                    {
-                        key: 'multi2',
-                        cssClass: "icon-magnify-out",
-                        capabilities: ['a2', 'b2', 'c2']
-                    },
-                    {
-                        key: 'single-subtype',
-                        inherits: 'basic',
-                        name: "Basic Subtype",
-                        description: "A test subtype"
-                    },
-                    {
-                        key: 'multi-subtype',
-                        inherits: ['multi1', 'multi2'],
-                        name: "Multi-parent Subtype",
-                        capabilities: ['a3']
-                    },
-                    {
-                        name: "Default"
-                    }
-                ],
-                provider;
+            var captured = {};
+            var testTypeDefinitions = [
+                {
+                    key: 'basic',
+                    cssClass: "icon-magnify-in",
+                    name: "Basic Type"
+                },
+                {
+                    key: 'multi1',
+                    cssClass: "icon-trash",
+                    description: "Multi1 Description",
+                    capabilities: ['a1', 'b1']
+                },
+                {
+                    key: 'multi2',
+                    cssClass: "icon-magnify-out",
+                    capabilities: ['a2', 'b2', 'c2']
+                },
+                {
+                    key: 'single-subtype',
+                    inherits: 'basic',
+                    name: "Basic Subtype",
+                    description: "A test subtype"
+                },
+                {
+                    key: 'multi-subtype',
+                    inherits: ['multi1', 'multi2'],
+                    name: "Multi-parent Subtype",
+                    capabilities: ['a3']
+                },
+                {
+                    name: "Default"
+                }
+            ];
+            var provider;
 
             beforeEach(function () {
                 captured = {};

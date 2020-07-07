@@ -28,17 +28,17 @@ define([
     eventHelpers
 ) {
 
-    var e10 = Math.sqrt(50),
-        e5 = Math.sqrt(10),
-        e2 = Math.sqrt(2);
+    var e10 = Math.sqrt(50);
+    var e5 = Math.sqrt(10);
+    var e2 = Math.sqrt(2);
 
     /**
      * Nicely formatted tick steps from d3-array.
      */
     function tickStep(start, stop, count) {
-        var step0 = Math.abs(stop - start) / Math.max(0, count),
-            step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-            error = step0 / step1;
+        var step0 = Math.abs(stop - start) / Math.max(0, count);
+        var step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10));
+        var error = step0 / step1;
         if (error >= e10) {
             step1 *= 10;
         } else if (error >= e5) {
@@ -54,8 +54,8 @@ define([
      * ticks to precise values.
      */
     function getPrecision(step) {
-        var exponential = step.toExponential(),
-            i = exponential.indexOf('e');
+        var exponential = step.toExponential();
+        var i = exponential.indexOf('e');
         if (i === -1) {
             return 0;
         }
@@ -74,8 +74,8 @@ define([
      * Linear tick generation from d3-array.
      */
     function ticks(start, stop, count) {
-        var step = tickStep(start, stop, count),
-            precision = getPrecision(step);
+        var step = tickStep(start, stop, count);
+        var precision = getPrecision(step);
         return _.range(
             Math.ceil(start / step) * step,
             Math.floor(stop / step) * step + step / 2, // inclusive
@@ -232,11 +232,11 @@ define([
     MCTTicksController.prototype.doTickUpdate = function () {
         if (this.shouldCheckWidth) {
             this.$scope.$digest();
-            var element = this.$element[0],
-                tickElements = element.querySelectorAll('.gl-plot-tick > span'),
-                tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
-                    return Math.max(memo, first.offsetWidth);
-                }, 0));
+            var element = this.$element[0];
+            var tickElements = element.querySelectorAll('.gl-plot-tick > span');
+            var tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
+                return Math.max(memo, first.offsetWidth);
+            }, 0));
 
             this.$scope.tickWidth = tickWidth;
             this.$scope.$emit('plot:tickWidth', tickWidth);

@@ -28,13 +28,13 @@ define(
     function (MCTInclude) {
 
         describe("The mct-include directive", function () {
-            var testTemplates,
-                testUrls,
-                mockLinker,
-                mockScope,
-                mockElement,
-                mockChangeTemplate,
-                mctInclude;
+            var testTemplates;
+            var testUrls;
+            var mockLinker;
+            var mockScope;
+            var mockElement;
+            var mockChangeTemplate;
+            var mctInclude;
 
             function fireWatch(expr, value) {
                 mockScope.$watch.calls.all().forEach(function (call) {

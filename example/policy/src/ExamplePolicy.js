@@ -33,10 +33,10 @@ define(
                  * "foo."
                  */
                 allow: function (action, context) {
-                    var domainObject = (context || {}).domainObject,
-                        model = (domainObject && domainObject.getModel()) || {},
-                        name = model.name || "",
-                        metadata = action.getMetadata() || {};
+                    var domainObject = (context || {}).domainObject;
+                    var model = (domainObject && domainObject.getModel()) || {};
+                    var name = model.name || "";
+                    var metadata = action.getMetadata() || {};
                     return metadata.key !== 'remove' || name.indexOf('foo') < 0;
                 }
             };

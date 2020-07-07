@@ -78,11 +78,11 @@ define(
          *          capability.
          */
         ContextCapability.prototype.getPath = function () {
-            var parentObject = this.parentObject,
-                parentContext =
-                    parentObject && parentObject.getCapability('context'),
-                parentPath = parentContext ?
-                    parentContext.getPath() : [this.parentObject];
+            var parentObject = this.parentObject;
+            var parentContext = parentObject &&
+                parentObject.getCapability('context');
+            var parentPath = parentContext ?
+                parentContext.getPath() : [this.parentObject];
 
             return parentPath.concat([this.domainObject]);
         };

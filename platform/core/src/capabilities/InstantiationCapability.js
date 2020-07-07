@@ -57,9 +57,9 @@ define(
          */
         InstantiationCapability.prototype.instantiate = function (model) {
             var parsedId =
-                    this.identifierService.parse(this.domainObject.getId()),
-                space = parsedId.getDefinedSpace(),
-                id = this.identifierService.generate(space);
+                    this.identifierService.parse(this.domainObject.getId());
+            var space = parsedId.getDefinedSpace();
+            var id = this.identifierService.generate(space);
 
             model.modified = this.now();
 

@@ -52,7 +52,8 @@ define(
             });
 
             it("exposes unique colors", function () {
-                var count = 0, set = {};
+                var count = 0;
+                var set = {};
 
                 // Count each color, and add them to the set
                 controller.groups().forEach(function (group) {

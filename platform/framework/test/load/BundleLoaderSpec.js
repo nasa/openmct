@@ -28,11 +28,11 @@ define(
     function (BundleLoader) {
 
         describe("The bundle loader", function () {
-            var loader,
-                mockHttp,
-                mockLog,
-                mockRegistry,
-                testBundles;
+            var loader;
+            var mockHttp;
+            var mockLog;
+            var mockRegistry;
+            var testBundles;
 
             beforeEach(function () {
                 testBundles = {

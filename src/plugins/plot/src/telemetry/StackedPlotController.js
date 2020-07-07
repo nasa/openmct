@@ -22,11 +22,11 @@
 
 define([], function () {
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
-        var tickWidth = 0,
-            composition,
-            currentRequest,
-            unlisten,
-            tickWidthMap = {};
+        var tickWidth = 0;
+        var composition;
+        var currentRequest;
+        var unlisten;
+        var tickWidthMap = {};
 
         this.$element = $element;
         this.exportImageService = exportImageService;

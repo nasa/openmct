@@ -88,8 +88,8 @@ define([
         filter
     ) {
 
-        var aggregator = this,
-            resultPromises;
+        var aggregator = this;
+        var resultPromises;
 
         if (!maxResults) {
             maxResults = this.DEFAULT_MAX_RESULTS;
@@ -148,9 +148,9 @@ define([
         if (!filter) {
             return modelResults;
         }
-        var initialLength = modelResults.hits.length,
-            finalLength,
-            removedByFilter;
+        var initialLength = modelResults.hits.length;
+        var finalLength;
+        var removedByFilter;
 
         modelResults.hits = modelResults.hits.filter(function (hit) {
             return filter(hit.model);

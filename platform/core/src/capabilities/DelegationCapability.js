@@ -50,8 +50,8 @@ define(
          * @implements {Capability}
          */
         function DelegationCapability($q, domainObject) {
-            var type = domainObject.getCapability("type"),
-                self = this;
+            var type = domainObject.getCapability("type");
+            var self = this;
 
             this.$q = $q;
             this.delegateCapabilities = {};

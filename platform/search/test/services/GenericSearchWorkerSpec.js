@@ -39,11 +39,11 @@ define([
 
     describe('GenericSearchWorker', function () {
         // If this test fails, make sure this path is correct
-        var worker,
-            objectX,
-            objectY,
-            objectZ,
-            itemsToIndex;
+        var worker;
+        var objectX;
+        var objectY;
+        var objectZ;
+        var itemsToIndex;
 
         beforeEach(function () {
             worker = new Worker(WORKER_FILE);

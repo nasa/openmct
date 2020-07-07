@@ -77,8 +77,8 @@ define(
          *          domain objects
          */
         RelationshipCapability.prototype.getRelatedObjects = function (key) {
-            var model = this.domainObject.getModel(),
-                ids;
+            var model = this.domainObject.getModel();
+            var ids;
 
             // Package objects as an array
             function packageObject(objects) {

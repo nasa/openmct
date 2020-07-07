@@ -25,9 +25,10 @@ define(
     function (HyperlinkController) {
 
         describe("The controller for hyperlinks", function () {
-            var domainObject,
-                controller,
-                scope;
+            var domainObject;
+            var controller;
+            var scope;
+
             beforeEach(function () {
                 scope = jasmine.createSpyObj(
                     "$scope",

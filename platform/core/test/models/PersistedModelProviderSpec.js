@@ -28,12 +28,12 @@ define(
     function (PersistedModelProvider) {
 
         describe("The persisted model provider", function () {
-            var mockQ,
-                mockPersistenceService,
-                SPACE = "space0",
-                modTimes,
-                mockNow,
-                provider;
+            var mockQ;
+            var mockPersistenceService;
+            var SPACE = "space0";
+            var modTimes;
+            var mockNow;
+            var provider;
 
             function mockPromise(value) {
                 return (value || {}).then ? value : {
@@ -102,13 +102,13 @@ define(
 
 
             it("ensures that persisted timestamps are present", function () {
-                var mockCallback = jasmine.createSpy("callback"),
-                    testModels = {
-                        a: { modified: 123, persisted: 1984, name: "A" },
-                        b: { persisted: 1977, name: "B" },
-                        c: { modified: 42, name: "C" },
-                        d: { name: "D" }
-                    };
+                var mockCallback = jasmine.createSpy("callback");
+                var testModels = {
+                    a: { modified: 123, persisted: 1984, name: "A" },
+                    b: { persisted: 1977, name: "B" },
+                    c: { modified: 42, name: "C" },
+                    d: { name: "D" }
+                };
 
                 mockPersistenceService.readObject.and.callFake(
                     function (space, id) {

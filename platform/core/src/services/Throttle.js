@@ -59,8 +59,8 @@ define(
              * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
-                var promise,
-                    args = [];
+                var promise;
+                var args = [];
 
                 function invoke() {
                     // Clear the active timeout so a new one starts next time.

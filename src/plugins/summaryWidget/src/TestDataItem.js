@@ -71,8 +71,8 @@ define([
          * @private
          */
         function onValueInput(event) {
-            var elem = event.target,
-                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
+            var elem = event.target;
+            var value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
             if (elem.tagName.toUpperCase() === 'INPUT') {
                 self.eventEmitter.emit('change', {
                     value: value,
@@ -159,8 +159,8 @@ define([
      * duplicate callbacks with the cloned configuration as an argument
      */
     TestDataItem.prototype.duplicate = function () {
-        var sourceItem = JSON.parse(JSON.stringify(this.config)),
-            self = this;
+        var sourceItem = JSON.parse(JSON.stringify(this.config));
+        var self = this;
         this.eventEmitter.emit('duplicate', {
             sourceItem: sourceItem,
             index: self.index
@@ -173,10 +173,10 @@ define([
      * @param {string} key The key of currently selected telemetry property
      */
     TestDataItem.prototype.generateValueInput = function (key) {
-        var evaluator = this.conditionManager.getEvaluator(),
-            inputArea = $('.t-value-inputs', this.domElement),
-            dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key),
-            inputType = evaluator.getInputTypeById(dataType);
+        var evaluator = this.conditionManager.getEvaluator();
+        var inputArea = $('.t-value-inputs', this.domElement);
+        var dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key);
+        var inputType = evaluator.getInputTypeById(dataType);
 
         inputArea.html('');
         if (inputType) {

@@ -65,8 +65,8 @@ define(
         // Pick a domain object model to use, favoring the one
         // with the most recent timestamp
         function pick(a, b) {
-            var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
-                bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
+            var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY;
+            var bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
             return (aModified > bModified) ? a : (b || a);
         }
 

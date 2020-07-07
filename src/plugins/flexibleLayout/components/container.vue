@@ -146,16 +146,16 @@ export default {
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }
-            let frameId = event.dataTransfer.getData('frameid'),
-                containerIndex = Number(event.dataTransfer.getData('containerIndex'));
+            let frameId = event.dataTransfer.getData('frameid');
+            let containerIndex = Number(event.dataTransfer.getData('containerIndex'));
 
             if (!frameId) {
                 return false;
             }
 
             if (containerIndex === this.index) {
-                let frame = this.container.frames.filter((f) => f.id === frameId)[0],
-                    framePos = this.container.frames.indexOf(frame);
+                let frame = this.container.frames.filter((f) => f.id === frameId)[0];
+                let framePos = this.container.frames.indexOf(frame);
 
                 if (index === -1) {
                     return framePos !== 0;
@@ -187,15 +187,15 @@ export default {
             );
         },
         startFrameResizing(index) {
-            let beforeFrame = this.frames[index],
-                afterFrame = this.frames[index + 1];
+            let beforeFrame = this.frames[index];
+            let afterFrame = this.frames[index + 1];
 
             this.maxMoveSize = beforeFrame.size + afterFrame.size;
         },
         frameResizing(index, delta, event) {
-            let percentageMoved = Math.round(delta / this.getElSize() * 100),
-                beforeFrame = this.frames[index],
-                afterFrame = this.frames[index + 1];
+            let percentageMoved = Math.round(delta / this.getElSize() * 100);
+            let beforeFrame = this.frames[index];
+            let afterFrame = this.frames[index + 1];
 
             beforeFrame.size = this.getFrameSize(beforeFrame.size + percentageMoved);
             afterFrame.size = this.getFrameSize(afterFrame.size - percentageMoved);

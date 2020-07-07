@@ -258,12 +258,12 @@ define([], function () {
      * @return {boolean} The boolean value of the conditions
      */
     ConditionEvaluator.prototype.execute = function (conditions, mode) {
-        var active = false,
-            conditionValue,
-            conditionDefined = false,
-            self = this,
-            firstRuleEvaluated = false,
-            compositionObjs = this.compositionObjs;
+        var active = false;
+        var conditionValue;
+        var conditionDefined = false;
+        var self = this;
+        var firstRuleEvaluated = false;
+        var compositionObjs = this.compositionObjs;
 
         if (mode === 'js') {
             active = this.executeJavaScriptCondition(conditions);
@@ -327,11 +327,11 @@ define([], function () {
      * @return {boolean} The value of this condition
      */
     ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
-        var cache = (this.useTestCache ? this.testCache : this.subscriptionCache),
-            telemetryValue,
-            op,
-            input,
-            validator;
+        var cache = (this.useTestCache ? this.testCache : this.subscriptionCache);
+        var telemetryValue;
+        var op;
+        var input;
+        var validator;
 
         if (cache[object] && typeof cache[object][key] !== 'undefined') {
             let value = cache[object][key];

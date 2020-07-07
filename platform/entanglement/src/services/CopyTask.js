@@ -148,8 +148,8 @@ define(
          * @returns {*}
          */
         CopyTask.prototype.copyComposees = function (composees, clonedParent, originalParent) {
-            var self = this,
-                idMap = {};
+            var self = this;
+            var idMap = {};
 
             return (composees || []).reduce(function (promise, originalComposee) {
                 //If the composee is composed of other
@@ -194,8 +194,8 @@ define(
          * itself (to allow linking to non duplicatable objects).
          */
         CopyTask.prototype.copy = function (originalObject) {
-            var self = this,
-                clone;
+            var self = this;
+            var clone;
 
             //Check if the type of the object being copied allows for
             // creation of new instances. If it does not, then a link to the

@@ -41,8 +41,8 @@ function (
     eventHelpers
 ) {
 
-    var MARKER_SIZE = 6.0,
-        HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
+    var MARKER_SIZE = 6.0;
+    var HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 
     /**
      * Offsetter adjusts x and y values by a fixed amount,
@@ -330,21 +330,21 @@ function (
     };
 
     MCTChartController.prototype.updateViewport = function () {
-        var xRange = this.config.xAxis.get('displayRange'),
-            yRange = this.config.yAxis.get('displayRange');
+        var xRange = this.config.xAxis.get('displayRange');
+        var yRange = this.config.yAxis.get('displayRange');
 
         if (!xRange || !yRange) {
             return;
         }
 
         var dimensions = [
-                xRange.max - xRange.min,
-                yRange.max - yRange.min
-            ],
-            origin = [
-                this.offset.x(xRange.min),
-                this.offset.y(yRange.min)
-            ];
+            xRange.max - xRange.min,
+            yRange.max - yRange.min
+        ];
+        var origin = [
+            this.offset.x(xRange.min),
+            this.offset.y(yRange.min)
+        ];
 
         this.drawAPI.setDimensions(
             dimensions,
@@ -391,11 +391,11 @@ function (
 
     MCTChartController.prototype.drawHighlight = function (highlight) {
         var points = new Float32Array([
-                this.offset.xVal(highlight.point, highlight.series),
-                this.offset.yVal(highlight.point, highlight.series)
-            ]),
-            color = highlight.series.get('color').asRGBAArray(),
-            pointCount = 1;
+            this.offset.xVal(highlight.point, highlight.series),
+            this.offset.yVal(highlight.point, highlight.series)
+        ]);
+        var color = highlight.series.get('color').asRGBAArray();
+        var pointCount = 1;
 
         this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE);
     };

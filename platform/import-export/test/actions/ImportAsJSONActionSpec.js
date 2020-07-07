@@ -30,16 +30,16 @@ define(
         xdescribe("The import JSON action", function () {
 
             var context = {};
-            var action,
-                exportService,
-                identifierService,
-                dialogService,
-                openmct,
-                mockDialog,
-                compositionCapability,
-                mockInstantiate,
-                uniqueId,
-                newObjects;
+            var action;
+            var exportService;
+            var identifierService;
+            var dialogService;
+            var openmct;
+            var mockDialog;
+            var compositionCapability;
+            var mockInstantiate;
+            var uniqueId;
+            var newObjects;
 
 
             beforeEach(function () {

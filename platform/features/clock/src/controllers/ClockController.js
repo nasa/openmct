@@ -39,11 +39,11 @@ function (
          *        a service used to align behavior with clock ticks
          */
     function ClockController($scope, tickerService) {
-        var lastTimestamp,
-            unlisten,
-            timeFormat,
-            zoneName,
-            self = this;
+        var lastTimestamp;
+        var unlisten;
+        var timeFormat;
+        var zoneName;
+        var self = this;
 
         function update() {
             var m = zoneName ?

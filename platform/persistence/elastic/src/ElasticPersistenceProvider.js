@@ -31,10 +31,10 @@ define(
 
         // JSLint doesn't like underscore-prefixed properties,
         // so hide them here.
-        var SRC = "_source",
-            CONFLICT = 409,
-            SEQ_NO = "_seq_no",
-            PRIMARY_TERM = "_primary_term";
+        var SRC = "_source";
+        var CONFLICT = 409;
+        var SEQ_NO = "_seq_no";
+        var PRIMARY_TERM = "_primary_term";
 
         /**
          * The ElasticPersistenceProvider reads and writes JSON documents
@@ -87,8 +87,8 @@ define(
 
         // Handle an update error
         ElasticPersistenceProvider.prototype.handleError = function (response, key) {
-            var error = new Error("Persistence error."),
-                $q = this.$q;
+            var error = new Error("Persistence error.");
+            var $q = this.$q;
             if ((response || {}).status === CONFLICT) {
                 error.key = "revision";
                 // Load the updated model, then reject the promise

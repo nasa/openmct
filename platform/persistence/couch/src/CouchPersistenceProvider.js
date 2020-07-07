@@ -31,8 +31,8 @@ define(
 
         // JSLint doesn't like dangling _'s, but CouchDB uses these, so
         // hide this behind variables.
-        var REV = "_rev",
-            ID = "_id";
+        var REV = "_rev";
+        var ID = "_id";
 
         /**
          * The CouchPersistenceProvider reads and writes JSON documents

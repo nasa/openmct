@@ -168,7 +168,11 @@ define(
             // telemetrySubscription, where failure to callback
             // once-per-update results in loss of data, WTD-784
             it("fires one event per update if requested", function () {
-                var i, domains = [], ranges = [], lastCall, initialCalls;
+                var i;
+                var domains = [];
+                var ranges = [];
+                var lastCall
+                var initialCalls;
 
 
                 // Clear out the subscription from beforeEach

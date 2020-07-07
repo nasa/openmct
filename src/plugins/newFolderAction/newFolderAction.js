@@ -49,23 +49,23 @@ export default class NewFolderAction {
         };
     }
     invoke(objectPath) {
-        let domainObject = objectPath[0],
-            parentKeystring = this._openmct.objects.makeKeyString(domainObject.identifier),
-            composition = this._openmct.composition.get(domainObject),
-            dialogService = this._openmct.$injector.get('dialogService'),
-            folderType = this._openmct.types.get('folder');
+        let domainObject = objectPath[0];
+        let parentKeystring = this._openmct.objects.makeKeyString(domainObject.identifier);
+        let composition = this._openmct.composition.get(domainObject);
+        let dialogService = this._openmct.$injector.get('dialogService');
+        let folderType = this._openmct.types.get('folder');
 
         dialogService.getUserInput(this._dialogForm, {name: 'Unnamed Folder'}).then((userInput) => {
-            let name = userInput.name,
-                identifier = {
-                    key: uuid(),
-                    namespace: domainObject.identifier.namespace
-                },
-                objectModel = {
-                    identifier,
-                    type: 'folder',
-                    location: parentKeystring
-                };
+            let name = userInput.name;
+            let identifier = {
+                key: uuid(),
+                namespace: domainObject.identifier.namespace
+            };
+            let objectModel = {
+                identifier,
+                type: 'folder',
+                location: parentKeystring
+            };
 
             folderType.definition.initialize(objectModel);
             objectModel.name = name || 'New Folder';

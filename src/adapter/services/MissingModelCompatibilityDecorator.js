@@ -46,18 +46,18 @@ define([
      * models.  If a model is requested twice, respond with a missing result.
      */
     MissingModelCompatibilityDecorator.prototype.apiFetch = function (ids) {
-        var results = {},
-            promises = ids.map(function (id) {
-                if (this.apiFetching[id]) {
-                    return Promise.resolve();
-                }
-                this.apiFetching[id] = true;
+        var results = {};
+        var promises = ids.map(function (id) {
+            if (this.apiFetching[id]) {
+                return Promise.resolve();
+            }
+            this.apiFetching[id] = true;
 
-                return this.api.objects.get(objectUtils.parseKeyString(id))
-                    .then(function (newDO) {
-                        results[id] = objectUtils.toOldFormat(newDO);
-                    });
-            }, this);
+            return this.api.objects.get(objectUtils.parseKeyString(id))
+                .then(function (newDO) {
+                    results[id] = objectUtils.toOldFormat(newDO);
+                });
+        }, this);
 
         return Promise.all(promises).then(function () {
             return results;

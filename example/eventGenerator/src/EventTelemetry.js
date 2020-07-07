@@ -35,9 +35,9 @@ define(
 
         function EventTelemetry(request, interval) {
 
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / interval),
-                generatorData = {};
+            var latestObservedTime = Date.now();
+            var count = Math.floor((latestObservedTime - firstObservedTime) / interval);
+            var generatorData = {};
 
             generatorData.getPointCount = function () {
                 return count;
@@ -49,8 +49,8 @@ define(
             };
 
             generatorData.getRangeValue = function (i, range) {
-                var domainDelta = this.getDomainValue(i) - firstObservedTime,
-                    ind = i % messages.length;
+                var domainDelta = this.getDomainValue(i) - firstObservedTime;
+                var ind = i % messages.length;
                 return messages[ind] + " - [" + domainDelta.toString() + "]";
             };
 

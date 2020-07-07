@@ -68,11 +68,11 @@ define(
          *        which extensions were registered
          */
         ExtensionRegistrar.prototype.registerExtensions = function (extensionGroup) {
-            var registeredCategories = this.registeredCategories,
-                customRegistrars = this.customRegistrars,
-                app = this.app,
-                sorter = this.sorter,
-                $log = this.$log;
+            var registeredCategories = this.registeredCategories;
+            var customRegistrars = this.customRegistrars;
+            var app = this.app;
+            var sorter = this.sorter;
+            var $log = this.$log;
 
             // Used to build unique identifiers for individual extensions,
             // so that these can be registered separately with Angular
@@ -101,10 +101,10 @@ define(
             // .service service registration method (an array containing
             // both dependencies and a factory method for the service.)
             function makeServiceArgument(category, extension) {
-                var dependencies = extension.depends || [],
-                    factory = (typeof extension === 'function') ?
-                        new PartialConstructor(extension) :
-                        staticFunction(extension);
+                var dependencies = extension.depends || [];
+                var factory = (typeof extension === 'function') ?
+                    new PartialConstructor(extension) :
+                    staticFunction(extension);
 
                 return dependencies.concat([factory]);
             }
@@ -165,9 +165,9 @@ define(
             // Examine a group of resolved dependencies to determine
             // which extension categories still need to be satisfied.
             function findEmptyExtensionDependencies(extGroup) {
-                var needed = {},
-                    categories = Object.keys(extGroup),
-                    allExtensions = [];
+                var needed = {};
+                var categories = Object.keys(extGroup);
+                var allExtensions = [];
 
                 // Build up an array of all extensions
                 categories.forEach(function (category) {

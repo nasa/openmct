@@ -30,8 +30,8 @@ define(
     function (MSLDataDictionary, module) {
         "use strict";
 
-        var TERRESTRIAL_DATE = "terrestrial_date",
-            LOCAL_DATA = "../data/rems.json";
+        var TERRESTRIAL_DATE = "terrestrial_date";
+        var LOCAL_DATA = "../data/rems.json";
 
         /**
          * Fetches historical data from the REMS instrument on the Curiosity
@@ -69,8 +69,8 @@ define(
          * @private
          */
         RemsTelemetryServerAdapter.prototype.requestHistory = function (request) {
-            var self = this,
-                id = request.key;
+            var self = this;
+            var id = request.key;
 
             var dataTransforms = this.dataTransforms;
 

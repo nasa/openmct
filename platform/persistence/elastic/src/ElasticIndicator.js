@@ -30,20 +30,20 @@ define(
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                text: "Connected",
-                glyphClass: "ok",
-                statusClass: "s-status-on",
-                description: "Connected to the domain object database."
-            },
-            DISCONNECTED = {
-                text: "Disconnected",
-                glyphClass: "err",
-                statusClass: "s-status-caution",
-                description: "Unable to connect to the domain object database."
-            },
-            PENDING = {
-                text: "Checking connection..."
-            };
+            text: "Connected",
+            glyphClass: "ok",
+            statusClass: "s-status-on",
+            description: "Connected to the domain object database."
+        };
+        var DISCONNECTED = {
+            text: "Disconnected",
+            glyphClass: "err",
+            statusClass: "s-status-caution",
+            description: "Unable to connect to the domain object database."
+        };
+        var PENDING = {
+            text: "Checking connection..."
+        };
 
         /**
          * Indicator for the current ElasticSearch connection. Polls

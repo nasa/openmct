@@ -31,16 +31,16 @@ define(
 
         describe("Link Action", function () {
 
-            var linkAction,
-                policyService,
-                locationService,
-                locationServicePromise,
-                linkService,
-                context,
-                selectedObject,
-                selectedObjectContextCapability,
-                currentParent,
-                newParent;
+            var linkAction;
+            var policyService;
+            var locationService;
+            var locationServicePromise;
+            var linkService;
+            var context;
+            var selectedObject;
+            var selectedObjectContextCapability;
+            var currentParent;
+            var newParent;
 
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(

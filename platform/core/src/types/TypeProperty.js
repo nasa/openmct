@@ -111,8 +111,8 @@ define(
          */
         TypeProperty.prototype.getValue = function (model) {
             var property = this.propertyDefinition.property ||
-                    this.propertyDefinition.key,
-                initialValue =
+                    this.propertyDefinition.key;
+            var initialValue =
                     property && lookupValue(model, property);
 
             // Provide an empty array if this is a multi-item

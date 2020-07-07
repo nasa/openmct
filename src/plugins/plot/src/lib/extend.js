@@ -29,9 +29,9 @@ define([
 
     function extend(props) {
         // eslint-disable-next-line no-invalid-this
-        var parent = this,
-            child,
-            Surrogate;
+        var parent = this;
+        var child;
+        var Surrogate;
 
         if (props && props.hasOwnProperty('constructor')) {
             child = props.constructor;

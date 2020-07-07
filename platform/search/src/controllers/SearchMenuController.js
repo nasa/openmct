@@ -51,8 +51,8 @@ define(function () {
 
         // For documentation, see updateOptions below
         function updateOptions() {
-            var type,
-                i;
+            var type;
+            var i;
 
             // Update all-checked status
             if ($scope.ngModel.checkAll) {

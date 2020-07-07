@@ -110,8 +110,8 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            let newTimestamp = this.getParsedTimestamp(datum),
-                limit;
+            let newTimestamp = this.getParsedTimestamp(datum);
+            let limit;
 
             if(this.shouldUpdate(newTimestamp)) {
                 this.timestamp = newTimestamp;
@@ -125,9 +125,9 @@ export default {
             }
         },
         shouldUpdate(newTimestamp) {
-            let newTimestampInBounds = this.inBounds(newTimestamp),
-                noExistingTimestamp = this.timestamp === undefined,
-                newTimestampIsLatest = newTimestamp > this.timestamp;
+            let newTimestampInBounds = this.inBounds(newTimestamp);
+            let noExistingTimestamp = this.timestamp === undefined;
+            let newTimestampIsLatest = newTimestamp > this.timestamp;
 
             return newTimestampInBounds &&
                 (noExistingTimestamp || newTimestampIsLatest);

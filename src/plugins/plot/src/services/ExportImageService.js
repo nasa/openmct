@@ -53,14 +53,14 @@ define(
          */
         ExportImageService.prototype.renderElement = function (element, imageType, className) {
 
-            var dialogService = this.dialogService,
-                dialog = dialogService.showBlockingMessage({
-                    title: "Capturing...",
-                    hint: "Capturing an image",
-                    unknownProgress: true,
-                    severity: "info",
-                    delay: true
-                });
+            var dialogService = this.dialogService;
+            var dialog = dialogService.showBlockingMessage({
+                title: "Capturing...",
+                hint: "Capturing an image",
+                unknownProgress: true,
+                severity: "info",
+                delay: true
+            });
 
             var mimeType = "image/png";
             if (imageType === "jpg") {
@@ -152,9 +152,9 @@ define(
                 Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
                     value: function (callback, mimeType, quality) {
 
-                        var binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]),
-                            len = binStr.length,
-                            arr = new Uint8Array(len);
+                        var binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]);
+                        var len = binStr.length;
+                        var arr = new Uint8Array(len);
 
                         for (var i = 0; i < len; i++) {
                             arr[i] = binStr.charCodeAt(i);

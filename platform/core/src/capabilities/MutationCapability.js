@@ -27,8 +27,8 @@ define(
     [],
     function () {
 
-        var GENERAL_TOPIC = "mutation",
-            TOPIC_PREFIX = "mutation:";
+        var GENERAL_TOPIC = "mutation";
+        var TOPIC_PREFIX = "mutation:";
 
         // Utility function to overwrite a destination object
         // with the contents of a source object.
@@ -116,13 +116,13 @@ define(
         MutationCapability.prototype.mutate = function (mutator, timestamp) {
             // Get the object's model and clone it, so the
             // mutator function has a temporary copy to work with.
-            var domainObject = this.domainObject,
-                now = this.now,
-                generalTopic = this.generalMutationTopic,
-                specificTopic = this.specificMutationTopic,
-                model = domainObject.getModel(),
-                clone = JSON.parse(JSON.stringify(model)),
-                useTimestamp = arguments.length > 1;
+            var domainObject = this.domainObject;
+            var now = this.now;
+            var generalTopic = this.generalMutationTopic;
+            var specificTopic = this.specificMutationTopic;
+            var model = domainObject.getModel();
+            var clone = JSON.parse(JSON.stringify(model));
+            var useTimestamp = arguments.length > 1;
 
             function notifyListeners(newModel) {
                 generalTopic.notify(domainObject);

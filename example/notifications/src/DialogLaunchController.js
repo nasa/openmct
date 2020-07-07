@@ -44,31 +44,31 @@ define(
              periodically with the progress of an ongoing process.
              */
             $scope.launchProgress = function (knownProgress) {
-                var dialog,
-                    model = {
-                        title: "Progress Dialog Example",
-                        progress: 0,
-                        hint: "Do not navigate away from this page or close this browser tab while this operation is in progress.",
-                        actionText: "Calculating...",
-                        unknownProgress: !knownProgress,
-                        unknownDuration: false,
-                        severity: "info",
-                        options: [
-                            {
-                                label: "Cancel Operation",
-                                callback: function () {
-                                    $log.debug("Operation cancelled");
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: "Do something else...",
-                                callback: function () {
-                                    $log.debug("Something else pressed");
-                                }
+                var dialog;
+                var model = {
+                    title: "Progress Dialog Example",
+                    progress: 0,
+                    hint: "Do not navigate away from this page or close this browser tab while this operation is in progress.",
+                    actionText: "Calculating...",
+                    unknownProgress: !knownProgress,
+                    unknownDuration: false,
+                    severity: "info",
+                    options: [
+                        {
+                            label: "Cancel Operation",
+                            callback: function () {
+                                $log.debug("Operation cancelled");
+                                dialog.dismiss();
                             }
-                        ]
-                    };
+                        },
+                        {
+                            label: "Do something else...",
+                            callback: function () {
+                                $log.debug("Something else pressed");
+                            }
+                        }
+                    ]
+                };
 
                 function incrementProgress() {
                     model.progress = Math.min(100, Math.floor(model.progress + Math.random() * 30));
@@ -96,28 +96,28 @@ define(
              Demonstrates launching an error dialog
              */
             $scope.launchError = function () {
-                var dialog,
-                    model = {
-                        title: "Error Dialog Example",
-                        actionText: "Something happened, and it was not good.",
-                        severity: "error",
-                        options: [
-                            {
-                                label: "Try Again",
-                                callback: function () {
-                                    $log.debug("Try Again Pressed");
-                                    dialog.dismiss();
-                                }
-                            },
-                            {
-                                label: "Cancel",
-                                callback: function () {
-                                    $log.debug("Cancel Pressed");
-                                    dialog.dismiss();
-                                }
+                var dialog;
+                var model = {
+                    title: "Error Dialog Example",
+                    actionText: "Something happened, and it was not good.",
+                    severity: "error",
+                    options: [
+                        {
+                            label: "Try Again",
+                            callback: function () {
+                                $log.debug("Try Again Pressed");
+                                dialog.dismiss();
                             }
-                        ]
-                    };
+                        },
+                        {
+                            label: "Cancel",
+                            callback: function () {
+                                $log.debug("Cancel Pressed");
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                };
                 dialog = dialogService.showBlockingMessage(model);
 
                 if (!dialog) {
@@ -129,21 +129,21 @@ define(
              Demonstrates launching an error dialog
              */
             $scope.launchInfo = function () {
-                var dialog,
-                    model = {
-                        title: "Info Dialog Example",
-                        actionText: "This is an example of a blocking info" +
-                        " dialog. This dialog can be used to draw the user's" +
-                        " attention to an event.",
-                        severity: "info",
-                        primaryOption: {
-                            label: "OK",
-                            callback: function () {
-                                $log.debug("OK Pressed");
-                                dialog.dismiss();
-                            }
+                var dialog;
+                var model = {
+                    title: "Info Dialog Example",
+                    actionText: "This is an example of a blocking info" +
+                    " dialog. This dialog can be used to draw the user's" +
+                    " attention to an event.",
+                    severity: "info",
+                    primaryOption: {
+                        label: "OK",
+                        callback: function () {
+                            $log.debug("OK Pressed");
+                            dialog.dismiss();
                         }
-                    };
+                    }
+                };
 
                 dialog = dialogService.showBlockingMessage(model);
 

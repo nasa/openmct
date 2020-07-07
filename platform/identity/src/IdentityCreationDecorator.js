@@ -36,8 +36,8 @@ define(
         }
 
         IdentityCreationDecorator.prototype.createObject = function (model, parent) {
-            var creationService = this.creationService,
-                identityService = this.identityService;
+            var creationService = this.creationService;
+            var identityService = this.identityService;
 
             return identityService.getUser().then(function (user) {
                 if (user && user.key) {

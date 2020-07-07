@@ -197,21 +197,21 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
     };
 
     ImportAsJSONAction.prototype.displayError = function () {
-        var dialog,
-            model = {
-                title: "Invalid File",
-                actionText:  "The selected file was either invalid JSON or was " +
-                "not formatted properly for import into Open MCT.",
-                severity: "error",
-                options: [
-                    {
-                        label: "Ok",
-                        callback: function () {
-                            dialog.dismiss();
-                        }
+        var dialog;
+        var model = {
+            title: "Invalid File",
+            actionText:  "The selected file was either invalid JSON or was " +
+            "not formatted properly for import into Open MCT.",
+            severity: "error",
+            options: [
+                {
+                    label: "Ok",
+                    callback: function () {
+                        dialog.dismiss();
                     }
-                ]
-            };
+                }
+            ]
+        };
         dialog = this.dialogService.showBlockingMessage(model);
     };
 

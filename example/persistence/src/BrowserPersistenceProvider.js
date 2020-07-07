@@ -33,13 +33,13 @@ define(
 
 
         function BrowserPersistenceProvider($q, SPACE) {
-            var spaces = SPACE ? [SPACE] : [],
-                caches = {},
-                promises = {
-                    as: function (value) {
-                        return $q.when(value);
-                    }
-                };
+            var spaces = SPACE ? [SPACE] : [];
+            var caches = {};
+            var promises = {
+                as: function (value) {
+                    return $q.when(value);
+                }
+            };
 
             spaces.forEach(function (space) {
                 caches[space] = {};

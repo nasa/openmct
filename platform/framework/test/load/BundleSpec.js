@@ -28,8 +28,8 @@ define(
     function (Bundle, Constants) { // Verify against constants, too
 
         describe("A bundle", function () {
-            var PATH = "some/path",
-                KEY = "someKey";
+            var PATH = "some/path";
+            var KEY = "someKey";
 
             it("reports its path", function () {
                 expect(new Bundle(PATH, {}).getPath()).toEqual(PATH);

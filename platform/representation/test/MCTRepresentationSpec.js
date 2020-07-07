@@ -27,25 +27,25 @@ define(
     ["../src/MCTRepresentation"],
     function (MCTRepresentation) {
 
-        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
-            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
-            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"];
+        var LOG_FUNCTIONS = ["error", "warn", "info", "debug"];
+        var DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
         describe("The mct-representation directive", function () {
-            var testRepresentations,
-                testViews,
-                testUrls,
-                mockRepresenters,
-                mockMutationCapability,
-                mockQ,
-                mockLinker,
-                mockLog,
-                mockChangeTemplate,
-                mockScope,
-                mockElement,
-                mockDomainObject,
-                testModel,
-                mctRepresentation;
+            var testRepresentations;
+            var testViews;
+            var testUrls;
+            var mockRepresenters;
+            var mockMutationCapability;
+            var mockQ;
+            var mockLinker;
+            var mockLog;
+            var mockChangeTemplate;
+            var mockScope;
+            var mockElement;
+            var mockDomainObject;
+            var testModel;
+            var mctRepresentation;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {
@@ -102,11 +102,11 @@ define(
                 });
 
                 mockRepresenters = ["A", "B"].map(function (name) {
-                    var constructor = jasmine.createSpy("Representer" + name),
-                        representer = jasmine.createSpyObj(
-                            "representer" + name,
-                            ["represent", "destroy"]
-                        );
+                    var constructor = jasmine.createSpy("Representer" + name);
+                    var representer = jasmine.createSpyObj(
+                        "representer" + name,
+                        ["represent", "destroy"]
+                    );
                     constructor.and.returnValue(representer);
                     return constructor;
                 });

@@ -32,12 +32,12 @@ define(
         describe("LocationCapability", function () {
 
             describe("instantiated with domain object", function () {
-                var locationCapability,
-                    mutationPromise,
-                    mockQ,
-                    mockInjector,
-                    mockObjectService,
-                    domainObject;
+                var locationCapability;
+                var mutationPromise;
+                var mockQ;
+                var mockInjector;
+                var mockObjectService;
+                var domainObject;
 
                 beforeEach(function () {
                     domainObject = domainObjectFactory({
@@ -95,8 +95,8 @@ define(
 
                 it("can mutate location", function () {
                     var result = locationCapability
-                            .setPrimaryLocation('root'),
-                        whenComplete = jasmine.createSpy('whenComplete');
+                        .setPrimaryLocation('root');
+                    var whenComplete = jasmine.createSpy('whenComplete');
 
                     result.then(whenComplete);
 
@@ -108,10 +108,10 @@ define(
                 });
 
                 describe("when used to load an original instance", function () {
-                    var objectPromise,
-                        qPromise,
-                        originalObjects,
-                        mockCallback;
+                    var objectPromise;
+                    var qPromise;
+                    var originalObjects;
+                    var mockCallback;
 
                     function resolvePromises() {
                         if (mockQ.when.calls.count() > 0) {

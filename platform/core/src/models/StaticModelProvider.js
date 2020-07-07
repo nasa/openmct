@@ -57,11 +57,13 @@ define(
         }
 
         StaticModelProvider.prototype.getModels = function (ids) {
-            var modelMap = this.modelMap,
-                result = {};
+            var modelMap = this.modelMap;
+            var result = {};
+
             ids.forEach(function (id) {
                 result[id] = modelMap[id];
             });
+
             return this.$q.when(result);
         };
 

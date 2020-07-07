@@ -28,10 +28,10 @@ define(
     function (ServiceCompositor) {
 
         describe("The service compositor", function () {
-            var registered,
-                mockApp,
-                mockLog,
-                compositor;
+            var registered;
+            var mockApp;
+            var mockLog;
+            var compositor;
 
 
             beforeEach(function () {
@@ -65,7 +65,8 @@ define(
 
             it("allows composite services to be registered", function () {
                 // Prepare components that look like resolved extensions
-                var components, name;
+                var components;
+                var name;
                 function MyDecorator() {
                     return {};
                 }
@@ -128,7 +129,8 @@ define(
 
             it("allows registered composite services to be instantiated", function () {
                 // Prepare components that look like resolved extensions
-                var components, name;
+                var components;
+                var name;
                 function MyProvider() {
                     return {};
                 }

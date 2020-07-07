@@ -29,24 +29,24 @@ define(
 
         describe("The static model provider", function () {
             var models = [
-                    {
-                        "id": "a",
-                        "model": {
-                            "name": "Thing A",
-                            "someProperty": "Some Value A"
-                        }
-                    },
-                    {
-                        "id": "b",
-                        "model": {
-                            "name": "Thing B",
-                            "someProperty": "Some Value B"
-                        }
+                {
+                    "id": "a",
+                    "model": {
+                        "name": "Thing A",
+                        "someProperty": "Some Value A"
                     }
-                ],
-                mockLog,
-                mockQ,
-                provider;
+                },
+                {
+                    "id": "b",
+                    "model": {
+                        "name": "Thing B",
+                        "someProperty": "Some Value B"
+                    }
+                }
+            ];
+            var mockLog;
+            var mockQ;
+            var provider;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["when"]);

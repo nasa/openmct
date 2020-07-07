@@ -69,9 +69,9 @@ define([
          * @private
          */
         function onValueInput(event) {
-            var elem = event.target,
-                value = isNaN(Number(elem.value)) ? elem.value : Number(elem.value),
-                inputIndex = self.valueInputs.indexOf(elem);
+            var elem = event.target;
+            var value = isNaN(Number(elem.value)) ? elem.value : Number(elem.value);
+            var inputIndex = self.valueInputs.indexOf(elem);
 
             self.eventEmitter.emit('change', {
                 value: value,
@@ -170,13 +170,13 @@ define([
      * @param {string} operation The key of currently selected operation
      */
     Condition.prototype.generateValueInputs = function (operation) {
-        var evaluator = this.conditionManager.getEvaluator(),
-            inputArea = $('.t-value-inputs', this.domElement),
-            inputCount,
-            inputType,
-            newInput,
-            index = 0,
-            emitChange = false;
+        var evaluator = this.conditionManager.getEvaluator();
+        var inputArea = $('.t-value-inputs', this.domElement);
+        var inputCount;
+        var inputType;
+        var newInput;
+        var index = 0;
+        var emitChange = false;
 
         inputArea.html('');
         this.valueInputs = [];

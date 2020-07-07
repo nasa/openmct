@@ -34,9 +34,9 @@ define(
          * @constructor
          */
         function EventTelemetryProvider($q, $timeout) {
-            var subscriptions = [],
-                genInterval = 1000,
-                generating = false;
+            var subscriptions = [];
+            var genInterval = 1000;
+            var generating = false;
 
             //
             function matchesSource(request) {

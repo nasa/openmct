@@ -69,9 +69,9 @@ define([
     };
 
     MCTChartSeriesElement.prototype.removeSegments = function (index, count) {
-        var target = index,
-            start = index + count,
-            end = this.count * 2;
+        var target = index;
+        var start = index + count;
+        var end = this.count * 2;
         this.buffer.copyWithin(target, start, end);
         for (var zero = end - count; zero < end; zero++) {
             this.buffer[zero] = 0;
@@ -125,8 +125,8 @@ define([
                 this.buffer = Array.prototype.slice.apply(this.buffer);
                 this.isTempBuffer = true;
             }
-            var target = insertionPoint + pointsRequired,
-                start = insertionPoint;
+            var target = insertionPoint + pointsRequired;
+            var start = insertionPoint;
             for (; start < target; start++) {
                 this.buffer.splice(start, 0, 0);
             }

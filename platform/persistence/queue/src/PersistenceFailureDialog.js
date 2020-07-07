@@ -25,16 +25,16 @@ define(
     function (PersistenceFailureConstants) {
 
         var OVERWRITE_CANCEL_OPTIONS = [
-                {
-                    name: "Overwrite",
-                    key: PersistenceFailureConstants.OVERWRITE_KEY
-                },
-                {
-                    name: "Discard",
-                    key: "cancel"
-                }
-            ],
-            OK_OPTIONS = [{ name: "OK", key: "ok" }];
+            {
+                name: "Overwrite",
+                key: PersistenceFailureConstants.OVERWRITE_KEY
+            },
+            {
+                name: "Discard",
+                key: "cancel"
+            }
+        ];
+        var OK_OPTIONS = [{ name: "OK", key: "ok" }];
 
         /**
          * Populates a `dialogModel` to pass to `dialogService.getUserChoise`
@@ -43,8 +43,8 @@ define(
          * @memberof platform/persistence/queue
          */
         function PersistenceFailureDialog(failures) {
-            var revisionErrors = [],
-                otherErrors = [];
+            var revisionErrors = [];
+            var otherErrors = [];
 
             // Place this failure into an appropriate group
             function categorizeFailure(failure) {

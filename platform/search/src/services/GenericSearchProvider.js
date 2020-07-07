@@ -87,8 +87,8 @@ define([
         maxResults
     ) {
 
-        var queryId = this.dispatchSearch(input, maxResults),
-            pendingQuery = this.$q.defer();
+        var queryId = this.dispatchSearch(input, maxResults);
+        var pendingQuery = this.$q.defer();
 
         this.pendingQueries[queryId] = pendingQuery;
 
@@ -103,8 +103,8 @@ define([
      * @returns worker the created search worker.
      */
     GenericSearchProvider.prototype.startWorker = function (workerService) {
-        var provider = this,
-            worker;
+        var provider = this;
+        var worker;
 
         if (this.USE_LEGACY_INDEXER) {
             worker = workerService.run('genericSearchWorker');
@@ -127,8 +127,8 @@ define([
      * @param topic the topicService.
      */
     GenericSearchProvider.prototype.indexOnMutation = function (topic) {
-        var mutationTopic = topic('mutation'),
-            provider = this;
+        var mutationTopic = topic('mutation');
+        var provider = this;
 
         mutationTopic.listen(function (mutatedObject) {
             var editor = mutatedObject.getCapability('editor');
@@ -215,8 +215,8 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.beginIndexRequest = function () {
-        var idToIndex = this.idsToIndex.shift(),
-            provider = this;
+        var idToIndex = this.idsToIndex.shift();
+        var provider = this;
 
         this.pendingRequests += 1;
         this.modelService
@@ -250,8 +250,8 @@ define([
             return;
         }
 
-        var pendingQuery,
-            modelResults;
+        var pendingQuery;
+        var modelResults;
 
         if (this.USE_LEGACY_INDEXER) {
             pendingQuery = this.pendingQueries[event.data.queryId];

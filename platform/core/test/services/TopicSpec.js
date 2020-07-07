@@ -59,7 +59,8 @@ define(
             });
 
             it("provides anonymous private topics", function () {
-                var t1 = topic(), t2 = topic();
+                var t1 = topic();
+                var t2 = topic();
 
                 t1.listen(mockCallback);
                 t2.notify(testMessage);

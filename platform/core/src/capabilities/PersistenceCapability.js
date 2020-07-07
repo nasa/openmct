@@ -109,15 +109,15 @@ define(
          *          if not.
          */
         PersistenceCapability.prototype.persist = function () {
-            var self = this,
-                domainObject = this.domainObject,
-                model = domainObject.getModel(),
-                modified = model.modified,
-                persisted = model.persisted,
-                persistenceService = this.persistenceService,
-                persistenceFn = persisted !== undefined ?
-                    this.persistenceService.updateObject :
-                    this.persistenceService.createObject;
+            var self = this;
+            var domainObject = this.domainObject;
+            var model = domainObject.getModel();
+            var modified = model.modified;
+            var persisted = model.persisted;
+            var persistenceService = this.persistenceService;
+            var persistenceFn = persisted !== undefined ?
+                this.persistenceService.updateObject :
+                this.persistenceService.createObject;
 
             if (persisted !== undefined && persisted === modified) {
                 return this.$q.when(true);

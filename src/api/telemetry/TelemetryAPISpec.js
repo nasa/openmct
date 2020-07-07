@@ -51,8 +51,8 @@ define([
         });
 
         describe('telemetry providers', function () {
-            var telemetryProvider,
-                domainObject;
+            var telemetryProvider;
+            var domainObject;
 
             beforeEach(function () {
                 telemetryProvider = jasmine.createSpyObj('telemetryProvider', [

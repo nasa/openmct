@@ -58,34 +58,34 @@ define([
         openmct,
         logLevel
     ) {
-        var $http = this.$http,
-            $log = this.$log,
-            app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
-            loader = new BundleLoader($http, $log, openmct.legacyRegistry),
-            resolver = new BundleResolver(
-                new ExtensionResolver(
-                    new ImplementationLoader({}),
-                    $log
-                ),
+        var $http = this.$http;
+        var $log = this.$log;
+        var app = angular.module(Constants.MODULE_NAME, ["ngRoute"]);
+        var loader = new BundleLoader($http, $log, openmct.legacyRegistry);
+        var resolver = new BundleResolver(
+            new ExtensionResolver(
+                new ImplementationLoader({}),
                 $log
             ),
-            registrar = new ExtensionRegistrar(
-                app,
-                new CustomRegistrars(app, $log),
-                new ExtensionSorter($log),
-                $log
-            ),
-            bootstrapper = new ApplicationBootstrapper(
-                angular,
-                openmct.element,
-                $log
-            ),
-            initializer = new FrameworkInitializer(
-                loader,
-                resolver,
-                registrar,
-                bootstrapper
-            );
+            $log
+        );
+        var registrar = new ExtensionRegistrar(
+            app,
+            new CustomRegistrars(app, $log),
+            new ExtensionSorter($log),
+            $log
+        );
+        var bootstrapper = new ApplicationBootstrapper(
+            angular,
+            openmct.element,
+            $log
+        );
+        var initializer = new FrameworkInitializer(
+            loader,
+            resolver,
+            registrar,
+            bootstrapper
+        );
 
         // Override of angular1.6 ! hashPrefix
         app.config(['$locationProvider', function ($locationProvider) {

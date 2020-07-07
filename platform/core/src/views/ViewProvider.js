@@ -129,8 +129,8 @@ define(
             // Check if a view and domain object type can be paired;
             // both can restrict the others they accept.
             function viewMatchesType(view, objType) {
-                var views = objType && (objType.getDefinition() || {}).views,
-                    matches = true;
+                var views = objType && (objType.getDefinition() || {}).views;
+                var matches = true;
 
                 // View is restricted to a certain type
                 if (view.type) {

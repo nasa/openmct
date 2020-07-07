@@ -51,8 +51,8 @@ define(
          *          extensions belonging to those categories
          */
         BundleResolver.prototype.resolveBundles = function (bundles) {
-            var extensionResolver = this.extensionResolver,
-                $log = this.$log;
+            var extensionResolver = this.extensionResolver;
+            var $log = this.$log;
 
             /*
              * Merge resolved bundles (where each is expressed as an
@@ -81,8 +81,8 @@ define(
             // the resolved extensions in an object in the format described
             // for mergeResolvedBundles above
             function resolveBundle(bundle) {
-                var categories = bundle.getExtensionCategories(),
-                    result = {};
+                var categories = bundle.getExtensionCategories();
+                var result = {};
 
                 function resolveExtension(extension) {
                     var category = extension.getCategory();

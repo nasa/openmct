@@ -89,11 +89,11 @@ define(
          *          to remove.
          */
         TemplateLinker.prototype.link = function (scope, element, ext) {
-            var activeElement = element,
-                activeTemplateUrl,
-                comment = this.$compile('<!-- hidden mct element -->')(scope),
-                activeScope,
-                self = this;
+            var activeElement = element;
+            var activeTemplateUrl;
+            var comment = this.$compile('<!-- hidden mct element -->')(scope);
+            var activeScope;
+            var self = this;
 
             function destroyScope() {
                 if (activeScope) {

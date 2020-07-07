@@ -42,9 +42,9 @@ define (
          * object that wraps the telemetry returned from the telemetry source.
          */
         RemsTelemetryProvider.prototype.requestTelemetry = function (requests) {
-            var packaged = {},
-                relevantReqs,
-                adapter = this.adapter;
+            var packaged = {};
+            var relevantReqs;
+            var adapter = this.adapter;
 
             function matchesSource(request) {
                 return (request.source === SOURCE);

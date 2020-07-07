@@ -99,7 +99,8 @@ define(
             });
 
             it("ensures a single object instance, even for multiple concurrent calls", function () {
-                var promiseA, promiseB;
+                var promiseA;
+                var promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();

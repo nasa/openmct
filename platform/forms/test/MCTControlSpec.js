@@ -25,11 +25,11 @@ define(
     function (MCTControl) {
 
         describe("The mct-control directive", function () {
-            var testControls,
-                mockScope,
-                mockLinker,
-                mockChangeTemplate,
-                mctControl;
+            var testControls;
+            var mockScope;
+            var mockLinker;
+            var mockChangeTemplate;
+            var mctControl;
 
             beforeEach(function () {
                 testControls = [

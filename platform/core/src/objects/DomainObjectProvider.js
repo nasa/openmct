@@ -67,8 +67,8 @@ define(
         }
 
         DomainObjectProvider.prototype.getObjects = function getObjects(ids) {
-            var modelService = this.modelService,
-                instantiate = this.instantiate;
+            var modelService = this.modelService;
+            var instantiate = this.instantiate;
 
             // Assemble the results from the model service and the
             // capability service into one value, suitable to return

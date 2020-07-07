@@ -36,8 +36,8 @@ define(
          * @constructor
          */
         function WorkerService($window, workers) {
-            var workerUrls = {},
-                sharedWorkers = {};
+            var workerUrls = {};
+            var sharedWorkers = {};
 
             function addWorker(worker) {
                 var key = worker.key;
@@ -79,9 +79,9 @@ define(
          * @returns {Worker | SharedWorker} the running Worker
          */
         WorkerService.prototype.run = function (key) {
-            var scriptUrl = this.workerUrls[key],
-                Worker = this.sharedWorkers[key] ?
-                    this.SharedWorker : this.Worker;
+            var scriptUrl = this.workerUrls[key];
+            var Worker = this.sharedWorkers[key] ?
+                this.SharedWorker : this.Worker;
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
 

@@ -31,27 +31,27 @@ define(
         // SEMICONNECTED: Connected to the database, but it reported an error.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
-                text: "Connected",
-                glyphClass: "ok",
-                statusClass: "s-status-on",
-                description: "Connected to the domain object database."
-            },
-            DISCONNECTED = {
-                text: "Disconnected",
-                glyphClass: "err",
-                statusClass: "s-status-caution",
-                description: "Unable to connect to the domain object database."
-            },
-            SEMICONNECTED = {
-                text: "Unavailable",
-                glyphClass: "caution",
-                statusClass: "s-status-caution",
-                description: "Database does not exist or is unavailable."
-            },
-            PENDING = {
-                text: "Checking connection...",
-                statusClass: "s-status-caution"
-            };
+            text: "Connected",
+            glyphClass: "ok",
+            statusClass: "s-status-on",
+            description: "Connected to the domain object database."
+        };
+        var DISCONNECTED = {
+            text: "Disconnected",
+            glyphClass: "err",
+            statusClass: "s-status-caution",
+            description: "Unable to connect to the domain object database."
+        };
+        var SEMICONNECTED = {
+            text: "Unavailable",
+            glyphClass: "caution",
+            statusClass: "s-status-caution",
+            description: "Database does not exist or is unavailable."
+        };
+        var PENDING = {
+            text: "Checking connection...",
+            statusClass: "s-status-caution"
+        };
 
         /**
          * Indicator for the current CouchDB connection. Polls CouchDB

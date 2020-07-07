@@ -22,9 +22,9 @@
 
 define(['../../src/models/ModelCacheService'], function (ModelCacheService) {
     describe("ModelCacheService", function () {
-        var testIds,
-            testModels,
-            cacheService;
+        var testIds;
+        var testModels;
+        var cacheService;
 
         beforeEach(function () {
             testIds = ['a', 'b', 'c', 'd'];

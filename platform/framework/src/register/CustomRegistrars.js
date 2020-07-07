@@ -54,11 +54,11 @@ define(
         // app.method(key, [ deps..., function ]) pattern.
         function customRegistrar(angularFunction) {
             return function (extension, index) {
-                var app = this.app,
-                    $log = this.$log,
-                    key = extension.key,
-                    dependencies = extension.depends || [],
-                    registered = this.registered[angularFunction] || {};
+                var app = this.app;
+                var $log = this.$log;
+                var key = extension.key;
+                var dependencies = extension.depends || [];
+                var registered = this.registered[angularFunction] || {};
 
                 this.registered[angularFunction] = registered;
 
@@ -96,10 +96,10 @@ define(
         }
 
         function registerConstant(extension) {
-            var app = this.app,
-                $log = this.$log,
-                key = extension.key,
-                value = extension.value;
+            var app = this.app;
+            var $log = this.$log;
+            var key = extension.key;
+            var value = extension.value;
 
             if (typeof key === "string" && value !== undefined) {
                 $log.info([
@@ -122,8 +122,8 @@ define(
 
         // Custom registration function for extensions of category "runs"
         function registerRun(extension) {
-            var app = this.app,
-                $log = this.$log;
+            var app = this.app;
+            var $log = this.$log;
 
             if (typeof extension === 'function') {
                 // Prepend dependencies, and schedule to run
@@ -140,9 +140,9 @@ define(
 
         // Custom registration function for extensions of category "route"
         function registerRoute(extension) {
-            var app = this.app,
-                $log = this.$log,
-                route = Object.create(extension);
+            var app = this.app;
+            var $log = this.$log;
+            var route = Object.create(extension);
 
             // Adjust path for bundle
             if (route.templateUrl) {
@@ -168,8 +168,8 @@ define(
 
         // Handle service compositing
         function registerComponents(components) {
-            var app = this.app,
-                $log = this.$log;
+            var app = this.app;
+            var $log = this.$log;
             return new ServiceCompositor(app, $log)
                 .registerCompositeServices(components);
         }

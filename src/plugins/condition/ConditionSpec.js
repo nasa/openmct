@@ -24,13 +24,13 @@ import Condition from "./Condition";
 import {TRIGGER} from "./utils/constants";
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 
-let openmct = {},
-    testConditionDefinition,
-    testTelemetryObject,
-    conditionObj,
-    conditionManager,
-    mockTelemetryReceived,
-    mockTimeSystems;
+let openmct = {};
+let testConditionDefinition;
+let testTelemetryObject;
+let conditionObj;
+let conditionManager;
+let mockTelemetryReceived;
+let mockTimeSystems;
 
 describe("The condition", function () {
 

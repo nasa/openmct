@@ -128,8 +128,8 @@ define(
 
         DomainObjectImpl.prototype.useCapability = function (name) {
             // Get tail of args to pass to invoke
-            var args = Array.prototype.slice.apply(arguments, [1]),
-                capability = this.getCapability(name);
+            var args = Array.prototype.slice.apply(arguments, [1]);
+            var capability = this.getCapability(name);
 
             return (capability && capability.invoke) ?
                 capability.invoke.apply(capability, args) :
