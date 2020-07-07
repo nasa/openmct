@@ -66,6 +66,23 @@ define([], function () {
                 this.c2d.closePath();
                 this.c2d.fill();
             }
+        },
+        triangle: {
+            label: 'Triangle',
+            drawWebGL: 4,
+            drawC2D: function (x, y, size) {
+                const offset = size / 2;
+                const v1 = [x, y - offset];
+                const v2 = [x - offset, y + offset];
+                const v3 = [x + offset, y + offset];
+
+                this.c2d.beginPath();
+                this.c2d.moveTo(...v1);
+                this.c2d.lineTo(...v2);
+                this.c2d.lineTo(...v3);
+                this.c2d.closePath();
+                this.c2d.fill();
+            }
         }
     };
 
