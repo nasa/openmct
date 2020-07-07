@@ -63,6 +63,9 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
+            },
+            ChromeHeadless: {
+                flags: ['--disable-dev-shm-usage']
             }
         },
         colors: true,
