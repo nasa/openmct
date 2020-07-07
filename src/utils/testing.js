@@ -81,7 +81,7 @@ export function generatePromises(names = []) {
 
     names.forEach((name) => {
         promises[name + 'Promise'] = new Promise((resolve) => {
-            promises[name + 'PromisResolve'] = resolve;
+            promises[name + 'PromiseResolve'] = resolve;
         });
     });
 
