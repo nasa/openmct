@@ -25,17 +25,17 @@ define(
     function (TelemetrySubscription) {
 
         describe("A telemetry subscription", function () {
-            var mockQ,
-                mockTimeout,
-                mockDomainObject,
-                mockCallback,
-                mockTelemetry,
-                mockMutation,
-                mockUnsubscribe,
-                mockUnlisten,
-                mockSeries,
-                testMetadata,
-                subscription;
+            var mockQ;
+            var mockTimeout;
+            var mockDomainObject;
+            var mockCallback;
+            var mockTelemetry;
+            var mockMutation;
+            var mockUnsubscribe;
+            var mockUnlisten;
+            var mockSeries;
+            var testMetadata;
+            var subscription;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {

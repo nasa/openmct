@@ -25,9 +25,9 @@ define(
     function (TelemetryFormatter) {
 
         describe("The telemetry formatter", function () {
-            var mockFormatService,
-                mockFormat,
-                formatter;
+            var mockFormatService;
+            var mockFormat;
+            var formatter;
 
             beforeEach(function () {
                 mockFormatService =
@@ -42,7 +42,8 @@ define(
             });
 
             it("formats domains using the formatService", function () {
-                var testValue = 12321, testResult = "some result";
+                var testValue = 12321;
+                var testResult = "some result";
                 mockFormat.format.and.returnValue(testResult);
 
                 expect(formatter.formatDomainValue(testValue))
@@ -57,8 +58,8 @@ define(
             });
 
             it("formats ranges as values", function () {
-                var value = 3.14159265352979323846264338, // not pi
-                    formatted = formatter.formatRangeValue(value);
+                var value = 3.14159265352979323846264338; // not pi
+                var formatted = formatter.formatRangeValue(value);
                 // Make sure we don't lose information by formatting
                 expect(parseFloat(formatted)).toEqual(value);
             });

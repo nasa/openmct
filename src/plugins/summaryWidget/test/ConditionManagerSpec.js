@@ -22,29 +22,29 @@
 
 define(['../src/ConditionManager'], function (ConditionManager) {
     xdescribe('A Summary Widget Condition Manager', function () {
-        var conditionManager,
-            mockDomainObject,
-            mockCompObject1,
-            mockCompObject2,
-            mockCompObject3,
-            mockMetadata,
-            mockTelemetryCallbacks,
-            mockEventCallbacks,
-            unsubscribeSpies,
-            unregisterSpies,
-            mockMetadataManagers,
-            mockComposition,
-            mockOpenMCT,
-            mockTelemetryAPI,
-            addCallbackSpy,
-            loadCallbackSpy,
-            removeCallbackSpy,
-            telemetryCallbackSpy,
-            metadataCallbackSpy,
-            telemetryRequests,
-            mockTelemetryValues,
-            mockTelemetryValues2,
-            mockConditionEvaluator;
+        var conditionManager;
+        var mockDomainObject;
+        var mockCompObject1;
+        var mockCompObject2;
+        var mockCompObject3;
+        var mockMetadata;
+        var mockTelemetryCallbacks;
+        var mockEventCallbacks;
+        var unsubscribeSpies;
+        var unregisterSpies;
+        var mockMetadataManagers;
+        var mockComposition;
+        var mockOpenMCT;
+        var mockTelemetryAPI;
+        var addCallbackSpy;
+        var loadCallbackSpy;
+        var removeCallbackSpy;
+        var telemetryCallbackSpy;
+        var metadataCallbackSpy;
+        var telemetryRequests;
+        var mockTelemetryValues;
+        var mockTelemetryValues2;
+        var mockConditionEvaluator;
 
         beforeEach(function () {
             mockDomainObject = {
@@ -387,18 +387,18 @@ define(['../src/ConditionManager'], function (ConditionManager) {
 
         it('evalutes a set of rules and returns the id of the' +
            'last active rule, or the first if no rules are active', function () {
-            var mockRuleOrder = ['default', 'rule0', 'rule1'],
-                mockRules = {
-                    default: {
-                        getProperty: function () {}
-                    },
-                    rule0: {
-                        getProperty: function () {}
-                    },
-                    rule1: {
-                        getProperty: function () {}
-                    }
-                };
+            var mockRuleOrder = ['default', 'rule0', 'rule1'];
+            var mockRules = {
+                default: {
+                    getProperty: function () {}
+                },
+                rule0: {
+                    getProperty: function () {}
+                },
+                rule1: {
+                    getProperty: function () {}
+                }
+            };
 
             mockConditionEvaluator.execute.and.returnValue(false);
             expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('default');

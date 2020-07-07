@@ -22,9 +22,9 @@
 
 define(["./LocalClock"], function (LocalClock) {
     describe("The LocalClock class", function () {
-        var clock,
-            mockTimeout,
-            timeoutHandle = {};
+        var clock;
+        var mockTimeout;
+        var timeoutHandle = {};
 
         beforeEach(function () {
             mockTimeout = jasmine.createSpy("timeout");

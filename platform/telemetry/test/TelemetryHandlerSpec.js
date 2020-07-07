@@ -28,12 +28,12 @@ define(
             // TelemetryHandler just provides a factory
             // for TelemetryHandle, so most real testing
             // should happen there.
-            var mockQ,
-                mockSubscriber,
-                mockDomainObject,
-                mockCallback,
-                mockSubscription,
-                handler;
+            var mockQ;
+            var mockSubscriber;
+            var mockDomainObject;
+            var mockCallback;
+            var mockSubscription;
+            var handler;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["when"]);

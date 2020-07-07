@@ -38,8 +38,8 @@ define(
          * @memberof platform/commonUI/mobile
          */
         function AgentService($window) {
-            var userAgent = $window.navigator.userAgent,
-                matches = userAgent.match(/iPad|iPhone|Android/i) || [];
+            var userAgent = $window.navigator.userAgent;
+            var matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
             this.userAgent = userAgent;
             this.mobileName = matches[0];

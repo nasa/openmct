@@ -26,8 +26,8 @@ define(
 
         describe("The region class ", function () {
 
-            var region,
-                part2 = new Region({'name': 'part2'});
+            var region;
+            var part2 = new Region({'name': 'part2'});
 
             beforeEach(function () {
                 region = new Region();

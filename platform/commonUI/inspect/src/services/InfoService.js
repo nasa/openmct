@@ -24,9 +24,9 @@ define(
     ['../InfoConstants'],
     function (InfoConstants) {
 
-        var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
-            MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION,
-            OPTIONS = InfoConstants.BUBBLE_OPTIONS;
+        var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE;
+        var MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION;
+        var OPTIONS = InfoConstants.BUBBLE_OPTIONS;
 
         /**
          * Displays informative content ("info bubbles") for the user.
@@ -52,15 +52,15 @@ define(
          *          dismiss the info bubble
          */
         InfoService.prototype.display = function (templateKey, title, content, position) {
-            var $compile = this.$compile,
-                $rootScope = this.$rootScope,
-                scope = $rootScope.$new(),
-                span = $compile('<span></span>')(scope),
-                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
-                    InfoConstants.BUBBLE_MAX_WIDTH,
-                options,
-                popup,
-                bubble;
+            var $compile = this.$compile;
+            var $rootScope = this.$rootScope;
+            var scope = $rootScope.$new();
+            var span = $compile('<span></span>')(scope);
+            var bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
+                     InfoConstants.BUBBLE_MAX_WIDTH;
+            var options;
+            var popup;
+            var bubble;
 
             options = Object.create(OPTIONS);
             options.marginX = -bubbleSpaceLR;

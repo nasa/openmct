@@ -25,14 +25,14 @@ define(
     function (TelemetryController) {
 
         describe("The telemetry controller", function () {
-            var mockScope,
-                mockQ,
-                mockTimeout,
-                mockLog,
-                mockDomainObject,
-                mockTelemetry,
-                mockUnsubscribe,
-                controller;
+            var mockScope;
+            var mockQ;
+            var mockTimeout;
+            var mockLog;
+            var mockDomainObject;
+            var mockTelemetry;
+            var mockUnsubscribe;
+            var controller;
 
             function mockPromise(value) {
                 return (value && value.then) ? value : {

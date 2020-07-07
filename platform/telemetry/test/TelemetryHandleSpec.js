@@ -25,13 +25,13 @@ define(
     function (TelemetryHandle) {
 
         describe("A telemetry handle", function () {
-            var mockQ,
-                mockSubscription,
-                mockDomainObject,
-                mockTelemetry,
-                mockSeries,
-                mockCallback,
-                handle;
+            var mockQ;
+            var mockSubscription;
+            var mockDomainObject;
+            var mockTelemetry;
+            var mockSeries;
+            var mockCallback;
+            var handle;
 
             function asPromise(v) {
                 return (v || {}).then ? v : {

@@ -25,13 +25,13 @@ define(
     function (StyleSheetLoader) {
 
         describe("The style sheet loader", function () {
-            var testStyleSheets,
-                mockDocument,
-                mockPlainDocument,
-                mockHead,
-                mockElement,
-                testBundle,
-                loader; // eslint-disable-line
+            var testStyleSheets;
+            var mockDocument;
+            var mockPlainDocument;
+            var mockHead;
+            var mockElement;
+            var testBundle;
+            var loader; // eslint-disable-line
 
             beforeEach(function () {
                 testBundle = {

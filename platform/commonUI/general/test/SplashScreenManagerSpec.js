@@ -25,8 +25,8 @@ define([
 ], function (SplashScreenManager) {
 
     describe('SplashScreenManager', function () {
-        var $document,
-            splashElement;
+        var $document;
+        var splashElement;
 
         beforeEach(function () {
             $document = jasmine.createSpyObj(

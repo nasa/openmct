@@ -28,12 +28,12 @@ define(
             // TelemetrySubscriber just provides a factory
             // for TelemetrySubscription, so most real testing
             // should happen there.
-            var mockQ,
-                mockTimeout,
-                mockDomainObject,
-                mockCallback,
-                mockPromise,
-                subscriber;
+            var mockQ;
+            var mockTimeout;
+            var mockDomainObject;
+            var mockCallback;
+            var mockPromise;
+            var subscriber;
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["when"]);

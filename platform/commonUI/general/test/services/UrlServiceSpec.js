@@ -28,12 +28,12 @@ define(
     function (UrlService) {
 
         describe("The url service", function () {
-            var urlService,
-                mockLocation,
-                mockDomainObject,
-                mockContext,
-                mockMode,
-                testViews;
+            var urlService;
+            var mockLocation;
+            var mockDomainObject;
+            var mockContext;
+            var mockMode;
+            var testViews;
 
             beforeEach(function () {
                 // Creates a mockLocation, used to

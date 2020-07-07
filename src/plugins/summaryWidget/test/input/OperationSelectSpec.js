@@ -1,7 +1,13 @@
 define(['../../src/input/OperationSelect'], function (OperationSelect) {
     describe('A select for choosing composition object properties', function () {
-        var mockConfig, mockBadConfig, mockManager, operationSelect, mockOperations,
-            mockPropertyTypes, mockKeySelect, mockEvaluator;
+        var mockConfig;
+        var mockBadConfig;
+        var mockManager;
+        var operationSelect;
+        var mockOperations;
+        var mockPropertyTypes;
+        var mockKeySelect;
+        var mockEvaluator;
         beforeEach(function () {
 
             mockConfig = {

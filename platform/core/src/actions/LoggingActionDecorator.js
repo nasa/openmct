@@ -44,16 +44,16 @@ define(
         }
 
         LoggingActionDecorator.prototype.getActions = function () {
-            var actionService = this.actionService,
-                $log = this.$log;
+            var actionService = this.actionService;
+            var $log = this.$log;
 
             // Decorate the perform method of the specified action, such that
             // it emits a log message whenever performed.
             function addLogging(action) {
-                var logAction = Object.create(action),
-                    metadata = action.getMetadata() || {},
-                    context = metadata.context || {},
-                    domainObject = context.domainObject;
+                var logAction = Object.create(action);
+                var metadata = action.getMetadata() || {};
+                var context = metadata.context || {};
+                var domainObject = context.domainObject;
 
                 logAction.perform = function () {
                     $log.info([

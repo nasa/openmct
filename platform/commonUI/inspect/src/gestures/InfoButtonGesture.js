@@ -36,12 +36,12 @@ define(
          *        show information
          */
         function InfoGestureButton($document, agentService, infoService, element, domainObject) {
-            var dismissBubble,
-                touchPosition,
-                body = $document.find('body');
+            var dismissBubble;
+            var touchPosition;
+            var body = $document.find('body');
 
             function trackPosition(event) {
-                // Record touch position, so bubble can be shown at latest
+                // Record touch position; so bubble can be shown at latest
                 // touch position, also offset by 22px to left (accounts for
                 // a finger-sized touch on the info button)
                 touchPosition = [event.clientX - 22, event.clientY];

@@ -32,7 +32,8 @@ define(
         };
 
         describe("The AgentService", function () {
-            var testWindow, agentService;
+            var testWindow;
+            var agentService;
 
             beforeEach(function () {
                 testWindow = {

@@ -1,14 +1,14 @@
 define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
     describe('A Summary Widget Rule', function () {
-        var mockDomainObject,
-            mockOpenMCT,
-            mockConditionManager,
-            mockEvaluator,
-            mockContainer,
-            mockTelemetryMetadata,
-            testDataManager,
-            mockCompObject1,
-            mockCompObject2;
+        var mockDomainObject;
+        var mockOpenMCT;
+        var mockConditionManager;
+        var mockEvaluator;
+        var mockContainer;
+        var mockTelemetryMetadata;
+        var testDataManager;
+        var mockCompObject1;
+        var mockCompObject2;
 
 
         beforeEach(function () {

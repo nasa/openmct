@@ -35,17 +35,17 @@ define(
         ];
 
         describe("The mct-popup directive", function () {
-            var mockCompile,
-                mockPopupService,
-                mockPopup,
-                mockScope,
-                mockElement,
-                testAttrs,
-                mockTransclude,
-                mockParentEl,
-                mockNewElement,
-                testRect,
-                mctPopup;
+            var mockCompile;
+            var mockPopupService;
+            var mockPopup;
+            var mockScope;
+            var mockElement;
+            var testAttrs;
+            var mockTransclude;
+            var mockParentEl;
+            var mockNewElement;
+            var testRect;
+            var mctPopup;
 
             beforeEach(function () {
                 mockCompile =

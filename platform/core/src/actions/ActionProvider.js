@@ -71,19 +71,19 @@ define(
         }
 
         ActionProvider.prototype.getActions = function (actionContext) {
-            var context = (actionContext || {}),
-                category = context.category,
-                key = context.key,
-                $log = this.$log,
-                candidates;
+            var context = (actionContext || {});
+            var category = context.category;
+            var key = context.key;
+            var $log = this.$log;
+            var candidates;
 
             // Instantiate an action; invokes the constructor and
             // additionally fills in the action's getMetadata method
             // with the extension definition (if no getMetadata
             // method was supplied.)
             function instantiateAction(Action, ctxt) {
-                var action = new Action(ctxt),
-                    metadata;
+                var action = new Action(ctxt);
+                var metadata;
 
                 // Provide a getMetadata method that echos
                 // declarative bindings, as well as context,

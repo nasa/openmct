@@ -60,12 +60,12 @@ define(
          *          in its new context
          */
         CompositionCapability.prototype.add = function (domainObject, index) {
-            var self = this,
-                id = typeof domainObject === 'string' ?
-                    domainObject : domainObject.getId(),
-                model = self.domainObject.getModel(),
-                composition = model.composition,
-                oldIndex = composition.indexOf(id);
+            var self = this;
+            var id = typeof domainObject === 'string' ?
+                domainObject : domainObject.getId();
+            var model = self.domainObject.getModel();
+            var composition = model.composition;
+            var oldIndex = composition.indexOf(id);
 
             // Find the object with the above id, used to contextualize
             function findObject(objects) {
@@ -113,9 +113,9 @@ define(
          *     objects which compose this domain object.
          */
         CompositionCapability.prototype.invoke = function () {
-            var domainObject = this.domainObject,
-                model = domainObject.getModel(),
-                ids;
+            var domainObject = this.domainObject;
+            var model = domainObject.getModel();
+            var ids;
 
             // Then filter out non-existent objects,
             // and wrap others (such that they expose a

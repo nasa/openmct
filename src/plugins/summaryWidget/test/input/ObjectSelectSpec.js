@@ -1,6 +1,10 @@
 define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
     describe('A select for choosing composition objects', function () {
-        var mockConfig, mockBadConfig, mockManager, objectSelect, mockComposition;
+        var mockConfig;
+        var mockBadConfig;
+        var mockManager;
+        var objectSelect;
+        var mockComposition;
         beforeEach(function () {
             mockConfig = {
                 object: 'key1'

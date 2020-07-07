@@ -26,16 +26,16 @@ define(
 
         describe("The editable region policy ", function () {
 
-            var editableRegionPolicy,
-                mockDomainObject,
-                mockEditorCapability,
-                mockBrowseRegionPart = {
-                    modes: 'browse'
-                },
-                mockEditRegionPart = {
-                    modes: 'edit'
-                },
-                mockAllModesRegionPart = {};
+            var editableRegionPolicy;
+            var mockDomainObject;
+            var mockEditorCapability;
+            var mockBrowseRegionPart = {
+                modes: 'browse'
+            };
+            var mockEditRegionPart = {
+                modes: 'edit'
+            };
+            var mockAllModesRegionPart = {};
 
             beforeEach(function () {
                 editableRegionPolicy = new EditableRegionPolicy();
