@@ -587,7 +587,10 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = this.layoutItems.findIndex(item);
+            let index = this.layoutItems.findIndex((layoutItem) => {
+                return layoutItem.id === item.id;
+            });
+
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         },
