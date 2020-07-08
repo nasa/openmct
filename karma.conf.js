@@ -23,7 +23,7 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless_no_dev_shm'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless_no_sandbox'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html'];
 
@@ -64,9 +64,9 @@ module.exports = (config) => {
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
             },
-            ChromeHeadless_no_dev_shm: {
+            ChromeHeadless_no_sandbox: {
                 base: 'ChromeHeadless',
-                flags: ['--disable-dev-shm-usage']
+                flags: ['--no-sandbox']
             }
         },
         colors: true,
