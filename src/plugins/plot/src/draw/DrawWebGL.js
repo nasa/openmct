@@ -35,36 +35,37 @@ define([
     const FRAGMENT_SHADER = `
         precision mediump float;
         uniform vec4 uColor;
-        uniform int uShape;
+        uniform int uMarkerShape;
         
         void main(void) {
             gl_FragColor = uColor;
 
-            if (uShape == 2) {
-                float distance = length(2.0 * gl_PointCoord - 1.0);
+            if (uMarkerShape > 1) {
+                vec2 clipSpacePointCoord = 2.0 * gl_PointCoord - 1.0;
 
-                if (distance > 1.0) {
-                    discard;
-                }
-            }
+                if (uMarkerShape == 2) { // circle
+                    float distance = length(clipSpacePointCoord);
 
-            if (uShape == 3) {
-                vec2 pointCoordClipSpace = 2.0 * gl_PointCoord - 1.0;
-                float distance = abs(pointCoordClipSpace.x) + abs(pointCoordClipSpace.y);
-                if (distance > 1.0) {
-                    discard;
-                }
-            }
+                    if (distance > 1.0) {
+                        discard;
+                    }
+                } else if (uMarkerShape == 3) { // diamond
+                    float distance = abs(clipSpacePointCoord.x) + abs(clipSpacePointCoord.y);
 
-            if (uShape == 4) {
-                vec2 pointCoordClipSpace = 2.0 * gl_PointCoord - 1.0;
-                float x = pointCoordClipSpace.x;
-                float y = pointCoordClipSpace.y;
-                float distance = 2.0 * x - 1.0;
-                float distance2 = -2.0 * x - 1.0;
-                if (y < distance || y < distance2) {
-                    discard;
+                    if (distance > 1.0) {
+                        discard;
+                    }
+                } else if (uMarkerShape == 4) { // triangle
+                    float x = clipSpacePointCoord.x;
+                    float y = clipSpacePointCoord.y;
+                    float distance = 2.0 * x - 1.0;
+                    float distance2 = -2.0 * x - 1.0;
+
+                    if (distance > y || distance2 > y) {
+                        discard;
+                    }
                 }
+
             }
         }
     `;
@@ -139,7 +140,7 @@ define([
         // shader programs (to pass values into shaders at draw-time)
         this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
-        this.uShape = this.gl.getUniformLocation(this.program, "uShape");
+        this.uMarkerShape = this.gl.getUniformLocation(this.program, "uMarkerShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
@@ -181,7 +182,7 @@ define([
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
-        this.gl.uniform1i(this.uShape, shapeCode)
+        this.gl.uniform1i(this.uMarkerShape, shapeCode)
         this.gl.drawArrays(drawType, 0, points);
     };
 
