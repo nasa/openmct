@@ -236,6 +236,11 @@ define([
     };
 
     MCTPlotController.prototype.onMouseDown = function ($event) {
+        // do not monitor drag events on browser context click
+        if (event.ctrlKey) {
+            return;
+        }
+
         this.listenTo(this.$window, 'mouseup', this.onMouseUp, this);
         this.listenTo(this.$window, 'mousemove', this.trackMousePosition, this);
         if (event.altKey) {
