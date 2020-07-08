@@ -457,15 +457,43 @@ export default {
             this.objectViewMap = {};
             this.layoutItems.forEach(this.trackItem);
         },
-        addChild(child) {
-            let keyString = this.openmct.objects.makeKeyString(child.identifier);
-            if (this.isTelemetry(child)) {
-                if (!this.telemetryViewMap[keyString] && !this.objectViewMap[keyString]) {
-                    this.addItem('telemetry-view', child);
+        isItemAlreadyTracked(child) {
+            let found = false,
+                keyString = this.openmct.objects.makeKeyString(child.identifier);
+
+            this.layoutItems.forEach(item => {
+                if (item.identifier) {
+                    let itemKeyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                    if (itemKeyString === keyString) {
+                        found = true;
+                        return;
+                    }
                 }
-            } else if (!this.objectViewMap[keyString]) {
-                this.addItem('subobject-view', child);
+            });
+
+            if (found) {
+                return true;
+            } else if (this.isTelemetry(child)) {
+                return this.telemetryViewMap[keyString] && this.objectViewMap[keyString];
+            } else {
+                return this.objectViewMap[keyString];
             }
+        },
+        addChild(child) {
+            if (this.isItemAlreadyTracked(child)) {
+                return;
+            }
+
+            let type;
+
+            if (this.isTelemetry(child)) {
+                type = 'telemetry-view';
+            } else {
+                type = 'subobject-view';
+            }
+
+            this.addItem(type, child);
         },
         removeChild(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
@@ -559,14 +587,17 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = this.layoutItems.findIndex(item);
+            let index = this.layoutItems.findIndex((layoutItem) => {
+                return layoutItem.id === item.id;
+            });
+
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         },
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
                     key: uuid(),
-                    namespace: domainObject.identifier.namespace
+                    namespace: this.internalDomainObject.identifier.namespace
                 },
                 type = this.openmct.types.get(viewType),
                 parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
