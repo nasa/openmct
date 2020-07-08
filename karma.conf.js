@@ -65,11 +65,12 @@ module.exports = (config) => {
                 debug: true
             },
             ChromeHeadless: {
+                base: 'Chrome',
                 flags: ['--disable-dev-shm-usage']
             }
         },
         colors: true,
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
         autoWatch: true,
         // HTML test reporting.
         htmlReporter: {
