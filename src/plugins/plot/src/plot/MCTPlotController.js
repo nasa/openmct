@@ -71,8 +71,6 @@ define([
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
         this.listenTo(this.$canvas, 'wheel', this.wheelZoom, this);
-
-        this.watchForMarquee();
     };
 
     MCTPlotController.prototype.initialize = function () {
@@ -82,11 +80,6 @@ define([
         this.listenTo(this.$canvas, 'mouseleave', this.untrackMousePosition, this);
         this.listenTo(this.$canvas, 'mousedown', this.onMouseDown, this);
         this.listenTo(this.$canvas, 'wheel', this.wheelZoom, this);
-
-        this.watchForMarquee();
-
-        this.listenTo(this.$window, 'keydown', this.toggleInteractionMode, this);
-        this.listenTo(this.$window, 'keyup', this.resetInteractionMode, this);
 
         this.$scope.rectangles = [];
         this.$scope.tickWidth = 0;
@@ -245,10 +238,9 @@ define([
     MCTPlotController.prototype.onMouseDown = function ($event) {
         this.listenTo(this.$window, 'mouseup', this.onMouseUp, this);
         this.listenTo(this.$window, 'mousemove', this.trackMousePosition, this);
-        if (this.allowPan) {
+        if (event.altKey) {
             return this.startPan($event);
-        }
-        if (this.allowMarquee) {
+        } else {
             return this.startMarquee($event);
         }
     };
@@ -261,11 +253,11 @@ define([
             this.$scope.lockHighlightPoint = !this.$scope.lockHighlightPoint;
         }
 
-        if (this.allowPan) {
+        if (this.pan) {
             return this.endPan($event);
         }
 
-        if (this.allowMarquee) {
+        if (this.marquee) {
             return this.endMarquee($event);
         }
     };
@@ -289,6 +281,9 @@ define([
     };
 
     MCTPlotController.prototype.startMarquee = function ($event) {
+        this.$canvas.removeClass('plot-drag');
+        this.$canvas.addClass('plot-marquee');
+
         this.trackMousePosition($event);
         if (this.positionOverPlot) {
             this.freeze();
@@ -444,6 +439,9 @@ define([
     };
 
     MCTPlotController.prototype.startPan = function ($event) {
+        this.$canvas.addClass('plot-drag');
+        this.$canvas.removeClass('plot-marquee');
+
         this.trackMousePosition($event);
         this.freeze();
         this.pan = {
@@ -484,32 +482,6 @@ define([
     MCTPlotController.prototype.endPan = function () {
         this.pan = undefined;
         this.$scope.$emit('user:viewport:change:end');
-    };
-
-    MCTPlotController.prototype.watchForMarquee = function () {
-        this.$canvas.removeClass('plot-drag');
-        this.$canvas.addClass('plot-marquee');
-        this.allowPan = false;
-        this.allowMarquee = true;
-    };
-
-    MCTPlotController.prototype.watchForPan = function () {
-        this.$canvas.addClass('plot-drag');
-        this.$canvas.removeClass('plot-marquee');
-        this.allowPan = true;
-        this.allowMarquee = false;
-    };
-
-    MCTPlotController.prototype.toggleInteractionMode = function (event) {
-        if (event.keyCode === 18) { // control key.
-            this.watchForPan();
-        }
-    };
-
-    MCTPlotController.prototype.resetInteractionMode = function (event) {
-        if (event.keyCode === 18) {
-            this.watchForMarquee();
-        }
     };
 
     MCTPlotController.prototype.freeze = function () {
