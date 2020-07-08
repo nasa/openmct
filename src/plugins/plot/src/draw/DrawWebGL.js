@@ -39,16 +39,30 @@ define([
         
         void main(void) {
             gl_FragColor = uColor;
+
             if (uShape == 2) {
                 float distance = length(2.0 * gl_PointCoord - 1.0);
+
                 if (distance > 1.0) {
                     discard;
                 }
             }
+
             if (uShape == 3) {
                 vec2 pointCoordClipSpace = 2.0 * gl_PointCoord - 1.0;
                 float distance = abs(pointCoordClipSpace.x) + abs(pointCoordClipSpace.y);
                 if (distance > 1.0) {
+                    discard;
+                }
+            }
+
+            if (uShape == 4) {
+                vec2 pointCoordClipSpace = 2.0 * gl_PointCoord - 1.0;
+                float x = pointCoordClipSpace.x;
+                float y = pointCoordClipSpace.y;
+                float distance = 2.0 * x - 1.0;
+                float distance2 = -2.0 * x - 1.0;
+                if (y < distance || y < distance2) {
                     discard;
                 }
             }
