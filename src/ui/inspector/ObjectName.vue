@@ -7,11 +7,17 @@
         <div class="c-object-label__type-icon"
              :class="typeCssClass"
         >
-            <span class="is-missing__indicator" title="This item is missing"></span>
+            <span class="is-missing__indicator"
+                  title="This item is missing"
+            ></span>
         </div>
 
-        <span v-if="!singleSelectNonObject" class="c-inspector__selected c-object-label__name">{{ item.name }}</span>
-        <span v-if="singleSelectNonObject" class="c-inspector__selected  c-object-label__name c-inspector__selected--non-domain-object">Layout Object</span>
+        <span v-if="!singleSelectNonObject"
+              class="c-inspector__selected c-object-label__name"
+        >{{ item.name }}</span>
+        <span v-if="singleSelectNonObject"
+              class="c-inspector__selected  c-object-label__name c-inspector__selected--non-domain-object"
+        >Layout Object</span>
 
     </div>
     <div v-if="multiSelect"

@@ -38,7 +38,9 @@
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
-        <div class="is-missing__indicator" title="This item is missing"></div>
+        <div class="is-missing__indicator"
+             title="This item is missing"
+        ></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"

@@ -30,9 +30,11 @@
             @click="showTab(tab, index)"
         >
             <div class="c-object-label__type-icon"
-                :class="tab.type.definition.cssClass"
+                 :class="tab.type.definition.cssClass"
             >
-                <span class="is-missing__indicator" title="This item is missing"></span>
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
             </div>
             <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
         </button>

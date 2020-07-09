@@ -14,7 +14,9 @@
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
     >
-        <span class="is-missing__indicator" title="This item is missing"></span>
+        <span class="is-missing__indicator"
+              title="This item is missing"
+        ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
         {{ observedObject.name }}

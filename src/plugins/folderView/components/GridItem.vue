@@ -27,7 +27,9 @@
         </div>
     </div>
     <div class="c-grid-item__controls">
-        <div class="is-missing__indicator" title="This item is missing"></div>
+        <div class="is-missing__indicator"
+             title="This item is missing"
+        ></div>
         <div
             class="icon-people"
             title="Shared"

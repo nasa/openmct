@@ -31,14 +31,16 @@
     <div class="c-so-view__header">
         <div class="c-object-label"
              :class="{
-                classList,
-                'is-missing': domainObject.status === 'missing'
-            }"
+                 classList,
+                 'is-missing': domainObject.status === 'missing'
+             }"
         >
             <div class="c-object-label__type-icon"
                  :class="cssClass"
-             >
-                <span class="is-missing__indicator" title="This item is missing"></span>
+            >
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
             </div>
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
@@ -55,7 +57,9 @@
             @click="expand"
         ></button>
     </div>
-    <div class="is-missing__indicator" title="This item is missing"></div>
+    <div class="is-missing__indicator"
+         title="This item is missing"
+    ></div>
     <object-view
         ref="objectView"
         class="c-so-view__object-view"

@@ -5,16 +5,19 @@
     @click="navigate"
 >
     <td class="c-list-item__name">
-        <a class="c-object-label"
-           :class="{ 'is-missing': item.status === 'missing' }"
-           ref="objectLink"
-           :href="objectLink"
+        <a
+            ref="objectLink"
+            class="c-object-label"
+            :class="{ 'is-missing': item.status === 'missing' }"
+            :href="objectLink"
         >
             <div
                 class="c-object-label__type-icon c-list-item__type-icon"
                 :class="item.type.cssClass"
             >
-                <span class="is-missing__indicator" title="This item is missing"></span>
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
             </div>
             <div class="c-object-label__name c-list-item__name">{{ item.model.name }}</div>
         </a>

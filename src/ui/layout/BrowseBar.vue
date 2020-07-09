@@ -16,7 +16,9 @@
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
             >
-                <span class="is-missing__indicator" title="This item is missing"></span>
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
             </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"
