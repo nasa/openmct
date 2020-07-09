@@ -570,6 +570,16 @@ define([
         this.cursorGuide = !this.cursorGuide;
     };
 
+    MCTPlotController.prototype.toggleXAxisLabel = function (label, options, series) {
+        let xAxisObject = options.filter(o => o.name === label)[0];
+
+        if (xAxisObject) {
+            this.config.xAxis.set('key', xAxisObject.key);
+            this.config.xAxis.set('label', label);
+            this.$scope.xAxisLabel = label;
+        }
+    };
+
     MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {
         let yAxisObject = options.filter(o => o.name === label)[0];
 
