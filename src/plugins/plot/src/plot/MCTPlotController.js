@@ -96,6 +96,7 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
+        this.$scope.xAxisLabel = this.config.xAxis.get('label');
         this.$scope.yAxisLabel = this.config.yAxis.get('label');
 
         this.cursorGuideVertical = this.$element[0].querySelector('.js-cursor-guide--v');
@@ -111,7 +112,33 @@ define([
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
 
+        this.setUpXAxisOptions();
         this.setUpYAxisOptions();
+    };
+
+    MCTPlotController.prototype.setUpXAxisOptions = function () {
+        if (this.$scope.series.length === 1) {
+            let metadata = this.$scope.series[0].metadata;
+
+            this.$scope.xKeyOptions = metadata
+                .valuesForHints(['domain'])
+                .map(function (o) {
+                    return {
+                        name: o.name,
+                        key: o.key
+                    };
+                });
+
+            //  set xAxisLabel if none is set yet
+            if (this.$scope.xAxisLabel === 'none') {
+                let xKey = this.$scope.series[0].model.xKey,
+                    xKeyModel = this.$scope.xKeyOptions.filter(o => o.key === xKey)[0];
+
+                this.$scope.xAxisLabel = xKeyModel.name;
+            }
+        } else {
+            this.$scope.xKeyOptions = undefined;
+        }
     };
 
     MCTPlotController.prototype.setUpYAxisOptions = function () {
