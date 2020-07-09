@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space

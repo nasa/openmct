@@ -158,7 +158,6 @@ define([
          */
         function onDragStart(event) {
             $('.t-drag-indicator').each(function () {
-                // eslint-disable-next-line no-invalid-this
                 $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
             });
             self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
@@ -202,7 +201,6 @@ define([
         Object.keys(this.textInputs).forEach(function (inputKey) {
             self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
             self.listenTo(self.textInputs[inputKey], 'input', function () {
-                // eslint-disable-next-line no-invalid-this
                 onTextInput(this, inputKey);
             });
         });
@@ -221,7 +219,6 @@ define([
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
         this.widgetDnD.on('drop', function () {
-            // eslint-disable-next-line no-invalid-this
             this.domElement.show();
             $('.t-drag-indicator').hide();
         }, this);

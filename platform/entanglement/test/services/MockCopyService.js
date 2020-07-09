@@ -61,7 +61,7 @@ define(
             );
 
             /** @this MockCopyService */
-            mockCopyService.perform.and.callFake(() => {
+            mockCopyService.perform.and.callFake(function () {
                 var performPromise;
                 var callExtensions;
                 var spy;
@@ -80,7 +80,7 @@ define(
                     }
                 };
 
-                spy = mockCopyService.perform;
+                spy = this.perform;
 
                 Object.keys(callExtensions).forEach(function (key) {
                     spy.calls.mostRecent()[key] = callExtensions[key];

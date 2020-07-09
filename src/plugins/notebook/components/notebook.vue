@@ -190,7 +190,7 @@ export default {
         }
     },
     updated: function () {
-        this.$nextTick(() => {
+        this.$nextTick(function () {
             this.focusOnEntryId();
         })
     },

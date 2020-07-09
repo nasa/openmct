@@ -53,22 +53,22 @@ define(['../../src/input/KeySelect'], function (KeySelect) {
                 'triggerCallback'
             ]);
 
-            mockObjectSelect.on.and.callFake((event, callback) => {
-                mockObjectSelect.callbacks = mockObjectSelect.callbacks || {};
-                mockObjectSelect.callbacks[event] = callback;
+            mockObjectSelect.on.and.callFake(function (event, callback) {
+                this.callbacks = this.callbacks || {};
+                this.callbacks[event] = callback;
             });
 
-            mockObjectSelect.triggerCallback.and.callFake((event, key) => {
-                mockObjectSelect.callbacks[event](key);
+            mockObjectSelect.triggerCallback.and.callFake(function (event, key) {
+                this.callbacks[event](key);
             });
 
-            mockManager.on.and.callFake((event, callback) => {
-                mockManager.callbacks = mockManager.callbacks || {};
-                mockManager.callbacks[event] = callback;
+            mockManager.on.and.callFake(function (event, callback) {
+                this.callbacks = this.callbacks || {};
+                this.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.and.callFake(event => {
-                mockManager.callbacks[event]();
+            mockManager.triggerCallback.and.callFake(function (event) {
+                this.callbacks[event]();
             });
 
             mockManager.getTelemetryMetadata.and.callFake(function (key) {

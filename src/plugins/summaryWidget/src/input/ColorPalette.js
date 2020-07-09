@@ -41,7 +41,6 @@ function (
         $('.c-palette', domElement).addClass('c-palette--color');
 
         $('.c-palette__item', domElement).each(function () {
-            // eslint-disable-next-line no-invalid-this
             var elem = this;
             $(elem).css('background-color', elem.dataset.item);
         });

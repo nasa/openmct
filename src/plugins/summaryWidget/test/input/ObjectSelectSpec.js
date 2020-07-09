@@ -35,16 +35,16 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
                 'getComposition'
             ]);
 
-            mockManager.on.and.callFake((event, callback) => {
-                mockManager.callbacks = mockManager.callbacks || {};
-                mockManager.callbacks[event] = callback;
+            mockManager.on.and.callFake(function (event, callback) {
+                this.callbacks = this.callbacks || {};
+                this.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.and.callFake((event, newObj) => {
+            mockManager.triggerCallback.and.callFake(function (event, newObj) {
                 if (event === 'add') {
-                    mockManager.callbacks.add(newObj);
+                    this.callbacks.add(newObj);
                 } else {
-                    mockManager.callbacks[event]();
+                    this.callbacks[event]();
                 }
             });
 

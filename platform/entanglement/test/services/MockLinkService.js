@@ -63,11 +63,11 @@ define(
                 ]
             );
 
-            mockLinkService.perform.and.callFake(object => {
+            mockLinkService.perform.and.callFake(function (object) {
                 var performPromise = new ControlledPromise();
 
-                mockLinkService.perform.calls.mostRecent().promise = performPromise;
-                mockLinkService.perform.calls.all()[mockLinkService.perform.calls.count() - 1].promise =
+                this.perform.calls.mostRecent().promise = performPromise;
+                this.perform.calls.all()[this.perform.calls.count() - 1].promise =
                     performPromise;
 
                 return performPromise.then(function (overrideObject) {
