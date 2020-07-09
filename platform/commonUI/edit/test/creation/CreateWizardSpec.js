@@ -28,6 +28,7 @@ define(
     function (CreateWizard) {
 
         xdescribe("The create wizard", function () {
+<<<<<<< HEAD
             var mockType;
             var mockParent;
             var mockProperties;
@@ -35,6 +36,15 @@ define(
             var testModel;
             var mockDomainObject;
             var wizard;
+=======
+            var mockType,
+                mockParent,
+                mockProperties,
+                mockPolicyService,
+                testModel,
+                mockDomainObject,
+                wizard;
+>>>>>>> parent of e6cd94123... satisfying no-invalid-this rule
 
             function createMockProperty(name) {
                 var mockProperty = jasmine.createSpyObj(

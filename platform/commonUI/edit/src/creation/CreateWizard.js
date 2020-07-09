@@ -55,12 +55,17 @@ define(
          *         show in the create dialog
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
+<<<<<<< HEAD
             var sections = [];
             var domainObject = this.domainObject;
             var self = this;
+=======
+            var sections = [],
+                domainObject = this.domainObject;
+>>>>>>> parent of e6cd94123... satisfying no-invalid-this rule
 
             function validateLocation(parent) {
-                return parent && self.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
+                return parent && this.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
             }
 
             sections.push({
