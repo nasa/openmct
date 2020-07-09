@@ -31,7 +31,12 @@
     </div>
     <div v-if="!readOnly"
          class="c-ne__local-controls--hidden"
-    >
+    >   
+        <button class="c-icon-button c-icon-button--major icon-image"
+                title="Add an image to entry"
+                @click="openImageEditor"
+        >
+        </button>
         <button class="c-icon-button c-icon-button--major icon-trash"
                 title="Delete this entry"
                 @click="deleteEntry"
@@ -60,6 +65,7 @@
 import NotebookEmbed from './notebook-embed.vue';
 import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
+import Painterro from 'painterro';
 
 export default {
     inject: ['openmct', 'snapshotContainer'],
@@ -310,6 +316,94 @@ export default {
         },
         updateEntries(entries) {
             this.$emit('updateEntries', entries);
+        },
+        openImageEditor() {
+            let painterroDiv = document.createElement('div');
+            let painterroInstance = {};
+            let save = false;
+            let self = this;
+
+            painterroDiv.id = 'snap-annotation';
+
+            let annotateOverlay = this.openmct.overlays.overlay({
+                element: painterroDiv,
+                size: 'large',
+                dismissable: false,
+                buttons: [
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            painterroInstance.save();
+                            annotateOverlay.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Save',
+                        callback: () => {
+                            save = true;
+                            painterroInstance.save();
+                            annotateOverlay.dismiss();
+                        }
+                    }
+                ]
+            });
+
+            painterroInstance = Painterro({
+                id: 'snap-annotation',
+                activeColor: '#ff0000',
+                activeColorAlpha: 1.0,
+                activeFillColor: '#fff',
+                activeFillColorAlpha: 0.0,
+                backgroundFillColor: '#000',
+                backgroundFillColorAlpha: 0.0,
+                defaultFontSize: 16,
+                defaultLineWidth: 2,
+                defaultTool: 'ellipse',
+                hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+                initText:'Drag an image or use Ctrl + V to paste',
+                how_to_paste_actions: ['replace_all'],
+                translation: {
+                    name: 'en',
+                    strings: {
+                        lineColor: 'Line',
+                        fillColor: 'Fill',
+                        lineWidth: 'Size',
+                        textColor: 'Color',
+                        fontSize: 'Size',
+                        fontStyle: 'Style'
+                    }
+                },
+                saveHandler: (image, done) => {
+                    if (save) {
+                        const url = image.asBlob();
+                        const reader = new window.FileReader();
+                        reader.readAsDataURL(url);
+                        reader.onloadend = function () {
+                            const snapshot = reader.result;
+                            const snapshotObject = {
+                                src: snapshot,
+                                type: url.type,
+                                size: url.size,
+                                modified: Date.now()
+                            };
+                            const embedObject = {
+                                snapshot: snapshotObject
+                            };
+
+                            const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
+                            const entryPos = getEntryPosById(self.entry.id, self.domainObject, self.selectedSection, self.selectedPage);
+                            const currentEntryEmbeds = entries[entryPos].embeds;
+                            currentEntryEmbeds.push(embedObject);
+                            self.updateEntries(entries);
+                        };
+                    } else {
+                        console.log('You cancelled the annotation!!!');
+                    }
+
+                    done(true);
+                }
+            }).show();
+            console.log(painterroInstance);
         }
     }
 }

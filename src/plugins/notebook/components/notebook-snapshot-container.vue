@@ -87,13 +87,8 @@ export default {
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
             };
-            const openImageEditor = {
-                cssClass: 'icon-image',
-                name: 'Create a new Image',
-                callback: this.snapshotContainer.openImageEditor
-            }
 
-            this.popupMenuItems = [removeSnapshot, openImageEditor];
+            this.popupMenuItems = [removeSnapshot];
         },
         close() {
             this.toggleSnapshot();
