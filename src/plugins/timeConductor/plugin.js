@@ -64,15 +64,13 @@ function validateConfiguration(config, openmct) {
             return m;
         }, {});
 
-    return config.menuOptions.map(menuOption => {
-        let message = '';
+    return config.menuOptions.map(function (menuOption) {
         if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
-            message = `Time system '${menuOption.timeSystem}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
+            return `Time system '${menuOption.timeSystem}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }
         if (menuOption.clock && !clocks[menuOption.clock]) {
-            message = `Clock '${menuOption.clock}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
+            return `Clock '${menuOption.clock}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }
-        return message;
     }).filter(isTruthy).join('\n');
 }
 

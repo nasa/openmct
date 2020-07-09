@@ -120,15 +120,9 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
-        // https://eslint.org/docs/rules/array-callback-return
-        "array-callback-return": "error",
-        // https://eslint.org/docs/rules/no-invalid-this
-        "no-invalid-this": "error", // Believe this one actually surfaces some bugs
-        // https://eslint.org/docs/rules/func-style
-        "func-style": ["error", "declaration"],
         // https://eslint.org/docs/rules/one-var
         "one-var": ["error", "never"],
-        
+
         "vue/html-indent": [
             "error",
             4,
