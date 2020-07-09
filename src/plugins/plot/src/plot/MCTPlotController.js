@@ -570,25 +570,14 @@ define([
         this.cursorGuide = !this.cursorGuide;
     };
 
-    /**
-     * @private
-     */
-    MCTPlotController.prototype.toggleAxisLabel = function (axis, label, options, series) {
-        const axisObject = options.filter(o => o.name === label)[0];
-
-        if (axisObject) {
-            series.emit(`change:${axis}Key`, axisObject.key);
-            this.config[`${axis}Axis`].set('label', label);
-            this.$scope[`${axis}AxisLabel`] = label;
-        }
-    };
-
-    MCTPlotController.prototype.toggleXAxisLabel = function (label, options, series) {
-        this.toggleAxisLabel('x', label, options, series);
-    };
-
     MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {
-        this.toggleAxisLabel('y', label, options, series);
+        let yAxisObject = options.filter(o => o.name === label)[0];
+
+        if (yAxisObject) {
+            series.emit('change:yKey', yAxisObject.key);
+            this.config.yAxis.set('label', label);
+            this.$scope.yAxisLabel = label;
+        }
     };
 
     return MCTPlotController;
