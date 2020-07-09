@@ -10,8 +10,8 @@
                     >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
                     </span>
                 </div>
-                <PopupMenu v-if="snapshots.length > 0"
-                           :popup-menu-items="popupMenuItems"
+                <PopupMenu 
+                    :popup-menu-items="popupMenuItems"
                 />
             </div>
 
@@ -86,9 +86,14 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
+            };
+            const openImageEditor = {
+                cssClass: 'icon-image',
+                name: 'Create a new Image',
+                callback: this.snapshotContainer.openImageEditor
             }
 
-            this.popupMenuItems = [removeSnapshot];
+            this.popupMenuItems = [removeSnapshot, openImageEditor];
         },
         close() {
             this.toggleSnapshot();
