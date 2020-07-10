@@ -72,18 +72,13 @@ var unknownObjectType = {
 
 export default {
     inject: ['openmct','domainObject', 'composition'],
+    components: {
+        ObjectView
+    },
     props: {
         isEditing: {
             type: Boolean,
             required: true
-        }
-    },
-    components: {
-        ObjectView
-    },
-    computed: {
-        allowEditing() {
-            return !this.internalDomainObject.locked && this.isEditing;
         }
     },
     data: function () {
@@ -100,6 +95,11 @@ export default {
             searchTabKey: `tabs.pos.${keyString}`
         };
     },
+    computed: {
+        allowEditing() {
+            return !this.internalDomainObject.locked && this.isEditing;
+        }
+    },
     mounted() {
         if (this.composition) {
             this.composition.on('add', this.addItem);
@@ -108,7 +108,7 @@ export default {
             this.composition.load().then(() => {
                 let currentTabIndexFromURL = getSearchParam(this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
-                
+
                 if (currentTabIndexFromURL !== null) {
                     this.setCurrentTabByIndex(currentTabIndexFromURL);
                 } else if (currentTabIndexFromDomainObject !== undefined) {
@@ -222,7 +222,7 @@ export default {
         },
         storeCurrentTabIndexInURL(index) {
             let currentTabIndexInURL = getSearchParam(this.searchTabKey);
-            
+
             if (index !== currentTabIndexInURL) {
                 setSearchParam(this.searchTabKey, index);
                 this.currentTabIndex = index;
