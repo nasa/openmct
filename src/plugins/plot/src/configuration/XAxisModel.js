@@ -81,7 +81,8 @@ define([
                     min: bounds.start,
                     max: bounds.end
                 },
-                frozen: false
+                frozen: false,
+                regenerate: true
             };
         }
     });

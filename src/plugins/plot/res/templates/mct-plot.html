@@ -219,7 +219,7 @@
 
             <div class="gl-plot-axis-area gl-plot-x has-local-controls">
                 <mct-ticks axis="xAxis">
-                     <div ng-repeat="tick in ticks track by tick.value"
+                     <div ng-repeat="tick in ticks"
                           class="gl-plot-tick gl-plot-x-tick-label"
                           ng-style="{
                               left: (100 * (tick.value - min) / interval) + '%'
