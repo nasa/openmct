@@ -57,7 +57,7 @@ module.exports = (config) => {
         ],
         port: 9876,
         reporters: reporters,
-        browsers: browsers,
+        browsers: ['ChromeHeadless'],
         customLaunchers: {
             ChromeDebugging: {
                 base: 'Chrome',
@@ -66,7 +66,7 @@ module.exports = (config) => {
             }
         },
         colors: true,
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
         autoWatch: true,
         // HTML test reporting.
         htmlReporter: {
