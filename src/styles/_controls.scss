@@ -420,9 +420,7 @@ select {
     margin: 1px 1px 0 0;
     padding: $interiorMargin $interiorMarginLg;
     white-space: nowrap;
-
     --notchSize: 7px;
-
     clip-path:
         polygon(
             0% 0%,
@@ -433,8 +431,12 @@ select {
             0% 100%
         );
 
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
     @include hover() {
-        background: $colorBtnBgHov;
+        filter: $filterHov;
     }
 
     &.is-current {
