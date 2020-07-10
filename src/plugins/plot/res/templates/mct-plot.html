@@ -36,7 +36,7 @@
                  ng-class="{'is-cursor-locked': !!lockHighlightPoint }">
                 <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock" title="Cursor is point locked. Click anywhere in the plot to unlock."></div>
                 <div class="plot-legend-item"
-                     ng-class="{'is-missing': series.status === 'missing'}"
+                     ng-class="{'is-missing': series.domainObject.status === 'missing'}"
                      ng-repeat="series in series track by $index"
                 >
                     <div class="plot-series-swatch-and-name">
@@ -86,7 +86,7 @@
                     </thead>
                     <tr ng-repeat="series in series"
                         class="plot-legend-item"
-                        ng-class="{'is-missing': series.status === 'missing'}"
+                        ng-class="{'is-missing': series.domainObject.status === 'missing'}"
                     >
                         <td class="plot-series-swatch-and-name">
                             <span class="plot-series-color-swatch"
