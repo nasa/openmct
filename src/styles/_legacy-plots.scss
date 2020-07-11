@@ -62,12 +62,9 @@ mct-plot {
     display: flex;
     flex-direction: column;
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
-
     .l-control-bar {
         flex: 0 0 auto;
+        margin-bottom: $interiorMargin;
     }
 
     .l-view-section {

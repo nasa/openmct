@@ -158,9 +158,11 @@
     }
 }
 
-.paused {
-    border: 1px solid #ff9900;
+.is-paused {
+    box-shadow: inset $colorPausedBg 0 0 1px 1px;
 }
+
+
 
 /******************************* LEGACY */
 .s-status-taking-snapshot,

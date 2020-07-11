@@ -92,14 +92,16 @@ div.c-table {
         flex: 1 1 auto;
     }
 
-    > * + * {
-        margin-top: $interiorMarginSm;
+    &:not(.is-paused) {
+        // TODO: SHOW BUTTONS WHEN IN SMALL CONTAINER AND PAUSED
+        background: green;
     }
 }
 
 .c-table-control-bar {
     display: flex;
     flex: 0 0 auto;
+    margin-bottom: $interiorMarginSm; // This approach to allow margin to go away when control bar is hidden
 
     > * + * {
         margin-left: $interiorMarginSm;

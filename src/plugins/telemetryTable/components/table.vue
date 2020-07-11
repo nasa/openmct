@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper">
+<div class="c-table-wrapper"
+     :class="{ 'is-paused': paused }"
+>
     <!-- main contolbar  start-->
     <div v-if="!marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
@@ -125,7 +127,7 @@
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
         :class="{
             'loading': loading,
-            'paused' : paused
+            'is-paused' : paused
         }"
     >
         <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">

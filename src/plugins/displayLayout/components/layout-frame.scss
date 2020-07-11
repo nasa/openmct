@@ -7,6 +7,15 @@
     > *:first-child {
         flex: 1 1 auto;
     }
+
+    &.is-in-small-container {
+        background: rgba(blue, 0.1);
+
+        //.c-control-bar,
+        //.c-telemetry-table__headers__filter {
+        //    display: none;
+        //}
+    }
 }
 
 .c-frame-edit__move {

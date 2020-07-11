@@ -25,7 +25,8 @@
     class="l-layout__frame c-frame"
     :class="{
         'no-frame': !item.hasFrame,
-        'u-inspectable': inspectable
+        'u-inspectable': inspectable,
+        'is-in-small-container': size.width < 600 || size.height < 600
     }"
     :style="style"
 >
@@ -61,6 +62,13 @@ export default {
         }
     },
     computed: {
+        size() {
+            let {x, y, width, height} = this.item;
+            return {
+                width: (this.gridSize[0] * width),
+                height: (this.gridSize[1] * height)
+            };
+        },
         style() {
             let {x, y, width, height} = this.item;
             return {
