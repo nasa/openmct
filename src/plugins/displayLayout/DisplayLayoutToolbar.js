@@ -134,6 +134,13 @@ define(['lodash'], function (_) {
                     return `configuration.items[${selectionPath[0].context.index}]`;
                 }
 
+                function getAllOfType(selection, specificType) {
+                    return selection.filter(selectionPath => {
+                        let type = selectionPath[0].context.layoutItem.type;
+                        return type === specificType;
+                    });
+                }
+
                 function getAllTypes(selection) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
@@ -506,6 +513,32 @@ define(['lodash'], function (_) {
                     return allTelemetry;
                 }
 
+                function getToggleUnitsButton(selectedParent, selection) {
+                    let applicableItems = getAllOfType(selection, 'telemetry-view');
+                    return {
+                        control: "toggle-button",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: applicableItems,
+                        contextMethod: 'toggleUnits',
+                        property: function (selectionPath) {
+                            console.log('path', selectionPath, getPath(selectionPath) + '.showUnits');
+                            return getPath(selectionPath) + '.showUnits';
+                        },
+                        options: [
+                            {
+                                value: true,
+                                icon: 'icon-eye-open',
+                                title: "Show units"
+                            },
+                            {
+                                value: false,
+                                icon: 'icon-eye-disabled',
+                                title: "Hide units"
+                            }
+                        ]
+                    };
+                }
+
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
                     if (selection.length === 1) {
                         let displayLayoutContext = selectionPath[1].context,
@@ -589,6 +622,7 @@ define(['lodash'], function (_) {
                     'text-style': [],
                     'position': [],
                     'duplicate': [],
+                    'unit-toggle': [],
                     'remove': []
                 };
 
@@ -648,6 +682,9 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                        }
+                        if (toolbar['unit-toggle'].length === 0) {
+                            toolbar['unit-toggle'] = [getToggleUnitsButton(selectedParent, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {

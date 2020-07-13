@@ -134,7 +134,6 @@ export default {
                 value = this.getFormValue(domainObject, toolbarItem);
             } else {
                 let values = [];
-
                 if (applicableSelectedItems) {
                     applicableSelectedItems.forEach(selectionPath => {
                         values.push(this.getPropertyValue(domainObject, toolbarItem, selectionPath));
@@ -160,7 +159,6 @@ export default {
             if (formKey) {
                 property = property + "." + formKey;
             }
-
             return _.get(domainObject, property);
         },
         getFormValue(domainObject, toolbarItem) {
@@ -204,7 +202,6 @@ export default {
         },
         updateObjectValue(value, item) {
             let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-
             this.structure = this.structure.map(toolbarItem => {
                 if (toolbarItem.domainObject) {
                     let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
@@ -234,7 +231,13 @@ export default {
                     }
                 });
             } else {
-                if (item.applicableSelectedItems) {
+                if(item.contextMethod) {
+                    let method = item.contextMethod;
+                    item.applicableSelectedItems.forEach(selectionPath => {
+                        this.mutateObject(item, value, selectionPath);
+                        selectionPath[0].context[method](value);
+                    });
+                } else if (item.applicableSelectedItems) {
                     item.applicableSelectedItems.forEach(selectionPath => {
                         this.mutateObject(item, value, selectionPath);
                     });
@@ -249,7 +252,6 @@ export default {
             if (formKey) {
                 property = property + "." + formKey;
             }
-
             this.openmct.objects.mutate(item.domainObject, property, value);
         },
         triggerMethod(item, event) {

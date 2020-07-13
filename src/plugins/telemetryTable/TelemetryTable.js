@@ -27,6 +27,7 @@ define([
     './collections/FilteredTableRowCollection',
     './TelemetryTableRow',
     './TelemetryTableColumn',
+    './TelemetryTableUnitColumn',
     './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
@@ -35,6 +36,7 @@ define([
     FilteredTableRowCollection,
     TelemetryTableRow,
     TelemetryTableColumn,
+    TelemetryTableUnitColumn,
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
@@ -206,15 +208,60 @@ define([
 
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-
             metadataValues.forEach(metadatum => {
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
+                // add units column if available
+                if(metadatum.unit !== undefined) {
+                    let unitColumn = this.createUnitColumn(metadatum);
+                    this.configuration.addSingleColumnForObject(telemetryObject, unitColumn);
+                }
             });
         }
 
         createColumn(metadatum) {
             return new TelemetryTableColumn(this.openmct, metadatum);
+        }
+
+        createUnitColumn(metadatum) {
+            return new TelemetryTableUnitColumn(this.openmct, metadatum);
+            // let unitColumn = {
+            //     isUnit: true,
+            //     metadatum,
+            //     titleValue: metadatum.name + ' Unit',
+            //     selectable: false,
+            //     formatter: {
+            //         format(telemetryDatum) {
+            //             return metadatum.unit;
+            //         },
+            //         parse(telemetryDatum) {
+            //             return metadatum.unit;
+            //         }
+            //     },
+            //     getKey() {
+            //         return this.metadatum.key + '-unit';
+            //     },
+            //     getTitle() {
+            //         return this.titleValue;
+            //     },
+            //     getMetadatum() {
+            //         return this.metadatum;
+            //     },
+            //     hasValueForDatum(telemetryDatum) {
+            //         return telemetryDatum.hasOwnProperty(this.metadatum.source);
+            //     },
+            //     getRawValue(telemetryDatum) {
+            //         return this.metadatum.unit;
+            //     },
+            //     getFormattedValue(telemetryDatum) {
+            //         return this.formatter.format(telemetryDatum);
+            //     },
+            //     getParsedValue(telemetryDatum) {
+            //         return this.formatter.parse(telemetryDatum);
+            //     }
+            // };
+            // return unitColumn;
+
         }
 
         subscribeTo(telemetryObject) {

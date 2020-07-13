@@ -41,6 +41,7 @@ define([
                 {
                     key: "sin",
                     name: "Sine",
+                    unit: "Hz",
                     formatString: '%0.2f',
                     hints: {
                         range: 1
@@ -49,6 +50,7 @@ define([
                 {
                     key: "cos",
                     name: "Cosine",
+                    unit: "deg",
                     formatString: '%0.2f',
                     hints: {
                         range: 2
