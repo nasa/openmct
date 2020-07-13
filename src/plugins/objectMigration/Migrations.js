@@ -225,7 +225,7 @@ define([
                                     telemetryObjects[element.id] = object;
                                 });
                         } else {
-                            return false;
+                            return [];
                         }
                     });
 

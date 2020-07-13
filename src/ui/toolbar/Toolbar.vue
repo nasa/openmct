@@ -167,7 +167,7 @@ export default {
             let value = {};
             let values = {};
 
-            toolbarItem.formKeys.map(key => {
+            toolbarItem.formKeys.forEach(key => {
                 values[key] = [];
 
                 if (toolbarItem.applicableSelectedItems) {
@@ -177,7 +177,6 @@ export default {
                 } else {
                     values[key].push(this.getPropertyValue(domainObject, toolbarItem, undefined, key));
                 }
-                return toolbarItem.formKeys;
             });
 
             for (const key in values) {
@@ -221,7 +220,7 @@ export default {
             // If value is an object, iterate the toolbar structure and mutate all keys in form.
             // Otherwise, mutate the property.
             if (value === Object(value)) {
-                this.structure.map(s => {
+                this.structure.forEach(s => {
                     if (s.formKeys) {
                         s.formKeys.forEach(key => {
                             if (item.applicableSelectedItems) {
@@ -233,7 +232,6 @@ export default {
                             }
                         });
                     }
-                    return this.structure;
                 });
             } else {
                 if (item.applicableSelectedItems) {

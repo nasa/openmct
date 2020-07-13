@@ -143,7 +143,7 @@ define([
                 _.set(this.$scope, formPath, coerce(newVal));
             }
         }), this);
-        this.model.listenTo(this.$scope, 'change:' + formPath, ((newVal, oldVal) => {
+        this.model.listenTo(this.$scope, 'change:' + formPath, (newVal, oldVal) => {
             var validationResult = validate(newVal, this.model);
             if (validationResult === true) {
                 delete this.$scope.validation[formProp];
@@ -164,7 +164,7 @@ define([
                     );
                 }
             }
-        }), this);
+        });
         _.set(this.$scope, formPath, coerce(this.model.get(prop)));
     };
 

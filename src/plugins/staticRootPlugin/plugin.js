@@ -3,7 +3,6 @@ define([
 ], function (
     StaticModelProvider
 ) {
-
     /**
      * Static Root Plugin: takes an export file and exposes it as a new root
      * object.

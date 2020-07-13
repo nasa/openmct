@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -20,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jshint latedef: nofunc */
+/* eslint-disable no-invalid-this */
 define([
     "./MeanTelemetryProvider",
     "./MockTelemetryApi"

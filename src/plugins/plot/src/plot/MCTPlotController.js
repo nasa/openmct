@@ -218,21 +218,17 @@ define([
 
         if (!point) {
             this.$scope.highlights = [];
-            this.$scope.series.map(series => {
-                delete series.closest;
-                return series;
-            });
+            this.$scope.series.forEach(series => delete series.closest);
         } else {
             this.$scope.highlights = this.$scope.series
-                .filter(function (series) {
-                    return series.data.length > 0;
-                }).map(function (series) {
+                .filter(series => series.data.length > 0)
+                .map(series => {
                     series.closest = series.nearestPoint(point);
                     return {
                         series: series,
                         point: series.closest
                     };
-                }, this);
+                });
         }
         this.$scope.$digest();
     };

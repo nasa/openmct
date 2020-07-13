@@ -33,14 +33,10 @@ define(
         _
     ) {
 
-        function ZERO() {
-            return 0;
-        }
-
         const EMPTY_SERIES = {
-            getPointCount: ZERO,
-            getDomainValue: ZERO,
-            getRangeValue: ZERO
+            getPointCount: () => 0,
+            getDomainValue: () => 0,
+            getRangeValue: () => 0
         };
 
         /**

@@ -139,16 +139,16 @@ define([
             }, this);
         },
         trackSeries: function (series) {
-            this.listenTo(series, 'change:stats', (seriesStats => {
+            this.listenTo(series, 'change:stats', seriesStats => {
                 if (!seriesStats) {
                     this.resetStats();
                 } else {
                     this.updateStats(seriesStats);
                 }
-            }), this);
+            });
             this.listenTo(series, 'change:yKey', () => {
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
+            });
         },
         untrackSeries: function (series) {
             this.stopListening(series);

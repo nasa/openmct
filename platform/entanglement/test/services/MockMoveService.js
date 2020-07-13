@@ -60,7 +60,7 @@ define(
                 ]
             );
 
-            mockMoveService.perform.and.callFake(()=> {
+            mockMoveService.perform.and.callFake(() => {
                 var performPromise,
                     callExtensions,
                     spy;
