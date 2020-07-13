@@ -28,17 +28,22 @@
             ng-click="legend.set('expanded', !legend.get('expanded'));">
         </div>
 
-        <div class="c-plot-legend__wrapper">
+        <div class="c-plot-legend__wrapper"
+            ng-class="{ 'is-cursor-locked':  !!lockHighlightPoint }">
 
             <!-- COLLAPSED PLOT LEGEND -->
             <div class="plot-wrapper-collapsed-legend"
-                 ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
+                 ng-class="{'is-cursor-locked': !!lockHighlightPoint }">
+                <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock" title="Cursor is point locked. Click anywhere in the plot to unlock."></div>
                 <div class="plot-legend-item"
-                      ng-repeat="series in series track by $index">
+                     ng-class="{'is-missing': series.status === 'missing'}"
+                     ng-repeat="series in series track by $index"
+                >
                     <div class="plot-series-swatch-and-name">
-                        <span class="plot-series-color-swatch"
+                        <span class="plot-series-color-swatch "
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
+                        <span class="is-missing__indicator" title="This item is missing"></span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
                     </div>
                     <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
@@ -55,7 +60,10 @@
             </div>
 
             <!-- EXPANDED PLOT LEGEND -->
-            <div class="plot-wrapper-expanded-legend">
+            <div class="plot-wrapper-expanded-legend"
+                 ng-class="{'is-cursor-locked': !!lockHighlightPoint }"
+            >
+                <div class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock" title="Click anywhere in the plot to unlock."> Cursor locked to point</div>
                 <table>
                     <thead>
                         <tr>
@@ -76,12 +84,15 @@
                             </th>
                         </tr>
                     </thead>
-                    <tr ng-repeat="series in series" class="plot-legend-item">
-                        <td class="plot-series-swatch-and-name"
-                            ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
+                    <tr ng-repeat="series in series"
+                        class="plot-legend-item"
+                        ng-class="{'is-missing': series.status === 'missing'}"
+                    >
+                        <td class="plot-series-swatch-and-name">
                             <span class="plot-series-color-swatch"
                                   ng-style="{ 'background-color': series.get('color').asHexString() }">
                             </span>
+                            <span class="is-missing__indicator" title="This item is missing"></span>
                             <span class="plot-series-name">{{ series.get('name') }}</span>
                         </td>
 
@@ -134,7 +145,7 @@
                     {{option.name}}
                 </option>
             </select>
-            
+
 
             <mct-ticks axis="yAxis">
                 <div ng-repeat="tick in ticks track by tick.value"
