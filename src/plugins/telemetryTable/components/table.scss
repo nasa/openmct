@@ -54,6 +54,16 @@
                 width: 100%;
             }
         }
+
+        &__filter {
+            .c-table__search {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .is-in-small-container & {
+                display: none;
+            }
+        }
     }
 
     &__headers__label {
@@ -138,7 +148,7 @@
     }
 }
 
-/******************************* EDITING */
+/******************************* SPECIFIC CASE WRAPPERS */
 .is-editing {
     .c-telemetry-table__headers__labels {
         th[draggable],
@@ -161,8 +171,6 @@
 .is-paused {
     box-shadow: inset $colorPausedBg 0 0 1px 1px;
 }
-
-
 
 /******************************* LEGACY */
 .s-status-taking-snapshot,
