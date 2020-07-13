@@ -14,7 +14,7 @@
 install: ## Install openmct on a docker node image, which implicitly uses ./Dockerfile
 	docker build -t openmct:latest .
 
-start: install stop ## Start openmct in docker container (in a detached fashion), which implicitly uses ./docker-compose.yml
+start: install stop ## Start openmct in docker container (in an attached state), which implicitly uses ./docker-compose.yml
 	docker-compose up
 
 stop: ## Stop openmct on docker conainter
