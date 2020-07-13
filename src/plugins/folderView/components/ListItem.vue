@@ -7,13 +7,19 @@
     <td class="c-list-item__name">
         <a
             ref="objectLink"
+            class="c-object-label"
+            :class="{ 'is-missing': item.status === 'missing' }"
             :href="objectLink"
         >
             <div
-                class="c-list-item__type-icon"
+                class="c-object-label__type-icon c-list-item__type-icon"
                 :class="item.type.cssClass"
-            ></div>
-            <div class="c-list-item__name-value">{{ item.model.name }}</div>
+            >
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
+            </div>
+            <div class="c-object-label__name c-list-item__name">{{ item.model.name }}</div>
         </a>
     </td>
     <td class="c-list-item__type">
