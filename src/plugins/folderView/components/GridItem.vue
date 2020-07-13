@@ -3,7 +3,7 @@
     class="l-grid-view__item c-grid-item"
     :class="{
         'is-alias': item.isAlias === true,
-        'is-missing': item.status === 'missing',
+        'is-missing': item.model.status === 'missing',
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
     }"
     :href="objectLink"

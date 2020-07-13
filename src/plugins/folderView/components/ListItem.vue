@@ -8,7 +8,7 @@
         <a
             ref="objectLink"
             class="c-object-label"
-            :class="{ 'is-missing': item.status === 'missing' }"
+            :class="{ 'is-missing': item.model.status === 'missing' }"
             :href="objectLink"
         >
             <div
