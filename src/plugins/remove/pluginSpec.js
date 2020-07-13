@@ -72,7 +72,7 @@ describe("The Remove Action plugin", () => {
         resetApplicationState(openmct);
     });
 
-    it("should be definied", () => {
+    it("should be defined", () => {
         expect(RemoveActionPlugin).toBeDefined();
     });
 
