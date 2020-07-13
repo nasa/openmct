@@ -42,19 +42,27 @@ define([
                 let component;
 
                 return {
-                    show: function (element) {
+                    show: function (element, editMode) {
                         component =  new Vue({
                             el: element,
                             components: {
                                 TabsComponent: TabsComponent.default
+                            },
+                            data() {
+                                return {
+                                    isEditing: editMode
+                                };
                             },
                             provide: {
                                 openmct,
                                 domainObject,
                                 composition: openmct.composition.get(domainObject)
                             },
-                            template: '<tabs-component></tabs-component>'
+                            template: '<tabs-component :isEditing="isEditing"></tabs-component>'
                         });
+                    },
+                    onEditModeChange(editMode) {
+                        component.isEditing = editMode;
                     },
                     destroy: function (element) {
                         component.$destroy();

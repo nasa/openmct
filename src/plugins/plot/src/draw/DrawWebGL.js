@@ -23,12 +23,13 @@
 
 define([
     'EventEmitter',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    './MarkerShapes'
 ], function (
     EventEmitter,
-    eventHelpers
+    eventHelpers,
+    MARKER_SHAPES
 ) {
-
     // WebGL shader sources (for drawing plain colors)
     var FRAGMENT_SHADER = [
         "precision mediump float;",
@@ -90,6 +91,7 @@ define([
         this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
         this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
         this.gl.compileShader(this.vertexShader);
+
         this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
         this.gl.shaderSource(this.fragmentShader, FRAGMENT_SHADER);
         this.gl.compileShader(this.fragmentShader);
@@ -105,6 +107,7 @@ define([
         // shader programs (to pass values into shaders at draw-time)
         this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
+        this.uMarkerShape = this.gl.getUniformLocation(this.program, "uMarkerShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
@@ -113,9 +116,6 @@ define([
 
         // Create a buffer to holds points which will be drawn
         this.buffer = this.gl.createBuffer();
-
-        // Use a line width of 2.0 for legibility
-        this.gl.lineWidth(2.0);
 
         // Enable blending, for smoothness
         this.gl.enable(this.gl.BLEND);
@@ -138,14 +138,18 @@ define([
             ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
-    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points) {
+    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
         if (this.isContextLost) {
             return;
         }
+
+        const shapeCode = MARKER_SHAPES[shape] ? MARKER_SHAPES[shape].drawWebGL : 0;
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
+        this.gl.uniform1i(this.uMarkerShape, shapeCode)
         this.gl.drawArrays(drawType, 0, points);
     };
 
@@ -210,12 +214,12 @@ define([
      * Draw the buffer as points.
      *
      */
-    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize) {
+    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
         if (this.isContextLost) {
             return;
         }
         this.gl.uniform1f(this.uPointSize, pointSize);
-        this.doDraw(this.gl.POINTS, buf, color, points);
+        this.doDraw(this.gl.POINTS, buf, color, points, shape);
     };
 
     /**

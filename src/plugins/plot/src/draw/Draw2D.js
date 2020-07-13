@@ -23,10 +23,12 @@
 
 define([
     'EventEmitter',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    './MarkerShapes'
 ], function (
     EventEmitter,
-    eventHelpers
+    eventHelpers,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -121,18 +123,17 @@ define([
         buf,
         color,
         points,
-        pointSize
+        pointSize,
+        shape
     ) {
-        var i = 0;
-        var offset = pointSize / 2;
+        const drawC2DShape = MARKER_SHAPES[shape].drawC2D.bind(this);
 
         this.setColor(color);
 
-        for (; i < points; i++) {
-            this.c2d.fillRect(
-                this.x(buf[i * 2]) - offset,
-                this.y(buf[i * 2 + 1]) - offset,
-                pointSize,
+        for (let i = 0; i < points; i++) {
+            drawC2DShape(
+                this.x(buf[i * 2]),
+                this.y(buf[i * 2 + 1]),
                 pointSize
             );
         }

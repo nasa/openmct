@@ -301,7 +301,7 @@ export default {
             let objectPath= this.currentObjectPath || this.objectPath;
             let parentObject = objectPath[1];
 
-            return [browseObject, parentObject, this.currentObject].every(object => !object.locked);
+            return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         }
     }
 }

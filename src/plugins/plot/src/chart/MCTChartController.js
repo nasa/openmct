@@ -371,7 +371,8 @@ function (
             chartElement.getBuffer(),
             chartElement.color().asRGBAArray(),
             chartElement.count,
-            chartElement.series.get('markerSize')
+            chartElement.series.get('markerSize'),
+            chartElement.series.get('markerShape')
         );
     };
 
@@ -396,8 +397,9 @@ function (
         ]);
         var color = highlight.series.get('color').asRGBAArray();
         var pointCount = 1;
+        var shape = highlight.series.get('markerShape');
 
-        this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE);
+        this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE, shape);
     };
 
     MCTChartController.prototype.drawRectangles = function () {
