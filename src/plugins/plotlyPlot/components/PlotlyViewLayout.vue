@@ -1,9 +1,12 @@
 <template>
-<div class="l-view-section js-plotly-container"></div>
+<div :id="plotId"
+     class="l-view-section">
+</div>
 </template>
 
 <script>
-import Plotly from 'plotly.js-gl2d-dist-min';
+// import Plotly from 'plotly.js-gl2d-dist-min';
+import Plotly from 'plotly.js-basic-dist-min';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
 import TelemetryTableColumn from '../../telemetryTable/TelemetryTableColumn';
@@ -18,7 +21,8 @@ export default {
             subscriptions: {},
             plotComposition: undefined,
             timestampKey: this.openmct.time.timeSystem().key,
-            yAxisLabel: ''
+            yAxisLabel: '',
+            plotId: this.openmct.objects.makeKeyString(this.domainObject.identifier)
         }
     },
     computed: {
@@ -30,7 +34,7 @@ export default {
         }
     },
     mounted() {
-        this.plotElement = document.querySelector('.js-plotly-container');
+        this.plotElement = document.getElementById(this.plotId);
         this.openmct.time.on('bounds', this.updateDomain);
         this.openmct.time.on('bounds', this.updateData);
 
