@@ -50,7 +50,7 @@
 
             <span class="c-condition__name">{{ condition.configuration.name }}</span>
             <span class="c-condition__summary">
-                <template v-if="!canEvaluateCriteria">
+                <template v-if="!condition.isDefault && !canEvaluateCriteria">
                     Define criteria
                 </template>
                 <span v-else>
@@ -250,7 +250,7 @@ export default {
             keys.forEach((trigger) => {
                 triggerOptions.push({
                     value: TRIGGER[trigger],
-                    label: TRIGGER_LABEL[TRIGGER[trigger]]
+                    label: `when ${TRIGGER_LABEL[TRIGGER[trigger]]}`
                 });
             });
             return triggerOptions;

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../api/objects/object-utils'], function (objectUtils) {
+define(['objectUtils'], function (objectUtils) {
     function AdapterCapability(domainObject) {
         this.domainObject = domainObject;
     }

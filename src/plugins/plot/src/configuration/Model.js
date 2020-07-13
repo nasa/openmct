@@ -49,7 +49,7 @@ define([
         this.initialize(options);
     }
 
-    _.extend(Model.prototype, EventEmitter.prototype);
+    Object.assign(Model.prototype, EventEmitter.prototype);
     eventHelpers.extend(Model.prototype);
 
     Model.extend = extend;

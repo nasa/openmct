@@ -19,38 +19,36 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import LADTableViewProvider from './LADTableViewProvider';
+import LADTableSetViewProvider from './LADTableSetViewProvider';
+import ladTableCompositionPolicy from './LADTableCompositionPolicy';
 
-define([
-    './LADTableViewProvider',
-    './LADTableSetViewProvider'
-], function (
-    LADTableViewProvider,
-    LADTableSetViewProvider
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
-            openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
+export default function plugin() {
+    return function install(openmct) {
 
-            openmct.types.addType('LadTable', {
-                name: "LAD Table",
-                creatable: true,
-                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
-                cssClass: 'icon-tabular-lad',
-                initialize(domainObject) {
-                    domainObject.composition = [];
-                }
-            });
+        openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
+        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
-            openmct.types.addType('LadTableSet', {
-                name: "LAD Table Set",
-                creatable: true,
-                description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
-                cssClass: 'icon-tabular-lad-set',
-                initialize(domainObject) {
-                    domainObject.composition = [];
-                }
-            });
-        };
+        openmct.types.addType('LadTable', {
+            name: "LAD Table",
+            creatable: true,
+            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+            cssClass: 'icon-tabular-lad',
+            initialize(domainObject) {
+                domainObject.composition = [];
+            }
+        });
+
+        openmct.types.addType('LadTableSet', {
+            name: "LAD Table Set",
+            creatable: true,
+            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+            cssClass: 'icon-tabular-lad-set',
+            initialize(domainObject) {
+                domainObject.composition = [];
+            }
+        });
+
+        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
     };
-});
+}

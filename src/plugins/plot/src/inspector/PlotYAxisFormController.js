@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    './PlotModelFormController',
-    'lodash'
+    './PlotModelFormController'
 ], function (
-    PlotModelFormController,
-    _
+    PlotModelFormController
 ) {
 
     var PlotYAxisFormController = PlotModelFormController.extend({
@@ -73,10 +71,10 @@ define([
                     if (range.max === '' || range.max === null || typeof range.max === 'undefined') {
                         return 'Must specify Maximum';
                     }
-                    if (_.isNaN(Number(range.min))) {
+                    if (Number.isNaN(Number(range.min))) {
                         return 'Minimum must be a number.';
                     }
-                    if (_.isNaN(Number(range.max))) {
+                    if (Number.isNaN(Number(range.max))) {
                         return 'Maximum must be a number.';
                     }
                     if (Number(range.min) > Number(range.max)) {

@@ -1,8 +1,0 @@
-<!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
-<div ng-show="notifications.length > 0" class="c-indicator c-indicator--clickable s-status-{{highest.severity}} icon-bell"
-      ng-controller="NotificationIndicatorController">
-    <span class="label c-indicator__label">
-        <button ng-click="showNotificationsList()">
-           {{notifications.length}} Notification<span ng-show="notifications.length > 1">s</span></button>
-    </span><span class="c-indicator__count">{{notifications.length}}</span>
-</div>

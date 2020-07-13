@@ -70,6 +70,10 @@ function ToolbarProvider(openmct) {
             }
 
             if (primary.context.type === 'frame') {
+                if (secondary.context.item.locked) {
+                    return [];
+                }
+
                 let frameId = primary.context.frameId;
                 let layoutObject = tertiary.context.item;
                 let containers = layoutObject
@@ -143,6 +147,9 @@ function ToolbarProvider(openmct) {
                 toggleContainer.domainObject = secondary.context.item;
 
             } else if (primary.context.type === 'container') {
+                if (primary.context.item.locked) {
+                    return [];
+                }
 
                 deleteContainer = {
                     control: "button",
@@ -187,6 +194,9 @@ function ToolbarProvider(openmct) {
                 };
 
             } else if (primary.context.type === 'flexible-layout') {
+                if (primary.context.item.locked) {
+                    return [];
+                }
 
                 addContainer = {
                     control: "button",

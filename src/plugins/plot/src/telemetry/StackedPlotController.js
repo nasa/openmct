@@ -20,12 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
-
+define([], function () {
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
         var tickWidth = 0,
             composition,
@@ -76,7 +71,7 @@ define([
                 if (childObj) {
                     var index = telemetryObjects.indexOf(childObj);
                     telemetryObjects.splice(index, 1);
-                    $scope.$broadcast('plot:tickWidth', _.max(tickWidthMap));
+                    $scope.$broadcast('plot:tickWidth', Math.max(...Object.values(tickWidthMap)));
                 }
             }
 
@@ -125,12 +120,13 @@ define([
         $scope.$watch('domainObject.getModel().composition', onCompositionChange);
 
         $scope.$on('plot:tickWidth', function ($e, width) {
-            var plotId = $e.targetScope.domainObject.getId();
+            const plotId = $e.targetScope.domainObject.getId();
             if (!tickWidthMap.hasOwnProperty(plotId)) {
                 return;
             }
+
             tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
-            var newTickWidth = _.max(tickWidthMap);
+            const newTickWidth = Math.max(...Object.values(tickWidthMap));
             if (newTickWidth !== tickWidth || width !== tickWidth) {
                 tickWidth = newTickWidth;
                 $scope.$broadcast('plot:tickWidth', tickWidth);

@@ -35,7 +35,7 @@
         >
             <tr
                 :key="primary.key"
-                class="c-table__group-header"
+                class="c-table__group-header js-lad-table-set__table-headers"
             >
                 <td colspan="10">
                     {{ primary.domainObject.name }}
@@ -102,7 +102,7 @@ export default {
             this.compositions.push({composition, addCallback, removeCallback});
         },
         removePrimary(identifier) {
-            let index = _.findIndex(this.primaryTelemetryObjects, (primary) => this.openmct.objects.makeKeyString(identifier) === primary.key),
+            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
 
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
@@ -130,7 +130,7 @@ export default {
         removeSecondary(primary) {
             return (identifier) => {
                 let array = this.secondaryTelemetryObjects[primary.key],
-                    index = _.findIndex(array, (secondary) => this.openmct.objects.makeKeyString(identifier) === secondary.key);
+                    index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
 
                 array.splice(index, 1);
 

@@ -33,13 +33,14 @@
 
     <div
         class="c-frame-edit__move"
-        @mousedown="startMove([1,1], [0,0], $event)"
+        @mousedown="isEditing ? startMove([1,1], [0,0], $event) : null"
     ></div>
 </div>
 </template>
 
 <script>
 import LayoutDrag from './../LayoutDrag'
+import _ from 'lodash'
 
 export default {
     inject: ['openmct'],
@@ -53,6 +54,10 @@ export default {
             required: true,
             validator: (arr) => arr && arr.length === 2
                 && arr.every(el => typeof el === 'number')
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     computed: {
