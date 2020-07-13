@@ -56,11 +56,13 @@ export const subscribeForStaleness = (callback, timeout) => {
         clearTimeout(stalenessTimer);
         callback();
     }, timeout);
+
     return {
         update: (data) => {
             if (stalenessTimer) {
                 clearTimeout(stalenessTimer);
             }
+
             stalenessTimer = setTimeout(() => {
                 clearTimeout(stalenessTimer);
                 callback(data);
@@ -71,5 +73,5 @@ export const subscribeForStaleness = (callback, timeout) => {
                 clearTimeout(stalenessTimer);
             }
         }
-    }
+    };
 };

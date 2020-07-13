@@ -419,6 +419,7 @@ define([
                     this.layout = appLayout.$refs.layout;
                     Browse(this);
                 }
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -426,8 +427,9 @@ define([
 
     MCT.prototype.startHeadless = function () {
         let unreachableNode = document.createElement('div');
+
         return this.start(unreachableNode, true);
-    }
+    };
 
     /**
      * Install a plugin in MCT.

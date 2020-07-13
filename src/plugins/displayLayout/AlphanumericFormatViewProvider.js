@@ -52,6 +52,7 @@ define([
             },
             view: function (domainObject, objectPath) {
                 let component;
+
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -70,12 +71,12 @@ define([
                         component.$destroy();
                         component = undefined;
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
 
     return AlphanumericFormatViewProvider;

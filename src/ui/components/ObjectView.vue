@@ -304,7 +304,7 @@ export default {
         },
         isEditingAllowed() {
             let browseObject = this.openmct.layout.$refs.browseObject.currentObject,
-                objectPath= this.currentObjectPath || this.objectPath,
+                objectPath = this.currentObjectPath || this.objectPath,
                 parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);

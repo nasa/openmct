@@ -74,14 +74,14 @@
 
 <script>
 import uuid from 'uuid';
-import SubobjectView from './SubobjectView.vue'
-import TelemetryView from './TelemetryView.vue'
-import BoxView from './BoxView.vue'
-import TextView from './TextView.vue'
-import LineView from './LineView.vue'
-import ImageView from './ImageView.vue'
-import EditMarquee from './EditMarquee.vue'
-import _ from 'lodash'
+import SubobjectView from './SubobjectView.vue';
+import TelemetryView from './TelemetryView.vue';
+import BoxView from './BoxView.vue';
+import TextView from './TextView.vue';
+import LineView from './LineView.vue';
+import ImageView from './ImageView.vue';
+import EditMarquee from './EditMarquee.vue';
+import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
     'table': (domainObject) => {
@@ -102,10 +102,11 @@ const TELEMETRY_IDENTIFIER_FUNCTIONS = {
                     identifiers.push(object.identifier);
                 }
             });
+
             return Promise.resolve(identifiers);
         });
     }
-}
+};
 
 const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
@@ -151,6 +152,7 @@ export default {
     },
     data() {
         let domainObject = JSON.parse(JSON.stringify(this.domainObject));
+
         return {
             internalDomainObject: domainObject,
             initSelectIndex: undefined,
@@ -173,6 +175,7 @@ export default {
             let selectionPath = this.selection[0];
             let singleSelectedLine = this.selection.length === 1 &&
                     selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
@@ -210,7 +213,9 @@ export default {
                 if ($event) {
                     $event.stopImmediatePropagation();
                 }
+
                 this.dragInProgress = false;
+
                 return;
             }
         },
@@ -364,6 +369,7 @@ export default {
             if (this.internalDomainObject.locked) {
                 return;
             }
+
             // Get the ID of the dragged object
             let draggedKeyString = $event.dataTransfer.types
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
@@ -467,6 +473,7 @@ export default {
 
                     if (itemKeyString === keyString) {
                         found = true;
+
                         return;
                     }
                 }
@@ -632,7 +639,7 @@ export default {
                 shiftKey: true,
                 cancelable: true,
                 view: window
-            })
+            });
 
             selectItemsArray.forEach((id) => {
                 let refId = `layout-item-${id}`,
@@ -672,7 +679,7 @@ export default {
                 }
 
                 offsetKeys.forEach(key => {
-                    copy[key] += DUPLICATE_OFFSET
+                    copy[key] += DUPLICATE_OFFSET;
                 });
 
                 if (layoutItemStyle) {
@@ -780,5 +787,5 @@ export default {
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
         }
     }
-}
+};
 </script>

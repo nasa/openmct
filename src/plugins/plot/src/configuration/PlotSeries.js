@@ -99,6 +99,7 @@ define([
          */
         defaults: function (options) {
             var range = this.metadata.valuesForHints(['range'])[0];
+
             return {
                 name: options.domainObject.name,
                 xKey: options.collection.plot.xAxis.get('key'),
@@ -150,7 +151,11 @@ define([
                 strategy = 'minmax';
             }
 
-            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, {
+                size: 1000,
+                strategy,
+                filters: this.filters
+            }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -193,6 +198,7 @@ define([
             if (newKey === oldKey) {
                 return;
             }
+
             var valueMetadata = this.metadata.value(newKey);
             if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
@@ -201,6 +207,7 @@ define([
                     this.set('interpolate', 'linear');
                 }
             }
+
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);
             }.bind(this);
@@ -267,6 +274,7 @@ define([
             return this.fetch(options)
                 .then(function (res) {
                     this.emit('load');
+
                     return res;
                 }.bind(this));
         },
@@ -300,12 +308,14 @@ define([
                     stats.maxPoint = point;
                     changed = true;
                 }
+
                 if (stats.minValue > value) {
                     stats.minValue = value;
                     stats.minPoint = point;
                     changed = true;
                 }
             }
+
             if (changed) {
                 this.set('stats', {
                     minValue: stats.minValue,
@@ -334,6 +344,7 @@ define([
 
             if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
                 console.warn('[Plot] Invalid Y Values detected');
+
                 return;
             }
 
@@ -342,6 +353,7 @@ define([
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
                     return;
                 }
+
                 if (this.getXVal(this.data[insertIndex - 1]) === this.getXVal(point)) {
                     return;
                 }
@@ -410,6 +422,7 @@ define([
                     this.unsubscribe();
                     delete this.unsubscribe;
                 }
+
                 this.fetch();
             } else {
                 this.filters = deepCopiedFilters;

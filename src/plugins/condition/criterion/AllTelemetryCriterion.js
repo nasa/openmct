@@ -51,14 +51,15 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         if (!this.stalenessSubscription) {
             this.stalenessSubscription = {};
         }
+
         Object.values(telemetryObjects).forEach((telemetryObject) => {
             const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             if (!this.stalenessSubscription[id]) {
                 this.stalenessSubscription[id] = subscribeForStaleness((data) => {
                     this.handleStaleTelemetry(id, data);
-                }, this.input[0]*1000);
+                }, this.input[0] * 1000);
             }
-        })
+        });
     }
 
     handleStaleTelemetry(id, data) {
@@ -66,6 +67,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             this.telemetryDataCache[id] = true;
             this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
         }
+
         this.emitEvent('telemetryIsStale', data);
     }
 
@@ -131,6 +133,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 if (this.stalenessSubscription[validatedData.id]) {
                     this.stalenessSubscription[validatedData.id].update(validatedData);
                 }
+
                 this.telemetryDataCache[validatedData.id] = false;
             } else {
                 this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
@@ -205,7 +208,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         let inputValue = this.input;
         if (this.metadata) {
             const telemetryObjects = Object.values(this.telemetryObjects);
-            for (let i=0; i < telemetryObjects.length; i++) {
+            for (let i = 0; i < telemetryObjects.length; i++) {
                 const telemetryObject = telemetryObjects[i];
                 const metadataObject = this.getMetaDataObject(telemetryObject, this.metadata);
                 if (metadataObject) {
@@ -215,6 +218,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 }
             }
         }
+
         return `${telemetryDescription} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
     }
 

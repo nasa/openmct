@@ -238,6 +238,7 @@ define(
                     context.item = newItem;
                 });
             }
+
             if (select) {
                 if (typeof select === 'object') {
                     element.dispatchEvent(select);

@@ -67,7 +67,7 @@ export default {
             dragStartX: undefined,
             dragX: undefined,
             zoomStyle: {}
-        }
+        };
     },
     computed: {
         inZoomMode() {
@@ -207,9 +207,9 @@ export default {
             this.$emit('panAxis', panBounds);
         },
         endPan() {
-            const panBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
-                ? this.getPanBounds()
-                : undefined;
+            const panBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX ?
+                this.getPanBounds() :
+                undefined;
             this.$emit('endPan', panBounds);
             this.inPanMode = false;
         },
@@ -251,16 +251,16 @@ export default {
             });
         },
         endZoom() {
-            const zoomRange = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
-                ? this.getZoomRange()
-                : undefined;
+            const zoomRange = this.dragStartX && this.dragX && this.dragStartX !== this.dragX ?
+                this.getZoomRange() :
+                undefined;
 
-            const zoomBounds = zoomRange
-                ? {
+            const zoomBounds = zoomRange ?
+                {
                     start: this.scaleToBounds(zoomRange.start),
                     end: this.scaleToBounds(zoomRange.end)
-                }
-                : this.openmct.time.bounds();
+                } :
+                this.openmct.time.bounds();
 
             this.zoomStyle = {};
             this.$emit('endZoom', zoomBounds);
@@ -269,13 +269,13 @@ export default {
             const leftBound = this.left;
             const rightBound = this.left + this.width;
 
-            const zoomStart = this.dragX < leftBound
-                ? leftBound
-                : Math.min(this.dragX, this.dragStartX);
+            const zoomStart = this.dragX < leftBound ?
+                leftBound :
+                Math.min(this.dragX, this.dragStartX);
 
-            const zoomEnd = this.dragX > rightBound
-                ? rightBound
-                : Math.max(this.dragX, this.dragStartX);
+            const zoomEnd = this.dragX > rightBound ?
+                rightBound :
+                Math.max(this.dragX, this.dragStartX);
 
             return {
                 start: zoomStart,
@@ -287,6 +287,7 @@ export default {
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
+
             return bounds.start + offset;
         },
         resize() {
@@ -297,5 +298,5 @@ export default {
         }
     }
 
-}
+};
 </script>

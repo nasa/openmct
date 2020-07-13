@@ -242,6 +242,7 @@ export default class Condition extends EventEmitter {
             if (!index) {
                 description = `Match if ${triggerDescription.prefix}`;
             }
+
             description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
         });
         this.description = description;

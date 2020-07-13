@@ -627,6 +627,7 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -658,6 +659,7 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -728,7 +730,8 @@ define(['lodash'], function (_) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     }
-                    if(toolbar.duplicate.length === 0) {
+
+                    if (toolbar.duplicate.length === 0) {
                         toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
                     }
                 });

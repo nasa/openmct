@@ -122,6 +122,7 @@ export default class URLTimeSettingsSynchronizer {
             } else if (!this.areStartAndEndEqual(this.openmct.time.bounds(), timeParameters.bounds)) {
                 this.openmct.time.bounds(timeParameters.bounds);
             }
+
             if (this.openmct.time.clock()) {
                 this.openmct.time.stopClock();
             }
@@ -132,6 +133,7 @@ export default class URLTimeSettingsSynchronizer {
             } else if (!this.areStartAndEndEqual(this.openmct.time.clockOffsets(), timeParameters.clockOffsets)) {
                 this.openmct.time.clockOffsets(timeParameters.clockOffsets);
             }
+
             if (!this.openmct.time.timeSystem() ||
                 this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
                 this.openmct.time.timeSystem(timeParameters.timeSystem);
@@ -168,6 +170,7 @@ export default class URLTimeSettingsSynchronizer {
                 searchParams.delete(SEARCH_START_DELTA);
                 searchParams.delete(SEARCH_END_DELTA);
             }
+
             searchParams.delete(SEARCH_START_BOUND);
             searchParams.delete(SEARCH_END_BOUND);
         }
@@ -209,6 +212,7 @@ export default class URLTimeSettingsSynchronizer {
             let timeSystemObject = this.openmct.time.timeSystems.get(timeSystem);
             isValid = timeSystemObject !== undefined;
         }
+
         return isValid;
     }
 
@@ -227,6 +231,7 @@ export default class URLTimeSettingsSynchronizer {
                 isValid = this.openmct.time.clocks.get(mode) !== undefined;
             }
         }
+
         return isValid;
     }
 

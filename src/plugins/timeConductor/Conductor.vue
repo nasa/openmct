@@ -161,7 +161,7 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
-import ConductorHistory from './ConductorHistory.vue'
+import ConductorHistory from './ConductorHistory.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -204,7 +204,7 @@ export default {
             altPressed: false,
             isPanning: false,
             isZooming: false
-        }
+        };
     },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
@@ -213,7 +213,7 @@ export default {
         this.openmct.time.on('bounds', this.setViewFromBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
+        this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -252,7 +252,7 @@ export default {
             this.openmct.time.bounds(_bounds);
         },
         setTimeSystem(timeSystem) {
-            this.timeSystem = timeSystem
+            this.timeSystem = timeSystem;
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
             this.durationFormatter = this.getFormatter(
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -268,8 +268,10 @@ export default {
                     end: endOffset
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -283,8 +285,10 @@ export default {
                     end: end
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -311,7 +315,7 @@ export default {
         },
         getBoundsLimit() {
             const configuration = this.configuration.menuOptions
-                .filter(option => option.timeSystem ===  this.timeSystem.key)
+                .filter(option => option.timeSystem === this.timeSystem.key)
                 .find(option => option.limit);
 
             const limit = configuration ? configuration.limit : undefined;
@@ -345,9 +349,9 @@ export default {
                 const limit = this.getBoundsLimit();
 
                 if (
-                    this.timeSystem.isUTCBased
-                    && limit
-                    && boundsValues.end - boundsValues.start > limit
+                    this.timeSystem.isUTCBased &&
+                    limit &&
+                    boundsValues.end - boundsValues.start > limit
                 ) {
                     if (input === currentInput) {
                         validationResult = "Start and end difference exceeds allowable limit";
@@ -365,9 +369,9 @@ export default {
             let validationResult = true;
 
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                const formattedDate = input === this.$refs.startDate
-                    ? this.formattedBounds.start
-                    : this.formattedBounds.end
+                const formattedDate = input === this.$refs.startDate ?
+                    this.formattedBounds.start :
+                    this.formattedBounds.end
                 ;
 
                 if (!this.timeFormatter.validate(formattedDate)) {
@@ -405,10 +409,12 @@ export default {
             if (validationResult !== true) {
                 input.setCustomValidity(validationResult);
                 input.title = validationResult;
+
                 return false;
             } else {
                 input.setCustomValidity('');
                 input.title = '';
+
                 return true;
             }
         },
@@ -433,5 +439,5 @@ export default {
             this.submitForm();
         }
     }
-}
+};
 </script>
