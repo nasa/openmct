@@ -37,7 +37,7 @@
             v-if="domainObject"
             ref="objectFrame"
             :domain-object="domainObject"
-            :object-path="objectPath"
+            :object-path="currentObjectPath"
             :has-frame="hasFrame"
             :show-edit-view="false"
         />
@@ -77,13 +77,17 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     data() {
         return {
             domainObject: undefined,
-            objectPath: undefined
-        };
+            currentObjectPath: undefined
+        }
     },
     computed: {
         hasFrame() {
@@ -92,7 +96,7 @@ export default {
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object) => {
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
                 this.setDomainObject(object);
             });
         }
@@ -107,7 +111,7 @@ export default {
     methods: {
         setDomainObject(object) {
             this.domainObject = object;
-            this.objectPath = [object];
+            this.currentObjectPath = [object].concat(this.objectPath);
             this.setSelection();
         },
         setSelection() {
@@ -139,5 +143,5 @@ export default {
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
     }
-};
+}
 </script>

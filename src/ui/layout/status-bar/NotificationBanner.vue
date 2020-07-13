@@ -91,6 +91,7 @@ export default {
     },
     mounted() {
         this.openmct.notifications.on('notification', this.showNotification);
+        this.openmct.notifications.on('dismiss-all', this.clearModel);
     },
     methods: {
         showNotification(notification) {

@@ -50,6 +50,7 @@
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionalStyleForItem } from "@/plugins/condition/utils/styleUtils";
+import isEmpty from 'lodash/isEmpty';
 
 export default {
     name: 'MultiSelectStylesView',
@@ -66,7 +67,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             mixedStyles: [],
             isStaticAndConditionalStyles: false
-        };
+        }
     },
     destroyed() {
         this.removeListeners();
@@ -112,7 +113,6 @@ export default {
                         this.isStaticAndConditionalStyles = this.hasConditionalStyles(domainObject, layoutItem.id);
                     }
                 }
-
                 itemInitialStyles.push(itemStyle);
             });
             const {styles, mixedStyles} = getConsolidatedStyleValues(itemInitialStyles);
@@ -163,29 +163,25 @@ export default {
             if (this.stopObserving) {
                 this.stopObserving();
             }
-
             if (this.stopObservingItems) {
                 this.stopObservingItems();
             }
-
             if (this.unObserveObjects) {
                 this.unObserveObjects.forEach((unObserveObject) => {
                     unObserveObject();
                 });
             }
-
             this.unObserveObjects = [];
         },
         removeItemStyles(itemId) {
-            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (itemId && domainObjectStyles[itemId]) {
                 domainObjectStyles[itemId] = undefined;
                 delete domainObjectStyles[this.itemId];
 
-                if (_.isEmpty(domainObjectStyles)) {
+                if (isEmpty(domainObjectStyles)) {
                     domainObjectStyles = undefined;
                 }
-
                 this.persist(this.domainObject, domainObjectStyles);
             }
         },
@@ -221,7 +217,6 @@ export default {
                     this.persist(domainObject, this.getDomainObjectStyle(domainObject, property));
                 });
             }
-
             this.isStaticAndConditionalStyles = false;
             let foundIndex = this.mixedStyles.indexOf(property);
             if (foundIndex > -1) {
@@ -229,7 +224,7 @@ export default {
             }
         },
         getDomainObjectStyle(domainObject, property, items) {
-            let domainObjectStyles = (domainObject.configuration && domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
 
             if (items) {
                 items.forEach(item => {
@@ -237,7 +232,6 @@ export default {
                     if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
                     }
-
                     Object.keys(item.applicableStyles).forEach(key => {
                         if (property === key) {
                             itemStaticStyle[key] = this.staticStyle.style[key];
@@ -246,8 +240,7 @@ export default {
                     if (this.isStaticAndConditionalStyles) {
                         this.removeConditionalStyles(domainObjectStyles, item.id);
                     }
-
-                    if (_.isEmpty(itemStaticStyle)) {
+                    if (isEmpty(itemStaticStyle)) {
                         itemStaticStyle = undefined;
                         domainObjectStyles[item.id] = undefined;
                     } else {
@@ -258,13 +251,11 @@ export default {
                 if (!domainObjectStyles.staticStyle) {
                     domainObjectStyles.staticStyle = {
                         style: {}
-                    };
+                    }
                 }
-
                 if (this.isStaticAndConditionalStyles) {
                     this.removeConditionalStyles(domainObjectStyles);
                 }
-
                 domainObjectStyles.staticStyle.style[property] = this.staticStyle.style[property];
             }
 
@@ -275,5 +266,5 @@ export default {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         }
     }
-};
+}
 </script>

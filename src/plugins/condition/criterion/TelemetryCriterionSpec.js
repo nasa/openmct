@@ -89,7 +89,7 @@ describe("The telemetry criterion", function () {
             operation: 'textContains',
             metadata: 'value',
             input: ['Hell'],
-            telemetryObject: testTelemetryObject
+            telemetryObjects: {[testTelemetryObject.identifier.key]: testTelemetryObject}
         };
 
         mockListener = jasmine.createSpy('listener');
@@ -115,13 +115,4 @@ describe("The telemetry criterion", function () {
         });
         expect(telemetryCriterion.result).toBeTrue();
     });
-
-    // it("does not return a result on new data from irrelavant telemetry providers", function () {
-    //     telemetryCriterion.getResult({
-    //         value: 'Hello',
-    //         utc: 'Hi',
-    //         id: '1234'
-    //     });
-    //     expect(telemetryCriterion.result).toBeFalse();
-    // });
 });

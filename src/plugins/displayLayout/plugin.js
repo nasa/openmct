@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Layout from './components/DisplayLayout.vue';
-import Vue from 'vue';
-import objectUtils from '../../api/objects/object-utils.js';
-import DisplayLayoutType from './DisplayLayoutType.js';
-import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import Layout from './components/DisplayLayout.vue'
+import Vue from 'vue'
+import objectUtils from 'objectUtils'
+import DisplayLayoutType from './DisplayLayoutType.js'
+import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'
 
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
@@ -39,7 +39,6 @@ export default function DisplayLayoutPlugin(options) {
             },
             view: function (domainObject, objectPath) {
                 let component;
-
                 return {
                     show(container) {
                         component = new Vue({
@@ -55,10 +54,11 @@ export default function DisplayLayoutPlugin(options) {
                             },
                             data() {
                                 return {
-                                    domainObject: domainObject
+                                    domainObject: domainObject,
+                                    isEditing: openmct.editor.isEditing()
                                 };
                             },
-                            template: '<layout ref="displayLayout" :domain-object="domainObject"></layout>'
+                            template: '<layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></layout>'
                         });
                     },
                     getSelectionContext() {
@@ -67,8 +67,15 @@ export default function DisplayLayoutPlugin(options) {
                             supportsMultiSelect: true,
                             addElement: component && component.$refs.displayLayout.addElement,
                             removeItem: component && component.$refs.displayLayout.removeItem,
-                            orderItem: component && component.$refs.displayLayout.orderItem
+                            orderItem: component && component.$refs.displayLayout.orderItem,
+                            duplicateItem: component && component.$refs.displayLayout.duplicateItem,
+                            switchViewType: component && component.$refs.displayLayout.switchViewType,
+                            mergeMultipleTelemetryViews: component && component.$refs.displayLayout.mergeMultipleTelemetryViews,
+                            mergeMultipleOverlayPlots: component && component.$refs.displayLayout.mergeMultipleOverlayPlots
                         };
+                    },
+                    onEditModeChange: function (isEditing) {
+                        component.isEditing = isEditing;
                     },
                     destroy() {
                         component.$destroy();
@@ -90,5 +97,5 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
         DisplayLayoutPlugin._installed = true;
-    };
+    }
 }

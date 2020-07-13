@@ -25,12 +25,14 @@ define([
     'lodash',
     '../configuration/Model',
     '../lib/extend',
-    'EventEmitter'
+    'EventEmitter',
+    '../draw/MarkerShapes'
 ], function (
     _,
     Model,
     extend,
-    EventEmitter
+    EventEmitter,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -56,6 +58,7 @@ define([
      *                `linear` (points are connected via straight lines), or
      *                `stepAfter` (points are connected by steps).
      * `markers`: boolean, whether or not this series should render with markers.
+     * `markerShape`: string, shape of markers.
      * `markerSize`: number, size in pixels of markers for this series.
      * `alarmMarkers`: whether or not to display alarm markers for this series.
      * `stats`: An object that tracks the min and max y values observed in this
@@ -96,12 +99,12 @@ define([
          */
         defaults: function (options) {
             var range = this.metadata.valuesForHints(['range'])[0];
-
             return {
                 name: options.domainObject.name,
                 xKey: options.collection.plot.xAxis.get('key'),
                 yKey: range.key,
                 markers: true,
+                markerShape: 'point',
                 markerSize: 2.0,
                 alarmMarkers: true
             };
@@ -147,11 +150,7 @@ define([
                 strategy = 'minmax';
             }
 
-            options = _.extend({}, {
-                size: 1000,
-                strategy,
-                filters: this.filters
-            }, options || {});
+            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -165,6 +164,7 @@ define([
                     );
             }
 
+            /* eslint-disable you-dont-need-lodash-underscore/concat */
             return this.openmct
                 .telemetry
                 .request(this.domainObject, options)
@@ -176,6 +176,7 @@ define([
                         .value();
                     this.reset(newPoints);
                 }.bind(this));
+            /* eslint-enable you-dont-need-lodash-underscore/concat */
         },
         /**
          * Update x formatter on x change.
@@ -192,7 +193,6 @@ define([
             if (newKey === oldKey) {
                 return;
             }
-
             var valueMetadata = this.metadata.value(newKey);
             if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
@@ -201,7 +201,6 @@ define([
                     this.set('interpolate', 'linear');
                 }
             }
-
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);
             }.bind(this);
@@ -268,7 +267,6 @@ define([
             return this.fetch(options)
                 .then(function (res) {
                     this.emit('load');
-
                     return res;
                 }.bind(this));
         },
@@ -278,7 +276,7 @@ define([
          * @private
          */
         sortedIndex: function (point) {
-            return _.sortedIndex(this.data, point, this.getXVal);
+            return _.sortedIndexBy(this.data, point, this.getXVal);
         },
         /**
          * Update min/max stats for the series.
@@ -302,14 +300,12 @@ define([
                     stats.maxPoint = point;
                     changed = true;
                 }
-
                 if (stats.minValue > value) {
                     stats.minValue = value;
                     stats.minPoint = point;
                     changed = true;
                 }
             }
-
             if (changed) {
                 this.set('stats', {
                     minValue: stats.minValue,
@@ -332,13 +328,20 @@ define([
          *                  a point to the end without dupe checking.
          */
         add: function (point, appendOnly) {
-            var insertIndex = this.data.length;
+            var insertIndex = this.data.length,
+                currentYVal = this.getYVal(point),
+                lastYVal = this.getYVal(this.data[insertIndex - 1]);
+
+            if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
+                console.warn('[Plot] Invalid Y Values detected');
+                return;
+            }
+
             if (!appendOnly) {
                 insertIndex = this.sortedIndex(point);
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
                     return;
                 }
-
                 if (this.getXVal(this.data[insertIndex - 1]) === this.getXVal(point)) {
                     return;
                 }
@@ -349,6 +352,15 @@ define([
             this.data.splice(insertIndex, 0, point);
             this.emit('add', point, insertIndex, this);
         },
+
+        /**
+         *
+         * @private
+         */
+        isValueInvalid: function (val) {
+            return Number.isNaN(val) || val === undefined;
+        },
+
         /**
          * Remove a point from the data array and notify listeners.
          * @private
@@ -398,11 +410,22 @@ define([
                     this.unsubscribe();
                     delete this.unsubscribe;
                 }
-
                 this.fetch();
             } else {
                 this.filters = deepCopiedFilters;
             }
+        },
+        markerOptionsDisplayText: function () {
+            const showMarkers = this.get('markers');
+            if (!showMarkers) {
+                return "Disabled";
+            }
+
+            const markerShapeKey = this.get('markerShape');
+            const markerShape = MARKER_SHAPES[markerShapeKey].label;
+            const markerSize = this.get('markerSize');
+
+            return `${markerShape}: ${markerSize}px`;
         }
     });
 

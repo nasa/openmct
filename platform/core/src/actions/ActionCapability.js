@@ -81,7 +81,7 @@ define(
                 baseContext = context || {};
             }
 
-            var actionContext = _.extend({}, baseContext);
+            var actionContext = Object.assign({}, baseContext);
             actionContext.domainObject = this.domainObject;
 
             return this.actionService.getActions(actionContext);

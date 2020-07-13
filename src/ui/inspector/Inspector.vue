@@ -54,7 +54,6 @@ export default {
     inject: ['openmct'],
     components: {
         StylesInspectorView,
-        // StylesInspectorView,
         multipane,
         pane,
         Elements,

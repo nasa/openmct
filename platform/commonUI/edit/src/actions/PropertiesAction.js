@@ -81,9 +81,14 @@ define(
          * context.
          */
         PropertiesAction.appliesTo = function (context) {
+
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation');
+
+            if (domainObject && domainObject.model && domainObject.model.locked) {
+                return false;
+            }
 
             // Only allow creatable types to be edited
             return domainObject && creatable;

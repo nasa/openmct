@@ -22,7 +22,7 @@
 /*jshint latedef: nofunc */
 /*global console */
 define([
-    '../../../api/objects/object-utils',
+    'objectUtils',
     './TelemetryAverager'
 ], function (objectUtils, TelemetryAverager) {
 

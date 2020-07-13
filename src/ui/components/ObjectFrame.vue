@@ -24,13 +24,24 @@
     class="c-so-view has-local-controls"
     :class="{
         'c-so-view--no-frame': !hasFrame,
-        'has-complex-content': complexContent
+        'has-complex-content': complexContent,
+        'is-missing': domainObject.status === 'missing'
     }"
 >
     <div class="c-so-view__header">
         <div class="c-object-label"
-             :class="[cssClass, classList]"
+             :class="{
+                 classList,
+                 'is-missing': domainObject.status === 'missing'
+             }"
         >
+            <div class="c-object-label__type-icon"
+                 :class="cssClass"
+            >
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
+            </div>
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
             </div>
@@ -46,6 +57,9 @@
             @click="expand"
         ></button>
     </div>
+    <div class="is-missing__indicator"
+         title="This item is missing"
+    ></div>
     <object-view
         ref="objectView"
         class="c-so-view__object-view"

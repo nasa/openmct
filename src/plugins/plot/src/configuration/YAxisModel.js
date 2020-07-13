@@ -86,7 +86,6 @@ define([
             if (padding === 0) {
                 padding = 1;
             }
-
             return {
                 min: range.min - padding,
                 max: range.max + padding
@@ -112,22 +111,18 @@ define([
                     min: seriesStats.minValue,
                     max: seriesStats.maxValue
                 });
-
                 return;
             }
-
             var stats = this.get('stats');
             var changed = false;
             if (stats.min > seriesStats.minValue) {
                 changed = true;
                 stats.min = seriesStats.minValue;
             }
-
             if (stats.max < seriesStats.maxValue) {
                 changed = true;
                 stats.max = seriesStats.maxValue;
             }
-
             if (changed) {
                 this.set('stats', {
                     min: stats.min,
@@ -178,7 +173,6 @@ define([
                 if (!label) {
                     this.unset('label');
                 }
-
                 return;
             }
 
@@ -188,39 +182,39 @@ define([
             this.set('format', yFormat.format.bind(yFormat));
             this.set('values', yMetadata.values);
             if (!label) {
-                var labelUnits = series.map(function (s) {
-                    return s.metadata.value(s.get('yKey')).units;
-                }).reduce(function (a, b) {
-                    if (a === undefined) {
-                        return b;
-                    }
-
-                    if (a === b) {
-                        return a;
-                    }
-
-                    return '';
-                }, undefined);
-                if (labelUnits) {
-                    this.set('label', labelUnits);
-
-                    return;
-                }
-
                 var labelName = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).name;
                 }).reduce(function (a, b) {
                     if (a === undefined) {
                         return b;
                     }
-
                     if (a === b) {
                         return a;
                     }
-
                     return '';
                 }, undefined);
-                this.set('label', labelName);
+
+                if (labelName) {
+                    this.set('label', labelName);
+                    return;
+                }
+
+                var labelUnits = series.map(function (s) {
+                    return s.metadata.value(s.get('yKey')).units;
+                }).reduce(function (a, b) {
+                    if (a === undefined) {
+                        return b;
+                    }
+                    if (a === b) {
+                        return a;
+                    }
+                    return '';
+                }, undefined);
+
+                if (labelUnits) {
+                    this.set('label', labelUnits);
+                    return;
+                }
             }
         },
         defaults: function (options) {

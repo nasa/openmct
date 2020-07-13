@@ -75,7 +75,7 @@ export default {
             this.items.push(item);
         },
         removeItem(identifier) {
-            let index = _.findIndex(this.items, (item) => this.openmct.objects.makeKeyString(identifier) === item.key);
+            let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
 
             this.items.splice(index, 1);
         },
@@ -88,4 +88,3 @@ export default {
     }
 };
 </script>
-

@@ -28,7 +28,7 @@ define([
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
-    './api/objects/object-utils',
+    'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
     './plugins/buildInfo/plugin',
@@ -251,7 +251,7 @@ define([
         this.legacyRegistry = new BundleRegistry();
         installDefaultBundles(this.legacyRegistry);
 
-        // Plugin's that are installed by default
+        // Plugins that are installed by default
 
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable());
@@ -268,6 +268,9 @@ define([
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());
+        this.install(this.plugins.URLTimeSettingsSynchronizer());
+        this.install(this.plugins.NotificationIndicator());
+        this.install(this.plugins.NewFolderAction());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -355,15 +358,11 @@ define([
      * @param {HTMLElement} [domElement] the DOM element in which to run
      *        MCT; if undefined, MCT will be run in the body of the document
      */
-    MCT.prototype.start = function (domElement) {
+    MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
         if (!this.plugins.DisplayLayout._installed) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
             }));
-        }
-
-        if (!domElement) {
-            domElement = document.body;
         }
 
         this.element = domElement;
@@ -405,23 +404,30 @@ define([
                 // something has depended upon objectService.  Cool, right?
                 this.$injector.get('objectService');
 
-                var appLayout = new Vue({
-                    components: {
-                        'Layout': Layout.default
-                    },
-                    provide: {
-                        openmct: this
-                    },
-                    template: '<Layout ref="layout"></Layout>'
-                });
-                domElement.appendChild(appLayout.$mount().$el);
+                if (!isHeadlessMode) {
+                    var appLayout = new Vue({
+                        components: {
+                            'Layout': Layout.default
+                        },
+                        provide: {
+                            openmct: this
+                        },
+                        template: '<Layout ref="layout"></Layout>'
+                    });
+                    domElement.appendChild(appLayout.$mount().$el);
 
-                this.layout = appLayout.$refs.layout;
-                Browse(this);
+                    this.layout = appLayout.$refs.layout;
+                    Browse(this);
+                }
                 this.router.start();
                 this.emit('start');
             }.bind(this));
     };
+
+    MCT.prototype.startHeadless = function () {
+        let unreachableNode = document.createElement('div');
+        return this.start(unreachableNode, true);
+    }
 
     /**
      * Install a plugin in MCT.
@@ -432,6 +438,10 @@ define([
      */
     MCT.prototype.install = function (plugin) {
         plugin(this);
+    };
+
+    MCT.prototype.destroy = function () {
+        this.emit('destroy');
     };
 
     MCT.prototype.plugins = plugins;

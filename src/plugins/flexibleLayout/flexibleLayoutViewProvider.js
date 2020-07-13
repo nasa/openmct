@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'flexible-layout';
             },
-            view: function (domainObject) {
+            view: function (domainObject, objectPath) {
                 let component;
 
                 return {
@@ -46,6 +46,7 @@ define([
                         component = new Vue({
                             provide: {
                                 openmct,
+                                objectPath,
                                 layoutObject: domainObject
                             },
                             el: element,

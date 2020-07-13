@@ -1,5 +1,5 @@
 define([
-    '../object-utils'
+    'objectUtils'
 ], function (
     objectUtils
 ) {

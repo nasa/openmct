@@ -29,10 +29,13 @@ define([
         function isTelemetryObject(selectionPath) {
             let selectedObject = selectionPath[0].context.item;
             let parentObject = selectionPath[1].context.item;
+            let selectedLayoutItem = selectionPath[0].context.layoutItem;
 
             return parentObject &&
                 parentObject.type === 'layout' &&
                 selectedObject &&
+                selectedLayoutItem &&
+                selectedLayoutItem.type === 'telemetry-view' &&
                 openmct.telemetry.isTelemetryObject(selectedObject) &&
                 !options.showAsView.includes(selectedObject.type);
         }
@@ -49,7 +52,6 @@ define([
             },
             view: function (domainObject, objectPath) {
                 let component;
-
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -68,12 +70,12 @@ define([
                         component.$destroy();
                         component = undefined;
                     }
-                };
+                }
             },
             priority: function () {
                 return 1;
             }
-        };
+        }
     }
 
     return AlphanumericFormatViewProvider;

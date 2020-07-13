@@ -22,16 +22,18 @@
 
 define([
     './PlotModelFormController',
+    '../draw/MarkerShapes',
     'lodash'
 ], function (
     PlotModelFormController,
+    MARKER_SHAPES,
     _
 ) {
 
     function dynamicPathForKey(key) {
         return function (object, model) {
             var modelIdentifier = model.get('identifier');
-            var index = _.findIndex(object.configuration.series, function (s) {
+            var index = object.configuration.series.findIndex(s => {
                 return _.isEqual(s.identifier, modelIdentifier);
             });
 
@@ -93,6 +95,13 @@ define([
                         value: o.key
                     };
                 });
+            this.$scope.markerShapeOptions = Object.entries(MARKER_SHAPES)
+                .map(([key, obj]) => {
+                    return {
+                        name: obj.label,
+                        value: key
+                    };
+                });
         },
 
         fields: [
@@ -107,6 +116,10 @@ define([
             {
                 modelProp: 'markers',
                 objectPath: dynamicPathForKey('markers')
+            },
+            {
+                modelProp: 'markerShape',
+                objectPath: dynamicPathForKey('markerShape')
             },
             {
                 modelProp: 'markerSize',

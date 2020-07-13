@@ -28,6 +28,16 @@ define([
                         domain: 2
                     }
                 },
+                // Need to enable "LocalTimeSystem" plugin to make use of this
+                // {
+                //     key: "local",
+                //     name: "Time",
+                //     format: "local-format",
+                //     source: "utc",
+                //     hints: {
+                //         domain: 3
+                //     }
+                // },
                 {
                     key: "sin",
                     name: "Sine",
@@ -59,6 +69,15 @@ define([
                     format: "utc",
                     hints: {
                         domain: 1
+                    }
+                },
+                {
+                    key: "local",
+                    name: "Time",
+                    format: "utc",
+                    source: "utc",
+                    hints: {
+                        domain: 2
                     }
                 },
                 {
@@ -100,7 +119,7 @@ define([
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {
-        return _.extend(
+        return Object.assign(
             {},
             domainObject.telemetry,
             METADATA_BY_TYPE[domainObject.type]

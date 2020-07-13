@@ -23,7 +23,7 @@
 define([
     './SummaryWidgetRule',
     '../eventHelpers',
-    '../../../../api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     SummaryWidgetRule,
@@ -81,10 +81,12 @@ define([
                     }
                 }.bind(this);
 
+                /* eslint-disable you-dont-need-lodash-underscore/map */
                 unsubscribes = _.map(
                     realtimeStates,
                     this.subscribeToObjectState.bind(this, updateCallback)
                 );
+                /* eslint-enable you-dont-need-lodash-underscore/map */
             }.bind(this));
 
         return function () {
@@ -152,11 +154,13 @@ define([
     SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
         return this.load()
             .then(function () {
+                /* eslint-disable you-dont-need-lodash-underscore/values */
                 return _(this.baseState)
                     .values()
                     .map(_.clone)
-                    .indexBy('id')
+                    .keyBy('id')
                     .value();
+                /* eslint-enable you-dont-need-lodash-underscore/values */
             }.bind(this));
     };
 
@@ -183,7 +187,7 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
-        options = _.extend({}, options, {
+        options = Object.assign({}, options, {
             strategy: 'latest',
             size: 1
         });
@@ -258,10 +262,12 @@ define([
             }
         }
 
+        /* eslint-disable you-dont-need-lodash-underscore/map */
         var latestTimestamp = _(state)
             .map('timestamps')
             .sortBy(timestampKey)
             .last();
+        /* eslint-enable you-dont-need-lodash-underscore/map */
 
         if (!latestTimestamp) {
             latestTimestamp = {};

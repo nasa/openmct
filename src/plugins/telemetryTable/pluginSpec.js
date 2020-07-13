@@ -23,38 +23,60 @@ import TablePlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    createMouseEvent
-} from 'testTools';
-
-let openmct;
-let tablePlugin;
-let element;
-let child;
+    createMouseEvent,
+    spyOnBuiltins,
+    resetApplicationState
+} from 'utils/testing';
 
 describe("the plugin", () => {
-    beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
+    let openmct;
+    let tablePlugin;
+    let element;
+    let child;
 
+    beforeAll(() => {
+        resetApplicationState();
+    })
+
+    beforeEach((done) => {
         openmct = createOpenMct();
 
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
-
+        // Table Plugin is actually installed by default, but because installing it
+        // again is harmless it is left here as an examplar for non-default plugins.
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
+        element = document.createElement('div');
+        child = document.createElement('div');
+        element.appendChild(child);
+
+        openmct.time.timeSystem('utc', {start: 0, end: 4});
+
+        spyOnBuiltins(['requestAnimationFrame']);
+        window.requestAnimationFrame.and.callFake((callBack) => {
+            callBack();
+        });
+
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
+
+    afterEach(() => {
+        resetApplicationState(openmct);
+    });
+
+    describe("defines a table object", function () {
+        it("that is creatable", () => {
+            let tableType = openmct.types.get('table');
+            expect(tableType.definition.creatable).toBe(true);
+        });
+    })
 
     it("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
-            id: "test-object",
+            id:"test-object",
             type: "test-object",
             telemetry: {
                 values: [{
@@ -76,44 +98,81 @@ describe("the plugin", () => {
 
         beforeEach(() => {
             testTelemetryObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object"
-                },
+                identifier:{ namespace: "", key: "test-object"},
                 type: "test-object",
                 name: "Test Object",
                 telemetry: {
                     values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    },{
                         key: "some-key",
                         name: "Some attribute",
                         hints: {
-                            domain: 1
+                            range: 1
                         }
                     }, {
                         key: "some-other-key",
                         name: "Another attribute",
                         hints: {
-                            range: 1
+                            range: 2
                         }
                     }]
                 }
             };
+            const testTelemetry = [
+                {
+                    'utc': 1,
+                    'some-key': 'some-value 1',
+                    'some-other-key' : 'some-other-value 1'
+                },
+                {
+                    'utc': 2,
+                    'some-key': 'some-value 2',
+                    'some-other-key' : 'some-other-value 2'
+                },
+                {
+                    'utc': 3,
+                    'some-key': 'some-value 3',
+                    'some-other-key' : 'some-other-value 3'
+                }
+            ];
+            let telemetryPromiseResolve;
+            let telemetryPromise = new Promise((resolve) => {
+                telemetryPromiseResolve = resolve;
+            });
+            openmct.telemetry.request.and.callFake(() => {
+                telemetryPromiseResolve(testTelemetry);
+                return telemetryPromise;
+            });
+
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
-            tableView = tableViewProvider.view(testTelemetryObject, true, [testTelemetryObject]);
+            tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
 
-            return Vue.nextTick();
+            return telemetryPromise.then(() => Vue.nextTick());
         });
 
-        it("Renders a column for every item in telemetry metadata", () => {
+        it("Renders a row for every telemetry datum returned",() => {
+            let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+            expect(rows.length).toBe(3);
+        });
+
+
+        it("Renders a column for every item in telemetry metadata",() => {
             let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(2);
-            expect(headers[0].innerText).toBe('Some attribute');
-            expect(headers[1].innerText).toBe('Another attribute');
+            expect(headers.length).toBe(3);
+            expect(headers[0].innerText).toBe('Time');
+            expect(headers[1].innerText).toBe('Some attribute');
+            expect(headers[2].innerText).toBe('Another attribute');
         });
 
-        it("Supports column reordering via drag and drop", () => {
+        it("Supports column reordering via drag and drop",() => {
             let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
             let fromColumn = columns[0];
             let toColumn = columns[1];

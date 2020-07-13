@@ -1,7 +1,7 @@
 define([
     './LegacyViewProvider',
     './TypeInspectorViewProvider',
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     LegacyViewProvider,
     TypeInspectorViewProvider,

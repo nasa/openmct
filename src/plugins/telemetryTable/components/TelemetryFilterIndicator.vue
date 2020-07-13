@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 const FILTER_INDICATOR_LABEL = 'Filters:';
 const FILTER_INDICATOR_LABEL_MIXED = 'Mixed Filters:';
 const FILTER_INDICATOR_TITLE = 'Data filters are being applied to this view.';

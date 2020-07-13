@@ -101,6 +101,12 @@ export default class RemoveAction {
     appliesTo(objectPath) {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
+        let child = objectPath[0];
+        let locked = child.locked ? child.locked : parent && parent.locked;
+
+        if (locked) {
+            return false;
+        }
 
         return parentType &&
             parentType.definition.creatable &&

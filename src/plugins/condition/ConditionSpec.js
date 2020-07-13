@@ -36,10 +36,11 @@ describe("The condition", function () {
 
     beforeEach (() => {
         conditionManager = jasmine.createSpyObj('conditionManager',
-            ['on']
+            ['on', 'updateConditionDescription']
         );
         mockTelemetryReceived = jasmine.createSpy('listener');
         conditionManager.on('telemetryReceived', mockTelemetryReceived);
+        conditionManager.updateConditionDescription.and.returnValue(function () {});
 
         testTelemetryObject = {
             identifier: {
@@ -49,9 +50,9 @@ describe("The condition", function () {
             type: "test-object",
             name: "Test Object",
             telemetry: {
-                values: [{
-                    key: "value",
-                    name: "Value",
+                valueMetadatas: [{
+                    key: "some-key",
+                    name: "Some attribute",
                     hints: {
                         range: 2
                     }
@@ -81,7 +82,7 @@ describe("The condition", function () {
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe', 'getMetadata']);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
-        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry.values);
+        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
 
         mockTimeSystems = {
             key: 'utc'

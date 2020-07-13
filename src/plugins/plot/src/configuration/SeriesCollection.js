@@ -102,11 +102,11 @@ define([
             var plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {
 
-                var persistedIndex = _.findIndex(plotObject.configuration.series, function (s) {
+                var persistedIndex = plotObject.configuration.series.findIndex(s => {
                     return _.isEqual(identifier, s.identifier);
                 });
 
-                var configIndex = _.findIndex(this.models, function (m) {
+                var configIndex = this.models.findIndex(m => {
                     return _.isEqual(m.domainObject.identifier, identifier);
                 });
 

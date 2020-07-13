@@ -22,13 +22,11 @@
 /*global define*/
 
 define([
-    'lodash',
     'EventEmitter',
     './Model',
     '../lib/extend',
     '../lib/eventHelpers'
 ], function (
-    _,
     EventEmitter,
     Model,
     extend,
@@ -45,7 +43,7 @@ define([
         this.initialize(options);
     }
 
-    _.extend(Collection.prototype, EventEmitter.prototype);
+    Object.assign(Collection.prototype, EventEmitter.prototype);
     eventHelpers.extend(Collection.prototype);
 
     Collection.extend = extend;
@@ -108,12 +106,7 @@ define([
     };
 
     Collection.prototype.indexOf = function (model) {
-        return _.findIndex(
-            this.models,
-            function (m) {
-                return m === model;
-            }
-        );
+        return this.models.findIndex(m => m === model);
     };
 
     Collection.prototype.remove = function (model) {

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, objectUtils) {
+define(['zepto', 'objectUtils'], function ($, objectUtils) {
 
     /**
      * The ImportAsJSONAction is available from context menus and allows a user
@@ -220,8 +220,14 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
     };
 
     ImportAsJSONAction.appliesTo = function (context) {
-        return context.domainObject !== undefined &&
-            context.domainObject.hasCapability("composition");
+        let domainObject = context.domainObject;
+
+        if (domainObject && domainObject.model.locked) {
+            return false;
+        }
+
+        return domainObject !== undefined &&
+            domainObject.hasCapability("composition");
     };
 
     return ImportAsJSONAction;

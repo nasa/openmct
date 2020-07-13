@@ -100,7 +100,7 @@ define([
 
         hasColumnWithKey(columnKey) {
             return _.flatten(Object.values(this.columns))
-                .findIndex(column => column.getKey() === columnKey) !== -1;
+                .some(column => column.getKey() === columnKey);
         }
 
         getColumns() {
@@ -109,9 +109,10 @@ define([
 
         getAllHeaders() {
             let flattenedColumns = _.flatten(Object.values(this.columns));
+            /* eslint-disable you-dont-need-lodash-underscore/uniq */
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
-
+            /* eslint-enable you-dont-need-lodash-underscore/uniq */
             function fromColumnsToHeadersMap(headersMap, column) {
                 headersMap[column.getKey()] = column.getTitle();
 

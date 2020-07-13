@@ -40,7 +40,6 @@ define([
             if (!valueMetadata.hints.hasOwnProperty('domain')) {
                 valueMetadata.hints.domain = valueMetadata.hints.x;
             }
-
             delete valueMetadata.hints.x;
         }
 
@@ -53,28 +52,24 @@ define([
             if (!valueMetadata.hints.hasOwnProperty('range')) {
                 valueMetadata.hints.range = valueMetadata.hints.y;
             }
-
             delete valueMetadata.hints.y;
         }
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
+                valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
             }
-
             if (!valueMetadata.hasOwnProperty('max')) {
-                valueMetadata.max = _.max(valueMetadata.values) + 1;
+                valueMetadata.max = Math.max(valueMetadata.values) + 1;
             }
-
             if (!valueMetadata.hasOwnProperty('min')) {
-                valueMetadata.min = _.min(valueMetadata.values) - 1;
+                valueMetadata.min = Math.min(valueMetadata.values) - 1;
             }
         }
 
         if (!valueMetadata.hints.hasOwnProperty('priority')) {
             valueMetadata.hints.priority = index;
         }
-
         return valueMetadata;
     }
 
@@ -117,24 +112,21 @@ define([
             /*jshint validthis: true */
             return this.hints.hasOwnProperty(hint);
         }
-
         function hasHints(metadata) {
             return hints.every(hasHint, metadata);
         }
-
         var matchingMetadata = this.valueMetadatas.filter(hasHints);
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];
-            };
+            }
         });
-
-        return _.sortByAll(matchingMetadata, ...iteratees);
+        return _.sortBy(matchingMetadata, ...iteratees);
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {
         return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
-    };
+    }
 
     TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
         let valueMetadata = this.valuesForHints(['range'])[0];
@@ -151,6 +143,7 @@ define([
 
         return valueMetadata.key;
     };
+
 
     return TelemetryMetadataManager;
 

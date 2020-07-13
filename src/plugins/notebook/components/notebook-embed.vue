@@ -54,12 +54,13 @@ export default {
     data() {
         return {
             popupMenuItems: []
-        };
+        }
     },
     watch: {
     },
     mounted() {
         this.addPopupMenuItems();
+        this.exportImageService = this.openmct.$injector.get('exportImageService');
     },
     methods: {
         addPopupMenuItems() {
@@ -67,12 +68,12 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            };
+            }
             const preview = {
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)
-            };
+            }
 
             this.popupMenuItems = [removeEmbed, preview];
         },
@@ -168,13 +169,11 @@ export default {
             }
 
             const bounds = this.openmct.time.bounds();
-            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start &&
-                this.embed.bounds.end !== bounds.end;
+            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
+                || this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
             this.openmct.time.stopClock();
-            window.location.href = link;
-
             let message = '';
             if (isTimeBoundChanged) {
                 this.openmct.time.bounds({
@@ -188,7 +187,11 @@ export default {
                 message = 'Time bound values changed to fixed timespan mode';
             }
 
-            this.openmct.notifications.alert(message);
+            if (message.length) {
+                this.openmct.notifications.alert(message);
+            }
+
+            window.location.href = link;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
@@ -197,13 +200,13 @@ export default {
             const options = {
                 name: this.removeActionString,
                 callback: this.removeEmbed.bind(this)
-            };
+            }
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
         openSnapshot() {
             const self = this;
-            const snapshot = new Vue({
+            this.snapshot = new Vue({
                 data: () => {
                     return {
                         embed: self.embed
@@ -211,16 +214,15 @@ export default {
                 },
                 methods: {
                     formatTime: self.formatTime,
-                    annotateSnapshot: self.annotateSnapshot
+                    annotateSnapshot: self.annotateSnapshot,
+                    exportImage: self.exportImage
                 },
                 template: SnapshotTemplate
             });
 
             const snapshotOverlay = this.openmct.overlays.overlay({
-                element: snapshot.$mount().$el,
-                onDestroy: () => {
-                    snapshot.$destroy(true);
-                },
+                element: this.snapshot.$mount().$el,
+                onDestroy: () => { this.snapshot.$destroy(true) },
                 size: 'large',
                 dismissable: true,
                 buttons: [
@@ -233,6 +235,15 @@ export default {
                     }
                 ]
             });
+        },
+        exportImage(type) {
+            let element = this.snapshot.$refs['snapshot-image'];
+
+            if (type === 'png') {
+                this.exportImageService.exportPNG(element, this.embed.name);
+            } else {
+                this.exportImageService.exportJPG(element, this.embed.name);
+            }
         },
         previewEmbed() {
             const self = this;
@@ -250,5 +261,5 @@ export default {
             this.$emit('updateEmbed', embed);
         }
     }
-};
+}
 </script>

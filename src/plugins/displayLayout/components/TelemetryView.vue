@@ -24,16 +24,23 @@
 <layout-frame
     :item="item"
     :grid-size="gridSize"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="styleClass"
+        :class="{
+            styleClass,
+            'is-missing': domainObject.status === 'missing'
+        }"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
+        <div class="is-missing__indicator"
+             title="This item is missing"
+        ></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
@@ -105,6 +112,10 @@ export default {
         index: {
             type: Number,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -171,6 +182,10 @@ export default {
             this.context.index = newIndex;
         },
         item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
             this.context.layoutItem = newItem;
         }
     },
@@ -245,7 +260,8 @@ export default {
                 updateTelemetryFormat: this.updateTelemetryFormat
             };
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el, this.context, this.initSelect);
+                this.$el, this.context, this.immediatelySelect || this.initSelect);
+            delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);

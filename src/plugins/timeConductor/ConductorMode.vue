@@ -111,7 +111,7 @@ export default {
             if (clock === undefined) {
                 return {
                     key: 'fixed',
-                    name: 'Fixed Timespan Mode',
+                    name: 'Fixed Timespan',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular'
                 };

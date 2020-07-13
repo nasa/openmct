@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 import { OPERATIONS } from "./operations";
-let isOneOfOperation = OPERATIONS.find((operation) => operation.name === 'valueIs');
-let isNotOneOfOperation = OPERATIONS.find((operation) => operation.name === 'valueIsNot');
+let isOneOfOperation = OPERATIONS.find((operation) => operation.name === 'isOneOf');
+let isNotOneOfOperation = OPERATIONS.find((operation) => operation.name === 'isNotOneOf');
 let isBetween = OPERATIONS.find((operation) => operation.name === 'between');
 let isNotBetween = OPERATIONS.find((operation) => operation.name === 'notBetween');
 let enumIsOperation = OPERATIONS.find((operation) => operation.name === 'enumValueIs');

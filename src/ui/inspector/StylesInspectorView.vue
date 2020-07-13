@@ -25,8 +25,7 @@
 </template>
 
 <script>
-import ConditionalStylesView from '../../plugins/condition/components/inspector/ConditionalStylesView.vue';
-import MultiSelectStylesView from '../../plugins/condition/components/inspector/MultiSelectStylesView.vue';
+import StylesView from '../../plugins/condition/components/inspector/StylesView.vue';
 import Vue from 'vue';
 
 export default {
@@ -46,7 +45,6 @@ export default {
     methods: {
         updateSelection(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let template = selection.length > 1 ? '<multi-select-styles-view></multi-select-styles-view>' : '<conditional-styles-view></conditional-styles-view>';
                 if (this.component) {
                     this.component.$destroy();
                     this.component = undefined;
@@ -62,10 +60,9 @@ export default {
                     },
                     el: viewContainer,
                     components: {
-                        ConditionalStylesView,
-                        MultiSelectStylesView
+                        StylesView
                     },
-                    template: template
+                    template: '<styles-view/>'
                 });
             }
         }

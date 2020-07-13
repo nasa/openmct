@@ -85,9 +85,9 @@ define([
                             value: Number(e.value)
                         };
                     }), 'e.value');
-                valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
-                valueMetadata.max = _.max(valueMetadata.values);
-                valueMetadata.min = _.min(valueMetadata.values);
+                valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
+                valueMetadata.max = Math.max(valueMetadata.values);
+                valueMetadata.min = Math.min(valueMetadata.values);
             }
 
             valueMetadatas.push(valueMetadata);
@@ -103,7 +103,7 @@ define([
         var metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
             var typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
-            _.extend(metadata, typeMetadata);
+            Object.assign(metadata, typeMetadata);
             if (!metadata.values) {
                 metadata.values = valueMetadatasFromOldFormat(metadata);
             }

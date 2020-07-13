@@ -24,6 +24,7 @@
     :item="item"
     :grid-size="gridSize"
     :title="domainObject && domainObject.name"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
@@ -61,7 +62,7 @@ function hasFrameByDefault(type) {
 }
 
 export default {
-    makeDefinition(openmct, gridSize, domainObject, position) {
+    makeDefinition(openmct, gridSize, domainObject, position, viewKey) {
         let defaultDimensions = getDefaultDimensions(gridSize);
         position = position || DEFAULT_POSITION;
 
@@ -71,7 +72,8 @@ export default {
             x: position[0],
             y: position[1],
             identifier: domainObject.identifier,
-            hasFrame: hasFrameByDefault(domainObject.type)
+            hasFrame: hasFrameByDefault(domainObject.type),
+            viewKey
         };
     },
     inject: ['openmct', 'objectPath'],
@@ -94,6 +96,10 @@ export default {
         index: {
             type: Number,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -109,6 +115,13 @@ export default {
             }
 
             this.context.index = newIndex;
+        },
+        item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.layoutItem = newItem;
         }
     },
     mounted() {
@@ -131,7 +144,8 @@ export default {
                 childContext.index = this.index;
                 this.context = childContext;
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.initSelect);
+                    this.$el, this.context, this.immediatelySelect || this.initSelect);
+                delete this.immediatelySelect;
             });
         }
     }

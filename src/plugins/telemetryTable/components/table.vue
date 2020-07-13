@@ -139,6 +139,7 @@
         ></div>
         <!-- Headers table -->
         <div
+            v-show="!hideHeaders"
             ref="headersTable"
             class="c-telemetry-table__headers-w js-table__headers-w"
             :style="{ 'max-width': widthWithScroll}"
@@ -302,7 +303,7 @@ export default {
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
-                };
+                }
             }
         }
     },
@@ -336,8 +337,9 @@ export default {
             markCounter: 0,
             paused: false,
             markedRows: [],
-            isShowingMarkedRowsOnly: false
-        };
+            isShowingMarkedRowsOnly: false,
+            hideHeaders: configuration.hideHeaders
+        }
     },
     computed: {
         dropTargetStyle() {
@@ -345,11 +347,10 @@ export default {
                 top: this.$refs.headersTable.offsetTop + 'px',
                 height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
-            };
+            }
         },
         lastHeaderKey() {
             let headerKeys = Object.keys(this.headers);
-
             return headerKeys[headerKeys.length - 1];
         },
         widthWithScroll() {
@@ -363,13 +364,11 @@ export default {
             } else {
                 let totalWidth = Object.keys(this.headers).reduce((total, key) => {
                     total += this.configuredColumnWidths[key];
-
                     return total;
                 }, 0);
 
                 style = {width: totalWidth + 'px'};
             }
-
             return style;
         }
     },
@@ -438,7 +437,7 @@ export default {
         updateVisibleRows() {
             if (!this.updatingView) {
                 this.updatingView = true;
-                requestAnimationFrame(() => {
+                requestAnimationFrame(()=> {
 
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
@@ -474,12 +473,10 @@ export default {
         },
         calculateFirstVisibleRow() {
             let scrollTop = this.scrollable.scrollTop;
-
             return Math.floor(scrollTop / this.rowHeight);
         },
         calculateLastVisibleRow() {
             let scrollBottom = this.scrollable.scrollTop + this.scrollable.offsetHeight;
-
             return Math.ceil(scrollBottom / this.rowHeight);
         },
         updateHeaders() {
@@ -496,14 +493,13 @@ export default {
                 sizingTableRow = this.sizingTable.children[0],
                 sizingCells = sizingTableRow.children;
 
-            headerKeys.forEach((headerKey, headerIndex, array) => {
+            headerKeys.forEach((headerKey, headerIndex, array)=>{
                 if (this.isAutosizeEnabled) {
                     columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
                 } else {
                     let cell = sizingCells[headerIndex];
                     columnWidths[headerKey] = cell.offsetWidth;
                 }
-
                 totalWidth += columnWidths[headerKey];
             });
 
@@ -524,9 +520,8 @@ export default {
                 this.sortOptions = {
                     key: columnKey,
                     direction: 'asc'
-                };
+                }
             }
-
             this.table.sortBy(this.sortOptions);
         },
         scroll() {
@@ -623,6 +618,7 @@ export default {
         },
         updateConfiguration(configuration) {
             this.isAutosizeEnabled = configuration.autosize;
+            this.hideHeaders = configuration.hideHeaders;
 
             this.updateHeaders();
             this.$nextTick().then(this.calculateColumnWidths);
@@ -666,9 +662,8 @@ export default {
                 newHeaderKeys.splice(to, 0, moveFromKey);
             }
 
-            let newHeaders = newHeaderKeys.reduce((headers, headerKey) => {
+            let newHeaders = newHeaderKeys.reduce((headers, headerKey)=>{
                 headers[headerKey] = this.headers[headerKey];
-
                 return headers;
             }, {});
 
@@ -698,11 +693,9 @@ export default {
                     } else {
                         this.scrollable.scrollTop = scrollTop;
                     }
-
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
-
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
@@ -714,7 +707,6 @@ export default {
             if (pausedByButton) {
                 this.pausedByButton = true;
             }
-
             this.paused = true;
             this.table.pause();
         },
@@ -798,14 +790,13 @@ export default {
                 this.markRow(rowIndex);
             } else {
                 if (this.markedRows.length > 1) {
-                    this.markedRows.forEach((r, i) => {
+                    this.markedRows.forEach((r,i) => {
                         if (i !== 0) {
                             r.marked = false;
                         }
                     });
                     this.markedRows.splice(1);
                 }
-
                 let lastRowToBeMarked = this.visibleRows[rowIndex];
 
                 let allRows = this.table.filteredRows.getRows(),
@@ -868,7 +859,7 @@ export default {
             });
         },
         recalculateColumnWidths() {
-            this.visibleRows.forEach((row, i) => {
+            this.visibleRows.forEach((row,i) => {
                 this.$set(this.sizingRows, i, row);
             });
 
@@ -884,5 +875,5 @@ export default {
             this.$nextTick().then(this.calculateColumnWidths);
         }
     }
-};
+}
 </script>

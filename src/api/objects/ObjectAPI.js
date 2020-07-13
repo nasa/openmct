@@ -22,7 +22,7 @@
 
 define([
     'lodash',
-    './object-utils',
+    'objectUtils',
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',

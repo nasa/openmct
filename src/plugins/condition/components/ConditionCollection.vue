@@ -153,7 +153,8 @@ export default {
         },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
-                this.conditionCollection = newConditionCollection;
+                //this forces children to re-render
+                this.conditionCollection = newConditionCollection.map(condition => condition);
                 this.updateDefaultCondition();
             });
         },
@@ -209,7 +210,7 @@ export default {
             this.$emit('telemetryUpdated', this.telemetryObjs);
         },
         removeTelemetryObject(identifier) {
-            let index = _.findIndex(this.telemetryObjs, (obj) => {
+            let index = this.telemetryObjs.findIndex(obj => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
                 let id = this.openmct.objects.makeKeyString(identifier);
 

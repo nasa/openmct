@@ -35,7 +35,7 @@ export const evaluateResults = (results, trigger) => {
 
 function matchAll(results) {
     for (const result of results) {
-        if (!result) {
+        if (result !== true) {
             return false;
         }
     }
@@ -45,7 +45,7 @@ function matchAll(results) {
 
 function matchAny(results) {
     for (const result of results) {
-        if (result) {
+        if (result === true) {
             return true;
         }
     }
@@ -56,7 +56,7 @@ function matchAny(results) {
 function matchExact(results, target) {
     let matches = 0;
     for (const result of results) {
-        if (result) {
+        if (result === true) {
             matches++;
         }
 
