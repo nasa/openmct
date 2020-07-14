@@ -21,8 +21,11 @@
 -->
 <div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
     <div class="c-plot-legend gl-plot-legend"
-         ng-class="{ 'hover-on-plot': !!highlights.length }"
-         ng-show="legend.get('position') !== 'hidden'">
+         ng-class="{
+            'hover-on-plot': !!highlights.length,
+            'is-legend-hidden': legend.get('hideLegendWhenSmall')
+        }"
+    >
         <div class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
             ng-class="{ 'c-disclosure-triangle--expanded': legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
@@ -134,7 +137,7 @@
                     {{option.name}}
                 </option>
             </select>
-            
+
 
             <mct-ticks axis="yAxis">
                 <div ng-repeat="tick in ticks track by tick.value"

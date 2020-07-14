@@ -62,7 +62,7 @@ mct-plot {
     display: flex;
     flex-direction: column;
 
-    .l-control-bar {
+    .c-control-bar {
         flex: 0 0 auto;
         margin-bottom: $interiorMargin;
     }
@@ -96,6 +96,12 @@ mct-plot {
                 display: block;
             }
         }
+    }
+
+    .is-in-small-container & {
+            .c-control-bar {
+                display: none;
+            }
     }
 }
 
@@ -441,7 +447,21 @@ mct-plot {
         @include propertiesHeader();
         margin-bottom: $interiorMarginSm;
     }
+
+    .is-in-small-container & {
+        &.is-legend-hidden {
+            display: none;
+        }
+    }
 }
+
+.c-plot--stacked {
+    .is-legend-hidden {
+        // Always show the legend in a stacked plot
+        display: flex !important;
+    }
+}
+
 
 .gl-plot-legend {
     display: flex;
@@ -498,17 +518,13 @@ mct-plot {
     flex: 1 1 auto;
 }
 
-.gl-plot {
+.gl-plot,
+.c-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
 
     &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
     &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
-
-    &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
-    &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
-    &.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
-    &.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {
@@ -551,8 +567,10 @@ mct-plot {
 
     /***************** TOP OR BOTTOM */
     &.plot-legend-top,
-    &.plot-legend-bottom {
+    &.plot-legend-bottom,
+    &.plot-legend-hidden {
         // General styles when legend is on the top or bottom
+        // -hidden included for legacy plots
         flex-direction: column;
 
         &.plot-legend-collapsed {
@@ -569,6 +587,7 @@ mct-plot {
     &.plot-legend-left,
     &.plot-legend-right {
         // General styles when legend is on left or right
+
         .gl-plot-legend {
             max-height: inherit;
         }
@@ -619,6 +638,33 @@ mct-plot {
             order: 1;
         }
     }
+
+    &.plot-legend-right { margin-left: $interiorMargin; }
+}
+
+/***************** STACKED PLOT LEGEND OVERRIDES */
+.c-plot--stacked {
+    // Always show the legend on top, ignore any position setting
+    .c-plot,
+    .gl-plot {
+        flex-direction: column !important;
+
+        .c-plot-legend,
+        .gl-plot-legend {
+            margin: 0;
+            margin-bottom: $interiorMargin;
+            order: 1 !important;
+            width: 100% !important;
+
+            .plot-wrapper-collapsed-legend {
+                flex-direction: row !important;
+            }
+        }
+        .plot-wrapper-axis-and-display-area {
+            order: 2 !important;
+        }
+    }
+
 }
 
 /***************** CURSOR GUIDES */
