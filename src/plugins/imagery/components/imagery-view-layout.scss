@@ -99,7 +99,7 @@
 .c-imagery {
     .h-local-controls--overlay-content {
         position: absolute;
-        right: $interiorMargin; top: $interiorMargin;
+        left: $interiorMargin; top: $interiorMargin;
         z-index: 2;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;

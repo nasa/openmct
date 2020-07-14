@@ -34,10 +34,11 @@
         <div class="c-plot-legend__wrapper">
 
             <!-- COLLAPSED PLOT LEGEND -->
-            <div class="plot-wrapper-collapsed-legend"
-                 ng-class="{'icon-cursor-lock': !!lockHighlightPoint}">
+            <div class="plot-wrapper-collapsed-legend">
                 <div class="plot-legend-item"
-                      ng-repeat="series in series track by $index">
+                    ng-repeat="series in series track by $index"
+                    ng-class="{'icon-cursor-lock': !!lockHighlightPoint}"
+                >
                     <div class="plot-series-swatch-and-name">
                         <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
@@ -151,17 +152,15 @@
         </div>
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              ng-style="{
-                     left: (tickWidth + 30) + 'px'
-                 }">
-            <div class="l-state-indicators">
-                <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
-                      title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
-                <span class="l-state-indicators__alert-cursor-lock icon-cursor-lock"
-                      title="Telemetry point selection is locked. Click anywhere in the plot to unlock."
-                      ng-if="lockHighlightPoint"></span>
-            </div>
+                 left: (tickWidth + 30) + 'px'
+             }">
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
+                <div class="l-state-indicators">
+                    <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                          title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
+                </div>
+
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"

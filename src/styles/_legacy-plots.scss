@@ -259,7 +259,7 @@ mct-plot {
         align-items: center;
         position: absolute;
         top: $m;
-        right: $m;
+        left: $m;
         z-index: 9;
 
         &__reset {
@@ -272,15 +272,18 @@ mct-plot {
             top: $m;
             right: $m;
         }
+
+        .c-button {
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+        }
     }
 
     .l-state-indicators {
         color: $colorPausedBg;
         position: absolute;
-        display: block;
-        font-size: 1.5em;
-        pointer-events: none;
-        top: $interiorMarginSm;
+        cursor: help;
+        font-size: 1.2em;
+        bottom: $interiorMarginSm;
         left: $interiorMarginSm;
         z-index: 2;
 
@@ -526,7 +529,6 @@ mct-plot {
 
         .plot-legend-item {
             display: flex;
-            align-items: center;
             justify-content: stretch;
             &:not(:first-child) {
                 margin-left: $interiorMarginLg;
@@ -607,7 +609,7 @@ mct-plot {
                 overflow-y: auto;
             }
             .plot-legend-item {
-                margin-bottom: 1px;
+                margin-bottom: $interiorMarginSm;
                 margin-left: 0;
                 flex-wrap: wrap;
                 .plot-series-swatch-and-name {

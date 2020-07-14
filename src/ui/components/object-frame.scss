@@ -35,16 +35,14 @@
         > .c-so-view__header {
             display: none;
         }
-
-        > .c-so-view__local-controls {
-            top: $interiorMarginSm; right: $interiorMarginSm;
-        }
     }
 
     &__local-controls {
+        // View Large button
+        box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
         position: absolute;
         top: $interiorMargin; right: $interiorMargin;
-        z-index: 2;
+        z-index: 10;
     }
 
     &__view-large {
