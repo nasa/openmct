@@ -143,7 +143,7 @@
             <ConductorHistory
                 v-if="isFixed"
                 class="c-conductor__history-select"
-                :bounds="openmct.time.bounds()"
+                :bounds="bounds"
                 :time-system="timeSystem"
             />
         </div>
@@ -190,6 +190,10 @@ export default {
                 start: offsets && durationFormatter.format(Math.abs(offsets.start)),
                 end: offsets && durationFormatter.format(Math.abs(offsets.end))
             },
+            bounds: {
+                start: bounds.start,
+                end: bounds.end
+            },
             formattedBounds: {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
@@ -210,7 +214,7 @@ export default {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', this.setViewFromBounds);
+        this.openmct.time.on('bounds', this.handleNewBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
@@ -220,6 +224,13 @@ export default {
         document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
+        handleNewBounds(bounds) {
+            this.syncBounds(bounds);
+            this.setViewFromBounds(bounds);
+        },
+        syncBounds(bounds) {
+            this.bounds = bounds;
+        },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
                 this.altPressed = true;
@@ -246,10 +257,13 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
         endZoom(bounds) {
-            const _bounds = bounds ? bounds : this.openmct.time.bounds();
             this.isZooming = false;
 
-            this.openmct.time.bounds(_bounds);
+            if (bounds) {
+                this.handleNewBounds(bounds);
+            } else {
+                this.setViewFromBounds(this.bounds);
+            }
         },
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem
