@@ -128,7 +128,6 @@ export default {
                 this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
             } else {
                 this.history = {};
-                this.persistHistoryToLocalStorage();
             }
         },
         persistHistoryToLocalStorage() {
