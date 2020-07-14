@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,10 +54,7 @@ mct-plot {
 }
 
 .c-plot {
-    //$p: $mainViewPad;
     @include abs($mainViewPad);
-    //position: absolute;
-    //top: $p; right: $p; bottom: $p; left: $p;
 
     display: flex;
     flex-direction: column;
@@ -99,9 +96,9 @@ mct-plot {
     }
 
     .is-in-small-container & {
-            .c-control-bar {
-                display: none;
-            }
+        .c-control-bar {
+            display: none;
+        }
     }
 }
 
@@ -197,9 +194,7 @@ mct-plot {
         &.gl-plot-y-label {
             display: block;
             left: 0; top: 0; right: auto; bottom: 0;
-            padding-left: 5px;
             text-orientation: mixed;
-            //overflow: hidden;
             writing-mode: vertical-lr;
             &:before {
                 // Icon denoting configurability
@@ -371,12 +366,6 @@ mct-plot {
     z-index: -10;
 
     .l-view-section {
-        //$m: $interiorMargin;
-        //top: $m !important;
-        //right: $m;
-        //bottom: $m;
-        //left: $m;
-
         .s-status-timeconductor-unsynced .holder-plot {
             .t-object-alert.t-alert-unsynced {
                 display: none;
@@ -518,6 +507,11 @@ mct-plot {
     flex: 1 1 auto;
 }
 
+.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
+.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
+.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
+.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
+
 .gl-plot,
 .c-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
@@ -638,8 +632,6 @@ mct-plot {
             order: 1;
         }
     }
-
-    &.plot-legend-right { margin-left: $interiorMargin; }
 }
 
 /***************** STACKED PLOT LEGEND OVERRIDES */
