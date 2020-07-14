@@ -26,4 +26,14 @@
         @include abs();
         border: 1px solid transparent;
     }
+
+    &.is-missing {
+        @include isMissing($absPos: true);
+        border: $borderMissing;
+
+        .is-missing__indicator {
+            top: 0;
+            left: 0;
+        }
+    }
 }
