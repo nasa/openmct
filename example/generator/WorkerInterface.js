@@ -72,15 +72,15 @@ define([
         });
         var messageId;
 
-        let callback = message => {
+        let self = this;
+        function callback(message) {
             if (message.error) {
                 deferred.reject(message.error);
             } else {
                 deferred.resolve(message.data);
             }
-            delete this.callbacks[messageId];
-        };
-
+            delete self.callbacks[messageId];
+        }
         messageId = this.dispatch('request', request, callback.bind(this));
 
         return promise;
