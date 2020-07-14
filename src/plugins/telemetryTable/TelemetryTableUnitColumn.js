@@ -29,12 +29,12 @@ define([
             super(openmct, metadatum);
             this.isUnit = true;
             this.titleValue += ' Unit';
-            this.formatter = {
-                format(datum) {
-                    return metadatum.unit;
+            this.formatter =  {
+                format: (datum) => {
+                    return this.metadatum.unit;
                 },
-                parse(datum) {
-                    return metadatum.unit;
+                parse: (datum) => {
+                    return this.metadatum.unit;
                 }
             };
         }
@@ -53,10 +53,6 @@ define([
 
         getFormattedValue(telemetryDatum) {
             return this.formatter.format(telemetryDatum);
-        }
-
-        getParsedValue(telemetryDatum) {
-            return this.formatter.parse(telemetryDatum);
         }
     }
 

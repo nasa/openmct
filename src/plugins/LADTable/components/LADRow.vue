@@ -32,6 +32,12 @@
         class="js-third-data"
         :class="valueClass"
     >{{ value }}</td>
+    <td 
+        v-if="hasUnits"
+        class="js-units"
+    >
+        {{ unit }}
+    </td>
 </tr>
 </template>
 
@@ -48,6 +54,10 @@ export default {
         domainObject: {
             type: Object,
             required: true
+        },
+        hasUnits: {
+            type: Boolean,
+            requred: true
         }
     },
     data() {
@@ -59,7 +69,8 @@ export default {
             timestamp: undefined,
             value: '---',
             valueClass: '',
-            currentObjectPath
+            currentObjectPath,
+            unit: ''
         }
     },
     computed: {
@@ -101,6 +112,10 @@ export default {
             .subscribe(this.domainObject, this.updateValues);
 
         this.requestHistory();
+
+        if(this.hasUnits) {
+            this.setUnit();
+        }
     },
     destroyed() {
         this.stopWatchingMutation();
@@ -185,6 +200,9 @@ export default {
                 console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
                 return false;
             }
+        },
+        setUnit() {
+            this.unit = this.valueMetadata.unit || '';
         }
     }
 }

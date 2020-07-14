@@ -27,6 +27,7 @@
             <th>Name</th>
             <th>Timestamp</th>
             <th>Value</th>
+            <th v-if="hasUnits">Unit</th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +46,7 @@
                 v-for="secondary in secondaryTelemetryObjects[primary.key]"
                 :key="secondary.key"
                 :domain-object="secondary.domainObject"
+                :has-units="hasUnits"
             />
         </template>
     </tbody>
@@ -63,7 +65,8 @@ export default {
         return {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
-            compositions: []
+            compositions: [],
+            hasUnits: false
         }
     },
     mounted() {
@@ -108,6 +111,7 @@ export default {
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
             this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
+            this.checkForUnits();
         },
         reorderPrimary(reorderPlan) {
             let oldComposition = this.primaryTelemetryObjects.slice();
@@ -125,6 +129,9 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
+                if(!this.hasUnits) {
+                    this.checkForUnits(domainObject);
+                }
             }
         },
         removeSecondary(primary) {
@@ -135,7 +142,25 @@ export default {
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
+                this.checkForUnits();
             }
+        },
+        checkForUnits() {
+            let hasUnits = false;
+            for(let telemetryObject in this.secondaryTelemetryObjects) {
+                if(this.secondaryTelemetryObjects[telemetryObject]) {
+                    let objects = this.secondaryTelemetryObjects[telemetryObject];
+                    for(let current of objects) {
+                        let metadata = this.openmct.telemetry.getMetadata(current.domainObject);
+                        for(let metadatum of metadata.valueMetadatas) {
+                            if(metadatum.unit) {
+                                hasUnits = true;
+                            }
+                        };
+                    }
+                }
+            }
+            this.hasUnits = hasUnits;
         }
     }
 }

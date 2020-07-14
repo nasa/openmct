@@ -521,7 +521,6 @@ define(['lodash'], function (_) {
                         applicableSelectedItems: applicableItems,
                         contextMethod: 'toggleUnits',
                         property: function (selectionPath) {
-                            console.log('path', selectionPath, getPath(selectionPath) + '.showUnits');
                             return getPath(selectionPath) + '.showUnits';
                         },
                         options: [

@@ -28,6 +28,7 @@
                 <th>Name</th>
                 <th>Timestamp</th>
                 <th>Value</th>
+                <th v-if="hasUnits">Unit</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,7 @@
                 v-for="item in items"
                 :key="item.key"
                 :domain-object="item.domainObject"
+                :has-units="hasUnits"
             />
         </tbody>
     </table>
@@ -51,7 +53,8 @@ export default {
     },
     data() {
         return {
-            items: []
+            items: [],
+            hasUnits: false
         }
     },
     mounted() {
@@ -73,6 +76,9 @@ export default {
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             this.items.push(item);
+            if(!this.hasUnits) {
+                this.checkForUnits(domainObject);
+            }
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
@@ -83,6 +89,15 @@ export default {
             let oldItems = this.items.slice();
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+            });
+        },
+        checkForUnits(domainObject) {
+            let metadata = this.openmct.telemetry.getMetadata(domainObject);
+            metadata.valueMetadatas.forEach((metadatum) => {
+                if(metadatum.unit) {
+                    this.hasUnits = true;
+                    return;
+                }
             });
         }
     }
