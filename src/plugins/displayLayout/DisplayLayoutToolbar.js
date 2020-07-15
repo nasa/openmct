@@ -515,11 +515,14 @@ define(['lodash'], function (_) {
 
                 function getToggleUnitsButton(selectedParent, selection) {
                     let applicableItems = getAllOfType(selection, 'telemetry-view');
+                    applicableItems = unitsOnly(applicableItems);
+                    if(!applicableItems.length) {
+                        return;
+                    }
                     return {
                         control: "toggle-button",
                         domainObject: selectedParent,
                         applicableSelectedItems: applicableItems,
-                        contextMethod: 'toggleUnits',
                         property: function (selectionPath) {
                             return getPath(selectionPath) + '.showUnits';
                         },
@@ -536,6 +539,20 @@ define(['lodash'], function (_) {
                             }
                         ]
                     };
+                }
+
+                function unitsOnly(items) {
+                    let results = items.filter((item) => {
+                        let currentItem = item[0];
+                        let metadata = this.openmct.telemetry.getMetadata(currentItem.context.item);
+                        let hasUnits = metadata
+                            .valueMetadatas
+                            .filter((metadatum) => metadatum.unit)
+                            .length;
+                        console.log('hasUnits', hasUnits);
+                        return hasUnits > 0;
+                    });
+                    return results;
                 }
 
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
@@ -683,7 +700,10 @@ define(['lodash'], function (_) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
                         if (toolbar['unit-toggle'].length === 0) {
-                            toolbar['unit-toggle'] = [getToggleUnitsButton(selectedParent, selectedObjects)];
+                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
+                            if(toggleUnitsButton) {
+                                toolbar['unit-toggle'] = [toggleUnitsButton];
+                            }
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {

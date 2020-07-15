@@ -231,13 +231,7 @@ export default {
                     }
                 });
             } else {
-                if(item.contextMethod) {
-                    let method = item.contextMethod;
-                    item.applicableSelectedItems.forEach(selectionPath => {
-                        this.mutateObject(item, value, selectionPath);
-                        selectionPath[0].context[method](value);
-                    });
-                } else if (item.applicableSelectedItems) {
+                if (item.applicableSelectedItems) {
                     item.applicableSelectedItems.forEach(selectionPath => {
                         this.mutateObject(item, value, selectionPath);
                     });

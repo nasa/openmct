@@ -59,7 +59,7 @@
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
                 <span
-                    v-if="unit && showUnits"
+                    v-if="unit && item.showUnits"
                     class="c-telemetry-view__value-text__unit"
                 >
                     {{ unit }}
@@ -129,8 +129,7 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined,
-            showUnits: true
+            currentObjectPath: undefined
         }
     },
     computed: {
@@ -279,9 +278,6 @@ export default {
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
-        },
-        toggleUnits(show) {
-            this.showUnits = show;
         }
     }
 }
