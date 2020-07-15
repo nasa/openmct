@@ -549,7 +549,6 @@ define(['lodash'], function (_) {
                             .valueMetadatas
                             .filter((metadatum) => metadatum.unit)
                             .length;
-                        console.log('hasUnits', hasUnits);
                         return hasUnits > 0;
                     });
                     return results;
