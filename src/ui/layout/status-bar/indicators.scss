@@ -76,8 +76,12 @@
 [class*='minify-indicators'] {
     // All styles for minified Indicators should go in here
     .c-indicator:not(.no-minify) {
+        overflow: hidden; // Solves width problem in Safari as well as collapsing bubbles problem
+
         @include hover() {
             background: $colorIndicatorBgHov;
+            overflow: visible;
+
             .c-indicator__label {
                 box-shadow: $colorIndicatorMenuBgShdw;
                 transform: scale(1.0);
