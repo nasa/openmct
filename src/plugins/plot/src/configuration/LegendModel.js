@@ -52,7 +52,8 @@ define([
                 showTimestampWhenExpanded: true,
                 showValueWhenExpanded: true,
                 showMaximumWhenExpanded: true,
-                showMinimumWhenExpanded: true
+                showMinimumWhenExpanded: true,
+                showUnitsWhenExpanded: true
             };
         }
     });

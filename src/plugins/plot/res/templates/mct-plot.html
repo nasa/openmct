@@ -44,7 +44,7 @@
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
                         <span class="is-missing__indicator" title="This item is missing"></span>
-                        <span class="plot-series-name">{{ series.get('name') }}</span>
+                        <span class="plot-series-name">{{ series.get('name') + (series.get('unit') ? ' ' + series.get('unit') : '')}}</span>
                     </div>
                     <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
                          ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
@@ -73,6 +73,9 @@
                             </th>
                             <th ng-if="legend.get('showValueWhenExpanded')">
                                 Value
+                            </th>
+                            <th ng-if="legend.get('showUnitsWhenExpanded')">
+                                Unit
                             </th>
                             <th ng-if="legend.get('showMinimumWhenExpanded')"
                                 class="mobile-hide">
@@ -105,6 +108,11 @@
                             <span class="plot-series-value cursor-hover hover-value-enabled"
                                   ng-class="series.closest.mctLimitState.cssClass">
                                 {{ series.formatY(series.closest) }}
+                            </span>
+                        </td>
+                        <td ng-if="legend.get('showUnitsWhenExpanded')">
+                            <span class="plot-series-value cursor-hover hover-value-enabled">
+                                {{ series.get('unit') }}
                             </span>
                         </td>
                         <td ng-if="legend.get('showMinimumWhenExpanded')"

@@ -60,6 +60,11 @@ define([
                 modelProp: 'showMinimumWhenExpanded',
                 coerce: Boolean,
                 objectPath: 'configuration.legend.showMinimumWhenExpanded'
+            },
+            {
+                modelProp: 'showUnitsWhenExpanded',
+                coerce: Boolean,
+                objectPath: 'configuration.legend.showUnitsWhenExpanded'
             }
         ]
     });
