@@ -289,7 +289,7 @@ export default {
         },
         calculateDragPosition(pxDeltaX, pxDeltaY) {
             let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
-            let gridDeltaY = Math.round(pxDeltaY / this.gridSize[0]); // TODO: should this be gridSize[1]?
+            let gridDeltaY = Math.round(pxDeltaY / this.gridSize[1]);
             let {x, y, x2, y2} = this.item;
             let dragPosition = {x, y, x2, y2};
 
