@@ -156,7 +156,7 @@ export default {
                             if(metadatum.unit) {
                                 hasUnits = true;
                             }
-                        };
+                        }
                     }
                 }
             }

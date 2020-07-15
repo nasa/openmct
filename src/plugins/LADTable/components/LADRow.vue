@@ -32,7 +32,7 @@
         class="js-third-data"
         :class="valueClass"
     >{{ value }}</td>
-    <td 
+    <td
         v-if="hasUnits"
         class="js-units"
     >

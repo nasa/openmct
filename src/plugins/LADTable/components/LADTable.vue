@@ -102,7 +102,7 @@ export default {
                     hasUnits = true;
                     break;
                 }
-            };
+            }
             this.hasUnits = hasUnits;
         }
     }
