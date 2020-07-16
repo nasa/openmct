@@ -77,7 +77,7 @@
                         />
                         <li
                             v-if="visibleItems.length === 0"
-                            :style="{ paddingLeft: ((ancestors.length + 1) * 10) + 'px' }"
+                            :style="emptyStyles()"
                             class="c-tree__item c-tree__item--empty"
                         >
                             No items
