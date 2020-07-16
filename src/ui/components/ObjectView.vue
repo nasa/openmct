@@ -53,7 +53,9 @@ export default {
     mounted() {
         this.currentObject = this.object;
         this.updateView();
-        this.$el.addEventListener('dragover', this.onDragOver);
+        this.$el.addEventListener('dragover', this.onDragOver, {
+            capture: true
+        });
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
@@ -234,7 +236,6 @@ export default {
             }
         },
         onDragOver(event) {
-            console.log('onDragOver');
             if (this.hasComposableDomainObject(event)) {
                 if (this.isEditingAllowed()) {
                     event.preventDefault();
