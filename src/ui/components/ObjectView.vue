@@ -269,6 +269,7 @@ export default {
             if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
+                this.isEditingAllowed() &&
                 !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }
