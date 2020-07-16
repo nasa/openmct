@@ -1,19 +1,23 @@
 <template>
 <div class="c-inspector__header">
     <div v-if="!multiSelect && !singleSelectNonObject"
-         class="c-inspector__selected-w c-object-label"
-         :class="typeCssClass"
+         class="c-inspector__selected c-object-label"
     >
-        <span class="c-inspector__selected c-object-label__name">{{ item.name }}</span>
+        <span class="c-object-label__type-icon"
+              :class="typeCssClass"
+        ></span>
+        <span class="c-object-label__name">{{ item.name }}</span>
     </div>
     <div v-if="singleSelectNonObject"
-         class="c-inspector__selected-w  c-object-label"
-         :class="typeCssClass"
+         class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
     >
-        <span class="c-inspector__selected  c-object-label__name c-inspector__selected--non-domain-object">Layout Object</span>
+        <span class="c-object-label__type-icon"
+              :class="typeCssClass"
+        ></span>
+        <span class="c-object-label__name">Layout Object</span>
     </div>
     <div v-if="multiSelect"
-         class="c-inspector__multiple-selected-w"
+         class="c-inspector__multiple-selected"
     >
         {{ itemsSelected }} items selected
     </div>

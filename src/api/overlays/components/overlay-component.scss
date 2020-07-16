@@ -88,6 +88,10 @@
     .c-click-icon {
         filter: $overlayBrightnessAdjust;
     }
+
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
+    }
 }
 
 body.desktop {
@@ -118,7 +122,9 @@ body.desktop {
 
     .l-overlay-large {
         // Default
-        $lrPad: $interiorMarginLg;
+        $pad: $interiorMarginLg;
+        $tbPad: floor($pad * 0.8);
+        $lrPad: $pad;
         .c-overlay {
             &__blocker {
                 display: none;
@@ -126,17 +132,18 @@ body.desktop {
 
             &__outer {
                 @include overlaySizing($overlayOuterMarginFullscreen);
-                padding: $interiorMargin $lrPad;
+                padding: $tbPad $lrPad;
             }
 
             &__close-button {
-                top: 7px;
+                top: $pad;
                 right: $interiorMarginSm;
             }
         }
 
         .l-browse-bar {
-            margin-right: $lrPad + 10px; // Don't cover close button
+            margin-right: $lrPad + $pad; // Don't cover close button
+            margin-bottom: $interiorMargin;
         }
     }
 

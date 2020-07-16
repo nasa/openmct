@@ -29,6 +29,7 @@
     >
         <button
             v-if="allowExport"
+            v-show="!markedRows.length"
             class="c-button icon-download labeled"
             title="Export this view's data"
             @click="exportAllDataAsCSV()"

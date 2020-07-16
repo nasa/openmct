@@ -350,6 +350,10 @@
         flex: 0 1 auto;
     }
 
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
+    }
+
     &__object-name--w {
         @include headerFont(1.4em);
         min-width: 0;

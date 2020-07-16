@@ -18,7 +18,7 @@
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        opacity: 0.6;
+        opacity: $objectLabelTypeIconOpacity;
         margin-right: $interiorMargin;
     }
 }

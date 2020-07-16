@@ -87,6 +87,8 @@ $colorAHov: #fff;
 $filterHov: brightness(1.3); // Tree, location items
 $colorSelectedBg: pushBack($colorKey, 10%);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
+$objectLabelTypeIconOpacity: 0.7;
+$objectLabelNameFilter: brightness(1.3);
 
 // Layout
 $shellMainPad: 4px 0;

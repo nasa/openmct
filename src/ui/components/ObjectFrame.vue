@@ -28,9 +28,10 @@
     }"
 >
     <div class="c-so-view__header">
-        <div class="c-object-label"
-             :class="[cssClass, classList]"
-        >
+        <div class="c-object-label">
+            <div class="c-object-label__type-icon"
+                 :class="[cssClass, classList]"
+            ></div>
             <div class="c-object-label__name">
                 {{ domainObject && domainObject.name }}
             </div>

@@ -98,8 +98,15 @@ div.c-table {
                 display: none;
             }
         }
+        .c-table-control-bar {
+            .c-click-icon,
+            .c-button {
+                &__label {
+                    display: none;
+                }
+            }
+        }
     }
-
 }
 
 .c-table-control-bar {

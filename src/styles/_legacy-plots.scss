@@ -342,11 +342,11 @@ mct-plot {
 
 .gl-plot-tick {
     &.gl-plot-x-tick-label {
-        top: $interiorMargin;
+        top: $interiorMarginSm;
     }
     &.gl-plot-y-tick-label {
-        right: $interiorMargin;
-        left: $interiorMargin;
+        right: $interiorMarginSm;
+        left: auto;
     }
 }
 
