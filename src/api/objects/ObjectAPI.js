@@ -172,6 +172,13 @@ define([
         throw new Error('Delete not implemented');
     };
 
+    ObjectAPI.prototype.isPersistable = function (domainObject) {
+        let provider = this.getProvider(domainObject.identifier);
+        return provider !== undefined &&
+            provider.create !== undefined &&
+            provider.update !== undefined;
+    }
+
     /**
      * Save this domain object in its current state.
      *
@@ -186,10 +193,8 @@ define([
         let provider = this.getProvider(domainObject.identifier);
         let result;
 
-        if (provider === undefined) {
-            result = Promise.reject(`No provider found for object ${JSON.stringify(domainObject)}`);
-        } else if (provider.create === undefined || provider.update === undefined) {
-            result = Promise.reject('Object provider does not saving');
+        if (!this.isPersistable(domainObject)) {
+            result = Promise.reject('Object provider does not support saving');
         } else if (hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
