@@ -96,7 +96,7 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
-        this.$scope.xAxisLabel = this.config.xAxis.get('label');
+        this.$scope.xAxisKey = this.config.xAxis.get('key');
         this.$scope.yAxisLabel = this.config.yAxis.get('label');
 
         this.cursorGuideVertical = this.$element[0].querySelector('.js-cursor-guide--v');
@@ -570,13 +570,13 @@ define([
         this.cursorGuide = !this.cursorGuide;
     };
 
-    MCTPlotController.prototype.toggleXAxisLabel = function (label, options, series) {
-        let xAxisObject = options.filter(o => o.name === label)[0];
+    MCTPlotController.prototype.toggleXAxisKey = function (key, options, series) {
+        let xAxisObject = options.find(o => o.key === key);
 
         if (xAxisObject) {
-            this.config.xAxis.set('key', xAxisObject.key);
-            this.config.xAxis.set('label', label);
-            this.$scope.xAxisLabel = label;
+            this.config.xAxis.set('key', key);
+            this.config.xAxis.set('label', xAxisObject.name);
+            this.$scope.xAxisKey = key;
         }
     };
 
