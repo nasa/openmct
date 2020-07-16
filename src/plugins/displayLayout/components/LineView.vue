@@ -56,9 +56,6 @@
             :class="startHandleClass"
             @mousedown="startDrag($event, 'start')"
         >
-            <span class="c-handle-info">
-                {{ dragPosition }}
-            </span>
         </div>
         <div
             class="c-frame-edit__handle"
@@ -235,8 +232,7 @@ export default {
             layoutItem: this.item,
             index: this.index
         };
-        this.removeSelectable = this.openmct.selection.selectable(
-            this.$el, this.context, this.initSelect);
+        this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context, this.initSelect);
     },
     destroyed() {
         if (this.removeSelectable) {

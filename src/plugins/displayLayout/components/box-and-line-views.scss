@@ -10,7 +10,6 @@
 
 .c-line-view {
     &.c-frame {
-        border: none !important;
         box-shadow: none !important;
     }
 
@@ -41,6 +40,7 @@
 
     &__hover-indicator {
         display: none;
+        opacity: 0.5;
         stroke: $editFrameColorHov;
         stroke-width: $drawingObjBorderW + 4;
     }

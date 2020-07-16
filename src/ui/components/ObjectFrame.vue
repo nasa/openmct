@@ -129,8 +129,11 @@ export default {
         getOverlayElement(childElement) {
             const fragment = new DocumentFragment();
             const header = this.getPreviewHeader();
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('l-preview-window__object-view');
+            wrapper.append(childElement);
             fragment.append(header);
-            fragment.append(childElement);
+            fragment.append(wrapper);
 
             return fragment;
         },
