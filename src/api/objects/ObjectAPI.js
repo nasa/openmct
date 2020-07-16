@@ -180,9 +180,9 @@ define([
     }
 
     /**
-     * Save this domain object in its current state.
+     * Save this domain object in its current state. EXPERIMENTAL
      *
-     * @method save
+     * @private
      * @memberof module:openmct.ObjectAPI#
      * @param {module:openmct.DomainObject} domainObject the domain object to
      *        save
