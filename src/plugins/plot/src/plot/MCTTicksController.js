@@ -120,8 +120,10 @@ define([
 
             this.tickCount = 4;
             this.tickUpdate = false;
+            this.forceRegeneration = false;
             this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
             this.listenTo(this.axis, 'change:format', this.updateTicks, this);
+            this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
             this.listenTo(this.$scope, '$destroy', this.stopListening, this);
             this.updateTicks();
         }
@@ -142,8 +144,7 @@ define([
      * @private
      */
     MCTTicksController.prototype.shouldRegenerateTicks = function (range) {
-        const forceRegeneration = this.axis.get('regenerate');
-        if (forceRegeneration) {
+        if (this.forceRegeneration) {
             return true;
         }
         if (!this.tickRange || !this.$scope.ticks || !this.$scope.ticks.length) {
@@ -172,6 +173,11 @@ define([
         }
         return ticks(range.min, range.max, number);
     };
+
+    MCTTicksController.prototype.updateTicksForceRegeneration = function () {
+        this.forceRegeneration = true;
+        this.updateTicks();
+    }
 
     MCTTicksController.prototype.updateTicks = function () {
         var range = this.axis.get('displayRange');
@@ -249,8 +255,10 @@ define([
             this.$scope.$emit('plot:tickWidth', tickWidth);
             this.shouldCheckWidth = false;
         }
+
         this.$scope.$digest();
         this.tickUpdate = false;
+        this.forceRegeneration = false;
     };
 
     return MCTTicksController;
