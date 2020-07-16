@@ -132,7 +132,7 @@ $colorPausedFg: #fff;
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: pushBack($colorKey, 50%);
-$colorKeySubtle: pushBack($colorKey, 10%);
+$colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
 $colorTime: #618cff;
@@ -142,12 +142,19 @@ $colorTimeHov: pushBack($colorTime, 5%);
 $colorTimeSubtle: pushBack($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$timeConductorAxisHoverFilter: brightness(0.8);
+$timeConductorActiveBg: $colorKey;
+$timeConductorActivePanBg: #A0CDE1;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
 $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
+$filterItemHoverFg: brightness(0.9);
+$filterItemMissing: contrast(0.2);
+$opacityMissing: 0.4;
+$borderMissing: 1px dashed $colorAlert !important;
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color

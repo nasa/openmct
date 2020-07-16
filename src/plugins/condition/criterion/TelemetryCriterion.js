@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { OPERATIONS } from '../utils/operations';
+import { OPERATIONS, getOperatorText } from '../utils/operations';
+import { subscribeForStaleness } from "../utils/time";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -43,22 +44,49 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.result = undefined;
+        this.stalenessSubscription = undefined;
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
     }
 
     initialize() {
-        this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
         this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
+        this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData()
+        }
+    }
+
+    subscribeForStaleData() {
+        if (this.stalenessSubscription) {
+            this.stalenessSubscription.clear();
+        }
+        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0]*1000);
+    }
+
+    handleStaleTelemetry(data) {
+        this.result = true;
+        this.emitEvent('telemetryIsStale', data);
     }
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    isStalenessCheck() {
+        return this.metadata && this.metadata === 'dataReceived';
+    }
+
+    isValidInput() {
+        return this.input instanceof Array && this.input.length;
+    }
+
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData()
+        }
     }
 
     createNormalizedDatum(telemetryDatum, endpoint) {
@@ -91,7 +119,14 @@ export default class TelemetryCriterion extends EventEmitter {
 
     getResult(data) {
         const validatedData = this.isValid() ? data : {};
-        this.result = this.computeResult(validatedData);
+        if (this.isStalenessCheck()) {
+            if (this.stalenessSubscription) {
+                this.stalenessSubscription.update(validatedData);
+            }
+            this.result = false;
+        } else {
+            this.result = this.computeResult(validatedData);
+        }
     }
 
     requestLAD() {
@@ -136,7 +171,7 @@ export default class TelemetryCriterion extends EventEmitter {
             let comparator = this.findOperation(this.operation);
             let params = [];
             params.push(data[this.metadata]);
-            if (this.input instanceof Array && this.input.length) {
+            if (this.isValidInput()) {
                 this.input.forEach(input => params.push(input));
             }
             if (typeof comparator === 'function') {
@@ -153,9 +188,57 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
+    getMetaDataObject(telemetryObject, metadata) {
+        let metadataObject;
+        if (metadata) {
+            const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+        }
+        return metadataObject;
+    }
+
+    getInputValueFromMetaData(metadataObject, input) {
+        let inputValue;
+        if (metadataObject) {
+            if(metadataObject.enumerations && input.length) {
+                const enumeration = metadataObject.enumerations[input[0]];
+                if (enumeration !== undefined && enumeration.string) {
+                    inputValue = [enumeration.string];
+                }
+            }
+        }
+        return inputValue;
+    }
+
+    getMetadataValueFromMetaData(metadataObject) {
+        let metadataValue;
+        if (metadataObject) {
+            if (metadataObject.name) {
+                metadataValue = metadataObject.name;
+            }
+        }
+        return metadataValue;
+    }
+
+    getDescription(criterion, index) {
+        let description;
+        if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
+            description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
+        } else {
+            const metadataObject = this.getMetaDataObject(this.telemetryObject, this.metadata);
+            const metadataValue = this.getMetadataValueFromMetaData(metadataObject) || (this.metadata === 'dataReceived' ? '' : this.metadata);
+            const inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+            description = `${this.telemetryObject.name} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+        }
+
+        return description;
+    }
 
     destroy() {
         delete this.telemetryObject;
         delete this.telemetryObjectIdAsString;
+        if (this.stalenessSubscription) {
+            delete this.stalenessSubscription;
+        }
     }
 }

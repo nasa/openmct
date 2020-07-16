@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: column;
 
+    &.is-missing {
+        border: $borderMissing;
+    }
+
     /*************************** HEADER */
     &__header {
         flex: 0 0 auto;
@@ -38,6 +42,15 @@
 
         > .c-so-view__local-controls {
             top: $interiorMarginSm; right: $interiorMarginSm;
+        }
+
+        &.is-missing {
+            @include isMissing($absPos: true);
+
+            .is-missing__indicator {
+                top: $interiorMargin;
+                left: $interiorMargin;
+            }
         }
     }
 

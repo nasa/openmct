@@ -37,12 +37,13 @@
             >
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               :mixed-styles="mixedStyles"
                               @persist="updateStaticStyle"
                 />
             </div>
             <button
+                v-if="allowEditing"
                 id="addConditionSet"
                 class="c-button c-button--major c-toggle-styling-button labeled"
                 @click="addConditionSet"
@@ -63,7 +64,7 @@
             >
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </a>
-            <template v-if="isEditing">
+            <template v-if="allowEditing">
                 <button
                     id="changeConditionSet"
                     class="c-button labeled"
@@ -96,7 +97,7 @@
                 />
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="conditionStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               @persist="updateConditionalStyle"
                 />
             </div>
@@ -137,7 +138,13 @@ export default {
             conditions: undefined,
             conditionsLoaded: false,
             navigateToPath: '',
-            selectedConditionId: ''
+            selectedConditionId: '',
+            locked: false
+        }
+    },
+    computed: {
+        allowEditing() {
+            return this.isEditing && !this.locked;
         }
     },
     destroyed() {
@@ -224,7 +231,13 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
+                const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
+
+                if (layoutDomainObject && layoutDomainObject.locked) {
+                    this.locked = true;
+                }
+
                 if (!isChildItem) {
                     domainObject = item;
                     itemStyle = getApplicableStylesForItem(item);
@@ -457,7 +470,7 @@ export default {
                 domainObjects.forEach(domainObject => {
                     let objectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
                     this.removeConditionalStyles(objectStyles);
-                    if (Object.keys(objectStyles).length <= 0) {
+                    if (objectStyles && Object.keys(objectStyles).length <= 0) {
                         objectStyles = undefined;
                     }
                     this.persist(domainObject, objectStyles);
@@ -467,14 +480,14 @@ export default {
                 this.items.forEach((item) => {
                     const itemId = item.id;
                     this.removeConditionalStyles(domainObjectStyles, itemId);
-                    if (Object.keys(domainObjectStyles[itemId]).length <= 0) {
+                    if (domainObjectStyles[itemId] && Object.keys(domainObjectStyles[itemId]).length <= 0) {
                         delete domainObjectStyles[itemId];
                     }
                 });
             }  else {
                 this.removeConditionalStyles(domainObjectStyles);
             }
-            if (Object.keys(domainObjectStyles).length <= 0) {
+            if (domainObjectStyles && Object.keys(domainObjectStyles).length <= 0) {
                 domainObjectStyles = undefined;
             }
             this.persist(this.domainObject, domainObjectStyles);
@@ -553,9 +566,9 @@ export default {
                     let itemConditionalStyle = { styles: []};
                     if (!this.conditionSetDomainObject) {
                         if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
-                            itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
+                            itemStaticStyle = Object.assign({}, domainObjectStyles[item.id].staticStyle.style);
                         }
-                        if (item.applicableStyles[property]) {
+                        if (item.applicableStyles[property] !== undefined) {
                             itemStaticStyle[property] = this.staticStyle.style[property];
                         }
                         if (Object.keys(itemStaticStyle).length <= 0) {

@@ -30,8 +30,7 @@ define([
     './MCTChartPointSet',
     './MCTChartAlarmPointSet',
     '../draw/DrawLoader',
-    '../lib/eventHelpers',
-    'lodash'
+    '../lib/eventHelpers'
 ],
 function (
     MCTChartLineLinear,
@@ -39,8 +38,7 @@ function (
     MCTChartPointSet,
     MCTChartAlarmPointSet,
     DrawLoader,
-    eventHelpers,
-    _
+    eventHelpers
 ) {
 
     var MARKER_SIZE = 6.0,
@@ -373,7 +371,8 @@ function (
             chartElement.getBuffer(),
             chartElement.color().asRGBAArray(),
             chartElement.count,
-            chartElement.series.get('markerSize')
+            chartElement.series.get('markerSize'),
+            chartElement.series.get('markerShape')
         );
     };
 
@@ -397,9 +396,10 @@ function (
                 this.offset.yVal(highlight.point, highlight.series)
             ]),
             color = highlight.series.get('color').asRGBAArray(),
-            pointCount = 1;
+            pointCount = 1,
+            shape = highlight.series.get('markerShape');
 
-        this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE);
+        this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE, shape);
     };
 
     MCTChartController.prototype.drawRectangles = function () {
