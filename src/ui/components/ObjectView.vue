@@ -234,6 +234,7 @@ export default {
             }
         },
         onDragOver(event) {
+            console.log('onDragOver');
             if (this.hasComposableDomainObject(event)) {
                 if (this.isEditingAllowed()) {
                     event.preventDefault();
