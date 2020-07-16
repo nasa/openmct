@@ -250,12 +250,17 @@ export default {
             document.body.addEventListener('mousemove', this.continueDrag);
             document.body.addEventListener('mouseup', this.endDrag);
             this.startPosition = [event.pageX, event.pageY];
-            this.dragPosition = {
-                x: this.item.x,
-                y: this.item.y,
-                x2: this.item.x2,
-                y2: this.item.y2
-            };
+            let {x, y, x2, y2} = this.item;
+            this.dragPosition = {x, y, x2, y2};
+            if (x === x2 || y === y2) {
+                if (y > y2 || x < x2) {
+                    if (this.dragging === 'start') {
+                        this.dragging = 'end';
+                    } else if (this.dragging === 'end') {
+                        this.dragging = 'start';
+                    }
+                }
+            }
             event.preventDefault();
         },
         continueDrag(event) {
