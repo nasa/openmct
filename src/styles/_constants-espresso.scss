@@ -98,7 +98,7 @@ $sideBarHeaderBg: rgba($colorBodyFg, 0.2);
 $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
-$colorStatusFg: #999;
+$colorStatusFg: #888;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
 $colorStatusInfoFilter: invert(58%) sepia(44%) saturate(405%) hue-rotate(85deg) brightness(102%) contrast(92%);
@@ -205,9 +205,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
-$colorBtnCautionBg: #f16f6f;
+$colorBtnCautionBg: $colorStatusAlert;
 $colorBtnCautionBgHov: #f1504e;
-$colorBtnCautionFg: $colorBtnFg;
+$colorBtnCautionFg: $colorBtnBg;
 $colorBtnActiveBg: $colorOk;
 $colorBtnActiveFg: $colorOkFg;
 $colorBtnSelectedBg: $colorSelectedBg;

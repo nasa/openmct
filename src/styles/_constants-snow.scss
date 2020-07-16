@@ -80,9 +80,11 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
-$filterHov: brightness(1.3); // Tree, location items
+$filterHov: brightness(0.8) contrast(2); // Tree, location items
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
+
+// Object labels
 $objectLabelTypeIconOpacity: 0.5;
 $objectLabelNameFilter: brightness(0.5);
 

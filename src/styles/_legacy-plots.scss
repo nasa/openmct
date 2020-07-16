@@ -29,15 +29,18 @@ mct-plot {
     .gl-plot.child-frame {
         &:hover {
             background: rgba($editUIColorBg, 0.1);
-            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+            box-shadow: inset rgba($editUIColorBg, 0.3) 0 0 0 1px;
         }
 
         &[s-selected] {
-            border: 1px solid $editUIColorFg !important;
-            color: $editUIColorFg !important;
-            box-shadow: $editFrameSelectedShdw;
+            background: rgba($editUIColorBg, 0.2);
+            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
             z-index: 2;
         }
+    }
+
+    .plot-wrapper-axis-and-display-area {
+        pointer-events: none;
     }
 }
 

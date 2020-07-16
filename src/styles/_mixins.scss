@@ -416,28 +416,18 @@
     }
 
     @include hover() {
-        background: $colorBtnBgHov;
-        color: $colorBtnFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"],
     &[class*='is-active']{
         background: $colorBtnMajorBg;
         color: $colorBtnMajorFg;
-
-        @include hover() {
-            background: $colorBtnMajorBgHov;
-            color: $colorBtnMajorFgHov;
-        }
     }
 
     &[class*='--caution'] {
-        background: $colorBtnCautionBg;
-        color: $colorBtnCautionFg;
-
-        &:hover {
-            background: $colorBtnCautionBgHov;
-        }
+        background: $colorBtnCautionBg !important;
+        color: $colorBtnCautionFg !important;
     }
 }
 

@@ -184,13 +184,6 @@ tr {
     }
 }
 
-/*************************************************** BUTTONS */
-.c-button {
-    &.s-status-caution {
-        background: $colorStatusAlert !important;
-    }
-}
-
 .s-status {
     &--partial {
         // Partially completed things, such as a file downloading or process that's running
