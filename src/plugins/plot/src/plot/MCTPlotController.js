@@ -128,14 +128,6 @@ define([
                         key: o.key
                     };
                 });
-
-            //  set xAxisLabel if none is set yet
-            if (this.$scope.xAxisLabel === 'none') {
-                let xKey = this.$scope.series[0].model.xKey,
-                    xKeyModel = this.$scope.xKeyOptions.filter(o => o.key === xKey)[0];
-
-                this.$scope.xAxisLabel = xKeyModel.name;
-            }
         } else {
             this.$scope.xKeyOptions = undefined;
         }

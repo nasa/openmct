@@ -30,7 +30,6 @@ define([
      */
     var XAxisModel = Model.extend({
         initialize: function (options) {
-            console.log(options);
             this.plot = options.plot;
             this.set('label', options.model.name || '');
             this.on('change:range', function (newValue, oldValue, model) {
@@ -71,12 +70,11 @@ define([
         defaults: function (options) {
             var bounds = options.openmct.time.bounds();
             var timeSystem = options.openmct.time.timeSystem();
-            console.log(timeSystem.name);
             var format = options.openmct.$injector.get('formatService')
                 .getFormat(timeSystem.timeFormat);
 
             return {
-                name: options.model.name || timeSystem.name,
+                name: timeSystem.name,
                 key: timeSystem.key,
                 format: format.format.bind(format),
                 range: {
