@@ -45,7 +45,7 @@
                 :title="lockedOrUnlocked"
                 class="c-button"
                 :class="{
-                    'icon-lock': domainObject.locked,
+                    'icon-lock s-status-caution': domainObject.locked,
                     'icon-unlocked': !domainObject.locked
                 }"
                 @click="toggleLock(!domainObject.locked)"

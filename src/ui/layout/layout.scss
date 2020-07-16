@@ -313,6 +313,13 @@
 
     &__actions,
     &__end {
+        .c-button {
+            &[class*='icon-']:before {
+                min-width: 1em;
+                text-align: center;
+            }
+        }
+
         > * + * {
             margin-left: $interiorMargin;
         }
