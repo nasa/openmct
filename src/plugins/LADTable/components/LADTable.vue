@@ -53,8 +53,17 @@ export default {
     },
     data() {
         return {
-            items: [],
-            hasUnits: false
+            items: []
+        }
+    },
+    computed: {
+        hasUnits() {
+            let itemsWithUnits = this.items.filter((item) => {
+                let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
+                return this.metadataHasUnits(metadata.valueMetadatas);
+
+            }).length;
+            return itemsWithUnits !== 0;
         }
     },
     mounted() {
@@ -76,13 +85,13 @@ export default {
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             this.items.push(item);
-            this.checkForUnits();
+            // this.checkForUnits();
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
 
             this.items.splice(index, 1);
-            this.checkForUnits();
+            // this.checkForUnits();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
@@ -90,20 +99,10 @@ export default {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
             });
         },
-        checkForUnits() {
-            let metadatas = [];
-            let hasUnits = false;
-            this.items.forEach((item) => {
-                let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
-                metadatas = metadatas.concat(metadata.valueMetadatas);
-            });
-            for(let metadatum of metadatas) {
-                if(metadatum.unit) {
-                    hasUnits = true;
-                    break;
-                }
-            }
-            this.hasUnits = hasUnits;
+        metadataHasUnits(valueMetadatas) {
+            return valueMetadatas.filter((metadatum) => {
+                return metadatum.unit;
+            }).length;
         }
     }
 }

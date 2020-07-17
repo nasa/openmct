@@ -225,43 +225,6 @@ define([
 
         createUnitColumn(metadatum) {
             return new TelemetryTableUnitColumn(this.openmct, metadatum);
-            // let unitColumn = {
-            //     isUnit: true,
-            //     metadatum,
-            //     titleValue: metadatum.name + ' Unit',
-            //     selectable: false,
-            //     formatter: {
-            //         format(telemetryDatum) {
-            //             return metadatum.unit;
-            //         },
-            //         parse(telemetryDatum) {
-            //             return metadatum.unit;
-            //         }
-            //     },
-            //     getKey() {
-            //         return this.metadatum.key + '-unit';
-            //     },
-            //     getTitle() {
-            //         return this.titleValue;
-            //     },
-            //     getMetadatum() {
-            //         return this.metadatum;
-            //     },
-            //     hasValueForDatum(telemetryDatum) {
-            //         return telemetryDatum.hasOwnProperty(this.metadatum.source);
-            //     },
-            //     getRawValue(telemetryDatum) {
-            //         return this.metadatum.unit;
-            //     },
-            //     getFormattedValue(telemetryDatum) {
-            //         return this.formatter.format(telemetryDatum);
-            //     },
-            //     getParsedValue(telemetryDatum) {
-            //         return this.formatter.parse(telemetryDatum);
-            //     }
-            // };
-            // return unitColumn;
-
         }
 
         subscribeTo(telemetryObject) {
