@@ -48,9 +48,8 @@ define(
             // prevents editing of objects that cannot be persisted, so we can assume that this
             // is a new object.
             if (!(parent.hasCapability('editor') && parent.getCapability('editor').isEditContextRoot())) {
-                var identifier = objectUtils.parseKeyString(parent.getId());
-                var provider = this.openmct.objects.getProvider(identifier);
-                return provider.save !== undefined;
+                let newStyleObject = objectUtils.toNewFormat(parent, parent.getId());
+                return this.openmct.objects.isPersistable(newStyleObject);
             }
             return true;
         };
