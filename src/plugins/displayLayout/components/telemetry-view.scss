@@ -27,13 +27,14 @@
         border: 1px solid transparent;
     }
 
-    &.is-missing {
-        @include isMissing($absPos: true);
-        border: $borderMissing;
+    @include isMissing($absPos: true);
 
-        .is-missing__indicator {
-            top: 0;
-            left: 0;
-        }
+    .is-missing__indicator {
+        top: 0;
+        left: 0;
+    }
+
+    &.is-missing {
+        border: $borderMissing;
     }
 }
