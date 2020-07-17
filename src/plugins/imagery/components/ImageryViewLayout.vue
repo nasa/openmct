@@ -27,6 +27,13 @@
              :style="{'background-image': getImageUrl() ? `url(${getImageUrl()})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
         >
+            <button class="c-icon-button c-nav c-nav--prev"
+                    title="Previous image"
+            ></button>
+            <button class="c-icon-button c-nav c-nav--next"
+                    title="Next image"
+                    :disabled="true"
+            ></button>
         </div>
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>

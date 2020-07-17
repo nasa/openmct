@@ -159,3 +159,34 @@
         }
     }
 }
+
+.c-nav {
+    $m: $interiorMargin;
+    position: absolute;
+    top: 50%;
+    background: rgba($colorBodyBg, 0.3);
+    //min-width: 24px;
+    //min-height: 24px;
+    padding: $interiorMarginLg 0;
+    transform: translateY(-50%);
+
+    &:before {
+        color: $colorKey;
+        font-size: 2em;
+        font-family: symbolsfont;
+    }
+
+    &--prev {
+        left: $m;
+        &:before {
+            content: $glyph-icon-arrow-left;
+        }
+    }
+
+    &--next {
+        right: $m;
+        &:before {
+            content: $glyph-icon-arrow-right;
+        }
+    }
+}
