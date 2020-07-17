@@ -29,7 +29,7 @@
             @click="showTab(tab, index)"
         >
             <span class="c-button__label c-tabs-view__tab__label">{{ tab.domainObject.name }}</span>
-            <button v-if="openmct.editor.isEditing()"
+            <button v-if="isEditing"
                     class="icon-x c-click-icon c-tabs-view__tab__close-btn"
                     @click="showRemoveDialog(index)"
             ></button>
@@ -156,7 +156,6 @@ export default {
             let activeTab = this.tabsList[index];
             let childDomainObject = activeTab.domainObject
 
-            let self = this;
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
                 message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
@@ -164,14 +163,14 @@ export default {
                     {
                         label: 'Ok',
                         emphasis: 'true',
-                        callback: function () {
-                            self.removeFromComposition(childDomainObject);
+                        callback: () => {
+                            this.removeFromComposition(childDomainObject);
                             prompt.dismiss();
                         }
                     },
                     {
                         label: 'Cancel',
-                        callback: function () {
+                        callback: () => {
                             prompt.dismiss();
                         }
                     }
