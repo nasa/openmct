@@ -218,14 +218,12 @@ define([
 
                     let elements = domainObject.configuration['fixed-display'].elements;
                     let telemetryObjects = {};
-                    let promises = elements.map(element => {
+                    let promises = elements.forEach(element => {
                         if (element.id) {
-                            return openmct.objects.get(element.id)
+                            openmct.objects.get(element.id)
                                 .then(object => {
                                     telemetryObjects[element.id] = object;
                                 });
-                        } else {
-                            return [];
                         }
                     });
 
