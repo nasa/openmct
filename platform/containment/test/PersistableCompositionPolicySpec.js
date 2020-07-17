@@ -33,7 +33,7 @@ define(
 
             beforeEach(function () {
                 objectAPI = jasmine.createSpyObj('objectsAPI', [
-                    'getProvider'
+                    'isPersistable'
                 ]);
 
                 mockOpenMCT = {
@@ -51,10 +51,6 @@ define(
                     'isEditContextRoot'
                 ]);
                 mockParent.getCapability.and.returnValue(mockEditorCapability);
-
-                objectAPI.getProvider.and.returnValue({
-                    save: function () {}
-                });
                 persistableCompositionPolicy = new PersistableCompositionPolicy(mockOpenMCT);
             });
 
@@ -65,19 +61,22 @@ define(
 
             it("Does not allow composition for objects that are not persistable", function () {
                 mockEditorCapability.isEditContextRoot.and.returnValue(false);
+                objectAPI.isPersistable.and.returnValue(true);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
-                objectAPI.getProvider.and.returnValue({});
+                objectAPI.isPersistable.and.returnValue(false);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(false);
             });
 
             it("Always allows composition of objects in edit mode to support object creation", function () {
                 mockEditorCapability.isEditContextRoot.and.returnValue(true);
+                objectAPI.isPersistable.and.returnValue(true);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
-                expect(objectAPI.getProvider).not.toHaveBeenCalled();
+                expect(objectAPI.isPersistable).not.toHaveBeenCalled();
 
                 mockEditorCapability.isEditContextRoot.and.returnValue(false);
+                objectAPI.isPersistable.and.returnValue(true);
                 expect(persistableCompositionPolicy.allow(mockParent, mockChild)).toBe(true);
-                expect(objectAPI.getProvider).toHaveBeenCalled();
+                expect(objectAPI.isPersistable).toHaveBeenCalled();
             });
 
         });
