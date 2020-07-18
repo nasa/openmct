@@ -160,33 +160,27 @@
     }
 }
 
-.c-nav {
-    $m: $interiorMargin;
+.c-imagery__prev-next-buttons {
+    //background: rgba(deeppink, 0.2);
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    pointer-events: none;
     position: absolute;
     top: 50%;
-    background: rgba($colorBodyBg, 0.3);
-    //min-width: 24px;
-    //min-height: 24px;
-    padding: $interiorMarginLg 0;
     transform: translateY(-50%);
 
-    &:before {
-        color: $colorKey;
-        font-size: 2em;
-        font-family: symbolsfont;
+    .c-nav {
+        pointer-events: all;
     }
+}
 
-    &--prev {
-        left: $m;
-        &:before {
-            content: $glyph-icon-arrow-left;
-        }
-    }
+.c-nav {
+    @include cArrowButtonBase($colorBg: rgba($colorLocalControlOvrBg, 0.1), $colorFg: $colorBtnBg);
+    @include cArrowButtonSizing($dimOuter: 48px);
+    border-radius: $controlCr;
 
-    &--next {
-        right: $m;
-        &:before {
-            content: $glyph-icon-arrow-right;
-        }
+    .is-in-small-container & {
+        @include cArrowButtonSizing($dimOuter: 32px);
     }
 }
