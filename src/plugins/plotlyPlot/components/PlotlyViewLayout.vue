@@ -1,12 +1,12 @@
 <template>
 <div :id="plotId"
-     class="l-view-section">
+     class="l-view-section"
+>
 </div>
 </template>
 
 <script>
-// import Plotly from 'plotly.js-gl2d-dist-min';
-import Plotly from 'plotly.js-basic-dist-min';
+import Plotly from 'plotly.js-gl2d-dist-min';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
 import TelemetryTableColumn from '../../telemetryTable/TelemetryTableColumn';
