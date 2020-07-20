@@ -76,16 +76,23 @@
 [class*='minify-indicators'] {
     // All styles for minified Indicators should go in here
     .c-indicator:not(.no-minify) {
+        border: 1px solid transparent; // Hack to make minified sizing work in Safari. Have no idea why this works.
+        overflow: visible;
+        transition: transform;
+
         @include hover() {
             background: $colorIndicatorBgHov;
+            transition: transform 250ms ease-in 200ms; // Go-away transition
+
             .c-indicator__label {
                 box-shadow: $colorIndicatorMenuBgShdw;
                 transform: scale(1.0);
-                transition: all 100ms ease-out 100ms;
+                overflow: visible;
+                transition: transform 100ms ease-out 100ms; // Appear transition
             }
         }
         .c-indicator__label {
-            transition: all 250ms ease-in 200ms;
+            transition: transform 250ms ease-in 200ms; // Go-away transition
             background: $colorIndicatorMenuBg;
             color: $colorIndicatorMenuFg;
             border-radius: $controlCr;
@@ -95,7 +102,7 @@
             position: absolute;
             transform-origin: 90% 0;
             transform: scale(0.0);
-            overflow: visible;
+            overflow: hidden;
             z-index: 50;
 
             &:before {
