@@ -15,6 +15,9 @@ jobs:
         - run:
             name: Installing dependencies (npm install)
             command: npm install
+        - run:
+            name: Rebuild node-sass
+            command: npm rebuild node-sass
         - save_cache:
             key: dependency-cache-13-{{ checksum "package.json" }}
             paths:
