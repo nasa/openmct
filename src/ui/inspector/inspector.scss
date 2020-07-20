@@ -4,7 +4,7 @@
     flex-direction: column;
 
     > * {
-        // Thi is on purpose: want extra margin on top object-name element
+        // This is on purpose: want extra margin on top object-name element
         margin-top: $interiorMargin;
     }
 
@@ -42,6 +42,8 @@
 
     &__content {
         flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
     }
 
     &__elements {

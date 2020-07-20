@@ -1,20 +1,27 @@
 <template>
 <div class="c-inspector__header">
-    <div v-if="!multiSelect && !singleSelectNonObject"
+    <div v-if="!multiSelect"
          class="c-inspector__selected c-object-label"
+         :class="{'is-missing': domainObject.status === 'missing' }"
     >
-        <span class="c-object-label__type-icon"
-              :class="typeCssClass"
-        ></span>
-        <span class="c-object-label__name">{{ item.name }}</span>
-    </div>
-    <div v-if="singleSelectNonObject"
-         class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
-    >
-        <span class="c-object-label__type-icon"
-              :class="typeCssClass"
-        ></span>
-        <span class="c-object-label__name">Layout Object</span>
+        <div class="c-object-label__type-icon"
+             :class="typeCssClass"
+        >
+            <span class="is-missing__indicator"
+                  title="This item is missing"
+            ></span>
+        </div>
+        <span v-if="!singleSelectNonObject"
+              class="c-inspector__selected c-object-label__name"
+        >{{ item.name }}</span>
+        <div v-if="singleSelectNonObject"
+             class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
+        >
+            <span class="c-object-label__type-icon"
+                  :class="typeCssClass"
+            ></span>
+            <span class="c-object-label__name">Layout Object</span>
+        </div>
     </div>
     <div v-if="multiSelect"
          class="c-inspector__multiple-selected"
