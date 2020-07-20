@@ -456,7 +456,7 @@ describe('the plugin', function () {
             };
         });
 
-        fit('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
+        it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
 
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
@@ -475,7 +475,7 @@ describe('the plugin', function () {
             }, 1500);
         });
 
-        fit('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
+        it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
             const date = Date.now();
             conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["2"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
