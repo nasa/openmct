@@ -95,6 +95,7 @@ module.exports = (config) => {
             stats: 'errors-only',
             logLevel: 'warn'
         },
-        singleRun: true
+        singleRun: true,
+        browserNoActivityTimeout: 400000
     });
 }
