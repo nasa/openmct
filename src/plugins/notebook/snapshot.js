@@ -1,6 +1,6 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook } from './utils/notebook-storage';
-import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
+import { NOTEBOOK_DEFAULT } from './notebook-constants';
 import SnapshotContainer from './snapshot-container';
 
 export default class Snapshot {
