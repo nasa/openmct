@@ -41,7 +41,7 @@
     "jsdoc": "^3.3.2",
     "karma": "^2.0.3",
     "karma-chrome-launcher": "^2.2.0",
-    "karma-firefox-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.3.0",
     "karma-cli": "^1.0.1",
     "karma-coverage": "^1.1.2",
     "karma-coverage-istanbul-reporter": "^2.1.1",
