@@ -27,7 +27,7 @@ mct-plot {
 /*********************** STACKED PLOT LAYOUT */
 .is-editing {
     .gl-plot.child-frame {
-        &:hover {
+        @include hover {
             background: rgba($editUIColorBg, 0.1);
             box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
         }
@@ -161,7 +161,7 @@ mct-plot {
         }
 
         &.gl-plot-x {
-            &:hover {
+            @include hover {
                 .gl-plot-x-label__select {
                     display: block;
                 }
@@ -216,8 +216,9 @@ mct-plot {
 
     .gl-plot-x-label__select {
         position: absolute;
-        left: 55%;
+        left: 50%;
         bottom: 0;
+        transform: translateX(-50%);
         z-index: 10;
     }
 
@@ -225,7 +226,7 @@ mct-plot {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        left: 20px;
+        left: 0;
         z-index: 10;
     }
 
