@@ -354,9 +354,9 @@
         @include headerFont(1.4em);
         min-width: 0;
 
-        &:before {
-            // Icon
-            margin-right: $interiorMargin;
+        .is-missing__indicator {
+            right: -5px !important;
+            top: -4px !important;
         }
     }
 
