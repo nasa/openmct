@@ -29,24 +29,28 @@ define([
     ClearDataAction,
     Vue
 ) {
-    return function plugin(appliesToObjects) {
+    return function plugin(appliesToObjects, options = {indicator: true}) {
+        let installIndicator = options.indicator;
+
         appliesToObjects = appliesToObjects || [];
 
         return function install(openmct) {
-            let component = new Vue ({
-                    provide: {
-                        openmct
-                    },
-                    components: {
-                        GlobalClearIndicator: GlobaClearIndicator.default
-                    },
-                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                }),
-                indicator = {
-                    element: component.$mount().$el
-                };
+            if (installIndicator) {
+                let component = new Vue ({
+                        provide: {
+                            openmct
+                        },
+                        components: {
+                            GlobalClearIndicator: GlobaClearIndicator.default
+                        },
+                        template: '<GlobalClearIndicator></GlobalClearIndicator>'
+                    }),
+                    indicator = {
+                        element: component.$mount().$el
+                    };
 
-            openmct.indicators.add(indicator);
+                openmct.indicators.add(indicator);
+            }
 
             openmct.contextMenu.registerAction(new ClearDataAction.default(openmct, appliesToObjects));
         };

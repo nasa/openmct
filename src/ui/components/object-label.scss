@@ -3,7 +3,7 @@
     // Used mostly in trees and lists
     display: flex;
     align-items: center;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     overflow: hidden;
     white-space: nowrap;
 
@@ -19,7 +19,6 @@
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        //margin-right: $interiorMargin;
     }
 
     &.is-missing {
