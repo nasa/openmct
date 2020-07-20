@@ -73,6 +73,7 @@ define(
              * @private
              */
             addOne(row) {
+                // console.log('SortedTableRowCollection addOne', row);
                 if (this.sortOptions === undefined) {
                     throw 'Please specify sort options';
                 }
