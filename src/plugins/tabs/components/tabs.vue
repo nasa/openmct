@@ -22,21 +22,24 @@
         <button
             v-for="(tab,index) in tabsList"
             :key="index"
-            class="c-tabs-view__tab c-tab c-object-label"
+            class="c-tab c-tabs-view__tab"
             :class="{
-                'is-current': isCurrent(tab),
-                'is-missing': tab.domainObject.status === 'missing'
+                'is-current': isCurrent(tab)
             }"
             @click="showTab(tab, index)"
         >
-            <div class="c-object-label__type-icon"
-                 :class="tab.type.definition.cssClass"
+            <div class="c-object-label"
+                 :class="{'is-missing': tab.domainObject.status === 'missing'}"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
-                ></span>
+                <div class="c-object-label__type-icon"
+                     :class="tab.type.definition.cssClass"
+                >
+                    <span class="is-missing__indicator"
+                          title="This item is missing"
+                    ></span>
+                </div>
+                <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
             </div>
-            <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
         </button>
     </div>
     <div

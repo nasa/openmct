@@ -43,7 +43,7 @@ define(
                 );
 
                 mockObjectAPI = jasmine.createSpyObj('objectAPI', [
-                    'getProvider'
+                    'isPersistable'
                 ]);
 
                 mockAPI = {
@@ -69,34 +69,31 @@ define(
             });
 
             it("Applies to edit action", function () {
-                mockObjectAPI.getProvider.and.returnValue({});
-                expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).not.toHaveBeenCalled();
 
                 policy.allow(mockEditAction, testContext);
-                expect(mockObjectAPI.getProvider).toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).toHaveBeenCalled();
             });
 
             it("Applies to properties action", function () {
-                mockObjectAPI.getProvider.and.returnValue({});
-                expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).not.toHaveBeenCalled();
 
                 policy.allow(mockPropertiesAction, testContext);
-                expect(mockObjectAPI.getProvider).toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).toHaveBeenCalled();
             });
 
             it("does not apply to other actions", function () {
-                mockObjectAPI.getProvider.and.returnValue({});
-                expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).not.toHaveBeenCalled();
 
                 policy.allow(mockOtherAction, testContext);
-                expect(mockObjectAPI.getProvider).not.toHaveBeenCalled();
+                expect(mockObjectAPI.isPersistable).not.toHaveBeenCalled();
             });
 
             it("Tests object provider for editability", function () {
-                mockObjectAPI.getProvider.and.returnValue({});
+                mockObjectAPI.isPersistable.and.returnValue(false);
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
-                expect(mockObjectAPI.getProvider).toHaveBeenCalled();
-                mockObjectAPI.getProvider.and.returnValue({save: function () {}});
+                expect(mockObjectAPI.isPersistable).toHaveBeenCalled();
+                mockObjectAPI.isPersistable.and.returnValue(true);
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
         });
