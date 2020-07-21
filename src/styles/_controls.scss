@@ -411,7 +411,17 @@ select {
 
 .c-tab {
     // Used in Tab View, generic tabs
-    background: $colorBtnBg;
+    $notchSize: 7px;
+    $clipPath:
+        polygon(
+            0% 0%,
+            calc(100% - #{$notchSize}) 0%,
+            100% #{$notchSize},
+            100% calc(100% - #{$notchSize}),
+            100% 100%,
+            0% 100%
+        );
+    background: rgba($colorBtnBg, 0.7);
     color: $colorBtnFg;
     cursor: pointer;
     display: flex;
@@ -420,21 +430,15 @@ select {
     margin: 1px 1px 0 0;
     padding: $interiorMargin $interiorMarginLg;
     white-space: nowrap;
+    clip-path: $clipPath;
+    -webkit-clip-path: $clipPath; // Safari
 
-    --notchSize: 7px;
-
-    clip-path:
-        polygon(
-            0% 0%,
-            calc(100% - var(--notchSize)) 0%,
-            100% var(--notchSize),
-            100% calc(100% - var(--notchSize)),
-            100% 100%,
-            0% 100%
-        );
+    > * + * {
+        margin-left: $interiorMargin;
+    }
 
     @include hover() {
-        background: $colorBtnBgHov;
+        filter: $filterHov;
     }
 
     &.is-current {

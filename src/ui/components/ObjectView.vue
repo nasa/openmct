@@ -53,7 +53,9 @@ export default {
     mounted() {
         this.currentObject = this.object;
         this.updateView();
-        this.$el.addEventListener('dragover', this.onDragOver);
+        this.$el.addEventListener('dragover', this.onDragOver, {
+            capture: true
+        });
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
@@ -269,6 +271,7 @@ export default {
             if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
+                this.isEditingAllowed() &&
                 !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }
@@ -301,7 +304,7 @@ export default {
                 objectPath= this.currentObjectPath || this.objectPath,
                 parentObject = objectPath[1];
 
-            return [browseObject, parentObject, this.currentObject].every(object => !object.locked);
+            return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         }
     }
 }
