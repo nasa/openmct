@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Plotly from 'plotly.js-gl2d-dist-min';
+import Plotly from 'plotly.js-dist';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
 import TelemetryTableColumn from '../../telemetryTable/TelemetryTableColumn';
