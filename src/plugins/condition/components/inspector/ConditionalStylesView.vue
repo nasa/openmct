@@ -197,6 +197,7 @@ export default {
             }
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
         },
         initialize(conditionSetDomainObject) {
@@ -210,6 +211,7 @@ export default {
             if (this.isEditing) {
                 if (this.stopProvidingTelemetry) {
                     this.stopProvidingTelemetry();
+                    delete this.stopProvidingTelemetry;
                 }
             } else {
                 this.subscribeToConditionSet();
@@ -307,6 +309,7 @@ export default {
             this.persist(domainObjectStyles);
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
         },
         updateDomainObjectItemStyles(newItems) {
@@ -375,6 +378,7 @@ export default {
         subscribeToConditionSet() {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
             if (this.conditionSetDomainObject) {
                 this.openmct.telemetry.request(this.conditionSetDomainObject)
