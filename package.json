@@ -45,7 +45,7 @@
     "karma-coverage": "^1.1.2",
     "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-html-reporter": "^0.2.7",
-    "karma-jasmine": "^2.0.0",
+    "karma-jasmine": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.0",
     "location-bar": "^3.0.1",
