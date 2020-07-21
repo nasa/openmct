@@ -307,7 +307,6 @@ export default {
                         },
                         traceIndices
                     );
-
                     this.drawing = false;
                 });
             }
