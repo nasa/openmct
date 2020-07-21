@@ -70,7 +70,7 @@ define([
     };
 
     ObjectServiceProvider.prototype.create = async function (object) {
-        let model = utils.toOldFormat(object);
+        let model = await utils.toOldFormat(object);
 
         return this.getPersistenceService().createObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
@@ -79,7 +79,7 @@ define([
         );
     }
     ObjectServiceProvider.prototype.update = async function (object) {
-        let model = utils.toOldFormat(object);
+        let model = await utils.toOldFormat(object);
 
         return this.getPersistenceService().updateObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
