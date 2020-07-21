@@ -148,7 +148,7 @@ export default {
                 const end = entry.end !== self.end;
 
                 return start || end;
-            };
+            }
 
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
