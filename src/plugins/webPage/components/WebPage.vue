@@ -6,7 +6,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import Plotly from 'plotly.js-gl2d-dist-min';
+import Plotly from 'plotly.js-dist';
 
 export default {
     inject: ['openmct', 'domainObject'],

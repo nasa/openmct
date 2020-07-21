@@ -60,7 +60,7 @@
     "node-bourbon": "^4.2.3",
     "node-sass": "^4.9.2",
     "painterro": "^1.0.35",
-    "plotly.js-gl2d-dist-min": "^1.54.5",
+    "plotly.js-dist": "^1.54.5",
     "printj": "^1.2.1",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",
