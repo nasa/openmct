@@ -190,13 +190,23 @@ export default {
 
                 requestAnimationFrame(() => {
                     this.dragX = $event.clientX;
-                    this.inPanMode ? this.pan() : this.zoom();
+
+                    if (this.inPanMode) {
+                        this.pan();
+                    } else {
+                        this.zoom()
+                    }
+
                     this.dragging = false;
                 });
             }
         },
         dragEnd() {
-            this.inPanMode ? this.endPan() : this.endZoom();
+            if (this.inPanMode) {
+                this.endPan();
+            } else {
+                this.endZoom()
+            }
 
             document.removeEventListener('mousemove', this.drag);
             this.dragStartX = undefined;
