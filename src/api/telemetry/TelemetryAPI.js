@@ -334,8 +334,8 @@ define([
             });
             if (subscriber.callbacks.length === 0) {
                 subscriber.unsubscribe();
+                delete this.subscribeCache[keyString];
             }
-            delete this.subscribeCache[keyString];
         }.bind(this);
     };
 

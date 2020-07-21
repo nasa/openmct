@@ -55,6 +55,7 @@
                 >
                     {{ option.name }}
                 </option>
+                <option value="dataReceived">any data received</option>
             </select>
         </span>
         <span v-if="criterion.telemetry && criterion.metadata"
@@ -83,6 +84,7 @@
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
+                <span v-if="criterion.metadata === 'dataReceived'">seconds</span>
             </template>
             <span v-else>
                 <span v-if="inputCount && criterion.operation"
@@ -147,7 +149,11 @@ export default {
             return (this.index !== 0 ? operator : '') + ' when';
         },
         filteredOps: function () {
-            return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
+            if (this.criterion.metadata === 'dataReceived') {
+                return this.operations.filter(op => op.name === 'isStale');
+            } else {
+                return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
+            }
         },
         setInputType: function () {
             let type = '';
@@ -213,6 +219,8 @@ export default {
                 } else {
                     this.operationFormat = 'number';
                 }
+            } else if (this.criterion.metadata === 'dataReceived') {
+                this.operationFormat = 'number';
             }
             this.updateInputVisibilityAndValues();
         },

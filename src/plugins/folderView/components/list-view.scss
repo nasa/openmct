@@ -13,7 +13,8 @@
             cursor: pointer;
 
             &:hover {
-                background: $colorListItemBgHov;
+                background: $colorItemTreeHoverBg;
+                filter: $filterHov;
                 transition: $transIn;
             }
         }

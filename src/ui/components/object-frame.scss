@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: column;
 
+    &.is-missing {
+        border: $borderMissing;
+    }
+
     /*************************** HEADER */
     &__header {
         flex: 0 0 auto;
@@ -39,6 +43,15 @@
         > .c-so-view__local-controls {
             top: $interiorMarginSm; right: $interiorMarginSm;
         }
+
+        &.is-missing {
+            @include isMissing($absPos: true);
+
+            .is-missing__indicator {
+                top: $interiorMargin;
+                left: $interiorMargin;
+            }
+        }
     }
 
     &__local-controls {
@@ -61,11 +74,9 @@
         height: 0; // Chrome 73 overflow bug fix
         overflow: auto;
 
-        .u-angular-object-view-wrapper {
-            .u-fills-container {
-                // Expand component types that fill a container
-                @include abs();
-            }
+        .u-fills-container {
+            // Expand component types that fill a container
+            @include abs();
         }
     }
 
@@ -78,8 +89,5 @@
 }
 
 .u-angular-object-view-wrapper {
-    flex: 1 1 auto;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+    display: contents;
 }

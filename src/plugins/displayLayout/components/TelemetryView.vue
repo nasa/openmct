@@ -24,16 +24,23 @@
 <layout-frame
     :item="item"
     :grid-size="gridSize"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="styleClass"
+        :class="{
+            styleClass,
+            'is-missing': domainObject.status === 'missing'
+        }"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
+        <div class="is-missing__indicator"
+             title="This item is missing"
+        ></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
@@ -104,6 +111,10 @@ export default {
         initSelect: Boolean,
         index: {
             type: Number,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
             required: true
         }
     },

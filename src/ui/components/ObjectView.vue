@@ -53,7 +53,9 @@ export default {
     mounted() {
         this.currentObject = this.object;
         this.updateView();
-        this.$el.addEventListener('dragover', this.onDragOver);
+        this.$el.addEventListener('dragover', this.onDragOver, {
+            capture: true
+        });
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
@@ -90,7 +92,15 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         invokeEditModeHandler(editMode) {
-            this.currentView.onEditModeChange(editMode);
+            let edit;
+
+            if (this.currentObject.locked) {
+                edit = false;
+            } else {
+                edit = editMode;
+            }
+
+            this.currentView.onEditModeChange(edit);
         },
         toggleEditView(editMode) {
             this.clear();
@@ -227,7 +237,11 @@ export default {
         },
         onDragOver(event) {
             if (this.hasComposableDomainObject(event)) {
-                event.preventDefault();
+                if (this.isEditingAllowed()) {
+                    event.preventDefault();
+                } else {
+                    event.stopPropagation();
+                }
             }
         },
         addObjectToParent(event) {
@@ -257,6 +271,7 @@ export default {
             if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
+                this.isEditingAllowed() &&
                 !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }
@@ -283,6 +298,13 @@ export default {
                     this.currentView.onClearData();
                 }
             }
+        },
+        isEditingAllowed() {
+            let browseObject = this.openmct.layout.$refs.browseObject.currentObject,
+                objectPath= this.currentObjectPath || this.objectPath,
+                parentObject = objectPath[1];
+
+            return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         }
     }
 }

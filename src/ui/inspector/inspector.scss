@@ -4,7 +4,7 @@
     flex-direction: column;
 
     > * {
-        // Thi is on purpose: want extra margin on top object-name element
+        // This is on purpose: want extra margin on top object-name element
         margin-top: $interiorMargin;
     }
 
@@ -41,6 +41,8 @@
 
     &__content {
         flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
     }
 
     &__elements {
@@ -143,7 +145,7 @@
     &__label {
         color: $colorInspectorPropName;
 
-        &[title] {
+        &[title]:not([title=""]) {
             // When a cell has a title, assume it's helpful text
             cursor: help;
         }

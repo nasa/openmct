@@ -64,7 +64,7 @@ export default {
     },
     computed: {
         formattedTimestamp() {
-            return this.timestamp !== undefined ? this.formats[this.timestampKey].format(this.timestamp) : '---';
+            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
         }
     },
     mounted() {
@@ -110,11 +110,11 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            let newTimestamp = this.formats[this.timestampKey].parse(datum),
+            let newTimestamp = this.getParsedTimestamp(datum),
                 limit;
 
             if(this.shouldUpdate(newTimestamp)) {
-                this.timestamp = this.formats[this.timestampKey].parse(datum);
+                this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 if (limit) {
@@ -125,9 +125,12 @@ export default {
             }
         },
         shouldUpdate(newTimestamp) {
-            return (this.timestamp === undefined) ||
-                (this.inBounds(newTimestamp) &&
-                newTimestamp > this.timestamp);
+            let newTimestampInBounds = this.inBounds(newTimestamp),
+                noExistingTimestamp = this.timestamp === undefined,
+                newTimestampIsLatest = newTimestamp > this.timestamp;
+
+            return newTimestampInBounds &&
+                (noExistingTimestamp || newTimestampIsLatest);
         },
         requestHistory() {
             this.openmct
@@ -146,6 +149,7 @@ export default {
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
             if(!isTick) {
+                this.resetValues();
                 this.requestHistory();
             }
         },
@@ -153,13 +157,34 @@ export default {
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
         },
         updateTimeSystem(timeSystem) {
-            this.value = '---';
-            this.timestamp = '---';
-            this.valueClass = '';
+            this.resetValues();
             this.timestampKey = timeSystem.key;
         },
         showContextMenu(event) {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        },
+        resetValues() {
+            this.value = '---';
+            this.timestamp = undefined;
+            this.valueClass = '';
+        },
+        getParsedTimestamp(timestamp) {
+            if(this.timeSystemFormat()) {
+                return this.formats[this.timestampKey].parse(timestamp);
+            }
+        },
+        getFormattedTimestamp(timestamp) {
+            if(this.timeSystemFormat()) {
+                return this.formats[this.timestampKey].format(timestamp);
+            }
+        },
+        timeSystemFormat() {
+            if(this.formats[this.timestampKey]) {
+                return true;
+            } else {
+                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+                return false;
+            }
         }
     }
 }
