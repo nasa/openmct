@@ -23,7 +23,7 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'FirefoxHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html'];
 
@@ -95,6 +95,7 @@ module.exports = (config) => {
             stats: 'errors-only',
             logLevel: 'warn'
         },
-        singleRun: true
+        singleRun: true,
+        browserNoActivityTimeout: 90000
     });
 }
