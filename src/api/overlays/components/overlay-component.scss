@@ -36,6 +36,7 @@
         font-size: 1.25em;
         position: absolute;
         top: $p; right: $p;
+        z-index: 99;
     }
 
     &__contents {
@@ -43,7 +44,7 @@
         display: flex;
         flex-direction: column;
         outline: none;
-        overflow: hidden;
+        overflow: auto;
     }
 
     &__top-bar {
@@ -87,6 +88,10 @@
     .c-click-icon {
         filter: $overlayBrightnessAdjust;
     }
+
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
+    }
 }
 
 body.desktop {
@@ -100,7 +105,6 @@ body.desktop {
     }
 
     // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
-    .l-overlay-large,
     .l-overlay-small,
     .l-overlay-fit {
         .c-overlay__outer {
@@ -118,8 +122,28 @@ body.desktop {
 
     .l-overlay-large {
         // Default
-        .c-overlay__outer {
-            @include overlaySizing($overlayOuterMarginLg);
+        $pad: $interiorMarginLg;
+        $tbPad: floor($pad * 0.8);
+        $lrPad: $pad;
+        .c-overlay {
+            &__blocker {
+                display: none;
+            }
+
+            &__outer {
+                @include overlaySizing($overlayOuterMarginFullscreen);
+                padding: $tbPad $lrPad;
+            }
+
+            &__close-button {
+                top: $pad;
+                right: $interiorMarginSm;
+            }
+        }
+
+        .l-browse-bar {
+            margin-right: $lrPad + $pad; // Don't cover close button
+            margin-bottom: $interiorMargin;
         }
     }
 
