@@ -9,8 +9,7 @@ define ([
     objectUtils,
     EventEmitter,
     $,
-    _,
-
+    _
 ) {
 
     /**

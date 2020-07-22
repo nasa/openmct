@@ -162,17 +162,26 @@ module.exports = {
                     {
                         "vars": "all",
                         "args": "none",
-                        "varsIgnorePattern": "controller",
-
+                        "varsIgnorePattern": "controller"
                     }
-                ]
+                ],
+                "no-redeclare": "off",
             }
         }, {
             "files": LEGACY_FILES,
             "rules": {
                 // https://eslint.org/docs/rules/no-nested-ternary
                 "no-nested-ternary": "off",
-                "no-var": "off"
+                "no-var": "off",
+                "no-redeclare": "off",
+            }
+        },
+        {
+            "files": ["*"],
+            "rules": {
+                "no-unused-vars": "off",
+                "no-prototype-builtins": "off",
+                "no-redeclare": "off",
             }
         }
     ]

@@ -103,7 +103,7 @@ export default {
 
             return _.flatten(filterNames);
         },
-        getFilterLabels(filterObject, metadatum,) {
+        getFilterLabels(filterObject, metadatum) {
             let filterLabels = [];
             Object.values(filterObject).forEach(comparator => {
                 comparator.forEach(filterValue => {
