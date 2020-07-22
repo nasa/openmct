@@ -139,7 +139,6 @@ export default {
             return Object.assign({}, {
                 fontSize: this.item.size
             }, this.itemStyle);
-
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;

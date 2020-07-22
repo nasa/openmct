@@ -48,7 +48,8 @@ export default {
             y: 1,
             width: 10,
             height: 5,
-            url: element.url
+            url: element.url,
+            size: '13px'
         };
     },
     inject: ['openmct'],
@@ -81,6 +82,8 @@ export default {
         style() {
             let backgroundImage = 'url(' + this.item.url + ')';
             let border = '1px solid ' + this.item.stroke;
+            let fontSize = this.item.size;
+
             if (this.itemStyle) {
                 if (this.itemStyle.imageUrl !== undefined) {
                     backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
@@ -89,7 +92,8 @@ export default {
             }
             return {
                 backgroundImage,
-                border
+                border,
+                fontSize
             };
         }
     },

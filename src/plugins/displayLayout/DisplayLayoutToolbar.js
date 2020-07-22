@@ -385,7 +385,7 @@ define(['lodash'], function (_) {
                         domainObject: selectedParent,
                         applicableSelectedItems: selection.filter(selectionPath => {
                             let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' || type === 'telemetry-view';
+                            return type !== 'line-view' || type !== 'box-view';
                         }),
                         property: function (selectionPath) {
                             return getPath(selectionPath) + ".size";
@@ -621,6 +621,11 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                        }
+                        if (toolbar['text-style'].length === 0) {
+                            toolbar['text-style'] = [
+                                getTextSizeMenu(selectedParent, selectedObjects)
+                            ];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
