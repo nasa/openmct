@@ -13,7 +13,7 @@
     }
 }
 
-.c-frame-edit__move {
+.c-frame__move-bar {
     display: none;
 }
 
@@ -33,7 +33,7 @@
             border: $editFrameSelectedBorder;
             box-shadow: $editFrameSelectedShdw;
 
-            .c-frame-edit__move {
+            .c-frame__move-bar {
                 cursor: move;
             }
         }
@@ -41,7 +41,7 @@
 
     /******************* DEFAULT STYLES FOR -EDIT__MOVE */
     // All object types
-    .c-frame-edit__move {
+    .c-frame__move-bar {
         @include abs();
         display: block;
     }
@@ -56,7 +56,7 @@
             transition-delay: $moveBarOutDelay;
         }
 
-        + .c-frame-edit__move {
+        + .c-frame__move-bar {
             display: none;
         }
 
@@ -72,7 +72,7 @@
                         transition-delay: $moveBarOutDelay;
                     }
 
-                    + .c-frame-edit__move {
+                    + .c-frame__move-bar {
                         transition: $transOut;
                         transition-delay: $moveBarOutDelay;
                         @include userSelectNone();
@@ -115,7 +115,7 @@
                             transition-delay: 0s;
                         }
 
-                        + .c-frame-edit__move {
+                        + .c-frame__move-bar {
                             transition: $transIn;
                             transition-delay: 0s;
                             height: $editFrameMovebarH;
@@ -125,7 +125,7 @@
             }
             > .l-layout__frame[s-selected] {
                 > .c-so-view.has-complex-content {
-                    + .c-frame-edit__move:before {
+                    + .c-frame__move-bar:before {
                         display: block;
                     }
                 }
@@ -135,7 +135,7 @@
         /******************* > 1 ITEMS SELECTED */
         &.is-multi-selected {
             .l-layout__frame[s-selected] {
-                > .c-so-view.has-complex-content + .c-frame-edit__move {
+                > .c-so-view.has-complex-content + .c-frame__move-bar {
                     display: block;
                 }
             }
