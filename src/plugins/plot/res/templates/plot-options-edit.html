@@ -174,13 +174,17 @@
                      title="The position of the legend relative to the plot display area.">Position</div>
                 <div class="grid-cell value">
                     <select ng-model="form.position">
-                        <option value="hidden">Hidden</option>
                         <option value="top">Top</option>
                         <option value="right">Right</option>
                         <option value="bottom">Bottom</option>
                         <option value="left">Left</option>
                     </select>
                 </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Hide the legend when the plot is small">Hide when plot small</div>
+                <div class="grid-cell value"><input type="checkbox" ng-model="form.hideLegendWhenSmall"/></div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"

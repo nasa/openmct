@@ -1,8 +1,0 @@
-.c-box-view {
-    display: flex;
-    align-items: stretch;
-
-    .c-frame & {
-        @include abs();
-    }
-}
