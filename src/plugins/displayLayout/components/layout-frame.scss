@@ -7,6 +7,10 @@
     > *:first-child {
         flex: 1 1 auto;
     }
+
+    &.is-in-small-container {
+        //background: rgba(blue, 0.1);
+    }
 }
 
 .c-frame-edit__move {
@@ -61,7 +65,7 @@
     .l-layout {
         /******************* 0 - 1 ITEM SELECTED */
         &:not(.is-multi-selected) {
-            > .l-layout__frame[s-selected] {
+            > .l-layout__frame {
                 > .c-so-view.has-complex-content {
                     > .c-so-view__local-controls {
                         transition: transform $transOutTime ease-in-out;
@@ -89,7 +93,7 @@
                             $lrOffset: 25%;
                             @include grippy($editFrameMovebarColorFg);
                             content: '';
-                            display: block;
+                            display: none;
                             position: absolute;
                             top: $tbOffset;
                             right: $lrOffset;
@@ -116,6 +120,13 @@
                             transition-delay: 0s;
                             height: $editFrameMovebarH;
                         }
+                    }
+                }
+            }
+            > .l-layout__frame[s-selected] {
+                > .c-so-view.has-complex-content {
+                    + .c-frame-edit__move:before {
+                        display: block;
                     }
                 }
             }

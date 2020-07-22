@@ -42,6 +42,7 @@
         height: 135px;
         overflow-x: auto;
         overflow-y: hidden;
+        padding-bottom: $interiorMarginSm;
 
         &.is-paused {
             background: rgba($colorPausedBg, 0.4);
@@ -99,7 +100,7 @@
 .c-imagery {
     .h-local-controls--overlay-content {
         position: absolute;
-        right: $interiorMargin; top: $interiorMargin;
+        left: $interiorMargin; top: $interiorMargin;
         z-index: 2;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
