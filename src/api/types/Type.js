@@ -84,6 +84,7 @@ define(function () {
         definition.form = legacyDefinition.properties;
         if (legacyDefinition.model) {
             definition.initialize = function (model) {
+                console.log('model', model);
                 for (let [k, v] of Object.entries(legacyDefinition.model)) {
                     model[k] = JSON.parse(JSON.stringify(v));
                 }

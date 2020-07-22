@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,window*/
-
 define(
     [],
     function () {

@@ -179,7 +179,6 @@ module.exports = {
         {
             "files": ["*"],
             "rules": {
-                "no-unused-vars": "off",
                 "no-prototype-builtins": "off",
                 "no-redeclare": "off",
             }
