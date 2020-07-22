@@ -29,11 +29,9 @@
     }
 
     &__close-button {
-        $p: $interiorMargin;
-        border-radius: 100% !important;
+        $p: $interiorMargin + 2px;
         color: $overlayColorFg;
-        display: inline-block;
-        font-size: 1.25em;
+        font-size: 1.5em;
         position: absolute;
         top: $p; right: $p;
         z-index: 99;
@@ -136,13 +134,13 @@ body.desktop {
             }
 
             &__close-button {
-                top: $pad;
-                right: $interiorMarginSm;
+                //top: $interiorMargin;
+                //right: $interiorMargin;
             }
         }
 
         .l-browse-bar {
-            margin-right: $lrPad + $pad; // Don't cover close button
+            margin-right: 50px; // Don't cover close button
             margin-bottom: $interiorMargin;
         }
     }

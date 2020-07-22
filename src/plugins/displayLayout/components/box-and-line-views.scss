@@ -46,6 +46,11 @@
     }
 
     .is-editing & {
+        // Needed to allow line to be moved
+        $w: 4px;
+        min-width: $w;
+        min-height: $w;
+
         &:hover {
             [class*='__hover-indicator'] {
                 display: inline;

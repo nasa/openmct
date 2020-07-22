@@ -76,8 +76,8 @@ const START_HANDLE_QUADRANTS = {
     2: 'c-frame-edit__handle--se',
     3: 'c-frame-edit__handle--ne',
     4: 'c-frame-edit__handle--nw',
-    5: 'c-frame-edit__handle--ne',
-    6: 'c-frame-edit__handle--se'
+    5: 'c-frame-edit__handle--nw',
+    6: 'c-frame-edit__handle--ne'
 };
 
 const END_HANDLE_QUADRANTS = {
