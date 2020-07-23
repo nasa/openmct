@@ -120,6 +120,14 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/default-case-last
+        "default-case-last": "error",
+        // https://eslint.org/docs/rules/default-param-last
+        "default-param-last": "error",
+        // https://eslint.org/docs/rules/grouped-accessor-pairs
+        "grouped-accessor-pairs": "error",
+        // https://eslint.org/docs/rules/no-constructor-return
+        "no-constructor-return": "error",
 
         "vue/html-indent": [
             "error",
@@ -151,7 +159,8 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off"
+        "vue/singleline-html-element-content-newline": "off",
+
     },
     "overrides": [
         {
