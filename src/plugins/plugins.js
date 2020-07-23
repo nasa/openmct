@@ -96,7 +96,6 @@ define([
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        MyOtherItems: 'platform/features/my-other-items',
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
