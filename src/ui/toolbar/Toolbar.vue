@@ -179,7 +179,7 @@ export default {
                 }
             });
 
-            for (const key in values) {
+            for (let key in values) {
                 if (values[key].every(val => val === values[key][0])) {
                     value[key] = values[key][0];
                     toolbarItem.nonSpecific = false;

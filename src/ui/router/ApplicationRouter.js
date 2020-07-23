@@ -26,7 +26,7 @@ const EventEmitter = require('EventEmitter');
 
 function paramsToObject(searchParams) {
     let params = {};
-    Object.entries(searchParams).forEach(([key, value]) => {
+    for (let [key, value] of searchParams.entries()) {
         if (params[key]) {
             if (!Array.isArray(params[key])) {
                 params[key] = [params[key]];
@@ -35,7 +35,7 @@ function paramsToObject(searchParams) {
         } else {
             params[key] = value;
         }
-    });
+    }
     return params;
 }
 
