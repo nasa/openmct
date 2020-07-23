@@ -152,8 +152,7 @@ module.exports = {
         }],
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
-        "no-prototype-builtins": "off",
-        "no-redeclare": "off",
+        "no-prototype-builtins": "off"
     },
     "overrides": [
         {
@@ -166,13 +165,11 @@ module.exports = {
                         "args": "none",
                         "varsIgnorePattern": "controller"
                     }
-                ],
-                "no-redeclare": "off",
+                ]
             }
         }, {
             "files": LEGACY_FILES,
             "rules": {
-                // https://eslint.org/docs/rules/no-nested-ternary
                 "no-unused-vars": [
                     "warn",
                     {
@@ -182,8 +179,7 @@ module.exports = {
                     }
                 ],
                 "no-nested-ternary": "off",
-                "no-var": "off",
-                "no-redeclare": "off",
+                "no-var": "off"
             }
         }
     ]

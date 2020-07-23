@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
     var TRANSACTION_METHODS = ['add', 'commit', 'cancel', 'size'];
