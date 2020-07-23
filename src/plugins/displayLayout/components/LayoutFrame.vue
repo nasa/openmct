@@ -31,9 +31,8 @@
     :style="style"
 >
     <slot></slot>
-
     <div
-        class="c-frame-edit__move"
+        class="c-frame__move-bar"
         @mousedown="isEditing ? startMove([1,1], [0,0], $event) : null"
     ></div>
 </div>
