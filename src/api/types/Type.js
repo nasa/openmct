@@ -82,12 +82,11 @@ define(function () {
         definition.cssClass = legacyDefinition.cssClass;
         definition.description = legacyDefinition.description;
         definition.form = legacyDefinition.properties;
-        if (legacyDefinition.model) {
+        if (legacyDefinition.model !== undefined) {
             definition.initialize = function (model) {
-                console.log('model', model);
-                for (let [k, v] of Object.entries(legacyDefinition.model)) {
+                Object.entries(legacyDefinition.model).forEach(([k, v]) => {
                     model[k] = JSON.parse(JSON.stringify(v));
-                }
+                });
             }
         }
 

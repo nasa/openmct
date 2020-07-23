@@ -10,7 +10,7 @@ const EventEmitter = require('EventEmitter');
 
 function paramsToObject(searchParams) {
     let params = {};
-    for (let [key, value] of searchParams.entries()) {
+    Object.entries(searchParams).forEach(([key, value]) => {
         if (params[key]) {
             if (!Array.isArray(params[key])) {
                 params[key] = [params[key]];
@@ -19,7 +19,7 @@ function paramsToObject(searchParams) {
         } else {
             params[key] = value;
         }
-    }
+    });
     return params;
 }
 
@@ -113,16 +113,16 @@ class ApplicationRouter extends EventEmitter {
 
     doParamsChange(newParams, oldParams, newLocation) {
         let changedParams = {};
-        for (let [key, value] of Object.entries(newParams)) {
+        Object.entries(newParams).forEach(([key, value]) => {
             if (value !== oldParams[key]) {
                 changedParams[key] = value;
             }
-        }
-        for (let key of Object.keys(oldParams)) {
+        });
+        Object.keys(oldParams).forEach(key => {
             if (!newParams.hasOwnProperty(key)) {
                 changedParams[key] = undefined;
             }
-        }
+        });
         this.emit('change:params', newParams, oldParams, changedParams);
     }
 
@@ -131,13 +131,13 @@ class ApplicationRouter extends EventEmitter {
      */
     updateParams(updateParams) {
         let searchParams = this.currentLocation.url.searchParams;
-        for (let [key, value] of Object.entries(updateParams)) {
+        Object.entries(updateParams).forEach(([key, value]) => {
             if (typeof value === 'undefined') {
                 searchParams.delete(key);
             } else {
                 searchParams.set(key, value);
             }
-        }
+        });
         this.setQueryString(searchParams.toString());
     }
 
