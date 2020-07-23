@@ -13,11 +13,9 @@
     }
 
     &__object-view {
-        background: $colorBodyBg;
-        border: 1px solid $colorInteriorBorder;
         flex: 1 1 auto;
+        height: 0; // Chrome 73
         overflow: auto;
-        padding: $interiorMargin;
 
         > div:not([class]) {
             // Target an immediate child div without a class and make it display: contents
