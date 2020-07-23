@@ -21,12 +21,14 @@
  *****************************************************************************/
 
 import TelemetryCriterion from "./TelemetryCriterion";
+import { getMockTelemetry } from "utils/testing";
 
 let openmct = {},
     mockListener,
     testCriterionDefinition,
     testTelemetryObject,
-    telemetryCriterion;
+    telemetryCriterion,
+    mockTelemetry = getMockTelemetry();
 
 describe("The telemetry criterion", function () {
 
@@ -60,7 +62,7 @@ describe("The telemetry criterion", function () {
         };
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter"]);
+        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter", "request"]);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
         openmct.telemetry.getValueFormatter.and.returnValue({
@@ -108,5 +110,31 @@ describe("The telemetry criterion", function () {
             id: testTelemetryObject.identifier.key
         });
         expect(telemetryCriterion.result).toBeTrue();
+    });
+
+    describe('the LAD request', () => {
+        beforeEach(async () => {
+            let telemetryRequestResolve;
+            let telemetryRequestPromise = new Promise((resolve) => {
+                telemetryRequestResolve = resolve;
+            });
+            openmct.telemetry.request.and.callFake(() => {
+                setTimeout(() => {
+                    telemetryRequestResolve(mockTelemetry);
+                }, 100);
+                return telemetryRequestPromise;
+            });
+        });
+
+        it("returns results for slow LAD requests", async function () {
+            const criteriaRequest = telemetryCriterion.requestLAD();
+            telemetryCriterion.destroy();
+            expect(telemetryCriterion.telemetryObject).toBeUndefined();
+            setTimeout(() => {
+                criteriaRequest.then((result) => {
+                    expect(result).toBeDefined();
+                });
+            }, 300);
+        });
     });
 });
