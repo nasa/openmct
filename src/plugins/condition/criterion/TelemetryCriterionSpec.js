@@ -118,7 +118,7 @@ describe("The telemetry criterion", function () {
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
-            openmct.telemetry.request.and.callFake(() => {
+            await openmct.telemetry.request.and.callFake(() => {
                 setTimeout(() => {
                     telemetryRequestResolve(mockTelemetry);
                 }, 100);
@@ -127,10 +127,10 @@ describe("The telemetry criterion", function () {
         });
 
         it("returns results for slow LAD requests", async function () {
-            const criteriaRequest = telemetryCriterion.requestLAD();
-            telemetryCriterion.destroy();
-            expect(telemetryCriterion.telemetryObject).toBeUndefined();
-            setTimeout(() => {
+            const criteriaRequest = await telemetryCriterion.requestLAD();
+            await telemetryCriterion.destroy();
+            await expect(telemetryCriterion.telemetryObject).toBeUndefined();
+            await setTimeout(() => {
                 criteriaRequest.then((result) => {
                     expect(result).toBeDefined();
                 });
