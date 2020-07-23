@@ -369,9 +369,9 @@
         margin-left: $interiorMarginLg;
         min-width: 0;
 
-        &:before {
-            // Icon
-            margin-right: $interiorMargin;
+        .is-missing__indicator {
+            right: -5px !important;
+            top: -4px !important;
         }
     }
 

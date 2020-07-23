@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    width: 100%;
+    //TODO: Do we need this???
+    //padding-right: $interiorMarginSm;
     overflow: auto;
 
     > * + * { margin-top: $interiorMargin; }
@@ -73,6 +74,32 @@
         padding: $interiorMarginSm $interiorMargin;
         transition: background 150ms ease;
 
+        &__type-icon {
+            color: $colorItemTreeIcon;
+        }
+
+        &:hover {
+            background: $colorItemTreeHoverBg;
+            filter: $filterHov;
+        }
+
+        &.is-navigated-object,
+        &.is-selected {
+            background: $colorItemTreeSelectedBg;
+
+            [class*="__name"] {
+                color: $colorItemTreeSelectedFg;
+            }
+        }
+    }
+}
+
+.c-tree {
+    .c-tree {
+        margin-left: 15px;
+    }
+
+    &__item {
         > * + * {
             margin-left: $interiorMarginSm;
         }
@@ -179,7 +206,6 @@
     $dimension: $treeNavArrowD;
 
     &__up, &__down {
-        color: #fff;
         flex: 0 0 auto;
         height: $dimension;
         width: $dimension;
