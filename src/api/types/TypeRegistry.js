@@ -62,7 +62,7 @@ define(['./Type'], function (Type) {
      * @private
      */
     TypeRegistry.prototype.standardizeType = function (typeDef) {
-        if (typeDef.hasOwnProperty('label')) {
+        if (Object.prototype.hasOwnProperty.call(typeDef, 'label')) {
             console.warn(
                 'DEPRECATION WARNING typeDef: ' + typeDef.label + '.  ' +
                 '`label` is deprecated in type definitions.  Please use ' +

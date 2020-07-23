@@ -59,14 +59,14 @@ define([
                 return vm;
             }, {byValue: {}, byString: {}});
             this.formatter.format = function (value) {
-                if (this.enumerations.byValue.hasOwnProperty(value)) {
+                if (Object.prototype.hasOwnProperty.call(this.enumerations.byValue, value)) {
                     return this.enumerations.byValue[value];
                 }
                 return value;
             }.bind(this);
             this.formatter.parse = function (string) {
                 if (typeof string === "string") {
-                    if (this.enumerations.byString.hasOwnProperty(string)) {
+                    if (Object.prototype.hasOwnProperty.call(this.enumerations.byString, string)) {
                         return this.enumerations.byString[string];
                     }
                 }

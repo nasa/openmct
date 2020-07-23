@@ -76,7 +76,7 @@ define(
             var search = this.$location.search(),
                 arr = [];
             for (var key in search) {
-                if (search.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(search, key)) {
                     arr.push(key + '=' + search[key]);
                 }
             }

@@ -32,8 +32,8 @@ define([
      */
     function isIdentifier(thing) {
         return typeof thing === 'object' &&
-            thing.hasOwnProperty('key') &&
-            thing.hasOwnProperty('namespace');
+            Object.prototype.hasOwnProperty.call(thing, 'key') &&
+            Object.prototype.hasOwnProperty.call(thing, 'namespace');
     }
 
     /**

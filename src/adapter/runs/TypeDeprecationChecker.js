@@ -27,7 +27,7 @@ define([
 ) {
 
     function checkForDeprecatedFunctionality(typeDef) {
-        if (typeDef.hasOwnProperty('telemetry')) {
+        if (Object.prototype.hasOwnProperty.call(typeDef, 'telemetry')) {
             console.warn(
                 'DEPRECATION WARNING: Telemetry data on type ' +
                 'registrations will be deprecated in a future version, ' +

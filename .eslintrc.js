@@ -151,8 +151,7 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off",
-        "no-prototype-builtins": "off"
+        "vue/singleline-html-element-content-newline": "off"
     },
     "overrides": [
         {

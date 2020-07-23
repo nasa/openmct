@@ -135,7 +135,7 @@ class ApplicationRouter extends EventEmitter {
             }
         });
         Object.keys(oldParams).forEach(key => {
-            if (!newParams.hasOwnProperty(key)) {
+            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
                 changedParams[key] = undefined;
             }
         });

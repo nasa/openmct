@@ -28,7 +28,7 @@ define(function () {
     }
 
     BundleRegistry.prototype.register = function (path, definition) {
-        if (this.knownBundles.hasOwnProperty(path)) {
+        if (Object.prototype.hasOwnProperty.call(this.knownBundles, path)) {
             throw new Error('Cannot register bundle with duplicate path', path);
         }
         this.knownBundles[path] = definition;

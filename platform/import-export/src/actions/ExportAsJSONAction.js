@@ -86,7 +86,7 @@ define(['lodash'], function (_) {
                         // Only export if object is creatable
                         if (this.isCreatable(child)) {
                             // Prevents infinite export of self-contained objs
-                            if (!this.tree.hasOwnProperty(this.getId(child))) {
+                            if (!Object.prototype.hasOwnProperty.call(this.tree, this.getId(child))) {
                                 // If object is a link to something absent from
                                 // tree, generate new id and treat as new object
                                 if (this.isExternal(child, parent)) {

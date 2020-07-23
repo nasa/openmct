@@ -106,7 +106,7 @@ define(
              * @returns {*} capability object
              */
             domainObject.getCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     return config.capabilities[capability];
                 }
             });
@@ -120,7 +120,7 @@ define(
              * @returns {boolean}
              */
             domainObject.hasCapability.and.callFake(function (capability) {
-                return config.capabilities.hasOwnProperty(capability);
+                return Object.prototype.hasOwnProperty.call(config.capabilities, capability);
             });
 
             /**
@@ -133,7 +133,7 @@ define(
              * @returns {*} result whatever was returned by `invoke`.
              */
             domainObject.useCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     if (!config.capabilities[capability].invoke) {
                         throw new Error(
                             capability + ' missing invoke function.'

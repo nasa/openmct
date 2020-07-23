@@ -31,7 +31,7 @@ define([
 ) {
     function TelemetryTableViewProvider(openmct) {
         function hasTelemetry(domainObject) {
-            if (!domainObject.hasOwnProperty('telemetry')) {
+            if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
                 return false;
             }
             let metadata = openmct.telemetry.getMetadata(domainObject);

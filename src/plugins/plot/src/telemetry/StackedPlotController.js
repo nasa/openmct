@@ -121,7 +121,7 @@ define([], function () {
 
         $scope.$on('plot:tickWidth', function ($e, width) {
             const plotId = $e.targetScope.domainObject.getId();
-            if (!tickWidthMap.hasOwnProperty(plotId)) {
+            if (!Object.prototype.hasOwnProperty.call(tickWidthMap, plotId)) {
                 return;
             }
 
