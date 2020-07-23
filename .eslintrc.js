@@ -156,6 +156,18 @@ module.exports = {
     },
     "overrides": [
         {
+            "files": ["*Spec.js"],
+            "rules": {
+                "no-unused-vars": [
+                    "warn",
+                    {
+                        "vars": "all",
+                        "args": "none",
+                        "varsIgnorePattern": "controller"
+                    }
+                ]
+            }
+        }, {
             "files": LEGACY_FILES,
             "rules": {
                 "no-unused-vars": [
