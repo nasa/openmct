@@ -70,7 +70,7 @@ export default {
         document.removeEventListener('click', this.hideMenu);
     },
     methods: {
-        async setNotebookTypes() {
+        setNotebookTypes() {
             const notebookTypes = [];
             const defaultNotebook = getDefaultNotebook();
 
@@ -80,7 +80,7 @@ export default {
                 if (domainObject.location) {
                     const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
 
-                    await notebookTypes.push({
+                    notebookTypes.push({
                         cssClass: 'icon-notebook',
                         name: `Save to Notebook ${defaultPath}`,
                         type: NOTEBOOK_DEFAULT
@@ -88,7 +88,7 @@ export default {
                 }
             }
 
-            await notebookTypes.push({
+            notebookTypes.push({
                 cssClass: 'icon-notebook',
                 name: 'Save to Notebook Snapshots',
                 type: NOTEBOOK_SNAPSHOT
