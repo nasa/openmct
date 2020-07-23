@@ -88,6 +88,10 @@ $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
 $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
+// Object labels
+$objectLabelTypeIconOpacity: 0.7;
+$objectLabelNameFilter: brightness(1.3);
+
 // Layout
 $shellMainPad: 4px 0;
 $shellPanePad: $interiorMargin, 7px;
@@ -209,9 +213,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: $colorKeyHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
-$colorBtnCautionBg: #f16f6f;
+$colorBtnCautionBg: $colorStatusAlert;
 $colorBtnCautionBgHov: #f1504e;
-$colorBtnCautionFg: $colorBtnFg;
+$colorBtnCautionFg: $colorBtnBg;
 $colorBtnActiveBg: $colorOk;
 $colorBtnActiveFg: $colorOkFg;
 $colorBtnSelectedBg: $colorSelectedBg;
@@ -339,7 +343,7 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: rgba($colorBodyFg, 0.2);
+$colorTabHeaderBg: rgba($colorBodyFg, 0.15);
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
