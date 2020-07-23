@@ -33,6 +33,11 @@ define([
                 objectPath: 'configuration.legend.position'
             },
             {
+                modelProp: 'hideLegendWhenSmall',
+                coerce: Boolean,
+                objectPath: 'configuration.legend.hideLegendWhenSmall'
+            },
+            {
                 modelProp: 'expandByDefault',
                 coerce: Boolean,
                 objectPath: 'configuration.legend.expandByDefault'
