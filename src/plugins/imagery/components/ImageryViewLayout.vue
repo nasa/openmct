@@ -31,11 +31,11 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
             <div class="h-local-controls flex-elem">
-                <a
+                <button
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': paused()}"
                     @click="paused(!paused())"
-                ></a>
+                ></button>
             </div>
         </div>
     </div>

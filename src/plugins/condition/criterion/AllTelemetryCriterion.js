@@ -124,7 +124,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
         if (validatedData) {
             if (this.isStalenessCheck()) {
-                if (this.stalenessSubscription[validatedData.id]) {
+                if (this.stalenessSubscription && this.stalenessSubscription[validatedData.id]) {
                     this.stalenessSubscription[validatedData.id].update(validatedData);
                 }
                 this.telemetryDataCache[validatedData.id] = false;

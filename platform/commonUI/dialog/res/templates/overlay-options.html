@@ -31,13 +31,13 @@
         </mct-include>
     </div>
     <div class="c-overlay__button-bar">
-        <a ng-repeat="option in ngModel.dialog.options"
+        <button ng-repeat="option in ngModel.dialog.options"
            href=''
            class="s-button lg"
            title="{{option.description}}"
            ng-click="ngModel.confirm(option.key)"
            ng-class="{ major: $first, subtle: !$first }">
             {{option.name}}
-        </a>
+        </button>
     </div>
 </mct-container>
