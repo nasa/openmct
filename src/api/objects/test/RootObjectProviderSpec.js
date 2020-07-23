@@ -31,7 +31,7 @@ define([
         beforeEach(function () {
             rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
             rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
-            rootObjectProvider = new RootObjectProvider(rootRegistry);
+            rootObjectProvider = new RootObjectProvider.default(rootRegistry);
         });
 
         it('supports fetching root', function () {

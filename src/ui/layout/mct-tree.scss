@@ -232,28 +232,28 @@
 // TRANSITIONS
 .slide-left,
 .slide-right {
-  animation-duration: 500ms;
-  animation-iteration-count: 1;
-  transition: all;
-  transition-timing-function: ease-in-out;
+    animation-duration: 500ms;
+    animation-iteration-count: 1;
+    transition: all;
+    transition-timing-function: ease-in-out;
 }
 
 .slide-left {
-  animation-name: animSlideLeft;
+    animation-name: animSlideLeft;
 }
 
 .slide-right {
-  animation-name: animSlideRight;
+    animation-name: animSlideRight;
 }
 
 @keyframes animSlideLeft {
-  0% {opactiy: 0; transform: translateX(100%);}
-  10% {opacity: 1;}
-  100% {transform: translateX(0);}
+    0% {opactiy: 0; transform: translateX(100%);}
+    10% {opacity: 1;}
+    100% {transform: translateX(0);}
 }
 
 @keyframes animSlideRight {
-  0% {opactiy: 0; transform: translateX(-100%);}
-  10% {opacity: 1;}
-  100% {transform: translateX(0);}
+    0% {opactiy: 0; transform: translateX(-100%);}
+    10% {opacity: 1;}
+    100% {transform: translateX(0);}
 }

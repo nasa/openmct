@@ -82,6 +82,7 @@ define([
     '../platform/exporters/bundle',
     '../platform/features/clock/bundle',
     '../platform/features/my-items/bundle',
+    '../platform/features/my-other-items/bundle',
     '../platform/features/hyperlink/bundle',
     '../platform/features/static-markup/bundle',
     '../platform/features/timeline/bundle',

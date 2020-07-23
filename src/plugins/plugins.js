@@ -54,7 +54,8 @@ define([
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
-    './newFolderAction/plugin'
+    './newFolderAction/plugin',
+    './defaultRootName/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -89,11 +90,13 @@ define([
     Snow,
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
-    NewFolderAction
+    NewFolderAction,
+    DefaultRootName
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
+        MyOtherItems: 'platform/features/my-other-items',
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
@@ -201,6 +204,7 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.DefaultRootName = DefaultRootName.default;
 
     return plugins;
 });
