@@ -239,11 +239,11 @@
                 <select
                     ng-if="xKeyOptions.length > 1 && series.length === 1"
                     ng-model="xAxisKey"
-                    ng-change="plot.toggleXAxisKey(xAxisKey, xKeyOptions, series[0])"
+                    ng-change="plot.toggleXAxisKey(xAxisKey, xKeyOptions)"
                     class="gl-plot-x-label__select local-controls--hidden"
                 >
                     <option
-                        ng-repeat="option in xKeyOptions"
+                        ng-repeat="option in xKeyOptions track by option.key"
                         value="{{option.key}}"
                         ng-selected="option.key === xAxisKey"
                     >

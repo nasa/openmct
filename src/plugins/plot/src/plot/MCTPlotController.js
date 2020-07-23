@@ -52,6 +52,7 @@ define([
 
             this.$scope.plotHistory = this.plotHistory = [];
             this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
+            this.listenTo(this.config.xAxis, 'change:key', this.onChangeXAxisKey, this);
 
             this.initialize();
         }
@@ -96,7 +97,6 @@ define([
         this.$scope.series = this.config.series.models;
         this.$scope.legend = this.config.legend;
 
-        this.$scope.xAxisKey = this.config.xAxis.get('key');
         this.$scope.yAxisLabel = this.config.yAxis.get('label');
 
         this.cursorGuideVertical = this.$element[0].querySelector('.js-cursor-guide--v');
@@ -117,6 +117,8 @@ define([
     };
 
     MCTPlotController.prototype.setUpXAxisOptions = function () {
+        const xAxisKey = this.config.xAxis.get('key');
+
         if (this.$scope.series.length === 1) {
             let metadata = this.$scope.series[0].metadata;
 
@@ -128,8 +130,11 @@ define([
                         key: o.key
                     };
                 });
-        } else {
-            this.$scope.xKeyOptions = undefined;
+
+            const xAxisOption = this.$scope.xKeyOptions.find(
+                option => { return option.key === xAxisKey; }
+            );
+            this.$scope.xAxisKey = xAxisOption.key;
         }
     };
 
@@ -562,13 +567,15 @@ define([
         this.cursorGuide = !this.cursorGuide;
     };
 
-    MCTPlotController.prototype.toggleXAxisKey = function (key, options, series) {
+    MCTPlotController.prototype.onChangeXAxisKey = function (key) {
+        this.$scope.xAxisKey = key;
+    };
+
+    MCTPlotController.prototype.toggleXAxisKey = function (key, options) {
         let xAxisObject = options.find(o => o.key === key);
 
         if (xAxisObject) {
             this.config.xAxis.set('key', key);
-            this.config.xAxis.set('label', xAxisObject.name);
-            this.$scope.xAxisKey = key;
         }
     };
 

@@ -130,10 +130,6 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
-        this.listenTo(series, 'change:xKey', function () {
-            this.loadSeriesData(series);
-        }, this);
-
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this);
@@ -166,6 +162,7 @@ define([
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
         this.config.xAxis.set('key', timeSystem.key);
+        this.config.xAxis.emit('resetSeries');
     };
 
     PlotController.prototype.destroy = function () {
