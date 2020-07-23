@@ -424,10 +424,7 @@ export default {
             this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
-            let nodes;
-            console.log('jump path', this.jumpPath);
-                nodes = this.jumpPath.split('/');
-            console.log('jumpToPath', {nodes, saveExpandedPath});
+            let nodes = this.jumpPath.split('/');
             for(let i = 0; i < nodes.length; i++) {
                 let currentNode = await this.openmct.objects.get(nodes[i]);
                 let newParent = this.buildTreeItem(currentNode);
@@ -546,7 +543,6 @@ export default {
         currentlyViewedObjectId() {
             let currentPath = this.openmct.router.currentLocation.path;
             if (currentPath) {
-                console.log('currentPath', currentPath);
                 currentPath = currentPath.split(ROOT_PATH)[1];
                 return currentPath.split('/').pop();
             }
