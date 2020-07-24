@@ -20,12 +20,21 @@ export default {
             default: () => {
                 return [];
             }
+        },
+        fontSize: {
+            type: String,
+            default: ''
         }
     },
     watch: {
         object(newObject, oldObject) {
             this.currentObject = newObject;
             this.debounceUpdateView();
+        },
+        fontSize(newSize, oldSize) {
+            if (newSize !== oldSize) {
+                this.setFontSize(newSize);
+            }
         }
     },
     destroyed() {
@@ -63,8 +72,8 @@ export default {
         if (this.currentObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
+            this.setFontSize(this.fontSize);
         }
-
     },
     methods: {
         clear() {
@@ -305,6 +314,11 @@ export default {
                 parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
+        },
+        setFontSize(newSize) {
+            let firstChild = this.$el.querySelector(':first-child');
+                console.log(firstChild.classList);
+                firstChild.style.fontSize = newSize;
         }
     }
 }

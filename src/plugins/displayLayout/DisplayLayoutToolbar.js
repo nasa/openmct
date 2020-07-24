@@ -124,7 +124,87 @@ define(['lodash'], function (_) {
                         'telemetry.plot.overlay-multi': [
                             VIEW_TYPES['telemetry.plot.stacked']
                         ]
-                    };
+                    },
+                    SMALL_FONT_SIZES = [
+                        {
+                            name: '8px',
+                            value: 'is-font-size--8'
+                        },
+                        {
+                            name: '9px',
+                            value: 'is-font-size--9'
+                        },
+                        {
+                            name: '10px',
+                            value: 'is-font-size--10'
+                        },
+                        {
+                            name: '11px',
+                            value: 'is-font-size--11'
+                        },
+                        {
+                            name: '12px',
+                            value: 'is-font-size--12'
+                        },
+                        {
+                            name: '13px',
+                            value: 'is-font-size--13'
+                        },
+                        {
+                            name: '14px',
+                            value: 'is-font-size--14'
+                        },
+                        {
+                            name: '16px',
+                            value: 'is-font-size--16'
+                        },
+                        {
+                            name: '18px',
+                            value: 'is-font-size--18'
+                        },
+                        {
+                            name: '20px',
+                            value: 'is-font-size--20'
+                        },
+                        {
+                            name: '24px',
+                            value: 'is-font-size--24'
+                        }
+                    ],
+                    LARGE_FONT_SIZES = [
+                        {
+                            name: '28px',
+                            value: 'is-font-size--28'
+                        },
+                        {
+                            name: '32px',
+                            value: 'is-font-size--32'
+                        },
+                        {
+                            name: '36px',
+                            value: 'is-font-size--36'
+                        },
+                        {
+                            name: '42px',
+                            value: 'is-font-size--42'
+                        },
+                        {
+                            name: '48px',
+                            value: 'is-font-size--48'
+                        },
+                        {
+                            name: '72px',
+                            value: 'is-font-size--72'
+                        },
+                        {
+                            name: '96px',
+                            value: 'is-font-size--96'
+                        },
+                        {
+                            name: '128px',
+                            value: 'is-font-size--128'
+                        }
+                    ]
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -378,6 +458,53 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getAvailableFontSizeOptions(selection) {
+                    let sizeOptions = 'big';
+
+                    selection.forEach(selectable => {
+                        if (selectable[0].context.item) {
+                            if (selectable[0].context.item.type.includes('plot') ||
+                            selectable[0].context.item.type.includes('table')) {
+                                sizeOptions = 'small';
+                            }
+                        }
+                    });
+
+                    if (sizeOptions === 'small') {
+                        return SMALL_FONT_SIZES;
+                    } else {
+                        return SMALL_FONT_SIZES.concat(LARGE_FONT_SIZES);
+                    }
+                }
+
+                function getFontSizeMenu(selectedParent, selection) {
+                    return {
+                        control: 'select-menu',
+                        domainObject: selectedParent,
+                        applicableSelectedItems: selection.filter(selectionPath => {
+                            let type = selectionPath[0].context.layoutItem.type;
+
+                            if (type !== 'line-view' || type !== 'box-view') {
+                                return false;
+                            } else if (type === 'subobject-view') {
+                                let objectType = selectionPath[0].context.item.type;
+
+                                if (objectType === 'layout' ||
+                                objectType === 'flexible-layout' ||
+                                objectType === 'tabs') {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }),
+                        property: (selectionPath) => {
+                            return getPath(selectionPath).fontsize
+                        },
+                        title: "Set font size",
+                        options: getAvailableFontSizeOptions(selection)
+                    }
+                }
+
                 function getTextSizeMenu(selectedParent, selection) {
                     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
                     return {
@@ -624,7 +751,7 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
+                                getFontSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {

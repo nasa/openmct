@@ -84,6 +84,9 @@ export default {
             return this.item.type === 'subobject-view' || this.item.type === 'telemetry-view';
         }
     },
+    mounted() {
+        console.log(this.item);
+    },
     methods: {
         updatePosition(event) {
             let currentPosition = [event.pageX, event.pageY];

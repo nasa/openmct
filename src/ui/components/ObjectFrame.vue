@@ -66,6 +66,7 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
+        :fontSize="fontSize"
     />
 </div>
 </template>
@@ -103,6 +104,10 @@ export default {
         showEditView: {
             type: Boolean,
             default: true
+        },
+        fontSize: {
+            type: String,
+            default: ''
         }
     },
     data() {

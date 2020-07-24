@@ -31,11 +31,11 @@
     <object-frame
         v-if="domainObject"
         ref="objectFrame"
-        :style="style"
         :domain-object="domainObject"
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
+        :fontSize="item.size"
     />
 </layout-frame>
 </template>
@@ -108,15 +108,6 @@ export default {
         return {
             domainObject: undefined,
             currentObjectPath: []
-        }
-    },
-    computed: {
-        style() {
-            let fontSize = this.item.size
-
-            return {
-                fontSize
-            }
         }
     },
     watch: {
