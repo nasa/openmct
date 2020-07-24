@@ -228,7 +228,7 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
+                    let parsedTimestamp = this.timeFormat.parse(datum),
                         bounds = this.openmct.time.bounds();
 
                     if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
