@@ -1,11 +1,13 @@
 <template>
-<div class="l-browse-bar">
+<div class="c-preview-header l-browse-bar">
     <div class="l-browse-bar__start">
         <div
-            class="l-browse-bar__object-name--w"
-            :class="type.cssClass"
+            class="l-browse-bar__object-name--w c-object-label"
         >
-            <span class="l-browse-bar__object-name">
+            <div class="c-object-label__type-icon"
+                 :class="type.cssClass"
+            ></div>
+            <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}
             </span>
             <context-menu-drop-down :object-path="objectPath" />
