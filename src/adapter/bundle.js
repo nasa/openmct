@@ -84,21 +84,6 @@ define([
                         ]
                     }
                 ],
-/**
-                "components": [
-                    {
-                        "provides": "persistenceService",
-                        "type": "provider",
-                        "implementation": CouchPersistenceProvider,
-                        "depends": [
-                            "$http",
-                            "$q",
-                            "PERSISTENCE_SPACE",
-                            "COUCHDB_PATH"
-                        ]
-                    }
-                ],
- */
                 components: [
                     {
                         type: "decorator",
