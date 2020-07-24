@@ -54,6 +54,16 @@
                 width: 100%;
             }
         }
+
+        &__filter {
+            .c-table__search {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .is-in-small-container & {
+                display: none;
+            }
+        }
     }
 
     &__headers__label {
@@ -86,6 +96,10 @@
         height: 0; // Fixes Chrome 73 overflow bug
         overflow-x: auto;
         overflow-y: scroll;
+
+        .is-editing & {
+            pointer-events: none;
+        }
     }
 
     /******************************* TABLES */
@@ -138,7 +152,7 @@
     }
 }
 
-/******************************* EDITING */
+/******************************* SPECIFIC CASE WRAPPERS */
 .is-editing {
     .c-telemetry-table__headers__labels {
         th[draggable],
@@ -158,8 +172,10 @@
     }
 }
 
-.paused {
-    border: 1px solid #ff9900;
+.is-paused {
+    .c-table__body-w {
+        border: 1px solid rgba($colorPausedBg, 0.8);
+    }
 }
 
 /******************************* LEGACY */
