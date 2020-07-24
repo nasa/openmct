@@ -65,8 +65,25 @@ export default {
         return {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
-            compositions: [],
-            hasUnits: false
+            compositions: []
+        }
+    },
+    computed: {
+        hasUnits() {
+            for(let telemetryObject in this.secondaryTelemetryObjects) {
+                if(this.secondaryTelemetryObjects[telemetryObject]) {
+                    let objects = this.secondaryTelemetryObjects[telemetryObject];
+                    for(let current of objects) {
+                        let metadata = this.openmct.telemetry.getMetadata(current.domainObject);
+                        for(let metadatum of metadata.valueMetadatas) {
+                            if(metadatum.unit) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
     },
     mounted() {
@@ -111,7 +128,6 @@ export default {
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
             this.primaryTelemetryObjects.splice(index,1);
             primary = undefined;
-            this.checkForUnits();
         },
         reorderPrimary(reorderPlan) {
             let oldComposition = this.primaryTelemetryObjects.slice();
@@ -129,9 +145,6 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-                if(!this.hasUnits) {
-                    this.checkForUnits(domainObject);
-                }
             }
         },
         removeSecondary(primary) {
@@ -142,9 +155,6 @@ export default {
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-                if(this.hasUnits) {
-                    this.checkForUnits();
-                }
             }
         },
         checkForUnits() {

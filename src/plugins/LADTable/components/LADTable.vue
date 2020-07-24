@@ -85,13 +85,11 @@ export default {
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             this.items.push(item);
-            // this.checkForUnits();
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
 
             this.items.splice(index, 1);
-            // this.checkForUnits();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
