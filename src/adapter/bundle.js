@@ -35,7 +35,8 @@ define([
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews',
     './policies/LegacyCompositionPolicyAdapter',
-    './actions/LegacyActionAdapter'
+    './actions/LegacyActionAdapter',
+    './services/LegacyPersistenceAdapter'
 ], function (
     ActionDialogDecorator,
     AdapterCapability,
@@ -51,7 +52,8 @@ define([
     LegacyObjectAPIInterceptor,
     installLegacyViews,
     legacyCompositionPolicyAdapter,
-    LegacyActionAdapter
+    LegacyActionAdapter,
+    LegacyPersistenceAdapter
 ) {
     return {
         name: 'src/adapter',
@@ -82,6 +84,21 @@ define([
                         ]
                     }
                 ],
+/**
+                "components": [
+                    {
+                        "provides": "persistenceService",
+                        "type": "provider",
+                        "implementation": CouchPersistenceProvider,
+                        "depends": [
+                            "$http",
+                            "$q",
+                            "PERSISTENCE_SPACE",
+                            "COUCHDB_PATH"
+                        ]
+                    }
+                ],
+ */
                 components: [
                     {
                         type: "decorator",
@@ -114,6 +131,13 @@ define([
                             "instantiate",
                             "topic"
                         ]
+                    },
+                    {
+                        provides: "persistenceService",
+                        type: "provider",
+                        priority: "fallback",
+                        implementation: LegacyPersistenceAdapter.default,
+                        depends: ["openmct"]
                     }
                 ],
                 policies: [
