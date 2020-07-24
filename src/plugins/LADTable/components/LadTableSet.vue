@@ -156,23 +156,6 @@ export default {
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
-        },
-        checkForUnits() {
-            for(let telemetryObject in this.secondaryTelemetryObjects) {
-                if(this.secondaryTelemetryObjects[telemetryObject]) {
-                    let objects = this.secondaryTelemetryObjects[telemetryObject];
-                    for(let current of objects) {
-                        let metadata = this.openmct.telemetry.getMetadata(current.domainObject);
-                        for(let metadatum of metadata.valueMetadatas) {
-                            if(metadatum.unit) {
-                                this.hasUnits = true;
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            this.hasUnits = false;
         }
     }
 }
