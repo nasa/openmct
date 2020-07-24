@@ -4,12 +4,6 @@ function LegacyPersistenceProvider(openmct) {
     this.openmct = openmct;
 }
 
-/*createObject: false,
-readObject: undefined,
-listObjects: [],
-updateObject: false,
-deleteObject: false */
-
 LegacyPersistenceProvider.prototype.listObjects = function () {
     return Promise.resolve([]);
 }
