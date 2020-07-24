@@ -54,7 +54,8 @@ define([
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
-    './newFolderAction/plugin'
+    './newFolderAction/plugin',
+    './persistence/couch/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -89,12 +90,13 @@ define([
     Snow,
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
-    NewFolderAction
+    NewFolderAction,
+    CouchDBPlugin
 ) {
     var bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch',
+        //CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -126,27 +128,29 @@ define([
 
     plugins.Conductor = TimeConductorPlugin.default;
 
-    plugins.CouchDB = function (url) {
-        return function (openmct) {
-            if (url) {
-                var bundleName = "config/couch";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "COUCHDB_PATH",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
+    plugins.CouchDB = CouchDBPlugin.default;
 
-            openmct.legacyRegistry.enable(bundleMap.CouchDB);
-        };
-    };
+    // plugins.CouchDB = function (url) {
+    //     return function (openmct) {
+    //         if (url) {
+    //             var bundleName = "config/couch";
+    //             openmct.legacyRegistry.register(bundleName, {
+    //                 "extensions": {
+    //                     "constants": [
+    //                         {
+    //                             "key": "COUCHDB_PATH",
+    //                             "value": url,
+    //                             "priority": "mandatory"
+    //                         }
+    //                     ]
+    //                 }
+    //             });
+    //             openmct.legacyRegistry.enable(bundleName);
+    //         }
+
+    //         openmct.legacyRegistry.enable(bundleMap.CouchDB);
+    //     };
+    // };
 
     plugins.Elasticsearch = function (url) {
         return function (openmct) {

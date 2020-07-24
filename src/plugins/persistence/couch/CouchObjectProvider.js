@@ -1,27 +1,27 @@
 import CouchDocument from "./CouchDocument";
-import * as objectUtils from "@/api/objects/object-utils";
+
 const REV = "_rev";
 const ID = "_id";
 
 export default class CouchObjectProvider {
-    constructor(openmct, config) {
+    constructor(openmct, url, namespace) {
         this.openmct = openmct;
-        this.url = config.couch_db_location;
-        this.path = config.path;
+        this.url = url;
+        this.namespace = namespace;        this.namespace = namespace;        this.namespace = namespace;
         this.revs = {};
     }
 
     request(subPath, method, value) {
         console.log(subPath, method, value);
-        return fetch({
+        return fetch(this.url + '/' + subPath, {
             method: method,
-            url: this.path + '/' + subPath,
             body: value
-        }).then(function (response) {
-            return response.data;
-        }, function () {
-            return undefined;
-        });
+        }).then(response => response.json())
+            .then(function (response) {
+                return response;
+            }, function () {
+                return undefined;
+            });
     }
 
     // Check the response to a create/update/delete request;
@@ -34,23 +34,29 @@ export default class CouchObjectProvider {
         } else {
             return false;
         }
-    };
+    }
 
     getModel(response) {
         if (response && response.model) {
-            this.revs[response[ID]] = response[REV];
-            return response.model;
+            let key = response[ID];
+            this.revs[key] = response[REV];
+            let object = response.model;
+            object.identifier = {
+                namespace: this.namespace,
+                key: key
+            };
+            return object;
         } else {
             return undefined;
         }
     }
 
     get(identifier) {
-        return this.request(identifier, "GET").then(this.getModel.bind(this));
+        return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 
     create(model) {
-        return this.request(model.identifier, "PUT", new CouchDocument(objectUtils.parseKeyString(model.identifier), model)).then(this.checkResponse.bind(this));
+        return this.request(model.identifier, "PUT", new CouchDocument(model.identifier.key, model)).then(this.checkResponse.bind(this));
     }
 
     update(model) {
