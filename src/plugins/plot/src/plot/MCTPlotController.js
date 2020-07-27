@@ -52,7 +52,6 @@ define([
 
             this.$scope.plotHistory = this.plotHistory = [];
             this.listenTo(this.$scope, 'plot:clearHistory', this.clear, this);
-            this.listenTo(this.config.xAxis, 'change:key', this.onChangeXAxisKey, this);
 
             this.initialize();
         }
@@ -109,6 +108,7 @@ define([
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
         this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
+        this.listenTo(this.config.xAxis, 'resetSeries', this.setUpXAxisOptions, this);
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
 
@@ -117,7 +117,6 @@ define([
     };
 
     MCTPlotController.prototype.setUpXAxisOptions = function () {
-        console.log('called');
         const xAxisKey = this.config.xAxis.get('key');
 
         if (this.$scope.series.length === 1) {
@@ -568,29 +567,8 @@ define([
         return this.$scope.xKeyOptions.find(option => option.key === key);
     };
 
-    MCTPlotController.prototype.onChangeXAxisKey = function (key) {
-        if (this.$scope.selectedXKeyOption.key !== key) {
-            this.$scope.selectedXKeyOption = this.getXKeyOption(key);
-        }
-    };
-
     MCTPlotController.prototype.toggleXKeyOption = function () {
         this.config.xAxis.set('key', this.$scope.selectedXKeyOption.key);
-
-        // console.log(this.$scope.selectedXKeyOption);
-        // const oldKey = this.config.xAxis.get('key');
-        // const newKey = option.key;
-
-        // this.$scope.selectedXKeyOption = option;
-        // if (oldKey !== newKey) {
-        //     console.log('set from toggle');
-        //     this.config.xAxis.set('key', newKey);
-        // }
-        // let xAxisObject = options.find(o => o.key === key);
-
-        // if (xAxisObject) {
-        //     this.config.xAxis.set('key', key);
-        // }
     };
 
     MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {
