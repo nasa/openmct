@@ -176,7 +176,7 @@ export default {
                     new_index += arr.length;
                 }
                 if (new_index >= arr.length) {
-                    var k = new_index - arr.length;
+                    let k = new_index - arr.length;
                     while ((k--) + 1) {
                         arr.push(undefined);
                     }

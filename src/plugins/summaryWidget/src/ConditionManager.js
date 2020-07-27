@@ -83,10 +83,10 @@ define ([
      * @return {string} The ID of the rule to display on the widget
      */
     ConditionManager.prototype.executeRules = function (ruleOrder, rules) {
-        var self = this,
-            activeId = ruleOrder[0],
-            rule,
-            conditions;
+        const self = this;
+        let activeId = ruleOrder[0];
+        let rule;
+        let conditions;
 
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
@@ -126,11 +126,11 @@ define ([
      *                   has completed and types have been parsed
      */
     ConditionManager.prototype.parsePropertyTypes = function (object) {
-        var objectId = objectUtils.makeKeyString(object.identifier);
+        const objectId = objectUtils.makeKeyString(object.identifier);
 
         this.telemetryTypesById[objectId] = {};
         Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
-            var type;
+            let type;
             if (valueMetadata.enumerations !== undefined) {
                 type = 'enum';
             } else if (valueMetadata.hints.hasOwnProperty('range')) {
@@ -185,11 +185,11 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionAdd = function (obj) {
-        var compositionKeys,
-            telemetryAPI = this.openmct.telemetry,
-            objId = objectUtils.makeKeyString(obj.identifier),
-            telemetryMetadata,
-            self = this;
+        let compositionKeys;
+        const telemetryAPI = this.openmct.telemetry;
+        const objId = objectUtils.makeKeyString(obj.identifier);
+        let telemetryMetadata;
+        const self = this;
 
         if (telemetryAPI.isTelemetryObject(obj)) {
             self.compositionObjs[objId] = obj;
@@ -239,7 +239,7 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionRemove = function (identifier) {
-        var objectId = objectUtils.makeKeyString(identifier);
+        const objectId = objectUtils.makeKeyString(identifier);
         // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
             return id.key === identifier.key &&
@@ -282,7 +282,7 @@ define ([
      * @return {string} The human-readable name of the domain object
      */
     ConditionManager.prototype.getObjectName = function (id) {
-        var name;
+        let name;
 
         if (this.keywordLabels[id]) {
             name = this.keywordLabels[id];

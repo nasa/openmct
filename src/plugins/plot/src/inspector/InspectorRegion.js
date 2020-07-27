@@ -47,7 +47,7 @@ define(
          * @private
          */
         InspectorRegion.prototype.buildRegion = function () {
-            var metadataRegion = {
+            const metadataRegion = {
                 name: 'metadata',
                 title: 'Metadata Region',
                 // Which modes should the region part be visible in? If

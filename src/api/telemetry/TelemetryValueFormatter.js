@@ -30,7 +30,7 @@ define([
 
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatService) {
-        var numberFormatter = {
+        const numberFormatter = {
             parse: function (x) {
                 return Number(x);
             },
@@ -75,8 +75,8 @@ define([
         }
         // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
-            var baseFormat = this.formatter.format;
-            var formatString = valueMetadata.formatString;
+            const baseFormat = this.formatter.format;
+            const formatString = valueMetadata.formatString;
             this.formatter.format = function (value) {
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };

@@ -48,7 +48,7 @@ define([
      *         disabled.
      *
      */
-    var YAxisModel = Model.extend({
+    const YAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
             this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
@@ -82,7 +82,7 @@ define([
             }
         },
         applyPadding: function (range) {
-            var padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
+            let padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
             if (padding === 0) {
                 padding = 1;
             }
@@ -113,8 +113,8 @@ define([
                 });
                 return;
             }
-            var stats = this.get('stats');
-            var changed = false;
+            const stats = this.get('stats');
+            let changed = false;
             if (stats.min > seriesStats.minValue) {
                 changed = true;
                 stats.min = seriesStats.minValue;
@@ -166,9 +166,9 @@ define([
          * Update yAxis format, values, and label from known series.
          */
         updateFromSeries: function (series) {
-            var plotModel = this.plot.get('domainObject');
-            var label = _.get(plotModel, 'configuration.yAxis.label');
-            var sampleSeries = series.first();
+            const plotModel = this.plot.get('domainObject');
+            const label = _.get(plotModel, 'configuration.yAxis.label');
+            const sampleSeries = series.first();
             if (!sampleSeries) {
                 if (!label) {
                     this.unset('label');
@@ -176,13 +176,13 @@ define([
                 return;
             }
 
-            var yKey = sampleSeries.get('yKey');
-            var yMetadata = sampleSeries.metadata.value(yKey);
-            var yFormat = sampleSeries.formats[yKey];
+            const yKey = sampleSeries.get('yKey');
+            const yMetadata = sampleSeries.metadata.value(yKey);
+            const yFormat = sampleSeries.formats[yKey];
             this.set('format', yFormat.format.bind(yFormat));
             this.set('values', yMetadata.values);
             if (!label) {
-                var labelName = series.map(function (s) {
+                const labelName = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).name;
                 }).reduce(function (a, b) {
                     if (a === undefined) {
@@ -199,7 +199,7 @@ define([
                     return;
                 }
 
-                var labelUnits = series.map(function (s) {
+                const labelUnits = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).units;
                 }).reduce(function (a, b) {
                     if (a === undefined) {

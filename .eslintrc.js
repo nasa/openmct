@@ -120,6 +120,10 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/no-var
+        "no-var": "error",
+        // https://eslint.org/docs/rules/one-var
+        "one-var": ["error", "never"],
 
         "vue/html-indent": [
             "error",
@@ -172,7 +176,8 @@ module.exports = {
             "rules": {
                 // https://eslint.org/docs/rules/no-nested-ternary
                 "no-nested-ternary": "off",
-                "no-var": "off"
+                "no-var": "off",
+                "one-var": "off"
             }
         }
     ]

@@ -31,7 +31,7 @@ export default {
     },
     methods: {
         add(child, index, anything) {
-            var type = this.openmct.types.get(child.type) || unknownObjectType;
+            const type = this.openmct.types.get(child.type) || unknownObjectType;
             this.items.push({
                 model: child,
                 type: type.definition,

@@ -91,7 +91,7 @@ define([
 
     Collection.prototype.add = function (model) {
         model = this.modelFn(model);
-        var index = this.models.length;
+        const index = this.models.length;
         this.models.push(model);
         this.emit('add', model, index);
     };
@@ -107,7 +107,7 @@ define([
     };
 
     Collection.prototype.remove = function (model) {
-        var index = this.indexOf(model);
+        const index = this.indexOf(model);
 
         if (index === -1) {
             throw new Error('model not found in collection.');

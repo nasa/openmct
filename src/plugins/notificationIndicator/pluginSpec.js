@@ -28,12 +28,12 @@ import {
 } from 'utils/testing';
 
 describe('the plugin', () => {
-    let notificationIndicatorPlugin,
-        openmct,
-        indicatorObject,
-        indicatorElement,
-        parentElement,
-        mockMessages = ['error', 'test', 'notifications'];
+    let notificationIndicatorPlugin;
+    let openmct;
+    let indicatorObject;
+    let indicatorElement;
+    let parentElement;
+    let mockMessages = ['error', 'test', 'notifications'];
 
     beforeAll(() => {
         resetApplicationState();
@@ -76,5 +76,4 @@ describe('the plugin', () => {
             expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
         });
     });
-
 });

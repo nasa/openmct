@@ -115,7 +115,7 @@ define([
         function hasHints(metadata) {
             return hints.every(hasHint, metadata);
         }
-        var matchingMetadata = this.valueMetadatas.filter(hasHints);
+        const matchingMetadata = this.valueMetadatas.filter(hasHints);
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];

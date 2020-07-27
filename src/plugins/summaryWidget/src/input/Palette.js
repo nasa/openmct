@@ -22,7 +22,7 @@ define([
     function Palette(cssClass, container, items) {
         eventHelpers.extend(this);
 
-        var self = this;
+        const self = this;
 
         this.cssClass = cssClass;
         this.items = items;
@@ -45,7 +45,7 @@ define([
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
-            var itemElement = $('<div class = "c-palette__item ' + item + '"' +
+            const itemElement = $('<div class = "c-palette__item ' + item + '"' +
                                 ' data-item = ' + item + '></div>');
             $('.c-palette__items', self.domElement).append(itemElement);
             self.itemElements[item] = itemElement;
@@ -67,8 +67,8 @@ define([
          * @private
          */
         function handleItemClick(event) {
-            var elem = event.currentTarget,
-                item = elem.dataset.item;
+            const elem = event.currentTarget;
+            const item = elem.dataset.item;
             self.set(item);
             $('.c-menu', self.domElement).hide();
         }
@@ -124,7 +124,7 @@ define([
      * @param {string} item The key of the item to set as selected
      */
     Palette.prototype.set = function (item) {
-        var self = this;
+        const self = this;
         if (this.items.includes(item) || item === this.nullOption) {
             this.value = item;
             if (item === this.nullOption) {

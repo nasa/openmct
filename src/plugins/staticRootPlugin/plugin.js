@@ -9,14 +9,14 @@ define([
      */
     function StaticRootPlugin(namespace, exportUrl) {
 
-        var rootIdentifier = {
+        const rootIdentifier = {
             namespace: namespace,
             key: 'root'
         };
 
-        var cachedProvider;
+        let cachedProvider;
 
-        var loadProvider = function () {
+        const loadProvider = function () {
             return fetch(exportUrl)
                 .then(function (response) {
                     return response.json();
@@ -28,7 +28,7 @@ define([
 
         };
 
-        var getProvider = function () {
+        const getProvider = function () {
             if (!cachedProvider) {
                 cachedProvider = loadProvider();
             }

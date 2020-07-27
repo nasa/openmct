@@ -20,11 +20,11 @@ define([
      * @param {function} changeCallback A change event callback to register with this
      *                                  select on initialization
      */
-    var NULLVALUE = '- Select Comparison -';
+    const NULLVALUE = '- Select Comparison -';
 
     function OperationSelect(config, keySelect, manager, changeCallback) {
         eventHelpers.extend(this);
-        var self = this;
+        const self = this;
 
         this.config = config;
         this.keySelect = keySelect;
@@ -49,7 +49,7 @@ define([
          * @private
          */
         function onKeyChange(key) {
-            var selected = self.config.operation;
+            const selected = self.config.operation;
             if (self.manager.metadataLoadCompleted()) {
                 self.loadOptions(key);
                 self.generateOptions();
@@ -84,10 +84,10 @@ define([
      * Populate this select with options based on its current composition
      */
     OperationSelect.prototype.generateOptions = function () {
-        var self = this,
-            items = this.operationKeys.map(function (operation) {
-                return [operation, self.evaluator.getOperationText(operation)];
-            });
+        const self = this;
+        const items = this.operationKeys.map(function (operation) {
+            return [operation, self.evaluator.getOperationText(operation)];
+        });
         items.splice(0, 0, ['', NULLVALUE]);
         this.select.setOptions(items);
 
@@ -104,9 +104,9 @@ define([
      * @param {string} key The telemetry property to load operations for
      */
     OperationSelect.prototype.loadOptions = function (key) {
-        var self = this,
-            operations = self.evaluator.getOperationKeys(),
-            type;
+        const self = this;
+        const operations = self.evaluator.getOperationKeys();
+        let type;
 
         type = self.manager.getTelemetryPropertyType(self.config.object, key);
 

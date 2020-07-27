@@ -21,7 +21,7 @@ define([
      */
     function TestDataManager(domainObject, conditionManager, openmct) {
         eventHelpers.extend(this);
-        var self = this;
+        const self = this;
 
         this.domainObject = domainObject;
         this.manager = conditionManager;
@@ -43,7 +43,7 @@ define([
          * @private
          */
         function toggleTestData(event) {
-            var elem = event.target;
+            const elem = event.target;
             self.evaluator.useTestData(elem.checked);
             self.updateTestCache();
         }
@@ -73,13 +73,13 @@ define([
      *                          this rule from, optional
      */
     TestDataManager.prototype.initItem = function (config) {
-        var sourceIndex = config && config.index,
-            defaultItem = {
-                object: '',
-                key: '',
-                value: ''
-            },
-            newItem;
+        const sourceIndex = config && config.index;
+        const defaultItem = {
+            object: '',
+            key: '',
+            value: ''
+        };
+        let newItem;
 
         newItem = (config !== undefined ? config.sourceItem : defaultItem);
         if (sourceIndex !== undefined) {
@@ -130,7 +130,7 @@ define([
      * update the view accordingly
      */
     TestDataManager.prototype.refreshItems = function () {
-        var self = this;
+        const self = this;
         if (this.items) {
             this.items.forEach(function (item) {
                 this.stopListening(item);
@@ -141,7 +141,7 @@ define([
         $('.t-test-data-item', this.domElement).remove();
 
         this.config.forEach(function (item, index) {
-            var newItem = new TestDataItem(item, index, self.manager);
+            const newItem = new TestDataItem(item, index, self.manager);
             self.listenTo(newItem, 'remove', self.removeItem, self);
             self.listenTo(newItem, 'duplicate', self.initItem, self);
             self.listenTo(newItem, 'change', self.onItemChange, self);
@@ -165,10 +165,10 @@ define([
      * as expected by a {ConditionEvaluator}
      */
     TestDataManager.prototype.generateTestCache = function () {
-        var testCache = this.testCache,
-            manager = this.manager,
-            compositionObjs = manager.getComposition(),
-            metadata;
+        let testCache = this.testCache;
+        const manager = this.manager;
+        const compositionObjs = manager.getComposition();
+        let metadata;
 
         testCache = {};
         Object.keys(compositionObjs).forEach(function (id) {

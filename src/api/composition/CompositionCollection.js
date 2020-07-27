@@ -122,7 +122,7 @@ define([
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        var index = this.listeners[event].findIndex(l => {
+        const index = this.listeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
         });
 

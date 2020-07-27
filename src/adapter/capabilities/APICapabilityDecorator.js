@@ -43,7 +43,7 @@ define([
         model,
         id
     ) {
-        var capabilities = this.capabilityService.getCapabilities(model, id);
+        const capabilities = this.capabilityService.getCapabilities(model, id);
         if (capabilities.mutation) {
             capabilities.mutation =
                 synchronizeMutationCapability(capabilities.mutation);

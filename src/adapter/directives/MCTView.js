@@ -27,9 +27,9 @@ define([
         return {
             restrict: 'E',
             link: function (scope, element, attrs) {
-                var provider = openmct.objectViews.getByProviderKey(attrs.mctProviderKey);
-                var view = new provider.view(scope.domainObject.useCapability('adapter'));
-                var domElement = element[0];
+                const provider = openmct.objectViews.getByProviderKey(attrs.mctProviderKey);
+                const view = new provider.view(scope.domainObject.useCapability('adapter'));
+                const domElement = element[0];
 
                 view.show(domElement);
 

@@ -32,31 +32,31 @@ define([
 
     function dynamicPathForKey(key) {
         return function (object, model) {
-            var modelIdentifier = model.get('identifier');
-            var index = object.configuration.series.findIndex(s => {
+            const modelIdentifier = model.get('identifier');
+            const index = object.configuration.series.findIndex(s => {
                 return _.isEqual(s.identifier, modelIdentifier);
             });
             return 'configuration.series[' + index + '].' + key;
         };
     }
 
-    var PlotSeriesFormController = PlotModelFormController.extend({
+    const PlotSeriesFormController = PlotModelFormController.extend({
 
         /**
          * Set the color for the current plot series.  If the new color was
          * already assigned to a different plot series, then swap the colors.
          */
         setColor: function (color) {
-            var oldColor = this.model.get('color');
-            var otherSeriesWithColor = this.model.collection.filter(function (s) {
+            const oldColor = this.model.get('color');
+            const otherSeriesWithColor = this.model.collection.filter(function (s) {
                 return s.get('color') === color;
             })[0];
 
 
             this.model.set('color', color);
 
-            var getPath = dynamicPathForKey('color');
-            var seriesColorPath = getPath(this.domainObject, this.model);
+            const getPath = dynamicPathForKey('color');
+            const seriesColorPath = getPath(this.domainObject, this.model);
 
             this.openmct.objects.mutate(
                 this.domainObject,
@@ -67,7 +67,7 @@ define([
             if (otherSeriesWithColor) {
                 otherSeriesWithColor.set('color', oldColor);
 
-                var otherSeriesColorPath = getPath(
+                const otherSeriesColorPath = getPath(
                     this.domainObject,
                     otherSeriesWithColor
                 );
@@ -86,7 +86,7 @@ define([
         initialize: function () {
             this.$scope.setColor = this.setColor.bind(this);
 
-            var metadata = this.model.metadata;
+            const metadata = this.model.metadata;
             this.$scope.yKeyOptions = metadata
                 .valuesForHints(['range'])
                 .map(function (o) {

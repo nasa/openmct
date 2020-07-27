@@ -69,11 +69,11 @@ define([
     };
 
     MCTChartSeriesElement.prototype.removeSegments = function (index, count) {
-        var target = index,
-            start = index + count,
-            end = this.count * 2;
+        const target = index;
+        const start = index + count;
+        const end = this.count * 2;
         this.buffer.copyWithin(target, start, end);
-        for (var zero = end - count; zero < end; zero++) {
+        for (let zero = end - count; zero < end; zero++) {
             this.buffer[zero] = 0;
         }
     };
@@ -83,8 +83,8 @@ define([
     };
 
     MCTChartSeriesElement.prototype.remove = function (point, index, series) {
-        var vertexCount = this.vertexCountForPointAtIndex(index);
-        var removalPoint = this.startIndexForPointAtIndex(index);
+        const vertexCount = this.vertexCountForPointAtIndex(index);
+        const removalPoint = this.startIndexForPointAtIndex(index);
 
         this.removeSegments(removalPoint, vertexCount);
 
@@ -107,8 +107,8 @@ define([
     };
 
     MCTChartSeriesElement.prototype.append = function (point, index, series) {
-        var pointsRequired = this.vertexCountForPointAtIndex(index);
-        var insertionPoint = this.startIndexForPointAtIndex(index);
+        const pointsRequired = this.vertexCountForPointAtIndex(index);
+        const insertionPoint = this.startIndexForPointAtIndex(index);
         this.growIfNeeded(pointsRequired);
         this.makeInsertionPoint(insertionPoint, pointsRequired);
         this.addPoint(
@@ -125,8 +125,8 @@ define([
                 this.buffer = Array.prototype.slice.apply(this.buffer);
                 this.isTempBuffer = true;
             }
-            var target = insertionPoint + pointsRequired,
-                start = insertionPoint;
+            const target = insertionPoint + pointsRequired;
+            let start = insertionPoint;
             for (; start < target; start++) {
                 this.buffer.splice(start, 0, 0);
             }
@@ -144,8 +144,8 @@ define([
     };
 
     MCTChartSeriesElement.prototype.growIfNeeded = function (pointsRequired) {
-        var remainingPoints = this.buffer.length - this.count * 2;
-        var temp;
+        const remainingPoints = this.buffer.length - this.count * 2;
+        let temp;
 
         if (remainingPoints <= pointsRequired) {
             temp = new Float32Array(this.buffer.length + 20000);

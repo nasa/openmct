@@ -258,12 +258,12 @@ define([], function () {
      * @return {boolean} The boolean value of the conditions
      */
     ConditionEvaluator.prototype.execute = function (conditions, mode) {
-        var active = false,
-            conditionValue,
-            conditionDefined = false,
-            self = this,
-            firstRuleEvaluated = false,
-            compositionObjs = this.compositionObjs;
+        let active = false;
+        let conditionValue;
+        let conditionDefined = false;
+        const self = this;
+        let firstRuleEvaluated = false;
+        const compositionObjs = this.compositionObjs;
 
         if (mode === 'js') {
             active = this.executeJavaScriptCondition(conditions);
@@ -327,11 +327,11 @@ define([], function () {
      * @return {boolean} The value of this condition
      */
     ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
-        var cache = (this.useTestCache ? this.testCache : this.subscriptionCache),
-            telemetryValue,
-            op,
-            input,
-            validator;
+        const cache = (this.useTestCache ? this.testCache : this.subscriptionCache);
+        let telemetryValue;
+        let op;
+        let input;
+        let validator;
 
         if (cache[object] && typeof cache[object][key] !== 'undefined') {
             let value = cache[object][key];
@@ -360,7 +360,7 @@ define([], function () {
      * @returns {boolean}
      */
     ConditionEvaluator.prototype.validateNumberInput = function (input) {
-        var valid = true;
+        let valid = true;
         input.forEach(function (value) {
             valid = valid && (typeof value === 'number');
         });
@@ -374,7 +374,7 @@ define([], function () {
      * @returns {boolean}
      */
     ConditionEvaluator.prototype.validateStringInput = function (input) {
-        var valid = true;
+        let valid = true;
         input.forEach(function (value) {
             valid = valid && (typeof value === 'string');
         });
@@ -438,7 +438,7 @@ define([], function () {
      * @return {string} The key for an HTML5 input type
      */
     ConditionEvaluator.prototype.getInputType = function (key) {
-        var type;
+        let type;
         if (this.operations[key]) {
             type = this.operations[key].appliesTo[0];
         }

@@ -7,10 +7,10 @@ define([
 ) {
 
     describe('The Composition API', function () {
-        var publicAPI;
-        var compositionAPI;
-        var topicService;
-        var mutationTopic;
+        let publicAPI;
+        let compositionAPI;
+        let topicService;
+        let mutationTopic;
 
         beforeEach(function () {
 
@@ -54,8 +54,8 @@ define([
         });
 
         describe('default composition', function () {
-            var domainObject;
-            var composition;
+            let domainObject;
+            let composition;
 
             beforeEach(function () {
                 domainObject = {
@@ -88,7 +88,7 @@ define([
             });
 
             it('loads composition from domain object', function () {
-                var listener = jasmine.createSpy('addListener');
+                const listener = jasmine.createSpy('addListener');
                 composition.on('add', listener);
 
                 return composition.load().then(function () {
@@ -99,7 +99,7 @@ define([
                 });
             });
             describe('supports reordering of composition', function () {
-                var listener;
+                let listener;
                 beforeEach(function () {
                     listener = jasmine.createSpy('reorderListener');
                     composition.on('reorder', listener);
@@ -145,9 +145,9 @@ define([
         });
 
         describe('static custom composition', function () {
-            var customProvider;
-            var domainObject;
-            var composition;
+            let customProvider;
+            let domainObject;
+            let composition;
 
             beforeEach(function () {
                 // A simple custom provider, returns the same composition for
@@ -179,12 +179,12 @@ define([
             });
 
             it('supports listening and loading', function () {
-                var addListener = jasmine.createSpy('addListener');
+                const addListener = jasmine.createSpy('addListener');
                 composition.on('add', addListener);
 
                 return composition.load().then(function (children) {
-                    var listenObject;
-                    var loadedObject = children[0];
+                    let listenObject;
+                    const loadedObject = children[0];
 
                     expect(addListener).toHaveBeenCalled();
 
@@ -217,9 +217,9 @@ define([
         });
 
         describe('dynamic custom composition', function () {
-            var customProvider;
-            var domainObject;
-            var composition;
+            let customProvider;
+            let domainObject;
+            let composition;
 
             beforeEach(function () {
                 // A dynamic provider, loads an empty composition and exposes
@@ -246,12 +246,12 @@ define([
             });
 
             it('supports listening and loading', function () {
-                var addListener = jasmine.createSpy('addListener');
-                var removeListener = jasmine.createSpy('removeListener');
-                var addPromise = new Promise(function (resolve) {
+                const addListener = jasmine.createSpy('addListener');
+                const removeListener = jasmine.createSpy('removeListener');
+                const addPromise = new Promise(function (resolve) {
                     addListener.and.callFake(resolve);
                 });
-                var removePromise = new Promise(function (resolve) {
+                const removePromise = new Promise(function (resolve) {
                     removeListener.and.callFake(resolve);
                 });
 
@@ -270,8 +270,8 @@ define([
                     jasmine.any(Function),
                     jasmine.any(CompositionCollection)
                 );
-                var add = customProvider.on.calls.all()[0].args[2];
-                var remove = customProvider.on.calls.all()[1].args[2];
+                const add = customProvider.on.calls.all()[0].args[2];
+                const remove = customProvider.on.calls.all()[1].args[2];
 
                 return composition.load()
                     .then(function () {

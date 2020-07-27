@@ -27,14 +27,14 @@ define([
     MeanTelemetryProvider,
     MockTelemetryApi
 ) {
-    var RANGE_KEY = 'value';
+    const RANGE_KEY = 'value';
 
     describe("The Mean Telemetry Provider", function () {
-        var mockApi;
-        var meanTelemetryProvider;
-        var mockDomainObject;
-        var associatedObject;
-        var allPromises;
+        let mockApi;
+        let meanTelemetryProvider;
+        let mockDomainObject;
+        let associatedObject;
+        let allPromises;
 
         beforeEach(function () {
             allPromises = [];
@@ -45,15 +45,15 @@ define([
         });
 
         it("supports telemetry-mean objects only", function () {
-            var mockTelemetryMeanObject = mockObjectWithType('telemetry-mean');
-            var mockOtherObject = mockObjectWithType('other');
+            const mockTelemetryMeanObject = mockObjectWithType('telemetry-mean');
+            const mockOtherObject = mockObjectWithType('other');
 
             expect(meanTelemetryProvider.canProvideTelemetry(mockTelemetryMeanObject)).toBe(true);
             expect(meanTelemetryProvider.canProvideTelemetry(mockOtherObject)).toBe(false);
         });
 
         describe("the subscribe function", function () {
-            var subscriptionCallback;
+            let subscriptionCallback;
 
             beforeEach(function () {
                 subscriptionCallback = jasmine.createSpy('subscriptionCallback');
@@ -65,7 +65,7 @@ define([
             });
 
             it("returns a function that unsubscribes from the associated object", function () {
-                var unsubscribe = meanTelemetryProvider.subscribe(mockDomainObject);
+                const unsubscribe = meanTelemetryProvider.subscribe(mockDomainObject);
 
                 return waitForPromises()
                     .then(unsubscribe)
@@ -76,7 +76,7 @@ define([
             });
 
             it("returns an average only when the sample size is reached", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -93,14 +93,14 @@ define([
             });
 
             it("correctly averages a sample of five values", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
                     {'utc': 4, 'defaultRange': 555.2313},
                     {'utc': 5, 'defaultRange': 1.1231}
                 ];
-                var expectedAverages = [{
+                const expectedAverages = [{
                     'utc': 5, 'value': 222.44888
                 }];
 
@@ -113,7 +113,7 @@ define([
             });
 
             it("correctly averages a sample of ten values", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -125,7 +125,7 @@ define([
                     {'utc': 9, 'defaultRange': 89.2111},
                     {'utc': 10, 'defaultRange': 0.543}
                 ];
-                var expectedAverages = [{
+                const expectedAverages = [{
                     'utc': 10, 'value': 451.07815
                 }];
 
@@ -138,7 +138,7 @@ define([
             });
 
             it("only averages values within its sample window", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -150,7 +150,7 @@ define([
                     {'utc': 9, 'defaultRange': 89.2111},
                     {'utc': 10, 'defaultRange': 0.543}
                 ];
-                var expectedAverages = [
+                const expectedAverages = [
                     {'utc': 5, 'value': 222.44888},
                     {'utc': 6, 'value': 662.4482599999999},
                     {'utc': 7, 'value': 704.6078},
@@ -167,7 +167,7 @@ define([
                     .then(expectAveragesForTelemetry.bind(this, expectedAverages));
             });
             describe("given telemetry input with range values", function () {
-                var inputTelemetry;
+                let inputTelemetry;
 
                 beforeEach(function () {
                     inputTelemetry = [{
@@ -178,7 +178,7 @@ define([
                     setSampleSize(1);
                 });
                 it("uses the 'rangeKey' input range, when it is the default, to calculate the average", function () {
-                    var averageTelemetryForRangeKey = [{
+                    const averageTelemetryForRangeKey = [{
                         'utc': 1,
                         'value': 5678
                     }];
@@ -192,7 +192,7 @@ define([
                 });
 
                 it("uses the 'otherKey' input range, when it is the default, to calculate the average", function () {
-                    var averageTelemetryForOtherKey = [{
+                    const averageTelemetryForOtherKey = [{
                         'utc': 1,
                         'value': 9999
                     }];
@@ -206,7 +206,7 @@ define([
                 });
             });
             describe("given telemetry input with range values", function () {
-                var inputTelemetry;
+                let inputTelemetry;
 
                 beforeEach(function () {
                     inputTelemetry = [{
@@ -217,7 +217,7 @@ define([
                     setSampleSize(1);
                 });
                 it("uses the 'rangeKey' input range, when it is the default, to calculate the average", function () {
-                    var averageTelemetryForRangeKey = [{
+                    const averageTelemetryForRangeKey = [{
                         'utc': 1,
                         'value': 5678
                     }];
@@ -231,7 +231,7 @@ define([
                 });
 
                 it("uses the 'otherKey' input range, when it is the default, to calculate the average", function () {
-                    var averageTelemetryForOtherKey = [{
+                    const averageTelemetryForOtherKey = [{
                         'utc': 1,
                         'value': 9999
                     }];
@@ -275,7 +275,7 @@ define([
             });
 
             it("returns an average only when the sample size is reached", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -291,7 +291,7 @@ define([
             });
 
             it("correctly averages a sample of five values", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -309,7 +309,7 @@ define([
             });
 
             it("correctly averages a sample of ten values", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -332,7 +332,7 @@ define([
             });
 
             it("only averages values within its sample window", function () {
-                var inputTelemetry = [
+                const inputTelemetry = [
                     {'utc': 1, 'defaultRange': 123.1231},
                     {'utc': 2, 'defaultRange': 321.3223},
                     {'utc': 3, 'defaultRange': 111.4446},
@@ -355,7 +355,7 @@ define([
             });
 
             function expectAverageToBe(expectedValue, averageData) {
-                var averageDatum = averageData[averageData.length - 1];
+                const averageDatum = averageData[averageData.length - 1];
                 expect(averageDatum[RANGE_KEY]).toBe(expectedValue);
             }
 
@@ -397,7 +397,7 @@ define([
         }
 
         function resolvePromiseWith(value) {
-            var promise = Promise.resolve(value);
+            const promise = Promise.resolve(value);
             allPromises.push(promise);
 
             return promise;

@@ -98,8 +98,8 @@ import AppLogo from './AppLogo.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
-var enterFullScreen = () => {
-    var docElm = document.documentElement;
+let enterFullScreen = () => {
+    let docElm = document.documentElement;
 
     if (docElm.requestFullscreen) {
         docElm.requestFullscreen();
@@ -111,7 +111,7 @@ var enterFullScreen = () => {
         docElm.msRequestFullscreen();
     }
 };
-var exitFullScreen = () => {
+let exitFullScreen = () => {
     if (document.exitFullscreen) {
         document.exitFullscreen();
     }

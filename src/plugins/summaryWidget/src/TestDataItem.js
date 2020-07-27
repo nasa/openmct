@@ -44,7 +44,7 @@ define([
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
 
-        var self = this;
+        const self = this;
 
         /**
          * A change event handler for this item's select inputs, which also invokes
@@ -71,8 +71,9 @@ define([
          * @private
          */
         function onValueInput(event) {
-            var elem = event.target,
-                value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
+            const elem = event.target;
+            const value = (isNaN(elem.valueAsNumber) ? elem.value : elem.valueAsNumber);
+
             if (elem.tagName.toUpperCase() === 'INPUT') {
                 self.eventEmitter.emit('change', {
                     value: value,
@@ -145,7 +146,7 @@ define([
      * remove callbacks
      */
     TestDataItem.prototype.remove = function () {
-        var self = this;
+        const self = this;
         this.eventEmitter.emit('remove', self.index);
         this.stopListening();
 
@@ -159,8 +160,9 @@ define([
      * duplicate callbacks with the cloned configuration as an argument
      */
     TestDataItem.prototype.duplicate = function () {
-        var sourceItem = JSON.parse(JSON.stringify(this.config)),
-            self = this;
+        const sourceItem = JSON.parse(JSON.stringify(this.config));
+        const self = this;
+
         this.eventEmitter.emit('duplicate', {
             sourceItem: sourceItem,
             index: self.index
@@ -173,10 +175,10 @@ define([
      * @param {string} key The key of currently selected telemetry property
      */
     TestDataItem.prototype.generateValueInput = function (key) {
-        var evaluator = this.conditionManager.getEvaluator(),
-            inputArea = $('.t-value-inputs', this.domElement),
-            dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key),
-            inputType = evaluator.getInputTypeById(dataType);
+        const evaluator = this.conditionManager.getEvaluator();
+        const inputArea = $('.t-value-inputs', this.domElement);
+        const dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key);
+        const inputType = evaluator.getInputTypeById(dataType);
 
         inputArea.html('');
         if (inputType) {

@@ -31,7 +31,7 @@ define([
     }
 
     RootRegistry.prototype.getRoots = function () {
-        var promises = this.providers.map(function (provider) {
+        const promises = this.providers.map(function (provider) {
             return provider();
         });
         return Promise.all(promises)

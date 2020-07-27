@@ -57,9 +57,9 @@ define([
         if (isIdentifier(keyString)) {
             return keyString;
         }
-        var namespace = '',
-            key = keyString;
-        for (var i = 0; i < key.length; i++) {
+        let namespace = '';
+        let key = keyString;
+        for (let i = 0; i < key.length; i++) {
             if (key[i] === "\\" && key[i + 1] === ":") {
                 i++; // skip escape character.
             } else if (key[i] === ":") {

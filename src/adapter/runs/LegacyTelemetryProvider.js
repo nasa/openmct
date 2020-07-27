@@ -50,7 +50,7 @@ define([
         LegacyTelemetryProvider.prototype.canProvideTelemetry;
 
     function createDatum(domainObject, metadata, legacySeries, i) {
-        var datum;
+        let datum;
 
         if (legacySeries.getDatum) {
             datum = legacySeries.getDatum(i);
@@ -77,9 +77,9 @@ define([
     }
 
     function adaptSeries(domainObject, metadata, legacySeries) {
-        var series = [];
+        const series = [];
 
-        for (var i = 0; i < legacySeries.getPointCount(); i++) {
+        for (let i = 0; i < legacySeries.getPointCount(); i++) {
             series.push(createDatum(domainObject, metadata, legacySeries, i));
         }
 
@@ -104,9 +104,9 @@ define([
      *          telemetry data.
      */
     LegacyTelemetryProvider.prototype.request = function (domainObject, request) {
-        var metadata = this.telemetryApi.getMetadata(domainObject);
-        var oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
-        var capability = oldObject.getCapability("telemetry");
+        const metadata = this.telemetryApi.getMetadata(domainObject);
+        const oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
+        const capability = oldObject.getCapability("telemetry");
 
         return capability.requestData(request).then(function (telemetrySeries) {
             return Promise.resolve(adaptSeries(domainObject, metadata, telemetrySeries));
@@ -130,9 +130,9 @@ define([
      * @returns {platform|telemetry.TelemetrySubscription|*}
      */
     LegacyTelemetryProvider.prototype.subscribe = function (domainObject, callback, request) {
-        var metadata = this.telemetryApi.getMetadata(domainObject);
-        var oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
-        var capability = oldObject.getCapability("telemetry");
+        const metadata = this.telemetryApi.getMetadata(domainObject);
+        const oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
+        const capability = oldObject.getCapability("telemetry");
 
         function callbackWrapper(series) {
             callback(createDatum(domainObject, metadata, series, series.getPointCount() - 1));
@@ -141,7 +141,7 @@ define([
     };
 
     LegacyTelemetryProvider.prototype.supportsLimits = function (domainObject) {
-        var oldObject = this.instantiate(
+        const oldObject = this.instantiate(
             utils.toOldFormat(domainObject),
             utils.makeKeyString(domainObject.identifier)
         );
@@ -149,11 +149,11 @@ define([
     };
 
     LegacyTelemetryProvider.prototype.getLimitEvaluator = function (domainObject) {
-        var oldObject = this.instantiate(
+        const oldObject = this.instantiate(
             utils.toOldFormat(domainObject),
             utils.makeKeyString(domainObject.identifier)
         );
-        var limitEvaluator = oldObject.getCapability("limit");
+        const limitEvaluator = oldObject.getCapability("limit");
 
         return {
             evaluate: function (datum, property) {
@@ -164,7 +164,7 @@ define([
 
     return function (openmct, instantiate) {
         // Legacy provider should always be the fallback.
-        var provider = new LegacyTelemetryProvider(openmct, instantiate);
+        const provider = new LegacyTelemetryProvider(openmct, instantiate);
         openmct.telemetry.legacyProvider = provider;
         openmct.telemetry.requestProviders.push(provider);
         openmct.telemetry.subscriptionProviders.push(provider);

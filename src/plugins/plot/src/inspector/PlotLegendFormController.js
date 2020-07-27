@@ -26,7 +26,7 @@ define([
     PlotModelFormController
 ) {
 
-    var PlotLegendFormController = PlotModelFormController.extend({
+    const PlotLegendFormController = PlotModelFormController.extend({
         fields: [
             {
                 modelProp: 'position',

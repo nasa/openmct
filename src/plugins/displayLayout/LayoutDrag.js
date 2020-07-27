@@ -96,7 +96,7 @@ define(
          *        original position, in pixels
          */
         LayoutDrag.prototype.getAdjustedPositionAndDimensions = function (pixelDelta) {
-            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+            const gridDelta = toGridDelta(this.gridSize, pixelDelta);
             return {
                 position: max(add(
                     this.rawPosition.position,
@@ -110,7 +110,7 @@ define(
         };
 
         LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
-            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+            const gridDelta = toGridDelta(this.gridSize, pixelDelta);
             return {
                 position: max(add(
                     this.rawPosition.position,

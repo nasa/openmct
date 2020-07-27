@@ -29,9 +29,10 @@ define([
 
     function extend(props) {
         /*jshint validthis: true*/
-        var parent = this,
-            child,
-            Surrogate;
+        const parent = this;
+
+        let child;
+        let Surrogate;
 
         if (props && props.hasOwnProperty('constructor')) {
             child = props.constructor;

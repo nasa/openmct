@@ -21,7 +21,7 @@ define([
 ) {
 
     //default css configuration for new rules
-    var DEFAULT_PROPS = {
+    const DEFAULT_PROPS = {
         'color': '#cccccc',
         'background-color': '#666666',
         'border-color': 'rgba(0,0,0,0)'
@@ -78,8 +78,8 @@ define([
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
-        var id = objectUtils.makeKeyString(this.domainObject.identifier),
-            self = this;
+        const id = objectUtils.makeKeyString(this.domainObject.identifier);
+        const self = this;
 
         /**
          * Toggles the configuration area for test data in the view
@@ -146,7 +146,7 @@ define([
      *                            Widget's view.
      */
     SummaryWidget.prototype.show = function (container) {
-        var self = this;
+        const self = this;
         this.container = container;
         $(container).append(this.domElement);
         $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
@@ -186,9 +186,9 @@ define([
      * Update the view from the current rule configuration and order
      */
     SummaryWidget.prototype.refreshRules = function () {
-        var self = this,
-            ruleOrder = self.domainObject.configuration.ruleOrder,
-            rules = self.rulesById;
+        const self = this;
+        const ruleOrder = self.domainObject.configuration.ruleOrder;
+        const rules = self.rulesById;
         self.ruleArea.html('');
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.ruleArea.append(rules[ruleId].getDOM());
@@ -199,8 +199,8 @@ define([
     };
 
     SummaryWidget.prototype.addOrRemoveDragIndicator = function () {
-        var rules = this.domainObject.configuration.ruleOrder;
-        var rulesById = this.rulesById;
+        const rules = this.domainObject.configuration.ruleOrder;
+        const rulesById = this.rulesById;
 
         rules.forEach(function (ruleKey, index, array) {
             if (array.length > 2 && index > 0) {
@@ -216,7 +216,7 @@ define([
      */
     SummaryWidget.prototype.updateWidget = function () {
         const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
-        var activeRule = this.rulesById[this.activeId];
+        const activeRule = this.rulesById[this.activeId];
         this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
         $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
         $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
@@ -238,9 +238,9 @@ define([
      * Add a new rule to this widget
      */
     SummaryWidget.prototype.addRule = function () {
-        var ruleCount = 0,
-            ruleId,
-            ruleOrder = this.domainObject.configuration.ruleOrder;
+        let ruleCount = 0;
+        let ruleId;
+        const ruleOrder = this.domainObject.configuration.ruleOrder;
 
         while (Object.keys(this.rulesById).includes('rule' + ruleCount)) {
             ruleCount++;
@@ -263,11 +263,11 @@ define([
      *                              instantiated
      */
     SummaryWidget.prototype.duplicateRule = function (sourceConfig) {
-        var ruleCount = 0,
-            ruleId,
-            sourceRuleId = sourceConfig.id,
-            ruleOrder = this.domainObject.configuration.ruleOrder,
-            ruleIds = Object.keys(this.rulesById);
+        let ruleCount = 0;
+        let ruleId;
+        const sourceRuleId = sourceConfig.id;
+        const ruleOrder = this.domainObject.configuration.ruleOrder;
+        const ruleIds = Object.keys(this.rulesById);
 
         while (ruleIds.includes('rule' + ruleCount)) {
             ruleCount = ++ruleCount;
@@ -292,8 +292,8 @@ define([
      * @param {string} ruleName The initial human-readable name of this rule
      */
     SummaryWidget.prototype.initRule = function (ruleId, ruleName) {
-        var ruleConfig,
-            styleObj = {};
+        let ruleConfig;
+        const styleObj = {};
 
         Object.assign(styleObj, DEFAULT_PROPS);
         if (!this.domainObject.configuration.ruleConfigById[ruleId]) {
@@ -333,9 +333,9 @@ define([
      *                       and dropTarget fields
      */
     SummaryWidget.prototype.reorder = function (event) {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            sourceIndex = ruleOrder.indexOf(event.draggingId),
-            targetIndex;
+        const ruleOrder = this.domainObject.configuration.ruleOrder;
+        const sourceIndex = ruleOrder.indexOf(event.draggingId);
+        let targetIndex;
 
         if (event.draggingId !== event.dropTarget) {
             ruleOrder.splice(sourceIndex, 1);

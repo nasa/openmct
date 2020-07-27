@@ -202,7 +202,7 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findSubscriptionProvider = function () {
-        var args = Array.prototype.slice.apply(arguments);
+        const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsSubscribe.apply(provider, args);
         }
@@ -214,7 +214,7 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findRequestProvider = function (domainObject) {
-        var args = Array.prototype.slice.apply(arguments);
+        const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsRequest.apply(provider, args);
         }
@@ -276,7 +276,7 @@ define([
             arguments[1] = {};
         }
         this.standardizeRequestOptions(arguments[1]);
-        var provider = this.findRequestProvider.apply(this, arguments);
+        const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');
         }
@@ -302,13 +302,13 @@ define([
      *          the subscription
      */
     TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
-        var provider = this.findSubscriptionProvider(domainObject);
+        const provider = this.findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
             this.subscribeCache = {};
         }
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var subscriber = this.subscribeCache[keyString];
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let subscriber = this.subscribeCache[keyString];
 
         if (!subscriber) {
             subscriber = this.subscribeCache[keyString] = {
@@ -348,11 +348,11 @@ define([
      */
     TelemetryAPI.prototype.getMetadata = function (domainObject) {
         if (!this.metadataCache.has(domainObject)) {
-            var metadataProvider = this.findMetadataProvider(domainObject);
+            const metadataProvider = this.findMetadataProvider(domainObject);
             if (!metadataProvider) {
                 return;
             }
-            var metadata = metadataProvider.getMetadata(domainObject);
+            const metadata = metadataProvider.getMetadata(domainObject);
 
             this.metadataCache.set(
                 domainObject,
@@ -368,11 +368,11 @@ define([
      *
      */
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
-        var options = metadatas.map(function (metadata) {
-            var values = metadata.valuesForHints(hints);
+        const options = metadatas.map(function (metadata) {
+            const values = metadata.valuesForHints(hints);
             return _.keyBy(values, 'key');
         }).reduce(function (a, b) {
-            var results = {};
+            const results = {};
             Object.keys(a).forEach(function (key) {
                 if (b.hasOwnProperty(key)) {
                     results[key] = a[key];
@@ -380,7 +380,7 @@ define([
             });
             return results;
         });
-        var sortKeys = hints.map(function (h) {
+        const sortKeys = hints.map(function (h) {
             return 'hints.' + h;
         });
         return _.sortBy(options, sortKeys);
@@ -412,7 +412,7 @@ define([
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
         if (!this.formatMapCache.has(metadata)) {
-            var formatMap = metadata.values().reduce(function (map, valueMetadata) {
+            const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
                 return map;
             }.bind(this), {});
@@ -471,7 +471,7 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.getLimitEvaluator = function (domainObject) {
-        var provider = this.findLimitEvaluator(domainObject);
+        const provider = this.findLimitEvaluator(domainObject);
         if (!provider) {
             return {
                 evaluate: function () {}

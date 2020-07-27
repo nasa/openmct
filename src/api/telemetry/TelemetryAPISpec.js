@@ -26,9 +26,9 @@ define([
     TelemetryAPI
 ) {
     xdescribe('Telemetry API', function () {
-        var openmct;
-        var telemetryAPI;
-        var mockTypeService;
+        let openmct;
+        let telemetryAPI;
+        let mockTypeService;
 
         beforeEach(function () {
             openmct = {
@@ -51,8 +51,8 @@ define([
         });
 
         describe('telemetry providers', function () {
-            var telemetryProvider,
-                domainObject;
+            let telemetryProvider;
+            let domainObject;
 
             beforeEach(function () {
                 telemetryProvider = jasmine.createSpyObj('telemetryProvider', [
@@ -71,10 +71,10 @@ define([
             });
 
             it('provides consistent results without providers', function () {
-                var unsubscribe = telemetryAPI.subscribe(domainObject);
+                const unsubscribe = telemetryAPI.subscribe(domainObject);
                 expect(unsubscribe).toEqual(jasmine.any(Function));
 
-                var response = telemetryAPI.request(domainObject);
+                const response = telemetryAPI.request(domainObject);
                 expect(response).toEqual(jasmine.any(Promise));
             });
 
@@ -83,14 +83,14 @@ define([
                 telemetryProvider.supportsRequest.and.returnValue(false);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var callback = jasmine.createSpy('callback');
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const callback = jasmine.createSpy('callback');
+                const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
                 expect(telemetryProvider.supportsSubscribe)
                     .toHaveBeenCalledWith(domainObject);
                 expect(telemetryProvider.subscribe).not.toHaveBeenCalled();
                 expect(unsubscribe).toEqual(jasmine.any(Function));
 
-                var response = telemetryAPI.request(domainObject);
+                const response = telemetryAPI.request(domainObject);
                 expect(telemetryProvider.supportsRequest)
                     .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
                 expect(telemetryProvider.request).not.toHaveBeenCalled();
@@ -98,13 +98,13 @@ define([
             });
 
             it('sends subscribe calls to matching providers', function () {
-                var unsubFunc = jasmine.createSpy('unsubscribe');
+                const unsubFunc = jasmine.createSpy('unsubscribe');
                 telemetryProvider.subscribe.and.returnValue(unsubFunc);
                 telemetryProvider.supportsSubscribe.and.returnValue(true);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var callback = jasmine.createSpy('callback');
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const callback = jasmine.createSpy('callback');
+                const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
                 expect(telemetryProvider.supportsSubscribe.calls.count()).toBe(1);
                 expect(telemetryProvider.supportsSubscribe)
                     .toHaveBeenCalledWith(domainObject);
@@ -112,7 +112,7 @@ define([
                 expect(telemetryProvider.subscribe)
                     .toHaveBeenCalledWith(domainObject, jasmine.any(Function));
 
-                var notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
+                const notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
                 notify('someValue');
                 expect(callback).toHaveBeenCalledWith('someValue');
 
@@ -126,19 +126,19 @@ define([
             });
 
             it('subscribes once per object', function () {
-                var unsubFunc = jasmine.createSpy('unsubscribe');
+                const unsubFunc = jasmine.createSpy('unsubscribe');
                 telemetryProvider.subscribe.and.returnValue(unsubFunc);
                 telemetryProvider.supportsSubscribe.and.returnValue(true);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var callback = jasmine.createSpy('callback');
-                var callbacktwo = jasmine.createSpy('callback two');
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-                var unsubscribetwo = telemetryAPI.subscribe(domainObject, callbacktwo);
+                const callback = jasmine.createSpy('callback');
+                const callbacktwo = jasmine.createSpy('callback two');
+                const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const unsubscribetwo = telemetryAPI.subscribe(domainObject, callbacktwo);
 
                 expect(telemetryProvider.subscribe.calls.count()).toBe(1);
 
-                var notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
+                const notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
                 notify('someValue');
                 expect(callback).toHaveBeenCalledWith('someValue');
                 expect(callbacktwo).toHaveBeenCalledWith('someValue');
@@ -157,20 +157,20 @@ define([
             });
 
             it('only deletes subscription cache when there are no more subscribers', function () {
-                var unsubFunc = jasmine.createSpy('unsubscribe');
+                const unsubFunc = jasmine.createSpy('unsubscribe');
                 telemetryProvider.subscribe.and.returnValue(unsubFunc);
                 telemetryProvider.supportsSubscribe.and.returnValue(true);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var callback = jasmine.createSpy('callback');
-                var callbacktwo = jasmine.createSpy('callback two');
-                var callbackThree = jasmine.createSpy('callback three');
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-                var unsubscribeTwo = telemetryAPI.subscribe(domainObject, callbacktwo);
+                const callback = jasmine.createSpy('callback');
+                const callbacktwo = jasmine.createSpy('callback two');
+                const callbackThree = jasmine.createSpy('callback three');
+                const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const unsubscribeTwo = telemetryAPI.subscribe(domainObject, callbacktwo);
 
                 expect(telemetryProvider.subscribe.calls.count()).toBe(1);
                 unsubscribe();
-                var unsubscribeThree = telemetryAPI.subscribe(domainObject, callbackThree);
+                const unsubscribeThree = telemetryAPI.subscribe(domainObject, callbackThree);
                 // Regression test for where subscription cache was deleted on each unsubscribe, resulting in
                 // superfluous additional subscriptions. If the subscription cache is being deleted on each unsubscribe,
                 // then a subsequent subscribe will result in a new subscription at the provider.
@@ -180,13 +180,13 @@ define([
             });
 
             it('does subscribe/unsubscribe', function () {
-                var unsubFunc = jasmine.createSpy('unsubscribe');
+                const unsubFunc = jasmine.createSpy('unsubscribe');
                 telemetryProvider.subscribe.and.returnValue(unsubFunc);
                 telemetryProvider.supportsSubscribe.and.returnValue(true);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var callback = jasmine.createSpy('callback');
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const callback = jasmine.createSpy('callback');
+                let unsubscribe = telemetryAPI.subscribe(domainObject, callback);
                 expect(telemetryProvider.subscribe.calls.count()).toBe(1);
                 unsubscribe();
 
@@ -196,25 +196,25 @@ define([
             });
 
             it('subscribes for different object', function () {
-                var unsubFuncs = [];
-                var notifiers = [];
+                const unsubFuncs = [];
+                const notifiers = [];
                 telemetryProvider.supportsSubscribe.and.returnValue(true);
                 telemetryProvider.subscribe.and.callFake(function (obj, cb) {
-                    var unsubFunc = jasmine.createSpy('unsubscribe ' + unsubFuncs.length);
+                    const unsubFunc = jasmine.createSpy('unsubscribe ' + unsubFuncs.length);
                     unsubFuncs.push(unsubFunc);
                     notifiers.push(cb);
                     return unsubFunc;
                 });
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var otherDomainObject = JSON.parse(JSON.stringify(domainObject));
+                const otherDomainObject = JSON.parse(JSON.stringify(domainObject));
                 otherDomainObject.identifier.namespace = 'other';
 
-                var callback = jasmine.createSpy('callback');
-                var callbacktwo = jasmine.createSpy('callback two');
+                const callback = jasmine.createSpy('callback');
+                const callbacktwo = jasmine.createSpy('callback two');
 
-                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-                var unsubscribetwo = telemetryAPI.subscribe(otherDomainObject, callbacktwo);
+                const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                const unsubscribetwo = telemetryAPI.subscribe(otherDomainObject, callbacktwo);
 
                 expect(telemetryProvider.subscribe.calls.count()).toBe(2);
 
@@ -235,12 +235,12 @@ define([
             });
 
             it('sends requests to matching providers', function () {
-                var telemPromise = Promise.resolve([]);
+                const telemPromise = Promise.resolve([]);
                 telemetryProvider.supportsRequest.and.returnValue(true);
                 telemetryProvider.request.and.returnValue(telemPromise);
                 telemetryAPI.addProvider(telemetryProvider);
 
-                var result = telemetryAPI.request(domainObject);
+                const result = telemetryAPI.request(domainObject);
                 expect(result).toBe(telemPromise);
                 expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
                     domainObject,

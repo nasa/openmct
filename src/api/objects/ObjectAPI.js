@@ -155,7 +155,7 @@ define([
      */
     ObjectAPI.prototype.get = function (identifier) {
         identifier = utils.parseKeyString(identifier);
-        var provider = this.getProvider(identifier);
+        const provider = this.getProvider(identifier);
 
         if (!provider) {
             throw new Error('No Provider Matched');
@@ -230,7 +230,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         return mutableObject.set(path, value);
     };
@@ -245,7 +245,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
         return mutableObject.stopListening.bind(mutableObject);

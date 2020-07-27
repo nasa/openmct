@@ -43,7 +43,7 @@ define([], function () {
     MockTelemetryApi.prototype.request = jasmine.createSpy('request');
 
     MockTelemetryApi.prototype.getValueFormatter = function (valueMetadata) {
-        var mockValueFormatter = jasmine.createSpyObj("valueFormatter", [
+        const mockValueFormatter = jasmine.createSpyObj("valueFormatter", [
             "parse"
         ]);
 
@@ -55,7 +55,7 @@ define([], function () {
     };
 
     MockTelemetryApi.prototype.mockReceiveTelemetry = function (newTelemetryDatum) {
-        var subscriptionCallback = this.subscribe.calls.mostRecent().args[1];
+        const subscriptionCallback = this.subscribe.calls.mostRecent().args[1];
         subscriptionCallback(newTelemetryDatum);
     };
 
@@ -70,7 +70,7 @@ define([], function () {
      * @private
      */
     MockTelemetryApi.prototype.setDefaultRangeTo = function (rangeKey) {
-        var mockMetadataValue = {
+        const mockMetadataValue = {
             key: rangeKey
         };
         this.metadata.valuesForHints.and.returnValue([mockMetadataValue]);
@@ -80,7 +80,7 @@ define([], function () {
      * @private
      */
     MockTelemetryApi.prototype.createMockMetadata = function () {
-        var mockMetadata = jasmine.createSpyObj("metadata", [
+        const mockMetadata = jasmine.createSpyObj("metadata", [
             'value',
             'valuesForHints'
         ]);

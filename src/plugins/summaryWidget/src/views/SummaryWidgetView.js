@@ -46,7 +46,7 @@ define([
         } else {
             this.widget.removeAttribute('target');
         }
-        var renderTracker = {};
+        const renderTracker = {};
         this.renderTracker = renderTracker;
         this.openmct.telemetry.request(this.domainObject, {
             strategy: 'latest',

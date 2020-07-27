@@ -64,7 +64,7 @@ define([
     PlotTemplate
 ) {
 
-    var installed = false;
+    let installed = false;
 
     function PlotPlugin() {
         return function install(openmct) {

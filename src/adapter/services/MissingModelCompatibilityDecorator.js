@@ -46,18 +46,19 @@ define([
      * models.  If a model is requested twice, respond with a missing result.
      */
     MissingModelCompatibilityDecorator.prototype.apiFetch = function (ids) {
-        var results = {},
-            promises = ids.map(function (id) {
-                if (this.apiFetching[id]) {
-                    return Promise.resolve();
-                }
-                this.apiFetching[id] = true;
+        const results = {};
 
-                return this.api.objects.get(objectUtils.parseKeyString(id))
-                    .then(function (newDO) {
-                        results[id] = objectUtils.toOldFormat(newDO);
-                    });
-            }, this);
+        const promises = ids.map(function (id) {
+            if (this.apiFetching[id]) {
+                return Promise.resolve();
+            }
+            this.apiFetching[id] = true;
+
+            return this.api.objects.get(objectUtils.parseKeyString(id))
+                .then(function (newDO) {
+                    results[id] = objectUtils.toOldFormat(newDO);
+                });
+        }, this);
 
         return Promise.all(promises).then(function () {
             return results;
@@ -71,7 +72,7 @@ define([
     MissingModelCompatibilityDecorator.prototype.getModels = function (ids) {
         return this.modelService.getModels(ids)
             .then(function (models) {
-                var missingIds = ids.filter(function (id) {
+                const missingIds = ids.filter(function (id) {
                     return !models[id];
                 });
 

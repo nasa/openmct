@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -127,8 +128,8 @@ export default {
             });
         },
         initDrag(event) {
-            let type = this.openmct.types.get(this.domainObject.type),
-                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+            let type = this.openmct.types.get(this.domainObject.type);
+            let iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
 
             if (this.dragGhost) {
                 let originalClassName = this.dragGhost.classList[0];

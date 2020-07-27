@@ -127,10 +127,10 @@ export default {
             this.searchService.query(this.searchValue).then(children => {
                 this.filteredTreeItems = children.hits.map(child => {
 
-                    let context = child.object.getCapability('context'),
-                        object = child.object.useCapability('adapter'),
-                        objectPath = [],
-                        navigateToParent;
+                    let context = child.object.getCapability('context');
+                    let object = child.object.useCapability('adapter');
+                    let objectPath = [];
+                    let navigateToParent;
 
                     if (context) {
                         objectPath = context.getPath().slice(1)

@@ -26,7 +26,7 @@ define([
     PlotModelFormController
 ) {
 
-    var PlotYAxisFormController = PlotModelFormController.extend({
+    const PlotYAxisFormController = PlotModelFormController.extend({
         fields: [
             {
                 modelProp: 'label',
@@ -52,7 +52,7 @@ define([
                             max: 0
                         };
                     }
-                    var newRange = {};
+                    const newRange = {};
                     if (typeof range.min !== 'undefined' && range.min !== null) {
                         newRange.min = Number(range.min);
                     }

@@ -285,8 +285,8 @@ export default {
         },
         clearData(domainObject) {
             if (domainObject) {
-                let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier),
-                    currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
+                let clearKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+                let currentObjectKeyString = this.openmct.objects.makeKeyString(this.currentObject.identifier);
 
                 if (clearKeyString === currentObjectKeyString) {
                     if (this.currentView.onClearData) {
@@ -300,9 +300,9 @@ export default {
             }
         },
         isEditingAllowed() {
-            let browseObject = this.openmct.layout.$refs.browseObject.currentObject,
-                objectPath= this.currentObjectPath || this.objectPath,
-                parentObject = objectPath[1];
+            let browseObject = this.openmct.layout.$refs.browseObject.currentObject;
+            let objectPath= this.currentObjectPath || this.objectPath;
+            let parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         }

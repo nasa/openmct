@@ -55,7 +55,7 @@ define(function () {
      * @private
      */
     Type.prototype.toLegacyDefinition = function () {
-        var def = {};
+        const def = {};
         def.name = this.definition.name;
         def.cssClass = this.definition.cssClass;
         def.description = this.definition.description;

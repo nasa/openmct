@@ -52,7 +52,7 @@ define([
     };
 
     PlotOptionsController.prototype.setUpScope = function () {
-        var config = configStore.get(this.configId);
+        const config = configStore.get(this.configId);
         if (!config) {
             this.$timeout(this.setUpScope.bind(this));
             return;

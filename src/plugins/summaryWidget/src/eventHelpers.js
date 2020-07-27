@@ -1,12 +1,12 @@
 /*global define*/
 // jscs:disable disallowDanglingUnderscores
 define([], function () {
-    var helperFunctions = {
+    const helperFunctions = {
         listenTo: function (object, event, callback, context) {
             if (!this._listeningTo) {
                 this._listeningTo = [];
             }
-            var listener = {
+            const listener = {
                 object: object,
                 event: event,
                 callback: callback,
@@ -14,7 +14,7 @@ define([], function () {
                 _cb: context ? callback.bind(context) : callback
             };
             if (object.$watch && event.indexOf('change:') === 0) {
-                var scopePath = event.replace('change:', '');
+                const scopePath = event.replace('change:', '');
                 listener.unlisten = object.$watch(scopePath, listener._cb, true);
             } else if (object.$on) {
                 listener.unlisten = object.$on(event, listener._cb);

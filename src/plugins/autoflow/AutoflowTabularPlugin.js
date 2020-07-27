@@ -27,7 +27,7 @@ define([
 ) {
     return function (options) {
         return function (openmct) {
-            var views = (openmct.mainViews || openmct.objectViews);
+            const views = (openmct.mainViews || openmct.objectViews);
 
             views.addProvider({
                 name: "Autoflow Tabular",

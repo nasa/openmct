@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define([], function () {
-    var LEGACY_INDICATOR_TEMPLATE =
+    const LEGACY_INDICATOR_TEMPLATE =
         '<mct-include ' +
         '   ng-model="indicator" ' +
         '   class="h-indicator" ' +
@@ -36,8 +36,8 @@ define([], function () {
 
             function addLegacyIndicators(legacyIndicators) {
                 legacyIndicators.forEach(function (legacyIndicatorDef) {
-                    var legacyIndicator = initializeIfNeeded(legacyIndicatorDef);
-                    var legacyIndicatorElement = buildLegacyIndicator(legacyIndicator, legacyIndicatorDef.template);
+                    const legacyIndicator = initializeIfNeeded(legacyIndicatorDef);
+                    const legacyIndicatorElement = buildLegacyIndicator(legacyIndicator, legacyIndicatorDef.template);
                     openmct.indicators.add({
                         element: legacyIndicatorElement
                     });
@@ -45,7 +45,7 @@ define([], function () {
             }
 
             function initializeIfNeeded(LegacyIndicatorDef) {
-                var legacyIndicator;
+                let legacyIndicator;
                 if (typeof LegacyIndicatorDef === 'function') {
                     legacyIndicator = new LegacyIndicatorDef();
                 } else {
@@ -55,9 +55,9 @@ define([], function () {
             }
 
             function buildLegacyIndicator(legacyIndicator, template) {
-                var $compile = openmct.$injector.get('$compile');
-                var $rootScope = openmct.$injector.get('$rootScope');
-                var scope = $rootScope.$new(true);
+                const $compile = openmct.$injector.get('$compile');
+                const $rootScope = openmct.$injector.get('$rootScope');
+                const scope = $rootScope.$new(true);
                 scope.indicator = legacyIndicator;
                 scope.template = template || 'indicator';
 

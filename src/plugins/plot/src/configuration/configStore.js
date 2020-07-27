@@ -42,7 +42,7 @@ define([
         return this.store[id];
     };
 
-    var STORE = new ConfigStore();
+    const STORE = new ConfigStore();
 
     return STORE;
 });

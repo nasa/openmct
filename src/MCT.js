@@ -290,7 +290,7 @@ define([
         let capabilityService = this.$injector.get('capabilityService');
 
         function instantiate(model, keyString) {
-            var capabilities = capabilityService.getCapabilities(model, keyString);
+            const capabilities = capabilityService.getCapabilities(model, keyString);
             model.id = keyString;
             return new DomainObjectImpl(keyString, model, capabilities);
         }
@@ -372,8 +372,8 @@ define([
 
         // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
-            var type = this.types.get(typeKey);
-            var legacyDefinition = type.toLegacyDefinition();
+            const type = this.types.get(typeKey);
+            const legacyDefinition = type.toLegacyDefinition();
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
@@ -400,7 +400,7 @@ define([
                 this.$injector.get('objectService');
 
                 if (!isHeadlessMode) {
-                    var appLayout = new Vue({
+                    const appLayout = new Vue({
                         components: {
                             'Layout': Layout.default
                         },

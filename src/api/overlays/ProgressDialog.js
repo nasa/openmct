@@ -2,7 +2,7 @@ import ProgressDialogComponent from './components/ProgressDialogComponent.vue';
 import Overlay from './Overlay';
 import Vue from 'vue';
 
-var component;
+let component;
 
 class ProgressDialog extends Overlay {
     constructor({progressPerc, progressText, iconClass, message, title, hint, timestamp, ...options}) {
