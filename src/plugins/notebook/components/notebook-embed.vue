@@ -81,13 +81,13 @@ export default {
             this.popupMenuItems = [removeEmbed, preview];
         },
         annotateSnapshot() {
-            let painterroInstance = null;
             const annotateVue = new Vue({
                 template: '<div id="snap-annotation"></div>'
-            });
+            }).$mount();
 
+            const painterroInstance = new PainterroInstance(annotateVue.$el, this.updateSnapshot);
             const annotateOverlay = this.openmct.overlays.overlay({
-                element: annotateVue.$mount().$el,
+                element: annotateVue.$el,
                 size: 'large',
                 dismissable: false,
                 buttons: [
@@ -114,8 +114,7 @@ export default {
                 }
             });
 
-            painterroInstance = new PainterroInstance();
-            painterroInstance.callback = this.updateSnapshot;
+            painterroInstance.intialize();
             painterroInstance.show(this.embed.snapshot.src);
         },
         changeLocation() {

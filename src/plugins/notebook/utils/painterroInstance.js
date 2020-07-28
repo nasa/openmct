@@ -1,7 +1,6 @@
 import Painterro from 'painterro';
 
-const defaultConfig = {
-    id: 'snap-annotation',
+const DEFAULT_CONFIG = {
     activeColor: '#ff0000',
     activeColorAlpha: 1.0,
     activeFillColor: '#fff',
@@ -26,20 +25,25 @@ const defaultConfig = {
 };
 
 export default class PainterroInstance {
-    constructor() {
-        this.callback = null;
-        this.config = Object.assign({}, defaultConfig);
-        this.config.id = this.config.id;
-        this.config.saveHandler = this.saveHandler.bind(this);
+    constructor(element, saveCallback) {
+        this.elementId = element.id;
         this.isSave = false;
-
-        this.painterro = Painterro(this.config);
         this.painterroInstance = null;
+        this.saveCallback = saveCallback;
     }
 
     dismiss() {
         this.isSave = false;
         this.painterroInstance.save();
+    }
+
+    intialize() {
+        this.config = Object.assign({}, DEFAULT_CONFIG);
+
+        this.config.id = this.elementId;
+        this.config.saveHandler = this.saveHandler.bind(this);
+
+        this.painterro = Painterro(this.config);
     }
 
     save() {
@@ -62,7 +66,7 @@ export default class PainterroInstance {
                     modified: Date.now()
                 };
 
-                self.callback(snapshotObject);
+                self.saveCallback(snapshotObject);
             };
         }
 
