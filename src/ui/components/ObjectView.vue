@@ -142,7 +142,7 @@ export default {
             }
 
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('u-angular-object-view-wrapper');
+            this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$el.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
