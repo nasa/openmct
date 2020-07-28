@@ -80,9 +80,13 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
-$filterHov: brightness(1.3); // Tree, location items
+$filterHov: brightness(0.8) contrast(2); // Tree, location items
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
+
+// Object labels
+$objectLabelTypeIconOpacity: 0.5;
+$objectLabelNameFilter: brightness(0.5);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -224,7 +228,7 @@ $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 $btnStdH: 24px;
 $colorCursorGuide: rgba(black, 0.6);
 $shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
-$colorLocalControlOvrBg: rgba($colorBodyFg, 0.8);
+$colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);

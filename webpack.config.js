@@ -14,6 +14,9 @@ const gitRevision = require('child_process')
 const gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
     .toString().trim();
+const vueFile = devMode ?
+    path.join(__dirname, "node_modules/vue/dist/vue.js") :
+    path.join(__dirname, "node_modules/vue/dist/vue.min.js");
 
 const webpackConfig = {
     mode: devMode ? 'development' : 'production',
@@ -37,7 +40,7 @@ const webpackConfig = {
             "csv": "comma-separated-values",
             "EventEmitter": "eventemitter3",
             "bourbon": "bourbon.scss",
-            "vue": path.join(__dirname, "node_modules/vue/dist/vue.js"),
+            "vue": vueFile,
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),

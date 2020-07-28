@@ -19,25 +19,21 @@
         >
             Drag objects here to add them to this view.
         </div>
-        <button
+        <div
             v-for="(tab,index) in tabsList"
             :key="index"
-            class="c-tabs-view__tab c-tab c-object-label"
+            class="c-tab c-tabs-view__tab"
             :class="{
-                'is-current': isCurrent(tab),
-                'is-missing': tab.domainObject.status === 'missing'
+                'is-current': isCurrent(tab)
             }"
             @click="showTab(tab, index)"
         >
-            <div class="c-object-label__type-icon"
-                 :class="tab.type.definition.cssClass"
-            >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
-                ></span>
-            </div>
-            <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
-        </button>
+            <span class="c-button__label c-tabs-view__tab__label">{{ tab.domainObject.name }}</span>
+            <button v-if="isEditing"
+                    class="icon-x c-click-icon c-tabs-view__tab__close-btn"
+                    @click="showRemoveDialog(index)"
+            ></button>
+        </div>
     </div>
     <div
         v-for="(tab, index) in tabsList"
@@ -56,6 +52,7 @@
 
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
+import RemoveAction from '../../remove/RemoveAction.js';
 import {
     getSearchParam,
     setSearchParam,
@@ -120,6 +117,7 @@ export default {
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
+        this.RemoveAction = new RemoveAction(this.openmct);
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
     },
@@ -149,6 +147,38 @@ export default {
             }
 
             this.currentTab = tab;
+        },
+        showRemoveDialog(index) {
+            if(!this.tabsList[index]) {
+                return;
+            }
+
+            let activeTab = this.tabsList[index];
+            let childDomainObject = activeTab.domainObject
+
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: 'true',
+                        callback: () => {
+                            this.removeFromComposition(childDomainObject);
+                            prompt.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        removeFromComposition(childDomainObject) {
+            this.composition.remove(childDomainObject);
         },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType,

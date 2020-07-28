@@ -612,6 +612,13 @@ export default {
                 object.composition.push(...composition);
             }
 
+            if (object.modified || object.persisted) {
+                object.modified = undefined;
+                object.persisted = undefined;
+                delete object.modified;
+                delete object.persisted;
+            }
+
             object.name = objectName;
             object.identifier = identifier;
             object.location = parentKeyString;

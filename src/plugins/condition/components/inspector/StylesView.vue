@@ -190,6 +190,7 @@ export default {
             if (this.isEditing) {
                 if (this.stopProvidingTelemetry) {
                     this.stopProvidingTelemetry();
+                    delete this.stopProvidingTelemetry;
                 }
             } else {
                 this.subscribeToConditionSet();
@@ -325,6 +326,7 @@ export default {
 
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
 
             if (this.unObserveObjects) {
@@ -337,6 +339,7 @@ export default {
         subscribeToConditionSet() {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
             if (this.conditionSetDomainObject) {
                 this.openmct.telemetry.request(this.conditionSetDomainObject)
@@ -494,6 +497,7 @@ export default {
 
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
         },
         removeConditionalStyles(domainObjectStyles, itemId) {
