@@ -95,7 +95,8 @@ export default function NotebookPlugin() {
             template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
         });
         const indicator = {
-            element: notebookSnapshotIndicator.$mount().$el
+            element: notebookSnapshotIndicator.$mount().$el,
+            key: 'notebook-snapshot-indicator'
         };
 
         openmct.indicators.add(indicator);

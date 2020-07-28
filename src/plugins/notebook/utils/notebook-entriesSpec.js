@@ -20,8 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import * as NotebookEntries from './notebook-entries';
+import { clearBuiltinSpies, createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
 
 const notebookStorage = {
+    domainObject: {
+        name: 'notebook',
+        identifier: {
+            namespace: '',
+            key: 'test-notebook'
+        }
+    },
     notebookMeta : {
         name: 'notebook',
         identifier: {
@@ -68,12 +76,6 @@ const notebookDomainObject = {
     }
 };
 
-const openmct = {
-    objects: {
-        mutate: jasmine.createSpy('mutate')
-    }
-};
-
 const selectedSection = {
     id: '03a79b6a-971c-4e56-9892-ec536332c3f0',
     isDefault: false,
@@ -113,9 +115,20 @@ const selectedPage = {
     pageTitle: 'Page'
 };
 
+let openmct;
+
 describe('Notebook Entries:', () => {
+    beforeEach(done => {
+        openmct = createOpenMct();
+        window.localStorage.setItem('notebook-storage', null);
+        spyOnBuiltins(['mutate'], openmct.objects);
+
+        done();
+    });
+
     afterEach(() => {
         notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
+        resetApplicationState(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {
