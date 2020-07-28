@@ -24,6 +24,8 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import CouchObjectProvider from "@/plugins/persistence/couch/CouchObjectProvider";
+import CouchObjectQueue from "@/plugins/persistence/couch/CouchObjectQueue";
 
 fdescribe("the plugin", () => {
     let openmct;
@@ -73,5 +75,15 @@ fdescribe("the plugin", () => {
                 expect(updatedResult).toBeDefined();
             });
         });
+    });
+
+    it('updates queued objects', () => {
+        let couchProvider = new CouchObjectProvider(openmct, 'http://localhost', '');
+        couchProvider.objectQueue[mockDomainObject.identifier.key] = new CouchObjectQueue(mockDomainObject);
+        spyOn(couchProvider, 'updateQueued');
+        couchProvider.update(mockDomainObject);
+        setTimeout(() => {
+            expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
+        }, 100);
     });
 });
