@@ -96,6 +96,29 @@ body.desktop {
     }
 }
 
+/******************************************************** FONTS */
+@each $size in $listFontSizes {
+    .is-font-size--#{$size} {
+        font-size: #{$size}px;
+    }
+}
+
+.is-font--default,
+.is-font--narrow,
+.is-font--monospace {
+    &-bold {
+        font-weight: bold;
+    }
+}
+
+[class*='is-font--narrow'] {
+    font-family: 'Arial Narrow', sans-serif;
+}
+
+[class*='is-font--monospace']  {
+    font-family: 'Andale Mono', sans-serif;
+}
+
 /******************************************************** HTML ENTITIES */
 a {
     color: $colorA;
@@ -226,7 +249,7 @@ body.desktop .has-local-controls {
 }
 
 /******************************************************** STATES */
-@mixin  spinner($b: 5px, $c: $colorKey) {
+@mixin  spinner($b: 5, $c: $colorKey) {
     animation-name: rotation-centered;
     animation-duration: 0.5s;
     animation-iteration-count: infinite;
@@ -276,13 +299,13 @@ body.desktop .has-local-controls {
     }
     &.c-tree__item {
         $d: $waitSpinnerTreeD;
-        $spinnerL: 19px + $d/2;
+        $spinnerL: 19 + $d/2;
 
         display: flex;
         align-items: center;
         padding-left: $spinnerL + $d/2 + $interiorMargin;
         background: $colorLoadingBg;
-        min-height: 5px + $d;
+        min-height: 5 + $d;
 
         .c-tree__item__label {
             font-style: italic;
@@ -291,7 +314,7 @@ body.desktop .has-local-controls {
         &:before {
             height: $d;
             width: $d;
-            border-width: 4px;
+            border-width: 4;
             left: $spinnerL;
         }
         &:after {
