@@ -27,7 +27,7 @@ import {
 import CouchObjectProvider from "@/plugins/persistence/couch/CouchObjectProvider";
 import CouchObjectQueue from "@/plugins/persistence/couch/CouchObjectQueue";
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct;
     let element;
     let child;
@@ -79,7 +79,10 @@ fdescribe("the plugin", () => {
 
     it('updates queued objects', () => {
         let couchProvider = new CouchObjectProvider(openmct, 'http://localhost', '');
-        couchProvider.objectQueue[mockDomainObject.identifier.key] = new CouchObjectQueue(mockDomainObject);
+        couchProvider.objectQueue[mockDomainObject.identifier.key] = new CouchObjectQueue({
+            mockDomainObject,
+            intermediateResponse: couchProvider.getIntermediateResponse()
+        });
         spyOn(couchProvider, 'updateQueued');
         couchProvider.update(mockDomainObject);
         setTimeout(() => {
