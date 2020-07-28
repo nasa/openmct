@@ -225,10 +225,10 @@ export default {
     },
     methods: {
         handleNewBounds(bounds) {
-            this.syncBounds(bounds);
+            this.setBounds(bounds);
             this.setViewFromBounds(bounds);
         },
-        syncBounds(bounds) {
+        setBounds(bounds) {
             this.bounds = bounds;
         },
         handleKeyDown(event) {

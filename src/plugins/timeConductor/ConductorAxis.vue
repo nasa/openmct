@@ -207,7 +207,7 @@ export default {
             this.$emit('panAxis', panBounds);
         },
         endPan() {
-            const panBounds = this.isChangingBounds()
+            const panBounds = this.isChangingViewBounds()
                 ? this.getPanBounds()
                 : undefined;
             this.$emit('endPan', panBounds);
@@ -252,7 +252,7 @@ export default {
         },
         endZoom() {
             let zoomBounds;
-            if (this.isChangingBounds()) {
+            if (this.isChangingViewBounds()) {
                 const zoomRange = this.getZoomRange();
                 zoomBounds = {
                     start: this.scaleToBounds(zoomRange.start),
@@ -287,7 +287,7 @@ export default {
             const offset = valueDelta / this.width * timeDelta;
             return bounds.start + offset;
         },
-        isChangingBounds() {
+        isChangingViewBounds() {
             return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
         },
         resize() {
