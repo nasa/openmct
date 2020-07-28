@@ -27,23 +27,29 @@ export default class CouchObjectProvider {
     // Check the response to a create/update/delete request;
     // track the rev if it's valid, otherwise return false to
     // indicate that the request failed.
-    checkResponse(response) {
+    // persist any queued objects
+    checkResponse(response, intermediateResponse) {
         let requestSuccess = false;
+        const id = response.id;
+        let rev;
         if (response && response.ok) {
-            const id = response.id;
-            const rev = response.rev;
+            rev = response.rev;
+            requestSuccess = true;
+        }
+
+        intermediateResponse.resolve(requestSuccess);
+
+        if (id) {
             if (!this.objectQueue[id]) {
                 this.objectQueue[id] = new CouchObjectQueue(undefined, rev);
             }
             this.objectQueue[id].updateRevision(rev);
-            requestSuccess = true;
-        }
-        if (response && response.id) {
-            if (this.objectQueue[response.id] && this.objectQueue[response.id].hasNext()) {
-                this.updateQueued();
+            this.objectQueue[id].pending = false;
+            if (this.objectQueue[id].hasNext()) {
+                console.log('Persisting queue', id, this.objectQueue[id].rev);
+                this.updateQueued(id);
             }
         }
-        return requestSuccess;
     }
 
     getModel(response) {
@@ -60,7 +66,6 @@ export default class CouchObjectProvider {
             this.objectQueue[key].updateRevision(response[REV]);
             return object;
         } else {
-            //This causes issues with the objectMigration plugin's needsMigration method.
             return undefined;
         }
     }
@@ -69,30 +74,58 @@ export default class CouchObjectProvider {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 
-    create(model) {
-        const key = model.identifier.key;
+    getIntermediateResponse() {
+        let intermediateResponse = {};
+        intermediateResponse.promise = new Promise(function (resolve, reject) {
+            intermediateResponse.resolve = resolve;
+            intermediateResponse.reject = reject;
+        });
+        return intermediateResponse;
+    }
+
+    enqueueObject(key, model, intermediateResponse) {
         if (this.objectQueue[key]) {
-            //there's already a create in progress, let's queue this version
-            this.objectQueue[key].enqueue(model);
+            this.objectQueue[key].enqueue({
+                model,
+                intermediateResponse
+            });
         } else {
-            this.objectQueue[key] = new CouchObjectQueue([model]);
+            this.objectQueue[key] = new CouchObjectQueue({
+                model,
+                intermediateResponse
+            });
         }
-        const queuedModel = this.objectQueue[key].dequeue();
-        return this.request(key, "PUT", new CouchDocument(key, queuedModel)).then(this.checkResponse.bind(this));
+    }
+
+    create(model) {
+        let intermediateResponse = this.getIntermediateResponse();
+        const key = model.identifier.key;
+        this.enqueueObject(key, model, intermediateResponse);
+        this.objectQueue[key].pending = true;
+        const queued = this.objectQueue[key].dequeue();
+        this.request(key, "PUT", new CouchDocument(key, queued.model)).then((response) => {
+            this.checkResponse(response, queued.intermediateResponse);
+        });
+        return intermediateResponse.promise;
     }
 
     updateQueued(key) {
-        const queuedModel = this.objectQueue[key].dequeue();
-        return this.request(key, "PUT", new CouchDocument(key, queuedModel, this.objectQueue[key].rev)).then(this.checkResponse.bind(this));
+        if (!this.objectQueue[key].pending) {
+            this.objectQueue[key].pending = true;
+            const queued = this.objectQueue[key].dequeue();
+            this.request(key, "PUT", new CouchDocument(key, queued.model, this.objectQueue[key].rev)).then((response) => {
+                this.checkResponse(response, queued.intermediateResponse);
+            });
+        } else {
+            console.log('Queued persist', key, this.objectQueue[key].rev);
+        }
     }
 
     update(model) {
+        let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
-        if (this.objectQueue[key]) {
-            this.objectQueue[key].enqueue(model);
-        } else {
-            this.objectQueue[key] = new CouchObjectQueue([model]);
-        }
-        return this.updateQueued(key);
+        this.enqueueObject(key, model, intermediateResponse);
+        this.updateQueued(key);
+        return intermediateResponse.promise;
     }
 }

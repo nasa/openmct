@@ -2,9 +2,10 @@
 //const MAX_QUEUE_SIZE = 10;
 
 export default class CouchObjectQueue {
-    constructor(model, rev) {
+    constructor(object, rev) {
         this.rev = rev;
-        this.models = model ? [model] : [];
+        this.objects = object ? [object] : [];
+        this.pending = false;
     }
 
     updateRevision(rev) {
@@ -12,20 +13,20 @@ export default class CouchObjectQueue {
     }
 
     hasNext() {
-        return this.models.length;
+        return this.objects.length;
     }
 
     enqueue(item) {
-        this.models.push(item);
+        this.objects.push(item);
     }
 
     dequeue() {
-        return this.models.shift();
+        return this.objects.shift();
     }
 
     clear() {
         this.rev = undefined;
-        this.models = [];
+        this.objects = [];
     }
 
 }
