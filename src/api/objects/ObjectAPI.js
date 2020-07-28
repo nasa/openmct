@@ -153,7 +153,7 @@ define([
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    ObjectAPI.prototype.get = function (identifier) {
+    ObjectAPI.prototype.get = function (identifier, fallback) {
         identifier = utils.parseKeyString(identifier);
         var provider = this.getProvider(identifier);
 
@@ -165,7 +165,11 @@ define([
             throw new Error('Provider does not support get!');
         }
 
-        return provider.get(identifier);
+        if (fallback) {
+            return this.fallbackProvider.get(identifier);
+        } else {
+            return provider.get(identifier);
+        }
     };
 
     ObjectAPI.prototype.delete = function () {

@@ -36,17 +36,21 @@ export default function () {
         }
 
         let wrappedFunction = openmct.objects.get;
-        openmct.objects.get = function migrate(identifier) {
-            return wrappedFunction.apply(openmct.objects, [identifier])
+        openmct.objects.get = function migrate(identifier, fallback) {
+            return wrappedFunction.apply(openmct.objects, [identifier, fallback])
                 .then(function (object) {
-                    if (needsMigration(object)) {
-                        migrateObject(object)
-                            .then(newObject => {
-                                openmct.objects.mutate(newObject, 'persisted', Date.now());
-                                return newObject;
-                            });
+                    if (!object && fallback === undefined) {
+                        return openmct.objects.get(identifier, true);
+                    } else {
+                        if (needsMigration(object)) {
+                            migrateObject(object)
+                                .then(newObject => {
+                                    openmct.objects.mutate(newObject, 'persisted', Date.now());
+                                    return newObject;
+                                });
+                        }
+                        return object;
                     }
-                    return object;
                 });
         }
     };
