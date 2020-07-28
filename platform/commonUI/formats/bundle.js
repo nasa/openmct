@@ -23,12 +23,10 @@
 define([
     "./src/FormatProvider",
     "./src/UTCTimeFormat",
-    "./src/ISOTimeFormat",
     "./src/DurationFormat"
 ], function (
     FormatProvider,
     UTCTimeFormat,
-    ISOTimeFormat,
     DurationFormat
 ) {
 
@@ -52,10 +50,6 @@ define([
                     {
                         "key": "utc",
                         "implementation": UTCTimeFormat
-                    },
-                    {
-                        "key": "iso",
-                        "implementation": ISOTimeFormat
                     },
                     {
                         "key": "duration",
