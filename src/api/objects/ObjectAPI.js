@@ -174,10 +174,11 @@ define([
 
     ObjectAPI.prototype.isPersistable = function (domainObject) {
         let provider = this.getProvider(domainObject.identifier);
+
         return provider !== undefined &&
             provider.create !== undefined &&
             provider.update !== undefined;
-    }
+    };
 
     /**
      * Save this domain object in its current state. EXPERIMENTAL
@@ -206,6 +207,7 @@ define([
                 result = provider.update(domainObject);
             }
         }
+
         return result;
     };
 
@@ -326,5 +328,6 @@ define([
         return domainObject.persisted !== undefined &&
             domainObject.persisted === domainObject.modified;
     }
+
     return ObjectAPI;
 });

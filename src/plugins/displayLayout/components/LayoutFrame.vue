@@ -63,6 +63,7 @@ export default {
     computed: {
         size() {
             let {width, height} = this.item;
+
             return {
                 width: (this.gridSize[0] * width),
                 height: (this.gridSize[1] * height)

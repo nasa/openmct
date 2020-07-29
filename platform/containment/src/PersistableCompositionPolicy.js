@@ -49,6 +49,7 @@ define(
             // is a new object.
             if (!(parent.hasCapability('editor') && parent.getCapability('editor').isEditContextRoot())) {
                 let newStyleObject = objectUtils.toNewFormat(parent, parent.getId());
+
                 return this.openmct.objects.isPersistable(newStyleObject);
             }
 

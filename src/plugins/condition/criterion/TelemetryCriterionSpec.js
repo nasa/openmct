@@ -128,6 +128,7 @@ describe("The telemetry criterion", function () {
                 setTimeout(() => {
                     telemetryRequestResolve(mockTelemetry);
                 }, 100);
+
                 return telemetryRequestPromise;
             });
         });

@@ -181,9 +181,11 @@ export default {
             if (x2 === x) {
                 return 5; // Vertical line
             }
+
             if (y2 === y) {
                 return 6; // Horizontal line
             }
+
             if (x2 > x) {
                 if (y2 < y) {
                     return 1;
@@ -200,25 +202,46 @@ export default {
         },
         linePosition() {
             let pos = {};
-            switch(this.vectorQuadrant) {
+            switch (this.vectorQuadrant) {
             case 1:
             case 3:
                 // slopes up
-                pos = {x1: '0%', y1: '100%', x2: '100%', y2: '0%'};
+                pos = {
+                    x1: '0%',
+                    y1: '100%',
+                    x2: '100%',
+                    y2: '0%'
+                };
                 break;
             case 5:
                 // vertical
-                pos = {x1: '0%', y1: '0%', x2: '0%', y2: '100%'};
+                pos = {
+                    x1: '0%',
+                    y1: '0%',
+                    x2: '0%',
+                    y2: '100%'
+                };
                 break;
             case 6:
                 // horizontal
-                pos = {x1: '0%', y1: '0%', x2: '100%', y2: '0%'};
+                pos = {
+                    x1: '0%',
+                    y1: '0%',
+                    x2: '100%',
+                    y2: '0%'
+                };
                 break;
             default:
                 // slopes down
-                pos = {x1: '0%', y1: '0%', x2: '100%', y2: '100%'};
+                pos = {
+                    x1: '0%',
+                    y1: '0%',
+                    x2: '100%',
+                    y2: '100%'
+                };
                 break;
             }
+
             return pos;
         }
     },
@@ -260,7 +283,12 @@ export default {
             document.body.addEventListener('mouseup', this.endDrag);
             this.startPosition = [event.pageX, event.pageY];
             let {x, y, x2, y2} = this.item;
-            this.dragPosition = {x, y, x2, y2};
+            this.dragPosition = {
+                x,
+                y,
+                x2,
+                y2
+            };
             if (x === x2 || y === y2) {
                 if (y > y2 || x < x2) {
                     if (this.dragging === 'start') {
@@ -270,6 +298,7 @@ export default {
                     }
                 }
             }
+
             event.preventDefault();
         },
         continueDrag(event) {

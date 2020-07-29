@@ -163,6 +163,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
+
         this.conditionSetIdentifier = undefined;
     }
 

@@ -56,7 +56,10 @@ define(
             }
 
             beforeEach(function () {
-                model = { someKey: "some value", name: "domain object"};
+                model = {
+                    someKey: "some value",
+                    name: "domain object"
+                };
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
@@ -98,7 +101,7 @@ define(
                 mockNewStyleDomainObject.identifier = {
                     namespace: "",
                     key: id
-                }
+                };
 
                 // Simulate mutation capability
                 mockDomainObject.useCapability.and.callFake(function (capability, mutator) {
@@ -153,6 +156,7 @@ define(
                 it("does not trigger error notification on successful" +
                     " persistence", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {
@@ -168,6 +172,7 @@ define(
                 });
                 it("rejects on falsey persistence result", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {
@@ -177,6 +182,7 @@ define(
 
                 it("notifies user on persistence failure", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {

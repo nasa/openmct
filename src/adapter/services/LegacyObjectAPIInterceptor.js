@@ -77,7 +77,8 @@ define([
             object.identifier.key,
             model
         );
-    }
+    };
+
     ObjectServiceProvider.prototype.update = async function (object) {
         let model = utils.toOldFormat(object);
 
@@ -86,7 +87,7 @@ define([
             object.identifier.key,
             model
         );
-    }
+    };
 
     /**
      * Get the space in which this domain object is persisted;
@@ -106,6 +107,7 @@ define([
         if (this.identifierService === undefined) {
             this.identifierService = this.$injector.get('identifierService');
         }
+
         return this.identifierService;
     };
 
@@ -113,8 +115,9 @@ define([
         if (this.persistenceService === undefined) {
             this.persistenceService = this.$injector.get('persistenceService');
         }
+
         return this.persistenceService;
-    }
+    };
 
     ObjectServiceProvider.prototype.delete = function (object) {
         // TODO!

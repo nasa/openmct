@@ -148,12 +148,12 @@ export default {
             this.currentTab = tab;
         },
         showRemoveDialog(index) {
-            if(!this.tabsList[index]) {
+            if (!this.tabsList[index]) {
                 return;
             }
 
             let activeTab = this.tabsList[index];
-            let childDomainObject = activeTab.domainObject
+            let childDomainObject = activeTab.domainObject;
 
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
