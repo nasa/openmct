@@ -146,12 +146,14 @@ export default class TelemetryCriterion extends EventEmitter {
             };
         }
 
+        let telemetryObject = this.telemetryObject;
+
         return this.openmct.telemetry.request(
             this.telemetryObject,
             options
         ).then(results => {
             const latestDatum = results.length ? results[results.length - 1] : {};
-            const normalizedDatum = this.createNormalizedDatum(latestDatum, this.telemetryObject);
+            const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObject);
 
             return {
                 id: this.id,

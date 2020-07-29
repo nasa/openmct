@@ -20,13 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper">
+<div class="c-table-wrapper"
+     :class="{ 'is-paused': paused }"
+>
     <!-- main contolbar  start-->
     <div v-if="!marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
     >
         <button
             v-if="allowExport"
+            v-show="!markedRows.length"
             class="c-button icon-download labeled"
             title="Export this view's data"
             @click="exportAllDataAsCSV()"
@@ -125,7 +128,7 @@
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
         :class="{
             'loading': loading,
-            'paused' : paused
+            'is-paused' : paused
         }"
     >
         <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">

@@ -80,6 +80,10 @@ define([], function () {
             return this.cellLimitClasses;
         }
 
+        getContextualDomainObject(openmct, objectKeyString) {
+            return openmct.objects.get(objectKeyString);
+        }
+
         getContextMenuActions() {
             return [];
         }

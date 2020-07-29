@@ -25,14 +25,14 @@
     class="l-layout__frame c-frame"
     :class="{
         'no-frame': !item.hasFrame,
-        'u-inspectable': inspectable
+        'u-inspectable': inspectable,
+        'is-in-small-container': size.width < 600 || size.height < 600
     }"
     :style="style"
 >
     <slot></slot>
-
     <div
-        class="c-frame-edit__move"
+        class="c-frame__move-bar"
         @mousedown="isEditing ? startMove([1,1], [0,0], $event) : null"
     ></div>
 </div>
@@ -61,6 +61,13 @@ export default {
         }
     },
     computed: {
+        size() {
+            let {width, height} = this.item;
+            return {
+                width: (this.gridSize[0] * width),
+                height: (this.gridSize[1] * height)
+            };
+        },
         style() {
             let {x, y, width, height} = this.item;
 

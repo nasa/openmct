@@ -313,6 +313,13 @@
 
     &__actions,
     &__end {
+        .c-button {
+            &[class*='icon-']:before {
+                min-width: 1em;
+                text-align: center;
+            }
+        }
+
         > * + * {
             margin-left: $interiorMargin;
         }
@@ -348,6 +355,10 @@
     &__object-name--w,
     &__object-name {
         flex: 0 1 auto;
+    }
+
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
     }
 
     &__object-name--w {

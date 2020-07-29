@@ -2,13 +2,16 @@
 <div class="c-snapshots-h">
     <div class="l-browse-bar">
         <div class="l-browse-bar__start">
-            <div class="l-browse-bar__object-name--w icon-notebook">
-                <div class="l-browse-bar__object-name">
-                    Notebook Snapshots
-                    <span v-if="snapshots.length"
-                          class="l-browse-bar__object-details"
-                    >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
-                    </span>
+            <div class="l-browse-bar__object-name--w">
+                <div class="l-browse-bar__object-name c-object-label">
+                    <div class="c-object-label__type-icon icon-notebook"></div>
+                    <div class="c-object-label__name">
+                        Notebook Snapshots
+                        <span v-if="snapshots.length"
+                              class="l-browse-bar__object-details"
+                        >&nbsp;{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
+                        </span>
+                    </div>
                 </div>
                 <PopupMenu v-if="snapshots.length > 0"
                            :popup-menu-items="popupMenuItems"

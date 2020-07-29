@@ -53,7 +53,9 @@ export default {
     mounted() {
         this.currentObject = this.object;
         this.updateView();
-        this.$el.addEventListener('dragover', this.onDragOver);
+        this.$el.addEventListener('dragover', this.onDragOver, {
+            capture: true
+        });
         this.$el.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
@@ -143,7 +145,7 @@ export default {
             }
 
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('u-angular-object-view-wrapper');
+            this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$el.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
@@ -274,6 +276,7 @@ export default {
             if (provider &&
                 provider.canEdit &&
                 provider.canEdit(this.currentObject) &&
+                this.isEditingAllowed() &&
                 !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }

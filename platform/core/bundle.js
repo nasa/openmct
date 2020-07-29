@@ -297,7 +297,8 @@ define([
                             "persistenceService",
                             "identifierService",
                             "notificationService",
-                            "$q"
+                            "$q",
+                            "openmct"
                         ]
                     },
                     {

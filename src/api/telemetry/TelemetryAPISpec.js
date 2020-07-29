@@ -159,6 +159,29 @@ define([
                 expect(callbacktwo).not.toHaveBeenCalledWith('anotherValue');
             });
 
+            it('only deletes subscription cache when there are no more subscribers', function () {
+                var unsubFunc = jasmine.createSpy('unsubscribe');
+                telemetryProvider.subscribe.and.returnValue(unsubFunc);
+                telemetryProvider.supportsSubscribe.and.returnValue(true);
+                telemetryAPI.addProvider(telemetryProvider);
+
+                var callback = jasmine.createSpy('callback');
+                var callbacktwo = jasmine.createSpy('callback two');
+                var callbackThree = jasmine.createSpy('callback three');
+                var unsubscribe = telemetryAPI.subscribe(domainObject, callback);
+                var unsubscribeTwo = telemetryAPI.subscribe(domainObject, callbacktwo);
+
+                expect(telemetryProvider.subscribe.calls.count()).toBe(1);
+                unsubscribe();
+                var unsubscribeThree = telemetryAPI.subscribe(domainObject, callbackThree);
+                // Regression test for where subscription cache was deleted on each unsubscribe, resulting in
+                // superfluous additional subscriptions. If the subscription cache is being deleted on each unsubscribe,
+                // then a subsequent subscribe will result in a new subscription at the provider.
+                expect(telemetryProvider.subscribe.calls.count()).toBe(1);
+                unsubscribeTwo();
+                unsubscribeThree();
+            });
+
             it('does subscribe/unsubscribe', function () {
                 var unsubFunc = jasmine.createSpy('unsubscribe');
                 telemetryProvider.subscribe.and.returnValue(unsubFunc);

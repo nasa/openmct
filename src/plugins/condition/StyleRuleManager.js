@@ -47,6 +47,7 @@ export default class StyleRuleManager extends EventEmitter {
         if (this.isEditing) {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
 
             if (this.conditionSetIdentifier) {
@@ -68,6 +69,7 @@ export default class StyleRuleManager extends EventEmitter {
     subscribeToConditionSet() {
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
+            delete this.stopProvidingTelemetry;
         }
 
         this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
@@ -159,9 +161,8 @@ export default class StyleRuleManager extends EventEmitter {
         this.applyStaticStyle();
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
+            delete this.stopProvidingTelemetry;
         }
-
-        delete this.stopProvidingTelemetry;
         this.conditionSetIdentifier = undefined;
     }
 
