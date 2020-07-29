@@ -29,7 +29,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { clearDefaultNotebook, getDefaultNotebook } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -77,7 +77,11 @@ export default {
             if (defaultNotebook) {
                 const domainObject = defaultNotebook.domainObject;
 
-                if (domainObject.location) {
+                if (!domainObject) {
+                    clearDefaultNotebook();
+                }
+
+                if (domainObject && domainObject.location) {
                     const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
 
                     notebookTypes.push({
