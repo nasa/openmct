@@ -64,7 +64,7 @@ function validateConfiguration(config, openmct) {
             return m;
         }, {});
 
-    return config.menuOptions.map(menuOption => {
+    return config.menuOptions.map(function (menuOption) {
         let message = '';
         if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
             message = `Time system '${menuOption.timeSystem}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;

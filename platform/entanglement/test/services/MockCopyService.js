@@ -60,7 +60,6 @@ define(
                 ]
             );
 
-            /** @this MockCopyService */
             mockCopyService.perform.and.callFake(() => {
                 var performPromise,
                     callExtensions,
