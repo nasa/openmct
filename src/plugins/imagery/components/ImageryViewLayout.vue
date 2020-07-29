@@ -31,11 +31,11 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
             <div class="h-local-controls flex-elem">
-                <a
+                <button
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': paused()}"
                     @click="paused(!paused())"
-                ></a>
+                ></button>
             </div>
         </div>
     </div>
@@ -228,8 +228,8 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
-                        bounds = this.openmct.time.bounds();
+                    let parsedTimestamp = this.timeFormat.parse(datum);
+                    let bounds = this.openmct.time.bounds();
 
                     if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);
