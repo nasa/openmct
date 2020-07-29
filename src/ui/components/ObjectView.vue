@@ -317,8 +317,7 @@ export default {
         },
         setFontSize(newSize) {
             let firstChild = this.$el.querySelector(':first-child');
-                console.log(firstChild.classList);
-                firstChild.style.fontSize = newSize;
+                firstChild.dataset.fontSize = newSize;
         }
     }
 }
