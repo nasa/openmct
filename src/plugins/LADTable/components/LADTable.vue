@@ -62,8 +62,8 @@ export default {
                 let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
                 return this.metadataHasUnits(metadata.valueMetadatas);
 
-            }).length;
-            return itemsWithUnits !== 0;
+            });
+            return itemsWithUnits.length !== 0;
         }
     },
     mounted() {
@@ -98,9 +98,8 @@ export default {
             });
         },
         metadataHasUnits(valueMetadatas) {
-            return valueMetadatas.filter((metadatum) => {
-                return metadatum.unit;
-            }).length;
+            let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
+            return metadataWithUnits.length > 0;
         }
     }
 }
