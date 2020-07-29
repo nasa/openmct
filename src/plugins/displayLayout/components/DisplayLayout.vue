@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="l-layout"
+    class="l-layout js-style-receiver"
     :class="{
         'is-multi-selected': selectedLayoutItems.length > 1,
         'allow-editing': isEditing

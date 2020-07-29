@@ -97,26 +97,27 @@ body.desktop {
 }
 
 /******************************************************** FONTS */
-@each $size in $listFontSizes {
-    .is-font-size--#{$size} {
-        font-size: #{$size}px;
+@mixin fontAndSize() {
+    // TODO: change to use data attributes
+    @each $size in $listFontSizes {
+        &.is-font-size--#{$size} {
+            font-size: #{$size}px;
+        }
     }
-}
 
-.is-font--default,
-.is-font--narrow,
-.is-font--monospace {
-    &-bold {
+    .is-font--default-bold &,
+    .is-font--narrow-bold &,
+    .is-font--monospace-bold & {
         font-weight: bold;
     }
-}
 
-[class*='is-font--narrow'] {
-    font-family: 'Arial Narrow', sans-serif;
-}
+    [class*='is-font--narrow'] & {
+        font-family: 'Arial Narrow', sans-serif;
+    }
 
-[class*='is-font--monospace']  {
-    font-family: 'Andale Mono', sans-serif;
+    [class*='is-font--monospace'] &  {
+        font-family: 'Andale Mono', sans-serif;
+    }
 }
 
 /******************************************************** HTML ENTITIES */

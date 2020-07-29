@@ -120,8 +120,9 @@ export default {
                 return;
             }
             let keys = Object.keys(styleObj);
+            let firstChild = this.$el.querySelector('.js-style-receiver');
+            if (!firstChild) { firstChild = this.$el.querySelector(':first-child'); }
             keys.forEach(key => {
-                let firstChild = this.$el.querySelector(':first-child');
                 if (firstChild) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
                         if (firstChild.style[key]) {
