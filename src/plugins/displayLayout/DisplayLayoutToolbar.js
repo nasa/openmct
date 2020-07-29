@@ -484,7 +484,7 @@ define(['lodash'], function (_) {
                         applicableSelectedItems: selection.filter(selectionPath => {
                             let type = selectionPath[0].context.layoutItem.type;
 
-                            if (type !== 'line-view' || type !== 'box-view') {
+                            if (type === 'line-view' || type === 'box-view') {
                                 return false;
                             } else if (type === 'subobject-view') {
                                 let objectType = selectionPath[0].context.item.type;
@@ -498,7 +498,7 @@ define(['lodash'], function (_) {
                             return true;
                         }),
                         property: (selectionPath) => {
-                            return getPath(selectionPath).fontsize
+                            return getPath(selectionPath) + '.fontSize';
                         },
                         title: "Set font size",
                         options: getAvailableFontSizeOptions(selection)
