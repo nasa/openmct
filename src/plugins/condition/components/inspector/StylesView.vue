@@ -421,19 +421,20 @@ export default {
         },
         addConditionSet() {
             let conditionSetDomainObject;
+            let self = this;
             function handleItemSelection(item) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
             }
-            const dismissDialog = (overlay, initialize) => {
+            function dismissDialog(overlay, initialize) {
                 overlay.dismiss();
                 if (initialize && conditionSetDomainObject) {
-                    this.conditionSetDomainObject = conditionSetDomainObject;
-                    this.conditionalStyles = [];
-                    this.initializeConditionalStyles();
+                    self.conditionSetDomainObject = conditionSetDomainObject;
+                    self.conditionalStyles = [];
+                    self.initializeConditionalStyles();
                 }
-            };
+            }
             let vm = new Vue({
                 provide: {
                     openmct: this.openmct
