@@ -10,7 +10,6 @@
             <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}
             </span>
-            <context-menu-drop-down :object-path="objectPath" />
         </div>
     </div>
     <div class="l-browse-bar__end">
@@ -20,12 +19,6 @@
                 :views="views"
                 :current-view="currentView"
                 @setView="setView"
-            />
-            <NotebookMenuSwitcher v-if="showNotebookMenuSwitcher"
-                                  :domain-object="domainObject"
-                                  :ignore-link="true"
-                                  :object-path="objectPath"
-                                  class="c-notebook-snapshot-menubutton"
             />
         </div>
     </div>
