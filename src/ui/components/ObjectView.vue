@@ -100,6 +100,12 @@ export default {
 
             this.openmct.objectViews.off('clearData', this.clearData);
         },
+        getStyleReceiver() {
+            let styleReceiver = this.$el.querySelector('.js-style-receiver');
+            console.log("sR", styleReceiver);
+            if (!styleReceiver) { styleReceiver = this.$el.querySelector(':first-child'); }
+            return styleReceiver;
+        },
         invokeEditModeHandler(editMode) {
             let edit;
 
@@ -120,21 +126,20 @@ export default {
                 return;
             }
             let keys = Object.keys(styleObj);
-            let firstChild = this.$el.querySelector('.js-style-receiver');
-            if (!firstChild) { firstChild = this.$el.querySelector(':first-child'); }
+            let elemToStyle = this.getStyleReceiver();
             keys.forEach(key => {
-                if (firstChild) {
+                if (elemToStyle) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
-                        if (firstChild.style[key]) {
-                            firstChild.style[key] = '';
+                        if (elemToStyle.style[key]) {
+                            elemToStyle.style[key] = '';
                         }
                     } else {
-                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
-                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
-                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        if (!styleObj.isStyleInvisible && elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !elemToStyle.classList.contains(styleObj.isStyleInvisible)) {
+                            elemToStyle.classList.add(styleObj.isStyleInvisible);
                         }
-                        firstChild.style[key] = styleObj[key];
+                        elemToStyle.style[key] = styleObj[key];
                     }
                 }
             });
@@ -317,8 +322,9 @@ export default {
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         },
         setFontSize(newSize) {
-            let firstChild = this.$el.querySelector(':first-child');
-                firstChild.dataset.fontSize = newSize;
+            let elemToStyle = this.getStyleReceiver();
+            console.log("sFS", newSize, elemToStyle);
+            elemToStyle.dataset.fontSize = newSize;
         }
     }
 }

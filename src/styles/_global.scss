@@ -98,26 +98,27 @@ body.desktop {
 
 /******************************************************** FONTS */
 @mixin fontAndSize() {
-    // TODO: change to use data attributes
     @each $size in $listFontSizes {
-        &.is-font-size--#{$size} {
+        &[data-font-size="#{$size}"] {
             font-size: #{$size}px;
         }
     }
 
-    .is-font--default-bold &,
-    .is-font--narrow-bold &,
-    .is-font--monospace-bold & {
+    &[data-font*="bold"] {
         font-weight: bold;
     }
 
-    [class*='is-font--narrow'] & {
+    &[data-font*="narrow"] {
         font-family: 'Arial Narrow', sans-serif;
     }
 
-    [class*='is-font--monospace'] &  {
+    &[data-font*="monospace"] {
         font-family: 'Andale Mono', sans-serif;
     }
+}
+
+.u-style-receiver {
+    @include fontAndSize();
 }
 
 /******************************************************** HTML ENTITIES */

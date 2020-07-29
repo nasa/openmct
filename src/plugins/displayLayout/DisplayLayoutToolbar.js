@@ -128,81 +128,81 @@ define(['lodash'], function (_) {
                     SMALL_FONT_SIZES = [
                         {
                             name: '8px',
-                            value: 'is-font-size--8'
+                            value: '8'
                         },
                         {
                             name: '9px',
-                            value: 'is-font-size--9'
+                            value: '9'
                         },
                         {
                             name: '10px',
-                            value: 'is-font-size--10'
+                            value: '10'
                         },
                         {
                             name: '11px',
-                            value: 'is-font-size--11'
+                            value: '11'
                         },
                         {
                             name: '12px',
-                            value: 'is-font-size--12'
+                            value: '12'
                         },
                         {
                             name: '13px',
-                            value: 'is-font-size--13'
+                            value: '13'
                         },
                         {
                             name: '14px',
-                            value: 'is-font-size--14'
+                            value: '14'
                         },
                         {
                             name: '16px',
-                            value: 'is-font-size--16'
+                            value: '16'
                         },
                         {
                             name: '18px',
-                            value: 'is-font-size--18'
+                            value: '18'
                         },
                         {
                             name: '20px',
-                            value: 'is-font-size--20'
+                            value: '20'
                         },
                         {
                             name: '24px',
-                            value: 'is-font-size--24'
+                            value: '24'
                         }
                     ],
                     LARGE_FONT_SIZES = [
                         {
                             name: '28px',
-                            value: 'is-font-size--28'
+                            value: '28'
                         },
                         {
                             name: '32px',
-                            value: 'is-font-size--32'
+                            value: '32'
                         },
                         {
                             name: '36px',
-                            value: 'is-font-size--36'
+                            value: '36'
                         },
                         {
                             name: '42px',
-                            value: 'is-font-size--42'
+                            value: '42'
                         },
                         {
                             name: '48px',
-                            value: 'is-font-size--48'
+                            value: '48'
                         },
                         {
                             name: '72px',
-                            value: 'is-font-size--72'
+                            value: '72'
                         },
                         {
                             name: '96px',
-                            value: 'is-font-size--96'
+                            value: '96'
                         },
                         {
                             name: '128px',
-                            value: 'is-font-size--128'
+                            value: '128'
                         }
                     ]
 

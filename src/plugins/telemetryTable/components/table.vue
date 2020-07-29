@@ -125,7 +125,7 @@
     <!-- alternate controlbar end  -->
 
     <div
-        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar js-style-receiver"
+        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
             'loading': loading,
             'is-paused' : paused

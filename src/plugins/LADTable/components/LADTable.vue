@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-lad-table-wrapper">
+<div class="c-lad-table-wrapper u-style-receiver js-style-receiver">
     <table class="c-table c-lad-table">
         <thead>
             <tr>

@@ -74,7 +74,7 @@ export default {
             y: position[1],
             identifier: domainObject.identifier,
             hasFrame: hasFrameByDefault(domainObject.type),
-            fontSize: 'is-font-size--13',
+            fontSize: '',
             viewKey
         };
     },
@@ -122,7 +122,7 @@ export default {
             if (!this.context) {
                 return;
             }
-            console.log(newItem);
+            // console.log("nI",newItem);
             this.context.layoutItem = newItem;
         }
     },

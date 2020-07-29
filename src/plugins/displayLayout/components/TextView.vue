@@ -29,7 +29,7 @@
     @endMove="() => $emit('endMove')"
 >
     <div
-        class="c-text-view js-style-receiver"
+        class="c-text-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
     >
