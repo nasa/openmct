@@ -485,6 +485,7 @@ define(['lodash'], function (_) {
                     return {
                         control: 'select-menu',
                         domainObject: selectedParent,
+                        icon: "icon-font-size",
                         applicableSelectedItems: selection.filter(selectionPath => {
                             let type = selectionPath[0].context.layoutItem.type;
 

@@ -30,7 +30,7 @@
 >
     <div
         v-if="domainObject"
-        class="c-telemetry-view"
+        class="u-style-receiver c-telemetry-view"
         :class="{
             styleClass,
             'is-missing': domainObject.status === 'missing'
