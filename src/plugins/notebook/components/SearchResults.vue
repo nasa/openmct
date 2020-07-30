@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import NotebookEntry from './notebook-entry.vue';
+import NotebookEntry from './NotebookEntry.vue';
 
 export default {
     inject: ['openmct', 'snapshotContainer'],

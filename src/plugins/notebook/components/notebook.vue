@@ -107,10 +107,10 @@
 </template>
 
 <script>
-import NotebookEntry from './notebook-entry.vue';
+import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
-import SearchResults from './search-results.vue';
-import Sidebar from './sidebar.vue';
+import SearchResults from './SearchResults.vue';
+import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';

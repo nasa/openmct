@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import NotebookEmbed from './notebook-embed.vue';
+import NotebookEmbed from './NotebookEmbed.vue';
 import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
 

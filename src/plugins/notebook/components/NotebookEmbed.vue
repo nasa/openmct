@@ -25,7 +25,7 @@
 
 <script>
 import Moment from 'moment';
-import PopupMenu from './popup-menu.vue';
+import PopupMenu from './PopupMenu.vue';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';

@@ -19,7 +19,7 @@
 <script>
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook } from '../utils/notebook-storage';
-import Page from './page-component.vue';
+import Page from './PageComponent.vue';
 
 export default {
     inject: ['openmct'],

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import * as NotebookEntries from './notebook-entries';
-import { clearBuiltinSpies, createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
+import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
 
 const notebookStorage = {
     domainObject: {

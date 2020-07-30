@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import NotebookEmbed from './notebook-embed.vue';
-import PopupMenu from './popup-menu.vue';
+import NotebookEmbed from './NotebookEmbed.vue';
+import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
