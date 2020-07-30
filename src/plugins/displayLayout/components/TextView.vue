@@ -31,6 +31,7 @@
     <div
         class="c-text-view u-style-receiver js-style-receiver"
         :data-font-size="item.fontSize"
+        :data-font="item.font"
         :class="[styleClass]"
         :style="style"
     >
@@ -54,7 +55,8 @@ export default {
             width: 10,
             height: 5,
             text: element.text,
-            fontSize: 'default'
+            fontSize: 'default',
+            font: 'default'
         };
     },
     inject: ['openmct'],

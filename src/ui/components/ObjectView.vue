@@ -24,6 +24,10 @@ export default {
         fontSize: {
             type: String,
             default: ''
+        },
+        font: {
+            type: String,
+            default: ''
         }
     },
     watch: {
@@ -34,6 +38,11 @@ export default {
         fontSize(newSize, oldSize) {
             if (newSize !== oldSize) {
                 this.setFontSize(newSize);
+            }
+        },
+        font(newFont, oldFont) {
+            if (newFont !== oldFont) {
+                this.setFont(newFont);
             }
         }
     },
@@ -73,6 +82,7 @@ export default {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
             this.setFontSize(this.fontSize);
+            this.setFont(this.font);
         }
     },
     methods: {
@@ -102,8 +112,11 @@ export default {
         },
         getStyleReceiver() {
             let styleReceiver = this.$el.querySelector('.js-style-receiver');
-            console.log("sR", styleReceiver);
-            if (!styleReceiver) { styleReceiver = this.$el.querySelector(':first-child'); }
+
+            if (!styleReceiver) {
+                styleReceiver = this.$el.querySelector(':first-child');
+            }
+
             return styleReceiver;
         },
         invokeEditModeHandler(editMode) {
@@ -323,8 +336,11 @@ export default {
         },
         setFontSize(newSize) {
             let elemToStyle = this.getStyleReceiver();
-            console.log("sFS", newSize, elemToStyle);
             elemToStyle.dataset.fontSize = newSize;
+        },
+        setFont(newFont) {
+            let elemToStyle = this.getStyleReceiver();
+            elemToStyle.dataset.font = newFont;
         }
     }
 }

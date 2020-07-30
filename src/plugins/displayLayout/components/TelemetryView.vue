@@ -37,6 +37,7 @@
         }"
         :style="styleObject"
         :data-font-size="item.fontSize"
+        :data-font="item.font"
         @contextmenu.prevent="showContextMenu"
     >
         <div class="is-missing__indicator"
@@ -90,7 +91,8 @@ export default {
             stroke: "",
             fill: "",
             color: "",
-            fontSize: 'default'
+            fontSize: 'default',
+            font: 'default'
         };
     },
     inject: ['openmct', 'objectPath'],

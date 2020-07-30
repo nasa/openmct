@@ -67,6 +67,7 @@
         :show-edit-view="showEditView"
         :object-path="objectPath"
         :fontSize="fontSize"
+        :font="font"
     />
 </div>
 </template>
@@ -106,6 +107,10 @@ export default {
             default: true
         },
         fontSize: {
+            type: String,
+            default: ''
+        },
+        font: {
             type: String,
             default: ''
         }
