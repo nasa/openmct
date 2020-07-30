@@ -70,15 +70,14 @@ export default {
     },
     computed: {
         hasUnits() {
-            for(let telemetryObject in this.secondaryTelemetryObjects) {
-                if(this.secondaryTelemetryObjects[telemetryObject]) {
-                    let objects = this.secondaryTelemetryObjects[telemetryObject];
-                    for(let current of objects) {
-                        let metadata = this.openmct.telemetry.getMetadata(current.domainObject);
-                        for(let metadatum of metadata.valueMetadatas) {
-                            if(metadatum.unit) {
-                                return true;
-                            }
+            let ladTables = Object.values(this.secondaryTelemetryObjects);
+            for(let ladTable of ladTables) {
+                console.log('ladTable', ladTable);
+                for(let telemetryObject of ladTable) {
+                    let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
+                    for(let metadatum of metadata.valueMetadatas) {
+                        if(metadatum.unit) {
+                            return true;
                         }
                     }
                 }
