@@ -248,7 +248,8 @@ export default {
         previewEmbed() {
             const self = this;
             const previewAction = new PreviewAction(self.openmct);
-            previewAction.invoke(JSON.parse(self.embed.objectPath));
+            this.openmct.objects.get(self.embed.domainObject.identifier)
+                .then(domainObject => previewAction.invoke([domainObject]));
         },
         removeEmbed(success) {
             if (!success) {
