@@ -1,5 +1,5 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
-import { getDefaultNotebook } from './utils/notebook-storage';
+import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 import SnapshotContainer from './snapshot-container';
 
@@ -45,10 +45,18 @@ export default class Snapshot {
     _saveToDefaultNoteBook(embed) {
         const notebookStorage = getDefaultNotebook();
         this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
-            .then(domainObject => {
+            .then(async (domainObject) => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
-                const link = notebookStorage.notebookMeta.link;
+                let link = notebookStorage.notebookMeta.link;
+
+                // Backwards compatibility fix (old notebook model without link)
+                if (!link) {
+                    link = await getDefaultNotebookLink(this.openmct, domainObject);
+                    notebookStorage.notebookMeta.link = link;
+                    setDefaultNotebook(this.openmct, notebookStorage);
+                }
+
                 const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this._showNotification(msg, link);
