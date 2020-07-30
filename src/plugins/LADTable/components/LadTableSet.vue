@@ -123,7 +123,7 @@ export default {
 
                 let array = this.secondaryTelemetryObjects[primary.key];
                 array.push(secondary);
-
+                console.log(this.secondaryTelemetryObjects);
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
             }
         },

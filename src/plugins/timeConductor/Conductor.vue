@@ -141,10 +141,11 @@
             <ConductorMode class="c-conductor__mode-select" />
             <ConductorTimeSystem class="c-conductor__time-system-select" />
             <ConductorHistory
-                v-if="isFixed"
                 class="c-conductor__history-select"
                 :bounds="openmct.time.bounds()"
                 :time-system="timeSystem"
+                :realtime-history-bounds="realtimeHistoryBounds"
+                :mode="timeMode"
             />
         </div>
         <input
@@ -198,12 +199,18 @@ export default {
                 start: bounds.start,
                 end: bounds.end
             },
+            realtimeHistoryBounds: bounds,
             isFixed: this.openmct.time.clock() === undefined,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
             isZooming: false
+        }
+    },
+    computed: {
+        timeMode() {
+            return this.isFixed ? 'fixed' : 'realtime';
         }
     },
     mounted() {
@@ -231,6 +238,7 @@ export default {
             }
         },
         pan(bounds) {
+            console.log('pan', bounds);
             this.isPanning = true;
             this.setViewFromBounds(bounds);
         },
@@ -292,7 +300,11 @@ export default {
             this.clearAllValidation();
             this.isFixed = clock === undefined;
         },
-        setViewFromBounds(bounds) {
+        setViewFromBounds(bounds, isTick) {
+            if(!isTick) {
+                // specific for realtime history tracking
+                this.realtimeHistoryBounds = bounds;
+            }
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
             this.viewBounds.start = bounds.start;

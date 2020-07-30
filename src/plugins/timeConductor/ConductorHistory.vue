@@ -66,7 +66,8 @@
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
-const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
+const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
+const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 export default {
@@ -80,37 +81,65 @@ export default {
         timeSystem: {
             type: Object,
             required: true
+        },
+        realtimeHistoryBounds: {
+            type: Object,
+            required: true
+        },
+        mode: {
+            type: String,
+            required: true
         }
     },
     data() {
         return {
-            history: {}, // contains arrays of timespans {start, end}, array key is time system key
+            realtimeHistory: {},
+            fixedHistory: {},
             presets: []
         }
     },
     computed: {
+        currentHistory() {
+            return this.mode + 'History';
+        },
         hasHistoryPresets() {
             return this.timeSystem.isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
-            const history = this.history[this.timeSystem.key];
-
+            console.log('hist for cur ts', this.currentHistory, this.timeSystem.key,this[this.currentHistory][this.timeSystem.key]);
+            const history = this[this.currentHistory][this.timeSystem.key];
             return history;
+        },
+        storageKey() {
+            let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
+            if(this.mode !== 'fixed') {
+                key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
+            }
+            return key;
         }
     },
     watch: {
         bounds: {
-            handler() {
-                this.addTimespan();
+            handler(bounds) {
+                // console.log('bounds in history vue', bounds);
+                if(this.mode === 'fixed') {
+                    this.addTimespan();
+                }
             },
             deep: true
         },
+        realtimeHistoryBounds: function (newBounds) {
+            this.addTimespan();
+        },
         timeSystem: {
-            handler() {
+            handler(ts) {
                 this.loadConfiguration();
                 this.addTimespan();
             },
             deep: true
+        },
+        mode: function () {
+            console.log('mode changed', this.storageKey);
         },
         history: {
             handler() {
@@ -124,19 +153,22 @@ export default {
     },
     methods: {
         getHistoryFromLocalStorage() {
-            if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-                this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
+            console.log('getfromlocal', this.storageKey);
+            if (localStorage.getItem(this.storageKey)) {
+                this[this.currentHistory] = JSON.parse(localStorage.getItem(this.storageKey))
             } else {
-                this.history = {};
+                this[this.currentHistory] = {};
                 this.persistHistoryToLocalStorage();
             }
+            console.log(this[this.currentHistory]);
         },
         persistHistoryToLocalStorage() {
-            localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
+            console.log('persist to local', this[this.currentHistory]);
+            localStorage.setItem(this.storageKey, JSON.stringify(this[this.currentHistory]));
         },
         addTimespan() {
             const key = this.timeSystem.key;
-            let [...currentHistory] = this.history[key] || [];
+            let [...currentHistory] = this[this.currentHistory][key] || [];
             const timespan = {
                 start: this.bounds.start,
                 end: this.bounds.end
@@ -155,7 +187,7 @@ export default {
             }
 
             currentHistory.unshift(timespan);
-            this.history[key] = currentHistory;
+            this[this.currentHistory][key] = currentHistory;
         },
         selectTimespan(timespan) {
             this.openmct.time.bounds(timespan);

@@ -36,6 +36,9 @@
     <script>
         const THIRTY_SECONDS = 30 * 1000;
         const THIRTY_MINUTES = THIRTY_SECONDS * 60;
+        const ONE_HOUR = THIRTY_MINUTES * 2;
+        const TWO_HOURS = ONE_HOUR * 2;
+        const ONE_DAY = ONE_HOUR * 24;
 
         [
             'example/eventGenerator'
@@ -72,21 +75,21 @@
                         {
                             label: 'Last Day',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60 * 24,
+                                start: () => Date.now() - ONE_DAY,
                                 end: () => Date.now()
                             }
                         },
                         {
                             label: 'Last 2 hours',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60 * 2,
+                                start: () => Date.now() - TWO_HOURS,
                                 end: () => Date.now()
                             }
                         },
                         {
                             label: 'Last hour',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60,
+                                start: () => Date.now() - ONE_HOUR,
                                 end: () => Date.now()
                             }
                         }
@@ -95,7 +98,7 @@
                     records: 10,
                     // maximum duration between start and end bounds
                     // for utc-based time systems this is in milliseconds
-                    limit: 1000 * 60 * 60 * 24
+                    limit: ONE_DAY
                 },
                 {
                     name: "Realtime",
