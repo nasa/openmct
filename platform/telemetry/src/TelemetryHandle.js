@@ -102,8 +102,8 @@ define(
                 }
 
                 // If the request is a simple number, treat it as a duration
-                request = (typeof request === 'number') ?
-                    { duration: request } : request;
+                request = (typeof request === 'number')
+                    ? { duration: request } : request;
 
                 // Look up telemetry-providing objects from the subscription,
                 // then issue new requests.
@@ -133,9 +133,9 @@ define(
                     }
                 }
 
-                return typeof index !== 'number' ?
-                    subscription.getDatum(telemetryObject) :
-                    makeNewDatum(this.getSeries(telemetryObject));
+                return typeof index !== 'number'
+                    ? subscription.getDatum(telemetryObject)
+                    : makeNewDatum(this.getSeries(telemetryObject));
             };
 
             return self;

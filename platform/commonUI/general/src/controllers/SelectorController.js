@@ -52,8 +52,8 @@ define(
 
             // Check that a selection is of the valid type
             function validateTreeSelection(selectedObject) {
-                var type = selectedObject &&
-                    selectedObject.getCapability('type');
+                var type = selectedObject
+                    && selectedObject.getCapability('type');
 
                 // Delegate type-checking to the capability...
                 if (!type || !type.instanceOf($scope.structure.type)) {

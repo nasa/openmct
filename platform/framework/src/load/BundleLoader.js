@@ -27,8 +27,8 @@ define(
     ['../Constants', './Bundle'],
     function (Constants, Bundle) {
 
-        var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; " +
-            "expected string or array",
+        var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; "
+            + "expected string or array",
             BAD_CONTENTS_PREFIX = "Invalid bundle contents for ",
             LOAD_ERROR_PREFIX = "Failed to load bundle ";
 
@@ -150,9 +150,9 @@ define(
                     .then(loadBundlesFromArray, handleError);
             }
 
-            return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+            return Array.isArray(bundles) ? loadBundlesFromArray(bundles)
+                : (typeof bundles === 'string') ? loadBundlesFromFile(bundles)
+                    : Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
         };
 
         return BundleLoader;

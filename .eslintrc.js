@@ -154,7 +154,7 @@ module.exports = {
         // https://eslint.org/docs/rules/no-multiple-empty-lines
         "no-multiple-empty-lines": ["error", {"max": 1}],
         // https://eslint.org/docs/rules/operator-linebreak
-        "operator-linebreak": ["error", "after"],
+        "operator-linebreak": ["error", "before", {"overrides": {"=": "after"}}],
         // https://eslint.org/docs/rules/padding-line-between-statements
         "padding-line-between-statements":["error", {
             "blankLine": "always",

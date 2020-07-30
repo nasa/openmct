@@ -141,8 +141,8 @@ function (
 
         function allowClone(objectToClone) {
             var allowed =
-                    (objectToClone.getId() === domainObject.getId()) ||
-                        objectToClone.getCapability('location').isOriginal();
+                    (objectToClone.getId() === domainObject.getId())
+                        || objectToClone.getCapability('location').isOriginal();
             if (allowed) {
                 toUndirty.push(objectToClone);
             }
@@ -220,10 +220,10 @@ function (
     SaveAsAction.appliesTo = function (context) {
         var domainObject = (context || {}).domainObject;
 
-        return domainObject !== undefined &&
-                domainObject.hasCapability('editor') &&
-                domainObject.getCapability('editor').isEditContextRoot() &&
-                domainObject.getModel().persisted === undefined;
+        return domainObject !== undefined
+                && domainObject.hasCapability('editor')
+                && domainObject.getCapability('editor').isEditContextRoot()
+                && domainObject.getModel().persisted === undefined;
     };
 
     return SaveAsAction;

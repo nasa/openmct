@@ -109,9 +109,9 @@ export default {
         updateSection(newSection) {
             const id = newSection.id;
             const sections = this.sections.map(section =>
-                section.id === id ?
-                    newSection :
-                    section);
+                section.id === id
+                    ? newSection
+                    : section);
             this.$emit('updateSection', {
                 sections,
                 id

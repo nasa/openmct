@@ -80,8 +80,8 @@ define(
          */
         WorkerService.prototype.run = function (key) {
             var scriptUrl = this.workerUrls[key],
-                Worker = this.sharedWorkers[key] ?
-                    this.SharedWorker : this.Worker;
+                Worker = this.sharedWorkers[key]
+                    ? this.SharedWorker : this.Worker;
 
             return scriptUrl && Worker && new Worker(scriptUrl);
         };

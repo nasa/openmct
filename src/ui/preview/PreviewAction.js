@@ -81,8 +81,8 @@ export default class PreviewAction {
         let targetObject = objectPath[0];
         let navigatedObject = this._openmct.router.path[0];
 
-        return targetObject.identifier.namespace === navigatedObject.identifier.namespace &&
-            targetObject.identifier.key === navigatedObject.identifier.key;
+        return targetObject.identifier.namespace === navigatedObject.identifier.namespace
+            && targetObject.identifier.key === navigatedObject.identifier.key;
     }
     _preventPreview(objectPath) {
         const noPreviewTypes = ['folder'];

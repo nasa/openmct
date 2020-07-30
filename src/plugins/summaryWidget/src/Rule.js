@@ -309,8 +309,8 @@ define([
      * Mutate thet domain object with this rule's local configuration
      */
     Rule.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
-            this.config.id, this.config);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.'
+            + this.config.id, this.config);
     };
 
     /**
@@ -467,11 +467,11 @@ define([
                     property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
                     if (name || property || operation) {
-                        description += 'when ' +
-                            (name ? name + '\'s ' : '') +
-                            (property ? property + ' ' : '') +
-                            (operation ? operation + ' ' : '') +
-                            (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                        description += 'when '
+                            + (name ? name + '\'s ' : '')
+                            + (property ? property + ' ' : '')
+                            + (operation ? operation + ' ' : '')
+                            + (self.config.trigger === 'any' ? ' OR ' : ' AND ');
                     }
                 });
             }

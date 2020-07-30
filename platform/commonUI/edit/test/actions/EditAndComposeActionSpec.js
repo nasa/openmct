@@ -105,8 +105,8 @@ define(
                 expect(mockEditAction.perform).toHaveBeenCalled();
             });
 
-            it("Does not enable edit mode for objects that do not have an" +
-                " edit action", function () {
+            it("Does not enable edit mode for objects that do not have an"
+                + " edit action", function () {
                 mockActionCapability.getActions.and.returnValue([]);
                 action.perform();
                 expect(mockEditAction.perform).not.toHaveBeenCalled();

@@ -88,11 +88,11 @@ define(
                 return domainObject.useCapability('composition');
             }
 
-            return this.doesDelegateCapability(key) ?
-                promiseChildren().then(
+            return this.doesDelegateCapability(key)
+                ? promiseChildren().then(
                     filterObjectsWithCapability(key)
-                ) :
-                this.$q.when([]);
+                )
+                : this.$q.when([]);
         };
 
         /**

@@ -349,9 +349,9 @@ export default {
                 const limit = this.getBoundsLimit();
 
                 if (
-                    this.timeSystem.isUTCBased &&
-                    limit &&
-                    boundsValues.end - boundsValues.start > limit
+                    this.timeSystem.isUTCBased
+                    && limit
+                    && boundsValues.end - boundsValues.start > limit
                 ) {
                     if (input === currentInput) {
                         validationResult = "Start and end difference exceeds allowable limit";
@@ -369,9 +369,9 @@ export default {
             let validationResult = true;
 
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                const formattedDate = input === this.$refs.startDate ?
-                    this.formattedBounds.start :
-                    this.formattedBounds.end
+                const formattedDate = input === this.$refs.startDate
+                    ? this.formattedBounds.start
+                    : this.formattedBounds.end
                 ;
 
                 if (!this.timeFormatter.validate(formattedDate)) {

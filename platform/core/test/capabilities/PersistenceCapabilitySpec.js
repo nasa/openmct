@@ -153,8 +153,8 @@ define(
                     expect(model).toEqual(refreshModel);
                 });
 
-                it("does not trigger error notification on successful" +
-                    " persistence", function () {
+                it("does not trigger error notification on successful"
+                    + " persistence", function () {
                     let rejected = false;
 
                     return persistence.persist()

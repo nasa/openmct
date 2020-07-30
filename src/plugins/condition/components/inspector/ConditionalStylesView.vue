@@ -167,8 +167,8 @@ export default {
                 layoutItem = this.selection[0][0].context.layoutItem;
                 const item = this.selection[0][0].context.item;
                 this.canHide = true;
-                if (item &&
-                    (!layoutItem || (this.isItemType('subobject-view', layoutItem)))) {
+                if (item
+                    && (!layoutItem || (this.isItemType('subobject-view', layoutItem)))) {
                     domainObject = item;
                 } else {
                     domainObject = this.selection[0][1].context.item;
@@ -326,11 +326,11 @@ export default {
             let keys = Object.keys(domainObjectStyles);
             //TODO: Need an easier way to find which properties are itemIds
             keys.forEach((key) => {
-                const keyIsItemId = (key !== 'styles') &&
-                    (key !== 'staticStyle') &&
-                    (key !== 'defaultConditionId') &&
-                    (key !== 'selectedConditionId') &&
-                    (key !== 'conditionSetIdentifier');
+                const keyIsItemId = (key !== 'styles')
+                    && (key !== 'staticStyle')
+                    && (key !== 'defaultConditionId')
+                    && (key !== 'selectedConditionId')
+                    && (key !== 'conditionSetIdentifier');
                 if (keyIsItemId) {
                     if (!(newItems.find(item => item.id === key))) {
                         itemsToRemove.push(key);

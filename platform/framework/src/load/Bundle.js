@@ -102,9 +102,9 @@ define(
          *          source file within it)
          */
         Bundle.prototype.getSourcePath = function (sourceFile) {
-            var subpath = sourceFile ?
-                [this.definition.sources, sourceFile] :
-                [this.definition.sources];
+            var subpath = sourceFile
+                ? [this.definition.sources, sourceFile]
+                : [this.definition.sources];
 
             return this.resolvePath(subpath);
         };
@@ -120,9 +120,9 @@ define(
          *          resource file within it)
          */
         Bundle.prototype.getResourcePath = function (resourceFile) {
-            var subpath = resourceFile ?
-                [this.definition.resources, resourceFile] :
-                [this.definition.resources];
+            var subpath = resourceFile
+                ? [this.definition.resources, resourceFile]
+                : [this.definition.resources];
 
             return this.resolvePath(subpath);
         };
@@ -138,9 +138,9 @@ define(
          *          resource file within it)
          */
         Bundle.prototype.getLibraryPath = function (libraryFile) {
-            var subpath = libraryFile ?
-                [this.definition.libraries, libraryFile] :
-                [this.definition.libraries];
+            var subpath = libraryFile
+                ? [this.definition.libraries, libraryFile]
+                : [this.definition.libraries];
 
             return this.resolvePath(subpath);
         };

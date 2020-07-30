@@ -77,9 +77,9 @@ define(
             // Used to build unique identifiers for individual extensions,
             // so that these can be registered separately with Angular
             function identify(category, extension, index) {
-                var name = extension.key ?
-                    ("extension-" + extension.key + "#" + index) :
-                    ("extension#" + index);
+                var name = extension.key
+                    ? ("extension-" + extension.key + "#" + index)
+                    : ("extension#" + index);
 
                 return category + "[" + name + "]";
             }
@@ -103,9 +103,9 @@ define(
             // both dependencies and a factory method for the service.)
             function makeServiceArgument(category, extension) {
                 var dependencies = extension.depends || [],
-                    factory = (typeof extension === 'function') ?
-                        new PartialConstructor(extension) :
-                        staticFunction(extension);
+                    factory = (typeof extension === 'function')
+                        ? new PartialConstructor(extension)
+                        : staticFunction(extension);
 
                 return dependencies.concat([factory]);
             }

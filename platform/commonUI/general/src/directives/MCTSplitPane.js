@@ -102,17 +102,17 @@ define(
                     position,
                     splitterSize,
 
-                    alias = $attrs.alias !== undefined ?
-                        "mctSplitPane-" + $attrs.alias : undefined,
+                    alias = $attrs.alias !== undefined
+                        ? "mctSplitPane-" + $attrs.alias : undefined,
 
                     //convert string to number from localStorage
-                    userWidthPreference = $window.localStorage.getItem(alias) === null ?
-                        undefined : Number($window.localStorage.getItem(alias));
+                    userWidthPreference = $window.localStorage.getItem(alias) === null
+                        ? undefined : Number($window.localStorage.getItem(alias));
 
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
-                    return (anchor.orientation === 'vertical' ?
-                        domElement.offsetWidth : domElement.offsetHeight);
+                    return (anchor.orientation === 'vertical'
+                        ? domElement.offsetWidth : domElement.offsetHeight);
                 }
 
                 // Apply styles to child elements
@@ -146,8 +146,8 @@ define(
                     var children = $element.children();
 
                     // Check to make sure contents are well-formed
-                    if (children.length !== 3 ||
-                            children[1].nodeName.toLowerCase() !== 'mct-splitter') {
+                    if (children.length !== 3
+                            || children[1].nodeName.toLowerCase() !== 'mct-splitter') {
                         $log.warn(CHILDREN_WARNING_MESSAGE);
 
                         return;

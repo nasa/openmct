@@ -47,9 +47,9 @@ define(
 
         function toGradient(triplet, value) {
             return triplet.map(function (v) {
-                return Math.round(value > 0 ?
-                    (v + (255 - v) * value) :
-                    (v * (1 + value))
+                return Math.round(value > 0
+                    ? (v + (255 - v) * value)
+                    : (v * (1 + value))
                 );
             });
         }

@@ -87,9 +87,9 @@ export default {
             }
         },
         getPosition: function (event) {
-            return this.type === 'horizontal' ?
-                event.pageX :
-                event.pageY;
+            return this.type === 'horizontal'
+                ? event.pageX
+                : event.pageY;
         },
         getNewSize: function (event) {
             let delta = this.startPosition - this.getPosition(event);

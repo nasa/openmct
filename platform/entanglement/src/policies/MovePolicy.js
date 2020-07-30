@@ -52,8 +52,8 @@ define([], function () {
         var key = action.getMetadata().key;
 
         if (key === 'move') {
-            return allowMutation(selectedObject(context)) &&
-                allowMutation(parentOf(selectedObject(context)));
+            return allowMutation(selectedObject(context))
+                && allowMutation(parentOf(selectedObject(context)));
         }
 
         return true;

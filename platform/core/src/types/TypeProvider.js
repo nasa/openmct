@@ -63,9 +63,9 @@ define(
                     return true;
                 }
 
-                return set[element] ?
-                    false :
-                    (set[element] = true);
+                return set[element]
+                    ? false
+                    : (set[element] = true);
             }) : array;
         }
 
@@ -178,8 +178,8 @@ define(
 
                     // Always provide a default name
                     def.model = def.model || {};
-                    def.model.name = def.model.name ||
-                        ("Unnamed " + (def.name || "Object"));
+                    def.model.name = def.model.name
+                        || ("Unnamed " + (def.name || "Object"));
 
                     return def;
                 }

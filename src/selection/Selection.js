@@ -63,10 +63,10 @@ define(
                 selectable = [selectable];
             }
 
-            let multiSelect = isMultiSelectEvent &&
-                this.parentSupportsMultiSelect(selectable) &&
-                this.isPeer(selectable) &&
-                !this.selectionContainsParent(selectable);
+            let multiSelect = isMultiSelectEvent
+                && this.parentSupportsMultiSelect(selectable)
+                && this.isPeer(selectable)
+                && !this.selectionContainsParent(selectable);
 
             if (multiSelect) {
                 this.handleMultiSelect(selectable);

@@ -210,9 +210,9 @@ define([
         );
         // Adjust opposite knob to maintain span
         this.$scope.ngModel.inner[opposite] =
-            this.$scope.ngModel.inner[edge] +
-            this.initialDragValue[opposite] -
-            this.initialDragValue[edge];
+            this.$scope.ngModel.inner[edge]
+            + this.initialDragValue[opposite]
+            - this.initialDragValue[edge];
 
         this.updateViewFromModel(this.$scope.ngModel);
     };
@@ -300,13 +300,13 @@ define([
     };
 
     TimeRangeController.prototype.validateStart = function (startValue) {
-        return startValue <=
-            this.$scope.formModel.end - this.outerMinimumSpan;
+        return startValue
+            <= this.$scope.formModel.end - this.outerMinimumSpan;
     };
 
     TimeRangeController.prototype.validateEnd = function (endValue) {
-        return endValue >=
-            this.$scope.formModel.start + this.outerMinimumSpan;
+        return endValue
+            >= this.$scope.formModel.start + this.outerMinimumSpan;
     };
 
     return TimeRangeController;

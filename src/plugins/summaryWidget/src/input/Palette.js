@@ -45,8 +45,8 @@ define([
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
-            var itemElement = $('<div class = "c-palette__item ' + item + '"' +
-                                ' data-item = ' + item + '></div>');
+            var itemElement = $('<div class = "c-palette__item ' + item + '"'
+                                + ' data-item = ' + item + '></div>');
             $('.c-palette__items', self.domElement).append(itemElement);
             self.itemElements[item] = itemElement;
         });

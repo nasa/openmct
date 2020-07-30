@@ -270,8 +270,8 @@ define([
             this.loadMoreData(xDisplayRange);
         }
 
-        this.synchronized(xRange.min === xDisplayRange.min &&
-                          xRange.max === xDisplayRange.max);
+        this.synchronized(xRange.min === xDisplayRange.min
+                          && xRange.max === xDisplayRange.max);
     };
 
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {

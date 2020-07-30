@@ -131,8 +131,8 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
             });
         });
 
-        it('updates its configuration on a item change and provides an updated' +
-           'cache to the evaluator', function () {
+        it('updates its configuration on a item change and provides an updated'
+           + 'cache to the evaluator', function () {
             testDataManager.onItemChange({
                 value: 26,
                 property: 'value',

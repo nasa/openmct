@@ -42,8 +42,8 @@ define(
             function noop() {}
 
             function mockPromise(value) {
-                return (value || {}).then ? value :
-                    {
+                return (value || {}).then ? value
+                    : {
                         then: function (callback) {
                             return mockPromise(callback(value));
                         },
@@ -171,8 +171,8 @@ define(
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(false);
             });
 
-            it("only applies to domain object that has not already been" +
-                " persisted", function () {
+            it("only applies to domain object that has not already been"
+                + " persisted", function () {
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 

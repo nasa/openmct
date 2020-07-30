@@ -146,10 +146,10 @@ define(['lodash'], function (_) {
     };
 
     ExportAsJSONAction.prototype.isExternal = function (child, parent) {
-        if (child.location !== this.getId(parent) &&
-            !Object.keys(this.tree).includes(child.location) &&
-            this.getId(child) !== this.getId(this.root) ||
-            this.externalIdentifiers.includes(this.getId(child))) {
+        if (child.location !== this.getId(parent)
+            && !Object.keys(this.tree).includes(child.location)
+            && this.getId(child) !== this.getId(this.root)
+            || this.externalIdentifiers.includes(this.getId(child))) {
 
             return true;
         }

@@ -74,8 +74,8 @@ define(
                 // Filter candidates by object type
                 for (i = 0; i < candidates.length; i += 1) {
                     type = candidates[i].type;
-                    if (!type || !domainObject ||
-                            domainObject.getCapability('type').instanceOf(type)) {
+                    if (!type || !domainObject
+                            || domainObject.getCapability('type').instanceOf(type)) {
                         return candidates[i];
                     }
                 }
@@ -146,10 +146,10 @@ define(
                 }
 
                 function unchanged(canRepresent, idPath, key) {
-                    return (canRepresent === couldRepresent) &&
-                        (key === lastKey) &&
-                        (idPath.length === lastIdPath.length) &&
-                        idPath.every(function (id, i) {
+                    return (canRepresent === couldRepresent)
+                        && (key === lastKey)
+                        && (idPath.length === lastIdPath.length)
+                        && idPath.every(function (id, i) {
                             return id === lastIdPath[i];
                         });
                 }

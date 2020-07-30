@@ -25,17 +25,17 @@
  */
 
 define(['zepto'], function ($) {
-    var OVERLAY_TEMPLATE = '' +
-'    <div class="abs blocker"></div>' +
-'    <div class="abs outer-holder">' +
-'       <a class="close icon-x-in-circle"></a>' +
-'       <div class="abs inner-holder l-flex-col">' +
-'           <div class="t-contents flex-elem holder grows"></div>' +
-'           <div class="bottom-bar flex-elem holder">' +
-'               <a class="t-done s-button major">Done</a>' +
-'           </div>' +
-'       </div>' +
-'    </div>';
+    var OVERLAY_TEMPLATE = ''
++ '    <div class="abs blocker"></div>'
++ '    <div class="abs outer-holder">'
++ '       <a class="close icon-x-in-circle"></a>'
++ '       <div class="abs inner-holder l-flex-col">'
++ '           <div class="t-contents flex-elem holder grows"></div>'
++ '           <div class="bottom-bar flex-elem holder">'
++ '               <a class="t-done s-button major">Done</a>'
++ '           </div>'
++ '       </div>'
++ '    </div>';
 
     /*
      *  An Overlay Service when instantiated creates an overlay dialog.
@@ -171,9 +171,9 @@ define(['zepto'], function ($) {
     };
 
     function newButtonTemplate(classString, title) {
-        var NEW_BUTTON_TEMPLATE = '<a class="s-button labeled' + classString + '">' +
-        '<span class="title-label">' + title + '</span>' +
-        '</a>';
+        var NEW_BUTTON_TEMPLATE = '<a class="s-button labeled' + classString + '">'
+        + '<span class="title-label">' + title + '</span>'
+        + '</a>';
 
         var button = document.createElement('div');
         $(button).addClass('holder flex-elem');

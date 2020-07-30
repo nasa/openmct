@@ -173,8 +173,8 @@ export default {
         },
         showMarquee() {
             let selectionPath = this.selection[0];
-            let singleSelectedLine = this.selection.length === 1 &&
-                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+            let singleSelectedLine = this.selection.length === 1
+                    && selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
 
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
@@ -382,8 +382,8 @@ export default {
             }
         },
         isTelemetry(domainObject) {
-            if (this.openmct.telemetry.isTelemetryObject(domainObject) &&
-                    !this.options.showAsView.includes(domainObject.type)) {
+            if (this.openmct.telemetry.isTelemetryObject(domainObject)
+                    && !this.options.showAsView.includes(domainObject.type)) {
                 return true;
             } else {
                 return false;
@@ -552,9 +552,9 @@ export default {
             let newIndex = -1;
 
             indices.forEach((itemIndex, index) => {
-                let isAdjacentItemSelected = position === 'up' ?
-                    itemIndex + 1 === previousItemIndex :
-                    itemIndex - 1 === previousItemIndex;
+                let isAdjacentItemSelected = position === 'up'
+                    ? itemIndex + 1 === previousItemIndex
+                    : itemIndex - 1 === previousItemIndex;
 
                 if (index > 0 && isAdjacentItemSelected) {
                     if (position === 'up') {

@@ -28,31 +28,31 @@ const styleProps = {
         svgProperty: 'fill',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                      type === 'telemetry-view' ||
-                                      type === 'box-view' ||
-                                      type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                      || type === 'telemetry-view'
+                                      || type === 'box-view'
+                                      || type === 'subobject-view');
         }
     },
     border: {
         svgProperty: 'stroke',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                            type === 'telemetry-view' ||
-                                            type === 'box-view' ||
-                                            type === 'image-view' ||
-                                            type === 'line-view' ||
-                                            type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                            || type === 'telemetry-view'
+                                            || type === 'box-view'
+                                            || type === 'image-view'
+                                            || type === 'line-view'
+                                            || type === 'subobject-view');
         }
     },
     color: {
         svgProperty: 'color',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                    type === 'telemetry-view' ||
-                                    type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                    || type === 'telemetry-view'
+                                    || type === 'subobject-view');
         }
     },
     imageUrl: {

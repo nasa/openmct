@@ -147,9 +147,9 @@ define(
             $scope.isSelected = function (cell) {
                 var date = $scope.date || {};
 
-                return cell.day === date.day &&
-                    cell.month === date.month &&
-                    cell.year === date.year;
+                return cell.day === date.day
+                    && cell.month === date.month
+                    && cell.year === date.year;
             };
 
             $scope.select = function (cell) {
@@ -161,9 +161,9 @@ define(
             };
 
             $scope.dateEquals = function (d1, d2) {
-                return d1.year === d2.year &&
-                    d1.month === d2.month &&
-                    d1.day === d2.day;
+                return d1.year === d2.year
+                    && d1.month === d2.month
+                    && d1.day === d2.day;
             };
 
             $scope.changeMonth = function (delta) {
@@ -194,8 +194,8 @@ define(
 
             // Ensure some useful default
             $scope.ngModel[$scope.field] =
-                $scope.ngModel[$scope.field] === undefined ?
-                    now() : $scope.ngModel[$scope.field];
+                $scope.ngModel[$scope.field] === undefined
+                    ? now() : $scope.ngModel[$scope.field];
 
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watchCollection('date', updateFromView);

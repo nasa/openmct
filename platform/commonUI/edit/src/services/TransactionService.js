@@ -48,9 +48,9 @@ define(
          * #cancel} are called
          */
         TransactionService.prototype.startTransaction = function () {
-            var transaction = this.isActive() ?
-                new NestedTransaction(this.transactions[0]) :
-                new Transaction(this.$log);
+            var transaction = this.isActive()
+                ? new NestedTransaction(this.transactions[0])
+                : new Transaction(this.$log);
 
             this.transactions.push(transaction);
         };

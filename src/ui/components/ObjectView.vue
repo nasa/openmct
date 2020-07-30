@@ -273,11 +273,11 @@ export default {
         },
         editIfEditable(event) {
             let provider = this.getViewProvider();
-            if (provider &&
-                provider.canEdit &&
-                provider.canEdit(this.currentObject) &&
-                this.isEditingAllowed() &&
-                !this.openmct.editor.isEditing()) {
+            if (provider
+                && provider.canEdit
+                && provider.canEdit(this.currentObject)
+                && this.isEditingAllowed()
+                && !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }
         },

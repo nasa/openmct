@@ -74,8 +74,8 @@ define([
 
         var historicalProvider = {
             supportsRequest: function (domainObject, options) {
-                return domainObject.type === 'example.imagery' &&
-                    options.strategy !== 'latest';
+                return domainObject.type === 'example.imagery'
+                    && options.strategy !== 'latest';
             },
             request: function (domainObject, options) {
                 var start = options.start;
@@ -92,8 +92,8 @@ define([
 
         var ladProvider = {
             supportsRequest: function (domainObject, options) {
-                return domainObject.type === 'example.imagery' &&
-                    options.strategy === 'latest';
+                return domainObject.type === 'example.imagery'
+                    && options.strategy === 'latest';
             },
             request: function (domainObject, options) {
                 return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name)]);
@@ -105,8 +105,8 @@ define([
                 key: 'example.imagery',
                 name: 'Example Imagery',
                 cssClass: 'icon-image',
-                description: 'For development use. Creates example imagery ' +
-                    'data that mimics a live imagery stream.',
+                description: 'For development use. Creates example imagery '
+                    + 'data that mimics a live imagery stream.',
                 creatable: true,
                 initialize: function (object) {
                     object.telemetry = {

@@ -40,8 +40,8 @@ define(
             var unlisten;
 
             function triggerRefresh() {
-                var persistence = $scope.domainObject &&
-                    $scope.domainObject.getCapability('persistence');
+                var persistence = $scope.domainObject
+                    && $scope.domainObject.getCapability('persistence');
 
                 return persistence && persistence.refresh();
             }

@@ -176,8 +176,8 @@ define(
                     "delegation",
                     "telemetry"
                 )).then(function (result) {
-                    var head = domainObject.hasCapability("telemetry") ?
-                            [domainObject] : [],
+                    var head = domainObject.hasCapability("telemetry")
+                            ? [domainObject] : [],
                         tail = result || [];
 
                     return head.concat(tail);
@@ -188,8 +188,8 @@ define(
             // by this controller to track latest responses, etc, for
             // a given domain object.
             function buildResponseContainer(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability("telemetry"),
+                var telemetry = domainObject
+                        && domainObject.getCapability("telemetry"),
                     id,
                     metadata;
 
@@ -352,8 +352,8 @@ define(
                  * @memberof platform/telemetry.TelemetryController#
                  */
                 getResponse: function getResponse(arg) {
-                    var id = arg && (typeof arg === 'string' ?
-                        arg : arg.getId());
+                    var id = arg && (typeof arg === 'string'
+                        ? arg : arg.getId());
 
                     if (id) {
                         return (self.response[id] || {}).data;

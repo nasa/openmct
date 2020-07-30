@@ -166,13 +166,13 @@ define([
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
         console.warn(
-            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry ' +
-            'will not be supported in future versions of Open MCT.  Please ' +
-            'use openmct.telemetry.isTelemetryObject instead.'
+            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry '
+            + 'will not be supported in future versions of Open MCT.  Please '
+            + 'use openmct.telemetry.isTelemetryObject instead.'
         );
 
-        return Boolean(this.findSubscriptionProvider(domainObject)) ||
-               Boolean(this.findRequestProvider(domainObject));
+        return Boolean(this.findSubscriptionProvider(domainObject))
+               || Boolean(this.findRequestProvider(domainObject));
     };
 
     /**

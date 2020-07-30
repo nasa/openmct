@@ -125,13 +125,13 @@
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
-        return amplitude *
-            Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return amplitude
+            * Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
-        return amplitude *
-            Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return amplitude
+            * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
     function sendError(error, message) {

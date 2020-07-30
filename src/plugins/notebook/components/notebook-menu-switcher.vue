@@ -106,13 +106,13 @@ export default {
             this.hideMenu();
 
             this.$nextTick(() => {
-                const element = document.querySelector('.c-overlay__contents') ||
-                    document.getElementsByClassName('l-shell__main-container')[0];
+                const element = document.querySelector('.c-overlay__contents')
+                    || document.getElementsByClassName('l-shell__main-container')[0];
 
                 const bounds = this.openmct.time.bounds();
-                const link = !this.ignoreLink ?
-                    window.location.href :
-                    null;
+                const link = !this.ignoreLink
+                    ? window.location.href
+                    : null;
 
                 const objectPath = this.objectPath || this.openmct.router.path;
                 const snapshotMeta = {

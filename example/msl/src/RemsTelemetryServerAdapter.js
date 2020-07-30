@@ -100,8 +100,8 @@ define(
             }
 
             function fallbackToLocal() {
-                self.$log.warn("Loading REMS data failed, probably due to" +
-                    " cross origin policy. Falling back to local data");
+                self.$log.warn("Loading REMS data failed, probably due to"
+                    + " cross origin policy. Falling back to local data");
 
                 return self.$http.get(self.localDataURI);
             }
@@ -109,8 +109,8 @@ define(
             //Filter results to match request parameters
             function filterResults(results) {
                 return results.filter(function (result) {
-                    return result.date >= (request.start || Number.MIN_VALUE) &&
-                        result.date <= (request.end || Number.MAX_VALUE);
+                    return result.date >= (request.start || Number.MIN_VALUE)
+                        && result.date <= (request.end || Number.MAX_VALUE);
                 });
             }
 

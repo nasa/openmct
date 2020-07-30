@@ -57,8 +57,8 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
-        return !(parent.identifier.namespace === child.identifier.namespace &&
-            parent.identifier.key === child.identifier.key);
+        return !(parent.identifier.namespace === child.identifier.namespace
+            && parent.identifier.key === child.identifier.key);
     };
 
     /**
@@ -167,8 +167,8 @@ define([
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
-            return !(childId.namespace === child.namespace &&
-                childId.key === child.key);
+            return !(childId.namespace === child.namespace
+                && childId.key === child.key);
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);

@@ -53,10 +53,10 @@ define([
             strategy: 'latest',
             size: 1
         }).then(function (results) {
-            if (this.destroyed ||
-                this.hasUpdated ||
-                this.renderTracker !== renderTracker ||
-                results.length === 0) {
+            if (this.destroyed
+                || this.hasUpdated
+                || this.renderTracker !== renderTracker
+                || results.length === 0) {
                 return;
             }
 

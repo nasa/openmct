@@ -45,8 +45,8 @@ define([
             name: 'Telemetry Table',
             cssClass: 'icon-tabular-realtime',
             canView(domainObject) {
-                return domainObject.type === 'table' ||
-                    hasTelemetry(domainObject);
+                return domainObject.type === 'table'
+                    || hasTelemetry(domainObject);
             },
             canEdit(domainObject) {
                 return domainObject.type === 'table';

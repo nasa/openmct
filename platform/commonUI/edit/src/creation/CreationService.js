@@ -73,8 +73,8 @@ define(
             // as a child contained by that parent.
             function addToComposition() {
                 var compositionCapability = parent.getCapability('composition'),
-                    addResult = compositionCapability &&
-                        compositionCapability.add(newObject);
+                    addResult = compositionCapability
+                        && compositionCapability.add(newObject);
 
                 return self.$q.when(addResult).then(function (result) {
                     if (!result) {

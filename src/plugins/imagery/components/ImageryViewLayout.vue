@@ -131,14 +131,14 @@ export default {
             return matchesLast || isStale;
         },
         getImageUrl(datum) {
-            return datum ?
-                this.imageFormat.format(datum) :
-                this.imageUrl;
+            return datum
+                ? this.imageFormat.format(datum)
+                : this.imageUrl;
         },
         getTime(datum) {
-            return datum ?
-                this.timeFormat.format(datum) :
-                this.time;
+            return datum
+                ? this.timeFormat.format(datum)
+                : this.time;
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -147,8 +147,8 @@ export default {
             }
 
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth ||
-                    (scrollHeight - scrollTop) > 2 * clientHeight;
+            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
+                    || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
         paused(state) {

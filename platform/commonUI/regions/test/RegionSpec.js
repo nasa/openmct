@@ -38,8 +38,8 @@ define(
                 ];
             });
 
-            it("adding a region at a specified index adds it in that" +
-                " position", function () {
+            it("adding a region at a specified index adds it in that"
+                + " position", function () {
 
                 region.addRegion(part2, 1);
 

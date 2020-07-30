@@ -129,8 +129,8 @@ define([
                 });
 
                 [false, true].forEach(function (isEditRoot) {
-                    var caseName = isEditRoot ?
-                        "that are being edited" : "that are not being edited";
+                    var caseName = isEditRoot
+                        ? "that are being edited" : "that are not being edited";
 
                     function itNavigatesAsExpected() {
                         if (isOrphan && !isEditRoot) {

@@ -61,8 +61,8 @@ define(
                         return;
                     }
 
-                    if (CHART_TYPE.ALLOCATIONS.length >=
-                        CHART_TYPE.MAX_INSTANCES) {
+                    if (CHART_TYPE.ALLOCATIONS.length
+                        >= CHART_TYPE.MAX_INSTANCES) {
                         return;
                     }
 

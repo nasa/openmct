@@ -98,8 +98,8 @@ define([
             }
 
             return domainObject.configuration.series.filter(function (seriesConfig) {
-                return seriesConfig.identifier.key === identifier.key &&
-                    seriesConfig.identifier.namespace === identifier.namespace;
+                return seriesConfig.identifier.key === identifier.key
+                    && seriesConfig.identifier.namespace === identifier.namespace;
             })[0];
         },
         /**

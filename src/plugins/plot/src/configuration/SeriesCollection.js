@@ -163,8 +163,8 @@ define([
             return this.filter(function (series) {
                 var seriesIdentifier = series.get('identifier');
 
-                return seriesIdentifier.namespace === identifier.namespace &&
-                    seriesIdentifier.key === identifier.key;
+                return seriesIdentifier.namespace === identifier.namespace
+                    && seriesIdentifier.key === identifier.key;
             })[0];
         }
     });

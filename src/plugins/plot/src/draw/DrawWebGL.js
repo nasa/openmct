@@ -90,8 +90,8 @@ define([
      */
     function DrawWebGL(canvas, overlay) {
         this.canvas = canvas;
-        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true }) ||
-            this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
+        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true })
+            || this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
 
         this.overlay = overlay;
         this.c2d = overlay.getContext('2d');
@@ -166,8 +166,8 @@ define([
 
     // Convert from logical to physical y coordinates
     DrawWebGL.prototype.y = function (v) {
-        return this.height -
-            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height
+            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
     DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
@@ -220,8 +220,8 @@ define([
             return;
         }
 
-        if (dimensions && dimensions.length > 0 &&
-                origin && origin.length > 0) {
+        if (dimensions && dimensions.length > 0
+                && origin && origin.length > 0) {
             this.gl.uniform2fv(this.uDimensions, dimensions);
             this.gl.uniform2fv(this.uOrigin, origin);
         }

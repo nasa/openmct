@@ -214,9 +214,9 @@ export default {
         isSelected(cell) {
             let date = this.date || {};
 
-            return cell.day === date.day &&
-                cell.month === date.month &&
-                cell.year === date.year;
+            return cell.day === date.day
+                && cell.month === date.month
+                && cell.year === date.year;
         },
 
         select(cell) {
@@ -228,9 +228,9 @@ export default {
         },
 
         dateEquals(d1, d2) {
-            return d1.year === d2.year &&
-                d1.month === d2.month &&
-                d1.day === d2.day;
+            return d1.year === d2.year
+                && d1.month === d2.month
+                && d1.day === d2.day;
         },
 
         changeMonth(delta) {

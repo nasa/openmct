@@ -274,8 +274,8 @@ define([], function () {
                     conditionValue = false;
                     Object.keys(compositionObjs).forEach(function (objId) {
                         try {
-                            conditionValue = conditionValue ||
-                                self.executeCondition(objId, condition.key,
+                            conditionValue = conditionValue
+                                || self.executeCondition(objId, condition.key,
                                     condition.operation, condition.values);
                             conditionDefined = true;
                         } catch (e) {
@@ -286,8 +286,8 @@ define([], function () {
                     conditionValue = true;
                     Object.keys(compositionObjs).forEach(function (objId) {
                         try {
-                            conditionValue = conditionValue &&
-                                self.executeCondition(objId, condition.key,
+                            conditionValue = conditionValue
+                                && self.executeCondition(objId, condition.key,
                                     condition.operation, condition.values);
                             conditionDefined = true;
                         } catch (e) {

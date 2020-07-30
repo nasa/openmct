@@ -127,15 +127,15 @@ export default class URLTimeSettingsSynchronizer {
                 this.openmct.time.stopClock();
             }
         } else {
-            if (!this.openmct.time.clock() ||
-                this.openmct.time.clock().key !== timeParameters.mode) {
+            if (!this.openmct.time.clock()
+                || this.openmct.time.clock().key !== timeParameters.mode) {
                 this.openmct.time.clock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.clockOffsets(), timeParameters.clockOffsets)) {
                 this.openmct.time.clockOffsets(timeParameters.clockOffsets);
             }
 
-            if (!this.openmct.time.timeSystem() ||
-                this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
+            if (!this.openmct.time.timeSystem()
+                || this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
                 this.openmct.time.timeSystem(timeParameters.timeSystem);
             }
         }
@@ -183,8 +183,8 @@ export default class URLTimeSettingsSynchronizer {
     areTimeParametersValid(timeParameters) {
         let isValid = false;
 
-        if (this.isModeValid(timeParameters.mode) &&
-            this.isTimeSystemValid(timeParameters.timeSystem)) {
+        if (this.isModeValid(timeParameters.mode)
+            && this.isTimeSystemValid(timeParameters.timeSystem)) {
 
             if (timeParameters.mode === 'fixed') {
                 isValid = this.areStartAndEndValid(timeParameters.bounds);
@@ -197,13 +197,13 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     areStartAndEndValid(bounds) {
-        return bounds !== undefined &&
-            bounds.start !== undefined &&
-            bounds.start !== null &&
-            bounds.end !== undefined &&
-            bounds.start !== null &&
-            !isNaN(bounds.start) &&
-            !isNaN(bounds.end);
+        return bounds !== undefined
+            && bounds.start !== undefined
+            && bounds.start !== null
+            && bounds.end !== undefined
+            && bounds.start !== null
+            && !isNaN(bounds.start)
+            && !isNaN(bounds.end);
     }
 
     isTimeSystemValid(timeSystem) {
@@ -219,8 +219,8 @@ export default class URLTimeSettingsSynchronizer {
     isModeValid(mode) {
         let isValid = false;
 
-        if (mode !== undefined &&
-            mode !== null) {
+        if (mode !== undefined
+            && mode !== null) {
             isValid = true;
         }
 
@@ -236,7 +236,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     areStartAndEndEqual(firstBounds, secondBounds) {
-        return firstBounds.start === secondBounds.start &&
-            firstBounds.end === secondBounds.end;
+        return firstBounds.start === secondBounds.start
+            && firstBounds.end === secondBounds.end;
     }
 }

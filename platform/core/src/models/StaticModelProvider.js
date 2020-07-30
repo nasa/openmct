@@ -37,9 +37,9 @@ define(
 
             function addModelToMap(model) {
                 // Skip models which don't look right
-                if (typeof model !== 'object' ||
-                        typeof model.id !== 'string' ||
-                            typeof model.model !== 'object') {
+                if (typeof model !== 'object'
+                        || typeof model.id !== 'string'
+                            || typeof model.model !== 'object') {
                     $log.warn([
                         "Skipping malformed domain object model exposed by ",
                         ((model || {}).bundle || {}).path

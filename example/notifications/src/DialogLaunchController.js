@@ -131,9 +131,9 @@ define(
                 var dialog,
                     model = {
                         title: "Info Dialog Example",
-                        actionText: "This is an example of a blocking info" +
-                        " dialog. This dialog can be used to draw the user's" +
-                        " attention to an event.",
+                        actionText: "This is an example of a blocking info"
+                        + " dialog. This dialog can be used to draw the user's"
+                        + " attention to an event.",
                         severity: "info",
                         primaryOption: {
                             label: "OK",

@@ -118,8 +118,8 @@
             .map(function prioritizeExactMatches(match) {
                 if (match.item.vector.name === query.exactInput) {
                     match.matchCount += 100;
-                } else if (match.item.vector.lowerCaseName ===
-                           query.inputLowerCase) {
+                } else if (match.item.vector.lowerCaseName
+                           === query.inputLowerCase) {
                     match.matchCount += 50;
                 }
 

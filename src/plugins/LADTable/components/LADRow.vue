@@ -129,8 +129,8 @@ export default {
                 noExistingTimestamp = this.timestamp === undefined,
                 newTimestampIsLatest = newTimestamp > this.timestamp;
 
-            return newTimestampInBounds &&
-                (noExistingTimestamp || newTimestampIsLatest);
+            return newTimestampInBounds
+                && (noExistingTimestamp || newTimestampIsLatest);
         },
         requestHistory() {
             this.openmct

@@ -172,8 +172,8 @@ define([
 
         this.positionOverElement = {
             x: $event.clientX - this.chartElementBounds.left,
-            y: this.chartElementBounds.height -
-                ($event.clientY - this.chartElementBounds.top)
+            y: this.chartElementBounds.height
+                - ($event.clientY - this.chartElementBounds.top)
         };
 
         this.positionOverPlot = {
@@ -320,8 +320,8 @@ define([
         var startPixels = this.marquee.startPixels;
         var endPixels = this.marquee.endPixels;
         var marqueeDistance = Math.sqrt(
-            Math.pow(startPixels.x - endPixels.x, 2) +
-            Math.pow(startPixels.y - endPixels.y, 2)
+            Math.pow(startPixels.x - endPixels.x, 2)
+            + Math.pow(startPixels.y - endPixels.y, 2)
         );
         // Don't zoom if mouse moved less than 7.5 pixels.
         if (marqueeDistance > 7.5) {

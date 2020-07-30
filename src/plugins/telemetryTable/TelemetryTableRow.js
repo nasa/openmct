@@ -53,9 +53,9 @@ define([], function () {
         getCellComponentName(key) {
             let column = this.columns[key];
 
-            return column &&
-                column.getCellComponentName &&
-                column.getCellComponentName();
+            return column
+                && column.getCellComponentName
+                && column.getCellComponentName();
         }
 
         getRowClass() {

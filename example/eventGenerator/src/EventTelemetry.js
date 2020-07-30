@@ -44,8 +44,8 @@ define(
             };
 
             generatorData.getDomainValue = function (i, domain) {
-                return i * interval +
-                        (domain !== 'delta' ? firstObservedTime : 0);
+                return i * interval
+                        + (domain !== 'delta' ? firstObservedTime : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {

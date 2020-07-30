@@ -260,11 +260,11 @@ export default {
             let criteria = this.condition.configuration.criteria;
             if (criteria.length) {
                 let lastCriterion = criteria[criteria.length - 1];
-                if (lastCriterion.telemetry &&
-                    lastCriterion.operation &&
-                    (lastCriterion.input.length ||
-                        lastCriterion.operation === 'isDefined' ||
-                        lastCriterion.operation === 'isUndefined')) {
+                if (lastCriterion.telemetry
+                    && lastCriterion.operation
+                    && (lastCriterion.input.length
+                        || lastCriterion.operation === 'isDefined'
+                        || lastCriterion.operation === 'isUndefined')) {
                     return true;
                 }
             }

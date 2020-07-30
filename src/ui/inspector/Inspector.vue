@@ -117,8 +117,8 @@ export default {
         },
         isLayoutObject(selection, objectType) {
             //we allow conditionSets to be styled if they're part of a layout
-            return selection.length > 1 &&
-                ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
+            return selection.length > 1
+                && ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
         },
         isCreatableObject(object, type) {
             return (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;

@@ -110,8 +110,8 @@ export default {
             activeNotification.on('minimized', this.minimized);
         },
         isEqual(modelA, modelB) {
-            return modelA.message === modelB.message &&
-                    modelA.timestamp === modelB.timestamp;
+            return modelA.message === modelB.message
+                    && modelA.timestamp === modelB.timestamp;
         },
         applyModel(model) {
             Object.keys(model).forEach((key) => this.activeModel[key] = model[key]);

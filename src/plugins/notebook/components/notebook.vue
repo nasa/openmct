@@ -142,13 +142,13 @@ export default {
             const pageEntries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
 
             const hours = parseInt(this.showTime, 10);
-            const filteredPageEntriesByTime = hours ?
-                pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000) :
-                pageEntries;
+            const filteredPageEntriesByTime = hours
+                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
+                : pageEntries;
 
-            return this.defaultSort === 'oldest' ?
-                filteredPageEntriesByTime :
-                [...filteredPageEntriesByTime].reverse();
+            return this.defaultSort === 'oldest'
+                ? filteredPageEntriesByTime
+                : [...filteredPageEntriesByTime].reverse();
         },
         pages() {
             return this.getPages() || [];
@@ -452,8 +452,8 @@ export default {
             }
 
             const notebookStorage = getDefaultNotebook();
-            if (!notebookStorage ||
-                    notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+            if (!notebookStorage
+                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
                 return;
             }
 
@@ -480,8 +480,8 @@ export default {
             }
 
             const notebookStorage = getDefaultNotebook();
-            if (!notebookStorage ||
-                    notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+            if (!notebookStorage
+                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
                 return;
             }
 

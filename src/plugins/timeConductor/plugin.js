@@ -41,9 +41,9 @@ function validateMenuOption(menuOption, index) {
 }
 
 function hasRequiredOptions(config) {
-    if (config === undefined ||
-        config.menuOptions === undefined ||
-        config.menuOptions.length === 0) {
+    if (config === undefined
+        || config.menuOptions === undefined
+        || config.menuOptions.length === 0) {
         return "You must specify one or more 'menuOptions'.";
     }
 

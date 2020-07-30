@@ -81,17 +81,17 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimerService.prototype.convert = function (timestamp) {
         var clock = this.time.clock();
-        var canConvert = this.hasTimer() &&
-            Boolean(clock) &&
-            this.timer.timerState !== 'stopped';
+        var canConvert = this.hasTimer()
+            && Boolean(clock)
+            && this.timer.timerState !== 'stopped';
 
         if (!canConvert) {
             return undefined;
         }
 
         var now = clock.currentValue();
-        var delta = this.timer.timerState === 'paused' ?
-            now - this.timer.pausedTime : 0;
+        var delta = this.timer.timerState === 'paused'
+            ? now - this.timer.pausedTime : 0;
         var epoch = this.timer.timestamp;
 
         return timestamp - epoch - delta;

@@ -61,17 +61,17 @@ define(
 
                 // Determine how long to wait before the next update
                 function currentInterval() {
-                    return attrs.mctResizeInterval ?
-                        scope.$eval(attrs.mctResizeInterval) :
-                        DEFAULT_INTERVAL;
+                    return attrs.mctResizeInterval
+                        ? scope.$eval(attrs.mctResizeInterval)
+                        : DEFAULT_INTERVAL;
                 }
 
                 // Evaluate mct-resize with the current bounds
                 function fireEval(bounds) {
                     // Only update when bounds actually change
-                    if (!lastBounds ||
-                            lastBounds.width !== bounds.width ||
-                            lastBounds.height !== bounds.height) {
+                    if (!lastBounds
+                            || lastBounds.width !== bounds.width
+                            || lastBounds.height !== bounds.height) {
                         scope.$eval(attrs.mctResize, { bounds: bounds });
                         if (!linking) { // Avoid apply-in-a-digest
                             scope.$apply();

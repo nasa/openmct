@@ -247,8 +247,8 @@ define ([
         var objectId = objectUtils.makeKeyString(identifier);
         // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
-            return id.key === identifier.key &&
-                id.namespace === identifier.namespace;
+            return id.key === identifier.key
+                && id.namespace === identifier.namespace;
         });
         delete this.compositionObjs[objectId];
         delete this.subscriptionCache[objectId];

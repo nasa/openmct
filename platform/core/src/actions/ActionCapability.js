@@ -108,9 +108,9 @@ define(
             var actions = this.getActions(context);
 
             return this.$q.when(
-                (actions && actions.length > 0) ?
-                    actions[0].perform(flag) :
-                    undefined
+                (actions && actions.length > 0)
+                    ? actions[0].perform(flag)
+                    : undefined
             );
         };
 

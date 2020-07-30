@@ -41,8 +41,8 @@ define(
 
             // Link these objects
             function doLink() {
-                var composition = self.domainObject &&
-                        self.domainObject.getCapability('composition');
+                var composition = self.domainObject
+                        && self.domainObject.getCapability('composition');
 
                 return composition && composition.add(self.selectedObject);
             }

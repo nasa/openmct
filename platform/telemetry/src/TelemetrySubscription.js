@@ -116,8 +116,8 @@ define(
                 var telemetryCapability =
                     domainObj.getCapability("telemetry");
 
-                return telemetryCapability &&
-                        telemetryCapability.getMetadata();
+                return telemetryCapability
+                        && telemetryCapability.getMetadata();
             }
 
             // Update the latest telemetry data for a specific
@@ -196,8 +196,8 @@ define(
             }
 
             function idsMatch(ids) {
-                return ids.length === self.telemetryObjects.length &&
-                    ids.every(function (id, index) {
+                return ids.length === self.telemetryObjects.length
+                    && ids.every(function (id, index) {
                         return self.telemetryObjects[index].getId() === id;
                     });
             }
@@ -210,8 +210,8 @@ define(
             }
 
             function addMutationListener() {
-                var mutation = domainObject &&
-                    domainObject.getCapability('mutation');
+                var mutation = domainObject
+                    && domainObject.getCapability('mutation');
                 if (mutation) {
                     return mutation.listen(modelChange);
                 }
@@ -294,9 +294,9 @@ define(
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
 
-            return latestValue && (key ?
-                latestValue.datum[key] :
-                latestValue.domain);
+            return latestValue && (key
+                ? latestValue.datum[key]
+                : latestValue.domain);
         };
 
         /**
@@ -318,9 +318,9 @@ define(
             var id = domainObject.getId(),
                 latestValue = this.latestValues[id];
 
-            return latestValue && (key ?
-                latestValue.datum[key] :
-                latestValue.range);
+            return latestValue && (key
+                ? latestValue.datum[key]
+                : latestValue.range);
         };
 
         /**

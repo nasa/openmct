@@ -82,8 +82,8 @@ define([], function () {
     };
 
     ExportTelemetryAsCSVAction.appliesTo = function (context) {
-        return context.domainObject &&
-            context.domainObject.hasCapability("telemetry");
+        return context.domainObject
+            && context.domainObject.hasCapability("telemetry");
     };
 
     return ExportTelemetryAsCSVAction;

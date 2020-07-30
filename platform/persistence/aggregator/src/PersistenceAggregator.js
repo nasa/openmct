@@ -78,9 +78,9 @@ define(
                 return this.providerMapPromise.then(function (map) {
                     var provider = map[space];
 
-                    return provider ?
-                        provider[method].apply(provider, delegateArgs) :
-                        METHOD_DEFAULTS[method];
+                    return provider
+                        ? provider[method].apply(provider, delegateArgs)
+                        : METHOD_DEFAULTS[method];
                 });
             };
         });

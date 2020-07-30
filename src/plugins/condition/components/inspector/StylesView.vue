@@ -296,11 +296,11 @@ export default {
             });
         },
         isKeyItemId(key) {
-            return (key !== 'styles') &&
-                (key !== 'staticStyle') &&
-                (key !== 'defaultConditionId') &&
-                (key !== 'selectedConditionId') &&
-                (key !== 'conditionSetIdentifier');
+            return (key !== 'styles')
+                && (key !== 'staticStyle')
+                && (key !== 'defaultConditionId')
+                && (key !== 'selectedConditionId')
+                && (key !== 'conditionSetIdentifier');
         },
         registerListener(domainObject) {
             let id = this.openmct.objects.makeKeyString(domainObject.identifier);

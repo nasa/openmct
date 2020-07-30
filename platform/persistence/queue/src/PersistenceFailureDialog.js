@@ -52,8 +52,8 @@ define(
             // Place this failure into an appropriate group
             function categorizeFailure(failure) {
                 // Check if the error is due to object revision
-                var isRevisionError = ((failure || {}).error || {}).key ===
-                    PersistenceFailureConstants.REVISION_ERROR_KEY;
+                var isRevisionError = ((failure || {}).error || {}).key
+                    === PersistenceFailureConstants.REVISION_ERROR_KEY;
                 // Push the failure into the appropriate group
                 (isRevisionError ? revisionErrors : otherErrors).push(failure);
             }
@@ -68,8 +68,8 @@ define(
                     revised: revisionErrors,
                     unrecoverable: otherErrors
                 },
-                options: revisionErrors.length > 0 ?
-                    OVERWRITE_CANCEL_OPTIONS : OK_OPTIONS
+                options: revisionErrors.length > 0
+                    ? OVERWRITE_CANCEL_OPTIONS : OK_OPTIONS
             };
         }
 

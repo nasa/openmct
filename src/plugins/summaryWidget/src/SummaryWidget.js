@@ -134,8 +134,8 @@ define([
      */
     SummaryWidget.prototype.watchForChanges = function (openmct, domainObject) {
         this.watchForChangesUnsubscribe = openmct.objects.observe(domainObject, '*', function (newDomainObject) {
-            if (newDomainObject.url !== this.domainObject.url ||
-                    newDomainObject.openNewTab !== this.domainObject.openNewTab) {
+            if (newDomainObject.url !== this.domainObject.url
+                    || newDomainObject.openNewTab !== this.domainObject.openNewTab) {
                 this.addHyperlink(newDomainObject.url, newDomainObject.openNewTab);
             }
         }.bind(this));

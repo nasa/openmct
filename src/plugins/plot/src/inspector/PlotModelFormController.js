@@ -54,8 +54,8 @@ define([
     eventHelpers.extend(PlotModelFormController.prototype);
 
     PlotModelFormController.prototype.isReady = function () {
-        return Boolean(this.$scope.formDomainObject) &&
-            Boolean(this.$scope.$eval(this.attrs.formModel));
+        return Boolean(this.$scope.formDomainObject)
+            && Boolean(this.$scope.$eval(this.attrs.formModel));
     };
 
     /**

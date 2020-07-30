@@ -128,9 +128,9 @@ export default {
         updatePage(newPage) {
             const id = newPage.id;
             const pages = this.pages.map(page =>
-                page.id === id ?
-                    newPage :
-                    page);
+                page.id === id
+                    ? newPage
+                    : page);
             this.$emit('updatePage', {
                 pages,
                 id

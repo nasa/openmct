@@ -148,10 +148,10 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateBounds = function (bounds) {
-        if ((bounds.start === undefined) ||
-            (bounds.end === undefined) ||
-            isNaN(bounds.start) ||
-            isNaN(bounds.end)
+        if ((bounds.start === undefined)
+            || (bounds.end === undefined)
+            || isNaN(bounds.start)
+            || isNaN(bounds.end)
         ) {
             return "Start and end must be specified as integer values";
         } else if (bounds.start > bounds.end) {
@@ -170,10 +170,10 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateOffsets = function (offsets) {
-        if ((offsets.start === undefined) ||
-            (offsets.end === undefined) ||
-            isNaN(offsets.start) ||
-            isNaN(offsets.end)
+        if ((offsets.start === undefined)
+            || (offsets.end === undefined)
+            || isNaN(offsets.start)
+            || isNaN(offsets.end)
         ) {
             return "Start and end offsets must be specified as integer values";
         } else if (offsets.start >= offsets.end) {
@@ -246,8 +246,8 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
-                    "Must specify bounds when changing time system without " +
-                    "an active clock."
+                    "Must specify bounds when changing time system without "
+                    + "an active clock."
                 );
             }
 

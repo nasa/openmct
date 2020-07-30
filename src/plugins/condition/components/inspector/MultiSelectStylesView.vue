@@ -133,9 +133,9 @@ export default {
             //check that all items that have been styles still exist. Otherwise delete those styles
             let keys = Object.keys(this.domainObject.configuration.objectStyles || {});
             keys.forEach((key) => {
-                if ((key !== 'styles') &&
-                    (key !== 'staticStyle') &&
-                    (key !== 'conditionSetIdentifier')) {
+                if ((key !== 'styles')
+                    && (key !== 'staticStyle')
+                    && (key !== 'conditionSetIdentifier')) {
                     if (!(newItems.find(item => item.id === key))) {
                         this.removeItemStyles(key);
                     }

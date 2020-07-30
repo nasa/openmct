@@ -95,9 +95,9 @@ define(
                  */
                 function incrementProgress() {
                     progress = Math.min(100, Math.floor(progress + Math.random() * 30));
-                    let progressText = ["Estimated time" +
-                    " remaining:" +
-                    " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
+                    let progressText = ["Estimated time"
+                    + " remaining:"
+                    + " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
                     notification.progress(progress, progressText);
 
                     if (progress < 100) {

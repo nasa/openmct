@@ -22,8 +22,8 @@ function defaultNotebookObjectChanged(newDomainObject) {
 
 function observeDefaultNotebookObject(openmct, notebookStorage) {
     const domainObject = notebookStorage.domainObject;
-    if (currentNotebookObject &&
-            currentNotebookObject.identifier.key === domainObject.identifier.key) {
+    if (currentNotebookObject
+            && currentNotebookObject.identifier.key === domainObject.identifier.key) {
         return;
     }
 

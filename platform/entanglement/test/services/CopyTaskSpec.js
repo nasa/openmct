@@ -185,8 +185,8 @@ define(
                 });
             });
 
-            describe("copies object trees with multiple references to the" +
-                " same object", function () {
+            describe("copies object trees with multiple references to the"
+                + " same object", function () {
                 var mockDomainObjectB,
                     mockComposingObject,
                     composingObjectModel,
@@ -248,8 +248,8 @@ define(
                 /**
                  * This a bug found in testathon when testing issue #428
                  */
-                it(" and correctly updates child identifiers in object" +
-                    " arrays within models ", function () {
+                it(" and correctly updates child identifiers in object"
+                    + " arrays within models ", function () {
                     var childA_ID = task.clones[0].getId(),
                         childB_ID = task.clones[1].getId();
 

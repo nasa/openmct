@@ -155,8 +155,8 @@ export default {
             this.elements = this.parentObject.composition.map((id) =>
                 this.elementsCache[this.openmct.objects.makeKeyString(id)]
             ).filter((element) => {
-                return element !== undefined &&
-                    element.name.toLowerCase().search(this.currentSearch) !== -1;
+                return element !== undefined
+                    && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
         },
         allowDrop(event) {

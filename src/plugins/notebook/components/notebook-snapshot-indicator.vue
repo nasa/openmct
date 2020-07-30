@@ -88,9 +88,9 @@ export default {
         updateSnapshotIndicatorTitle() {
             const snapshotCount = this.snapshotContainer.getSnapshots().length;
             this.snapshotCount = snapshotCount;
-            const snapshotTitleSuffix = snapshotCount === 1 ?
-                'Snapshot' :
-                'Snapshots';
+            const snapshotTitleSuffix = snapshotCount === 1
+                ? 'Snapshot'
+                : 'Snapshots';
             this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
         }
     }

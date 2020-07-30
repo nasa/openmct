@@ -82,8 +82,8 @@ define(
             // Combines caller-provided filter (if any) with the
             // baseline behavior of respecting creation policy.
             function filterWithPolicy(domainObj) {
-                return (!filter || filter(domainObj)) &&
-                    policyService.allow(
+                return (!filter || filter(domainObj))
+                    && policyService.allow(
                         "creation",
                         domainObj.getCapability("type")
                     );

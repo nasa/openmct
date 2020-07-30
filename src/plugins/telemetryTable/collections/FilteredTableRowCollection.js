@@ -71,11 +71,11 @@ define(
              * @private
              */
             isSubsetOfCurrentFilter(columnKey, filter) {
-                return this.columnFilters[columnKey] &&
-                    filter.startsWith(this.columnFilters[columnKey]) &&
+                return this.columnFilters[columnKey]
+                    && filter.startsWith(this.columnFilters[columnKey])
                     // startsWith check will otherwise fail when filter cleared
                     // because anyString.startsWith('') === true
-                    filter !== '';
+                    && filter !== '';
             }
 
             addOne(row) {

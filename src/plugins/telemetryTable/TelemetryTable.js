@@ -265,9 +265,9 @@ define([
 
         buildOptionsFromConfiguration(telemetryObject) {
             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier),
-                filters = this.domainObject.configuration &&
-                    this.domainObject.configuration.filters &&
-                    this.domainObject.configuration.filters[keyString];
+                filters = this.domainObject.configuration
+                    && this.domainObject.configuration.filters
+                    && this.domainObject.configuration.filters[keyString];
 
             return {filters} || {};
         }

@@ -108,8 +108,8 @@ export default class RemoveAction {
             return false;
         }
 
-        return parentType &&
-            parentType.definition.creatable &&
-            Array.isArray(parent.composition);
+        return parentType
+            && parentType.definition.creatable
+            && Array.isArray(parent.composition);
     }
 }

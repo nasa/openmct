@@ -77,9 +77,9 @@ define(function () {
     Color.fromHexString = function (hexString) {
         if (!/#([0-9a-fA-F]{2}){2}/.test(hexString)) {
             throw new Error(
-                'Invalid input "' +
-                hexString +
-                '". Hex string must be in CSS format e.g. #00FF00'
+                'Invalid input "'
+                + hexString
+                + '". Hex string must be in CSS format e.g. #00FF00'
             );
         }
 

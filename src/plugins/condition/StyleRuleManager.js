@@ -88,8 +88,8 @@ export default class StyleRuleManager extends EventEmitter {
             this.initialize(styleConfiguration || {});
             this.destroy();
         } else {
-            let isNewConditionSet = !this.conditionSetIdentifier ||
-                                    !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
+            let isNewConditionSet = !this.conditionSetIdentifier
+                                    || !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
             this.initialize(styleConfiguration);
             if (this.isEditing) {
                 this.applySelectedConditionStyle();

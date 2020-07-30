@@ -45,8 +45,8 @@ export default {
         remove(identifier) {
             this.items = this.items
                 .filter((i) => {
-                    return i.model.identifier.key !== identifier.key ||
-                        i.model.identifier.namespace !== identifier.namespace;
+                    return i.model.identifier.key !== identifier.key
+                        || i.model.identifier.namespace !== identifier.namespace;
                 });
         }
     }

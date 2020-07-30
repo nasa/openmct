@@ -169,8 +169,8 @@ export default {
             }
 
             const bounds = this.openmct.time.bounds();
-            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start ||
-                this.embed.bounds.end !== bounds.end;
+            const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
+                || this.embed.bounds.end !== bounds.end;
             const isFixedTimespanMode = !this.openmct.time.clock();
 
             this.openmct.time.stopClock();

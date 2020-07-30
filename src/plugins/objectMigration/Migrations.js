@@ -47,9 +47,9 @@ define([
         }
 
         function isTelemetry(domainObject) {
-            if (openmct.telemetry.isTelemetryObject(domainObject) &&
-                domainObject.type !== 'summary-widget' &&
-                domainObject.type !== 'example.imagery') {
+            if (openmct.telemetry.isTelemetryObject(domainObject)
+                && domainObject.type !== 'summary-widget'
+                && domainObject.type !== 'example.imagery') {
                 return true;
             } else {
                 return false;
@@ -179,9 +179,9 @@ define([
         return [
             {
                 check(domainObject) {
-                    return domainObject.type === 'layout' &&
-                        domainObject.configuration &&
-                        domainObject.configuration.layout;
+                    return domainObject.type === 'layout'
+                        && domainObject.configuration
+                        && domainObject.configuration.layout;
                 },
                 migrate(domainObject) {
                     let childObjects = {};
@@ -200,9 +200,9 @@ define([
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'telemetry.fixed' &&
-                        domainObject.configuration &&
-                        domainObject.configuration['fixed-display'];
+                    return domainObject.type === 'telemetry.fixed'
+                        && domainObject.configuration
+                        && domainObject.configuration['fixed-display'];
                 },
                 migrate(domainObject) {
                     const DEFAULT_GRID_SIZE = [64, 16];
@@ -240,9 +240,9 @@ define([
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'table' &&
-                        domainObject.configuration &&
-                        domainObject.configuration.table;
+                    return domainObject.type === 'table'
+                        && domainObject.configuration
+                        && domainObject.configuration.table;
                 },
                 migrate(domainObject) {
                     let currentTableConfiguration = domainObject.configuration.table || {};

@@ -36,8 +36,8 @@ define(['lodash'], function (_) {
                 let selectedParent = selectionPath[1];
 
                 // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
-                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
-                    (selectedObject.context.item && selectedObject.context.item.type === 'layout');
+                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout')
+                    || (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
@@ -138,12 +138,12 @@ define(['lodash'], function (_) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
 
-                        return type === 'text-view' ||
-                            type === 'telemetry-view' ||
-                            type === 'box-view' ||
-                            type === 'image-view' ||
-                            type === 'line-view' ||
-                            type === 'subobject-view';
+                        return type === 'text-view'
+                            || type === 'telemetry-view'
+                            || type === 'box-view'
+                            || type === 'image-view'
+                            || type === 'line-view'
+                            || type === 'subobject-view';
                     });
                 }
 
@@ -574,8 +574,8 @@ define(['lodash'], function (_) {
                 function isMainLayoutSelected(selectionPath) {
                     let selectedObject = selectionPath[0].context.item;
 
-                    return selectedObject && selectedObject.type === 'layout' &&
-                        !selectionPath[0].context.layoutItem;
+                    return selectedObject && selectedObject.type === 'layout'
+                        && !selectionPath[0].context.layoutItem;
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {

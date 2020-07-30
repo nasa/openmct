@@ -253,12 +253,12 @@ define([
                 lowPoint = this.data[insertIndex - 1],
                 highPoint = this.data[insertIndex],
                 indexVal = this.getXVal(xValue),
-                lowDistance = lowPoint ?
-                    indexVal - this.getXVal(lowPoint) :
-                    Number.POSITIVE_INFINITY,
-                highDistance = highPoint ?
-                    this.getXVal(highPoint) - indexVal :
-                    Number.POSITIVE_INFINITY,
+                lowDistance = lowPoint
+                    ? indexVal - this.getXVal(lowPoint)
+                    : Number.POSITIVE_INFINITY,
+                highDistance = highPoint
+                    ? this.getXVal(highPoint) - indexVal
+                    : Number.POSITIVE_INFINITY,
                 nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
             return nearestPoint;

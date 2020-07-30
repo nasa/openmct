@@ -133,8 +133,8 @@ define(
                 newContext.selectedObject = object;
                 newContext.domainObject = newParentObj;
 
-                return composeService.validate(object, newParentObj) &&
-                    self.policyService.allow("action", self, newContext);
+                return composeService.validate(object, newParentObj)
+                    && self.policyService.allow("action", self, newContext);
             };
 
             return locationService.getLocationFromUser(
@@ -153,8 +153,8 @@ define(
             var applicableObject =
                 context.selectedObject || context.domainObject;
 
-            return Boolean(applicableObject &&
-                applicableObject.hasCapability('context'));
+            return Boolean(applicableObject
+                && applicableObject.hasCapability('context'));
         };
 
         return AbstractComposeAction;

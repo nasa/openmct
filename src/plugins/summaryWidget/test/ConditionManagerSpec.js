@@ -387,8 +387,8 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             expect(telemetryCallbackSpy).toHaveBeenCalled();
         });
 
-        it('evalutes a set of rules and returns the id of the' +
-           'last active rule, or the first if no rules are active', function () {
+        it('evalutes a set of rules and returns the id of the'
+           + 'last active rule, or the first if no rules are active', function () {
             var mockRuleOrder = ['default', 'rule0', 'rule1'],
                 mockRules = {
                     default: {
