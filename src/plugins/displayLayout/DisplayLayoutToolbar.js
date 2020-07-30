@@ -127,6 +127,10 @@ define(['lodash'], function (_) {
                     },
                     SMALL_FONT_SIZES = [
                         {
+                            name: 'Default',
+                            value: 'default'
+                        },
+                        {
                             name: '8px',
                             value: '8'
                         },
@@ -505,26 +509,26 @@ define(['lodash'], function (_) {
                     }
                 }
 
-                function getTextSizeMenu(selectedParent, selection) {
-                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type !== 'line-view' || type !== 'box-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".size";
-                        },
-                        title: "Set text size",
-                        options: TEXT_SIZE.map(size => {
-                            return {
-                                value: size + "px"
-                            };
-                        })
-                    };
-                }
+                // function getTextSizeMenu(selectedParent, selection) {
+                //     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
+                //     return {
+                //         control: "select-menu",
+                //         domainObject: selectedParent,
+                //         applicableSelectedItems: selection.filter(selectionPath => {
+                //             let type = selectionPath[0].context.layoutItem.type;
+                //             return type !== 'line-view' || type !== 'box-view';
+                //         }),
+                //         property: function (selectionPath) {
+                //             return getPath(selectionPath) + ".size";
+                //         },
+                //         title: "Set text size",
+                //         options: TEXT_SIZE.map(size => {
+                //             return {
+                //                 value: size + "px"
+                //             };
+                //         })
+                //     };
+                // }
 
                 function getTextButton(selectedParent, selection) {
                     return {
@@ -763,7 +767,7 @@ define(['lodash'], function (_) {
                         }
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
+                                getFontSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
@@ -784,7 +788,7 @@ define(['lodash'], function (_) {
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
+                                getFontSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {

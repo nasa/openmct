@@ -36,6 +36,7 @@
             'is-missing': domainObject.status === 'missing'
         }"
         :style="styleObject"
+        :data-font-size="item.fontSize"
         @contextmenu.prevent="showContextMenu"
     >
         <div class="is-missing__indicator"
@@ -89,7 +90,7 @@ export default {
             stroke: "",
             fill: "",
             color: "",
-            size: "13px"
+            fontSize: 'default'
         };
     },
     inject: ['openmct', 'objectPath'],
@@ -136,8 +137,14 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
+            let size;
+            //for legacy size support
+            if (!this.item.fontSize) {
+                size = this.item.size
+            }
+
             return Object.assign({}, {
-                fontSize: this.item.size
+                size
             }, this.itemStyle);
         },
         fieldName() {

@@ -74,7 +74,7 @@ export default {
             y: position[1],
             identifier: domainObject.identifier,
             hasFrame: hasFrameByDefault(domainObject.type),
-            fontSize: '',
+            fontSize: 'default',
             viewKey
         };
     },
