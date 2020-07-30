@@ -102,7 +102,6 @@ define([
             return {
                 name: options.domainObject.name,
                 unit: range.unit,
-                nameWithUnit: options.domainObject.name + (range.unit ? ' ' + range.unit : ''),
                 xKey: options.collection.plot.xAxis.get('key'),
                 yKey: range.key,
                 markers: true,
@@ -428,6 +427,10 @@ define([
             const markerSize = this.get('markerSize');
 
             return `${markerShape}: ${markerSize}px`;
+        },
+        nameWithUnit: function () {
+            let unit = this.get('unit');
+            return this.get('name') + (unit ? ' ' + unit : '');
         }
     });
 
