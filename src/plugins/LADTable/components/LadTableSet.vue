@@ -72,7 +72,6 @@ export default {
         hasUnits() {
             let ladTables = Object.values(this.secondaryTelemetryObjects);
             for(let ladTable of ladTables) {
-                console.log('ladTable', ladTable);
                 for(let telemetryObject of ladTable) {
                     let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
                     for(let metadatum of metadata.valueMetadatas) {
@@ -124,9 +123,8 @@ export default {
             let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
 
-            this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
+            this.$delete(this.secondaryTelemetryObjects, primary.key);
             this.primaryTelemetryObjects.splice(index,1);
-            primary = undefined;
         },
         reorderPrimary(reorderPlan) {
             let oldComposition = this.primaryTelemetryObjects.slice();
