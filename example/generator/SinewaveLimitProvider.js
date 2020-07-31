@@ -78,12 +78,15 @@ define([
                 if (datum[range] > RED[range]) {
                     return LIMITS.rh;
                 }
+
                 if (datum[range] < -RED[range]) {
                     return LIMITS.rl;
                 }
+
                 if (datum[range] > YELLOW[range]) {
                     return LIMITS.yh;
                 }
+
                 if (datum[range] < -YELLOW[range]) {
                     return LIMITS.yl;
                 }

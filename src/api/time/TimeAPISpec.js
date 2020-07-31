@@ -43,7 +43,10 @@ define(['./TimeAPI'], function (TimeAPI) {
             ]);
             clock.currentValue.and.returnValue(100);
             clock.key = clockKey;
-            bounds = {start: 0, end: 1};
+            bounds = {
+                start: 0,
+                end: 1
+            };
             eventListener = jasmine.createSpy("eventListener");
             toi = 111;
         });
@@ -55,14 +58,20 @@ define(['./TimeAPI'], function (TimeAPI) {
         });
 
         it("Allows setting of valid bounds", function () {
-            bounds = {start: 0, end: 1};
+            bounds = {
+                start: 0,
+                end: 1
+            };
             expect(api.bounds()).not.toBe(bounds);
             expect(api.bounds.bind(api, bounds)).not.toThrow();
             expect(api.bounds()).toEqual(bounds);
         });
 
         it("Disallows setting of invalid bounds", function () {
-            bounds = {start: 1, end: 0};
+            bounds = {
+                start: 1,
+                end: 0
+            };
             expect(api.bounds()).not.toEqual(bounds);
             expect(api.bounds.bind(api, bounds)).toThrow();
             expect(api.bounds()).not.toEqual(bounds);
@@ -94,7 +103,10 @@ define(['./TimeAPI'], function (TimeAPI) {
         it("allows setting of timesystem without bounds with clock", function () {
             api.addTimeSystem(timeSystem);
             api.addClock(clock);
-            api.clock(clockKey, {start: 0, end: 1});
+            api.clock(clockKey, {
+                start: 0,
+                end: 1
+            });
             expect(api.timeSystem()).not.toBe(timeSystem);
             expect(function () {
                 api.timeSystem(timeSystemKey);
@@ -127,19 +139,24 @@ define(['./TimeAPI'], function (TimeAPI) {
 
         it("If bounds are set and TOI lies inside them, do not change TOI", function () {
             api.timeOfInterest(6);
-            api.bounds({start: 1, end: 10});
+            api.bounds({
+                start: 1,
+                end: 10
+            });
             expect(api.timeOfInterest()).toEqual(6);
         });
 
         it("If bounds are set and TOI lies outside them, reset TOI", function () {
             api.timeOfInterest(11);
-            api.bounds({start: 1, end: 10});
+            api.bounds({
+                start: 1,
+                end: 10
+            });
             expect(api.timeOfInterest()).toBeUndefined();
         });
 
         it("Maintains delta during tick", function () {
         });
-
 
         it("Allows registered time system to be activated", function () {
         });
@@ -184,7 +201,10 @@ define(['./TimeAPI'], function (TimeAPI) {
 
             it("sets bounds based on current value", function () {
                 api.clock("mts", mockOffsets);
-                expect(api.bounds()).toEqual({start: 10, end: 11});
+                expect(api.bounds()).toEqual({
+                    start: 10,
+                    end: 11
+                });
             });
 
             it("a new tick listener is registered", function () {

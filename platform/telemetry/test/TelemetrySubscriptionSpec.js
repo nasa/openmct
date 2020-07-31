@@ -134,6 +134,7 @@ define(
                 for (i = 0; i < 100; i += 1) {
                     mockTelemetry.subscribe.calls.mostRecent().args[0](mockSeries);
                 }
+
                 // This gets fired via a timeout, so trigger any of those
                 mockTimeout.calls.all().forEach(function (call) {
                     call.args[0]();
@@ -169,7 +170,6 @@ define(
             // once-per-update results in loss of data, WTD-784
             it("fires one event per update if requested", function () {
                 var i, domains = [], ranges = [], lastCall, initialCalls;
-
 
                 // Clear out the subscription from beforeEach
                 subscription.unsubscribe();
@@ -243,7 +243,12 @@ define(
             });
 
             it("provides telemetry as datum objects", function () {
-                var testDatum = { a: 1, b: 13, c: 42, d: -1977 };
+                var testDatum = {
+                    a: 1,
+                    b: 13,
+                    c: 42,
+                    d: -1977
+                };
 
                 function lookup(index, key) {
                     return testDatum[key];

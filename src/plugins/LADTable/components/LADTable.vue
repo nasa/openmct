@@ -52,7 +52,7 @@ export default {
     data() {
         return {
             items: []
-        }
+        };
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
@@ -86,5 +86,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

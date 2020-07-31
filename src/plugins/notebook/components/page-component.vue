@@ -44,7 +44,7 @@ export default {
         return {
             popupMenuItems: [],
             removeActionString: `Delete ${this.pageTitle}`
-        }
+        };
     },
     watch: {
         page(newPage) {
@@ -63,7 +63,7 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            }
+            };
 
             this.popupMenuItems = [removePage];
         },
@@ -80,7 +80,7 @@ export default {
                 name: this.removeActionString,
                 callback: this.deletePage.bind(this),
                 message
-            }
+            };
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
@@ -92,6 +92,7 @@ export default {
             if (page.className.indexOf('is-selected') > -1) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
+
                 return;
             }
 
@@ -123,5 +124,5 @@ export default {
             this.$emit('renamePage', Object.assign(this.page, { name }));
         }
     }
-}
+};
 </script>

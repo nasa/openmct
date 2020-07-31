@@ -39,7 +39,7 @@ export default {
             domainObject: {},
             multiSelect: false,
             itemsSelected: 0
-        }
+        };
     },
     computed: {
         item() {
@@ -52,6 +52,7 @@ export default {
             if (this.type.definition.cssClass === undefined) {
                 return 'icon-object';
             }
+
             return this.type.definition.cssClass;
         },
         singleSelectNonObject() {
@@ -69,6 +70,7 @@ export default {
         updateSelection(selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
+
                 return;
             }
 
@@ -76,6 +78,7 @@ export default {
                 this.multiSelect = true;
                 this.domainObject = {};
                 this.itemsSelected = selection.length;
+
                 return;
             } else {
                 this.multiSelect = false;
@@ -83,5 +86,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

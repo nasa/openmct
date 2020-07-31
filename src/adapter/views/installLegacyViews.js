@@ -12,6 +12,7 @@ define([
         function convertToLegacyObject(domainObject) {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return instantiate(oldModel, keyString);
         }
 

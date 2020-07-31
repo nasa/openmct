@@ -76,7 +76,7 @@ define(
             // but additionally adds a domainObject field.
             var baseContext;
             if (typeof context === 'string') {
-                baseContext =  { key: context };
+                baseContext = { key: context };
             } else {
                 baseContext = context || {};
             }
@@ -108,12 +108,11 @@ define(
             var actions = this.getActions(context);
 
             return this.$q.when(
-                (actions && actions.length > 0) ?
-                    actions[0].perform(flag) :
-                    undefined
+                (actions && actions.length > 0)
+                    ? actions[0].perform(flag)
+                    : undefined
             );
         };
-
 
         return ActionCapability;
     }

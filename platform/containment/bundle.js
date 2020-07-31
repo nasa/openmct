@@ -35,7 +35,7 @@ define([
 ) {
 
     return {
-        name:"platform/containment",
+        name: "platform/containment",
         definition: {
             "extensions": {
                 "policies": [

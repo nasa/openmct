@@ -51,6 +51,7 @@ define(
                         // Property definition is same as form row definition
                         var row = JSON.parse(JSON.stringify(property.getDefinition()));
                         row.key = index;
+
                         return row;
                     }).filter(function (row) {
                         // Only show properties which are editable

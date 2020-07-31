@@ -64,5 +64,5 @@ export default {
             return this.condition ? this.condition.summary : '';
         }
     }
-}
+};
 </script>

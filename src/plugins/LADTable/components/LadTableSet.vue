@@ -64,7 +64,7 @@ export default {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
             compositions: []
-        }
+        };
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
@@ -99,14 +99,18 @@ export default {
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({composition, addCallback, removeCallback});
+            this.compositions.push({
+                composition,
+                addCallback,
+                removeCallback
+            });
         },
         removePrimary(identifier) {
             let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
 
             this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
-            this.primaryTelemetryObjects.splice(index,1);
+            this.primaryTelemetryObjects.splice(index, 1);
             primary = undefined;
         },
         reorderPrimary(reorderPlan) {
@@ -125,7 +129,7 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         },
         removeSecondary(primary) {
             return (identifier) => {
@@ -135,8 +139,8 @@ export default {
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         }
     }
-}
+};
 </script>

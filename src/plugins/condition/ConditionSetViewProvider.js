@@ -44,6 +44,7 @@ export default class ConditionSetViewProvider {
     view(domainObject, objectPath) {
         let component;
         const openmct = this.openmct;
+
         return {
             show: (container, isEditing) => {
                 component = new Vue({
@@ -59,7 +60,7 @@ export default class ConditionSetViewProvider {
                     data() {
                         return {
                             isEditing
-                        }
+                        };
                     },
                     template: '<condition-set :isEditing="isEditing"></condition-set>'
                 });
