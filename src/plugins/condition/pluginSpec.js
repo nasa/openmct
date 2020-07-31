@@ -418,10 +418,10 @@ describe('the plugin', function () {
                                 "trigger": "all",
                                 "criteria": [
                                     {
-                                        "id":"35400132-63b0-425c-ac30-8197df7d5862",
-                                        "telemetry":"any",
-                                        "operation":"isStale",
-                                        "input":[
+                                        "id": "35400132-63b0-425c-ac30-8197df7d5862",
+                                        "telemetry": "any",
+                                        "operation": "isStale",
+                                        "input": [
                                             "0.2"
                                         ],
                                         "metadata": "dataReceived"
