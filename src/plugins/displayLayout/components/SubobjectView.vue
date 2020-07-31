@@ -35,6 +35,8 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
+        :font-size="item.fontSize"
+        :font="item.font"
     />
 </layout-frame>
 </template>
@@ -73,6 +75,8 @@ export default {
             y: position[1],
             identifier: domainObject.identifier,
             hasFrame: hasFrameByDefault(domainObject.type),
+            fontSize: 'default',
+            font: 'default',
             viewKey
         };
     },
@@ -120,7 +124,6 @@ export default {
             if (!this.context) {
                 return;
             }
-
             this.context.layoutItem = newItem;
         }
     },

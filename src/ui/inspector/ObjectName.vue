@@ -2,7 +2,7 @@
 <div class="c-inspector__header">
     <div v-if="!multiSelect"
          class="c-inspector__selected c-object-label"
-         :class="{'is-missing': domainObject.status === 'missing' }"
+         :class="{'is-missing': domainObject && domainObject.status === 'missing' }"
     >
         <div class="c-object-label__type-icon"
              :class="typeCssClass"

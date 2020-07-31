@@ -20,12 +20,30 @@ export default {
             default: () => {
                 return [];
             }
+        },
+        fontSize: {
+            type: String,
+            default: ''
+        },
+        font: {
+            type: String,
+            default: ''
         }
     },
     watch: {
         object(newObject, oldObject) {
             this.currentObject = newObject;
             this.debounceUpdateView();
+        },
+        fontSize(newSize, oldSize) {
+            if (newSize !== oldSize) {
+                this.setFontSize(newSize);
+            }
+        },
+        font(newFont, oldFont) {
+            if (newFont !== oldFont) {
+                this.setFont(newFont);
+            }
         }
     },
     destroyed() {
@@ -63,8 +81,9 @@ export default {
         if (this.currentObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
+            this.setFontSize(this.fontSize);
+            this.setFont(this.font);
         }
-
     },
     methods: {
         clear() {
@@ -91,6 +110,15 @@ export default {
 
             this.openmct.objectViews.off('clearData', this.clearData);
         },
+        getStyleReceiver() {
+            let styleReceiver = this.$el.querySelector('.js-style-receiver');
+
+            if (!styleReceiver) {
+                styleReceiver = this.$el.querySelector(':first-child');
+            }
+
+            return styleReceiver;
+        },
         invokeEditModeHandler(editMode) {
             let edit;
 
@@ -111,20 +139,20 @@ export default {
                 return;
             }
             let keys = Object.keys(styleObj);
+            let elemToStyle = this.getStyleReceiver();
             keys.forEach(key => {
-                let firstChild = this.$el.querySelector(':first-child');
-                if (firstChild) {
+                if (elemToStyle) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
-                        if (firstChild.style[key]) {
-                            firstChild.style[key] = '';
+                        if (elemToStyle.style[key]) {
+                            elemToStyle.style[key] = '';
                         }
                     } else {
-                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
-                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
-                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        if (!styleObj.isStyleInvisible && elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !elemToStyle.classList.contains(styleObj.isStyleInvisible)) {
+                            elemToStyle.classList.add(styleObj.isStyleInvisible);
                         }
-                        firstChild.style[key] = styleObj[key];
+                        elemToStyle.style[key] = styleObj[key];
                     }
                 }
             });
@@ -305,6 +333,14 @@ export default {
                 parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
+        },
+        setFontSize(newSize) {
+            let elemToStyle = this.getStyleReceiver();
+            elemToStyle.dataset.fontSize = newSize;
+        },
+        setFont(newFont) {
+            let elemToStyle = this.getStyleReceiver();
+            elemToStyle.dataset.font = newFont;
         }
     }
 }

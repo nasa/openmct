@@ -52,6 +52,7 @@
     $ctrlW: 22px;
 
     &__controls {
+        font-size: 1rem !important;
         margin-right: 0;
         min-width: 0;
         overflow: hidden;
@@ -62,7 +63,7 @@
     }
 
     &__direction {
-        font-size: 0.9em;
+        font-size: 0.9rem !important;
         margin-right: $interiorMargin;
     }
 

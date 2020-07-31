@@ -124,7 +124,117 @@ define(['lodash'], function (_) {
                         'telemetry.plot.overlay-multi': [
                             VIEW_TYPES['telemetry.plot.stacked']
                         ]
-                    };
+                    },
+                    SMALL_FONT_SIZES = [
+                        {
+                            name: 'Default Size',
+                            value: 'default'
+                        },
+                        {
+                            name: '8px',
+                            value: '8'
+                        },
+                        {
+                            name: '9px',
+                            value: '9'
+                        },
+                        {
+                            name: '10px',
+                            value: '10'
+                        },
+                        {
+                            name: '11px',
+                            value: '11'
+                        },
+                        {
+                            name: '12px',
+                            value: '12'
+                        },
+                        {
+                            name: '13px',
+                            value: '13'
+                        },
+                        {
+                            name: '14px',
+                            value: '14'
+                        },
+                        {
+                            name: '16px',
+                            value: '16'
+                        },
+                        {
+                            name: '18px',
+                            value: '18'
+                        },
+                        {
+                            name: '20px',
+                            value: '20'
+                        },
+                        {
+                            name: '24px',
+                            value: '24'
+                        }
+                    ],
+                    LARGE_FONT_SIZES = [
+                        {
+                            name: '28px',
+                            value: '28'
+                        },
+                        {
+                            name: '32px',
+                            value: '32'
+                        },
+                        {
+                            name: '36px',
+                            value: '36'
+                        },
+                        {
+                            name: '42px',
+                            value: '42'
+                        },
+                        {
+                            name: '48px',
+                            value: '48'
+                        },
+                        {
+                            name: '72px',
+                            value: '72'
+                        },
+                        {
+                            name: '96px',
+                            value: '96'
+                        },
+                        {
+                            name: '128px',
+                            value: '128'
+                        }
+                    ],
+                    FONTS = [
+                        {
+                            name: 'Default',
+                            value: 'default'
+                        },
+                        {
+                            name: 'Bold',
+                            value: 'default-bold'
+                        },
+                        {
+                            name: 'Narrow',
+                            value: 'narrow'
+                        },
+                        {
+                            name: 'Narrow Bold',
+                            value: 'narrow-bold'
+                        },
+                        {
+                            name: 'Monospace',
+                            value: 'monospace'
+                        },
+                        {
+                            name: 'Monospace Bold',
+                            value: 'monospace-bold'
+                        }
+                    ]
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -378,25 +488,136 @@ define(['lodash'], function (_) {
                     }
                 }
 
-                function getTextSizeMenu(selectedParent, selection) {
-                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' || type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".size";
-                        },
-                        title: "Set text size",
-                        options: TEXT_SIZE.map(size => {
-                            return {
-                                value: size + "px"
-                            };
-                        })
-                    };
+                function getAvailableFontSizeOptions(selection) {
+                    let sizeOptions = 'big';
+
+                    selection.forEach(selectable => {
+                        if (selectable[0].context.item) {
+                            if (selectable[0].context.item.type.includes('plot') ||
+                            selectable[0].context.item.type.includes('table')) {
+                                sizeOptions = 'small';
+                            }
+                        }
+                    });
+
+                    if (sizeOptions === 'small') {
+                        return SMALL_FONT_SIZES;
+                    } else {
+                        return SMALL_FONT_SIZES.concat(LARGE_FONT_SIZES);
+                    }
+                }
+
+                function getFontSizeMenu(selectedParent, selection) {
+
+                    if (selection.length === 1) {
+                        let primary = selection[0][0];
+                        let type = primary.context.layoutItem.type;
+
+                        if (type === 'subobject-view') {
+                            let objectType = primary.context.item.type;
+
+                            if (objectType === 'layout' ||
+                                objectType === 'flexible-layout' ||
+                                objectType === 'tabs') {
+                                return;
+                            }
+                        }
+
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font-size",
+                            applicableSelectedItems: selection,
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.fontSize';
+                            },
+                            title: "Set font size",
+                            options: getAvailableFontSizeOptions(selection)
+                        };
+                    } else {
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font-size",
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                let type = selectionPath[0].context.layoutItem.type;
+
+                                if (type === 'line-view' || type === 'box-view') {
+                                    return false;
+                                } else if (type === 'subobject-view') {
+                                    let objectType = selectionPath[0].context.item.type;
+
+                                    if (objectType === 'layout' ||
+                                        objectType === 'flexible-layout' ||
+                                        objectType === 'tabs') {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }),
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.fontSize';
+                            },
+                            title: "Set font size",
+                            options: getAvailableFontSizeOptions(selection)
+                        }
+                    }
+                }
+
+                function getFontMenu(selectedParent, selection) {
+                    if (selection.length === 1) {
+                        let primary = selection[0][0];
+                        let type = primary.context.layoutItem.type;
+
+                        if (type === 'subobject-view') {
+                            let objectType = primary.context.item.type;
+
+                            if (objectType === 'layout' ||
+                                objectType === 'flexible-layout' ||
+                                objectType === 'tabs') {
+                                return;
+                            }
+                        }
+
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font",
+                            applicableSelectedItems: selection,
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.font';
+                            },
+                            title: "Set font style",
+                            options: FONTS
+                        }
+                    } else {
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font",
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                let type = selectionPath[0].context.layoutItem.type;
+
+                                if (type === 'line-view' || type === 'box-view') {
+                                    return false;
+                                } else if (type === 'subobject-view') {
+                                    let objectType = selectionPath[0].context.item.type;
+
+                                    if (objectType === 'layout' ||
+                                    objectType === 'flexible-layout' ||
+                                    objectType === 'tabs') {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }),
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.font';
+                            },
+                            title: "Set font style",
+                            options: FONTS
+                        }
+                    }
                 }
 
                 function getTextButton(selectedParent, selection) {
@@ -409,7 +630,7 @@ define(['lodash'], function (_) {
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-font",
+                        icon: "icon-pencil",
                         title: "Edit text properties",
                         dialog: DIALOG_FORM.text
                     };
@@ -586,7 +807,8 @@ define(['lodash'], function (_) {
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
-                    'text-style': [],
+                    'font-size': [],
+                    'font-family': [],
                     'position': [],
                     'duplicate': [],
                     'remove': []
@@ -622,6 +844,16 @@ define(['lodash'], function (_) {
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
+                        if (toolbar['font-size'].length === 0) {
+                            toolbar['font-size'] = [
+                                getFontSizeMenu(selectedParent, selectedObjects)
+                            ];
+                        }
+                        if (toolbar['font-family'].length === 0) {
+                            toolbar['font-family'] = [
+                                getFontMenu(selectedParent, selectedObjects)
+                            ];
+                        }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
                             toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
@@ -629,9 +861,14 @@ define(['lodash'], function (_) {
                         if (toolbar['telemetry-value'].length === 0) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
+                        if (toolbar['font-size'].length === 0) {
+                            toolbar['font-size'] = [
+                                getFontSizeMenu(selectedParent, selectedObjects)
+                            ];
+                        }
+                        if (toolbar['font-family'].length === 0) {
+                            toolbar['font-family'] = [
+                                getFontMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {
@@ -650,9 +887,14 @@ define(['lodash'], function (_) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'text-view') {
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
+                        if (toolbar['font-size'].length === 0) {
+                            toolbar['font-size'] = [
+                                getFontSizeMenu(selectedParent, selectedObjects)
+                            ];
+                        }
+                        if (toolbar['font-family'].length === 0) {
+                            toolbar['font-family'] = [
+                                getFontMenu(selectedParent, selectedObjects)
                             ];
                         }
                         if (toolbar.position.length === 0) {

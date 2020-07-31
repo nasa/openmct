@@ -81,6 +81,7 @@ export default {
         style() {
             let backgroundImage = 'url(' + this.item.url + ')';
             let border = '1px solid ' + this.item.stroke;
+
             if (this.itemStyle) {
                 if (this.itemStyle.imageUrl !== undefined) {
                     backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';

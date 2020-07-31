@@ -29,7 +29,7 @@
         >
         </div>
         <div class="c-imagery__control-bar">
-            <div class="c-imagery__timestamp">{{ getTime() }}</div>
+            <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ getTime() }}</div>
             <div class="h-local-controls flex-elem">
                 <button
                     class="c-button icon-pause pause-play"
