@@ -508,60 +508,115 @@ define(['lodash'], function (_) {
                 }
 
                 function getFontSizeMenu(selectedParent, selection) {
-                    return {
-                        control: 'select-menu',
-                        domainObject: selectedParent,
-                        icon: "icon-font-size",
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
 
-                            if (type === 'line-view' || type === 'box-view') {
-                                return false;
-                            } else if (type === 'subobject-view') {
-                                let objectType = selectionPath[0].context.item.type;
+                    if (selection.length === 1) {
+                        let primary = selection[0][0];
+                        let type = primary.context.layoutItem.type;
 
-                                if (objectType === 'layout' ||
+                        if (type === 'subobject-view') {
+                            let objectType = primary.context.item.type;
+
+                            if (objectType === 'layout' ||
                                 objectType === 'flexible-layout' ||
                                 objectType === 'tabs') {
-                                    return false;
-                                }
+                                return;
                             }
-                            return true;
-                        }),
-                        property: (selectionPath) => {
-                            return getPath(selectionPath) + '.fontSize';
-                        },
-                        title: "Set font size",
-                        options: getAvailableFontSizeOptions(selection)
+                        }
+
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font-size",
+                            applicableSelectedItems: selection,
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.fontSize';
+                            },
+                            title: "Set font size",
+                            options: getAvailableFontSizeOptions(selection)
+                        };
+                    } else {
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font-size",
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                let type = selectionPath[0].context.layoutItem.type;
+
+                                if (type === 'line-view' || type === 'box-view') {
+                                    return false;
+                                } else if (type === 'subobject-view') {
+                                    let objectType = selectionPath[0].context.item.type;
+
+                                    if (objectType === 'layout' ||
+                                        objectType === 'flexible-layout' ||
+                                        objectType === 'tabs') {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }),
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.fontSize';
+                            },
+                            title: "Set font size",
+                            options: getAvailableFontSizeOptions(selection)
+                        }
                     }
                 }
 
                 function getFontMenu(selectedParent, selection) {
-                    return {
-                        control: 'select-menu',
-                        domainObject: selectedParent,
-                        icon: "icon-font",
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
+                    if (selection.length === 1) {
+                        let primary = selection[0][0];
+                        let type = primary.context.layoutItem.type;
 
-                            if (type === 'line-view' || type === 'box-view') {
-                                return false;
-                            } else if (type === 'subobject-view') {
-                                let objectType = selectionPath[0].context.item.type;
+                        if (type === 'subobject-view') {
+                            let objectType = primary.context.item.type;
 
-                                if (objectType === 'layout' ||
+                            if (objectType === 'layout' ||
                                 objectType === 'flexible-layout' ||
                                 objectType === 'tabs') {
-                                    return false;
-                                }
+                                return;
                             }
-                            return true;
-                        }),
-                        property: (selectionPath) => {
-                            return getPath(selectionPath) + '.font';
-                        },
-                        title: "Set font style",
-                        options: FONTS
+                        }
+
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font",
+                            applicableSelectedItems: selection,
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.font';
+                            },
+                            title: "Set font style",
+                            options: FONTS
+                        }
+                    } else {
+                        return {
+                            control: 'select-menu',
+                            domainObject: selectedParent,
+                            icon: "icon-font",
+                            applicableSelectedItems: selection.filter(selectionPath => {
+                                let type = selectionPath[0].context.layoutItem.type;
+
+                                if (type === 'line-view' || type === 'box-view') {
+                                    return false;
+                                } else if (type === 'subobject-view') {
+                                    let objectType = selectionPath[0].context.item.type;
+
+                                    if (objectType === 'layout' ||
+                                    objectType === 'flexible-layout' ||
+                                    objectType === 'tabs') {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }),
+                            property: (selectionPath) => {
+                                return getPath(selectionPath) + '.font';
+                            },
+                            title: "Set font style",
+                            options: FONTS
+                        }
                     }
                 }
 
