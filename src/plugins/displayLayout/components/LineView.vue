@@ -44,7 +44,7 @@
     </svg>
 
     <div
-        class="c-frame-edit__move"
+        class="c-frame__move-bar"
         @mousedown="startDrag($event)"
     ></div>
     <div

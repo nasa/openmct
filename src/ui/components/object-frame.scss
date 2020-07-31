@@ -36,10 +36,6 @@
             display: none;
         }
 
-        //> .c-so-view__local-controls {
-        //    top: $interiorMarginSm; right: $interiorMarginSm;
-        //}
-
         &.is-missing {
             @include isMissing($absPos: true);
 
@@ -86,6 +82,8 @@
     }
 }
 
-.u-angular-object-view-wrapper {
-    display: contents;
+.l-angular-ov-wrapper {
+    // This element is the recipient for object styling; cannot be display: contents
+    height: 100%;
+    overflow: hidden;
 }
