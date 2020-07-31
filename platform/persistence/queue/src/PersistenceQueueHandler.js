@@ -87,6 +87,7 @@ define(
                             requeue: requeue,
                             error: error
                         });
+
                         return false;
                     }
 
@@ -97,9 +98,9 @@ define(
 
                 // Handle any failures from the full operation
                 function handleFailure(value) {
-                    return failures.length > 0 ?
-                        failureHandler.handle(failures) :
-                        value;
+                    return failures.length > 0
+                        ? failureHandler.handle(failures)
+                        : value;
                 }
 
                 // Try to persist everything, then handle any failures

@@ -24,7 +24,7 @@ import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct','snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer'],
     data() {
         return {
             expanded: false,
@@ -32,7 +32,7 @@ export default {
             snapshotCount: 0,
             snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT,
             flashIndicator: false
-        }
+        };
     },
     mounted() {
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
@@ -50,6 +50,7 @@ export default {
             if (this.snapshotContainer.getSnapshots().length > this.snapshotCount) {
                 this.notifyNewSnapshot();
             }
+
             this.updateSnapshotIndicatorTitle();
         },
         toggleSnapshot() {
@@ -93,5 +94,5 @@ export default {
             this.indicatorTitle = `${snapshotCount} ${snapshotTitleSuffix}`;
         }
     }
-}
+};
 </script>

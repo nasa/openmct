@@ -70,6 +70,7 @@ define([
                 if (!active) {
                     return;
                 }
+
                 var updateCallback = function () {
                     var datum = this.evaluateState(
                         realtimeStates,
@@ -190,6 +191,7 @@ define([
             strategy: 'latest',
             size: 1
         });
+
         return this.openmct
             .telemetry
             .request(
@@ -215,6 +217,7 @@ define([
             timestampedDatum[timeSystem.key] =
                 this.baseState[childId].formats[timeSystem.key].parse(datum);
         }, this);
+
         return timestampedDatum;
     };
 
@@ -271,6 +274,7 @@ define([
         }
 
         var baseDatum = _.clone(latestTimestamp);
+
         return this.makeDatumFromRule(i, baseDatum);
     };
 

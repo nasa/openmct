@@ -56,12 +56,17 @@ define([
             this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
                 vm.byValue[e.value] = e.string;
                 vm.byString[e.string] = e.value;
+
                 return vm;
-            }, {byValue: {}, byString: {}});
+            }, {
+                byValue: {},
+                byString: {}
+            });
             this.formatter.format = function (value) {
                 if (this.enumerations.byValue.hasOwnProperty(value)) {
                     return this.enumerations.byValue[value];
                 }
+
                 return value;
             }.bind(this);
             this.formatter.parse = function (string) {
@@ -70,9 +75,11 @@ define([
                         return this.enumerations.byString[string];
                     }
                 }
+
                 return Number(string);
             }.bind(this);
         }
+
         // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
             var baseFormat = this.formatter.format;
@@ -81,20 +88,24 @@ define([
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };
         }
+
         if (valueMetadata.format === 'string') {
             this.formatter.parse = function (value) {
                 if (value === undefined) {
                     return '';
                 }
+
                 if (typeof value === 'string') {
                     return value;
                 } else {
                     return value.toString();
                 }
             };
+
             this.formatter.format = function (value) {
                 return value;
             };
+
             this.formatter.validate = function (value) {
                 return typeof value === 'string';
             };
@@ -105,6 +116,7 @@ define([
         if (_.isObject(datum)) {
             return this.formatter.parse(datum[this.valueMetadata.source]);
         }
+
         return this.formatter.parse(datum);
     };
 
@@ -112,6 +124,7 @@ define([
         if (_.isObject(datum)) {
             return this.formatter.format(datum[this.valueMetadata.source]);
         }
+
         return this.formatter.format(datum);
     };
 

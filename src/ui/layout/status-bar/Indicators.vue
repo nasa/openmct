@@ -29,5 +29,5 @@ export default {
             this.$el.appendChild(indicator.element);
         });
     }
-}
+};
 </script>

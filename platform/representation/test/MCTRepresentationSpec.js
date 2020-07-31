@@ -69,12 +69,18 @@ define(
                 testRepresentations = [
                     {
                         key: "abc",
-                        bundle: { path: "a", resources: "b" },
+                        bundle: {
+                            path: "a",
+                            resources: "b"
+                        },
                         templateUrl: "c/template.html"
                     },
                     {
                         key: "def",
-                        bundle: { path: "d", resources: "e" },
+                        bundle: {
+                            path: "d",
+                            resources: "e"
+                        },
                         templateUrl: "f/template.html",
                         uses: ["testCapability", "otherTestCapability"]
                     }
@@ -83,13 +89,19 @@ define(
                 testViews = [
                     {
                         key: "uvw",
-                        bundle: { path: "u", resources: "v" },
+                        bundle: {
+                            path: "u",
+                            resources: "v"
+                        },
                         templateUrl: "w/template.html",
                         gestures: ["testGesture", "otherTestGesture"]
                     },
                     {
                         key: "xyz",
-                        bundle: { path: "x", resources: "y" },
+                        bundle: {
+                            path: "x",
+                            resources: "y"
+                        },
                         templateUrl: "z/template.html"
                     }
                 ];
@@ -108,6 +120,7 @@ define(
                             ["represent", "destroy"]
                         );
                     constructor.and.returnValue(representer);
+
                     return constructor;
                 });
 
@@ -324,7 +337,6 @@ define(
                 });
 
             });
-
 
         });
     }

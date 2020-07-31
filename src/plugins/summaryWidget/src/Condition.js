@@ -56,6 +56,7 @@ define([
             if (property === 'operation') {
                 self.generateValueInputs(value);
             }
+
             self.eventEmitter.emit('change', {
                 value: value,
                 property: property,
@@ -216,8 +217,9 @@ define([
         let telemetryMetadata = this.conditionManager.getTelemetryMetadata(this.config.object);
         let options = '';
         telemetryMetadata[this.config.key].enumerations.forEach(enumeration => {
-            options += '<option value="' + enumeration.value + '">'+ enumeration.string + '</option>';
+            options += '<option value="' + enumeration.value + '">' + enumeration.string + '</option>';
         });
+
         return options;
     };
 
