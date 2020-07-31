@@ -58,6 +58,12 @@
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
+                <span
+                    v-if="unit && item.showUnits"
+                    class="c-telemetry-view__value-text__unit"
+                >
+                    {{ unit }}
+                </span>
             </div>
         </div>
     </div>
@@ -136,6 +142,12 @@ export default {
             let displayMode = this.item.displayMode;
 
             return displayMode === 'all' || displayMode === 'value';
+        },
+        unit() {
+            let value = this.item.value,
+                unit = this.metadata.value(value).unit;
+
+            return unit;
         },
         styleObject() {
             return Object.assign({}, {
@@ -257,7 +269,9 @@ export default {
                 item: domainObject,
                 layoutItem: this.item,
                 index: this.index,
-                updateTelemetryFormat: this.updateTelemetryFormat
+                updateTelemetryFormat: this.updateTelemetryFormat,
+                toggleUnits: this.toggleUnits,
+                showUnits: this.showUnits
             };
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);

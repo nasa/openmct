@@ -135,7 +135,6 @@ export default {
                 value = this.getFormValue(domainObject, toolbarItem);
             } else {
                 let values = [];
-
                 if (applicableSelectedItems) {
                     applicableSelectedItems.forEach(selectionPath => {
                         values.push(this.getPropertyValue(domainObject, toolbarItem, selectionPath));
@@ -207,7 +206,6 @@ export default {
         },
         updateObjectValue(value, item) {
             let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-
             this.structure = this.structure.map(toolbarItem => {
                 if (toolbarItem.domainObject) {
                     let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
