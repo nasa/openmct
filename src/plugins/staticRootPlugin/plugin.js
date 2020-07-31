@@ -23,6 +23,7 @@ define([
                 })
                 .then(function (importData) {
                     cachedProvider = new StaticModelProvider(importData, rootIdentifier);
+
                     return cachedProvider;
                 });
 
@@ -32,6 +33,7 @@ define([
             if (!cachedProvider) {
                 cachedProvider = loadProvider();
             }
+
             return Promise.resolve(cachedProvider);
         };
 

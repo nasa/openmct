@@ -13,12 +13,12 @@ export default {
         DialogComponent: DialogComponent,
         ProgressComponent: ProgressComponent
     },
-    inject:['iconClass', 'title', 'hint', 'timestamp', 'message'],
+    inject: ['iconClass', 'title', 'hint', 'timestamp', 'message'],
     props: {
         model: {
             type: Object,
             required: true
         }
     }
-}
+};
 </script>

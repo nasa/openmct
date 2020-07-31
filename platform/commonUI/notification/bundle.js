@@ -27,7 +27,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/notification",
+        name: "platform/commonUI/notification",
         definition: {
             "extensions": {
                 "services": [

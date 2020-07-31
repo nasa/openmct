@@ -56,7 +56,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                     mockCompObject1: {
                         key: 'mockCompObject1'
                     },
-                    mockCompObject2 : {
+                    mockCompObject2: {
                         key: 'mockCompObject2'
                     }
                 }],
@@ -225,6 +225,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                     req.reject = reject;
                 });
                 telemetryRequests.push(req);
+
                 return req.promise;
             });
             mockTelemetryAPI.isTelemetryObject.and.returnValue(true);
@@ -233,6 +234,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             });
             mockTelemetryAPI.subscribe.and.callFake(function (obj, callback) {
                 mockTelemetryCallbacks[obj.identifier.key] = callback;
+
                 return unsubscribeSpies[obj.identifier.key];
             });
             mockTelemetryAPI.triggerTelemetryCallback.and.callFake(function (key) {
@@ -385,8 +387,8 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             expect(telemetryCallbackSpy).toHaveBeenCalled();
         });
 
-        it('evalutes a set of rules and returns the id of the' +
-           'last active rule, or the first if no rules are active', function () {
+        it('evalutes a set of rules and returns the id of the'
+           + 'last active rule, or the first if no rules are active', function () {
             var mockRuleOrder = ['default', 'rule0', 'rule1'],
                 mockRules = {
                     default: {

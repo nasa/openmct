@@ -67,7 +67,7 @@ export default {
             dragStartX: undefined,
             dragX: undefined,
             zoomStyle: {}
-        }
+        };
     },
     computed: {
         inZoomMode() {
@@ -285,6 +285,7 @@ export default {
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
+
             return bounds.start + offset;
         },
         isChangingViewBounds() {
@@ -298,5 +299,5 @@ export default {
         }
     }
 
-}
+};
 </script>

@@ -38,7 +38,7 @@ define(
             "identifier": "msl",
             "instruments": [
                 {
-                    "name":"rems",
+                    "name": "rems",
                     "identifier": "rems",
                     "measurements": [
                         {
