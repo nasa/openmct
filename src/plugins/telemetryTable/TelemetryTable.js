@@ -27,6 +27,7 @@ define([
     './collections/FilteredTableRowCollection',
     './TelemetryTableRow',
     './TelemetryTableColumn',
+    './TelemetryTableUnitColumn',
     './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
@@ -35,6 +36,7 @@ define([
     FilteredTableRowCollection,
     TelemetryTableRow,
     TelemetryTableColumn,
+    TelemetryTableUnitColumn,
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
@@ -210,15 +212,23 @@ define([
 
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-
             metadataValues.forEach(metadatum => {
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
+                // add units column if available
+                if (metadatum.unit !== undefined) {
+                    let unitColumn = this.createUnitColumn(metadatum);
+                    this.configuration.addSingleColumnForObject(telemetryObject, unitColumn);
+                }
             });
         }
 
         createColumn(metadatum) {
             return new TelemetryTableColumn(this.openmct, metadatum);
+        }
+
+        createUnitColumn(metadatum) {
+            return new TelemetryTableUnitColumn(this.openmct, metadatum);
         }
 
         subscribeTo(telemetryObject) {

@@ -134,6 +134,14 @@ define(['lodash'], function (_) {
                     return `configuration.items[${selectionPath[0].context.index}]`;
                 }
 
+                function getAllOfType(selection, specificType) {
+                    return selection.filter(selectionPath => {
+                        let type = selectionPath[0].context.layoutItem.type;
+
+                        return type === specificType;
+                    });
+                }
+
                 function getAllTypes(selection) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
@@ -510,6 +518,50 @@ define(['lodash'], function (_) {
                     return allTelemetry;
                 }
 
+                function getToggleUnitsButton(selectedParent, selection) {
+                    let applicableItems = getAllOfType(selection, 'telemetry-view');
+                    applicableItems = unitsOnly(applicableItems);
+                    if (!applicableItems.length) {
+                        return;
+                    }
+
+                    return {
+                        control: "toggle-button",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: applicableItems,
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + '.showUnits';
+                        },
+                        options: [
+                            {
+                                value: true,
+                                icon: 'icon-eye-open',
+                                title: "Show units"
+                            },
+                            {
+                                value: false,
+                                icon: 'icon-eye-disabled',
+                                title: "Hide units"
+                            }
+                        ]
+                    };
+                }
+
+                function unitsOnly(items) {
+                    let results = items.filter((item) => {
+                        let currentItem = item[0];
+                        let metadata = this.openmct.telemetry.getMetadata(currentItem.context.item);
+                        let hasUnits = metadata
+                            .valueMetadatas
+                            .filter((metadatum) => metadatum.unit)
+                            .length;
+
+                        return hasUnits > 0;
+                    });
+
+                    return results;
+                }
+
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
                     if (selection.length === 1) {
                         let displayLayoutContext = selectionPath[1].context,
@@ -594,6 +646,7 @@ define(['lodash'], function (_) {
                     'text-style': [],
                     'position': [],
                     'duplicate': [],
+                    'unit-toggle': [],
                     'remove': []
                 };
 
@@ -662,6 +715,13 @@ define(['lodash'], function (_) {
 
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                        }
+
+                        if (toolbar['unit-toggle'].length === 0) {
+                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
+                            if (toggleUnitsButton) {
+                                toolbar['unit-toggle'] = [toggleUnitsButton];
+                            }
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar['text-style'].length === 0) {
