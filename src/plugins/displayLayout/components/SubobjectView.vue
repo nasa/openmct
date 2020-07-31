@@ -35,7 +35,7 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
-        :fontSize="item.fontSize"
+        :font-size="item.fontSize"
         :font="item.font"
     />
 </layout-frame>

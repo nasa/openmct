@@ -66,7 +66,7 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
-        :fontSize="fontSize"
+        :font-size="fontSize"
         :font="font"
     />
 </div>
