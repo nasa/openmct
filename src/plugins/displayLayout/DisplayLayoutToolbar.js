@@ -127,7 +127,7 @@ define(['lodash'], function (_) {
                     },
                     SMALL_FONT_SIZES = [
                         {
-                            name: 'Default',
+                            name: 'Default Size',
                             value: 'default'
                         },
                         {
@@ -211,7 +211,7 @@ define(['lodash'], function (_) {
                     ],
                     FONTS = [
                         {
-                            name: 'Default',
+                            name: 'Default Font',
                             value: 'default'
                         },
                         {
@@ -540,7 +540,7 @@ define(['lodash'], function (_) {
                     return {
                         control: 'select-menu',
                         domainObject: selectedParent,
-                        icon: "icon-font-size",
+                        icon: "icon-font",
                         applicableSelectedItems: selection.filter(selectionPath => {
                             let type = selectionPath[0].context.layoutItem.type;
 
@@ -575,7 +575,7 @@ define(['lodash'], function (_) {
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-font",
+                        icon: "icon-pencil",
                         title: "Edit text properties",
                         dialog: DIALOG_FORM.text
                     };
