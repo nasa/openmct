@@ -120,7 +120,6 @@ define([
 
             this.tickCount = 4;
             this.tickUpdate = false;
-            this.forceRegeneration = false;
             this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
             this.listenTo(this.axis, 'change:format', this.updateTicks, this);
             this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
@@ -143,8 +142,8 @@ define([
      *
      * @private
      */
-    MCTTicksController.prototype.shouldRegenerateTicks = function (range) {
-        if (this.forceRegeneration) {
+    MCTTicksController.prototype.shouldRegenerateTicks = function (range, forceRegeneration) {
+        if (forceRegeneration) {
             return true;
         }
         if (!this.tickRange || !this.$scope.ticks || !this.$scope.ticks.length) {
@@ -175,11 +174,10 @@ define([
     };
 
     MCTTicksController.prototype.updateTicksForceRegeneration = function () {
-        this.forceRegeneration = true;
-        this.updateTicks();
+        this.updateTicks(true);
     }
 
-    MCTTicksController.prototype.updateTicks = function () {
+    MCTTicksController.prototype.updateTicks = function (forceRegeneration = false) {
         var range = this.axis.get('displayRange');
         if (!range) {
             delete this.$scope.min;
@@ -197,7 +195,7 @@ define([
         this.$scope.min = range.min;
         this.$scope.max = range.max;
         this.$scope.interval = Math.abs(range.min - range.max);
-        if (this.shouldRegenerateTicks(range)) {
+        if (this.shouldRegenerateTicks(range, forceRegeneration)) {
             var newTicks = this.getTicks();
             this.tickRange = {
                 min: Math.min.apply(Math, newTicks),
@@ -258,7 +256,6 @@ define([
 
         this.$scope.$digest();
         this.tickUpdate = false;
-        this.forceRegeneration = false;
     };
 
     return MCTTicksController;

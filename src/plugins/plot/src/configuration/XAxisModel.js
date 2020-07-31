@@ -49,8 +49,6 @@ define([
             }
             this.listenTo(this, 'change:key', this.changeKey, this);
             this.listenTo(this, 'resetSeries', this.resetSeries, this);
-            // this.listenTo(this, 'changeView', this.changeView, this);
-            // this.listenTo(this, 'change:view', this.changeView, this);
         },
         changeKey: function (newKey) {
             var series = this.plot.series.first();
@@ -75,23 +73,6 @@ define([
                 plotSeries.reset();
             });
         },
-        // changeView: function (newKey) {
-        //     console.log(`changing to ${newKey}`);
-        // },
-        // changeView: function (newKey) {
-        //     var series = this.plot.series.first();
-        //     if (series) {
-        //         var xMetadata = series.metadata.value(newKey);
-        //         var xFormat = series.formats[newKey];
-        //         this.set('label', xMetadata.name);
-        //         this.set('format', xFormat.format.bind(xFormat));
-        //     } else {
-        //         this.set('format', function (x) {
-        //             return x;
-        //         });
-        //         this.set('label', newKey);
-        //     }
-        // },
         defaults: function (options) {
             var bounds = options.openmct.time.bounds();
             var timeSystem = options.openmct.time.timeSystem();
@@ -101,7 +82,6 @@ define([
             return {
                 name: timeSystem.name,
                 key: timeSystem.key,
-                // view: timeSystem.key,
                 format: format.format.bind(format),
                 range: {
                     min: bounds.start,
