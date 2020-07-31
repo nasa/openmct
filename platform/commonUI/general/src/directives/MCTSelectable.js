@@ -66,7 +66,6 @@ define(
                     });
                 });
 
-
             }
 
             return {

@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
+import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 export default {
@@ -85,8 +85,10 @@ export default {
                 if (this.itemStyle.imageUrl !== undefined) {
                     backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
                 }
+
                 border = this.itemStyle.border;
             }
+
             return {
                 backgroundImage,
                 border
@@ -122,5 +124,5 @@ export default {
             this.removeSelectable();
         }
     }
-}
+};
 </script>

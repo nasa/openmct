@@ -3,7 +3,7 @@ import NotebookSnapshotIndicator from './components/notebook-snapshot-indicator.
 import SnapshotContainer from './snapshot-container';
 import Vue from 'vue';
 
-let installed  = false;
+let installed = false;
 
 export default function NotebookPlugin() {
     return function install(openmct) {
@@ -109,6 +109,7 @@ export default function NotebookPlugin() {
             },
             view: function (domainObject) {
                 let component;
+
                 return {
                     show(container) {
                         component = new Vue({

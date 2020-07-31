@@ -86,6 +86,7 @@ define([
             if (padding === 0) {
                 padding = 1;
             }
+
             return {
                 min: range.min - padding,
                 max: range.max + padding
@@ -111,18 +112,22 @@ define([
                     min: seriesStats.minValue,
                     max: seriesStats.maxValue
                 });
+
                 return;
             }
+
             var stats = this.get('stats');
             var changed = false;
             if (stats.min > seriesStats.minValue) {
                 changed = true;
                 stats.min = seriesStats.minValue;
             }
+
             if (stats.max < seriesStats.maxValue) {
                 changed = true;
                 stats.max = seriesStats.maxValue;
             }
+
             if (changed) {
                 this.set('stats', {
                     min: stats.min,
@@ -173,6 +178,7 @@ define([
                 if (!label) {
                     this.unset('label');
                 }
+
                 return;
             }
 
@@ -188,14 +194,17 @@ define([
                     if (a === undefined) {
                         return b;
                     }
+
                     if (a === b) {
                         return a;
                     }
+
                     return '';
                 }, undefined);
 
                 if (labelName) {
                     this.set('label', labelName);
+
                     return;
                 }
 
@@ -205,14 +214,17 @@ define([
                     if (a === undefined) {
                         return b;
                     }
+
                     if (a === b) {
                         return a;
                     }
+
                     return '';
                 }, undefined);
 
                 if (labelUnits) {
                     this.set('label', labelUnits);
+
                     return;
                 }
             }
