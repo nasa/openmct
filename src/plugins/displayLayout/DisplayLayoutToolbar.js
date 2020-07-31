@@ -211,11 +211,11 @@ define(['lodash'], function (_) {
                     ],
                     FONTS = [
                         {
-                            name: 'Default Font',
+                            name: 'Default',
                             value: 'default'
                         },
                         {
-                            name: 'Default Bold',
+                            name: 'Bold',
                             value: 'default-bold'
                         },
                         {
