@@ -74,14 +74,14 @@
 
 <script>
 import uuid from 'uuid';
-import SubobjectView from './SubobjectView.vue'
-import TelemetryView from './TelemetryView.vue'
-import BoxView from './BoxView.vue'
-import TextView from './TextView.vue'
-import LineView from './LineView.vue'
-import ImageView from './ImageView.vue'
-import EditMarquee from './EditMarquee.vue'
-import _ from 'lodash'
+import SubobjectView from './SubobjectView.vue';
+import TelemetryView from './TelemetryView.vue';
+import BoxView from './BoxView.vue';
+import TextView from './TextView.vue';
+import LineView from './LineView.vue';
+import ImageView from './ImageView.vue';
+import EditMarquee from './EditMarquee.vue';
+import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
     'table': (domainObject) => {
@@ -102,10 +102,11 @@ const TELEMETRY_IDENTIFIER_FUNCTIONS = {
                     identifiers.push(object.identifier);
                 }
             });
+
             return Promise.resolve(identifiers);
         });
     }
-}
+};
 
 const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
@@ -151,6 +152,7 @@ export default {
     },
     data() {
         let domainObject = JSON.parse(JSON.stringify(this.domainObject));
+
         return {
             internalDomainObject: domainObject,
             initSelectIndex: undefined,
@@ -171,8 +173,9 @@ export default {
         },
         showMarquee() {
             let selectionPath = this.selection[0];
-            let singleSelectedLine = this.selection.length === 1 &&
-                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+            let singleSelectedLine = this.selection.length === 1
+                    && selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
@@ -210,7 +213,9 @@ export default {
                 if ($event) {
                     $event.stopImmediatePropagation();
                 }
+
                 this.dragInProgress = false;
+
                 return;
             }
         },
@@ -364,6 +369,7 @@ export default {
             if (this.internalDomainObject.locked) {
                 return;
             }
+
             // Get the ID of the dragged object
             let draggedKeyString = $event.dataTransfer.types
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
@@ -376,8 +382,8 @@ export default {
             }
         },
         isTelemetry(domainObject) {
-            if (this.openmct.telemetry.isTelemetryObject(domainObject) &&
-                    !this.options.showAsView.includes(domainObject.type)) {
+            if (this.openmct.telemetry.isTelemetryObject(domainObject)
+                    && !this.options.showAsView.includes(domainObject.type)) {
                 return true;
             } else {
                 return false;
@@ -457,15 +463,44 @@ export default {
             this.objectViewMap = {};
             this.layoutItems.forEach(this.trackItem);
         },
-        addChild(child) {
-            let keyString = this.openmct.objects.makeKeyString(child.identifier);
-            if (this.isTelemetry(child)) {
-                if (!this.telemetryViewMap[keyString] && !this.objectViewMap[keyString]) {
-                    this.addItem('telemetry-view', child);
+        isItemAlreadyTracked(child) {
+            let found = false,
+                keyString = this.openmct.objects.makeKeyString(child.identifier);
+
+            this.layoutItems.forEach(item => {
+                if (item.identifier) {
+                    let itemKeyString = this.openmct.objects.makeKeyString(item.identifier);
+
+                    if (itemKeyString === keyString) {
+                        found = true;
+
+                        return;
+                    }
                 }
-            } else if (!this.objectViewMap[keyString]) {
-                this.addItem('subobject-view', child);
+            });
+
+            if (found) {
+                return true;
+            } else if (this.isTelemetry(child)) {
+                return this.telemetryViewMap[keyString] && this.objectViewMap[keyString];
+            } else {
+                return this.objectViewMap[keyString];
             }
+        },
+        addChild(child) {
+            if (this.isItemAlreadyTracked(child)) {
+                return;
+            }
+
+            let type;
+
+            if (this.isTelemetry(child)) {
+                type = 'telemetry-view';
+            } else {
+                type = 'subobject-view';
+            }
+
+            this.addItem(type, child);
         },
         removeChild(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
@@ -517,9 +552,9 @@ export default {
             let newIndex = -1;
 
             indices.forEach((itemIndex, index) => {
-                let isAdjacentItemSelected = position === 'up' ?
-                    itemIndex + 1 === previousItemIndex :
-                    itemIndex - 1 === previousItemIndex;
+                let isAdjacentItemSelected = position === 'up'
+                    ? itemIndex + 1 === previousItemIndex
+                    : itemIndex - 1 === previousItemIndex;
 
                 if (index > 0 && isAdjacentItemSelected) {
                     if (position === 'up') {
@@ -559,14 +594,17 @@ export default {
             }
         },
         updateTelemetryFormat(item, format) {
-            let index = this.layoutItems.findIndex(item);
+            let index = this.layoutItems.findIndex((layoutItem) => {
+                return layoutItem.id === item.id;
+            });
+
             item.format = format;
             this.mutate(`configuration.items[${index}]`, item);
         },
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
                     key: uuid(),
-                    namespace: domainObject.identifier.namespace
+                    namespace: this.internalDomainObject.identifier.namespace
                 },
                 type = this.openmct.types.get(viewType),
                 parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
@@ -579,6 +617,13 @@ export default {
                 object.type = viewType;
                 type.definition.initialize(object);
                 object.composition.push(...composition);
+            }
+
+            if (object.modified || object.persisted) {
+                object.modified = undefined;
+                object.persisted = undefined;
+                delete object.modified;
+                delete object.persisted;
             }
 
             object.name = objectName;
@@ -601,7 +646,7 @@ export default {
                 shiftKey: true,
                 cancelable: true,
                 view: window
-            })
+            });
 
             selectItemsArray.forEach((id) => {
                 let refId = `layout-item-${id}`,
@@ -641,7 +686,7 @@ export default {
                 }
 
                 offsetKeys.forEach(key => {
-                    copy[key] += DUPLICATE_OFFSET
+                    copy[key] += DUPLICATE_OFFSET;
                 });
 
                 if (layoutItemStyle) {
@@ -749,5 +794,5 @@ export default {
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
         }
     }
-}
+};
 </script>

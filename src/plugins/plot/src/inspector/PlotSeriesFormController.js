@@ -22,9 +22,11 @@
 
 define([
     './PlotModelFormController',
+    '../draw/MarkerShapes',
     'lodash'
 ], function (
     PlotModelFormController,
+    MARKER_SHAPES,
     _
 ) {
 
@@ -34,6 +36,7 @@ define([
             var index = object.configuration.series.findIndex(s => {
                 return _.isEqual(s.identifier, modelIdentifier);
             });
+
             return 'configuration.series[' + index + '].' + key;
         };
     }
@@ -49,7 +52,6 @@ define([
             var otherSeriesWithColor = this.model.collection.filter(function (s) {
                 return s.get('color') === color;
             })[0];
-
 
             this.model.set('color', color);
 
@@ -93,6 +95,13 @@ define([
                         value: o.key
                     };
                 });
+            this.$scope.markerShapeOptions = Object.entries(MARKER_SHAPES)
+                .map(([key, obj]) => {
+                    return {
+                        name: obj.label,
+                        value: key
+                    };
+                });
         },
 
         fields: [
@@ -107,6 +116,10 @@ define([
             {
                 modelProp: 'markers',
                 objectPath: dynamicPathForKey('markers')
+            },
+            {
+                modelProp: 'markerShape',
+                objectPath: dynamicPathForKey('markerShape')
             },
             {
                 modelProp: 'markerSize',

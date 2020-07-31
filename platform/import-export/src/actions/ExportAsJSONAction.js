@@ -94,6 +94,7 @@ define(['lodash'], function (_) {
                                 } else {
                                     this.tree[this.getId(child)] = child;
                                 }
+
                                 this.write(child);
                             }
                         }
@@ -140,17 +141,19 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.copyObject = function (object) {
         var jsonString = JSON.stringify(object);
+
         return JSON.parse(jsonString);
     };
 
     ExportAsJSONAction.prototype.isExternal = function (child, parent) {
-        if (child.location !== this.getId(parent) &&
-            !Object.keys(this.tree).includes(child.location) &&
-            this.getId(child) !== this.getId(this.root) ||
-            this.externalIdentifiers.includes(this.getId(child))) {
+        if (child.location !== this.getId(parent)
+            && !Object.keys(this.tree).includes(child.location)
+            && this.getId(child) !== this.getId(this.root)
+            || this.externalIdentifiers.includes(this.getId(child))) {
 
             return true;
         }
+
         return false;
     };
 
@@ -169,6 +172,7 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.isCreatable = function (domainObject) {
         var type = this.typeService.getType(domainObject.type);
+
         return this.policyService.allow(
             "creation",
             type

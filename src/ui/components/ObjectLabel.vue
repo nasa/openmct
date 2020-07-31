@@ -1,7 +1,10 @@
 <template>
 <a
     class="c-tree__item__label c-object-label"
-    :class="classList"
+    :class="{
+        classList,
+        'is-missing': observedObject.status === 'missing'
+    }"
     draggable="true"
     :href="objectLink"
     @dragstart="dragStart"
@@ -10,8 +13,14 @@
     <div
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
-    ></div>
-    <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
+    >
+        <span class="is-missing__indicator"
+              title="This item is missing"
+        ></span>
+    </div>
+    <div class="c-tree__item__name c-object-label__name">
+        {{ observedObject.name }}
+    </div>
 </a>
 </template>
 
@@ -57,6 +66,7 @@ export default {
             if (!type) {
                 return 'icon-object-unknown';
             }
+
             return type.definition.cssClass;
         }
     },
@@ -67,6 +77,7 @@ export default {
             });
             this.$once('hook:destroyed', removeListener);
         }
+
         this.previewAction = new PreviewAction(this.openmct);
     },
     methods: {
@@ -94,11 +105,12 @@ export default {
             if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
+
             // serialize domain object anyway, because some views can drag-and-drop objects without composition
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }
     }
-}
+};
 </script>

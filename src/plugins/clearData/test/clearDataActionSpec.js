@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ClearDataActionPlugin  from '../plugin.js';
+import ClearDataActionPlugin from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
 describe('When the Clear Data Plugin is installed,', function () {

@@ -31,10 +31,16 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="styleClass"
+        :class="{
+            styleClass,
+            'is-missing': domainObject.status === 'missing'
+        }"
         :style="styleObject"
         @contextmenu.prevent="showContextMenu"
     >
+        <div class="is-missing__indicator"
+             title="This item is missing"
+        ></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
@@ -59,8 +65,8 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
-import printj from 'printj'
+import LayoutFrame from './LayoutFrame.vue';
+import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
@@ -118,15 +124,17 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined
-        }
+        };
     },
     computed: {
         showLabel() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'label';
         },
         showValue() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'value';
         },
         styleObject() {
@@ -161,6 +169,7 @@ export default {
             }
 
             let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
             return alarm && alarm.cssClass;
         }
     },
@@ -261,6 +270,6 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
-}
+};
 
 </script>

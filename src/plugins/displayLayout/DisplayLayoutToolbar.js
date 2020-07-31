@@ -36,8 +36,8 @@ define(['lodash'], function (_) {
                 let selectedParent = selectionPath[1];
 
                 // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
-                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
-                    (selectedObject.context.item && selectedObject.context.item.type === 'layout');
+                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout')
+                    || (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
@@ -137,18 +137,20 @@ define(['lodash'], function (_) {
                 function getAllTypes(selection) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
-                        return type === 'text-view' ||
-                            type === 'telemetry-view' ||
-                            type === 'box-view' ||
-                            type === 'image-view' ||
-                            type === 'line-view' ||
-                            type === 'subobject-view';
+
+                        return type === 'text-view'
+                            || type === 'telemetry-view'
+                            || type === 'box-view'
+                            || type === 'image-view'
+                            || type === 'line-view'
+                            || type === 'subobject-view';
                     });
                 }
 
                 function getAddButton(selection, selectionPath) {
                     if (selection.length === 1) {
                         selectionPath = selectionPath || selection[0];
+
                         return {
                             control: "menu",
                             domainObject: selectionPath[0].context.item,
@@ -380,11 +382,13 @@ define(['lodash'], function (_) {
 
                 function getTextSizeMenu(selectedParent, selection) {
                     const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
+
                     return {
                         control: "select-menu",
                         domainObject: selectedParent,
                         applicableSelectedItems: selection.filter(selectionPath => {
                             let type = selectionPath[0].context.layoutItem.type;
+
                             return type === 'text-view' || type === 'telemetry-view';
                         }),
                         property: function (selectionPath) {
@@ -431,7 +435,7 @@ define(['lodash'], function (_) {
                                 return {
                                     name: value.name,
                                     value: value.key
-                                }
+                                };
                             })
                         };
                     }
@@ -569,8 +573,9 @@ define(['lodash'], function (_) {
 
                 function isMainLayoutSelected(selectionPath) {
                     let selectedObject = selectionPath[0].context.item;
-                    return selectedObject && selectedObject.type === 'layout' &&
-                        !selectionPath[0].context.layoutItem;
+
+                    return selectedObject && selectedObject.type === 'layout'
+                        && !selectionPath[0].context.layoutItem;
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {
@@ -604,9 +609,11 @@ define(['lodash'], function (_) {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
                             toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];
                         }
+
                         if (toolbar['toggle-frame'].length === 0) {
                             toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -616,9 +623,11 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -626,14 +635,17 @@ define(['lodash'], function (_) {
                         if (toolbar['display-mode'].length === 0) {
                             toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar['telemetry-value'].length === 0) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
+
                         if (toolbar['text-style'].length === 0) {
                             toolbar['text-style'] = [
                                 getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -643,9 +655,11 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
+
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -655,6 +669,7 @@ define(['lodash'], function (_) {
                                 getTextSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -664,9 +679,11 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.text.length === 0) {
                             toolbar.text = [getTextButton(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -680,6 +697,7 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -693,6 +711,7 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -706,16 +725,19 @@ define(['lodash'], function (_) {
                                 getY2Input(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     }
-                    if(toolbar.duplicate.length === 0) {
+
+                    if (toolbar.duplicate.length === 0) {
                         toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
                     }
                 });
 
                 let toolbarArray = Object.values(toolbar);
+
                 return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
                     group = group.filter(control => control !== undefined);
 
@@ -730,7 +752,7 @@ define(['lodash'], function (_) {
                     return accumulator;
                 }, []));
             }
-        }
+        };
     }
 
     return DisplayLayoutToolbar;

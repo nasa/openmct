@@ -25,12 +25,14 @@ define([
     'lodash',
     '../configuration/Model',
     '../lib/extend',
-    'EventEmitter'
+    'EventEmitter',
+    '../draw/MarkerShapes'
 ], function (
     _,
     Model,
     extend,
-    EventEmitter
+    EventEmitter,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -56,6 +58,7 @@ define([
      *                `linear` (points are connected via straight lines), or
      *                `stepAfter` (points are connected by steps).
      * `markers`: boolean, whether or not this series should render with markers.
+     * `markerShape`: string, shape of markers.
      * `markerSize`: number, size in pixels of markers for this series.
      * `alarmMarkers`: whether or not to display alarm markers for this series.
      * `stats`: An object that tracks the min and max y values observed in this
@@ -96,11 +99,13 @@ define([
          */
         defaults: function (options) {
             var range = this.metadata.valuesForHints(['range'])[0];
+
             return {
                 name: options.domainObject.name,
                 xKey: options.collection.plot.xAxis.get('key'),
                 yKey: range.key,
                 markers: true,
+                markerShape: 'point',
                 markerSize: 2.0,
                 alarmMarkers: true
             };
@@ -146,7 +151,11 @@ define([
                 strategy = 'minmax';
             }
 
-            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, {
+                size: 1000,
+                strategy,
+                filters: this.filters
+            }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -189,6 +198,7 @@ define([
             if (newKey === oldKey) {
                 return;
             }
+
             var valueMetadata = this.metadata.value(newKey);
             if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
@@ -197,6 +207,7 @@ define([
                     this.set('interpolate', 'linear');
                 }
             }
+
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);
             }.bind(this);
@@ -242,12 +253,12 @@ define([
                 lowPoint = this.data[insertIndex - 1],
                 highPoint = this.data[insertIndex],
                 indexVal = this.getXVal(xValue),
-                lowDistance = lowPoint ?
-                    indexVal - this.getXVal(lowPoint) :
-                    Number.POSITIVE_INFINITY,
-                highDistance = highPoint ?
-                    this.getXVal(highPoint) - indexVal :
-                    Number.POSITIVE_INFINITY,
+                lowDistance = lowPoint
+                    ? indexVal - this.getXVal(lowPoint)
+                    : Number.POSITIVE_INFINITY,
+                highDistance = highPoint
+                    ? this.getXVal(highPoint) - indexVal
+                    : Number.POSITIVE_INFINITY,
                 nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
             return nearestPoint;
@@ -263,6 +274,7 @@ define([
             return this.fetch(options)
                 .then(function (res) {
                     this.emit('load');
+
                     return res;
                 }.bind(this));
         },
@@ -296,12 +308,14 @@ define([
                     stats.maxPoint = point;
                     changed = true;
                 }
+
                 if (stats.minValue > value) {
                     stats.minValue = value;
                     stats.minPoint = point;
                     changed = true;
                 }
             }
+
             if (changed) {
                 this.set('stats', {
                     minValue: stats.minValue,
@@ -330,6 +344,7 @@ define([
 
             if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
                 console.warn('[Plot] Invalid Y Values detected');
+
                 return;
             }
 
@@ -338,6 +353,7 @@ define([
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
                     return;
                 }
+
                 if (this.getXVal(this.data[insertIndex - 1]) === this.getXVal(point)) {
                     return;
                 }
@@ -406,10 +422,23 @@ define([
                     this.unsubscribe();
                     delete this.unsubscribe;
                 }
+
                 this.fetch();
             } else {
                 this.filters = deepCopiedFilters;
             }
+        },
+        markerOptionsDisplayText: function () {
+            const showMarkers = this.get('markers');
+            if (!showMarkers) {
+                return "Disabled";
+            }
+
+            const markerShapeKey = this.get('markerShape');
+            const markerShape = MARKER_SHAPES[markerShapeKey].label;
+            const markerSize = this.get('markerSize');
+
+            return `${markerShape}: ${markerSize}px`;
         }
     });
 

@@ -52,7 +52,7 @@
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
-                         title="The line rendering style for this series.">Line Style</div>
+                         title="The rendering method to join lines for this series.">Line Method</div>
                     <div class="grid-cell value">
                         <select ng-model="form.interpolate">
                             <option value="none">None</option>
@@ -64,12 +64,27 @@
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="Whether markers are displayed.">Markers</div>
-                    <div class="grid-cell value"><input type="checkbox" ng-model="form.markers"/></div>
+                    <div class="grid-cell value">
+                        <input type="checkbox" ng-model="form.markers"/>
+                        <select
+                            ng-show="form.markers"
+                            ng-model="form.markerShape">
+                            <option
+                                ng-repeat="option in markerShapeOptions"
+                                value="{{ option.value }}"
+                                ng-selected="option.value == form.markerShape"
+                            >
+                                {{ option.name }}
+                            </option>
+                        </select>
+                    </div>
                 </li>
                 <li class="grid-row">
                     <div class="grid-cell label"
                          title="Display markers visually denoting points in alarm.">Alarm Markers</div>
-                    <div class="grid-cell value"><input type="checkbox" ng-model="form.alarmMarkers"/></div>
+                    <div class="grid-cell value">
+                        <input type="checkbox" ng-model="form.alarmMarkers"/>
+                    </div>
                 </li>
                 <li class="grid-row" ng-show="form.markers || form.alarmMarkers">
                     <div class="grid-cell label"
@@ -159,13 +174,17 @@
                      title="The position of the legend relative to the plot display area.">Position</div>
                 <div class="grid-cell value">
                     <select ng-model="form.position">
-                        <option value="hidden">Hidden</option>
                         <option value="top">Top</option>
                         <option value="right">Right</option>
                         <option value="bottom">Bottom</option>
                         <option value="left">Left</option>
                     </select>
                 </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Hide the legend when the plot is small">Hide when plot small</div>
+                <div class="grid-cell value"><input type="checkbox" ng-model="form.hideLegendWhenSmall"/></div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"

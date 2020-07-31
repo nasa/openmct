@@ -89,6 +89,7 @@ define([
             self.outerWrapper.toggleClass('expanded-widget-test-data');
             self.toggleTestDataControl.toggleClass('c-disclosure-triangle--expanded');
         }
+
         this.listenTo(this.toggleTestDataControl, 'click', toggleTestData);
 
         /**
@@ -99,6 +100,7 @@ define([
             self.outerWrapper.toggleClass('expanded-widget-rules');
             self.toggleRulesControl.toggleClass('c-disclosure-triangle--expanded');
         }
+
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
         openmct.$injector.get('objectService')
@@ -132,8 +134,8 @@ define([
      */
     SummaryWidget.prototype.watchForChanges = function (openmct, domainObject) {
         this.watchForChangesUnsubscribe = openmct.objects.observe(domainObject, '*', function (newDomainObject) {
-            if (newDomainObject.url !== this.domainObject.url ||
-                    newDomainObject.openNewTab !== this.domainObject.openNewTab) {
+            if (newDomainObject.url !== this.domainObject.url
+                    || newDomainObject.openNewTab !== this.domainObject.openNewTab) {
                 this.addHyperlink(newDomainObject.url, newDomainObject.openNewTab);
             }
         }.bind(this));
@@ -255,7 +257,6 @@ define([
         this.refreshRules();
     };
 
-
     /**
      * Duplicate an existing widget rule from its configuration and splice it in
      * after the rule it duplicates
@@ -317,6 +318,7 @@ define([
             };
 
         }
+
         ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
         this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
             this.conditionManager, this.widgetDnD, this.container);
@@ -344,6 +346,7 @@ define([
             this.domainObject.configuration.ruleOrder = ruleOrder;
             this.updateDomainObject();
         }
+
         this.refreshRules();
     };
 

@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 /**
  * This bundle implements actions which control the location of objects
  * (move, copy, link.)

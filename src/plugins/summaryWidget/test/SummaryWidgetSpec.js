@@ -58,6 +58,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             mockStatusCapability.get.and.returnValue([]);
             mockStatusCapability.listen.and.callFake(function (callback) {
                 listenCallback = callback;
+
                 return listenCallbackSpy;
             });
             mockStatusCapability.triggerCallback.and.callFake(function () {

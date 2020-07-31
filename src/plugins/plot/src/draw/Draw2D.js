@@ -20,13 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define([
     'EventEmitter',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    './MarkerShapes'
 ], function (
     EventEmitter,
-    eventHelpers
+    eventHelpers,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -59,8 +60,8 @@ define([
 
     // Convert from logical to physical y coordinates
     Draw2D.prototype.y = function (v) {
-        return this.height -
-            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height
+            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
     // Set the color to be used for drawing operations
@@ -71,7 +72,6 @@ define([
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
     };
-
 
     Draw2D.prototype.clear = function () {
         this.width = this.canvas.width = this.canvas.offsetWidth;
@@ -121,18 +121,17 @@ define([
         buf,
         color,
         points,
-        pointSize
+        pointSize,
+        shape
     ) {
-        var i = 0,
-            offset = pointSize / 2;
+        const drawC2DShape = MARKER_SHAPES[shape].drawC2D.bind(this);
 
         this.setColor(color);
 
-        for (; i < points; i++) {
-            this.c2d.fillRect(
-                this.x(buf[i * 2]) - offset,
-                this.y(buf[i * 2 + 1]) - offset,
-                pointSize,
+        for (let i = 0; i < points; i++) {
+            drawC2DShape(
+                this.x(buf[i * 2]),
+                this.y(buf[i * 2 + 1]),
                 pointSize
             );
         }
@@ -159,7 +158,6 @@ define([
             );
         }
     };
-
 
     return Draw2D;
 });
