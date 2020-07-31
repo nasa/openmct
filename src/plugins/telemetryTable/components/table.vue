@@ -117,7 +117,7 @@
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">Deselect All</span>
+            <span class="c-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>
@@ -303,6 +303,7 @@ export default {
             default() {
                 return {
                     enable: false,
+                    disableMultiSelect: false,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
@@ -787,6 +788,11 @@ export default {
             this.$set(markedRow, 'marked', true);
             this.pause();
 
+            if (this.marking.disableMultiSelect) {
+                this.unmarkAllRows();
+                insertMethod = 'push';
+            }
+
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
@@ -800,7 +806,7 @@ export default {
                 return;
             }
 
-            if (!this.markedRows.length) {
+            if (!this.markedRows.length || this.marking.disableMultiSelect) {
                 this.markRow(rowIndex);
             } else {
                 if (this.markedRows.length > 1) {
