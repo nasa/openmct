@@ -54,7 +54,7 @@ export default {
     data() {
         return {
             items: []
-        }
+        };
     },
     computed: {
         hasUnits() {
@@ -102,5 +102,5 @@ export default {
             return metadataWithUnits.length > 0;
         }
     }
-}
+};
 </script>

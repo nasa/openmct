@@ -48,7 +48,7 @@ export default {
     components: {
         ProgressBar
     },
-    props:{
+    props: {
         notification: {
             type: Object,
             required: true
@@ -59,20 +59,20 @@ export default {
             isProgressNotification: false,
             progressPerc: this.notification.model.progressPerc,
             progressText: this.notification.model.progressText
-        }
+        };
     },
     computed: {
         progressObject() {
             return {
                 progressPerc: this.progressPerc,
                 progressText: this.progressText
-            }
+            };
         }
     },
     mounted() {
         if (this.notification.model.progressPerc) {
             this.isProgressNotification = true;
-            this.notification.on('progress', this.updateProgressBar)
+            this.notification.on('progress', this.updateProgressBar);
         }
     },
     methods: {
@@ -81,5 +81,5 @@ export default {
             this.progressText = progressText;
         }
     }
-}
+};
 </script>

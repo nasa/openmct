@@ -110,7 +110,7 @@ define([
                 }
             ]
         }
-    }
+    };
 
     function GeneratorMetadataProvider() {
 

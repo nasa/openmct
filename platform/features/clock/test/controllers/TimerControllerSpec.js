@@ -92,9 +92,18 @@ define(
                     }[k]];
                 });
 
-                mockStart.getMetadata.and.returnValue({cssClass: "icon-play", name: "Start"});
-                mockPause.getMetadata.and.returnValue({cssClass: "icon-pause", name: "Pause"});
-                mockStop.getMetadata.and.returnValue({cssClass: "icon-box", name: "Stop"});
+                mockStart.getMetadata.and.returnValue({
+                    cssClass: "icon-play",
+                    name: "Start"
+                });
+                mockPause.getMetadata.and.returnValue({
+                    cssClass: "icon-pause",
+                    name: "Pause"
+                });
+                mockStop.getMetadata.and.returnValue({
+                    cssClass: "icon-box",
+                    name: "Stop"
+                });
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};

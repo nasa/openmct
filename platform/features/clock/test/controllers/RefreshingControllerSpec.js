@@ -24,8 +24,6 @@ define(
     ["../../src/controllers/RefreshingController"],
     function (RefreshingController) {
 
-
-
         describe("The refreshing controller", function () {
             var mockScope,
                 mockTicker,

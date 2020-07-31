@@ -99,6 +99,7 @@ const TIME_OPTIONS = (function makeRanges() {
     while (arr.length < 60) {
         arr.push(arr.length);
     }
+
     return {
         hours: arr.slice(0, 24),
         minutes: arr,
@@ -133,7 +134,7 @@ export default {
             table: undefined,
             date: undefined,
             time: undefined
-        }
+        };
     },
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);
@@ -141,7 +142,10 @@ export default {
     },
     methods: {
         generateTable() {
-            let m = moment.utc({ year: this.picker.year, month: this.picker.month }).day(0),
+            let m = moment.utc({
+                    year: this.picker.year,
+                    month: this.picker.month
+                }).day(0),
                 table = [],
                 row,
                 col;
@@ -209,9 +213,10 @@ export default {
 
         isSelected(cell) {
             let date = this.date || {};
-            return cell.day === date.day &&
-                cell.month === date.month &&
-                cell.year === date.year;
+
+            return cell.day === date.day
+                && cell.month === date.month
+                && cell.year === date.year;
         },
 
         select(cell) {
@@ -223,9 +228,9 @@ export default {
         },
 
         dateEquals(d1, d2) {
-            return d1.year === d2.year &&
-                d1.month === d2.month &&
-                d1.day === d2.day;
+            return d1.year === d2.year
+                && d1.month === d2.month
+                && d1.day === d2.day;
         },
 
         changeMonth(delta) {
@@ -234,10 +239,12 @@ export default {
                 this.picker.month = 0;
                 this.picker.year += 1;
             }
+
             if (this.picker.month < 0) {
                 this.picker.month = 11;
                 this.picker.year -= 1;
             }
+
             this.picker.interacted = true;
             this.updateViewForMonth();
         },
@@ -250,5 +257,5 @@ export default {
             return TIME_OPTIONS[key];
         }
     }
-}
+};
 </script>

@@ -78,7 +78,7 @@ export default {
             headers: {},
             isEditing: this.openmct.editor.isEditing(),
             configuration: this.tableConfiguration.getConfiguration()
-        }
+        };
     },
     mounted() {
         this.unlisteners = [];
@@ -149,5 +149,5 @@ export default {
             this.tableConfiguration.updateConfiguration(this.configuration);
         }
     }
-}
+};
 </script>

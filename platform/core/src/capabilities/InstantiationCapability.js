@@ -65,8 +65,8 @@ define(
 
             // Lazily initialize; instantiate depends on capabilityService,
             // which depends on all capabilities, including this one.
-            this.instantiateFn = this.instantiateFn ||
-                this.$injector.get("instantiate");
+            this.instantiateFn = this.instantiateFn
+                || this.$injector.get("instantiate");
 
             var newObject = this.instantiateFn(model, id);
 

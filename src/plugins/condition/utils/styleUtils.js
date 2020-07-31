@@ -28,31 +28,31 @@ const styleProps = {
         svgProperty: 'fill',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                      type === 'telemetry-view' ||
-                                      type === 'box-view' ||
-                                      type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                      || type === 'telemetry-view'
+                                      || type === 'box-view'
+                                      || type === 'subobject-view');
         }
     },
     border: {
         svgProperty: 'stroke',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                            type === 'telemetry-view' ||
-                                            type === 'box-view' ||
-                                            type === 'image-view' ||
-                                            type === 'line-view'||
-                                            type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                            || type === 'telemetry-view'
+                                            || type === 'box-view'
+                                            || type === 'image-view'
+                                            || type === 'line-view'
+                                            || type === 'subobject-view');
         }
     },
     color: {
         svgProperty: 'color',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                    type === 'telemetry-view'||
-                                    type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                    || type === 'telemetry-view'
+                                    || type === 'subobject-view');
         }
     },
     imageUrl: {
@@ -71,11 +71,13 @@ const aggregateStyleValues = (accumulator, currentStyle) => {
         if (!accumulator[property]) {
             accumulator[property] = [];
         }
+
         const found = styleKeys.find(key => key === property);
         if (found) {
             accumulator[property].push(currentStyle[found]);
         }
     });
+
     return accumulator;
 };
 
@@ -98,6 +100,7 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
             }
         }
     });
+
     return {
         styles: styleValues,
         mixedStyles
@@ -108,7 +111,7 @@ const getStaticStyleForItem = (domainObject, id) => {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
         if (id) {
-            if(domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
                 return domainObjectStyles[id].staticStyle.style;
             }
         } else if (domainObjectStyles.staticStyle) {
@@ -161,6 +164,7 @@ export const getApplicableStylesForItem = (domainObject, item) => {
             } else if (item) {
                 defaultValue = item[styleProp.svgProperty];
             }
+
             style[property] = defaultValue === undefined ? styleProp.noneValue : defaultValue;
         }
     });
@@ -172,6 +176,7 @@ export const getStylesWithoutNoneValue = (style) => {
     if (isEmpty(style) || !style) {
         return;
     }
+
     let styleObj = {};
     const keys = Object.keys(style);
     keys.forEach(key => {
@@ -183,5 +188,6 @@ export const getStylesWithoutNoneValue = (style) => {
             }
         }
     });
+
     return styleObj;
 };

@@ -10,7 +10,6 @@
             <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}
             </span>
-            <context-menu-drop-down :object-path="objectPath" />
         </div>
     </div>
     <div class="l-browse-bar__end">
@@ -21,31 +20,19 @@
                 :current-view="currentView"
                 @setView="setView"
             />
-            <NotebookMenuSwitcher v-if="showNotebookMenuSwitcher"
-                                  :domain-object="domainObject"
-                                  :ignore-link="true"
-                                  :object-path="objectPath"
-                                  class="c-notebook-snapshot-menubutton"
-            />
         </div>
     </div>
 </div>
 </template>
 
-
 <script>
-import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
 
 export default {
     inject: [
-        'openmct',
-        'objectPath'
+        'openmct'
     ],
     components: {
-        ContextMenuDropDown,
-        NotebookMenuSwitcher,
         ViewSwitcher
     },
     props: {
@@ -62,12 +49,6 @@ export default {
             }
         },
         hideViewSwitcher: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
-        },
-        showNotebookMenuSwitcher: {
             type: Boolean,
             default: () => {
                 return false;
@@ -90,5 +71,5 @@ export default {
             this.$emit('setView', view);
         }
     }
-}
+};
 </script>

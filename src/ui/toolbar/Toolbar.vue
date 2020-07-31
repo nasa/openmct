@@ -55,6 +55,7 @@ export default {
 
             if (selection.length === 0 || !selection[0][0]) {
                 this.structure = [];
+
                 return;
             }
 
@@ -68,7 +69,7 @@ export default {
                     toolbarItem.dialog.sections.forEach(section => {
                         section.rows.forEach(row => {
                             formKeys.push(row.key);
-                        })
+                        });
                     });
                     toolbarItem.formKeys = formKeys;
                 }
@@ -87,7 +88,7 @@ export default {
             if (!this.domainObjectsById[id]) {
                 this.domainObjectsById[id] = {
                     domainObject: domainObject
-                }
+                };
                 this.observeObject(domainObject, id);
             }
         },
@@ -183,6 +184,7 @@ export default {
                     toolbarItem.nonSpecific = false;
                 } else {
                     toolbarItem.nonSpecific = true;
+
                     return {};
                 }
             }
@@ -198,6 +200,7 @@ export default {
                     unObserveObject();
                 });
             }
+
             this.unObserveObjects = [];
         },
         updateObjectValue(value, item) {
@@ -262,5 +265,5 @@ export default {
         this.openmct.editor.off('isEditing', this.handleEditing);
         this.removeListeners();
     }
-}
+};
 </script>

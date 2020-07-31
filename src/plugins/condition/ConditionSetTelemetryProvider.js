@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionManager from './ConditionManager'
+import ConditionManager from './ConditionManager';
 
 export default class ConditionSetTelemetryProvider {
     constructor(openmct) {

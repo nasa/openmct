@@ -41,15 +41,15 @@ export default {
             required: true,
             validator(value) {
                 // must pass valid options array.
-                return Array.isArray(value.options) &&
-                    value.options.every((o) => o.name);
+                return Array.isArray(value.options)
+                    && value.options.every((o) => o.name);
             }
         }
     },
     methods: {
         onClick(option) {
-            this.$emit('click', option)
+            this.$emit('click', option);
         }
     }
-}
+};
 </script>
