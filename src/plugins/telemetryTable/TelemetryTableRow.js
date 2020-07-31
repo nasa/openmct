@@ -70,7 +70,7 @@ define([], function () {
         getCellLimitClasses() {
             if (!this.cellLimitClasses) {
                 this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
-                    if(!column.isUnit) {
+                    if (!column.isUnit) {
                         let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
                         alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
                     }

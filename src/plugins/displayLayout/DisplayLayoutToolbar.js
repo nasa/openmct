@@ -137,6 +137,7 @@ define(['lodash'], function (_) {
                 function getAllOfType(selection, specificType) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
+
                         return type === specificType;
                     });
                 }
@@ -520,9 +521,10 @@ define(['lodash'], function (_) {
                 function getToggleUnitsButton(selectedParent, selection) {
                     let applicableItems = getAllOfType(selection, 'telemetry-view');
                     applicableItems = unitsOnly(applicableItems);
-                    if(!applicableItems.length) {
+                    if (!applicableItems.length) {
                         return;
                     }
+
                     return {
                         control: "toggle-button",
                         domainObject: selectedParent,
@@ -553,8 +555,10 @@ define(['lodash'], function (_) {
                             .valueMetadatas
                             .filter((metadatum) => metadatum.unit)
                             .length;
+
                         return hasUnits > 0;
                     });
+
                     return results;
                 }
 
@@ -712,9 +716,10 @@ define(['lodash'], function (_) {
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
+
                         if (toolbar['unit-toggle'].length === 0) {
                             let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
-                            if(toggleUnitsButton) {
+                            if (toggleUnitsButton) {
                                 toolbar['unit-toggle'] = [toggleUnitsButton];
                             }
                         }

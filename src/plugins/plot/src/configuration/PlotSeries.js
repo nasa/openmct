@@ -443,6 +443,7 @@ define([
         },
         nameWithUnit: function () {
             let unit = this.get('unit');
+
             return this.get('name') + (unit ? ' ' + unit : '');
         }
     });

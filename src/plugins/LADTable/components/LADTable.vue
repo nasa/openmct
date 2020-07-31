@@ -60,9 +60,11 @@ export default {
         hasUnits() {
             let itemsWithUnits = this.items.filter((item) => {
                 let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
+
                 return this.metadataHasUnits(metadata.valueMetadatas);
 
             });
+
             return itemsWithUnits.length !== 0;
         }
     },
@@ -99,6 +101,7 @@ export default {
         },
         metadataHasUnits(valueMetadatas) {
             let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
+
             return metadataWithUnits.length > 0;
         }
     }

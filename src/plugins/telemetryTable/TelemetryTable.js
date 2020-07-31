@@ -216,7 +216,7 @@ define([
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
                 // add units column if available
-                if(metadatum.unit !== undefined) {
+                if (metadatum.unit !== undefined) {
                     let unitColumn = this.createUnitColumn(metadatum);
                     this.configuration.addSingleColumnForObject(telemetryObject, unitColumn);
                 }

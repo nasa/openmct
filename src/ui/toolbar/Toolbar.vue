@@ -160,6 +160,7 @@ export default {
             if (formKey) {
                 property = property + "." + formKey;
             }
+
             return _.get(domainObject, property);
         },
         getFormValue(domainObject, toolbarItem) {
@@ -249,6 +250,7 @@ export default {
             if (formKey) {
                 property = property + "." + formKey;
             }
+
             this.openmct.objects.mutate(item.domainObject, property, value);
         },
         triggerMethod(item, event) {

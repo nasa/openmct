@@ -136,7 +136,7 @@ export default {
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
                 // if units are available, need to add columns to be hidden
-                if(metadatum.unit !== undefined) {
+                if (metadatum.unit !== undefined) {
                     let unitColumn = new TelemetryTableUnitColumn(this.openmct, metadatum);
                     this.tableConfiguration.addSingleColumnForObject(telemetryObject, unitColumn);
                 }

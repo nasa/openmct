@@ -146,6 +146,7 @@ export default {
         unit() {
             let value = this.item.value,
                 unit = this.metadata.value(value).unit;
+
             return unit;
         },
         styleObject() {

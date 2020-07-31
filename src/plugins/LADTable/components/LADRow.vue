@@ -71,7 +71,7 @@ export default {
             valueClass: '',
             currentObjectPath,
             unit: ''
-        }
+        };
     },
     computed: {
         formattedTimestamp() {
@@ -113,7 +113,7 @@ export default {
 
         this.requestHistory();
 
-        if(this.hasUnits) {
+        if (this.hasUnits) {
             this.setUnit();
         }
     },

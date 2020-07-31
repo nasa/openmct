@@ -29,7 +29,7 @@ define([
             super(openmct, metadatum);
             this.isUnit = true;
             this.titleValue += ' Unit';
-            this.formatter =  {
+            this.formatter = {
                 format: (datum) => {
                     return this.metadatum.unit;
                 },
