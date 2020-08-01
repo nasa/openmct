@@ -567,6 +567,14 @@ define([
         return this.$scope.xKeyOptions.find(option => option.key === key);
     };
 
+    MCTPlotController.prototype.isEnabledXKeyToggle = function () {
+        const isSinglePlot = this.$scope.xKeyOptions.length > 1 && this.$scope.series.length === 1;
+        const isFrozen = this.config.xAxis.get('frozen');
+        const inRealTimeMode = this.config.openmct.time.clock();
+
+        return isSinglePlot && !isFrozen && !inRealTimeMode;
+    };
+
     MCTPlotController.prototype.toggleXKeyOption = function () {
         this.config.xAxis.set('key', this.$scope.selectedXKeyOption.key);
     };

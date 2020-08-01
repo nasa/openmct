@@ -237,7 +237,7 @@
                 </div>
 
                 <select
-                    ng-if="xKeyOptions.length > 1 && series.length === 1"
+                    ng-if="plot.isEnabledXKeyToggle()"
                     ng-model="selectedXKeyOption.key"
                     ng-change="plot.toggleXKeyOption()"
                     class="gl-plot-x-label__select local-controls--hidden"
