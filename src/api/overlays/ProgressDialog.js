@@ -23,7 +23,7 @@ class ProgressDialog extends Overlay {
                         progressPerc: progressPerc || 0,
                         progressText
                     }
-                }
+                };
             },
             template: '<progress-dialog-component :model="model"></progress-dialog-component>'
         }).$mount();

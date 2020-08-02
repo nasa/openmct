@@ -34,6 +34,7 @@ define([
         const promises = this.providers.map(function (provider) {
             return provider();
         });
+
         return Promise.all(promises)
             .then(_.flatten);
     };

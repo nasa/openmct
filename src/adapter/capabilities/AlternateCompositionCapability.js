@@ -74,6 +74,7 @@ define([
         const keyString = objectUtils.makeKeyString(child.identifier);
         const oldModel = objectUtils.toOldFormat(child);
         const newDO = this.instantiate(oldModel, keyString);
+
         return new ContextualDomainObject(newDO, this.domainObject);
 
     };
@@ -103,5 +104,4 @@ define([
     };
 
     return AlternateCompositionCapability;
-}
-);
+});

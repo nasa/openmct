@@ -53,7 +53,7 @@ define([
 ) {
 
     return {
-        name:"platform/entanglement",
+        name: "platform/entanglement",
         definition: {
             "name": "Entanglement",
             "description": "Tools to assist you in entangling the world of WARP.",

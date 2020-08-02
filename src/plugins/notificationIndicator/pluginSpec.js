@@ -67,6 +67,7 @@ describe('the plugin', () => {
     describe('the indicator plugin element', () => {
         beforeEach(() => {
             parentElement.append(indicatorElement);
+
             return Vue.nextTick();
         });
 

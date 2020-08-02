@@ -50,6 +50,7 @@ define([
         Surrogate = function () {
             this.constructor = child;
         };
+
         Surrogate.prototype = parent.prototype;
         child.prototype = new Surrogate();
 

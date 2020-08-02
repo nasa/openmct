@@ -23,32 +23,36 @@
 import Conductor from './Conductor.vue';
 
 function isTruthy(a) {
-    return !!a;
+    return Boolean(a);
 }
 
 function validateMenuOption(menuOption, index) {
     if (menuOption.clock && !menuOption.clockOffsets) {
         return `Conductor menu option is missing required property 'clockOffsets'. This field is required when configuring a menu option with a clock.\r\n${JSON.stringify(menuOption)}`;
     }
+
     if (!menuOption.timeSystem) {
         return `Conductor menu option is missing required property 'timeSystem'\r\n${JSON.stringify(menuOption)}`;
     }
+
     if (!menuOption.bounds && !menuOption.clock) {
         return `Conductor menu option is missing required property 'bounds'. This field is required when configuring a menu option with fixed bounds.\r\n${JSON.stringify(menuOption)}`;
     }
 }
 
 function hasRequiredOptions(config) {
-    if (config === undefined ||
-        config.menuOptions === undefined ||
-        config.menuOptions.length === 0) {
+    if (config === undefined
+        || config.menuOptions === undefined
+        || config.menuOptions.length === 0) {
         return "You must specify one or more 'menuOptions'.";
     }
+
     if (config.menuOptions.some(validateMenuOption)) {
         return config.menuOptions.map(validateMenuOption)
             .filter(isTruthy)
             .join('\n');
     }
+
     return undefined;
 }
 
@@ -56,11 +60,13 @@ function validateConfiguration(config, openmct) {
     const systems = openmct.time.getAllTimeSystems()
         .reduce(function (m, ts) {
             m[ts.key] = ts;
+
             return m;
         }, {});
     const clocks = openmct.time.getAllClocks()
         .reduce(function (m, c) {
             m[c.key] = c;
+
             return m;
         }, {});
 
@@ -68,6 +74,7 @@ function validateConfiguration(config, openmct) {
         if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
             return `Time system '${menuOption.timeSystem}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }
+
         if (menuOption.clock && !clocks[menuOption.clock]) {
             return `Clock '${menuOption.clock}' has not been registered: \r\n ${JSON.stringify(menuOption)}`;
         }

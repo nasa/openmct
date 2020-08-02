@@ -38,8 +38,8 @@ define(
             const adaptedObject = domainObject.useCapability('adapter');
 
             if (!adaptedObject.telemetry) {
-                return domainObject.hasCapability('delegation') &&
-                    domainObject.getCapability('delegation')
+                return domainObject.hasCapability('delegation')
+                    && domainObject.getCapability('delegation')
                         .doesDelegateCapability('telemetry');
             }
 
@@ -48,6 +48,7 @@ define(
             if (rangeValues.length === 0) {
                 return false;
             }
+
             return !rangeValues.every(function (value) {
                 return value.format === 'string';
             });

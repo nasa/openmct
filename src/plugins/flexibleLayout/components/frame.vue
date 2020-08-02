@@ -88,7 +88,7 @@ export default {
         return {
             domainObject: undefined,
             currentObjectPath: undefined
-        }
+        };
     },
     computed: {
         hasFrame() {
@@ -97,7 +97,7 @@ export default {
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object) => {
                 this.setDomainObject(object);
             });
         }
@@ -144,5 +144,5 @@ export default {
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
     }
-}
+};
 </script>

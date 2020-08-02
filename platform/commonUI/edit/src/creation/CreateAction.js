@@ -104,7 +104,6 @@ define(
             // We will disable this.
         };
 
-
         /**
          * Metadata associated with a Create action.
          * @typedef {ActionMetadata} CreateActionMetadata

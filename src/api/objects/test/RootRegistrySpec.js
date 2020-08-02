@@ -31,14 +31,24 @@ define([
         let registry;
 
         beforeEach(function () {
-            idA = {key: 'keyA', namespace: 'something'};
-            idB = {key: 'keyB', namespace: 'something'};
-            idC = {key: 'keyC', namespace: 'something'};
+            idA = {
+                key: 'keyA',
+                namespace: 'something'
+            };
+            idB = {
+                key: 'keyB',
+                namespace: 'something'
+            };
+            idC = {
+                key: 'keyC',
+                namespace: 'something'
+            };
             registry = new RootRegistry();
         });
 
         it('can register a root by key', function () {
             registry.addRoot(idA);
+
             return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA]);
@@ -47,6 +57,7 @@ define([
 
         it('can register multiple roots by key', function () {
             registry.addRoot([idA, idB]);
+
             return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB]);
@@ -57,6 +68,7 @@ define([
             registry.addRoot(function () {
                 return Promise.resolve(idA);
             });
+
             return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA]);
@@ -67,6 +79,7 @@ define([
             registry.addRoot(function () {
                 return Promise.resolve([idA, idB]);
             });
+
             return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB]);
@@ -78,6 +91,7 @@ define([
             registry.addRoot(function () {
                 return Promise.resolve([idC]);
             });
+
             return registry.getRoots()
                 .then(function (roots) {
                     expect(roots).toEqual([idA, idB, idC]);

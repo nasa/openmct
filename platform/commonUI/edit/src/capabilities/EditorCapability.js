@@ -83,6 +83,7 @@ define(
          */
         EditorCapability.prototype.save = function () {
             console.warn('DEPRECATED: cannot save via edit capability, use openmct.editor instead.');
+
             return Promise.resolve();
         };
 
@@ -95,6 +96,7 @@ define(
          */
         EditorCapability.prototype.finish = function () {
             console.warn('DEPRECATED: cannot finish via edit capability, use openmct.editor instead.');
+
             return Promise.resolve();
         };
 

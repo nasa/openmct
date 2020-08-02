@@ -51,7 +51,7 @@ define([
         const ruleOrder = domainObject.configuration.ruleOrder || [];
         const enumerations = ruleOrder
             .filter(function (ruleId) {
-                return !!domainObject.configuration.ruleConfigById[ruleId];
+                return Boolean(domainObject.configuration.ruleConfigById[ruleId]);
             })
             .map(function (ruleId, ruleIndex) {
                 return {

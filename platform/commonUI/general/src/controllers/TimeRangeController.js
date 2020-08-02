@@ -136,12 +136,12 @@ define([
 
     TimeRangeController.prototype.defaultBounds = function () {
         var t = this.now();
+
         return {
             start: t - 24 * 3600 * 1000, // One day
             end: t
         };
     };
-
 
     TimeRangeController.prototype.updateViewFromModel = function (ngModel) {
         ngModel = ngModel || {};
@@ -173,6 +173,7 @@ define([
     TimeRangeController.prototype.toMillis = function (pixels) {
         var span =
             this.$scope.ngModel.outer.end - this.$scope.ngModel.outer.start;
+
         return (pixels / this.$scope.spanWidth) * span;
     };
 
@@ -209,9 +210,9 @@ define([
         );
         // Adjust opposite knob to maintain span
         this.$scope.ngModel.inner[opposite] =
-            this.$scope.ngModel.inner[edge] +
-            this.initialDragValue[opposite] -
-            this.initialDragValue[edge];
+            this.$scope.ngModel.inner[edge]
+            + this.initialDragValue[opposite]
+            - this.initialDragValue[edge];
 
         this.updateViewFromModel(this.$scope.ngModel);
     };
@@ -270,6 +271,7 @@ define([
                         self.$scope.formModel.start;
                 self.formStartChanged = false;
             }
+
             if (self.formEndChanged) {
                 self.$scope.ngModel.outer.end =
                     self.$scope.ngModel.inner.end =
@@ -298,13 +300,13 @@ define([
     };
 
     TimeRangeController.prototype.validateStart = function (startValue) {
-        return startValue <=
-            this.$scope.formModel.end - this.outerMinimumSpan;
+        return startValue
+            <= this.$scope.formModel.end - this.outerMinimumSpan;
     };
 
     TimeRangeController.prototype.validateEnd = function (endValue) {
-        return endValue >=
-            this.$scope.formModel.start + this.outerMinimumSpan;
+        return endValue
+            >= this.$scope.formModel.start + this.outerMinimumSpan;
     };
 
     return TimeRangeController;

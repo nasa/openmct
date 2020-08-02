@@ -47,7 +47,7 @@ export default {
     data() {
         return {
             showViewMenu: false
-        }
+        };
     },
     mounted() {
         document.addEventListener('click', this.hideViewMenu);
@@ -66,5 +66,5 @@ export default {
             this.showViewMenu = false;
         }
     }
-}
+};
 </script>

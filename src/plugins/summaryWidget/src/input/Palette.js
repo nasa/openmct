@@ -45,8 +45,8 @@ define([
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
-            const itemElement = $('<div class = "c-palette__item ' + item + '"' +
-                                ' data-item = ' + item + '></div>');
+            const itemElement = $('<div class = "c-palette__item ' + item + '"'
+                                + ' data-item = ' + item + '></div>');
             $('.c-palette__items', self.domElement).append(itemElement);
             self.itemElements[item] = itemElement;
         });
@@ -133,6 +133,7 @@ define([
                 this.updateSelected(item);
             }
         }
+
         this.eventEmitter.emit('change', self.value);
     };
 

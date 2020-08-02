@@ -29,7 +29,7 @@ define([
     "use strict";
 
     return {
-        name:"example/eventGenerator",
+        name: "example/eventGenerator",
         definition: {
             "name": "Event Message Generator",
             "description": "For development use. Creates sample event message data that mimics a live data stream.",

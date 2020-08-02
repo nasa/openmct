@@ -123,7 +123,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~
      */
 
-
     /**
      * An interface for retrieving telemetry data associated with a domain
      * object.
@@ -152,7 +151,7 @@ define([
      * @returns {boolean} true if the object is a telemetry object.
      */
     TelemetryAPI.prototype.isTelemetryObject = function (domainObject) {
-        return !!this.findMetadataProvider(domainObject);
+        return Boolean(this.findMetadataProvider(domainObject));
     };
 
     /**
@@ -167,12 +166,13 @@ define([
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
         console.warn(
-            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry ' +
-            'will not be supported in future versions of Open MCT.  Please ' +
-            'use openmct.telemetry.isTelemetryObject instead.'
+            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry '
+            + 'will not be supported in future versions of Open MCT.  Please '
+            + 'use openmct.telemetry.isTelemetryObject instead.'
         );
-        return !!this.findSubscriptionProvider(domainObject) ||
-               !!this.findRequestProvider(domainObject);
+
+        return Boolean(this.findSubscriptionProvider(domainObject))
+               || Boolean(this.findRequestProvider(domainObject));
     };
 
     /**
@@ -187,12 +187,15 @@ define([
         if (provider.supportsRequest) {
             this.requestProviders.unshift(provider);
         }
+
         if (provider.supportsSubscribe) {
             this.subscriptionProviders.unshift(provider);
         }
+
         if (provider.supportsMetadata) {
             this.metadataProviders.unshift(provider);
         }
+
         if (provider.supportsLimits) {
             this.limitProviders.unshift(provider);
         }
@@ -247,9 +250,11 @@ define([
         if (!options.hasOwnProperty('start')) {
             options.start = this.openmct.time.bounds().start;
         }
+
         if (!options.hasOwnProperty('end')) {
             options.end = this.openmct.time.bounds().end;
         }
+
         if (!options.hasOwnProperty('domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
@@ -275,14 +280,17 @@ define([
             arguments.length = 2;
             arguments[1] = {};
         }
+
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');
         }
+
         return provider.request.apply(provider, arguments).catch((rejected) => {
             this.openmct.notifications.error('Error requesting telemetry data, see console for details');
             console.error(rejected);
+
             return Promise.reject(rejected);
         });
     };
@@ -307,6 +315,7 @@ define([
         if (!this.subscribeCache) {
             this.subscribeCache = {};
         }
+
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
         let subscriber = this.subscribeCache[keyString];
 
@@ -352,6 +361,7 @@ define([
             if (!metadataProvider) {
                 return;
             }
+
             const metadata = metadataProvider.getMetadata(domainObject);
 
             this.metadataCache.set(
@@ -359,6 +369,7 @@ define([
                 new TelemetryMetadataManager(metadata)
             );
         }
+
         return this.metadataCache.get(domainObject);
     };
 
@@ -370,6 +381,7 @@ define([
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         const options = metadatas.map(function (metadata) {
             const values = metadata.valuesForHints(hints);
+
             return _.keyBy(values, 'key');
         }).reduce(function (a, b) {
             const results = {};
@@ -378,11 +390,13 @@ define([
                     results[key] = a[key];
                 }
             });
+
             return results;
         });
         const sortKeys = hints.map(function (h) {
             return 'hints.' + h;
         });
+
         return _.sortBy(options, sortKeys);
     };
 
@@ -396,11 +410,13 @@ define([
             if (!this.formatService) {
                 this.formatService = this.openmct.$injector.get('formatService');
             }
+
             this.valueFormatterCache.set(
                 valueMetadata,
                 new TelemetryValueFormatter(valueMetadata, this.formatService)
             );
         }
+
         return this.valueFormatterCache.get(valueMetadata);
     };
 
@@ -414,10 +430,12 @@ define([
         if (!this.formatMapCache.has(metadata)) {
             const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
+
                 return map;
             }.bind(this), {});
             this.formatMapCache.set(metadata, formatMap);
         }
+
         return this.formatMapCache.get(metadata);
     };
 
@@ -477,6 +495,7 @@ define([
                 evaluate: function () {}
             };
         }
+
         return provider.getLimitEvaluator(domainObject);
     };
 

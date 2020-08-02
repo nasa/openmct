@@ -41,6 +41,7 @@ define([
                     listener(newModel);
                 });
             };
+
             return capability;
         };
     }

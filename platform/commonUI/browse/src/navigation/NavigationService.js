@@ -69,8 +69,10 @@ define(
         NavigationService.prototype.setNavigation = function (domainObject, force) {
             if (force) {
                 this.doNavigation(domainObject);
+
                 return true;
             }
+
             if (this.navigated === domainObject) {
                 return true;
             }
@@ -81,6 +83,7 @@ define(
             }
 
             this.doNavigation(domainObject);
+
             return true;
         };
 
@@ -120,6 +123,7 @@ define(
          */
         NavigationService.prototype.shouldNavigate = function () {
             var doNotNavigate = this.shouldWarnBeforeNavigate();
+
             return !doNotNavigate || this.$window.confirm(doNotNavigate);
         };
 
@@ -135,6 +139,7 @@ define(
          */
         NavigationService.prototype.checkBeforeNavigation = function (checkFn) {
             this.checks.push(checkFn);
+
             return function removeCheck() {
                 this.checks = this.checks.filter(function (fn) {
                     return checkFn !== fn;
@@ -172,6 +177,7 @@ define(
             if (reasons.length) {
                 return reasons.join('\n');
             }
+
             return false;
         };
 
@@ -186,6 +192,7 @@ define(
             if (shouldWarnBeforeNavigate) {
                 return shouldWarnBeforeNavigate;
             }
+
             if (this.oldUnload) {
                 return this.oldUnload.apply(undefined, [].slice.apply(arguments));
             }

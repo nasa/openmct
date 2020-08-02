@@ -84,6 +84,7 @@ define([
                         .getPersistedSeriesConfig(domainObject.identifier);
                 }
             }
+
             // Clone to prevent accidental mutation by ref.
             seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
 
@@ -136,10 +137,12 @@ define([
                     seriesColor = color.Color.fromHexString(seriesColor);
                     series.set('color', seriesColor);
                 }
+
                 this.palette.remove(seriesColor);
             } else {
                 series.set('color', this.palette.getNextColor());
             }
+
             this.listenTo(series, 'change:color', this.updateColorPalette, this);
         },
         onSeriesRemove: function (series) {
@@ -159,8 +162,9 @@ define([
         byIdentifier: function (identifier) {
             return this.filter(function (series) {
                 const seriesIdentifier = series.get('identifier');
-                return seriesIdentifier.namespace === identifier.namespace &&
-                    seriesIdentifier.key === identifier.key;
+
+                return seriesIdentifier.namespace === identifier.namespace
+                    && seriesIdentifier.key === identifier.key;
             })[0];
         }
     });

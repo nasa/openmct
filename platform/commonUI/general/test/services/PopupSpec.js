@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ["../../src/services/Popup"],
     function (Popup) {
@@ -33,7 +32,10 @@ define(
             beforeEach(function () {
                 mockElement =
                     jasmine.createSpyObj('element', ['css', 'remove']);
-                testStyles = { left: '12px', top: '14px' };
+                testStyles = {
+                    left: '12px',
+                    top: '14px'
+                };
                 popup = new Popup(mockElement, testStyles);
             });
 

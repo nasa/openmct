@@ -169,6 +169,7 @@ define(
         function registerComponents(components) {
             var app = this.app,
                 $log = this.$log;
+
             return new ServiceCompositor(app, $log)
                 .registerCompositeServices(components);
         }

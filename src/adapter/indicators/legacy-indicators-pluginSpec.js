@@ -85,7 +85,7 @@ define(
             }
 
             it("Displays any legacy indicators ", function () {
-                const legacyIndicators = [{},{},{},{}];
+                const legacyIndicators = [{}, {}, {}, {}];
 
                 legacyIndicatorsRunsFunction(legacyIndicators);
                 renderIndicators();

@@ -34,7 +34,10 @@ describe("The telemetry criterion", function () {
 
     beforeEach (() => {
         testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
+            identifier: {
+                namespace: "",
+                key: "test-object"
+            },
             type: "test-object",
             name: "Test Object",
             telemetry: {
@@ -76,7 +79,10 @@ describe("The telemetry criterion", function () {
             ['timeSystem', 'bounds', 'getAllTimeSystems']
         );
         openmct.time.timeSystem.and.returnValue({key: 'system'});
-        openmct.time.bounds.and.returnValue({start: 0, end: 1});
+        openmct.time.bounds.and.returnValue({
+            start: 0,
+            end: 1
+        });
         openmct.time.getAllTimeSystems.and.returnValue([{key: 'system'}]);
 
         testCriterionDefinition = {
@@ -122,6 +128,7 @@ describe("The telemetry criterion", function () {
                 setTimeout(() => {
                     telemetryRequestResolve(mockTelemetry);
                 }, 100);
+
                 return telemetryRequestPromise;
             });
         });

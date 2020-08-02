@@ -5,7 +5,6 @@ define([
 ) {
     describe('objectUtils', function () {
 
-
         describe('keyString util', function () {
             const EXPECTATIONS = {
                 'ROOT': {

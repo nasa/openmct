@@ -49,7 +49,7 @@ export default {
         return {
             initialPos: 0,
             isDragging: false
-        }
+        };
     },
     mounted() {
         document.addEventListener('dragstart', this.setDragging);
@@ -102,5 +102,5 @@ export default {
             this.isDragging = false;
         }
     }
-}
+};
 </script>

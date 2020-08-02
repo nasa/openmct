@@ -37,19 +37,28 @@ const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-third-data'
 const LAD_SET_TABLE_HEADERS = '.js-lad-table-set__table-headers';
 
 function utcTimeFormat(value) {
-    return new Date(value).toISOString().replace('T', ' ')
+    return new Date(value).toISOString().replace('T', ' ');
 }
 
 describe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
 
     let openmct;
+
     let ladPlugin;
+
     let parent;
+
     let child;
+
     let telemetryCount = 3;
+
     let timeFormat = 'utc';
-    let mockTelemetry = getMockTelemetry({ count: telemetryCount, format: timeFormat });
+
+    let mockTelemetry = getMockTelemetry({
+        count: telemetryCount,
+        format: timeFormat
+    });
 
     let mockObj = getMockObjects({
         objectKeyStrings: ['ladTable', 'telemetry'],
@@ -83,7 +92,10 @@ describe("The LAD Table", () => {
 
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
-        openmct.time.bounds({ start: bounds.start, end: bounds.end });
+        openmct.time.bounds({
+            start: bounds.start,
+            end: bounds.end
+        });
 
         openmct.on('start', done);
         openmct.startHeadless(appHolder);
@@ -119,7 +131,7 @@ describe("The LAD Table", () => {
         });
 
         it("should reject non-telemtry producing objects", () => {
-            expect(()=> {
+            expect(() => {
                 ladTableCompositionCollection.add(mockObj.ladTable);
             }).toThrow();
         });
@@ -127,7 +139,9 @@ describe("The LAD Table", () => {
 
     describe("table view", () => {
         let applicableViews;
+
         let ladTableViewProvider;
+
         let ladTableView;
 
         let anotherTelemetryObj = getMockObjects({
@@ -135,7 +149,10 @@ describe("The LAD Table", () => {
             overwrite: {
                 telemetry: {
                     name: "New Telemetry Object",
-                    identifier: { namespace: "", key: "another-telemetry-object" }
+                    identifier: {
+                        namespace: "",
+                        key: "another-telemetry-object"
+                    }
                 }
             }
         }).telemetry;
@@ -145,9 +162,10 @@ describe("The LAD Table", () => {
 
         beforeEach(async () => {
             let telemetryRequestResolve;
-            let telemetryObjectResolve;
-            let anotherTelemetryObjectResolve;
 
+            let telemetryObjectResolve;
+
+            let anotherTelemetryObjectResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
@@ -159,22 +177,27 @@ describe("The LAD Table", () => {
             let anotherTelemetryObjectPromise = new Promise((resolve) => {
                 anotherTelemetryObjectResolve = resolve;
             });
-
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
+
                 return telemetryRequestPromise;
             });
             openmct.objects.get.and.callFake((obj) => {
-                if(obj.key === 'telemetry-object') {
+                if (obj.key === 'telemetry-object') {
                     telemetryObjectResolve(mockObj.telemetry);
+
                     return telemetryObjectPromise;
                 } else {
                     anotherTelemetryObjectResolve(anotherTelemetryObj);
+
                     return anotherTelemetryObjectPromise;
                 }
             });
 
-            openmct.time.bounds({ start: bounds.start, end: bounds.end });
+            openmct.time.bounds({
+                start: bounds.start,
+                end: bounds.end
+            });
 
             applicableViews = openmct.objectViews.get(mockObj.ladTable);
             ladTableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
@@ -183,6 +206,7 @@ describe("The LAD Table", () => {
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
             await Vue.nextTick();
+
             return;
         });
 
@@ -201,6 +225,7 @@ describe("The LAD Table", () => {
 
         it("should show the name provided for the the telemetry producing object", () => {
             const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText;
+
             const expectedName = mockObj.telemetry.name;
             expect(rowName).toBe(expectedName);
         });
@@ -228,12 +253,21 @@ describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
 
     let openmct;
+
     let ladPlugin;
+
     let parent;
+
     let child;
+
     let telemetryCount = 3;
+
     let timeFormat = 'utc';
-    let mockTelemetry = getMockTelemetry({ count: telemetryCount, format: timeFormat });
+
+    let mockTelemetry = getMockTelemetry({
+        count: telemetryCount,
+        format: timeFormat
+    });
 
     let mockObj = getMockObjects({
         objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
@@ -243,7 +277,6 @@ describe("The LAD Table Set", () => {
         start: 0,
         end: 4
     };
-
     // add mock telemetry to lad table and lad table to lad table set (composition)
     mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
     mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
@@ -266,7 +299,10 @@ describe("The LAD Table Set", () => {
 
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
-        openmct.time.bounds({ start: bounds.start, end: bounds.end });
+        openmct.time.bounds({
+            start: bounds.start,
+            end: bounds.end
+        });
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -302,7 +338,7 @@ describe("The LAD Table Set", () => {
         });
 
         it("should reject non lad table objects", () => {
-            expect(()=> {
+            expect(() => {
                 ladTableSetCompositionCollection.add(mockObj.telemetry);
             }).toThrow();
         });
@@ -310,7 +346,9 @@ describe("The LAD Table Set", () => {
 
     describe("table view", () => {
         let applicableViews;
+
         let ladTableSetViewProvider;
+
         let ladTableSetView;
 
         let otherObj = getMockObjects({
@@ -318,7 +356,10 @@ describe("The LAD Table Set", () => {
             overwrite: {
                 ladTable: {
                     name: "New LAD Table Object",
-                    identifier: { namespace: "", key: "another-lad-object" }
+                    identifier: {
+                        namespace: "",
+                        key: "another-lad-object"
+                    }
                 }
             }
         });
@@ -329,9 +370,10 @@ describe("The LAD Table Set", () => {
 
         beforeEach(async () => {
             let telemetryRequestResolve;
-            let ladObjectResolve;
-            let anotherLadObjectResolve;
 
+            let ladObjectResolve;
+
+            let anotherLadObjectResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
@@ -343,24 +385,29 @@ describe("The LAD Table Set", () => {
             let anotherLadObjectPromise = new Promise((resolve) => {
                 anotherLadObjectResolve = resolve;
             });
-
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
+
                 return telemetryRequestPromise;
             });
             openmct.objects.get.and.callFake((obj) => {
-                if(obj.key === 'lad-object') {
+                if (obj.key === 'lad-object') {
                     ladObjectResolve(mockObj.ladObject);
+
                     return ladObjectPromise;
-                } else if(obj.key === 'another-lad-object') {
+                } else if (obj.key === 'another-lad-object') {
                     anotherLadObjectResolve(otherObj.ladObject);
+
                     return anotherLadObjectPromise;
                 }
 
                 return Promise.resolve({});
             });
 
-            openmct.time.bounds({ start: bounds.start, end: bounds.end });
+            openmct.time.bounds({
+                start: bounds.start,
+                end: bounds.end
+            });
 
             applicableViews = openmct.objectViews.get(mockObj.ladTableSet);
             ladTableSetViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableSetKey);
@@ -369,6 +416,7 @@ describe("The LAD Table Set", () => {
 
             await Promise.all([telemetryRequestPromise, ladObjectPromise, anotherLadObjectPromise]);
             await Vue.nextTick();
+
             return;
         });
 

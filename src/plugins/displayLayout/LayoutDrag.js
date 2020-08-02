@@ -87,7 +87,6 @@ define(
             });
         }
 
-
         /**
          * Get a new position object in grid coordinates, with
          * position and dimensions both offset appropriately
@@ -97,6 +96,7 @@ define(
          */
         LayoutDrag.prototype.getAdjustedPositionAndDimensions = function (pixelDelta) {
             const gridDelta = toGridDelta(this.gridSize, pixelDelta);
+
             return {
                 position: max(add(
                     this.rawPosition.position,
@@ -111,6 +111,7 @@ define(
 
         LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
             const gridDelta = toGridDelta(this.gridSize, pixelDelta);
+
             return {
                 position: max(add(
                     this.rawPosition.position,

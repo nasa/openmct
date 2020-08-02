@@ -68,9 +68,11 @@ define(['zepto', './res/indicator-template.html'],
                 if (this.iconClassValue) {
                     this.element.classList.remove(this.iconClassValue);
                 }
+
                 if (iconClass) {
                     this.element.classList.add(iconClass);
                 }
+
                 this.iconClassValue = iconClass;
             }
 
@@ -82,9 +84,11 @@ define(['zepto', './res/indicator-template.html'],
                 if (this.statusClassValue) {
                     this.element.classList.remove(this.statusClassValue);
                 }
+
                 if (statusClass) {
                     this.element.classList.add(statusClass);
                 }
+
                 this.statusClassValue = statusClass;
             }
 

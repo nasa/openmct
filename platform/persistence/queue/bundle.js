@@ -33,7 +33,7 @@ define([
 ) {
 
     return {
-        name:"platform/persistence/queue",
+        name: "platform/persistence/queue",
         definition: {
             "extensions": {
                 "components": [
