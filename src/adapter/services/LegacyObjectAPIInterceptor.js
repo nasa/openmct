@@ -79,7 +79,7 @@ define([
         );
 
         return result;
-    }
+    };
 
     ObjectServiceProvider.prototype.update = async function (object) {
         let model = utils.toOldFormat(object);
@@ -91,7 +91,7 @@ define([
         );
 
         return result;
-    }
+    };
 
     /**
      * Get the space in which this domain object is persisted;
@@ -111,6 +111,7 @@ define([
         if (this.identifierService === undefined) {
             this.identifierService = this.$injector.get('identifierService');
         }
+
         return this.identifierService;
     };
 
@@ -118,8 +119,9 @@ define([
         if (this.persistenceService === undefined) {
             this.persistenceService = this.$injector.get('persistenceService');
         }
+
         return this.persistenceService;
-    }
+    };
 
     ObjectServiceProvider.prototype.delete = function (object) {
         // TODO!
@@ -127,9 +129,11 @@ define([
 
     ObjectServiceProvider.prototype.get = function (key) {
         var keyString = utils.makeKeyString(key);
+
         return this.objectService.getObjects([keyString])
             .then(function (results) {
                 var model = results[keyString].getModel();
+
                 return utils.toNewFormat(model, key);
             });
     };
@@ -143,6 +147,7 @@ define([
             var results = {},
                 promises = keys.map(function (keyString) {
                     var key = utils.parseKeyString(keyString);
+
                     return openmct.objects.get(key)
                         .then(function (object) {
                             object = utils.toOldFormat(object);

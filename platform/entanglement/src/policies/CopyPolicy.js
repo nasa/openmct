@@ -34,7 +34,8 @@ define([], function () {
 
     function allowCreation(domainObject) {
         var type = domainObject && domainObject.getCapability('type');
-        return !!(type && type.hasFeature('creation'));
+
+        return Boolean(type && type.hasFeature('creation'));
     }
 
     function selectedObject(context) {

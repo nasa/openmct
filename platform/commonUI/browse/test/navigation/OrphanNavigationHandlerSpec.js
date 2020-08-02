@@ -70,6 +70,7 @@ define([
                     jasmine.createSpy('throttled-' + mockThrottledFns.length);
                 mockThrottledFn.and.callFake(fn);
                 mockThrottledFns.push(mockThrottledFn);
+
                 return mockThrottledFn;
             });
             mockTopic.and.returnValue(mockMutationTopic);
@@ -81,7 +82,7 @@ define([
                 }[c];
             });
             mockDomainObject.hasCapability.and.callFake(function (c) {
-                return !!mockDomainObject.getCapability(c);
+                return Boolean(mockDomainObject.getCapability(c));
             });
             mockParentObject.getCapability.and.callFake(function (c) {
                 return {
@@ -101,7 +102,6 @@ define([
                 mockNavigationService
             );
         });
-
 
         it("listens for mutation with a throttled function", function () {
             expect(mockMutationTopic.listen)
@@ -129,8 +129,8 @@ define([
                 });
 
                 [false, true].forEach(function (isEditRoot) {
-                    var caseName = isEditRoot ?
-                        "that are being edited" : "that are not being edited";
+                    var caseName = isEditRoot
+                        ? "that are being edited" : "that are not being edited";
 
                     function itNavigatesAsExpected() {
                         if (isOrphan && !isEditRoot) {

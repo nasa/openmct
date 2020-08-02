@@ -54,7 +54,7 @@ define(
                 );
 
                 mockCapabilities = {
-                    "editor" : mockEditorCapability,
+                    "editor": mockEditorCapability,
                     "status": mockStatusCapability
                 };
 
@@ -77,7 +77,10 @@ define(
 
                 testViews = [
                     { key: 'abc' },
-                    { key: 'def', someKey: 'some value' },
+                    {
+                        key: 'def',
+                        someKey: 'some value'
+                    },
                     { key: 'xyz' }
                 ];
 

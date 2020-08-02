@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name:"platform/status",
+        name: "platform/status",
         definition: {
             "extensions": {
                 "representers": [

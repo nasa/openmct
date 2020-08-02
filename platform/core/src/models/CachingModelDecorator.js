@@ -55,6 +55,7 @@ define(
                     loadFromCache.forEach(function (id) {
                         modelResults[id] = this.cacheService.get(id);
                     }, this);
+
                     return modelResults;
                 }.bind(this));
         };

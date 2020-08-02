@@ -88,22 +88,22 @@ export default {
             objectCssClass: undefined,
             updatedFilters: JSON.parse(JSON.stringify(this.persistedFilters)),
             isEditing: this.openmct.editor.isEditing()
-        }
+        };
     },
     computed: {
         // do not show filter fields if using global filter
         // if editing however, show all filter fields
         activeFilters() {
             if (!this.isEditing && this.persistedFilters.useGlobal) {
-                return []
+                return [];
             }
 
-            return this.filterObject.metadataWithFilters
+            return this.filterObject.metadataWithFilters;
         },
         hasActiveFilters() {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(comparator => {
-                return (typeof(comparator) === 'object' && !isEmpty(comparator));
+                return (typeof (comparator) === 'object' && !isEmpty(comparator));
             });
         }
     },
@@ -164,5 +164,5 @@ export default {
             this.isEditing = isEditing;
         }
     }
-}
+};
 </script>

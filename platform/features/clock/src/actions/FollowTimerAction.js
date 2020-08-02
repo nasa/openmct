@@ -37,16 +37,16 @@ define(
          */
         function FollowTimerAction(timerService, context) {
             var domainObject =
-                context.domainObject &&
-                context.domainObject.useCapability('adapter');
+                context.domainObject
+                && context.domainObject.useCapability('adapter');
             this.perform =
                 timerService.setTimer.bind(timerService, domainObject);
         }
 
         FollowTimerAction.appliesTo = function (context) {
             var model =
-                (context.domainObject && context.domainObject.getModel()) ||
-                {};
+                (context.domainObject && context.domainObject.getModel())
+                || {};
 
             return model.type === 'timer';
         };

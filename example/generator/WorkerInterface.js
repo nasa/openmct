@@ -78,6 +78,7 @@ define([
             } else {
                 deferred.resolve(message.data);
             }
+
             delete this.callbacks[messageId];
         }
 
@@ -100,9 +101,6 @@ define([
             delete this.callbacks[messageId];
         }.bind(this);
     };
-
-
-
 
     return WorkerInterface;
 });

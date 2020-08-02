@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,28 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-
 define([
-    "./src/ExamplePolicy"
+    './TelemetryTableColumn.js'
 ], function (
-    ExamplePolicy
+    TelemetryTableColumn
 ) {
-    "use strict";
-
-    return {
-        name: "example/policy",
-        definition: {
-            "name": "Example Policy",
-            "description": "Provides an example of using policies to prohibit actions.",
-            "extensions": {
-                "policies": [
-                    {
-                        "implementation": ExamplePolicy,
-                        "category": "action"
-                    }
-                ]
-            }
+    class TelemetryTableUnitColumn extends TelemetryTableColumn {
+        constructor(openmct, metadatum) {
+            super(openmct, metadatum);
+            this.isUnit = true;
+            this.titleValue += ' Unit';
+            this.formatter = {
+                format: (datum) => {
+                    return this.metadatum.unit;
+                },
+                parse: (datum) => {
+                    return this.metadatum.unit;
+                }
+            };
         }
-    };
+
+        getKey() {
+            return this.metadatum.key + '-unit';
+        }
+
+        getTitle() {
+            return this.metadatum.name + ' Unit';
+        }
+
+        getRawValue(telemetryDatum) {
+            return this.metadatum.unit;
+        }
+
+        getFormattedValue(telemetryDatum) {
+            return this.formatter.format(telemetryDatum);
+        }
+    }
+
+    return TelemetryTableUnitColumn;
 });
