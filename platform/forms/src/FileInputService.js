@@ -75,15 +75,17 @@ define(["zepto"], function ($) {
             fileReader.onerror = function () {
                 return reject(event.target.result);
             };
+
             fileReader.readAsText(file);
         });
     };
 
-    FileInputService.prototype.newInput  = function () {
+    FileInputService.prototype.newInput = function () {
         var input = $(document.createElement('input'));
         input.attr("type", "file");
         input.css("display", "none");
         $('body').append(input);
+
         return input;
     };
 

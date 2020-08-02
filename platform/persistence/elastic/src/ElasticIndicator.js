@@ -86,12 +86,15 @@ define(
         ElasticIndicator.prototype.getCssClass = function () {
             return "c-indicator--clickable icon-suitcase";
         };
+
         ElasticIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;
         };
+
         ElasticIndicator.prototype.getText = function () {
             return this.state.text;
         };
+
         ElasticIndicator.prototype.getDescription = function () {
             return this.state.description;
         };

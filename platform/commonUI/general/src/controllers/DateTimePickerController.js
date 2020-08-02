@@ -35,6 +35,7 @@ define(
                 while (arr.length < 60) {
                     arr.push(arr.length);
                 }
+
                 return {
                     hours: arr.slice(0, 24),
                     minutes: arr,
@@ -70,7 +71,10 @@ define(
                 interacted = false;
 
             function generateTable() {
-                var m = moment.utc({ year: year, month: month }).day(0),
+                var m = moment.utc({
+                        year: year,
+                        month: month
+                    }).day(0),
                     table = [],
                     row,
                     col;
@@ -142,9 +146,10 @@ define(
 
             $scope.isSelected = function (cell) {
                 var date = $scope.date || {};
-                return cell.day === date.day &&
-                    cell.month === date.month &&
-                    cell.year === date.year;
+
+                return cell.day === date.day
+                    && cell.month === date.month
+                    && cell.year === date.year;
             };
 
             $scope.select = function (cell) {
@@ -156,9 +161,9 @@ define(
             };
 
             $scope.dateEquals = function (d1, d2) {
-                return d1.year === d2.year &&
-                    d1.month === d2.month &&
-                    d1.day === d2.day;
+                return d1.year === d2.year
+                    && d1.month === d2.month
+                    && d1.day === d2.day;
             };
 
             $scope.changeMonth = function (delta) {
@@ -167,10 +172,12 @@ define(
                     month = 0;
                     year += 1;
                 }
+
                 if (month < 0) {
                     month = 11;
                     year -= 1;
                 }
+
                 interacted = true;
                 updateScopeForMonth();
             };
@@ -187,8 +194,8 @@ define(
 
             // Ensure some useful default
             $scope.ngModel[$scope.field] =
-                $scope.ngModel[$scope.field] === undefined ?
-                    now() : $scope.ngModel[$scope.field];
+                $scope.ngModel[$scope.field] === undefined
+                    ? now() : $scope.ngModel[$scope.field];
 
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watchCollection('date', updateFromView);

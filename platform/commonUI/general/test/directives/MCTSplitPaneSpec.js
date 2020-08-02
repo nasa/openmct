@@ -51,7 +51,7 @@ define(
                 mockParsed.assign = jasmine.createSpy('assign');
                 mockParse.and.returnValue(mockParsed);
 
-                mockWindow.localStorage =  {
+                mockWindow.localStorage = {
                     store: {},
                     setItem: function (key, value) {
                         this.store[key] = value;
@@ -114,13 +114,19 @@ define(
                     mockChildren.eq.and.callFake(function (i) {
                         return [mockFirstPane, mockSplitter, mockSecondPane][i];
                     });
-                    mockFirstPane[0] = { offsetWidth: 123, offsetHeight: 456 };
+                    mockFirstPane[0] = {
+                        offsetWidth: 123,
+                        offsetHeight: 456
+                    };
                     mockSplitter[0] = {
                         nodeName: 'mct-splitter',
                         offsetWidth: 10,
                         offsetHeight: 456
                     };
-                    mockSecondPane[0] = { offsetWidth: 10, offsetHeight: 456 };
+                    mockSecondPane[0] = {
+                        offsetWidth: 10,
+                        offsetHeight: 456
+                    };
 
                     mockChildren[0] = mockFirstPane[0];
                     mockChildren[1] = mockSplitter[0];
@@ -146,10 +152,10 @@ define(
 
                 it("exposes the current anchoring mode", function () {
                     expect(controller.anchor()).toEqual({
-                        edge : 'left',
-                        opposite : 'right',
-                        dimension : 'width',
-                        orientation : 'vertical'
+                        edge: 'left',
+                        opposite: 'right',
+                        dimension: 'width',
+                        orientation: 'vertical'
                     });
                 });
 

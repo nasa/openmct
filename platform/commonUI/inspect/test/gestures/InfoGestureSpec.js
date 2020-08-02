@@ -64,7 +64,10 @@ define(
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockOff = jasmine.createSpy('$off');
-                testMetadata = [{ name: "Test name", value: "Test value" }];
+                testMetadata = [{
+                    name: "Test name",
+                    value: "Test value"
+                }];
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockHide = jasmine.createSpy('hide');
 
@@ -93,7 +96,10 @@ define(
             });
 
             it("displays an info bubble on a delay after mouseenter", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
                 expect(mockTimeout)
                     .toHaveBeenCalledWith(jasmine.any(Function), testDelay);
                 mockTimeout.calls.mostRecent().args[0]();
@@ -106,14 +112,23 @@ define(
             });
 
             it("does not display info bubble if mouse leaves too soon", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
-                fireEvent("mouseleave", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
+                fireEvent("mouseleave", {
+                    clientX: 1977,
+                    clientY: 42
+                });
                 expect(mockTimeout.cancel).toHaveBeenCalledWith(mockPromise);
                 expect(mockInfoService.display).not.toHaveBeenCalled();
             });
 
             it("hides a shown bubble when mouse leaves", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
                 mockTimeout.calls.mostRecent().args[0]();
                 expect(mockHide).not.toHaveBeenCalled(); // verify precondition
                 fireEvent("mouseleave", {});
@@ -121,9 +136,18 @@ define(
             });
 
             it("tracks mouse position", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
-                fireEvent("mousemove", { clientX: 1999, clientY: 11 });
-                fireEvent("mousemove", { clientX: 1984, clientY: 11 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
+                fireEvent("mousemove", {
+                    clientX: 1999,
+                    clientY: 11
+                });
+                fireEvent("mousemove", {
+                    clientX: 1984,
+                    clientY: 11
+                });
                 mockTimeout.calls.mostRecent().args[0]();
                 // Should have displayed at the latest observed mouse position
                 expect(mockInfoService.display).toHaveBeenCalledWith(
@@ -135,7 +159,10 @@ define(
             });
 
             it("hides shown bubbles when destroyed", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
                 mockTimeout.calls.mostRecent().args[0]();
                 expect(mockHide).not.toHaveBeenCalled(); // verify precondition
                 gesture.destroy();
@@ -143,7 +170,10 @@ define(
             });
 
             it("detaches listeners when destroyed", function () {
-                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseenter", {
+                    clientX: 1977,
+                    clientY: 42
+                });
                 gesture.destroy();
                 mockElement.on.calls.all().forEach(function (call) {
                     expect(mockElement.off).toHaveBeenCalledWith(

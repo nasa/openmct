@@ -41,11 +41,11 @@ export function getLatestTimestamp(
     const key = currentTimeSystem.key;
 
     if (!latest || !latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
+        latest = updateLatestTimeStamp(compare, timeSystems);
     }
 
     if (compare[key] > latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
+        latest = updateLatestTimeStamp(compare, timeSystems);
     }
 
     return latest;
@@ -56,11 +56,13 @@ export function subscribeForStaleness(callback, timeout) {
         clearTimeout(stalenessTimer);
         callback();
     }, timeout);
+
     return {
         update: (data) => {
             if (stalenessTimer) {
                 clearTimeout(stalenessTimer);
             }
+
             stalenessTimer = setTimeout(() => {
                 clearTimeout(stalenessTimer);
                 callback(data);
@@ -71,5 +73,5 @@ export function subscribeForStaleness(callback, timeout) {
                 clearTimeout(stalenessTimer);
             }
         }
-    }
+    };
 }

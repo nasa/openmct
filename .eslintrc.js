@@ -127,6 +127,59 @@ module.exports = {
         // https://eslint.org/docs/rules/func-style
         "func-style": ["error", "declaration"],
 
+        // https://eslint.org/docs/rules/no-implicit-coercion
+        "no-implicit-coercion": "error",
+        //https://eslint.org/docs/rules/no-unneeded-ternary
+        "no-unneeded-ternary": "error",
+        // https://eslint.org/docs/rules/semi
+        "semi": ["error", "always"],
+        // https://eslint.org/docs/rules/no-multi-spaces
+        "no-multi-spaces": "error",
+        // https://eslint.org/docs/rules/key-spacing
+        "key-spacing": ["error", {
+            "afterColon": true
+        }],
+        // https://eslint.org/docs/rules/keyword-spacing
+        "keyword-spacing": ["error", {
+            "before": true,
+            "after": true
+        }],
+        // https://eslint.org/docs/rules/comma-spacing
+        // Also requires one line code fix
+        "comma-spacing": ["error", {
+            "after": true
+        }],
+        //https://eslint.org/docs/rules/no-whitespace-before-property
+        "no-whitespace-before-property": "error",
+        // https://eslint.org/docs/rules/object-curly-newline
+        "object-curly-newline": ["error", {"consistent": true, "multiline": true}],
+        // https://eslint.org/docs/rules/object-property-newline
+        "object-property-newline": "error",
+        // https://eslint.org/docs/rules/brace-style
+        "brace-style": "error",
+        // https://eslint.org/docs/rules/no-multiple-empty-lines
+        "no-multiple-empty-lines": ["error", {"max": 1}],
+        // https://eslint.org/docs/rules/operator-linebreak
+        "operator-linebreak": ["error", "before", {"overrides": {"=": "after"}}],
+        // https://eslint.org/docs/rules/padding-line-between-statements
+        "padding-line-between-statements":["error", {
+            "blankLine": "always",
+            "prev": "multiline-block-like",
+            "next": "*"
+        }, {
+            "blankLine": "always",
+            "prev": "*",
+            "next": "return"
+        }],
+        // https://eslint.org/docs/rules/space-infix-ops
+        "space-infix-ops": "error",
+        // https://eslint.org/docs/rules/space-unary-ops
+        "space-unary-ops": ["error", {"words": true, "nonwords": false}],
+        // https://eslint.org/docs/rules/arrow-spacing
+        "arrow-spacing": "error",
+        // https://eslint.org/docs/rules/semi-spacing
+        "semi-spacing": ["error", {"before": false, "after": true}],
+
         "vue/html-indent": [
             "error",
             4,

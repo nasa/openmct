@@ -5,7 +5,7 @@ const TIME_BOUNDS = {
     END_BOUND: 'tc.endBound',
     START_DELTA: 'tc.startDelta',
     END_DELTA: 'tc.endDelta'
-}
+};
 
 export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
     if (historicLink.includes('tc.mode=fixed')) {
@@ -82,7 +82,10 @@ export function createNewEmbed(snapshotMeta, snapshot = '') {
     const date = Date.now();
     const historicLink = link
         ? getHistoricLinkInFixedMode(openmct, bounds, link)
-        : objectLink.computed.objectLink.call({ objectPath, openmct });
+        : objectLink.computed.objectLink.call({
+            objectPath,
+            openmct
+        });
     const name = domainObject.name;
     const type = domainObject.identifier.key;
 

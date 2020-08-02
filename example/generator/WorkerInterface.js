@@ -79,8 +79,11 @@ define([
             } else {
                 deferred.resolve(message.data);
             }
+
             delete self.callbacks[messageId];
+
         }
+
         messageId = this.dispatch('request', request, callback.bind(this));
 
         return promise;
@@ -100,9 +103,6 @@ define([
             delete this.callbacks[messageId];
         }.bind(this);
     };
-
-
-
 
     return WorkerInterface;
 });

@@ -23,13 +23,16 @@ define([
                 })
                 .then(function (importData) {
                     cachedProvider = new StaticModelProvider(importData, rootIdentifier);
+
                     return cachedProvider;
                 });
         }
+
         function getProvider() {
             if (!cachedProvider) {
                 cachedProvider = loadProvider();
             }
+
             return Promise.resolve(cachedProvider);
         }
 

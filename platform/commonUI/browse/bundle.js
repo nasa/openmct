@@ -49,7 +49,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/browse",
+        name: "platform/commonUI/browse",
         definition: {
             "extensions": {
                 "routes": [

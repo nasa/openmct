@@ -115,6 +115,7 @@ define(
             this.domainObject.useCapability("mutation", function () {
                 return formModel;
             });
+
             return this.domainObject;
         };
 
