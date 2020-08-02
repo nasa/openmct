@@ -52,6 +52,7 @@ define([
             this.buffer = new Float32Array(this.buffer);
             this.isTempBuffer = false;
         }
+
         return this.buffer;
     };
 
@@ -99,6 +100,7 @@ define([
         if (!this.offset.xVal) {
             this.chart.setOffset(point, undefined, series);
         }
+
         return {
             x: this.offset.xVal(point, series),
             y: this.offset.yVal(point, series)
@@ -124,6 +126,7 @@ define([
                 this.buffer = Array.prototype.slice.apply(this.buffer);
                 this.isTempBuffer = true;
             }
+
             var target = insertionPoint + pointsRequired,
                 start = insertionPoint;
             for (; start < target; start++) {

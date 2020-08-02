@@ -87,8 +87,6 @@ define(
                 expect(mockDocument.off).toHaveBeenCalledWith("mouseup", callback);
             });
 
-
-
         });
     }
 );

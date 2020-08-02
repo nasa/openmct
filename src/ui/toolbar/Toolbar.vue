@@ -55,6 +55,7 @@ export default {
 
             if (selection.length === 0 || !selection[0][0]) {
                 this.structure = [];
+
                 return;
             }
 
@@ -68,7 +69,7 @@ export default {
                     toolbarItem.dialog.sections.forEach(section => {
                         section.rows.forEach(row => {
                             formKeys.push(row.key);
-                        })
+                        });
                     });
                     toolbarItem.formKeys = formKeys;
                 }
@@ -87,7 +88,7 @@ export default {
             if (!this.domainObjectsById[id]) {
                 this.domainObjectsById[id] = {
                     domainObject: domainObject
-                }
+                };
                 this.observeObject(domainObject, id);
             }
         },
@@ -134,7 +135,6 @@ export default {
                 value = this.getFormValue(domainObject, toolbarItem);
             } else {
                 let values = [];
-
                 if (applicableSelectedItems) {
                     applicableSelectedItems.forEach(selectionPath => {
                         values.push(this.getPropertyValue(domainObject, toolbarItem, selectionPath));
@@ -185,6 +185,7 @@ export default {
                     toolbarItem.nonSpecific = false;
                 } else {
                     toolbarItem.nonSpecific = true;
+
                     return {};
                 }
             }
@@ -200,11 +201,11 @@ export default {
                     unObserveObject();
                 });
             }
+
             this.unObserveObjects = [];
         },
         updateObjectValue(value, item) {
             let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-
             this.structure = this.structure.map(toolbarItem => {
                 if (toolbarItem.domainObject) {
                     let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
@@ -266,5 +267,5 @@ export default {
         this.openmct.editor.off('isEditing', this.handleEditing);
         this.removeListeners();
     }
-}
+};
 </script>

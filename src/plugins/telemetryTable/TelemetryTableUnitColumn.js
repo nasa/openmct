@@ -19,38 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define([], function () {
-
-    /**
-     * Disallow duplication when the object to be duplicated is not
-     * creatable.
-     * @constructor
-     * @implements {Policy}
-     * @memberof platform/entanglement
-     */
-    function CopyPolicy() {
-    }
-
-    function allowCreation(domainObject) {
-        var type = domainObject && domainObject.getCapability('type');
-
-        return Boolean(type && type.hasFeature('creation'));
-    }
-
-    function selectedObject(context) {
-        return context.selectedObject || context.domainObject;
-    }
-
-    CopyPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
-
-        if (key === 'copy') {
-            return allowCreation(selectedObject(context));
+define([
+    './TelemetryTableColumn.js'
+], function (
+    TelemetryTableColumn
+) {
+    class TelemetryTableUnitColumn extends TelemetryTableColumn {
+        constructor(openmct, metadatum) {
+            super(openmct, metadatum);
+            this.isUnit = true;
+            this.titleValue += ' Unit';
+            this.formatter = {
+                format: (datum) => {
+                    return this.metadatum.unit;
+                },
+                parse: (datum) => {
+                    return this.metadatum.unit;
+                }
+            };
         }
 
-        return true;
-    };
+        getKey() {
+            return this.metadatum.key + '-unit';
+        }
 
-    return CopyPolicy;
+        getTitle() {
+            return this.metadatum.name + ' Unit';
+        }
+
+        getRawValue(telemetryDatum) {
+            return this.metadatum.unit;
+        }
+
+        getFormattedValue(telemetryDatum) {
+            return this.formatter.format(telemetryDatum);
+        }
+    }
+
+    return TelemetryTableUnitColumn;
 });

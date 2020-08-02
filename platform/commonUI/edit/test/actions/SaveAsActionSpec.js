@@ -41,15 +41,15 @@ define(
             function noop() {}
 
             function mockPromise(value) {
-                return (value || {}).then ? value :
-                    {
+                return (value || {}).then ? value
+                    : {
                         then: function (callback) {
                             return mockPromise(callback(value));
                         },
                         catch: function (callback) {
                             return mockPromise(callback(value));
                         }
-                    }   ;
+                    };
             }
 
             beforeEach(function () {
@@ -66,7 +66,10 @@ define(
                 mockDomainObject.getCapability.and.callFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.getModel.and.returnValue({location: 'a', persisted: undefined});
+                mockDomainObject.getModel.and.returnValue({
+                    location: 'a',
+                    persisted: undefined
+                });
                 mockDomainObject.getId.and.returnValue(0);
 
                 mockClonedObject = jasmine.createSpyObj(
@@ -167,8 +170,8 @@ define(
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(false);
             });
 
-            it("only applies to domain object that has not already been" +
-                " persisted", function () {
+            it("only applies to domain object that has not already been"
+                + " persisted", function () {
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 

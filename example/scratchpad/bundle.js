@@ -28,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/scratchpad",
+        name: "example/scratchpad",
         definition: {
             "extensions": {
                 "roots": [

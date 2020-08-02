@@ -36,6 +36,7 @@ define(
             function Constructor() {
                 return { someKey: "some value" };
             }
+
             Constructor.someProperty = "some static value";
 
             beforeEach(function () {
@@ -68,14 +69,15 @@ define(
                 });
             });
 
-
             it("issues a warning and defaults to plain definition if load fails", function () {
                 var bundle = new Bundle("w", {
                         sources: "x",
-                        extensions: { tests: [{
-                            someOtherKey: "some other value",
-                            implementation: "y/z.js"
-                        }] }
+                        extensions: {
+                            tests: [{
+                                someOtherKey: "some other value",
+                                implementation: "y/z.js"
+                            }]
+                        }
                     }),
                     extension = bundle.getExtensions("tests")[0];
 
@@ -106,7 +108,6 @@ define(
                     expect(result.someProperty).toEqual("some static value");
                 });
             });
-
 
         });
     }

@@ -64,14 +64,15 @@ define(['./Type'], function (Type) {
     TypeRegistry.prototype.standardizeType = function (typeDef) {
         if (Object.prototype.hasOwnProperty.call(typeDef, 'label')) {
             console.warn(
-                'DEPRECATION WARNING typeDef: ' + typeDef.label + '.  ' +
-                '`label` is deprecated in type definitions.  Please use ' +
-                '`name` instead.  This will cause errors in a future version ' +
-                'of Open MCT.  For more information, see ' +
-                'https://github.com/nasa/openmct/issues/1568');
+                'DEPRECATION WARNING typeDef: ' + typeDef.label + '.  '
+                + '`label` is deprecated in type definitions.  Please use '
+                + '`name` instead.  This will cause errors in a future version '
+                + 'of Open MCT.  For more information, see '
+                + 'https://github.com/nasa/openmct/issues/1568');
             if (!typeDef.name) {
                 typeDef.name = typeDef.label;
             }
+
             delete typeDef.label;
         }
     };
@@ -103,9 +104,8 @@ define(['./Type'], function (Type) {
                 let def = Type.definitionFromLegacyDefinition(type);
                 this.addType(type.key, def);
             });
-    }
+    };
 
     return TypeRegistry;
 });
-
 

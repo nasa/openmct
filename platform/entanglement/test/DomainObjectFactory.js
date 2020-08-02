@@ -44,14 +44,17 @@ define(
             if (!config || !config.hasOwnProperty) {
                 config = {};
             }
+
             if (!config.name) {
                 config.name = 'domainObject';
             }
+
             configObjectProps.forEach(function (prop) {
                 if (!config[prop] || !config[prop].hasOwnProperty) {
                     config[prop] = {};
                 }
             });
+
             return config;
         }
 
@@ -139,7 +142,9 @@ define(
                             capability + ' missing invoke function.'
                         );
                     }
+
                     var passThroughArgs = [].slice.call(arguments, 1);
+
                     return config
                         .capabilities[capability]
                         .invoke

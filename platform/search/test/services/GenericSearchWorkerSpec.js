@@ -34,7 +34,6 @@ define([
         {type: 'application/javascript'}
     ));
 
-
     describe('GenericSearchWorker', function () {
         // If this test fails, make sure this path is correct
         var worker,

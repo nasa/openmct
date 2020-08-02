@@ -28,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/identity",
+        name: "example/identity",
         definition: {
             "extensions": {
                 "components": [

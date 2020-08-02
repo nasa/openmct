@@ -41,5 +41,6 @@ export default function Branding(options) {
     if (arguments.length === 1) {
         brandingOptions = options;
     }
+
     return brandingOptions;
 }

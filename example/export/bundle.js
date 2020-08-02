@@ -26,7 +26,7 @@ define([
     "use strict";
 
     return {
-        name:"example/export",
+        name: "example/export",
         definition: {
             "name": "Example of using CSV Export",
             "extensions": {

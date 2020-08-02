@@ -28,7 +28,6 @@ define(
         // the a specific template that can be included via mct-include
         var TEMPLATE = '<mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include>';
 
-
         /**
          * The OverlayService is responsible for pre-pending templates to
          * the body of the document, which is useful for displaying templates
@@ -53,6 +52,7 @@ define(
             this.findBody = function () {
                 return $document.find('body');
             };
+
             this.newScope = function () {
                 return $rootScope.$new();
             };

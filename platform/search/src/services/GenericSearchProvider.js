@@ -66,7 +66,6 @@ define([
             provider.scheduleForIndexing(rootId);
         });
 
-
     }
 
     /**
@@ -153,6 +152,7 @@ define([
             this.pendingIndex[id] = true;
             this.idsToIndex.push(id);
         }
+
         this.keepIndexing();
     };
 
@@ -163,8 +163,8 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
-        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
-            this.idsToIndex.length
+        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS
+            && this.idsToIndex.length
         ) {
             this.beginIndexRequest();
         }
@@ -291,6 +291,7 @@ define([
         while (this.pendingQueries[queryId]) {
             queryId = Math.ceil(Math.random() * 100000);
         }
+
         return queryId;
     };
 
@@ -315,7 +316,6 @@ define([
 
         return queryId;
     };
-
 
     return GenericSearchProvider;
 });

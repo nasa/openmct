@@ -47,9 +47,9 @@ define(
          * #cancel} are called
          */
         TransactionService.prototype.startTransaction = function () {
-            var transaction = this.isActive() ?
-                new NestedTransaction(this.transactions[0]) :
-                new Transaction(this.$log);
+            var transaction = this.isActive()
+                ? new NestedTransaction(this.transactions[0])
+                : new Transaction(this.$log);
 
             this.transactions.push(transaction);
         };
@@ -98,13 +98,16 @@ define(
             if (!transaction) {
                 return Promise.reject();
             }
+
             if (!this.isActive()) {
                 return transaction.commit()
                     .then(function (r) {
                         this.cacheService.flush();
+
                         return r;
                     }.bind(this));
             }
+
             return transaction.commit();
         };
 
@@ -118,6 +121,7 @@ define(
          */
         TransactionService.prototype.cancel = function () {
             var transaction = this.transactions.pop();
+
             return transaction ? transaction.cancel() : Promise.reject();
         };
 

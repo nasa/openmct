@@ -32,25 +32,27 @@ define([
 
         if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'x')) {
             console.warn(
-                'DEPRECATION WARNING: `x` hints should be replaced with ' +
-                '`domain` hints moving forward.  ' +
-                'https://github.com/nasa/openmct/issues/1546'
+                'DEPRECATION WARNING: `x` hints should be replaced with '
+                + '`domain` hints moving forward.  '
+                + 'https://github.com/nasa/openmct/issues/1546'
             );
             if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
                 valueMetadata.hints.domain = valueMetadata.hints.x;
             }
+
             delete valueMetadata.hints.x;
         }
 
         if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'y')) {
             console.warn(
-                'DEPRECATION WARNING: `y` hints should be replaced with ' +
-                '`range` hints moving forward.  ' +
-                'https://github.com/nasa/openmct/issues/1546'
+                'DEPRECATION WARNING: `y` hints should be replaced with '
+                + '`range` hints moving forward.  '
+                + 'https://github.com/nasa/openmct/issues/1546'
             );
             if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
                 valueMetadata.hints.range = valueMetadata.hints.y;
             }
+
             delete valueMetadata.hints.y;
         }
 
@@ -58,9 +60,11 @@ define([
             if (!valueMetadata.values) {
                 valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
             }
+
             if (!Object.prototype.hasOwnProperty.call(valueMetadata, 'max')) {
                 valueMetadata.max = Math.max(valueMetadata.values) + 1;
             }
+
             if (!Object.prototype.hasOwnProperty.call(valueMetadata, 'min')) {
                 valueMetadata.min = Math.min(valueMetadata.values) - 1;
             }
@@ -69,6 +73,7 @@ define([
         if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'priority')) {
             valueMetadata.hints.priority = index;
         }
+
         return valueMetadata;
     }
 
@@ -111,21 +116,24 @@ define([
             /*jshint validthis: true */
             return Object.prototype.hasOwnProperty.call(this.hints, hint);
         }
+
         function hasHints(metadata) {
             return hints.every(hasHint, metadata);
         }
+
         var matchingMetadata = this.valueMetadatas.filter(hasHints);
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];
-            }
+            };
         });
+
         return _.sortBy(matchingMetadata, ...iteratees);
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {
         return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
-    }
+    };
 
     TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
         let valueMetadata = this.valuesForHints(['range'])[0];
@@ -142,7 +150,6 @@ define([
 
         return valueMetadata.key;
     };
-
 
     return TelemetryMetadataManager;
 

@@ -80,11 +80,13 @@ define(
                         var clonedElement = document.getElementById(exportId);
                         clonedElement.classList.add(className);
                     }
+
                     element.id = oldId;
                 },
                 removeContainer: true // Set to false to debug what html2canvas renders
             }).then(function (canvas) {
                 dialog.dismiss();
+
                 return new Promise(function (resolve, reject) {
                     return canvas.toBlob(resolve, mimeType);
                 });

@@ -56,6 +56,7 @@ define(
                 results.forEach(function (result) {
                     packaged[result.key] = result.telemetry;
                 });
+
                 // Format as expected (sources -> keys -> telemetry)
                 return { eventGenerator: packaged };
             }

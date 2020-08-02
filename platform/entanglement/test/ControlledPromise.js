@@ -34,7 +34,6 @@ define(
             spyOn(this, 'then').and.callThrough();
         }
 
-
         /**
          * Resolve the promise, passing the supplied value to all resolve
          * handlers.

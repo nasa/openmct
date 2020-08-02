@@ -47,8 +47,8 @@ define(
          * @returns {string} URL for the domain object
          */
         UrlService.prototype.urlForLocation = function (mode, domainObject) {
-            var context = domainObject &&
-                    domainObject.getCapability('context'),
+            var context = domainObject
+                    && domainObject.getCapability('context'),
                 objectPath = context ? context.getPath() : [],
                 ids = objectPath.map(function (domainObj) {
                     return domainObj.getId();
@@ -80,10 +80,12 @@ define(
                     arr.push(key + '=' + search[key]);
                 }
             }
+
             var searchPath = "?" + arr.join('&'),
                 newTabPath =
-                    "#" + this.urlForLocation(mode, domainObject) +
-                            searchPath;
+                    "#" + this.urlForLocation(mode, domainObject)
+                            + searchPath;
+
             return newTabPath;
         };
 

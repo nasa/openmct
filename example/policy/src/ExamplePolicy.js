@@ -36,6 +36,7 @@ define(
                         model = (domainObject && domainObject.getModel()) || {},
                         name = model.name || "",
                         metadata = action.getMetadata() || {};
+
                     return metadata.key !== 'remove' || name.indexOf('foo') < 0;
                 }
             };

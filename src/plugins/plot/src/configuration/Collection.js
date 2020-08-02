@@ -38,6 +38,7 @@ define([
         } else {
             this.models = [];
         }
+
         this.initialize(options);
     }
 
@@ -55,9 +56,11 @@ define([
     Collection.prototype.modelFn = function (model) {
         if (model instanceof this.modelClass) {
             model.collection = this;
+
             return model;
 
         }
+
         return new this.modelClass({
             collection: this,
             model: model

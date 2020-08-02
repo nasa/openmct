@@ -63,6 +63,7 @@ define(
                     wrappedPersistence.persist.bind(wrappedPersistence),
                     wrappedPersistence.refresh.bind(wrappedPersistence)
                 );
+
                 //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
@@ -73,6 +74,7 @@ define(
         TransactionalPersistenceCapability.prototype.refresh = function () {
             this.transactionManager
                 .clearTransactionsFor(this.domainObject.getId());
+
             return this.persistenceCapability.refresh();
         };
 

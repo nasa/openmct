@@ -67,8 +67,6 @@ define([
         this.stopListening();
     };
 
-
-
     eventHelpers.extend(MCTChartAlarmPointSet.prototype);
 
     return MCTChartAlarmPointSet;

@@ -59,10 +59,12 @@ define(
                     if (api) {
                         return;
                     }
-                    if (CHART_TYPE.ALLOCATIONS.length >=
-                        CHART_TYPE.MAX_INSTANCES) {
+
+                    if (CHART_TYPE.ALLOCATIONS.length
+                        >= CHART_TYPE.MAX_INSTANCES) {
                         return;
                     }
+
                     try {
                         api = new CHART_TYPE.API(canvas, overlay);
                         CHART_TYPE.ALLOCATIONS.push(api);
@@ -79,6 +81,7 @@ define(
                 if (!api) {
                     console.warn("Cannot initialize mct-chart.");
                 }
+
                 return api;
             },
 
@@ -88,6 +91,7 @@ define(
             getFallbackDrawAPI: function (canvas, overlay) {
                 var api = new CHARTS[1].API(canvas, overlay);
                 CHARTS[1].ALLOCATIONS.push(api);
+
                 return api;
             },
 

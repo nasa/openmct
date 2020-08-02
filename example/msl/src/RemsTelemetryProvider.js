@@ -73,6 +73,7 @@ define (
         RemsTelemetryProvider.prototype.subscribe = function (callback, requests) {
             return function () {};
         };
+
         RemsTelemetryProvider.prototype.unsubscribe = function (callback, requests) {
             return function () {};
         };

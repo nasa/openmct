@@ -36,6 +36,7 @@ define([
         if (!options) {
             options = {};
         }
+
         this.id = options.id;
         this.model = options.model;
         this.collection = options.collection;
@@ -45,6 +46,7 @@ define([
         } else {
             _.defaultsDeep(this.model, defaults);
         }
+
         this.initialize(options);
     }
 

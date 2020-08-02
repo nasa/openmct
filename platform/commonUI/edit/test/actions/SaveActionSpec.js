@@ -137,6 +137,7 @@ define(
                 it("notifies if saving succeeded", function () {
                     var mockCallback = jasmine.createSpy("callback");
                     mockEditorCapability.save.and.returnValue(Promise.resolve());
+
                     return action.perform().then(mockCallback).then(function () {
                         expect(mockNotificationService.info).toHaveBeenCalled();
                         expect(mockNotificationService.error).not.toHaveBeenCalled();
@@ -146,6 +147,7 @@ define(
                 it("notifies if saving failed", function () {
                     var mockCallback = jasmine.createSpy("callback");
                     mockEditorCapability.save.and.returnValue(Promise.reject("some failure reason"));
+
                     return action.perform().then(mockCallback).then(function () {
                         expect(mockNotificationService.error).toHaveBeenCalled();
                         expect(mockNotificationService.info).not.toHaveBeenCalled();

@@ -44,6 +44,7 @@ define(
         TelemetryTable.prototype.poll = function () {
             var t = this.table;
             this.table = undefined;
+
             return t;
         };
 

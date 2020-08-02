@@ -38,7 +38,7 @@ define([
     "use strict";
 
     return {
-        name:"example/notifications",
+        name: "example/notifications",
         definition: {
             "extensions": {
                 "templates": [

@@ -29,8 +29,6 @@ define(
     function () {
         'use strict';
 
-
-
         function BrowserPersistenceProvider($q, SPACE) {
             var spaces = SPACE ? [SPACE] : [],
                 caches = {},
@@ -50,6 +48,7 @@ define(
                 },
                 listObjects: function (space) {
                     var cache = caches[space];
+
                     return promises.as(
                         cache ? Object.keys(cache) : null
                     );
@@ -67,6 +66,7 @@ define(
                 },
                 readObject: function (space, key) {
                     var cache = caches[space];
+
                     return promises.as(
                         cache ? cache[key] : null
                     );

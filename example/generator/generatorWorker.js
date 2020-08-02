@@ -62,13 +62,14 @@
                     data: {
                         name: data.name,
                         utc: nextStep,
-                        yesterday: nextStep - 60*60*24*1000,
+                        yesterday: nextStep - 60 * 60 * 24 * 1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
                         cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                     }
                 });
                 nextStep += step;
             }
+
             return nextStep;
         }
 
@@ -85,6 +86,7 @@
         if (request.end === undefined) {
             request.end = Date.now();
         }
+
         if (request.start === undefined) {
             request.start = request.end - FIFTEEN_MINUTES;
         }
@@ -108,11 +110,12 @@
             data.push({
                 name: request.name,
                 utc: nextStep,
-                yesterday: nextStep - 60*60*24*1000,
+                yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
+
         self.postMessage({
             id: message.id,
             data: data
@@ -120,13 +123,13 @@
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
-        return amplitude *
-            Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return amplitude
+            * Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
-        return amplitude *
-            Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return amplitude
+            * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
     function sendError(error, message) {
