@@ -54,10 +54,8 @@ define(
 
             function deviceMatches(tokens) {
                 tokens = tokens || "";
-
                 return tokens.split(" ").every(function (token) {
                     var fn = DeviceMatchers[token];
-
                     return fn && fn(agentService);
                 });
             }

@@ -83,14 +83,12 @@ export function setObjectPath(objectPath) {
         if (objectPath.length > 0 && isDomainObject(objectPath[0])) {
             throw 'setObjectPath must be called with either a string, or an array of Domain Objects';
         }
-
         objectPathString = objectPath.reduce((pathString, object) => {
             return `${pathString}/${objectUtils.makeKeyString(object.identifier)}`;
         }, '');
     } else {
-        objectPathString = objectPath;
+        objectPathString = objectPath
     }
-
     url.pathname = objectPathString;
     setLocationFromUrl(url);
 }

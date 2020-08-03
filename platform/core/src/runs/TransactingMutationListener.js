@@ -37,7 +37,6 @@ define([], function () {
 
         function hasChanged(domainObject) {
             var model = domainObject.getModel();
-
             return model.persisted === undefined || model.modified > model.persisted;
         }
 

@@ -82,8 +82,7 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             autoDismiss: true,
             severity: "info"
-        };
-
+        }
         return this._notify(notificationModel);
     }
 
@@ -96,8 +95,7 @@ export default class NotificationAPI extends EventEmitter {
         let notificationModel = {
             message: message,
             severity: "alert"
-        };
-
+        }
         return this._notify(notificationModel);
     }
 
@@ -110,8 +108,7 @@ export default class NotificationAPI extends EventEmitter {
         let notificationModel = {
             message: message,
             severity: "error"
-        };
-
+        }
         return this._notify(notificationModel);
     }
 
@@ -127,8 +124,7 @@ export default class NotificationAPI extends EventEmitter {
             progressPerc: progressPerc,
             progressText: progressText,
             severity: "info"
-        };
-
+        }
         return this._notify(notificationModel);
     }
 
@@ -204,7 +200,6 @@ export default class NotificationAPI extends EventEmitter {
         if (index >= 0) {
             this.notifications.splice(index, 1);
         }
-
         this._setActiveNotification(this._selectNextNotification());
         this._setHighestSeverity();
         notification.emit('destroy');
@@ -304,7 +299,7 @@ export default class NotificationAPI extends EventEmitter {
                 notification.model.progressPerc = progressPerc;
                 notification.model.progressText = progressText;
                 notification.emit('progress', progressPerc, progressText);
-            };
+            }
         }
 
         return notification;
@@ -318,10 +313,8 @@ export default class NotificationAPI extends EventEmitter {
 
         if (!notification) {
             delete this.activeTimeout;
-
             return;
         }
-
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
@@ -349,8 +342,8 @@ export default class NotificationAPI extends EventEmitter {
         for (; i < this.notifications.length; i++) {
             notification = this.notifications[i];
 
-            if (!notification.model.minimized
-                && notification !== this.activeNotification) {
+            if (!notification.model.minimized &&
+                notification !== this.activeNotification) {
                 return notification;
             }
         }

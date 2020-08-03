@@ -38,8 +38,8 @@ define(
             // * treeModel: The model for the embedded tree representation,
             //              used for bi-directional object selection.
             function setLocatingObject(domainObject, priorObject) {
-                var context = domainObject
-                    && domainObject.getCapability("context"),
+                var context = domainObject &&
+                    domainObject.getCapability("context"),
                     contextRoot = context && context.getRoot();
 
                 if (contextRoot && contextRoot !== $scope.rootObject) {
@@ -65,12 +65,11 @@ define(
                 $scope.ngModel[$scope.field] = domainObject;
 
                 // Restrict which locations can be selected
-                if (domainObject
-                        && $scope.structure
-                            && $scope.structure.validate) {
+                if (domainObject &&
+                        $scope.structure &&
+                            $scope.structure.validate) {
                     if (!$scope.structure.validate(domainObject)) {
                         setLocatingObject(priorObject, undefined);
-
                         return;
                     }
                 }
@@ -79,7 +78,7 @@ define(
                 if ($scope.ngModelController) {
                     $scope.ngModelController.$setValidity(
                         'composition',
-                        Boolean($scope.treeModel.selectedObject)
+                        !!$scope.treeModel.selectedObject
                     );
                 }
             }

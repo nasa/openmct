@@ -52,7 +52,7 @@ define(
          * @returns {boolean} true on mobile
          */
         AgentService.prototype.isMobile = function () {
-            return Boolean(this.mobileName);
+            return !!this.mobileName;
         };
 
         /**
@@ -132,7 +132,6 @@ define(
          */
         AgentService.prototype.isBrowser = function (name) {
             name = name.toLowerCase();
-
             return this.userAgent.toLowerCase().indexOf(name) !== -1;
         };
 

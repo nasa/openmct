@@ -45,7 +45,6 @@ define(
                     control: "textfield"
                 });
                 mockProperty.getValue.and.returnValue(name);
-
                 return mockProperty;
             }
 
@@ -121,10 +120,7 @@ define(
                 // Should have gotten a setValue call
                 mockProperties.forEach(function (mockProperty, i) {
                     expect(mockProperty.setValue).toHaveBeenCalledWith(
-                        {
-                            someKey: "some value",
-                            type: 'test'
-                        },
+                        { someKey: "some value", type: 'test' },
                         "field " + i
                     );
                 });
@@ -191,6 +187,7 @@ define(
                     return section.name === 'Location';
                 })).toEqual(false);
             });
+
 
         });
     }

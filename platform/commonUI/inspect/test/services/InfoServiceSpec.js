@@ -63,7 +63,6 @@ define(
                         ]);
                     mockCompiledTemplate.and.returnValue(mockElement);
                     mockElements.push(mockElement);
-
                     return mockCompiledTemplate;
                 });
                 mockRootScope.$new.and.returnValue(mockScope);

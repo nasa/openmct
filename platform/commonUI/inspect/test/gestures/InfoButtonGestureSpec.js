@@ -63,10 +63,7 @@ define(
                 mockEvent.pageY = 0;
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockOff = jasmine.createSpy('$off');
-                testMetadata = [{
-                    name: "Test name",
-                    value: "Test value"
-                }];
+                testMetadata = [{ name: "Test name", value: "Test value" }];
                 mockHide = jasmine.createSpy('hide');
 
                 mockDomainObject.getModel.and.returnValue({ name: "Test Object" });
@@ -84,7 +81,7 @@ define(
                     mockElement,
                     mockDomainObject
                 );
-                fireGesture = mockElement.on.calls.mostRecent().args[1];
+                fireGesture =  mockElement.on.calls.mostRecent().args[1];
             });
 
             it("expect click on the representation", function () {
@@ -107,7 +104,7 @@ define(
 
                 // Get the touch start on the body
                 // and fire the dismiss gesture
-                fireDismissGesture = mockBody.on.calls.mostRecent().args[1];
+                fireDismissGesture =  mockBody.on.calls.mostRecent().args[1];
                 fireDismissGesture(mockEvent);
                 // Expect Body to have been touched, event.preventDefault()
                 // to be called, then the mockBody listener to be detached

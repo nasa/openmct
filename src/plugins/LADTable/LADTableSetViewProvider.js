@@ -38,7 +38,7 @@ export default function LADTableSetViewProvider(openmct) {
 
             return {
                 show: function (element) {
-                    component = new Vue({
+                    component =  new Vue({
                         el: element,
                         components: {
                             LadTableSet: LadTableSet

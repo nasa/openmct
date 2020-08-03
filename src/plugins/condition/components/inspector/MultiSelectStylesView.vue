@@ -67,7 +67,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             mixedStyles: [],
             isStaticAndConditionalStyles: false
-        };
+        }
     },
     destroyed() {
         this.removeListeners();
@@ -113,7 +113,6 @@ export default {
                         this.isStaticAndConditionalStyles = this.hasConditionalStyles(domainObject, layoutItem.id);
                     }
                 }
-
                 itemInitialStyles.push(itemStyle);
             });
             const {styles, mixedStyles} = getConsolidatedStyleValues(itemInitialStyles);
@@ -133,9 +132,9 @@ export default {
             //check that all items that have been styles still exist. Otherwise delete those styles
             let keys = Object.keys(this.domainObject.configuration.objectStyles || {});
             keys.forEach((key) => {
-                if ((key !== 'styles')
-                    && (key !== 'staticStyle')
-                    && (key !== 'conditionSetIdentifier')) {
+                if ((key !== 'styles') &&
+                    (key !== 'staticStyle') &&
+                    (key !== 'conditionSetIdentifier')) {
                     if (!(newItems.find(item => item.id === key))) {
                         this.removeItemStyles(key);
                     }
@@ -164,21 +163,18 @@ export default {
             if (this.stopObserving) {
                 this.stopObserving();
             }
-
             if (this.stopObservingItems) {
                 this.stopObservingItems();
             }
-
             if (this.unObserveObjects) {
                 this.unObserveObjects.forEach((unObserveObject) => {
                     unObserveObject();
                 });
             }
-
             this.unObserveObjects = [];
         },
         removeItemStyles(itemId) {
-            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (itemId && domainObjectStyles[itemId]) {
                 domainObjectStyles[itemId] = undefined;
                 delete domainObjectStyles[this.itemId];
@@ -186,7 +182,6 @@ export default {
                 if (isEmpty(domainObjectStyles)) {
                     domainObjectStyles = undefined;
                 }
-
                 this.persist(this.domainObject, domainObjectStyles);
             }
         },
@@ -222,7 +217,6 @@ export default {
                     this.persist(domainObject, this.getDomainObjectStyle(domainObject, property));
                 });
             }
-
             this.isStaticAndConditionalStyles = false;
             let foundIndex = this.mixedStyles.indexOf(property);
             if (foundIndex > -1) {
@@ -230,7 +224,7 @@ export default {
             }
         },
         getDomainObjectStyle(domainObject, property, items) {
-            let domainObjectStyles = (domainObject.configuration && domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
 
             if (items) {
                 items.forEach(item => {
@@ -238,7 +232,6 @@ export default {
                     if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
                         itemStaticStyle = domainObjectStyles[item.id].staticStyle.style;
                     }
-
                     Object.keys(item.applicableStyles).forEach(key => {
                         if (property === key) {
                             itemStaticStyle[key] = this.staticStyle.style[key];
@@ -247,7 +240,6 @@ export default {
                     if (this.isStaticAndConditionalStyles) {
                         this.removeConditionalStyles(domainObjectStyles, item.id);
                     }
-
                     if (isEmpty(itemStaticStyle)) {
                         itemStaticStyle = undefined;
                         domainObjectStyles[item.id] = undefined;
@@ -259,13 +251,11 @@ export default {
                 if (!domainObjectStyles.staticStyle) {
                     domainObjectStyles.staticStyle = {
                         style: {}
-                    };
+                    }
                 }
-
                 if (this.isStaticAndConditionalStyles) {
                     this.removeConditionalStyles(domainObjectStyles);
                 }
-
                 domainObjectStyles.staticStyle.style[property] = this.staticStyle.style[property];
             }
 
@@ -276,5 +266,5 @@ export default {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         }
     }
-};
+}
 </script>

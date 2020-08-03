@@ -58,7 +58,7 @@ define(function () {
                     required: true
                 }
             ]
-        };
+        }
     }
 
     return DisplayLayoutType;

@@ -30,11 +30,11 @@ define(
 
         function cancelEditing(domainObject) {
             var navigatedObject = domainObject,
-                editorCapability = navigatedObject
-                    && navigatedObject.getCapability("editor");
+                editorCapability = navigatedObject &&
+                    navigatedObject.getCapability("editor");
 
-            return editorCapability
-                && editorCapability.finish();
+            return editorCapability &&
+                editorCapability.finish();
         }
 
         /**

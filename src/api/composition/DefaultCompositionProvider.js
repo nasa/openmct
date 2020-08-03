@@ -57,9 +57,9 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
-        return !(parent.identifier.namespace === child.identifier.namespace
-            && parent.identifier.key === child.identifier.key);
-    };
+        return !(parent.identifier.namespace === child.identifier.namespace &&
+            parent.identifier.key === child.identifier.key);
+    }
 
     /**
      * Check if this provider should be used to load composition for a
@@ -72,7 +72,7 @@ define([
      * @method appliesTo
      */
     DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
-        return Boolean(domainObject.composition);
+        return !!domainObject.composition;
     };
 
     /**
@@ -167,8 +167,8 @@ define([
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
-            return !(childId.namespace === child.namespace
-                && childId.key === child.key);
+            return !(childId.namespace === child.namespace &&
+                childId.key === child.key);
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
@@ -192,7 +192,6 @@ define([
             this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
     };
-
     /**
      * @private
      */
@@ -229,7 +228,6 @@ define([
                 });
             }
         }
-
         this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         let id = objectUtils.makeKeyString(domainObject.identifier);
@@ -260,10 +258,9 @@ define([
         if (this.topicListener) {
             return;
         }
-
         this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
         this.topicListener = () => {
-            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
+            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation)
         };
     };
 
@@ -306,6 +303,7 @@ define([
         removed.forEach(function (removedChild) {
             listeners.remove.forEach(notify(removedChild));
         });
+
 
     };
 

@@ -127,7 +127,6 @@ define(
                 mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
-
                         return mockPromise(true);
                     }
                 });
@@ -158,7 +157,6 @@ define(
                 mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
-
                         return mockPromise(true);
                     }
                 });
@@ -190,7 +188,6 @@ define(
                 mockDomainObject.useCapability.and.callFake(function (key, mutator) {
                     if (key === 'mutation') {
                         mutator(testModel);
-
                         return mockPromise(true);
                     }
                 });

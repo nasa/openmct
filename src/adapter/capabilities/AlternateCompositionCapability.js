@@ -74,7 +74,6 @@ define([
         var keyString = objectUtils.makeKeyString(child.identifier);
         var oldModel = objectUtils.toOldFormat(child);
         var newDO = this.instantiate(oldModel, keyString);
-
         return new ContextualDomainObject(newDO, this.domainObject);
 
     };

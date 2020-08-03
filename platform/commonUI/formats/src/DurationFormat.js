@@ -31,6 +31,7 @@ define([
             DATE_FORMAT
         ];
 
+
     /**
      * Formatter for duration. Uses moment to produce a date from a given
      * value, but output is formatted to display only time. Can be used for

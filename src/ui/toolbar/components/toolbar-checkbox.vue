@@ -30,7 +30,6 @@ export default {
     },
     data() {
         uniqueId++;
-
         return {
             uid: `mct-checkbox-id-${uniqueId}`
         };
@@ -40,5 +39,5 @@ export default {
             this.$emit('change', event.target.checked, {...this.options});
         }
     }
-};
+}
 </script>

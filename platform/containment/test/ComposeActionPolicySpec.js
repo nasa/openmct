@@ -41,7 +41,6 @@ define(
                 mockTypes = ['a', 'b'].map(function (type) {
                     var mockType = jasmine.createSpyObj('type-' + type, ['getKey']);
                     mockType.getKey.and.returnValue(type);
-
                     return mockType;
                 });
                 mockDomainObjects = ['a', 'b'].map(function (id, index) {
@@ -53,7 +52,6 @@ define(
                     mockDomainObject.getCapability.and.callFake(function (c) {
                         return c === 'type' && mockTypes[index];
                     });
-
                     return mockDomainObject;
                 });
                 mockAction = jasmine.createSpyObj('action', ['getMetadata']);

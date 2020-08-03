@@ -113,8 +113,8 @@ define(
                 // Check if an object has (or delegates, if allowed) a
                 // capability.
                 function hasCapability(c) {
-                    return domainObj.hasCapability(c)
-                        || (allowDelegation && delegation.doesDelegateCapability(c));
+                    return domainObj.hasCapability(c) ||
+                        (allowDelegation && delegation.doesDelegateCapability(c));
                 }
 
                 // For the reduce step below.

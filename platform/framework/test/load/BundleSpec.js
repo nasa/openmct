@@ -68,11 +68,7 @@ define(
 
             it("reports all declared extension categories", function () {
                 var bundle = new Bundle(PATH, {
-                    extensions: {
-                        things: [],
-                        tests: [],
-                        foos: []
-                    }
+                    extensions: { things: [], tests: [], foos: [] }
                 });
 
                 expect(bundle.getExtensionCategories().sort()).toEqual(

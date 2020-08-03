@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/services/CopyService',
@@ -38,7 +39,6 @@ define(
                 }
             };
             spyOn(promise, 'then').and.callThrough();
-
             return promise;
         }
 
@@ -191,7 +191,6 @@ define(
                                 result[k] = v;
                             });
                         });
-
                         return synchronousPromise(result);
                     });
                     mockQ.defer.and.returnValue(mockDeferred);
@@ -243,7 +242,6 @@ define(
                         instantiationCapability.invoke.and.callFake(
                             function (model) {
                                 objectCopy.model = model;
-
                                 return objectCopy;
                             }
                         );
@@ -285,7 +283,6 @@ define(
                             function (model) {
                                 var cloneToReturn = objectClones[invocationCount++];
                                 cloneToReturn.model = model;
-
                                 return cloneToReturn;
                             }
                         );
@@ -410,21 +407,20 @@ define(
                         function accept() {
                             return true;
                         }
-
                         function reject() {
                             return false;
                         }
 
-                        it("does not create new instances of objects "
-                            + "rejected by the filter", function () {
+                        it("does not create new instances of objects " +
+                            "rejected by the filter", function () {
                             copyService.perform(object, newParent, reject)
                                 .then(copyFinished);
                             expect(copyFinished.calls.mostRecent().args[0])
                                 .toBe(object);
                         });
 
-                        it("does create new instances of objects "
-                            + "accepted by the filter", function () {
+                        it("does create new instances of objects " +
+                            "accepted by the filter", function () {
                             copyService.perform(object, newParent, accept)
                                 .then(copyFinished);
                             expect(copyFinished.calls.mostRecent().args[0])

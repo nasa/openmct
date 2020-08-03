@@ -40,11 +40,9 @@ define([
         }
 
         var evaluator = this.pool.get(domainObject);
-
         return evaluator.requestLatest(options)
             .then(function (latestDatum) {
                 this.pool.release(evaluator);
-
                 return latestDatum ? [latestDatum] : [];
             }.bind(this));
     };
@@ -56,7 +54,6 @@ define([
     SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
         var evaluator = this.pool.get(domainObject);
         var unsubscribe = evaluator.subscribe(callback);
-
         return function () {
             this.pool.release(evaluator);
             unsubscribe();

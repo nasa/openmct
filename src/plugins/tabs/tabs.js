@@ -43,7 +43,7 @@ define([
 
                 return {
                     show: function (element, editMode) {
-                        component = new Vue({
+                        component =  new Vue({
                             el: element,
                             components: {
                                 TabsComponent: TabsComponent.default
@@ -75,6 +75,5 @@ define([
             }
         };
     }
-
     return Tabs;
 });

@@ -33,41 +33,30 @@ define(
                 actionProvider;
 
             function SimpleAction() {
-                return {
-                    perform: function () {
-                        return "simple";
-                    }
-                };
+                return { perform: function () {
+                    return "simple";
+                } };
             }
 
             function CategorizedAction() {
-                return {
-                    perform: function () {
-                        return "categorized";
-                    }
-                };
+                return { perform: function () {
+                    return "categorized";
+                } };
             }
-
             CategorizedAction.category = "someCategory";
 
             function KeyedAction() {
-                return {
-                    perform: function () {
-                        return "keyed";
-                    }
-                };
+                return { perform: function () {
+                    return "keyed";
+                } };
             }
-
             KeyedAction.key = "someKey";
 
             function CategorizedKeyedAction() {
-                return {
-                    perform: function () {
-                        return "both";
-                    }
-                };
+                return { perform: function () {
+                    return "both";
+                } };
             }
-
             CategorizedKeyedAction.key = "someKey";
             CategorizedKeyedAction.category = "someCategory";
 
@@ -81,7 +70,6 @@ define(
                     }
                 };
             }
-
             MetadataAction.key = "metadata";
 
             beforeEach(function () {
@@ -198,6 +186,7 @@ define(
                 });
 
             });
+
 
         });
     }

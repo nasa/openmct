@@ -57,7 +57,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 key: 'alpha',
                 operation: 'greaterThan',
                 values: [2]
-            }, {
+            },{
                 object: 'b',
                 key: 'gamma',
                 operation: 'lessThan',
@@ -74,22 +74,22 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 key: '',
                 operation: '',
                 values: []
-            }, {
+            },{
                 object: 'a',
                 key: 'No Such Key',
                 operation: '',
                 values: []
-            }, {
+            },{
                 object: 'a',
                 key: 'alpha',
                 operation: 'No Such Operation',
                 values: []
-            }, {
+            },{
                 object: 'all',
                 key: 'Nonexistent Field',
                 operation: 'Random Operation',
                 values: []
-            }, {
+            },{
                 object: 'any',
                 key: 'Nonexistent Field',
                 operation: 'Whatever Operation',
@@ -128,7 +128,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     appliesTo: ['number'],
                     inputCount: 1,
                     getDescription: function (values) {
-                        return ' > ' + values[0];
+                        return ' > ' + values [0];
                     }
                 },
                 lessThan: {

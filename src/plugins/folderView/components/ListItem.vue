@@ -56,5 +56,5 @@ export default {
             this.$refs.objectLink.click();
         }
     }
-};
+}
 </script>

@@ -79,6 +79,7 @@ define(
                 navigationService.addListener(callback);
                 navigationService.removeListener(callback);
 
+
                 navigationService.setNavigation(testObject);
                 expect(callback).not.toHaveBeenCalled();
             });

@@ -33,6 +33,7 @@ define(
                 mockLog,
                 compositor;
 
+
             beforeEach(function () {
                 registered = {};
 
@@ -56,10 +57,7 @@ define(
 
             it("allows composite services to be registered", function () {
                 compositor.registerCompositeServices([
-                    {
-                        type: "provider",
-                        provides: "testService"
-                    }
+                    { type: "provider", provides: "testService" }
                 ]);
 
                 expect(mockApp.service).toHaveBeenCalled();
@@ -71,19 +69,15 @@ define(
                 function MyDecorator() {
                     return {};
                 }
-
                 function MyOtherDecorator() {
                     return {};
                 }
-
                 function MyProvider() {
                     return {};
                 }
-
                 function MyOtherProvider() {
                     return {};
                 }
-
                 function MyAggregator() {
                     return {};
                 }
@@ -138,11 +132,9 @@ define(
                 function MyProvider() {
                     return {};
                 }
-
                 function MyOtherProvider() {
                     return {};
                 }
-
                 function MyAggregator() {
                     return {};
                 }
@@ -180,11 +172,9 @@ define(
                 function MyProvider() {
                     return {};
                 }
-
                 function MyDecorator() {
                     return {};
                 }
-
                 function MyAggregator() {
                     return {};
                 }

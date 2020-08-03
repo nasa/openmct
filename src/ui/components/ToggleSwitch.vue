@@ -39,6 +39,6 @@ export default {
             this.$emit('change', event.target.checked);
         }
     }
-};
+}
 
 </script>

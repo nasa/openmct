@@ -35,21 +35,9 @@ define(
                 var resolveFunction;
                 csvContents = undefined;
                 testRows = [
-                    {
-                        a: 1,
-                        b: 2,
-                        c: 3
-                    },
-                    {
-                        a: 4,
-                        b: 5,
-                        c: 6
-                    },
-                    {
-                        a: 7,
-                        b: 8,
-                        c: 9
-                    }
+                    { a: 1, b: 2, c: 3 },
+                    { a: 4, b: 5, c: 6 },
+                    { a: 7, b: 8, c: 9 }
                 ];
                 mockSaveAs = jasmine.createSpy('saveAs');
                 readCSVPromise = new Promise(function (resolve) {
@@ -61,7 +49,6 @@ define(
                         csvContents = new CSV(reader.result).parse();
                         resolveFunction();
                     };
-
                     reader.readAsText(blob);
                 });
                 exportService = new ExportService(mockSaveAs);
@@ -70,7 +57,6 @@ define(
             describe("#exportCSV(rows)", function () {
                 beforeEach(function () {
                     exportService.exportCSV(testRows);
-
                     return readCSVPromise;
                 });
 
@@ -141,7 +127,6 @@ define(
                     testFilename = "some-test-filename.csv";
                     exportService
                         .exportCSV(testRows, { filename: testFilename });
-
                     return readCSVPromise;
                 });
 
@@ -152,6 +137,7 @@ define(
                     );
                 });
             });
+
 
         });
 

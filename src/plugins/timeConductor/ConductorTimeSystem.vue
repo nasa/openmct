@@ -104,10 +104,10 @@ export default {
         getMatchingConfig(options) {
             const matchers = {
                 clock(config) {
-                    return options.clock === config.clock;
+                    return options.clock === config.clock
                 },
                 timeSystem(config) {
-                    return options.timeSystem === config.timeSystem;
+                    return options.timeSystem === config.timeSystem
                 }
             };
 
@@ -130,5 +130,5 @@ export default {
         }
     }
 
-};
+}
 </script>

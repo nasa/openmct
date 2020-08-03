@@ -43,7 +43,7 @@ define([
 ) {
 
     return {
-        name: "platform/representation",
+        name:"platform/representation",
         definition: {
             "extensions": {
                 "directives": [

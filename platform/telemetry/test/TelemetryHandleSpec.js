@@ -74,7 +74,6 @@ define(
                         asPromise(v).then(function (value) {
                             r = value;
                         });
-
                         return r;
                     });
                 });
@@ -121,10 +120,7 @@ define(
             });
 
             it("provides access to the datum objects by index", function () {
-                var testDatum = {
-                        a: 1,
-                        b: 2
-                    }, testIndex = 42;
+                var testDatum = { a: 1, b: 2 }, testIndex = 42;
                 mockSubscription.makeDatum.and.returnValue(testDatum);
                 handle.request({});
                 expect(handle.getDatum(mockDomainObject, testIndex))

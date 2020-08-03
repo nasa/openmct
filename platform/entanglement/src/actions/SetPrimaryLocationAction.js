@@ -41,7 +41,6 @@ define(
 
         SetPrimaryLocationAction.prototype.perform = function () {
             var location = this.domainObject.getCapability('location');
-
             return location.setPrimaryLocation(
                 location.getContextualLocation()
             );
@@ -49,9 +48,8 @@ define(
 
         SetPrimaryLocationAction.appliesTo = function (context) {
             var domainObject = context.domainObject;
-
-            return domainObject && domainObject.hasCapability("location")
-                && (domainObject.getModel().location === undefined);
+            return domainObject && domainObject.hasCapability("location") &&
+                (domainObject.getModel().location === undefined);
         };
 
         return SetPrimaryLocationAction;

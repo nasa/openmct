@@ -90,7 +90,6 @@ define([], function () {
                 key: key
             };
         });
-
         return mockMetadata;
     };
 

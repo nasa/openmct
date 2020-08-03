@@ -148,16 +148,15 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateBounds = function (bounds) {
-        if ((bounds.start === undefined)
-            || (bounds.end === undefined)
-            || isNaN(bounds.start)
-            || isNaN(bounds.end)
+        if ((bounds.start === undefined) ||
+            (bounds.end === undefined) ||
+            isNaN(bounds.start) ||
+            isNaN(bounds.end)
         ) {
             return "Start and end must be specified as integer values";
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
         }
-
         return true;
     };
 
@@ -170,16 +169,15 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateOffsets = function (offsets) {
-        if ((offsets.start === undefined)
-            || (offsets.end === undefined)
-            || isNaN(offsets.start)
-            || isNaN(offsets.end)
+        if ((offsets.start === undefined) ||
+            (offsets.end === undefined) ||
+            isNaN(offsets.start) ||
+            isNaN(offsets.end)
         ) {
             return "Start and end offsets must be specified as integer values";
         } else if (offsets.start >= offsets.end) {
             return "Specified start offset must be < end offset";
         }
-
         return true;
     };
 
@@ -209,7 +207,6 @@ define(['EventEmitter'], function (EventEmitter) {
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
-
             //Create a copy to avoid direct mutation of conductor bounds
             this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
@@ -228,7 +225,6 @@ define(['EventEmitter'], function (EventEmitter) {
                 this.timeOfInterest(undefined);
             }
         }
-
         //Return a copy to prevent direct mutation of time conductor bounds.
         return JSON.parse(JSON.stringify(this.boundsVal));
     };
@@ -246,11 +242,10 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
-                    "Must specify bounds when changing time system without "
-                    + "an active clock."
+                    "Must specify bounds when changing time system without " +
+                    "an active clock."
                 );
             }
-
             var timeSystem;
 
             if (timeSystemOrKey === undefined) {
@@ -317,7 +312,6 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit('timeOfInterest', this.toi);
         }
-
         return this.toi;
     };
 
@@ -446,7 +440,6 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit("clockOffsets", offsets);
         }
-
         return this.offsets;
     };
 

@@ -31,14 +31,8 @@ define(
 
             beforeEach(function () {
                 testVersions = [
-                    {
-                        name: "Some name",
-                        value: "1.2.3"
-                    },
-                    {
-                        name: "Some other name",
-                        value: "3.2.1"
-                    }
+                    { name: "Some name", value: "1.2.3" },
+                    { name: "Some other name", value: "3.2.1" }
                 ];
                 mockWindow = jasmine.createSpyObj("$window", ["open"]);
                 controller = new AboutController(testVersions, mockWindow);
@@ -56,6 +50,7 @@ define(
                 controller.openLicenses();
                 expect(mockWindow.open).toHaveBeenCalledWith("#/licenses");
             });
+
 
         });
 

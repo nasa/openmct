@@ -66,8 +66,8 @@ define(
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
-                return Object.keys(self.persistences).length
-                    === self.lastObservedSize;
+                return Object.keys(self.persistences).length ===
+                    self.lastObservedSize;
             }
 
             // Persist all queued objects
@@ -82,7 +82,6 @@ define(
                 function clearFlushPromise(value) {
                     self.flushPromise = undefined;
                     flushingDefer.resolve(value);
-
                     return value;
                 }
 
@@ -110,7 +109,6 @@ define(
                 } else {
                     self.scheduleFlush();
                 }
-
                 // Update lastObservedSize to detect quiescence
                 self.lastObservedSize = Object.keys(self.persistences).length;
             }
@@ -122,12 +120,13 @@ define(
             } else {
                 // Otherwise, schedule a flush on a timeout (to give
                 // a window for other updates to get aggregated)
-                self.pendingTimeout = self.pendingTimeout
-                        || $timeout(maybeFlush, self.delay, false);
+                self.pendingTimeout = self.pendingTimeout ||
+                        $timeout(maybeFlush, self.delay, false);
             }
 
             return self.activeDefer.promise;
         };
+
 
         /**
          * Queue persistence of a domain object.
@@ -140,7 +139,6 @@ define(
             var id = domainObject.getId();
             this.persistences[id] = persistence;
             this.objects[id] = domainObject;
-
             return this.scheduleFlush();
         };
 

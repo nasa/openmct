@@ -78,6 +78,7 @@ define(
                         domainObject.getId()
                     );
 
+
                 } catch (err) {
                     // Exceptions at this point indicate that the browser
                     // do not fully support drag-and-drop (e.g. if
@@ -106,6 +107,7 @@ define(
             this.startDragCallback = startDrag;
             this.endDragCallback = endDrag;
         }
+
 
         DragGesture.prototype.destroy = function () {
             // Detach listener

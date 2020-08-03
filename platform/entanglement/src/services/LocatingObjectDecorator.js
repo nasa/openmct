@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     ['../../../core/src/capabilities/ContextualDomainObject'],
     function (ContextualDomainObject) {
@@ -64,7 +65,6 @@ define(
                             "no context will be added and unexpected behavior",
                             "may follow."
                         ].join(" "));
-
                         return domainObject;
                     }
 

@@ -27,6 +27,7 @@ define(
     [],
     function () {
 
+
         /**
          * The `delegation` capability allows a domain object to indicate
          * that it wishes to delegate responsibility for some other
@@ -64,6 +65,7 @@ define(
             }
         }
 
+
         /**
          * Get the domain objects which are intended to be delegated
          * responsibility for some specific capability.
@@ -88,11 +90,11 @@ define(
                 return domainObject.useCapability('composition');
             }
 
-            return this.doesDelegateCapability(key)
-                ? promiseChildren().then(
+            return this.doesDelegateCapability(key) ?
+                promiseChildren().then(
                     filterObjectsWithCapability(key)
-                )
-                : this.$q.when([]);
+                ) :
+                this.$q.when([]);
         };
 
         /**
@@ -103,7 +105,7 @@ define(
          * @returns {boolean} true if the capability is delegated
          */
         DelegationCapability.prototype.doesDelegateCapability = function (key) {
-            return Boolean(this.delegateCapabilities[key]);
+            return !!(this.delegateCapabilities[key]);
         };
 
         /**

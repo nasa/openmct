@@ -24,5 +24,5 @@ import RemoveAction from "./RemoveAction";
 export default function () {
     return function (openmct) {
         openmct.contextMenu.registerAction(new RemoveAction(openmct));
-    };
+    }
 }

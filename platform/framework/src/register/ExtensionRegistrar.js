@@ -77,10 +77,9 @@ define(
             // Used to build unique identifiers for individual extensions,
             // so that these can be registered separately with Angular
             function identify(category, extension, index) {
-                var name = extension.key
-                    ? ("extension-" + extension.key + "#" + index)
-                    : ("extension#" + index);
-
+                var name = extension.key ?
+                    ("extension-" + extension.key + "#" + index) :
+                    ("extension#" + index);
                 return category + "[" + name + "]";
             }
 
@@ -103,9 +102,9 @@ define(
             // both dependencies and a factory method for the service.)
             function makeServiceArgument(category, extension) {
                 var dependencies = extension.depends || [],
-                    factory = (typeof extension === 'function')
-                        ? new PartialConstructor(extension)
-                        : staticFunction(extension);
+                    factory = (typeof extension === 'function') ?
+                        new PartialConstructor(extension) :
+                        staticFunction(extension);
 
                 return dependencies.concat([factory]);
             }
@@ -148,9 +147,7 @@ define(
                         extensions.forEach(registerExtension);
                         registerExtensionArraysForCategory(category, names);
                     }
-
                     registeredCategories[category] = true;
-
                     return true;
                 }
             }
@@ -162,7 +159,6 @@ define(
                     Constants.EXTENSION_SUFFIX,
                     dependency.length - Constants.EXTENSION_SUFFIX.length
                 );
-
                 return index !== -1;
             }
 
@@ -196,6 +192,7 @@ define(
 
                 return Object.keys(needed);
             }
+
 
             // Register any extension categories that are depended-upon but
             // have not been declared anywhere; such dependencies are then

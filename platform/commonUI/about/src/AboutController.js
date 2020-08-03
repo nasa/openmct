@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 /**
  * Implements Open MCT's About dialog.
  * @namespace platform/commonUI/about

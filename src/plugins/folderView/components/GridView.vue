@@ -18,5 +18,5 @@ export default {
     components: {GridItem},
     mixins: [compositionLoader],
     inject: ['openmct']
-};
+}
 </script>

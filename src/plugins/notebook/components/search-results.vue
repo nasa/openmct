@@ -23,7 +23,7 @@ export default {
     components: {
         NotebookEntry
     },
-    props: {
+    props:{
         results: {
             type: Array,
             default() {
@@ -32,7 +32,7 @@ export default {
         }
     },
     data() {
-        return {};
+        return {}
     },
     watch: {
         results(newResults) {}
@@ -46,5 +46,5 @@ export default {
             this.$emit('changeSectionPage', data);
         }
     }
-};
+}
 </script>

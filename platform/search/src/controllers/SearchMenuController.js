@@ -48,6 +48,7 @@ define(function () {
             }
         });
 
+
         // For documentation, see updateOptions below
         function updateOptions() {
             var type,
@@ -76,7 +77,6 @@ define(function () {
                         }
                     }
                 }
-
                 // If there's still nothing in the filters string, there are no
                 //   filters selected
                 if ($scope.ngModel.filtersString === '') {
@@ -122,6 +122,5 @@ define(function () {
             checkAll: checkAll
         };
     }
-
     return SearchMenuController;
 });

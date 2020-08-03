@@ -56,8 +56,8 @@ define(
                 $rootScope = this.$rootScope,
                 scope = $rootScope.$new(),
                 span = $compile('<span></span>')(scope),
-                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR
-                    + InfoConstants.BUBBLE_MAX_WIDTH,
+                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
+                    InfoConstants.BUBBLE_MAX_WIDTH,
                 options,
                 popup,
                 bubble;

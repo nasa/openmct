@@ -77,16 +77,7 @@ define(
                 expect(mockApp.service.calls.count()).toEqual(3);
 
                 expect(mockApp.constant.calls.count()).toEqual(0);
-                customRegistrars.constants([{
-                    key: "a",
-                    value: "b"
-                }, {
-                    key: "b",
-                    value: "c"
-                }, {
-                    key: "c",
-                    value: "d"
-                }]);
+                customRegistrars.constants([{ key: "a", value: "b" }, { key: "b", value: "c" }, { key: "c", value: "d" }]);
                 expect(mockApp.constant.calls.count()).toEqual(3);
 
                 expect(mockApp.run.calls.count()).toEqual(0);
@@ -144,10 +135,7 @@ define(
                         "$routeProvider",
                         ["when", "otherwise"]
                     ),
-                    bundle = {
-                        path: "test/bundle",
-                        resources: "res"
-                    },
+                    bundle = { path: "test/bundle", resources: "res" },
                     routes = [
                         {
                             when: "foo",

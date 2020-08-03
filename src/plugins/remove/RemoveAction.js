@@ -37,7 +37,7 @@ export default class RemoveAction {
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
-        }).catch(() => {});
+        }).catch(() =>{});
     }
 
     showConfirmDialog(object) {
@@ -62,8 +62,8 @@ export default class RemoveAction {
                         }
                     }
                 ]
-            });
-        });
+            })
+        })
     }
 
     inNavigationPath(object) {
@@ -108,8 +108,8 @@ export default class RemoveAction {
             return false;
         }
 
-        return parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+        return parentType &&
+            parentType.definition.creatable &&
+            Array.isArray(parent.composition);
     }
 }

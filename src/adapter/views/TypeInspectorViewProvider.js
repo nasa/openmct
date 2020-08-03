@@ -37,6 +37,7 @@ define([
                 scope.domainObject = legacyObject;
                 scope.model = legacyObject.getModel();
 
+
                 return {
                     show: function (container) {
                         let child = document.createElement('div');
@@ -51,7 +52,6 @@ define([
                                     results[i] = r;
                                 }));
                             }
-
                             return result;
                         });
 
@@ -59,11 +59,10 @@ define([
                             if (isDestroyed) {
                                 return;
                             }
-
                             uses.forEach(function (key, i) {
                                 scope[key] = results[i];
                             });
-                            element = openmct.$angular.element(child);
+                            element = openmct.$angular.element(child)
                             templateLinker.link(
                                 scope,
                                 element,
@@ -89,7 +88,7 @@ define([
                         element = null;
                         scope = null;
                     }
-                };
+                }
             }
         };
     }

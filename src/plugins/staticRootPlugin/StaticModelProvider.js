@@ -23,7 +23,6 @@ define([
                     key: i
                 });
             }
-
             while (objectString.indexOf(originalId) !== -1) {
                 objectString = objectString.replace(
                     '"' + originalId + '"',
@@ -43,7 +42,6 @@ define([
         return Object.keys(oldObjectMap)
             .reduce(function (newObjectMap, key) {
                 newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
-
                 return newObjectMap;
             }, {});
     }
@@ -51,7 +49,6 @@ define([
     /* Set the root location correctly for a top-level object */
     function setRootLocation(objectMap, rootIdentifier) {
         objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
-
         return objectMap;
     }
 
@@ -73,7 +70,6 @@ define([
         if (this.objectMap[keyString]) {
             return this.objectMap[keyString];
         }
-
         throw new Error(keyString + ' not found in import models.');
     };
 

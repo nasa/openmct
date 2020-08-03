@@ -43,7 +43,7 @@ define([
 ) {
 
     return {
-        name: "platform/search",
+        name:"platform/search",
         definition: {
             "name": "Search",
             "description": "Allows the user to search through the file tree.",

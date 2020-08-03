@@ -6,7 +6,6 @@ define([], function () {
             if (!this._listeningTo) {
                 this._listeningTo = [];
             }
-
             var listener = {
                 object: object,
                 event: event,
@@ -24,7 +23,6 @@ define([], function () {
             } else {
                 object.on(event, listener._cb);
             }
-
             this._listeningTo.push(listener);
         },
 
@@ -37,19 +35,15 @@ define([], function () {
                 if (object && object !== listener.object) {
                     return false;
                 }
-
                 if (event && event !== listener.event) {
                     return false;
                 }
-
                 if (callback && callback !== listener.callback) {
                     return false;
                 }
-
                 if (context && context !== listener.context) {
                     return false;
                 }
-
                 return true;
             })
                 .map(function (listener) {
@@ -60,7 +54,6 @@ define([], function () {
                     } else {
                         listener.object.off(listener.event, listener._cb);
                     }
-
                     return listener;
                 })
                 .forEach(function (listener) {

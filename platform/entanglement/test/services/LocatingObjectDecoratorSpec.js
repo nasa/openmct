@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/services/LocatingObjectDecorator',
@@ -49,22 +50,10 @@ define(
                 // D <-> E, to verify cycle detection
                 testModels = {
                     a: { name: "A" },
-                    b: {
-                        name: "B",
-                        location: "a"
-                    },
-                    c: {
-                        name: "C",
-                        location: "b"
-                    },
-                    d: {
-                        name: "D",
-                        location: "e"
-                    },
-                    e: {
-                        name: "E",
-                        location: "d"
-                    }
+                    b: { name: "B", location: "a" },
+                    c: { name: "C", location: "b" },
+                    d: { name: "D", location: "e" },
+                    e: { name: "E", location: "d" }
                 };
                 testObjects = {};
 
@@ -82,7 +71,6 @@ define(
                             result[k] = v;
                         });
                     });
-
                     return testPromise(result);
                 });
 

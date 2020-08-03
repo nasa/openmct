@@ -52,15 +52,12 @@ define(
                 mockDomainObject.hasCapability = function (c) {
                     return capabilities[c] !== undefined;
                 };
-
                 mockDomainObject.getCapability = function (c) {
                     return capabilities[c];
                 };
-
                 mockDomainObject.useCapability = function (c, v) {
                     return capabilities[c] && capabilities[c].invoke(v);
                 };
-
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
 
                 capabilities = {};
@@ -111,10 +108,7 @@ define(
 
             it("restricts typed views to matching types", function () {
                 var testType = "testType",
-                    testView = {
-                        key: "x",
-                        type: testType
-                    },
+                    testView = { key: "x", type: testType },
                     viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability

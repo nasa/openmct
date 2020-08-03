@@ -44,7 +44,7 @@ define([
      * definition has a telemetry property.
      */
     DefaultMetadataProvider.prototype.supportsMetadata = function (domainObject) {
-        return Boolean(domainObject.telemetry) || Boolean(this.typeHasTelemetry(domainObject));
+        return !!domainObject.telemetry || !!this.typeHasTelemetry(domainObject);
     };
 
     /**
@@ -82,7 +82,7 @@ define([
                     _.sortBy(valueMetadata.enumerations.map(function (e) {
                         return {
                             string: e.string,
-                            value: Number(e.value)
+                            value: +e.value
                         };
                     }), 'e.value');
                 valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
@@ -119,9 +119,9 @@ define([
         if (!this.typeService) {
             this.typeService = this.openmct.$injector.get('typeService');
         }
-
-        return Boolean(this.typeService.getType(domainObject.type).typeDef.telemetry);
+        return !!this.typeService.getType(domainObject.type).typeDef.telemetry;
     };
+
 
     return DefaultMetadataProvider;
 

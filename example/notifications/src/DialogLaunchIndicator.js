@@ -42,11 +42,9 @@ define(
         DialogLaunchIndicator.prototype.getGlyphClass = function () {
             return 'ok';
         };
-
         DialogLaunchIndicator.prototype.getText = function () {
             return "Launch test dialog";
         };
-
         DialogLaunchIndicator.prototype.getDescription = function () {
             return "Launch test dialog";
         };

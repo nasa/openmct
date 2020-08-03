@@ -49,10 +49,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
             //Test expected initial conditions
             expect(window.location.hash.includes('tc.mode=fixed')).toBe(true);
 
-            openmct.time.clock('local', {
-                start: -1000,
-                end: 100
-            });
+            openmct.time.clock('local', {start: -1000, end: 100});
 
             expect(window.location.hash.includes('tc.mode=local')).toBe(true);
 
@@ -64,17 +61,11 @@ describe("The URLTimeSettingsSynchronizer", () => {
             expect(window.location.hash.includes('tc.startDelta')).toBe(false);
             expect(window.location.hash.includes('tc.endDelta')).toBe(false);
 
-            openmct.time.clock('local', {
-                start: -1000,
-                end: 100
-            });
+            openmct.time.clock('local', {start: -1000, end: 100});
             expect(window.location.hash.includes('tc.startDelta=1000')).toBe(true);
             expect(window.location.hash.includes('tc.endDelta=100')).toBe(true);
 
-            openmct.time.clockOffsets({
-                start: -2000,
-                end: 200
-            });
+            openmct.time.clockOffsets({start: -2000, end: 200});
             expect(window.location.hash.includes('tc.startDelta=2000')).toBe(true);
             expect(window.location.hash.includes('tc.endDelta=200')).toBe(true);
 
@@ -84,7 +75,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
         describe("when set in the url", () => {
             it("will change from fixed to realtime mode when the mode changes", () => {
                 expectLocationToBeInFixedMode();
-
                 return switchToRealtimeMode().then(() => {
                     let clock = openmct.time.clock();
 
@@ -95,7 +85,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             it("the clock is correctly set in the API from the URL parameters", () => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
-
                     return new Promise((resolve) => {
                         resolveFunction = resolve;
 
@@ -116,7 +105,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             it("the clock offsets are correctly set in the API from the URL parameters", () => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
-
                     return new Promise((resolve) => {
                         resolveFunction = resolve;
                         //The 'hashchange' event appears to be asynchronous, so we need to wait until a clock change has been
@@ -138,7 +126,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             it("the time system is correctly set in the API from the URL parameters", () => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
-
                     return new Promise((resolve) => {
                         resolveFunction = resolve;
 
@@ -161,21 +148,15 @@ describe("The URLTimeSettingsSynchronizer", () => {
     describe("fixed timespan mode", () => {
         beforeEach(() => {
             openmct.time.stopClock();
-            openmct.time.timeSystem('utc', {
-                start: 0,
-                end: 1
-            });
+            openmct.time.timeSystem('utc', {start: 0, end: 1});
         });
 
-        it("when bounds are set via the time API, they are immediately reflected in the URL", () => {
+        it("when bounds are set via the time API, they are immediately reflected in the URL", ()=>{
             //Test expected initial conditions
             expect(window.location.hash.includes('tc.startBound=0')).toBe(true);
             expect(window.location.hash.includes('tc.endBound=1')).toBe(true);
 
-            openmct.time.bounds({
-                start: 10,
-                end: 20
-            });
+            openmct.time.bounds({start: 10, end: 20});
 
             expect(window.location.hash.includes('tc.startBound=10')).toBe(true);
             expect(window.location.hash.includes('tc.endBound=20')).toBe(true);
@@ -185,14 +166,11 @@ describe("The URLTimeSettingsSynchronizer", () => {
             expect(window.location.hash.includes('tc.endBound=1')).toBe(false);
         });
 
-        it("when time system is set via the time API, it is immediately reflected in the URL", () => {
+        it("when time system is set via the time API, it is immediately reflected in the URL", ()=>{
             //Test expected initial conditions
             expect(window.location.hash.includes('tc.timeSystem=utc')).toBe(true);
 
-            openmct.time.timeSystem('local', {
-                start: 20,
-                end: 30
-            });
+            openmct.time.timeSystem('local', {start: 20, end: 30});
 
             expect(window.location.hash.includes('tc.timeSystem=local')).toBe(true);
 
@@ -291,7 +269,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
     function switchToRealtimeMode() {
         let resolveFunction;
-
         return new Promise((resolve) => {
             resolveFunction = resolve;
             openmct.time.on('clock', resolveFunction);
@@ -303,7 +280,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
     function switchToFixedMode() {
         let resolveFunction;
-
         return new Promise((resolve) => {
             resolveFunction = resolve;
             //The 'hashchange' event appears to be asynchronous, so we need to wait until a clock change has been

@@ -30,7 +30,6 @@ define(
 
             function installController() {
                 var Controller = mctForm.controller[1];
-
                 return new Controller(mockScope);
             }
 
@@ -108,6 +107,7 @@ define(
                 expect(mockScope.getRegExp()).toEqual(/\S/);
                 expect(mockScope.getRegExp(undefined)).toEqual(/\S/);
             });
+
 
         });
     }

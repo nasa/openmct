@@ -35,10 +35,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockScope = jasmine.createSpyObj("$scope", ["$eval", "$on", "$apply"]);
 
-                testElement = {
-                    offsetWidth: 100,
-                    offsetHeight: 200
-                };
+                testElement = { offsetWidth: 100, offsetHeight: 200 };
                 testAttrs = { mctResize: "some-expr" };
 
                 mctResize = new MCTResize(mockTimeout);
@@ -58,12 +55,7 @@ define(
                 );
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctResize,
-                    {
-                        bounds: {
-                            width: 100,
-                            height: 200
-                        }
-                    }
+                    { bounds: { width: 100, height: 200 } }
                 );
             });
 
@@ -77,12 +69,7 @@ define(
                 // Shouldn't know about this yet...
                 expect(mockScope.$eval).not.toHaveBeenCalledWith(
                     testAttrs.mctResize,
-                    {
-                        bounds: {
-                            width: 300,
-                            height: 350
-                        }
-                    }
+                    { bounds: { width: 300, height: 350 } }
                 );
 
                 // Fire the timeout
@@ -92,12 +79,7 @@ define(
                 // with the new width & height
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctResize,
-                    {
-                        bounds: {
-                            width: 300,
-                            height: 350
-                        }
-                    }
+                    { bounds: { width: 300, height: 350 } }
                 );
             });
 

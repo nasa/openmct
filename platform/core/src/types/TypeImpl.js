@@ -107,6 +107,7 @@ define(
          * @method Type#hasFeature
          */
 
+
         /**
          * Construct a new type. Types describe categories of
          * domain objects.

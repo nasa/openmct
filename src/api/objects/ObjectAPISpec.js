@@ -16,11 +16,10 @@ describe("The Object API", () => {
             name: "test object",
             type: "test-type"
         };
-    });
+    })
     describe("The save function", () => {
         it("Rejects if no provider available", () => {
             let rejected = false;
-
             return objectAPI.save(mockDomainObject)
                 .catch(() => rejected = true)
                 .then(() => expect(rejected).toBe(true));
@@ -33,7 +32,7 @@ describe("The Object API", () => {
                     "update"
                 ]);
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
-            });
+            })
             it("Calls 'create' on provider if object is new", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).toHaveBeenCalled();
@@ -57,5 +56,5 @@ describe("The Object API", () => {
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
         });
-    });
+    })
 });

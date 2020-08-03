@@ -94,10 +94,7 @@ define([
                 return composition.load().then(function () {
                     expect(listener.calls.count()).toBe(3);
                     expect(listener).toHaveBeenCalledWith({
-                        identifier: {
-                            namespace: 'test',
-                            key: 'a'
-                        }
+                        identifier: {namespace: 'test', key: 'a'}
                     });
                 });
             });
@@ -132,15 +129,12 @@ define([
                     expect(newComposition[0].key).toEqual('b');
                     expect(newComposition[1].key).toEqual('c');
                     expect(newComposition[2].key).toEqual('a');
-                });
+                })
             });
             it('supports adding an object to composition', function () {
                 let addListener = jasmine.createSpy('addListener');
                 let mockChildObject = {
-                    identifier: {
-                        key: 'mock-key',
-                        namespace: ''
-                    }
+                    identifier: {key: 'mock-key', namespace: ''}
                 };
                 composition.on('add', addListener);
                 composition.add(mockChildObject);
@@ -197,10 +191,7 @@ define([
                     listenObject = addListener.calls.mostRecent().args[0];
                     expect(listenObject).toEqual(loadedObject);
                     expect(loadedObject).toEqual({
-                        identifier: {
-                            namespace: 'custom',
-                            key: 'thing'
-                        }
+                        identifier: {namespace: 'custom', key: 'thing'}
                     });
                 });
             });
@@ -209,10 +200,7 @@ define([
 
                 beforeEach(function () {
                     mockChildObject = {
-                        identifier: {
-                            key: 'mock-key',
-                            namespace: ''
-                        }
+                        identifier: {key: 'mock-key', namespace: ''}
                     };
                     composition.add(mockChildObject);
                 });
@@ -289,28 +277,17 @@ define([
                     .then(function () {
                         expect(addListener).not.toHaveBeenCalled();
                         expect(removeListener).not.toHaveBeenCalled();
-                        add({
-                            namespace: 'custom',
-                            key: 'thing'
-                        });
-
+                        add({namespace: 'custom', key: 'thing'});
                         return addPromise;
                     }).then(function () {
                         expect(addListener).toHaveBeenCalledWith({
-                            identifier: {
-                                namespace: 'custom',
-                                key: 'thing'
-                            }
+                            identifier: {namespace: 'custom', key: 'thing'}
                         });
                         remove(addListener.calls.mostRecent().args[0]);
-
                         return removePromise;
                     }).then(function () {
                         expect(removeListener).toHaveBeenCalledWith({
-                            identifier: {
-                                namespace: 'custom',
-                                key: 'thing'
-                            }
+                            identifier: {namespace: 'custom', key: 'thing'}
                         });
                     });
             });

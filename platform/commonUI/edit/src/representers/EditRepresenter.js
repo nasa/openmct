@@ -74,7 +74,6 @@ define(
                     model.configuration = model.configuration || {};
                     model.configuration[this.key] = configuration;
                 }
-
                 domainObject.useCapability('mutation', function () {
                     return model;
                 });

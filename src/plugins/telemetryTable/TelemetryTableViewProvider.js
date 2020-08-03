@@ -34,19 +34,16 @@ define([
             if (!domainObject.hasOwnProperty('telemetry')) {
                 return false;
             }
-
             let metadata = openmct.telemetry.getMetadata(domainObject);
-
             return metadata.values().length > 0;
         }
-
         return {
             key: 'table',
             name: 'Telemetry Table',
             cssClass: 'icon-tabular-realtime',
             canView(domainObject) {
-                return domainObject.type === 'table'
-                    || hasTelemetry(domainObject);
+                return domainObject.type === 'table' ||
+                    hasTelemetry(domainObject)
             },
             canEdit(domainObject) {
                 return domainObject.type === 'table';
@@ -93,13 +90,12 @@ define([
                         component.$destroy();
                         component = undefined;
                     }
-                };
+                }
             },
             priority() {
                 return 1;
             }
         };
     }
-
     return TelemetryTableViewProvider;
 });

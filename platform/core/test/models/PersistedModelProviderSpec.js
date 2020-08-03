@@ -52,10 +52,7 @@ define(
 
             beforeEach(function () {
                 modTimes = {};
-                mockQ = {
-                    when: mockPromise,
-                    all: mockAll
-                };
+                mockQ = { when: mockPromise, all: mockAll };
                 mockPersistenceService = jasmine.createSpyObj(
                     'persistenceService',
                     [
@@ -97,43 +94,19 @@ define(
                 });
 
                 expect(models).toEqual({
-                    a: {
-                        space: SPACE,
-                        id: "a",
-                        persisted: 0,
-                        modified: undefined
-                    },
-                    x: {
-                        space: SPACE,
-                        id: "x",
-                        persisted: 0,
-                        modified: undefined
-                    },
-                    zz: {
-                        space: SPACE,
-                        id: "zz",
-                        persisted: 0,
-                        modified: undefined
-                    }
+                    a: { space: SPACE, id: "a", persisted: 0, modified: undefined },
+                    x: { space: SPACE, id: "x", persisted: 0, modified: undefined },
+                    zz: { space: SPACE, id: "zz", persisted: 0, modified: undefined }
                 });
             });
+
 
             it("ensures that persisted timestamps are present", function () {
                 var mockCallback = jasmine.createSpy("callback"),
                     testModels = {
-                        a: {
-                            modified: 123,
-                            persisted: 1984,
-                            name: "A"
-                        },
-                        b: {
-                            persisted: 1977,
-                            name: "B"
-                        },
-                        c: {
-                            modified: 42,
-                            name: "C"
-                        },
+                        a: { modified: 123, persisted: 1984, name: "A" },
+                        b: { persisted: 1977, name: "B" },
+                        c: { modified: 42, name: "C" },
                         d: { name: "D" }
                     };
 
@@ -147,24 +120,10 @@ define(
                 provider.getModels(Object.keys(testModels)).then(mockCallback);
 
                 expect(mockCallback).toHaveBeenCalledWith({
-                    a: {
-                        modified: 123,
-                        persisted: 1984,
-                        name: "A"
-                    },
-                    b: {
-                        persisted: 1977,
-                        name: "B"
-                    },
-                    c: {
-                        modified: 42,
-                        persisted: 42,
-                        name: "C"
-                    },
-                    d: {
-                        persisted: 12321,
-                        name: "D"
-                    }
+                    a: { modified: 123, persisted: 1984, name: "A" },
+                    b: { persisted: 1977, name: "B" },
+                    c: { modified: 42, persisted: 42, name: "C" },
+                    d: { persisted: 12321, name: "D" }
                 });
             });
 

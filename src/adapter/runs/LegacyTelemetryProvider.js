@@ -137,7 +137,6 @@ define([
         function callbackWrapper(series) {
             callback(createDatum(domainObject, metadata, series, series.getPointCount() - 1));
         }
-
         return capability.subscribe(callbackWrapper, request) || function () {};
     };
 
@@ -146,7 +145,6 @@ define([
             utils.toOldFormat(domainObject),
             utils.makeKeyString(domainObject.identifier)
         );
-
         return oldObject.hasCapability("limit");
     };
 

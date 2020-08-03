@@ -81,7 +81,6 @@ define(
                 (dictionary.instruments || []).forEach(function (instrument) {
                     addInstrument(instrument, "msl:curiosity");
                 });
-
                 return models;
             }
 
@@ -91,7 +90,6 @@ define(
                 }
             };
         }
-
         return RemsTelemetryModelProvider;
     }
 );

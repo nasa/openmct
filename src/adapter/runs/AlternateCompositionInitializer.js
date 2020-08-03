@@ -33,8 +33,7 @@ define([
     function AlternateCompositionInitializer(openmct) {
         AlternateCompositionCapability.appliesTo = function (model, id) {
             model = objectUtils.toNewFormat(model, id || '');
-
-            return Boolean(openmct.composition.get(model));
+            return !!openmct.composition.get(model);
         };
     }
 

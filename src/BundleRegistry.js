@@ -31,7 +31,6 @@ define(function () {
         if (this.knownBundles.hasOwnProperty(path)) {
             throw new Error('Cannot register bundle with duplicate path', path);
         }
-
         this.knownBundles[path] = definition;
     };
 
@@ -39,7 +38,6 @@ define(function () {
         if (!this.knownBundles[path]) {
             throw new Error('Unknown bundle ' + path);
         }
-
         this.bundles[path] = this.knownBundles[path];
     };
 
@@ -47,12 +45,11 @@ define(function () {
         if (!this.bundles[path]) {
             throw new Error('Tried to disable inactive bundle ' + path);
         }
-
         delete this.bundles[path];
     };
 
     BundleRegistry.prototype.contains = function (path) {
-        return Boolean(this.bundles[path]);
+        return !!this.bundles[path];
     };
 
     BundleRegistry.prototype.get = function (path) {
@@ -69,7 +66,6 @@ define(function () {
         if (!this.knownBundles[path]) {
             throw new Error('Cannot remove Unknown Bundle ' + path);
         }
-
         delete this.bundles[path];
         delete this.knownBundles[path];
     };

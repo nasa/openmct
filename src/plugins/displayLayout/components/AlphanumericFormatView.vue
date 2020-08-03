@@ -58,7 +58,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             telemetryFormat: undefined,
             nonMixedFormat: false
-        };
+        }
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.toggleEdit);
@@ -99,6 +99,6 @@ export default {
             this.telemetryFormat = this.nonMixedFormat ? format : '';
         }
     }
-};
+}
 
 </script>

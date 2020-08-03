@@ -59,7 +59,6 @@ define([
                 self.telemetryMetadata = self.manager.getTelemetryMetadata(self.config.object);
                 self.generateOptions();
             }
-
             self.select.setSelected(self.config.key);
         }
 
@@ -80,7 +79,7 @@ define([
         var items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
         });
-        items.splice(0, 0, ['', NULLVALUE]);
+        items.splice(0, 0, ['',NULLVALUE]);
         this.select.setOptions(items);
 
         if (this.select.options.length < 2) {

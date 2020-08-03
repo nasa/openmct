@@ -133,14 +133,8 @@ define([
         it('can convert model results to object results', function () {
             var modelResults = {
                     hits: [
-                        {
-                            id: 123,
-                            score: 5
-                        },
-                        {
-                            id: 234,
-                            score: 1
-                        }
+                        {id: 123, score: 5},
+                        {id: 234, score: 1}
                     ],
                     total: 2
                 },
@@ -156,16 +150,8 @@ define([
                 .then(function (objectResults) {
                     expect(objectResults).toEqual({
                         hits: [
-                            {
-                                id: 123,
-                                score: 5,
-                                object: '123-object-hey'
-                            },
-                            {
-                                id: 234,
-                                score: 1,
-                                object: '234-object-hello'
-                            }
+                            {id: 123, score: 5, object: '123-object-hey'},
+                            {id: 234, score: 1, object: '234-object-hello'}
                         ],
                         total: 2
                     });

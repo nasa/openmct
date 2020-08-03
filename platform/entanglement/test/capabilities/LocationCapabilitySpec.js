@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/capabilities/LocationCapability',
@@ -116,7 +117,6 @@ define(
                         if (mockQ.when.calls.count() > 0) {
                             qPromise.resolve(mockQ.when.calls.mostRecent().args[0]);
                         }
-
                         if (mockObjectService.getObjects.calls.count() > 0) {
                             objectPromise.resolve(originalObjects);
                         }
@@ -156,6 +156,7 @@ define(
                             .toHaveBeenCalledWith(originalObjects.testObject);
                     });
                 });
+
 
             });
         });

@@ -253,22 +253,20 @@ export default {
                     label: `when ${TRIGGER_LABEL[TRIGGER[trigger]]}`
                 });
             });
-
             return triggerOptions;
         },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
             if (criteria.length) {
                 let lastCriterion = criteria[criteria.length - 1];
-                if (lastCriterion.telemetry
-                    && lastCriterion.operation
-                    && (lastCriterion.input.length
-                        || lastCriterion.operation === 'isDefined'
-                        || lastCriterion.operation === 'isUndefined')) {
+                if (lastCriterion.telemetry &&
+                    lastCriterion.operation &&
+                    (lastCriterion.input.length ||
+                        lastCriterion.operation === 'isDefined' ||
+                        lastCriterion.operation === 'isUndefined')) {
                     return true;
                 }
             }
-
             return false;
         }
     },
@@ -295,7 +293,6 @@ export default {
             } else {
                 this.condition.configuration.output = this.selectedOutputSelection;
             }
-
             this.persist();
         },
         addCriteria() {
@@ -320,14 +317,8 @@ export default {
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
-            if (!this.isDragging) {
-                return;
-            }
-
-            if (targetIndex > this.moveIndex) {
-                targetIndex--;
-            } // for 'downward' move
-
+            if (!this.isDragging) { return }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -335,14 +326,8 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
-            if (!this.isDragging) {
-                return;
-            }
-
-            if (targetIndex > this.moveIndex) {
-                targetIndex--;
-            } // for 'downward' move
-
+            if (!this.isDragging) { return }
+            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -385,8 +370,8 @@ export default {
             });
         },
         initCap(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+            return str.charAt(0).toUpperCase() + str.slice(1)
         }
     }
-};
+}
 </script>

@@ -36,14 +36,12 @@ define([
                 if (selection.length === 0 || selection[0].length === 0) {
                     return false;
                 }
-
                 let object = selection[0][0].context.item;
 
                 return object && supportedObjectTypesArray.some(type => object.type === type);
             },
             view: function (selection) {
                 let component;
-
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -63,13 +61,12 @@ define([
                             component = undefined;
                         }
                     }
-                };
+                }
             },
             priority: function () {
                 return 1;
             }
-        };
+        }
     }
-
     return FiltersInspectorViewProvider;
 });

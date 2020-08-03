@@ -37,7 +37,6 @@ define([
         if (domainObject.getModel().type === 'summary-widget') {
             return view.key === 'summary-widget-viewer';
         }
-
         return true;
 
     };

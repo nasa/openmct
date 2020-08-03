@@ -52,21 +52,20 @@ export default {
             globalMetadata: {},
             providedObject,
             children: {}
-        };
+        }
     },
     computed: {
         hasActiveFilters() {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(filters => {
                 return Object.values(filters).some(comparator => {
-                    return (typeof (comparator) === 'object' && !_.isEmpty(comparator));
+                    return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
                 });
             });
         },
         hasMixedFilters() {
             // Should be true when filter values are mixed.
             let filtersToCompare = _.omit(this.persistedFilters[Object.keys(this.persistedFilters)[0]], [USE_GLOBAL]);
-
             return Object.values(this.persistedFilters).some(filters => {
                 return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
             });
@@ -79,7 +78,6 @@ export default {
                     return FILTER_VIEW_TITLE;
                 }
             }
-
             return '';
         }
     },
@@ -160,14 +158,13 @@ export default {
             let filtersToRemove = new Set();
 
             this.children[keyString].metadataWithFilters.forEach(metadatum => {
-                let keepFilter = false;
+                let keepFilter = false
                 Object.keys(this.children).forEach(childKeyString => {
                     if (childKeyString !== keyString) {
                         let filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
 
                         if (filterMatched) {
                             keepFilter = true;
-
                             return;
                         }
                     }
@@ -185,8 +182,8 @@ export default {
 
             if (useGlobalValues) {
                 Object.keys(this.persistedFilters[keyString]).forEach(key => {
-                    if (typeof (this.persistedFilters[keyString][key]) === 'object') {
-                        this.persistedFilters[keyString][key] = this.globalFilters[key];
+                    if (typeof(this.persistedFilters[keyString][key]) === 'object') {
+                        this.persistedFilters[keyString][key]  = this.globalFilters[key];
                     }
                 });
             }
@@ -224,11 +221,9 @@ export default {
             this.children[keyString].metadataWithFilters.forEach(metadatum => {
                 if (metadatum.key === field) {
                     hasField = true;
-
                     return;
                 }
             });
-
             return hasField;
         },
         mutateConfigurationFilters() {
@@ -238,5 +233,5 @@ export default {
             this.openmct.objects.mutate(this.providedObject, 'configuration.globalFilters', this.globalFilters);
         }
     }
-};
+}
 </script>

@@ -45,7 +45,6 @@ define(
             // because it may be saved elsewhere
             if ((key === 'edit' && category === 'view-control') || key === 'properties') {
                 let newStyleObject = objectUtils.toNewFormat(domainObject, domainObject.getId());
-
                 return this.openmct.objects.isPersistable(newStyleObject);
             }
 

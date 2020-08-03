@@ -96,7 +96,6 @@ define(
 
                 function resolveCategory(category) {
                     result[category] = [];
-
                     return Promise.all(
                         bundle.getExtensions(category).map(resolveExtension)
                     );

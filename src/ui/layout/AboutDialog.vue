@@ -41,12 +41,12 @@ export default {
         return {
             branding: JSON.parse(JSON.stringify(this.openmct.branding())),
             buildInfo: JSON.parse(JSON.stringify(this.openmct.buildInfo))
-        };
+        }
     },
     methods: {
         showLicenses() {
             window.open('#/licenses');
         }
     }
-};
+}
 </script>

@@ -33,12 +33,10 @@ define([
 
         beforeEach(function () {
             testModel = {};
-            testContext = {
-                domainObject: jasmine.createSpyObj('domainObject', [
-                    'getModel',
-                    'useCapability'
-                ])
-            };
+            testContext = { domainObject: jasmine.createSpyObj('domainObject', [
+                'getModel',
+                'useCapability'
+            ]) };
             testAdaptedObject = { foo: 'bar' };
             testContext.domainObject.getModel.and.returnValue(testModel);
             testContext.domainObject.useCapability.and.callFake(function (c) {

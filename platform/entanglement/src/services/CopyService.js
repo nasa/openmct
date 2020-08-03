@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     ["./CopyTask"],
     function (CopyTask) {
@@ -42,11 +43,9 @@ define(
             if (!parentCandidate || !parentCandidate.getId) {
                 return false;
             }
-
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
-
             return this.openmct.composition.checkPolicy(parentCandidate.useCapability('adapter'), object.useCapability('adapter'));
         };
 
@@ -82,8 +81,8 @@ define(
             // Combines caller-provided filter (if any) with the
             // baseline behavior of respecting creation policy.
             function filterWithPolicy(domainObj) {
-                return (!filter || filter(domainObj))
-                    && policyService.allow(
+                return (!filter || filter(domainObj)) &&
+                    policyService.allow(
                         "creation",
                         domainObj.getCapability("type")
                     );

@@ -129,7 +129,6 @@ export default {
     computed: {
         showFrameEdit() {
             let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
-
             return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
         },
         position() {
@@ -137,20 +136,13 @@ export default {
             if (this.dragging && this.dragPosition) {
                 ({x, y, x2, y2} = this.dragPosition);
             }
-
-            return {
-                x,
-                y,
-                x2,
-                y2
-            };
+            return {x, y, x2, y2};
         },
         stroke() {
             if (this.itemStyle) {
                 if (this.itemStyle.border) {
                     return this.itemStyle.border.replace('1px solid ', '');
                 }
-
                 return '';
             } else {
                 return this.item.stroke;
@@ -162,7 +154,6 @@ export default {
             let height = Math.max(this.gridSize[1] * Math.abs(y - y2), 1);
             let left = this.gridSize[0] * Math.min(x, x2);
             let top = this.gridSize[1] * Math.min(y, y2);
-
             return {
                 left: `${left}px`,
                 top: `${top}px`,
@@ -181,67 +172,41 @@ export default {
             if (x2 === x) {
                 return 5; // Vertical line
             }
-
             if (y2 === y) {
                 return 6; // Horizontal line
             }
-
             if (x2 > x) {
                 if (y2 < y) {
                     return 1;
                 }
-
                 return 4;
             }
-
             if (y2 < y) {
                 return 2;
             }
-
             return 3;
         },
         linePosition() {
             let pos = {};
-            switch (this.vectorQuadrant) {
+            switch(this.vectorQuadrant) {
             case 1:
             case 3:
                 // slopes up
-                pos = {
-                    x1: '0%',
-                    y1: '100%',
-                    x2: '100%',
-                    y2: '0%'
-                };
+                pos = {x1: '0%', y1: '100%', x2: '100%', y2: '0%'};
                 break;
             case 5:
                 // vertical
-                pos = {
-                    x1: '0%',
-                    y1: '0%',
-                    x2: '0%',
-                    y2: '100%'
-                };
+                pos = {x1: '0%', y1: '0%', x2: '0%', y2: '100%'};
                 break;
             case 6:
                 // horizontal
-                pos = {
-                    x1: '0%',
-                    y1: '0%',
-                    x2: '100%',
-                    y2: '0%'
-                };
+                pos = {x1: '0%', y1: '0%', x2: '100%', y2: '0%'};
                 break;
             default:
                 // slopes down
-                pos = {
-                    x1: '0%',
-                    y1: '0%',
-                    x2: '100%',
-                    y2: '100%'
-                };
+                pos = {x1: '0%', y1: '0%', x2: '100%', y2: '100%'};
                 break;
             }
-
             return pos;
         }
     },
@@ -273,7 +238,6 @@ export default {
         if (this.removeSelectable) {
             this.removeSelectable();
         }
-
         this.openmct.selection.off('change', this.setSelection);
     },
     methods: {
@@ -283,12 +247,7 @@ export default {
             document.body.addEventListener('mouseup', this.endDrag);
             this.startPosition = [event.pageX, event.pageY];
             let {x, y, x2, y2} = this.item;
-            this.dragPosition = {
-                x,
-                y,
-                x2,
-                y2
-            };
+            this.dragPosition = {x, y, x2, y2};
             if (x === x2 || y === y2) {
                 if (y > y2 || x < x2) {
                     if (this.dragging === 'start') {
@@ -298,7 +257,6 @@ export default {
                     }
                 }
             }
-
             event.preventDefault();
         },
         continueDrag(event) {
@@ -324,14 +282,8 @@ export default {
             if (!this.dragging) {
                 this.$emit('endMove');
             } else {
-                this.$emit('endLineResize', this.item, {
-                    x,
-                    y,
-                    x2,
-                    y2
-                });
+                this.$emit('endLineResize', this.item, {x, y, x2, y2});
             }
-
             this.dragPosition = undefined;
             this.dragging = undefined;
             event.preventDefault();
@@ -340,12 +292,7 @@ export default {
             let gridDeltaX = Math.round(pxDeltaX / this.gridSize[0]);
             let gridDeltaY = Math.round(pxDeltaY / this.gridSize[1]);
             let {x, y, x2, y2} = this.item;
-            let dragPosition = {
-                x,
-                y,
-                x2,
-                y2
-            };
+            let dragPosition = {x, y, x2, y2};
 
             if (this.dragging === 'start') {
                 dragPosition.x -= gridDeltaX;
@@ -360,7 +307,6 @@ export default {
                 dragPosition.x2 -= gridDeltaX;
                 dragPosition.y2 -= gridDeltaY;
             }
-
             return dragPosition;
         },
         setSelection(selection) {
@@ -372,5 +318,5 @@ export default {
             });
         }
     }
-};
+}
 </script>

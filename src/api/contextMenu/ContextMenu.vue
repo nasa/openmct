@@ -20,5 +20,5 @@
 <script>
 export default {
     inject: ['actions', 'objectPath']
-};
+}
 </script>

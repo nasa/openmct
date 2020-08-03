@@ -69,7 +69,6 @@
 
 <script>
 import TelemetryTableColumn from '../TelemetryTableColumn';
-import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn';
 
 export default {
     inject: ['tableConfiguration', 'openmct'],
@@ -78,7 +77,7 @@ export default {
             headers: {},
             isEditing: this.openmct.editor.isEditing(),
             configuration: this.tableConfiguration.getConfiguration()
-        };
+        }
     },
     mounted() {
         this.unlisteners = [];
@@ -132,14 +131,10 @@ export default {
         },
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
             metadataValues.forEach(metadatum => {
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
-                // if units are available, need to add columns to be hidden
-                if (metadatum.unit !== undefined) {
-                    let unitColumn = new TelemetryTableUnitColumn(this.openmct, metadatum);
-                    this.tableConfiguration.addSingleColumnForObject(telemetryObject, unitColumn);
-                }
             });
         },
         toggleHeaderVisibility() {
@@ -149,5 +144,5 @@ export default {
             this.tableConfiguration.updateConfiguration(this.configuration);
         }
     }
-};
+}
 </script>

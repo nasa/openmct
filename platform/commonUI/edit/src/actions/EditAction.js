@@ -91,9 +91,9 @@ define(
 
             // Only allow editing of types that support it and are not already
             // being edited
-            return type && type.hasFeature('creation')
-                && domainObject.hasCapability('editor')
-                && !domainObject.getCapability('editor').isEditContextRoot();
+            return type && type.hasFeature('creation') &&
+                domainObject.hasCapability('editor') &&
+                !domainObject.getCapability('editor').isEditContextRoot();
         };
 
         return EditAction;

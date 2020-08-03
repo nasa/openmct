@@ -29,7 +29,7 @@ define([
 ) {
 
     return {
-        name: "platform/features/pages",
+        name:"platform/features/pages",
         definition: {
             "extensions": {
                 "types": [

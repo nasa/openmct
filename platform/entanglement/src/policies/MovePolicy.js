@@ -34,14 +34,12 @@ define([], function () {
 
     function parentOf(domainObject) {
         var context = domainObject.getCapability('context');
-
         return context && context.getParent();
     }
 
     function allowMutation(domainObject) {
         var type = domainObject && domainObject.getCapability('type');
-
-        return Boolean(type && type.hasFeature('creation'));
+        return !!(type && type.hasFeature('creation'));
     }
 
     function selectedObject(context) {
@@ -52,8 +50,8 @@ define([], function () {
         var key = action.getMetadata().key;
 
         if (key === 'move') {
-            return allowMutation(selectedObject(context))
-                && allowMutation(parentOf(selectedObject(context)));
+            return allowMutation(selectedObject(context)) &&
+                allowMutation(parentOf(selectedObject(context)));
         }
 
         return true;

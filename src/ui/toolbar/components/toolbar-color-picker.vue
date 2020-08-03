@@ -153,5 +153,5 @@ export default {
             }
         }
     }
-};
+}
 </script>

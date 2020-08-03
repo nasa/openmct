@@ -102,7 +102,7 @@ define(
                 });
 
                 mockDomainObject.hasCapability.and.callFake(function (name) {
-                    return Boolean(capabilities[name]);
+                    return !!capabilities[name];
                 });
 
                 capabilities.editor.finish.and.returnValue(mockPromise(true));
@@ -123,8 +123,8 @@ define(
                 expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
             });
 
-            it("invokes the editor capability's cancel functionality when"
-                + " performed", function () {
+            it("invokes the editor capability's cancel functionality when" +
+                " performed", function () {
                 mockDomainObject.getModel.and.returnValue({persisted: 1});
                 //Return true from navigate action
                 capabilities.action.perform.and.returnValue(mockPromise(true));

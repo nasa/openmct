@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/actions/CopyAction',
@@ -47,11 +48,7 @@ define(
                 mockLog,
                 abstractComposePromise,
                 domainObject = {model: {name: "mockObject"}},
-                progress = {
-                    phase: "copying",
-                    totalObjects: 10,
-                    processed: 1
-                };
+                progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(
@@ -117,7 +114,6 @@ define(
 
                 locationServicePromise.then.and.callFake(function (callback) {
                     callback(newParent);
-
                     return abstractComposePromise;
                 });
 
@@ -146,6 +142,7 @@ define(
 
                 copyService = new MockCopyService();
             });
+
 
             describe("with context from context-action", function () {
                 beforeEach(function () {
@@ -231,6 +228,7 @@ define(
                 it("initializes happily", function () {
                     expect(copyAction).toBeDefined();
                 });
+
 
                 it("performs copy immediately", function () {
                     copyAction.perform();

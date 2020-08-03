@@ -52,8 +52,8 @@ define(
 
             // Check that a selection is of the valid type
             function validateTreeSelection(selectedObject) {
-                var type = selectedObject
-                    && selectedObject.getCapability('type');
+                var type = selectedObject &&
+                    selectedObject.getCapability('type');
 
                 // Delegate type-checking to the capability...
                 if (!type || !type.instanceOf($scope.structure.type)) {
@@ -72,7 +72,6 @@ define(
                     function getObject(id) {
                         return objects[id];
                     }
-
                     self.selectedObjects =
                         ids.filter(getObject).map(getObject);
                 }
@@ -100,6 +99,9 @@ define(
             this.listModel = listModel;
         }
 
+
+
+
         // Set the value of the field being edited
         SelectorController.prototype.setField = function (value) {
             this.$scope.ngModel[this.$scope.field] = value;
@@ -109,6 +111,7 @@ define(
         SelectorController.prototype.getField = function () {
             return this.$scope.ngModel[this.$scope.field] || [];
         };
+
 
         /**
          * Get the root object to show in the left-hand tree.
@@ -158,6 +161,7 @@ define(
         SelectorController.prototype.selected = function () {
             return this.selectedObjects;
         };
+
 
         return SelectorController;
     }

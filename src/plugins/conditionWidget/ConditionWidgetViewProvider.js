@@ -39,7 +39,7 @@ export default function ConditionWidget(openmct) {
 
             return {
                 show: function (element) {
-                    component = new Vue({
+                    component =  new Vue({
                         el: element,
                         components: {
                             ConditionWidgetComponent: ConditionWidgetComponent

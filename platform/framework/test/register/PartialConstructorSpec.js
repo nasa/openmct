@@ -38,7 +38,6 @@ define(
                     c: c,
                     d: d
                 };
-
                 return result;
             }
 

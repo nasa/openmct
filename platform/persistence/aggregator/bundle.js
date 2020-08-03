@@ -27,7 +27,7 @@ define([
 ) {
 
     return {
-        name: "platform/persistence/aggregator",
+        name:"platform/persistence/aggregator",
         definition: {
             "extensions": {
                 "components": [

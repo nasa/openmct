@@ -47,7 +47,7 @@ define([
 ) {
 
     return {
-        name: "platform/commonUI/about",
+        name:"platform/commonUI/about",
         definition: {
             "name": "About Open MCT",
             "extensions": {

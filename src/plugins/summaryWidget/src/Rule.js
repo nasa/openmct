@@ -148,7 +148,6 @@ define([
             } else if (inputKey === 'label') {
                 self.thumbnailLabel.html(text);
             }
-
             self.eventEmitter.emit('change');
         }
 
@@ -165,7 +164,6 @@ define([
             self.widgetDnD.dragStart(self.config.id);
             self.domElement.hide();
         }
-
         /**
          * Show or hide this rule's configuration properties
          * @private
@@ -309,8 +307,8 @@ define([
      * Mutate thet domain object with this rule's local configuration
      */
     Rule.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.'
-            + this.config.id, this.config);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
+            this.config.id, this.config);
     };
 
     /**
@@ -377,7 +375,6 @@ define([
         } else {
             ruleConfigById[this.config.id].conditions.push(newConfig);
         }
-
         this.domainObject.configuration.ruleConfigById = ruleConfigById;
         this.updateDomainObject();
         this.refreshConditions();
@@ -416,7 +413,6 @@ define([
                 if (loopCnt > 0) {
                     $('.t-condition-context', $condition).html(triggerContextStr + ' when');
                 }
-
                 loopCnt++;
             });
         }
@@ -467,11 +463,11 @@ define([
                     property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
                     if (name || property || operation) {
-                        description += 'when '
-                            + (name ? name + '\'s ' : '')
-                            + (property ? property + ' ' : '')
-                            + (operation ? operation + ' ' : '')
-                            + (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                        description += 'when ' +
+                            (name ? name + '\'s ' : '') +
+                            (property ? property + ' ' : '') +
+                            (operation ? operation + ' ' : '') +
+                            (self.config.trigger === 'any' ? ' OR ' : ' AND ');
                     }
                 });
             }
@@ -480,11 +476,9 @@ define([
         if (description.endsWith('OR ')) {
             description = description.substring(0, description.length - 3);
         }
-
         if (description.endsWith('AND ')) {
             description = description.substring(0, description.length - 4);
         }
-
         description = (description === '' ? this.config.description : description);
         this.description.html(description);
         this.config.description = description;

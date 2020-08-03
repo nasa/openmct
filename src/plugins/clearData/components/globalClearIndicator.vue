@@ -14,5 +14,5 @@ export default {
             this.openmct.objectViews.emit('clearData');
         }
     }
-};
+}
 </script>

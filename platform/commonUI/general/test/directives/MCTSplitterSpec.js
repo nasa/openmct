@@ -98,7 +98,7 @@ define(
                     });
 
                     it("tell's the splitter when it is done resizing", function () {
-                        mockScope.splitter.move([10, 0]);
+                        mockScope.splitter.move([10,0]);
                         mockScope.splitter.endMove();
                         expect(mockSplitPane.endResizing).toHaveBeenCalledWith(testPosition + 10);
                     });

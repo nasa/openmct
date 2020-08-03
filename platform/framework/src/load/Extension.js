@@ -65,7 +65,6 @@ define(
                 logName += definition.name || "";
                 logName += ")";
             }
-
             logName += " from " + bundle.getLogName();
 
             // Copy over definition. This allows us to attach the bundle
@@ -132,9 +131,9 @@ define(
          * @returns {string} path to implementation, or undefined
          */
         Extension.prototype.getImplementationPath = function () {
-            return (this.hasImplementation() && !this.hasImplementationValue())
-                ? this.bundle.getSourcePath(this.definition.implementation)
-                : undefined;
+            return (this.hasImplementation() && !this.hasImplementationValue()) ?
+                this.bundle.getSourcePath(this.definition.implementation) :
+                undefined;
         };
 
         /**
@@ -143,9 +142,9 @@ define(
          * @returns {function} the constructor for this extension instance
          */
         Extension.prototype.getImplementationValue = function () {
-            return typeof this.definition.implementation === 'function'
-                ? this.definition.implementation
-                : undefined;
+            return typeof this.definition.implementation === 'function' ?
+                this.definition.implementation :
+                undefined;
         };
 
         /**

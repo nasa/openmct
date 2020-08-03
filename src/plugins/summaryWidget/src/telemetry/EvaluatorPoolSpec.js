@@ -48,7 +48,6 @@ define([
                     ]
                 );
                 compositionCollection.load.and.returnValue(Promise.resolve());
-
                 return compositionCollection;
             });
             openmct.objects.observe.and.callFake(function () {

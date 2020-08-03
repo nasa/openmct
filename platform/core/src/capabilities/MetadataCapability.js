@@ -43,14 +43,13 @@ define(
 
             function hasDisplayableValue(metadataProperty) {
                 var t = typeof metadataProperty.value;
-
                 return (t === 'string' || t === 'number');
             }
 
             function formatTimestamp(timestamp) {
-                return typeof timestamp === 'number'
-                    ? (moment.utc(timestamp).format(TIME_FORMAT) + " UTC")
-                    : undefined;
+                return typeof timestamp === 'number' ?
+                    (moment.utc(timestamp).format(TIME_FORMAT) + " UTC") :
+                    undefined;
             }
 
             function getProperties() {
@@ -68,7 +67,6 @@ define(
 
             function getCommonMetadata() {
                 var type = domainObject.getCapability('type');
-
                 // Note that invalid values will be filtered out later
                 return [
                     {

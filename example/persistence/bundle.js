@@ -29,7 +29,7 @@ define([
     "use strict";
 
     return {
-        name: "example/persistence",
+        name:"example/persistence",
         definition: {
             "extensions": {
                 "components": [

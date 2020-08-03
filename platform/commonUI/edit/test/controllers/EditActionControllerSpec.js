@@ -40,7 +40,6 @@ define(
                     mockedSaveActions.forEach(function (action) {
                         action.getMetadata.and.returnValue(mockSaveActionMetadata);
                     });
-
                     return mockedSaveActions;
                 } else if (actionContext.category === "conclude-editing") {
                     return ["a", "b", "c"];

@@ -27,6 +27,7 @@ define(
     ["../../src/capabilities/ContextualDomainObject"],
     function (ContextualDomainObject) {
 
+
         var DOMAIN_OBJECT_METHODS = [
             "getId",
             "getModel",
@@ -40,6 +41,7 @@ define(
                 mockDomainObject,
                 model,
                 contextualDomainObject;
+
 
             beforeEach(function () {
                 mockParent = jasmine.createSpyObj("parent", DOMAIN_OBJECT_METHODS);
@@ -56,6 +58,7 @@ define(
                 );
             });
 
+
             it("adds a context capability to a domain object", function () {
                 var context = contextualDomainObject.getCapability('context');
 
@@ -65,6 +68,7 @@ define(
                 expect(context.getRoot).toBeDefined();
                 expect(context.getParent()).toEqual(mockParent);
             });
+
 
             it("does not shadow other domain object methods", function () {
                 expect(contextualDomainObject.getModel())

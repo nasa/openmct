@@ -51,7 +51,6 @@ define(
                 } else {
                     this.columnFilters[columnKey] = filter;
                 }
-
                 this.rows = rowsToFilter.filter(this.matchesFilters, this);
                 this.emit('filter');
             }
@@ -71,11 +70,11 @@ define(
              * @private
              */
             isSubsetOfCurrentFilter(columnKey, filter) {
-                return this.columnFilters[columnKey]
-                    && filter.startsWith(this.columnFilters[columnKey])
+                return this.columnFilters[columnKey] &&
+                    filter.startsWith(this.columnFilters[columnKey]) &&
                     // startsWith check will otherwise fail when filter cleared
                     // because anyString.startsWith('') === true
-                    && filter !== '';
+                    filter !== '';
             }
 
             addOne(row) {
@@ -99,7 +98,6 @@ define(
 
                     doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
                 });
-
                 return doesMatchFilters;
             }
 

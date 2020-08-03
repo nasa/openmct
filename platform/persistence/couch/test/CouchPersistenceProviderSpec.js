@@ -85,11 +85,7 @@ define(
             it("allows object creation", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "xyz",
-                        "ok": true
-                    }
+                    data: { "_id": "abc", "_rev": "xyz", "ok": true }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -109,11 +105,7 @@ define(
             it("allows object models to be read back", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "xyz",
-                        "model": model
-                    }
+                    data: { "_id": "abc", "_rev": "xyz", "model": model }
                 }));
                 provider.readObject("testSpace", "abc").then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -129,21 +121,13 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "xyz",
-                        "model": {}
-                    }
+                    data: { "_id": "abc", "_rev": "xyz", "model": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "uvw",
-                        "ok": true
-                    }
+                    data: { "_id": "abc", "_rev": "uvw", "ok": true }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -163,21 +147,13 @@ define(
             it("allows object deletion", function () {
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "xyz",
-                        "model": {}
-                    }
+                    data: { "_id": "abc", "_rev": "xyz", "model": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "uvw",
-                        "ok": true
-                    }
+                    data: { "_id": "abc", "_rev": "uvw", "ok": true }
                 }));
                 provider.deleteObject("testSpace", "abc", {}).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -197,11 +173,7 @@ define(
             it("reports failure to create objects", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_rev": "xyz",
-                        "ok": false
-                    }
+                    data: { "_id": "abc", "_rev": "xyz", "ok": false }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
                 expect(capture).toHaveBeenCalledWith(false);

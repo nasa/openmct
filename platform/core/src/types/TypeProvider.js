@@ -56,16 +56,15 @@ define(
 
         function removeDuplicates(array) {
             var set = {};
-
             return array ? array.filter(function (element) {
                 // Don't filter objects (e.g. property definitions)
                 if (element instanceof Object && !(element instanceof String)) {
                     return true;
                 }
 
-                return set[element]
-                    ? false
-                    : (set[element] = true);
+                return set[element] ?
+                    false :
+                    (set[element] = true);
             }) : array;
         }
 
@@ -90,7 +89,6 @@ define(
                         result[k] = (a[k] || []).concat(b[k] || []);
                     }
                 });
-
                 return result;
             }, {});
 
@@ -100,7 +98,6 @@ define(
                     collapsed[k] = removeDuplicates(collapsed[k]);
                 }
             });
-
             return collapsed;
         }
 
@@ -123,9 +120,9 @@ define(
                             result[k] = (result[k] || []).concat(typeDef);
                         }
                     });
-
                     return result;
                 }(rawTypeDefinitions));
+
 
             this.typeMap = {};
             this.typeDefinitions = typeDefinitions;
@@ -134,7 +131,6 @@ define(
 
         TypeProvider.prototype.listTypes = function () {
             var self = this;
-
             return removeDuplicates(
                 this.rawTypeDefinitions.filter(function (def) {
                     return def.key;
@@ -178,8 +174,8 @@ define(
 
                     // Always provide a default name
                     def.model = def.model || {};
-                    def.model.name = def.model.name
-                        || ("Unnamed " + (def.name || "Object"));
+                    def.model.name = def.model.name ||
+                        ("Unnamed " + (def.name || "Object"));
 
                     return def;
                 }

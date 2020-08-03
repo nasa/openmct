@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/services/LocationService'
@@ -65,7 +66,6 @@ define(
                     validate = function () {
                         return true;
                     };
-
                     initialLocation = { key: "a key" };
                     locationResult = locationService.getLocationFromUser(
                         title,

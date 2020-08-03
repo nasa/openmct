@@ -13,11 +13,9 @@ export default {
             if (!this.objectPath.length) {
                 return;
             }
-
             if (this.navigateToPath) {
                 return '#' + this.navigateToPath;
             }
-
             return '#/browse/' + this.objectPath
                 .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
                 .reverse()

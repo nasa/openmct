@@ -38,8 +38,8 @@ export default {
             required: true,
             validator(value) {
                 // must pass valid options array.
-                return Array.isArray(value.options)
-                    && value.options.every((o) => o.value);
+                return Array.isArray(value.options) &&
+                    value.options.every((o) => o.value);
             }
         }
     },
@@ -47,9 +47,8 @@ export default {
         selectedName() {
             let selectedOption = this.options.options.filter((o) => o.value === this.options.value)[0];
             if (selectedOption) {
-                return selectedOption.name || selectedOption.value;
+                return selectedOption.name || selectedOption.value
             }
-
             // If no selected option, then options are non-specific
             return '??px';
         },
@@ -62,9 +61,8 @@ export default {
             if (this.options.value === option.value) {
                 return;
             }
-
             this.$emit('change', option.value, this.options);
         }
     }
-};
+}
 </script>

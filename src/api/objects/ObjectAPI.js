@@ -36,6 +36,7 @@ define([
     EventEmitter
 ) {
 
+
     /**
      * Utilities for loading, saving, and manipulating domain objects.
      * @interface ObjectAPI
@@ -65,7 +66,6 @@ define([
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
-
         return this.providers[identifier.namespace] || this.fallbackProvider;
     };
 
@@ -174,11 +174,10 @@ define([
 
     ObjectAPI.prototype.isPersistable = function (domainObject) {
         let provider = this.getProvider(domainObject.identifier);
-
-        return provider !== undefined
-            && provider.create !== undefined
-            && provider.update !== undefined;
-    };
+        return provider !== undefined &&
+            provider.create !== undefined &&
+            provider.update !== undefined;
+    }
 
     /**
      * Save this domain object in its current state. EXPERIMENTAL
@@ -207,7 +206,6 @@ define([
                 result = provider.update(domainObject);
             }
         }
-
         return result;
     };
 
@@ -234,7 +232,6 @@ define([
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         var mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
-
         return mutableObject.set(path, value);
     };
 
@@ -251,7 +248,6 @@ define([
         var mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
-
         return mutableObject.stopListening.bind(mutableObject);
     };
 
@@ -270,9 +266,9 @@ define([
     ObjectAPI.prototype.areIdsEqual = function (...identifiers) {
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                return identifier === identifiers[0] ||
+                    (identifier.namespace === identifiers[0].namespace &&
+                        identifier.key === identifiers[0].key);
             });
     };
 
@@ -325,9 +321,8 @@ define([
      */
 
     function hasAlreadyBeenPersisted(domainObject) {
-        return domainObject.persisted !== undefined
-            && domainObject.persisted === domainObject.modified;
+        return domainObject.persisted !== undefined &&
+            domainObject.persisted === domainObject.modified;
     }
-
     return ObjectAPI;
 });

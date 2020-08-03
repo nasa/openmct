@@ -51,7 +51,6 @@ define([
                 if (this.apiFetching[id]) {
                     return Promise.resolve();
                 }
-
                 this.apiFetching[id] = true;
 
                 return this.api.objects.get(objectUtils.parseKeyString(id))
@@ -85,7 +84,6 @@ define([
                         Object.keys(apiResults).forEach(function (k) {
                             models[k] = apiResults[k];
                         });
-
                         return models;
                     });
             }.bind(this));

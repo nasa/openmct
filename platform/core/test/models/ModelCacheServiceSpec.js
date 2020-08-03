@@ -30,7 +30,6 @@ define(['../../src/models/ModelCacheService'], function (ModelCacheService) {
             testIds = ['a', 'b', 'c', 'd'];
             testModels = testIds.reduce(function (models, id) {
                 models[id] = { someKey: "some value for " + id };
-
                 return models;
             }, {});
             cacheService = new ModelCacheService();

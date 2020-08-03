@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define([
     '../creation/CreateWizard',
     './SaveInProgressDialog'
@@ -49,7 +50,6 @@ function (
         this.injectObjectService = function () {
             this.objectService = $injector.get("objectService");
         };
-
         this.dialogService = dialogService;
         this.copyService = copyService;
         this.notificationService = notificationService;
@@ -75,7 +75,6 @@ function (
         if (!this.objectService) {
             this.injectObjectService();
         }
-
         return this.objectService;
     };
 
@@ -119,13 +118,11 @@ function (
 
         function showBlockingDialog(object) {
             dialog.show();
-
             return object;
         }
 
         function hideBlockingDialog(object) {
             dialog.hide();
-
             return object;
         }
 
@@ -141,12 +138,11 @@ function (
 
         function allowClone(objectToClone) {
             var allowed =
-                    (objectToClone.getId() === domainObject.getId())
-                        || objectToClone.getCapability('location').isOriginal();
+                    (objectToClone.getId() === domainObject.getId()) ||
+                        objectToClone.getCapability('location').isOriginal();
             if (allowed) {
                 toUndirty.push(objectToClone);
             }
-
             return allowed;
         }
 
@@ -167,11 +163,11 @@ function (
             return this.openmct.editor.save().then(() => {
                 // Force mutation for search indexing
                 return clonedObject;
-            });
+            })
         }
 
         function finishEditing(clonedObject) {
-            return fetchObject(clonedObject.getId());
+            return fetchObject(clonedObject.getId())
         }
 
         function indexForSearch(savedObject) {
@@ -184,7 +180,6 @@ function (
 
         function onSuccess(object) {
             self.notificationService.info("Save Succeeded");
-
             return object;
         }
 
@@ -193,7 +188,6 @@ function (
             if (reason !== "user canceled") {
                 self.notificationService.error("Save Failed");
             }
-
             throw reason;
         }
 
@@ -211,6 +205,7 @@ function (
             .catch(onFailure);
     };
 
+
     /**
          * Check if this action is applicable in a given context.
          * This will ensure that a domain object is present in the context,
@@ -219,11 +214,10 @@ function (
          */
     SaveAsAction.appliesTo = function (context) {
         var domainObject = (context || {}).domainObject;
-
-        return domainObject !== undefined
-                && domainObject.hasCapability('editor')
-                && domainObject.getCapability('editor').isEditContextRoot()
-                && domainObject.getModel().persisted === undefined;
+        return domainObject !== undefined &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot() &&
+                domainObject.getModel().persisted === undefined;
     };
 
     return SaveAsAction;

@@ -67,8 +67,8 @@ define(
             // Stylesheets which specify themes should only be applied
             // when that theme has been declared.
             function matchesTheme(stylesheet) {
-                return stylesheet.theme === undefined
-                    || stylesheet.theme === activeTheme;
+                return stylesheet.theme === undefined ||
+                    stylesheet.theme === activeTheme;
             }
 
             assetPath = assetPath || ".";

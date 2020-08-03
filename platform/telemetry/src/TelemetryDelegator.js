@@ -58,10 +58,9 @@ define(
                 "delegation",
                 "telemetry"
             )).then(function (result) {
-                var head = domainObject.hasCapability("telemetry")
-                        ? [domainObject] : [],
+                var head = domainObject.hasCapability("telemetry") ?
+                        [domainObject] : [],
                     tail = result || [];
-
                 return head.concat(tail);
             });
         };

@@ -27,8 +27,8 @@ export default {
     },
     computed: {
         styleBarWidth() {
-            return `width: ${this.model.progressPerc}%;`;
+            return `width: ${this.model.progressPerc}%;`
         }
     }
-};
+}
 </script>

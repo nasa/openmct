@@ -33,7 +33,7 @@ define([
 ) {
 
     return {
-        name: "platform/identity",
+        name:"platform/identity",
         definition: {
             "extensions": {
                 "components": [

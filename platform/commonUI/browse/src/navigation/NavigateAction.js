@@ -46,7 +46,6 @@ define(
         NavigateAction.prototype.perform = function () {
             if (this.navigationService.shouldNavigate()) {
                 this.navigationService.setNavigation(this.domainObject, true);
-
                 return Promise.resolve({});
             }
 

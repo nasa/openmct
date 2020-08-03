@@ -81,7 +81,6 @@ define(
                         result[id] = instantiate(models[id], id);
                     }
                 });
-
                 return result;
             }
 

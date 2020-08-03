@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../src/IdentityCreationDecorator'
@@ -81,10 +82,7 @@ define(
                         // Make sure arguments were delegated appropriately
                         expect(mockCreationService.createObject)
                             .toHaveBeenCalledWith(
-                                {
-                                    someKey: "some value",
-                                    creator: "test-user-id"
-                                },
+                                { someKey: "some value", creator: "test-user-id" },
                                 mockParent
                             );
                     });

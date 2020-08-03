@@ -39,7 +39,6 @@ define(
             // Used to capture arguments to mocks
             function capture() {
                 var names = Array.prototype.slice.apply(arguments, []);
-
                 return function () {
                     var values = arguments;
                     names.forEach(function (name, index) {
@@ -55,7 +54,6 @@ define(
                 mockAngular = {
                     element: function (selector) {
                         captured.selector = selector;
-
                         return { ready: capture("callback") };
                     },
                     bootstrap: capture("element", "appNames")
@@ -75,6 +73,7 @@ define(
 
                 bootstrapper.bootstrap(mockApp);
             });
+
 
             // The tests.
 

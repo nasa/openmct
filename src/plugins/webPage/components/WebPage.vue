@@ -10,7 +10,7 @@ export default {
     data: function () {
         return {
             currentDomainObject: this.domainObject
-        };
+        }
     }
-};
+}
 </script>

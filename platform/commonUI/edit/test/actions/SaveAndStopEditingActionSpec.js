@@ -97,6 +97,7 @@ define(
                 action = new SaveAndStopEditingAction(dialogService, notificationService, actionContext);
             });
 
+
             it("only applies to domain object with an editor capability", function () {
                 expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");

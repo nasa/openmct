@@ -53,9 +53,9 @@ define(
 
             // Intercept requests for a context capability.
             contextualObject.getCapability = function (name) {
-                return name === "context"
-                    ? contextCapability
-                    : domainObject.getCapability.apply(this, arguments);
+                return name === "context" ?
+                    contextCapability :
+                    domainObject.getCapability.apply(this, arguments);
             };
 
             return contextualObject;

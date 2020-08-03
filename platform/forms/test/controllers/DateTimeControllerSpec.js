@@ -83,6 +83,7 @@ define(
                 expect(mockScope.ngModel.test).toBeUndefined();
             });
 
+
             it("exposes date-time format for placeholder", function () {
                 expect(mockScope.format).toEqual(jasmine.any(String));
                 expect(mockScope.format.length).toBeGreaterThan(0);

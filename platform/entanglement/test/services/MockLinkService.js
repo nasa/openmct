@@ -74,7 +74,6 @@ define(
                     if (overrideObject) {
                         return overrideObject;
                     }
-
                     return object;
                 });
             });

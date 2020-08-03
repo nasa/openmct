@@ -43,9 +43,7 @@ define(
                     function MockFormat() {
                         return mockFormatInstances[i];
                     }
-
                     MockFormat.key = k;
-
                     return MockFormat;
                 });
                 provider = new FormatProvider(mockFormats);

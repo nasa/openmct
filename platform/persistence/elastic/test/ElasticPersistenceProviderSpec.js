@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     ["../src/ElasticPersistenceProvider"],
     function (ElasticPersistenceProvider) {
@@ -84,11 +85,7 @@ define(
             it("allows object creation", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_seq_no": 1,
-                        "_primary_term": 1
-                    }
+                    data: { "_id": "abc", "_seq_no": 1, "_primary_term": 1 }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -103,12 +100,7 @@ define(
             it("allows object models to be read back", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_seq_no": 1,
-                        "_primary_term": 1,
-                        "_source": model
-                    }
+                    data: { "_id": "abc", "_seq_no": 1, "_primary_term": 1, "_source": model }
                 }));
                 provider.readObject("testSpace", "abc").then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -125,20 +117,13 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_source": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_seq_no": 1,
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_seq_no": 1, "_source": {} }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -153,19 +138,13 @@ define(
             it("allows object deletion", function () {
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_source": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_source": {} }
                 }));
                 provider.deleteObject("testSpace", "abc", {}).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -194,20 +173,13 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_seq_no": 1,
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_seq_no": 1, "_source": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "status": 409,
-                        "error": "Revision error..."
-                    }
+                    data: { "status": 409, "error": "Revision error..." }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(
                     capture,
@@ -224,20 +196,13 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "_id": "abc",
-                        "_seq_no": 1,
-                        "_source": {}
-                    }
+                    data: { "_id": "abc", "_seq_no": 1, "_source": {} }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: {
-                        "status": 410,
-                        "error": "Revision error..."
-                    }
+                    data: { "status": 410, "error": "Revision error..." }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(
                     capture,
@@ -247,6 +212,7 @@ define(
                 expect(capture).not.toHaveBeenCalled();
                 expect(mockErrorCallback).toHaveBeenCalled();
             });
+
 
         });
     }

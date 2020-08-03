@@ -26,7 +26,6 @@ define(['vue'], function (Vue) {
         this.show = function (container) {
             container.appendChild(vm.$mount().$el);
         };
-
         this.destroy = vm.$destroy.bind(vm);
     }
 

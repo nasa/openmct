@@ -15,13 +15,11 @@ function paramsToObject(searchParams) {
             if (!Array.isArray(params[key])) {
                 params[key] = [params[key]];
             }
-
             params[key].push(value);
         } else {
             params[key] = value;
         }
     }
-
     return params;
 }
 
@@ -42,7 +40,7 @@ class ApplicationRouter extends EventEmitter {
      * start(); Start routing.
      */
     constructor() {
-        super();
+        super()
         this.routes = [];
         this.started = false;
     }
@@ -54,7 +52,6 @@ class ApplicationRouter extends EventEmitter {
         if (this.started) {
             throw new Error('Router already started!');
         }
-
         this.started = true;
         let locationBar = new LocationBar();
         locationBar.onChange(p => this.handleLocationChange(p));
@@ -65,13 +62,13 @@ class ApplicationRouter extends EventEmitter {
 
     handleLocationChange(pathString) {
         if (pathString[0] !== '/') {
-            pathString = '/' + pathString;
+            pathString = '/' + pathString
         }
 
         let url = new URL(
             pathString,
             `${location.protocol}//${location.host}${location.pathname}`
-        );
+        )
 
         let oldLocation = this.currentLocation;
 
@@ -87,7 +84,6 @@ class ApplicationRouter extends EventEmitter {
         if (!oldLocation) {
             this.doPathChange(newLocation.path, null, newLocation);
             this.doParamsChange(newLocation.params, {}, newLocation);
-
             return;
         }
 
@@ -98,7 +94,6 @@ class ApplicationRouter extends EventEmitter {
                 this
             );
         }
-
         if (!_.isEqual(oldLocation.params, newLocation.params)) {
             this.doParamsChange(
                 newLocation.params,
@@ -113,7 +108,6 @@ class ApplicationRouter extends EventEmitter {
         if (route) {
             route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
         }
-
         this.emit('change:path', newPath, oldPath);
     }
 
@@ -124,13 +118,11 @@ class ApplicationRouter extends EventEmitter {
                 changedParams[key] = value;
             }
         }
-
         for (let key of Object.keys(oldParams)) {
             if (!newParams.hasOwnProperty(key)) {
                 changedParams[key] = undefined;
             }
         }
-
         this.emit('change:params', newParams, oldParams, changedParams);
     }
 
@@ -146,7 +138,6 @@ class ApplicationRouter extends EventEmitter {
                 searchParams.set(key, value);
             }
         }
-
         this.setQueryString(searchParams.toString());
     }
 
@@ -163,7 +154,6 @@ class ApplicationRouter extends EventEmitter {
                 searchParams.set(key, value);
             }
         }
-
         this.set(path, searchParams.toString());
     }
 
@@ -180,10 +170,7 @@ class ApplicationRouter extends EventEmitter {
     }
 
     route(matcher, callback) {
-        this.routes.push({
-            matcher,
-            callback
-        });
+        this.routes.push({matcher, callback});
     }
 }
 

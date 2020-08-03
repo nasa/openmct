@@ -71,7 +71,6 @@ define([
             if (installed) {
                 return;
             }
-
             installed = true;
 
             openmct.legacyRegistry.register("openmct/plot", {

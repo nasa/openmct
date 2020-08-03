@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     ["../src/PersistenceFailureHandler", "../src/PersistenceFailureConstants"],
     function (PersistenceFailureHandler, Constants) {
@@ -47,14 +48,10 @@ define(
                 mockFailure.domainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
-                mockFailure.domainObject.getModel.and.returnValue({
-                    id: id,
-                    modified: index
-                });
+                mockFailure.domainObject.getModel.and.returnValue({ id: id, modified: index });
                 mockFailure.persistence = mockPersistence;
                 mockFailure.id = id;
                 mockFailure.error = { key: Constants.REVISION_ERROR_KEY };
-
                 return mockFailure;
             }
 

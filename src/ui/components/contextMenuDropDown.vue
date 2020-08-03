@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import contextMenu from '../mixins/context-menu-gesture';
+import contextMenu from '../mixins/context-menu-gesture'
 
 export default {
     mixins: [contextMenu],
@@ -16,6 +16,6 @@ export default {
             required: true
         }
     }
-};
+}
 </script>
 

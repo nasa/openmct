@@ -90,7 +90,6 @@ define([], function () {
                     if (thisRequest !== currentRequest) {
                         return;
                     }
-
                     composition = openmct.composition.get(obj);
                     composition.on('add', addChild);
                     composition.on('remove', removeChild);

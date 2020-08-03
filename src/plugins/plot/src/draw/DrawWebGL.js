@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define([
     'EventEmitter',
     '../lib/eventHelpers',
@@ -90,8 +91,8 @@ define([
      */
     function DrawWebGL(canvas, overlay) {
         this.canvas = canvas;
-        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true })
-            || this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
+        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true }) ||
+            this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
 
         this.overlay = overlay;
         this.c2d = overlay.getContext('2d');
@@ -166,8 +167,8 @@ define([
 
     // Convert from logical to physical y coordinates
     DrawWebGL.prototype.y = function (v) {
-        return this.height
-            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height -
+            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
     DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
@@ -181,7 +182,7 @@ define([
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
-        this.gl.uniform1i(this.uMarkerShape, shapeCode);
+        this.gl.uniform1i(this.uMarkerShape, shapeCode)
         this.gl.drawArrays(drawType, 0, points);
     };
 
@@ -189,7 +190,6 @@ define([
         if (this.isContextLost) {
             return;
         }
-
         this.height = this.canvas.height = this.canvas.offsetHeight;
         this.width = this.canvas.width = this.canvas.offsetWidth;
         this.overlay.height = this.overlay.offsetHeight;
@@ -219,9 +219,8 @@ define([
         if (this.isContextLost) {
             return;
         }
-
-        if (dimensions && dimensions.length > 0
-                && origin && origin.length > 0) {
+        if (dimensions && dimensions.length > 0 &&
+                origin && origin.length > 0) {
             this.gl.uniform2fv(this.uDimensions, dimensions);
             this.gl.uniform2fv(this.uOrigin, origin);
         }
@@ -241,7 +240,6 @@ define([
         if (this.isContextLost) {
             return;
         }
-
         this.doDraw(this.gl.LINE_STRIP, buf, color, points);
     };
 
@@ -253,7 +251,6 @@ define([
         if (this.isContextLost) {
             return;
         }
-
         this.gl.uniform1f(this.uPointSize, pointSize);
         this.doDraw(this.gl.POINTS, buf, color, points, shape);
     };
@@ -271,7 +268,6 @@ define([
         if (this.isContextLost) {
             return;
         }
-
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
         ), color, 4);

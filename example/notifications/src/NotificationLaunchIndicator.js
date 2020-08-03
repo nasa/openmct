@@ -42,11 +42,9 @@ define(
         NotificationLaunchIndicator.prototype.getGlyphClass = function () {
             return 'ok';
         };
-
         NotificationLaunchIndicator.prototype.getText = function () {
             return "Launch notification";
         };
-
         NotificationLaunchIndicator.prototype.getDescription = function () {
             return "Launch notification";
         };

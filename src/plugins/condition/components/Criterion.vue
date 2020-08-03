@@ -142,12 +142,11 @@ export default {
             operationFormat: '',
             enumerations: [],
             inputTypes: INPUT_TYPES
-        };
+        }
     },
     computed: {
         setRowLabel: function () {
             let operator = TRIGGER_CONJUNCTION[this.trigger];
-
             return (this.index !== 0 ? operator : '') + ' when';
         },
         filteredOps: function () {
@@ -164,13 +163,11 @@ export default {
                     if (this.filteredOps[i].appliesTo.length) {
                         type = this.inputTypes[this.filteredOps[i].appliesTo[0]];
                     } else {
-                        type = 'text';
+                        type = 'text'
                     }
-
                     break;
                 }
             }
-
             return type;
         }
     },
@@ -187,11 +184,11 @@ export default {
     },
     methods: {
         checkTelemetry() {
-            if (this.criterion.telemetry) {
+            if(this.criterion.telemetry) {
                 const isAnyAllTelemetry = this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all';
                 const telemetryForCriterionExists = this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier));
-                if (!isAnyAllTelemetry
-                    && !telemetryForCriterionExists) {
+                if (!isAnyAllTelemetry &&
+                    !telemetryForCriterionExists) {
                     //telemetry being used was removed. So reset this criterion.
                     this.criterion.telemetry = '';
                     this.criterion.metadata = '';
@@ -226,7 +223,6 @@ export default {
             } else if (this.criterion.metadata === 'dataReceived') {
                 this.operationFormat = 'number';
             }
-
             this.updateInputVisibilityAndValues();
         },
         updateMetadataOptions(ev) {
@@ -234,14 +230,12 @@ export default {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
-
             if (this.criterion.telemetry) {
                 let telemetryObjects = this.telemetry;
                 if (this.criterion.telemetry !== 'all' && this.criterion.telemetry !== 'any') {
                     const found = this.telemetry.find(telemetryObj => (this.openmct.objects.areIdsEqual(telemetryObj.identifier, this.criterion.telemetry)));
                     telemetryObjects = found ? [found] : [];
                 }
-
                 this.telemetryMetadataOptions = [];
                 telemetryObjects.forEach(telemetryObject => {
                     let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -254,10 +248,9 @@ export default {
             if (!this.telemetryMetadataOptions) {
                 this.telemetryMetadataOptions = options;
             }
-
             options.forEach((option) => {
                 const found = this.telemetryMetadataOptions.find((metadataOption) => {
-                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name));
+                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name))
                 });
                 if (!found) {
                     this.telemetryMetadataOptions.push(option);
@@ -282,7 +275,6 @@ export default {
                     this.inputCount = this.filteredOps[i].inputCount;
                 }
             }
-
             if (!this.inputCount) {
                 this.criterion.input = [];
             }
@@ -300,7 +292,6 @@ export default {
                 if (this.enumerations.length && !this.criterion.input.length) {
                     this.criterion.input = [this.enumerations[0].value.toString()];
                 }
-
                 this.inputCount = 0;
             }
         },

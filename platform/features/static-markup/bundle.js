@@ -28,7 +28,7 @@ define([
 ) {
 
     return {
-        name: "platform/features/static-markup",
+        name:"platform/features/static-markup",
         definition: {
             "extensions": {
                 "types": [

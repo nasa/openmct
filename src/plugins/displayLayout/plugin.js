@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Layout from './components/DisplayLayout.vue';
-import Vue from 'vue';
-import objectUtils from 'objectUtils';
-import DisplayLayoutType from './DisplayLayoutType.js';
-import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import Layout from './components/DisplayLayout.vue'
+import Vue from 'vue'
+import objectUtils from 'objectUtils'
+import DisplayLayoutType from './DisplayLayoutType.js'
+import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'
 
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
@@ -39,7 +39,6 @@ export default function DisplayLayoutPlugin(options) {
             },
             view: function (domainObject, objectPath) {
                 let component;
-
                 return {
                     show(container) {
                         component = new Vue({
@@ -98,5 +97,5 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
         DisplayLayoutPlugin._installed = true;
-    };
+    }
 }

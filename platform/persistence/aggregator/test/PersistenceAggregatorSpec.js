@@ -63,7 +63,6 @@ define(
                         mockProvider[m].and.returnValue(fakePromise(true));
                     });
                     mockProvider.listSpaces.and.returnValue(fakePromise([space]));
-
                     return mockProvider;
                 });
                 mockCallback = jasmine.createSpy();
@@ -75,7 +74,6 @@ define(
                             result.push(v);
                         });
                     });
-
                     return fakePromise(result);
                 });
 

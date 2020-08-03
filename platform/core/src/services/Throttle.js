@@ -65,7 +65,6 @@ define(
                 function invoke() {
                     // Clear the active timeout so a new one starts next time.
                     promise = undefined;
-
                     // Invoke the function with the latest supplied arguments.
                     return fn.apply(null, args);
                 }
@@ -79,7 +78,6 @@ define(
                     args = Array.prototype.slice.apply(arguments, [0]);
                     // Start a timeout if needed
                     promise = promise || $timeout(invoke, delay, apply);
-
                     // Return whichever timeout is active (to get
                     // a promise for the results of fn)
                     return promise;

@@ -61,7 +61,6 @@ define([
 
             it("subscribes to telemetry for the associated object", function () {
                 meanTelemetryProvider.subscribe(mockDomainObject);
-
                 return expectObjectWasSubscribedTo(associatedObject);
             });
 
@@ -78,27 +77,14 @@ define([
 
             it("returns an average only when the sample size is reached", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313}
                 ];
 
                 setSampleSize(5);
                 meanTelemetryProvider.subscribe(mockDomainObject, subscriptionCallback);
-
                 return waitForPromises()
                     .then(feedInputTelemetry.bind(this, inputTelemetry))
                     .then(function () {
@@ -108,30 +94,14 @@ define([
 
             it("correctly averages a sample of five values", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231}
                 ];
                 var expectedAverages = [{
-                    'utc': 5,
-                    'value': 222.44888
+                    'utc': 5, 'value': 222.44888
                 }];
 
                 setSampleSize(5);
@@ -144,50 +114,19 @@ define([
 
             it("correctly averages a sample of ten values", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    },
-                    {
-                        'utc': 6,
-                        'defaultRange': 2323.12
-                    },
-                    {
-                        'utc': 7,
-                        'defaultRange': 532.12
-                    },
-                    {
-                        'utc': 8,
-                        'defaultRange': 453.543
-                    },
-                    {
-                        'utc': 9,
-                        'defaultRange': 89.2111
-                    },
-                    {
-                        'utc': 10,
-                        'defaultRange': 0.543
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231},
+                    {'utc': 6, 'defaultRange': 2323.12},
+                    {'utc': 7, 'defaultRange': 532.12},
+                    {'utc': 8, 'defaultRange': 453.543},
+                    {'utc': 9, 'defaultRange': 89.2111},
+                    {'utc': 10, 'defaultRange': 0.543}
                 ];
                 var expectedAverages = [{
-                    'utc': 10,
-                    'value': 451.07815
+                    'utc': 10, 'value': 451.07815
                 }];
 
                 setSampleSize(10);
@@ -200,72 +139,24 @@ define([
 
             it("only averages values within its sample window", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    },
-                    {
-                        'utc': 6,
-                        'defaultRange': 2323.12
-                    },
-                    {
-                        'utc': 7,
-                        'defaultRange': 532.12
-                    },
-                    {
-                        'utc': 8,
-                        'defaultRange': 453.543
-                    },
-                    {
-                        'utc': 9,
-                        'defaultRange': 89.2111
-                    },
-                    {
-                        'utc': 10,
-                        'defaultRange': 0.543
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231},
+                    {'utc': 6, 'defaultRange': 2323.12},
+                    {'utc': 7, 'defaultRange': 532.12},
+                    {'utc': 8, 'defaultRange': 453.543},
+                    {'utc': 9, 'defaultRange': 89.2111},
+                    {'utc': 10, 'defaultRange': 0.543}
                 ];
                 var expectedAverages = [
-                    {
-                        'utc': 5,
-                        'value': 222.44888
-                    },
-                    {
-                        'utc': 6,
-                        'value': 662.4482599999999
-                    },
-                    {
-                        'utc': 7,
-                        'value': 704.6078
-                    },
-                    {
-                        'utc': 8,
-                        'value': 773.02748
-                    },
-                    {
-                        'utc': 9,
-                        'value': 679.8234399999999
-                    },
-                    {
-                        'utc': 10,
-                        'value': 679.70742
-                    }
+                    {'utc': 5, 'value': 222.44888},
+                    {'utc': 6, 'value': 662.4482599999999},
+                    {'utc': 7, 'value': 704.6078},
+                    {'utc': 8, 'value': 773.02748},
+                    {'utc': 9, 'value': 679.8234399999999},
+                    {'utc': 10, 'value': 679.70742}
                 ];
 
                 setSampleSize(5);
@@ -378,7 +269,6 @@ define([
 
             it("requests telemetry for the associated object", function () {
                 whenTelemetryRequestedReturn([]);
-
                 return meanTelemetryProvider.request(mockDomainObject).then(function () {
                     expect(mockApi.telemetry.request).toHaveBeenCalledWith(associatedObject, undefined);
                 });
@@ -386,22 +276,10 @@ define([
 
             it("returns an average only when the sample size is reached", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313}
                 ];
 
                 setSampleSize(5);
@@ -414,26 +292,11 @@ define([
 
             it("correctly averages a sample of five values", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231}
                 ];
 
                 setSampleSize(5);
@@ -447,46 +310,16 @@ define([
 
             it("correctly averages a sample of ten values", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    },
-                    {
-                        'utc': 6,
-                        'defaultRange': 2323.12
-                    },
-                    {
-                        'utc': 7,
-                        'defaultRange': 532.12
-                    },
-                    {
-                        'utc': 8,
-                        'defaultRange': 453.543
-                    },
-                    {
-                        'utc': 9,
-                        'defaultRange': 89.2111
-                    },
-                    {
-                        'utc': 10,
-                        'defaultRange': 0.543
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231},
+                    {'utc': 6, 'defaultRange': 2323.12},
+                    {'utc': 7, 'defaultRange': 532.12},
+                    {'utc': 8, 'defaultRange': 453.543},
+                    {'utc': 9, 'defaultRange': 89.2111},
+                    {'utc': 10, 'defaultRange': 0.543}
                 ];
 
                 setSampleSize(10);
@@ -500,46 +333,16 @@ define([
 
             it("only averages values within its sample window", function () {
                 var inputTelemetry = [
-                    {
-                        'utc': 1,
-                        'defaultRange': 123.1231
-                    },
-                    {
-                        'utc': 2,
-                        'defaultRange': 321.3223
-                    },
-                    {
-                        'utc': 3,
-                        'defaultRange': 111.4446
-                    },
-                    {
-                        'utc': 4,
-                        'defaultRange': 555.2313
-                    },
-                    {
-                        'utc': 5,
-                        'defaultRange': 1.1231
-                    },
-                    {
-                        'utc': 6,
-                        'defaultRange': 2323.12
-                    },
-                    {
-                        'utc': 7,
-                        'defaultRange': 532.12
-                    },
-                    {
-                        'utc': 8,
-                        'defaultRange': 453.543
-                    },
-                    {
-                        'utc': 9,
-                        'defaultRange': 89.2111
-                    },
-                    {
-                        'utc': 10,
-                        'defaultRange': 0.543
-                    }
+                    {'utc': 1, 'defaultRange': 123.1231},
+                    {'utc': 2, 'defaultRange': 321.3223},
+                    {'utc': 3, 'defaultRange': 111.4446},
+                    {'utc': 4, 'defaultRange': 555.2313},
+                    {'utc': 5, 'defaultRange': 1.1231},
+                    {'utc': 6, 'defaultRange': 2323.12},
+                    {'utc': 7, 'defaultRange': 532.12},
+                    {'utc': 8, 'defaultRange': 453.543},
+                    {'utc': 9, 'defaultRange': 89.2111},
+                    {'utc': 10, 'defaultRange': 0.543}
                 ];
 
                 setSampleSize(5);

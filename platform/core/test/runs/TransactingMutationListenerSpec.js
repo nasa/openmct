@@ -58,14 +58,12 @@ define(
 
                 mockTopic.and.callFake(function (t) {
                     expect(t).toBe('mutation');
-
                     return mockMutationTopic;
                 });
 
                 mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
                     expect(c).toBe('persistence');
-
                     return mockPersistence;
                 });
                 mockModel = {};

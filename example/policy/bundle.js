@@ -29,7 +29,7 @@ define([
     "use strict";
 
     return {
-        name: "example/policy",
+        name:"example/policy",
         definition: {
             "name": "Example Policy",
             "description": "Provides an example of using policies to prohibit actions.",

@@ -159,6 +159,7 @@ define(
                 expect(controller.isSelected()).toBeFalsy();
             });
 
+
             it("does not expand a node if no context is available", function () {
                 var mockParentContext = jasmine.createSpyObj(
                         "parentContext",

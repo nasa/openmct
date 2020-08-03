@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [],
     function () {
@@ -75,7 +76,6 @@ define(
                 // hasCapability("composition") returns false;
                 clone.composition = [];
             }
-
             delete clone.persisted;
             delete clone.modified;
             delete clone.location;
@@ -91,11 +91,7 @@ define(
         function persistObjects(self) {
             return self.$q.all(self.clones.map(function (clone) {
                 return clone.getCapability("persistence").persist().then(function () {
-                    self.deferred.notify({
-                        phase: "copying",
-                        totalObjects: self.clones.length,
-                        processed: ++self.persisted
-                    });
+                    self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
                 });
             })).then(function () {
                 return self;
@@ -140,7 +136,6 @@ define(
                         delete obj[key];
                         obj[idMap[key]] = value;
                     }
-
                     this.rewriteIdentifiers(value, idMap);
                 }, this);
             }
@@ -183,7 +178,6 @@ define(
                 //Add the clone to the list of clones that will
                 //be returned by this function
                 self.clones.push(clonedParent);
-
                 return clonedParent;
             });
         };
@@ -216,7 +210,6 @@ define(
                 //Iterate through child tree
                 return this.$q.when(originalObject.useCapability('composition')).then(function (composees) {
                     self.deferred.notify({phase: "preparing"});
-
                     //Duplicate the object's children, and their children, and
                     // so on down to the leaf nodes of the tree.
                     //If it is a link, don't both with children
@@ -226,6 +219,7 @@ define(
                 //Creating a link, no need to iterate children
                 return self.$q.when(originalObject);
             }
+
 
         };
 
@@ -248,9 +242,7 @@ define(
                 if (domainObjectClone !== self.domainObject) {
                     domainObjectClone.getModel().location = self.parent.getId();
                 }
-
                 self.firstClone = domainObjectClone;
-
                 return self;
             });
         };

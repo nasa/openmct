@@ -28,7 +28,7 @@ define([
     hyperlinkTemplate
 ) {
     return {
-        name: "platform/features/hyperlink",
+        name:"platform/features/hyperlink",
         definition: {
             "name": "Hyperlink",
             "description": "Insert a hyperlink to reference a link",

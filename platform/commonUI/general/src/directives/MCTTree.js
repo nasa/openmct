@@ -31,7 +31,6 @@ define([
                     return true;
                 };
             }
-
             if (!scope.onSelection) {
                 scope.onSelection = function () {};
             }
@@ -43,13 +42,10 @@ define([
                 if (currentSelection === domainObject) {
                     return;
                 }
-
                 if (!scope.allowSelection(domainObject)) {
                     treeView.value(currentSelection);
-
                     return;
                 }
-
                 currentSelection = domainObject;
                 scope.onSelection(domainObject);
                 scope.selectedObject = domainObject;

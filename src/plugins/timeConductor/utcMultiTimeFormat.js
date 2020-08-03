@@ -44,8 +44,8 @@ export default function multiFormat(date) {
             return m.hours();
         }],
         ["ddd DD", function (m) {
-            return m.days()
-                && m.date() !== 1;
+            return m.days() &&
+                m.date() !== 1;
         }],
         ["MMM DD", function (m) {
             return m.date() !== 1;

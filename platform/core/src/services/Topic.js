@@ -55,7 +55,6 @@ define(
                 return {
                     listen: function (listener) {
                         listeners.push(listener);
-
                         return function unlisten() {
                             listeners = listeners.filter(function (l) {
                                 return l !== listener;
@@ -85,7 +84,6 @@ define(
                     return createTopic();
                 } else {
                     topics[key] = topics[key] || createTopic();
-
                     return topics[key];
                 }
             };

@@ -102,10 +102,7 @@ define([
                     testKeys = ['abc', 'def', 'xyz'];
                     testChildren = testKeys.map(function (key) {
                         return {
-                            identifier: {
-                                namespace: "test",
-                                key: key
-                            },
+                            identifier: { namespace: "test", key: key },
                             name: "Object " + key
                         };
                     });
@@ -113,12 +110,7 @@ define([
                     domObserver = new DOMObserver(testContainer);
 
                     testHistories = testKeys.reduce(function (histories, key, index) {
-                        histories[key] = {
-                            key: key,
-                            range: index + 10,
-                            domain: key + index
-                        };
-
+                        histories[key] = { key: key, range: index + 10, domain: key + index };
                         return histories;
                     }, {});
 
@@ -130,14 +122,12 @@ define([
                     mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
                     mockUnsubscribes = testKeys.reduce(function (map, key) {
                         map[key] = jasmine.createSpy('unsubscribe-' + key);
-
                         return map;
                     }, {});
 
                     mockmct.composition.get.and.returnValue(mockComposition);
                     mockComposition.load.and.callFake(function () {
                         testChildren.forEach(emitEvent.bind(null, mockComposition, 'add'));
-
                         return Promise.resolve(testChildren);
                     });
 
@@ -147,19 +137,16 @@ define([
                         mockFormatter.format.and.callFake(function (datum) {
                             return datum[metadatum.hint];
                         });
-
                         return mockFormatter;
                     });
                     mockmct.telemetry.limitEvaluator.and.returnValue(mockEvaluator);
                     mockmct.telemetry.subscribe.and.callFake(function (obj, callback) {
                         var key = obj.identifier.key;
                         callbacks[key] = callback;
-
                         return mockUnsubscribes[key];
                     });
                     mockmct.telemetry.request.and.callFake(function (obj, request) {
                         var key = obj.identifier.key;
-
                         return Promise.resolve([testHistories[key]]);
                     });
                     mockMetadata.valuesForHints.and.callFake(function (hints) {
@@ -183,7 +170,6 @@ define([
                 describe("when rows have been populated", function () {
                     function rowsMatch() {
                         var rows = $(testContainer).find(".l-autoflow-row").length;
-
                         return rows === testChildren.length;
                     }
 
@@ -193,22 +179,17 @@ define([
 
                     it("adds rows on composition change", function () {
                         var child = {
-                            identifier: {
-                                namespace: "test",
-                                key: "123"
-                            },
+                            identifier: { namespace: "test", key: "123" },
                             name: "Object 123"
                         };
                         testChildren.push(child);
                         emitEvent(mockComposition, 'add', child);
-
                         return domObserver.when(rowsMatch);
                     });
 
                     it("removes rows on composition change", function () {
                         var child = testChildren.pop();
                         emitEvent(mockComposition, 'remove', child.identifier);
-
                         return domObserver.when(rowsMatch);
                     });
                 });
@@ -235,7 +216,6 @@ define([
 
                     function widthHasChanged() {
                         var width = $(testContainer).find('.l-autoflow-col').css('width');
-
                         return width !== initialWidth + 'px';
                     }
 
@@ -256,7 +236,6 @@ define([
                     function rowTextDefined() {
                         return $(testContainer).find(".l-autoflow-item").filter(".r").text() !== "";
                     }
-
                     return domObserver.when(rowTextDefined).then(function () {
                         testKeys.forEach(function (key, index) {
                             var datum = testHistories[key];
@@ -268,11 +247,7 @@ define([
 
                 it("displays incoming telemetry", function () {
                     var testData = testKeys.map(function (key, index) {
-                        return {
-                            key: key,
-                            range: index * 100,
-                            domain: key + index
-                        };
+                        return { key: key, range: index * 100, domain: key + index };
                     });
 
                     testData.forEach(function (datum) {
@@ -291,10 +266,7 @@ define([
                     var testClass = "some-limit-violation";
                     mockEvaluator.evaluate.and.returnValue({ cssClass: testClass });
                     testKeys.forEach(function (key) {
-                        callbacks[key]({
-                            range: 'foo',
-                            domain: 'bar'
-                        });
+                        callbacks[key]({ range: 'foo', domain: 'bar' });
                     });
 
                     return waitsForChange().then(function () {
@@ -334,14 +306,12 @@ define([
 
                     function setHeight(height) {
                         $container.css('height', height + 'px');
-
                         return domObserver.when(columnsHaveAutoflowed);
                     }
 
                     for (var height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
                         promiseChain = promiseChain.then(setHeight.bind(this, height));
                     }
-
                     return promiseChain.then(function () {
                         $container.remove();
                     });

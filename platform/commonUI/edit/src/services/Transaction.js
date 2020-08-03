@@ -41,12 +41,8 @@ define([], function () {
      *          pair of callbacks from the transaction
      */
     Transaction.prototype.add = function (commit, cancel) {
-        var callback = {
-            commit: commit,
-            cancel: cancel
-        };
+        var callback = { commit: commit, cancel: cancel };
         this.callbacks.push(callback);
-
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
                 return c !== callback;
@@ -94,6 +90,7 @@ define([], function () {
             return Promise.all(promises);
         };
     });
+
 
     return Transaction;
 });

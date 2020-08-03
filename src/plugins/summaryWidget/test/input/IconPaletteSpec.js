@@ -7,7 +7,7 @@ define(['../../src/input/IconPalette'], function (IconPalette) {
         });
 
         it('allows defining a custom icon set', function () {
-            iconPalette = new IconPalette('', 'someContainer', ['icon1', 'icon2', 'icon3']);
+            iconPalette = new IconPalette('','someContainer', ['icon1', 'icon2', 'icon3']);
             expect(iconPalette.getCurrent()).toEqual('icon1');
             iconPalette.on('change', changeCallback);
             iconPalette.set('icon2');

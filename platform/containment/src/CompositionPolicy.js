@@ -53,13 +53,11 @@ define(
                 if (typeof c === 'string') {
                     return c === child.getCapability('type').getKey();
                 }
-
                 // More complicated rules require context to have all specified
                 // capabilities.
                 if (!Array.isArray(c.has)) {
                     c.has = [c.has];
                 }
-
                 return c.has.every(function (capability) {
                     return child.hasCapability(capability);
                 });

@@ -56,7 +56,6 @@ define(
                     //navigate back to parent because nothing to show.
                     return domainObject.getCapability("location").getOriginal().then(function (original) {
                         parent = original.getCapability("context").getParent();
-
                         return parent.getCapability("action").perform("navigate");
                     });
                 }
@@ -79,10 +78,9 @@ define(
          */
         CancelAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
-
-            return domainObject !== undefined
-                && domainObject.hasCapability('editor')
-                && domainObject.getCapability('editor').isEditContextRoot();
+            return domainObject !== undefined &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot();
         };
 
         return CancelAction;

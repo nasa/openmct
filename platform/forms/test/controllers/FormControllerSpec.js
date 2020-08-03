@@ -82,6 +82,7 @@ define(
                 expect(mockScope.getRegExp(undefined)).toEqual(/\S/);
             });
 
+
         });
     }
 );

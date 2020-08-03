@@ -49,7 +49,6 @@ define(
 
                 // Store to verify interactions later
                 mockUnsubscribes[index] = unsubscribe;
-
                 return provider;
             }
 

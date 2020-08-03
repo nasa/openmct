@@ -68,6 +68,7 @@ define(
                 );
             });
 
+
             it("aliases 'instantiate' as 'invoke'", function () {
                 expect(instantiation.invoke).toBe(instantiation.instantiate);
             });

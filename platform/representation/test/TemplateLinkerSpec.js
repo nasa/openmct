@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     ["../src/TemplateLinker"],
     function (TemplateLinker) {
@@ -66,13 +67,12 @@ define(
 
                 mockTemplateRequest.and.returnValue(mockPromise);
                 mockCompile.and.callFake(function (toCompile) {
-                    var html = typeof toCompile === 'string'
-                        ? toCompile : toCompile.testHtml;
+                    var html = typeof toCompile === 'string' ?
+                        toCompile : toCompile.testHtml;
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
                         jasmine.createSpyObj('templateEl', JQLITE_METHODS);
                     mockTemplates[html].and.returnValue(mockElements[html]);
-
                     return mockTemplates[html];
                 });
                 mockSce.trustAsResourceUrl.and.callFake(function (url) {

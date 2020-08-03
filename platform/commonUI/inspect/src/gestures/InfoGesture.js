@@ -46,11 +46,9 @@ define(
             this.showBubbleCallback = function (event) {
                 self.showBubble(event);
             };
-
             this.hideBubbleCallback = function (event) {
                 self.hideBubble(event);
             };
-
             this.trackPositionCallback = function (event) {
                 self.trackPosition(event);
             };
@@ -83,7 +81,6 @@ define(
                 this.element.off('mouseleave', this.hideBubbleCallback);
                 this.dismissBubble = undefined;
             }
-
             // If a bubble will be shown on a timeout, cancel that
             if (this.pendingBubble) {
                 this.$timeout.cancel(this.pendingBubble);
@@ -91,7 +88,6 @@ define(
                 this.element.off('mouseleave', this.hideBubbleCallback);
                 this.pendingBubble = undefined;
             }
-
             // Also clear mouse position so we don't have a ton of tiny
             // arrays allocated while user mouses over things
             this.mousePosition = undefined;
@@ -129,6 +125,7 @@ define(
 
             this.element.on('mouseleave', this.hideBubbleCallback);
         };
+
 
         /**
          * Detach any event handlers associated with this gesture.

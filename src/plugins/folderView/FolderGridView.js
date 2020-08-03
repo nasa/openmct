@@ -40,7 +40,7 @@ define([
 
                 return {
                     show: function (element) {
-                        component = new Vue({
+                        component =  new Vue({
                             el: element,
                             components: {
                                 gridViewComponent: GridViewComponent.default
@@ -63,6 +63,5 @@ define([
             }
         };
     }
-
     return FolderGridView;
 });

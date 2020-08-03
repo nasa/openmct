@@ -60,7 +60,6 @@ define(
                     );
                     mockProperty.getValue.and.returnValue("Value " + k);
                     mockProperty.getDefinition.and.returnValue({ name: "Property " + k});
-
                     return mockProperty;
                 });
                 testModel = { name: "" };

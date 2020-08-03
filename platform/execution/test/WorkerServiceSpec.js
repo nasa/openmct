@@ -40,35 +40,23 @@ define(
                     {
                         key: 'abc',
                         scriptUrl: 'c.js',
-                        bundle: {
-                            path: 'a',
-                            sources: 'b'
-                        }
+                        bundle: { path: 'a', sources: 'b' }
                     },
                     {
                         key: 'xyz',
                         scriptUrl: 'z.js',
-                        bundle: {
-                            path: 'x',
-                            sources: 'y'
-                        }
+                        bundle: { path: 'x', sources: 'y' }
                     },
                     {
                         key: 'xyz',
                         scriptUrl: 'bad.js',
-                        bundle: {
-                            path: 'bad',
-                            sources: 'bad'
-                        }
+                        bundle: { path: 'bad', sources: 'bad' }
                     },
                     {
                         key: 'a-shared-worker',
                         shared: true,
                         scriptUrl: 'c.js',
-                        bundle: {
-                            path: 'a',
-                            sources: 'b'
-                        }
+                        bundle: { path: 'a', sources: 'b' }
                     }
                 ];
                 mockWorker = {};

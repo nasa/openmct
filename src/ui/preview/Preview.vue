@@ -122,7 +122,6 @@ export default {
             if (!styleObj) {
                 return;
             }
-
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
                 let firstChild = this.$refs.objectView.querySelector(':first-child');
@@ -137,12 +136,11 @@ export default {
                         } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
                             firstChild.classList.add(styleObj.isStyleInvisible);
                         }
-
                         firstChild.style[key] = styleObj[key];
                     }
                 }
             });
         }
     }
-};
+}
 </script>

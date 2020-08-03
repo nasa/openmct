@@ -59,7 +59,7 @@ export default {
             notebookSnapshot: null,
             notebookTypes: [],
             showMenu: false
-        };
+        }
     },
     mounted() {
         this.notebookSnapshot = new Snapshot(this.openmct);
@@ -126,5 +126,5 @@ export default {
             });
         }
     }
-};
+}
 </script>

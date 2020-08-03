@@ -120,7 +120,6 @@ define(
                             ngModel.field = imageUrl;
                             console.warn('You cancelled the annotation!!!');
                         }
-
                         done(true);
                     }
                 }).show(imageUrl);

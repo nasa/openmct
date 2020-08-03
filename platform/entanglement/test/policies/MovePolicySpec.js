@@ -44,6 +44,7 @@ define([
             mockParentType =
                 jasmine.createSpyObj('parent-type', ['hasFeature']);
 
+
             testMetadata = {};
 
             mockDomainObject = domainObjectFactory({

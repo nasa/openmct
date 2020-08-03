@@ -18,7 +18,6 @@ export default {
         if (!this.composition) {
             return;
         }
-
         this.composition.on('add', this.add);
         this.composition.on('remove', this.remove);
         this.composition.load();
@@ -27,7 +26,6 @@ export default {
         if (!this.composition) {
             return;
         }
-
         this.composition.off('add', this.add);
         this.composition.off('remove', this.remove);
     },
@@ -46,8 +44,8 @@ export default {
             this.items = this.items
                 .filter((i) => {
                     return i.model.identifier.key !== identifier.key
-                        || i.model.identifier.namespace !== identifier.namespace;
+                        || i.model.identifier.namespace !== identifier.namespace
                 });
         }
     }
-};
+}

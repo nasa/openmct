@@ -152,22 +152,10 @@ define(
                                 name: "Choose something",
                                 control: "select",
                                 options: [
-                                    {
-                                        name: "Hats",
-                                        value: "hats"
-                                    },
-                                    {
-                                        name: "Bats",
-                                        value: "bats"
-                                    },
-                                    {
-                                        name: "Cats",
-                                        value: "cats"
-                                    },
-                                    {
-                                        name: "Mats",
-                                        value: "mats"
-                                    }
+                                    { name: "Hats", value: "hats" },
+                                    { name: "Bats", value: "bats" },
+                                    { name: "Cats", value: "cats" },
+                                    { name: "Mats", value: "mats" }
                                 ],
                                 key: "aChoice"
                             },
@@ -176,22 +164,10 @@ define(
                                 control: "select",
                                 required: true,
                                 options: [
-                                    {
-                                        name: "Hats",
-                                        value: "hats"
-                                    },
-                                    {
-                                        name: "Bats",
-                                        value: "bats"
-                                    },
-                                    {
-                                        name: "Cats",
-                                        value: "cats"
-                                    },
-                                    {
-                                        name: "Mats",
-                                        value: "mats"
-                                    }
+                                    { name: "Hats", value: "hats" },
+                                    { name: "Bats", value: "bats" },
+                                    { name: "Cats", value: "cats" },
+                                    { name: "Mats", value: "mats" }
                                 ],
                                 key: "aRequiredChoice"
                             }

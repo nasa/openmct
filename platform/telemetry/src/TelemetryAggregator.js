@@ -130,6 +130,7 @@ define(
             };
         };
 
+
         return TelemetryAggregator;
     }
 );

@@ -104,7 +104,6 @@ export default {
         },
         borderColorOption() {
             let value = this.styleItem.style.border.replace('1px solid ', '');
-
             return {
                 icon: 'icon-line-horz',
                 title: STYLE_CONSTANTS.borderColorTitle,
@@ -112,11 +111,10 @@ export default {
                 property: 'border',
                 isEditing: this.isEditing,
                 nonSpecific: this.mixedStyles.indexOf('border') > -1
-            };
+            }
         },
         backgroundColorOption() {
             let value = this.styleItem.style.backgroundColor;
-
             return {
                 icon: 'icon-paint-bucket',
                 title: STYLE_CONSTANTS.backgroundColorTitle,
@@ -124,11 +122,10 @@ export default {
                 property: 'backgroundColor',
                 isEditing: this.isEditing,
                 nonSpecific: this.mixedStyles.indexOf('backgroundColor') > -1
-            };
+            }
         },
         colorOption() {
             let value = this.styleItem.style.color;
-
             return {
                 icon: 'icon-font',
                 title: STYLE_CONSTANTS.textColorTitle,
@@ -136,7 +133,7 @@ export default {
                 property: 'color',
                 isEditing: this.isEditing,
                 nonSpecific: this.mixedStyles.indexOf('color') > -1
-            };
+            }
         },
         imageUrlOption() {
             return {
@@ -162,7 +159,7 @@ export default {
                 value: {url: this.styleItem.style.imageUrl},
                 isEditing: this.isEditing,
                 nonSpecific: this.mixedStyles.indexOf('imageUrl') > -1
-            };
+            }
         },
         isStyleInvisibleOption() {
             return {
@@ -181,7 +178,7 @@ export default {
                         title: STYLE_CONSTANTS.visibilityVisible
                     }
                 ]
-            };
+            }
 
         }
     },
@@ -193,14 +190,12 @@ export default {
             if (value && value.indexOf('__no_value') > -1) {
                 return value.replace('__no_value', 'transparent');
             }
-
             return value;
         },
         normalizeValueForStyle(value) {
             if (value && value === 'transparent') {
                 return '__no_value';
             }
-
             return value;
         },
         updateStyleValue(value, item) {
@@ -208,15 +203,13 @@ export default {
             if (item.property === 'border') {
                 value = '1px solid ' + value;
             }
-
             if (value && (value.url !== undefined)) {
                 this.styleItem.style[item.property] = value.url;
             } else {
                 this.styleItem.style[item.property] = value;
             }
-
             this.$emit('persist', this.styleItem, item.property);
         }
     }
-};
+}
 </script>

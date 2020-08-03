@@ -32,6 +32,7 @@ define(
         PersistenceFailureHandler
     ) {
 
+
         /**
          * The PersistenceQueue is used by the QueuingPersistenceCapability
          * to aggregate calls for object persistence. These are then issued

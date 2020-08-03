@@ -63,10 +63,10 @@ define(
                 selectable = [selectable];
             }
 
-            let multiSelect = isMultiSelectEvent
-                && this.parentSupportsMultiSelect(selectable)
-                && this.isPeer(selectable)
-                && !this.selectionContainsParent(selectable);
+            let multiSelect = isMultiSelectEvent &&
+                this.parentSupportsMultiSelect(selectable) &&
+                this.isPeer(selectable) &&
+                !this.selectionContainsParent(selectable);
 
             if (multiSelect) {
                 this.handleMultiSelect(selectable);
@@ -174,7 +174,7 @@ define(
                 return false;
             }
 
-            return Boolean(element.closest('[data-selectable]'));
+            return !!element.closest('[data-selectable]');
         };
 
         /**
@@ -238,7 +238,6 @@ define(
                     context.item = newItem;
                 });
             }
-
             if (select) {
                 if (typeof select === 'object') {
                     element.dispatchEvent(select);

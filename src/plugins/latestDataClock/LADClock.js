@@ -36,7 +36,6 @@ define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) 
         this.name = 'Latest available data';
         this.description = "Updates when when new data is available";
     }
-
     LADClock.prototype = Object.create(LocalClock.prototype);
 
     return LADClock;

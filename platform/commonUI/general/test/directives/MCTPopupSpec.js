@@ -78,7 +78,6 @@ define(
                 mockCompile.and.callFake(function () {
                     var mockFn = jasmine.createSpy();
                     mockFn.and.returnValue(mockNewElement);
-
                     return mockFn;
                 });
                 mockElement.parent.and.returnValue([mockParentEl]);

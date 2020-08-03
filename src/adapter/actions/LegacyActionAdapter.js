@@ -27,9 +27,7 @@ export default function LegacyActionAdapter(openmct, legacyActions) {
         if (action.category === 'contextual' || (Array.isArray(action.category) && action.category.includes('contextual'))) {
             return true;
         }
-
         console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
-
         return false;
     }
 

@@ -68,7 +68,6 @@ define(
         CouchPersistenceProvider.prototype.checkResponse = function (response) {
             if (response && response.ok) {
                 this.revs[response.id] = response.rev;
-
                 return response.ok;
             } else {
                 return false;
@@ -79,7 +78,6 @@ define(
         CouchPersistenceProvider.prototype.getModel = function (response) {
             if (response && response.model) {
                 this.revs[response[ID]] = response[REV];
-
                 return response.model;
             } else {
                 return undefined;
@@ -109,6 +107,7 @@ define(
             return this.request(subpath, "PUT", value);
         };
 
+
         CouchPersistenceProvider.prototype.listSpaces = function () {
             return this.$q.when(this.spaces);
         };
@@ -122,20 +121,19 @@ define(
                 .then(this.checkResponse.bind(this));
         };
 
+
         CouchPersistenceProvider.prototype.readObject = function (space, key) {
             return this.get(key).then(this.getModel.bind(this));
         };
 
         CouchPersistenceProvider.prototype.updateObject = function (space, key, value) {
             var rev = this.revs[key];
-
             return this.put(key, new CouchDocument(key, value, rev))
                 .then(this.checkResponse.bind(this));
         };
 
         CouchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
             var rev = this.revs[key];
-
             return this.put(key, new CouchDocument(key, value, rev, true))
                 .then(this.checkResponse.bind(this));
         };

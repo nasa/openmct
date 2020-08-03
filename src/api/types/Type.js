@@ -87,7 +87,7 @@ define(function () {
                 for (let [k, v] of Object.entries(legacyDefinition.model)) {
                     model[k] = JSON.parse(JSON.stringify(v));
                 }
-            };
+            }
         }
 
         if (legacyDefinition.features && legacyDefinition.features.includes("creation")) {

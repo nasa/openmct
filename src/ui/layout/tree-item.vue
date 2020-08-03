@@ -57,7 +57,6 @@ export default {
     },
     data() {
         this.navigateToPath = this.buildPathString(this.node.navigateToParent);
-
         return {
             hasChildren: false,
             isLoading: false,
@@ -65,7 +64,7 @@ export default {
             navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
             children: [],
             expanded: false
-        };
+        }
     },
     computed: {
         isAlias() {
@@ -73,9 +72,7 @@ export default {
             if (!parent) {
                 return false;
             }
-
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-
             return parentKeyString !== this.node.object.location;
         }
     },
@@ -84,7 +81,6 @@ export default {
             if (!this.hasChildren) {
                 return;
             }
-
             if (!this.loaded && !this.isLoading) {
                 this.composition = this.openmct.composition.get(this.domainObject);
                 this.composition.on('add', this.addChild);
@@ -92,7 +88,6 @@ export default {
                 this.composition.load().then(this.finishLoading);
                 this.isLoading = true;
             }
-
             this.setLocalStorageExpanded(this.navigateToPath);
         }
     },
@@ -194,5 +189,5 @@ export default {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
         }
     }
-};
+}
 </script>

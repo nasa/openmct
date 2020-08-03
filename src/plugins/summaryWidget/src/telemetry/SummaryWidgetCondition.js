@@ -54,7 +54,6 @@ define([
                     return true;
                 }
             }
-
             return false;
         } else if (this.object === 'all') {
             for (i = 0; i < stateKeys.length; i++) {
@@ -64,7 +63,6 @@ define([
                     return false;
                 }
             }
-
             return true;
         } else {
             return this.evaluateState(telemetryState[this.object]);
@@ -75,7 +73,6 @@ define([
         var testValues = [
             state.formats[this.key].parse(state.lastDatum)
         ].concat(this.values);
-
         return this.comparator(testValues);
     };
 

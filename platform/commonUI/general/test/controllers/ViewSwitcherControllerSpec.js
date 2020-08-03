@@ -55,40 +55,19 @@ define(
 
             it("maintains the current selection when views change", function () {
                 var views = [
-                    {
-                        key: "a",
-                        name: "View A"
-                    },
-                    {
-                        key: "b",
-                        name: "View B"
-                    },
-                    {
-                        key: "c",
-                        name: "View C"
-                    },
-                    {
-                        key: "d",
-                        name: "View D"
-                    }
+                    { key: "a", name: "View A" },
+                    { key: "b", name: "View B" },
+                    { key: "c", name: "View C" },
+                    { key: "d", name: "View D" }
                 ];
                 mockScope.$watch.calls.mostRecent().args[1](views);
                 mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
                 mockScope.$watch.calls.mostRecent().args[1]([
-                    {
-                        key: "a",
-                        name: "View A"
-                    },
-                    {
-                        key: "b",
-                        name: "View B"
-                    },
-                    {
-                        key: "x",
-                        name: "View X"
-                    }
+                    { key: "a", name: "View A" },
+                    { key: "b", name: "View B" },
+                    { key: "x", name: "View X" }
                 ]);
 
                 // "b" is still in there, should remain selected
@@ -97,40 +76,19 @@ define(
 
             it("chooses a default if a selected view becomes inapplicable", function () {
                 var views = [
-                    {
-                        key: "a",
-                        name: "View A"
-                    },
-                    {
-                        key: "b",
-                        name: "View B"
-                    },
-                    {
-                        key: "c",
-                        name: "View C"
-                    },
-                    {
-                        key: "d",
-                        name: "View D"
-                    }
+                    { key: "a", name: "View A" },
+                    { key: "b", name: "View B" },
+                    { key: "c", name: "View C" },
+                    { key: "d", name: "View D" }
                 ];
                 mockScope.$watch.calls.mostRecent().args[1](views);
                 mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
                 mockScope.$watch.calls.mostRecent().args[1]([
-                    {
-                        key: "a",
-                        name: "View A"
-                    },
-                    {
-                        key: "c",
-                        name: "View C"
-                    },
-                    {
-                        key: "x",
-                        name: "View X"
-                    }
+                    { key: "a", name: "View A" },
+                    { key: "c", name: "View C" },
+                    { key: "x", name: "View X" }
                 ]);
 
                 // "b" is still in there, should remain selected

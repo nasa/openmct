@@ -12,7 +12,7 @@
 <script>
 export default {
     props: {
-        value: {
+        value:  {
             type: Boolean,
             default: false
         },
@@ -35,5 +35,5 @@ export default {
             }
         }
     }
-};
+}
 </script>

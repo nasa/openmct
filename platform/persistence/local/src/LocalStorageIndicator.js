@@ -43,15 +43,12 @@ define(
         LocalStorageIndicator.prototype.getCssClass = function () {
             return "c-indicator--clickable icon-suitcase s-status-caution";
         };
-
         LocalStorageIndicator.prototype.getGlyphClass = function () {
             return 'caution';
         };
-
         LocalStorageIndicator.prototype.getText = function () {
             return "Off-line storage";
         };
-
         LocalStorageIndicator.prototype.getDescription = function () {
             return LOCAL_STORAGE_WARNING;
         };

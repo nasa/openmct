@@ -47,7 +47,7 @@ export default {
         return {
             popupMenuItems: [],
             removeActionString: `Delete ${this.sectionTitle}`
-        };
+        }
     },
     watch: {
         section(newSection) {
@@ -66,7 +66,7 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            };
+            }
 
             this.popupMenuItems = [removeSection];
         },
@@ -83,7 +83,7 @@ export default {
                 name: this.removeActionString,
                 callback: this.deleteSection.bind(this),
                 message
-            };
+            }
 
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
@@ -96,7 +96,6 @@ export default {
             if (section.className.indexOf('is-selected') > -1) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
-
                 return;
             }
 
@@ -129,5 +128,5 @@ export default {
             this.$emit('renameSection', Object.assign(this.section, { name }));
         }
     }
-};
+}
 </script>

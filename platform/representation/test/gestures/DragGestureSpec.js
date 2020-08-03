@@ -33,6 +33,8 @@ define(
             DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id";
 
+
+
         describe("The drag gesture", function () {
             var mockLog,
                 mockDndService,

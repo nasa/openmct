@@ -36,7 +36,7 @@ export default {
             notifications: this.openmct.notifications.notifications,
             highest: this.openmct.notifications.highest,
             showNotificationsOverlay: false
-        };
+        }
     },
     computed: {
         severityClass() {
@@ -66,5 +66,5 @@ export default {
             }
         }
     }
-};
+}
 </script>

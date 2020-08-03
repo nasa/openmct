@@ -58,7 +58,6 @@ define(function () {
 
     function isDefaultColor(color) {
         var a = color.asIntegerArray();
-
         return COLOR_PALETTE.some(function (b) {
             return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
         });
@@ -77,12 +76,11 @@ define(function () {
     Color.fromHexString = function (hexString) {
         if (!/#([0-9a-fA-F]{2}){2}/.test(hexString)) {
             throw new Error(
-                'Invalid input "'
-                + hexString
-                + '". Hex string must be in CSS format e.g. #00FF00'
+                'Invalid input "' +
+                hexString +
+                '". Hex string must be in CSS format e.g. #00FF00'
             );
         }
-
         return new Color([
             parseInt(hexString.slice(1, 3), 16),
             parseInt(hexString.slice(3, 5), 16),
@@ -147,7 +145,6 @@ define(function () {
         for (var i = 0; i < allColors.length; i++) {
             this.colorGroups[i % 3].push(allColors[i]);
         }
-
         this.reset();
     }
 
@@ -176,7 +173,6 @@ define(function () {
 
     ColorPalette.prototype.getByHexString = function (hexString) {
         var color = Color.fromHexString(hexString);
-
         return color;
     };
 
@@ -189,7 +185,6 @@ define(function () {
             console.warn('Color Palette empty, reusing colors!');
             this.reset();
         }
-
         return this.availableColors.shift();
     };
 
@@ -201,6 +196,7 @@ define(function () {
     ColorPalette.prototype.getColor = function (index) {
         return this.colors[index % this.colors.length];
     };
+
 
     return {
         Color: Color,

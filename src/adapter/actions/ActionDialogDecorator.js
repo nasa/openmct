@@ -49,7 +49,6 @@ define([
                     };
                 }
             }
-
             return action;
         });
     };

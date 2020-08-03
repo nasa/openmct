@@ -31,9 +31,9 @@ define([
      * @private
      */
     function isIdentifier(thing) {
-        return typeof thing === 'object'
-            && thing.hasOwnProperty('key')
-            && thing.hasOwnProperty('namespace');
+        return typeof thing === 'object' &&
+            thing.hasOwnProperty('key') &&
+            thing.hasOwnProperty('namespace');
     }
 
     /**
@@ -57,7 +57,6 @@ define([
         if (isIdentifier(keyString)) {
             return keyString;
         }
-
         var namespace = '',
             key = keyString;
         for (var i = 0; i < key.length; i++) {
@@ -67,7 +66,6 @@ define([
                 key = key.slice(i + 1);
                 break;
             }
-
             namespace += key[i];
         }
 
@@ -80,6 +78,7 @@ define([
             key: key
         };
     }
+
 
     /**
      * Convert an Open MCT Identifier into a keyString, ex:
@@ -94,11 +93,9 @@ define([
         if (isKeyString(identifier)) {
             return identifier;
         }
-
         if (!identifier.namespace) {
             return identifier.key;
         }
-
         return [
             identifier.namespace.replace(/:/g, '\\:'),
             identifier.key
@@ -119,7 +116,6 @@ define([
         if (model.composition) {
             model.composition = model.composition.map(makeKeyString);
         }
-
         return model;
     }
 
@@ -138,7 +134,6 @@ define([
         if (model.composition) {
             model.composition = model.composition.map(parseKeyString);
         }
-
         return model;
     }
 

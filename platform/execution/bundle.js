@@ -27,7 +27,7 @@ define([
 ) {
 
     return {
-        name: "platform/execution",
+        name:"platform/execution",
         definition: {
             "extensions": {
                 "services": [

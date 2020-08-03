@@ -51,7 +51,6 @@ define(
                     var mockRemove =
                         jasmine.createSpy('remove-' + mockRemoves.length);
                     mockRemoves.push(mockRemove);
-
                     return mockRemove;
                 });
 

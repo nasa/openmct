@@ -102,7 +102,7 @@ define(
             if (position[0] > margin[0]) {
                 styles.right = (winDim[0] - position[0] + offset[0]) + 'px';
             } else {
-                styles.left = (position[0] + offset[0]) + 'px';
+                styles.left =  (position[0] + offset[0]) + 'px';
             }
 
             if (position[1] > margin[1]) {

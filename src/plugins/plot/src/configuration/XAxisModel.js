@@ -47,7 +47,6 @@ define([
             if (this.get('range')) {
                 this.set('range', this.get('range'));
             }
-
             this.listenTo(this, 'change:key', this.changeKey, this);
         },
         changeKey: function (newKey) {
@@ -63,7 +62,6 @@ define([
                 });
                 this.set('label', newKey);
             }
-
             this.plot.series.forEach(function (plotSeries) {
                 plotSeries.set('xKey', newKey);
                 plotSeries.reset();

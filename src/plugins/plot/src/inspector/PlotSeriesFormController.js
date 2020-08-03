@@ -36,7 +36,6 @@ define([
             var index = object.configuration.series.findIndex(s => {
                 return _.isEqual(s.identifier, modelIdentifier);
             });
-
             return 'configuration.series[' + index + '].' + key;
         };
     }
@@ -52,6 +51,7 @@ define([
             var otherSeriesWithColor = this.model.collection.filter(function (s) {
                 return s.get('color') === color;
             })[0];
+
 
             this.model.set('color', color);
 

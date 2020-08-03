@@ -31,7 +31,7 @@ define([
     "use strict";
 
     return {
-        name: "example/profiling",
+        name:"example/profiling",
         definition: {
             "extensions": {
                 "indicators": [

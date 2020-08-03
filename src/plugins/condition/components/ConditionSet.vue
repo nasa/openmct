@@ -72,7 +72,7 @@ export default {
             defaultConditionOutput: '',
             telemetryObjs: [],
             testData: {}
-        };
+        }
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);

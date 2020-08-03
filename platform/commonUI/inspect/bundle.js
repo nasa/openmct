@@ -39,7 +39,7 @@ define([
 ) {
 
     return {
-        name: "platform/commonUI/inspect",
+        name:"platform/commonUI/inspect",
         definition: {
             "extensions": {
                 "templates": [

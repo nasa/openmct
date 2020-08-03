@@ -80,7 +80,6 @@ define(
                 template: function (element, attrs) {
                     var key = attrs.key,
                         container = containerMap[key];
-
                     return container ? container.template : "";
                 }
             };

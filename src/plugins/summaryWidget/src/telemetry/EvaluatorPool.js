@@ -46,9 +46,7 @@ define([
             this.byEvaluator.set(poolEntry.evaluator, poolEntry);
             this.byObjectId[objectId] = poolEntry;
         }
-
         poolEntry.leases += 1;
-
         return poolEntry.evaluator;
     };
 

@@ -59,7 +59,6 @@ define(
                 if ($scope.optionIndex === 0) {
                     $scope.optionIndex = $scope.filteredOptions.length;
                 }
-
                 $scope.optionIndex--;
                 fillInputWithIndexedOption();
             }
@@ -68,7 +67,6 @@ define(
                 if ($scope.optionIndex === $scope.filteredOptions.length - 1) {
                     $scope.optionIndex = -1;
                 }
-
                 $scope.optionIndex++;
                 fillInputWithIndexedOption();
             }
@@ -92,7 +90,7 @@ define(
                         incrementOptionIndex();
                         break;
                     case key.up:
-                        $event.preventDefault(); // Prevents cursor jumping back and forth
+                        $event.preventDefault();    // Prevents cursor jumping back and forth
                         decrementOptionIndex();
                         break;
                     case key.enter:

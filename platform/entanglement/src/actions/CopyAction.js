@@ -89,7 +89,6 @@ define(
                 if (this.dialog) {
                     this.dialog.dismiss();
                 }
-
                 if (!this.notification) {
                     this.notification = this.notificationService
                         .notify({
@@ -98,7 +97,6 @@ define(
                             severity: "info"
                         });
                 }
-
                 this.notification.model.progress = (processed / totalObjects) * 100;
                 this.notification.model.title = ["Copied ", processed, "of ",
                     totalObjects, "objects"].join(" ");
@@ -144,7 +142,6 @@ define(
                 if (self.notification) {
                     self.notification.dismiss(); // Clear the progress notification
                 }
-
                 self.$log.error("Error copying objects. ", errorDetails);
                 //Show a minimized notification of error for posterity
                 self.notificationService.notify(errorMessage);
@@ -152,7 +149,6 @@ define(
                 errorDialog = self.dialogService.showBlockingMessage(errorMessage);
 
             }
-
             function notification(details) {
                 self.progress(details.phase, details.totalObjects, details.processed);
             }

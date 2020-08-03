@@ -55,9 +55,9 @@ define(
             // Filter by invoking the capability's appliesTo method
             function filterCapabilities(model, id) {
                 return capabilities.filter(function (capability) {
-                    return capability.appliesTo
-                        ? capability.appliesTo(model, id)
-                        : true;
+                    return capability.appliesTo ?
+                        capability.appliesTo(model, id) :
+                        true;
                 });
             }
 
@@ -72,7 +72,6 @@ define(
                         $log.warn("No key defined for capability; skipping.");
                     }
                 });
-
                 return result;
             }
 

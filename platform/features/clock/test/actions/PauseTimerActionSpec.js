@@ -61,7 +61,6 @@ define(
                 mockDomainObject.useCapability.and.callFake(function (c, v) {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;
-
                         return asPromise(true);
                     }
                 });

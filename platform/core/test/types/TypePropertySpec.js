@@ -27,10 +27,7 @@ define(
         describe("Type property", function () {
 
             it("allows retrieval of its definition", function () {
-                var definition = {
-                    key: "hello",
-                    someOtherKey: "hm?"
-                };
+                var definition = { key: "hello", someOtherKey: "hm?" };
                 expect(
                     new TypeProperty(definition).getDefinition()
                 ).toEqual(definition);

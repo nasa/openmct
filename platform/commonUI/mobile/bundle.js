@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name: "platform/commonUI/mobile",
+        name:"platform/commonUI/mobile",
         definition: {
             "extensions": {
                 "directives": [

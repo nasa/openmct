@@ -35,7 +35,7 @@
 
 <script>
 export default {
-    props: {
+    props:{
         index: {
             type: Number,
             required: true
@@ -49,7 +49,7 @@ export default {
         return {
             isMouseOver: false,
             isValidTarget: false
-        };
+        }
     },
     mounted() {
         document.addEventListener('dragstart', this.dragstart);
@@ -79,5 +79,5 @@ export default {
             this.isValidTarget = false;
         }
     }
-};
+}
 </script>

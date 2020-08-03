@@ -76,15 +76,15 @@ define(
                 );
             });
 
-            it("if no transaction is active, passes through to persistence"
-                + " provider", function () {
+            it("if no transaction is active, passes through to persistence" +
+                " provider", function () {
                 mockTransactionManager.isActive.and.returnValue(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
-            it("if transaction is active, persist and cancel calls are"
-                + " queued", function () {
+            it("if transaction is active, persist and cancel calls are" +
+                " queued", function () {
                 mockTransactionManager.isActive.and.returnValue(true);
                 capability.persist();
                 expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();

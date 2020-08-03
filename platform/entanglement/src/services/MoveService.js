@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     function () {
         /**
@@ -43,19 +44,15 @@ define(
             if (!parentCandidate || !parentCandidate.getId) {
                 return false;
             }
-
             if (parentCandidate.getId() === currentParent.getId()) {
                 return false;
             }
-
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
-
             if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
                 return false;
             }
-
             return this.openmct.composition.checkPolicy(
                 parentCandidate.useCapability('adapter'),
                 object.useCapability('adapter')
@@ -69,8 +66,8 @@ define(
                     oldLocationCapability = object
                         .getCapability('location');
 
-                if (!newLocationCapability
-                        || !oldLocationCapability) {
+                if (!newLocationCapability ||
+                        !oldLocationCapability) {
                     return;
                 }
 

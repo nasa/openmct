@@ -57,7 +57,6 @@ define([
             if (property === 'key') {
                 self.generateValueInput(value);
             }
-
             self.eventEmitter.emit('change', {
                 value: value,
                 property: property,
@@ -184,7 +183,6 @@ define([
             if (!this.config.value) {
                 this.config.value = (inputType === 'number' ? 0 : '');
             }
-
             this.valueInput = $('<input class="sm" type = "' + inputType + '" value = "' + this.config.value + '"> </input>').get(0);
             inputArea.append(this.valueInput);
         }

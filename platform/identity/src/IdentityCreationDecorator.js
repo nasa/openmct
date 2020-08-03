@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     function () {
 
@@ -42,7 +43,6 @@ define(
                 if (user && user.key) {
                     model.creator = user.key;
                 }
-
                 return creationService.createObject(model, parent);
             });
         };

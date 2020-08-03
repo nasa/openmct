@@ -24,5 +24,5 @@ import URLTimeSettingsSynchronizer from "./URLTimeSettingsSynchronizer.js";
 export default function () {
     return function install(openmct) {
         return new URLTimeSettingsSynchronizer(openmct);
-    };
+    }
 }

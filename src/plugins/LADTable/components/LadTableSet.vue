@@ -27,7 +27,6 @@
             <th>Name</th>
             <th>Timestamp</th>
             <th>Value</th>
-            <th v-if="hasUnits">Unit</th>
         </tr>
     </thead>
     <tbody>
@@ -46,7 +45,6 @@
                 v-for="secondary in secondaryTelemetryObjects[primary.key]"
                 :key="secondary.key"
                 :domain-object="secondary.domainObject"
-                :has-units="hasUnits"
             />
         </template>
     </tbody>
@@ -66,23 +64,6 @@ export default {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
             compositions: []
-        };
-    },
-    computed: {
-        hasUnits() {
-            let ladTables = Object.values(this.secondaryTelemetryObjects);
-            for (let ladTable of ladTables) {
-                for (let telemetryObject of ladTable) {
-                    let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
-                    for (let metadatum of metadata.valueMetadatas) {
-                        if (metadatum.unit) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
         }
     },
     mounted() {
@@ -118,18 +99,15 @@ export default {
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({
-                composition,
-                addCallback,
-                removeCallback
-            });
+            this.compositions.push({composition, addCallback, removeCallback});
         },
         removePrimary(identifier) {
             let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
                 primary = this.primaryTelemetryObjects[index];
 
-            this.$delete(this.secondaryTelemetryObjects, primary.key);
-            this.primaryTelemetryObjects.splice(index, 1);
+            this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
+            this.primaryTelemetryObjects.splice(index,1);
+            primary = undefined;
         },
         reorderPrimary(reorderPlan) {
             let oldComposition = this.primaryTelemetryObjects.slice();
@@ -147,7 +125,7 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            };
+            }
         },
         removeSecondary(primary) {
             return (identifier) => {
@@ -157,8 +135,8 @@ export default {
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            };
+            }
         }
     }
-};
+}
 </script>

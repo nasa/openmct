@@ -36,7 +36,7 @@ export default function WebPage(openmct) {
 
             return {
                 show: function (element) {
-                    component = new Vue({
+                    component =  new Vue({
                         el: element,
                         components: {
                             WebPageComponent: WebPageComponent

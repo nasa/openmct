@@ -31,14 +31,8 @@ define(
             var mockQ,
                 mockProviders,
                 modelList = [
-                    {
-                        "a": { someKey: "some value" },
-                        "b": undefined
-                    },
-                    {
-                        "b": { someOtherKey: "some other value" },
-                        "a": undefined
-                    }
+                    { "a": { someKey: "some value" }, "b": undefined },
+                    { "b": { someOtherKey: "some other value" }, "a": undefined }
                 ],
                 aggregator;
 
@@ -50,7 +44,6 @@ define(
                         ["getModels"]
                     );
                     mockProvider.getModels.and.returnValue(models);
-
                     return mockProvider;
                 });
 

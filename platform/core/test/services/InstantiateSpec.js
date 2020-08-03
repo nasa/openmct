@@ -55,8 +55,8 @@ define(
                 mockCapabilityConstructor.and.returnValue(mockCapabilityInstance);
 
                 mockIdentifierService.generate.and.callFake(function (space) {
-                    return (space ? (space + ":") : "")
-                            + "some-id-" + (idCounter += 1);
+                    return (space ? (space + ":") : "") +
+                            "some-id-" + (idCounter += 1);
                 });
 
                 mockCacheService = jasmine.createSpyObj(

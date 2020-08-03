@@ -36,7 +36,7 @@ export default {
     mounted() {
         let branding = this.openmct.branding();
         if (branding.smallLogoImage) {
-            this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
+            this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`
         }
     },
     methods: {
@@ -55,5 +55,5 @@ export default {
             });
         }
     }
-};
+}
 </script>

@@ -13,7 +13,7 @@ class Overlay extends EventEmitter {
     constructor(options) {
         super();
 
-        this.dismissable = options.dismissable !== false;
+        this.dismissable = options.dismissable !== false ? true : false;
         this.container = document.createElement('div');
         this.container.classList.add('l-overlay-wrapper', cssClasses[options.size]);
 

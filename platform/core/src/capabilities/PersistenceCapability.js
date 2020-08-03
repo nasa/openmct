@@ -115,7 +115,6 @@ define(["objectUtils"],
                 domainObject = this.domainObject;
 
             let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
-
             return this.openmct.objects
                 .save(newStyleObject)
                 .then(function (result) {
@@ -142,7 +141,6 @@ define(["objectUtils"],
                     return $q.reject('Got empty object model');
                 } else {
                     var modified = model.modified;
-
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
@@ -171,9 +169,9 @@ define(["objectUtils"],
          */
         PersistenceCapability.prototype.getSpace = function () {
             var id = this.domainObject.getId();
-
             return this.identifierService.parse(id).getSpace();
         };
+
 
         /**
          * Check if this domain object has been persisted at some
@@ -191,7 +189,6 @@ define(["objectUtils"],
          */
         PersistenceCapability.prototype.getKey = function () {
             var id = this.domainObject.getId();
-
             return this.identifierService.parse(id).getKey();
         };
 

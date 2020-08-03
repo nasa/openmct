@@ -26,7 +26,7 @@ define([
 ], function (ExportService, saveAs) {
 
     return {
-        name: "platform/exporters",
+        name:"platform/exporters",
         definition: {
             extensions: {
                 services: [

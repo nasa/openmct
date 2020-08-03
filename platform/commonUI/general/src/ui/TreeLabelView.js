@@ -32,13 +32,11 @@ define([
 
     function isLink(domainObject) {
         var location = domainObject.getCapability('location');
-
         return location.isLink();
     }
 
     function getClass(domainObject) {
         var type = domainObject.getCapability('type');
-
         return type.getCssClass();
     }
 

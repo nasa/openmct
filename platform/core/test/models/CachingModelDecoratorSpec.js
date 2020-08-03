@@ -50,7 +50,6 @@ define(
                         var next = fakePromise();
                         callbacks.push(callback);
                         chains.push(next);
-
                         return next;
                     },
                     resolve: function (value) {
@@ -151,6 +150,7 @@ define(
                 expect(mockCallback.calls.mostRecent().args[0].a)
                     .toEqual({ someNewKey: "some other value" });
             });
+
 
         });
     }

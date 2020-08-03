@@ -52,7 +52,7 @@ export default {
     data() {
         return {
             conditionErrors: []
-        };
+        }
     },
     mounted() {
         this.getConditionErrors();
@@ -76,5 +76,5 @@ export default {
             }
         }
     }
-};
+}
 </script>

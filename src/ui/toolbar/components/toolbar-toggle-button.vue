@@ -24,7 +24,6 @@ export default {
             if (nextIndex >= this.options.options.length) {
                 nextIndex = 0;
             }
-
             return this.options.options[nextIndex];
         },
         nonSpecific() {

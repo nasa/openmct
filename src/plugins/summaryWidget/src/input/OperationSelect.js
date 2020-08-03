@@ -68,10 +68,8 @@ define([
                 self.loadOptions(self.config.key);
                 self.generateOptions();
             }
-
             self.select.setSelected(self.config.operation);
         }
-
         this.keySelect.on('change', onKeyChange);
         this.manager.on('metadata', onMetadataLoad);
 

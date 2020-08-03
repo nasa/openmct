@@ -23,7 +23,7 @@
 define([], function () {
 
     return {
-        name: "platform/framework",
+        name:"platform/framework",
         definition: {
             "name": "Open MCT Framework Component",
             "description": "Framework layer for Open MCT; interprets bundle definitions and serves as an intermediary between Require and Angular",

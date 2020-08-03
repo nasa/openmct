@@ -144,7 +144,6 @@ define(
                     if (model !== result) {
                         copyValues(model, result);
                     }
-
                     model.modified = useTimestamp ? timestamp : now();
                     notifyListeners(model);
                 }

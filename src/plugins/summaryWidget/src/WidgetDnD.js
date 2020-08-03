@@ -98,7 +98,6 @@ define([
                 }
             }
         });
-
         return target;
     };
 
@@ -154,7 +153,6 @@ define([
             if (!this.rulesById[dropTarget]) {
                 dropTarget = this.draggingId;
             }
-
             this.eventEmitter.emit('drop', {
                 draggingId: draggingId,
                 dropTarget: dropTarget

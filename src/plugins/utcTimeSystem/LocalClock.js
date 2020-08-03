@@ -86,7 +86,6 @@ define(['EventEmitter'], function (EventEmitter) {
         if (this.listeners(event).length === 1) {
             this.start();
         }
-
         return result;
     };
 

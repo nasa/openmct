@@ -33,29 +33,25 @@ define([], function () {
         getFormattedDatum(headers) {
             return Object.keys(headers).reduce((formattedDatum, columnKey) => {
                 formattedDatum[columnKey] = this.getFormattedValue(columnKey);
-
                 return formattedDatum;
             }, {});
         }
 
         getFormattedValue(key) {
             let column = this.columns[key];
-
             return column && column.getFormattedValue(this.datum[key]);
         }
 
         getParsedValue(key) {
             let column = this.columns[key];
-
             return column && column.getParsedValue(this.datum[key]);
         }
 
         getCellComponentName(key) {
             let column = this.columns[key];
-
-            return column
-                && column.getCellComponentName
-                && column.getCellComponentName();
+            return column &&
+                column.getCellComponentName &&
+                column.getCellComponentName();
         }
 
         getRowClass() {
@@ -63,22 +59,18 @@ define([], function () {
                 let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
                 this.rowClass = limitEvaluation && limitEvaluation.cssClass;
             }
-
             return this.rowClass;
         }
 
         getCellLimitClasses() {
             if (!this.cellLimitClasses) {
                 this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
-                    if (!column.isUnit) {
-                        let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
-                        alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
-                    }
+                    let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
+                    alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
 
                     return alarmStateMap;
                 }, {});
             }
-
             return this.cellLimitClasses;
         }
 
@@ -101,7 +93,6 @@ define([], function () {
     function createNormalizedDatum(datum, columns) {
         return Object.values(columns).reduce((normalizedDatum, column) => {
             normalizedDatum[column.getKey()] = column.getRawValue(datum);
-
             return normalizedDatum;
         }, {});
     }

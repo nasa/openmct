@@ -65,6 +65,7 @@ define(
             this.counts = {};
         }
 
+
         TelemetryQueue.prototype.isEmpty = function () {
             return this.queue.length < 1;
         };
@@ -83,7 +84,6 @@ define(
 
             // Decrement counts for the object that will be popped
             Object.keys(counts).forEach(decrementCount);
-
             return this.queue.shift();
         };
 
@@ -109,7 +109,6 @@ define(
                 // up a new  container for key-value pairs.
                 object = {};
                 queue.push(object);
-
                 return object;
             }
 

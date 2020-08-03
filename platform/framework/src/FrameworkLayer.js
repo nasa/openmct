@@ -98,7 +98,6 @@ define([
 
         // Initialize the application
         $log.info("Initializing application.");
-
         return initializer.runApplication();
     };
 

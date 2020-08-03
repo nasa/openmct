@@ -37,6 +37,7 @@ define(['EventEmitter'], function (EventEmitter) {
 
     ViewRegistry.prototype = Object.create(EventEmitter.prototype);
 
+
     /**
      * @private for platform-internal use
      * @param {*} item the object to be viewed
@@ -76,7 +77,6 @@ define(['EventEmitter'], function (EventEmitter) {
         if (key === undefined) {
             throw "View providers must have a unique 'key' property defined";
         }
-
         if (this.providers[key] !== undefined) {
             console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
         }

@@ -54,7 +54,7 @@ export default {
     data() {
         return {
             popupMenuItems: []
-        };
+        }
     },
     watch: {
     },
@@ -68,12 +68,12 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            };
+            }
             const preview = {
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)
-            };
+            }
 
             this.popupMenuItems = [removeEmbed, preview];
         },
@@ -200,7 +200,7 @@ export default {
             const options = {
                 name: this.removeActionString,
                 callback: this.removeEmbed.bind(this)
-            };
+            }
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
@@ -222,9 +222,7 @@ export default {
 
             const snapshotOverlay = this.openmct.overlays.overlay({
                 element: this.snapshot.$mount().$el,
-                onDestroy: () => {
-                    this.snapshot.$destroy(true);
-                },
+                onDestroy: () => { this.snapshot.$destroy(true) },
                 size: 'large',
                 dismissable: true,
                 buttons: [
@@ -250,8 +248,7 @@ export default {
         previewEmbed() {
             const self = this;
             const previewAction = new PreviewAction(self.openmct);
-            this.openmct.objects.get(self.embed.domainObject.identifier)
-                .then(domainObject => previewAction.invoke([domainObject]));
+            previewAction.invoke(JSON.parse(self.embed.objectPath));
         },
         removeEmbed(success) {
             if (!success) {
@@ -264,5 +261,5 @@ export default {
             this.$emit('updateEmbed', embed);
         }
     }
-};
+}
 </script>

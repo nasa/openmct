@@ -55,7 +55,7 @@ export default {
     },
     data() {
         return {
-        };
+        }
     },
     watch: {
     },
@@ -88,10 +88,7 @@ export default {
                 sections[0].isSelected = true;
             }
 
-            this.$emit('updateSection', {
-                sections,
-                id
-            });
+            this.$emit('updateSection', { sections, id });
         },
         selectSection(id, newSections) {
             const currentSections = newSections || this.sections;
@@ -101,10 +98,7 @@ export default {
 
                 return section;
             });
-            this.$emit('updateSection', {
-                sections,
-                id
-            });
+            this.$emit('updateSection', { sections, id });
         },
         updateSection(newSection) {
             const id = newSection.id;
@@ -112,11 +106,8 @@ export default {
                 section.id === id
                     ? newSection
                     : section);
-            this.$emit('updateSection', {
-                sections,
-                id
-            });
+            this.$emit('updateSection', { sections, id });
         }
     }
-};
+}
 </script>

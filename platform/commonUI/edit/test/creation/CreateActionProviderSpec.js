@@ -51,7 +51,6 @@ define(
                 );
                 mockType.hasFeature.and.returnValue(true);
                 mockType.getName.and.returnValue(name);
-
                 return mockType;
             }
 
@@ -76,7 +75,7 @@ define(
                 };
 
                 mockPolicyService.allow.and.callFake(function (category, type) {
-                    return Boolean(category === "creation" && mockCreationPolicy(type));
+                    return category === "creation" && mockCreationPolicy(type) ? true : false;
                 });
 
                 mockTypeService.listTypes.and.returnValue(mockTypes);

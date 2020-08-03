@@ -29,7 +29,7 @@ define([
 ) {
 
     return {
-        name: "platform/commonUI/regions",
+        name:"platform/commonUI/regions",
         definition: {
             "extensions": {
                 "controllers": [

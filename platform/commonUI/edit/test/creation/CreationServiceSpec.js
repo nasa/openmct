@@ -58,10 +58,7 @@ define(
             }
 
             beforeEach(function () {
-                mockQ = {
-                    when: mockPromise,
-                    reject: mockReject
-                };
+                mockQ = { when: mockPromise, reject: mockReject };
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["error", "warn", "info", "debug"]
@@ -116,8 +113,8 @@ define(
 
                 mockNewObject.getId.and.returnValue('newId');
                 mockNewObject.getCapability.and.callFake(function (c) {
-                    return c === 'persistence'
-                        ? mockNewPersistenceCapability : undefined;
+                    return c === 'persistence' ?
+                        mockNewPersistenceCapability : undefined;
                 });
 
                 mockPersistenceCapability.persist
@@ -170,7 +167,6 @@ define(
                     mockDomainObject.getId.and.returnValue(id);
                     mockCompositionCapability.invoke
                         .and.returnValue(mockPromise([mockDomainObject]));
-
                     return mockPromise(mockDomainObject);
                 });
 
@@ -210,6 +206,7 @@ define(
 
                 expect(mockLog.error).toHaveBeenCalled();
             });
+
 
         });
     }

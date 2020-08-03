@@ -95,13 +95,11 @@ define(
             });
 
             it("provides a list of relationship types", function () {
-                mockDomainObject.getModel.and.returnValue({
-                    relationships: {
-                        abc: ['a', 'b'],
-                        def: "not an array, should be ignored",
-                        xyz: []
-                    }
-                });
+                mockDomainObject.getModel.and.returnValue({ relationships: {
+                    abc: ['a', 'b'],
+                    def: "not an array, should be ignored",
+                    xyz: []
+                } });
                 expect(relationship.listRelationships()).toEqual(['abc', 'xyz']);
             });
 

@@ -34,13 +34,11 @@ define(
             function BasicCapability() {
                 return;
             }
-
             BasicCapability.key = "basic";
 
             function ApplicableCapability() {
                 return;
             }
-
             ApplicableCapability.key = "applicable";
             ApplicableCapability.appliesTo = function (model) {
                 return !model.isNotApplicable;

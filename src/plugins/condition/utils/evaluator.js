@@ -31,7 +31,7 @@ export const evaluateResults = (results, trigger) => {
     } else {
         return matchAny(results);
     }
-};
+}
 
 function matchAll(results) {
     for (const result of results) {
@@ -59,7 +59,6 @@ function matchExact(results, target) {
         if (result === true) {
             matches++;
         }
-
         if (matches > target) {
             return false;
         }

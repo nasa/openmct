@@ -59,6 +59,7 @@ import {
     deleteSearchParam
 } from 'utils/openmctLocation';
 
+
 var unknownObjectType = {
     definition: {
         cssClass: 'icon-object-unknown',
@@ -67,7 +68,7 @@ var unknownObjectType = {
 };
 
 export default {
-    inject: ['openmct', 'domainObject', 'composition'],
+    inject: ['openmct','domainObject', 'composition'],
     components: {
         ObjectView
     },
@@ -134,7 +135,7 @@ export default {
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
-    methods: {
+    methods:{
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
                 this.currentTab = this.tabsList[index];
@@ -148,12 +149,12 @@ export default {
             this.currentTab = tab;
         },
         showRemoveDialog(index) {
-            if (!this.tabsList[index]) {
+            if(!this.tabsList[index]) {
                 return;
             }
 
             let activeTab = this.tabsList[index];
-            let childDomainObject = activeTab.domainObject;
+            let childDomainObject = activeTab.domainObject
 
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
@@ -261,5 +262,5 @@ export default {
             deleteSearchParam(this.searchTabKey);
         }
     }
-};
+}
 </script>

@@ -56,7 +56,6 @@ define(
             this.state = false;
             this.$document.off("mouseup", this.clickaway);
         };
-
         ClickAwayController.prototype.activate = function () {
             this.state = true;
             this.$document.on("mouseup", this.clickaway);

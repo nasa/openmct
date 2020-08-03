@@ -29,7 +29,7 @@ define([
 ) {
 
     return {
-        name: "platform/persistence/local",
+        name:"platform/persistence/local",
         definition: {
             "extensions": {
                 "components": [

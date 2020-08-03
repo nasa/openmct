@@ -37,7 +37,7 @@ export default {
     data: function () {
         return {
             internalDomainObject: this.domainObject
-        };
+        }
     },
     computed: {
         urlDefined() {
@@ -57,5 +57,5 @@ export default {
             this.internalDomainObject = domainObject;
         }
     }
-};
+}
 </script>

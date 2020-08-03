@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import treeItem from './tree-item.vue';
+import treeItem from './tree-item.vue'
 import search from '../components/search.vue';
 
 export default {
@@ -70,7 +70,7 @@ export default {
             allTreeItems: [],
             filteredTreeItems: [],
             isLoading: false
-        };
+        }
     },
     mounted() {
         this.searchService = this.openmct.$injector.get('searchService');
@@ -81,7 +81,7 @@ export default {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
-                    return this.openmct.composition.get(root).load();
+                    return this.openmct.composition.get(root).load()
                 })
                 .then(children => {
                     this.isLoading = false;
@@ -118,7 +118,7 @@ export default {
                         object,
                         objectPath,
                         navigateToParent
-                    };
+                    }
                 });
             });
         },
@@ -130,5 +130,5 @@ export default {
             }
         }
     }
-};
+}
 </script>

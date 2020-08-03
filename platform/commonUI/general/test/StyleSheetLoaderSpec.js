@@ -40,18 +40,9 @@ define(
                 };
 
                 testStyleSheets = [
-                    {
-                        stylesheetUrl: "d.css",
-                        bundle: testBundle
-                    },
-                    {
-                        stylesheetUrl: "e.css",
-                        bundle: testBundle
-                    },
-                    {
-                        stylesheetUrl: "f.css",
-                        bundle: testBundle
-                    }
+                    { stylesheetUrl: "d.css", bundle: testBundle },
+                    { stylesheetUrl: "e.css", bundle: testBundle },
+                    { stylesheetUrl: "f.css", bundle: testBundle }
                 ];
 
                 mockPlainDocument =
@@ -113,6 +104,7 @@ define(
                         .toHaveBeenCalledWith('href', "./a/b/c/bad-theme.css");
                 });
             });
+
 
         });
     }

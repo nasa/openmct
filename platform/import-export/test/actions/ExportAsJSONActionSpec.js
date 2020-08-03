@@ -74,11 +74,9 @@ define(
                     {
                         name: 'test',
                         id: 'someID',
-                        capabilities: {
-                            'adapter': {
-                                invoke: invokeAdapter
-                            }
-                        }
+                        capabilities: {'adapter': {
+                            invoke: invokeAdapter
+                        }}
                     });
                 identifierService.generate.and.returnValue('brandNewId');
                 exportService.exportJSON.and.callFake(function (tree, options) {
@@ -94,7 +92,6 @@ define(
 
             function invokeAdapter() {
                 var newStyleObject = new AdapterCapability(context.domainObject).invoke();
-
                 return newStyleObject;
             }
 
@@ -104,7 +101,7 @@ define(
 
             it("doesn't export non-creatable objects in tree", function () {
                 var nonCreatableType = {
-                    hasFeature:
+                    hasFeature :
                         function (feature) {
                             return feature !== 'creation';
                         }
@@ -114,24 +111,15 @@ define(
 
                 var parent = domainObjectFactory({
                     name: 'parent',
-                    model: {
-                        name: 'parent',
-                        location: 'ROOT',
-                        composition: ['childId']
-                    },
+                    model: { name: 'parent', location: 'ROOT', composition: ['childId']},
                     id: 'parentId',
-                    capabilities: {
-                        'adapter': {
-                            invoke: invokeAdapter
-                        }
-                    }
+                    capabilities: {'adapter': {
+                        invoke: invokeAdapter
+                    }}
                 });
 
                 var child = {
-                    identifier: {
-                        namespace: '',
-                        key: 'childId'
-                    },
+                    identifier: {namespace: '', key: 'childId'},
                     name: 'child',
                     location: 'parentId'
                 };
@@ -152,11 +140,7 @@ define(
             it("can export self-containing objects", function () {
                 var parent = domainObjectFactory({
                     name: 'parent',
-                    model: {
-                        name: 'parent',
-                        location: 'ROOT',
-                        composition: ['infiniteChildId']
-                    },
+                    model: { name: 'parent', location: 'ROOT', composition: ['infiniteChildId']},
                     id: 'infiniteParentId',
                     capabilities: {
                         'adapter': {
@@ -166,10 +150,7 @@ define(
                 });
 
                 var child = {
-                    identifier: {
-                        namespace: '',
-                        key: 'infiniteChildId'
-                    },
+                    identifier: {namespace: '', key: 'infiniteChildId'},
                     name: 'child',
                     location: 'infiniteParentId',
                     composition: ['infiniteParentId']
@@ -197,23 +178,17 @@ define(
                     model: {
                         name: 'parent',
                         composition: ['externalId'],
-                        location: 'ROOT'
-                    },
+                        location: 'ROOT'},
                     id: 'parentId',
-                    capabilities: {
-                        'adapter': {
-                            invoke: invokeAdapter
-                        }
-                    }
+                    capabilities: {'adapter': {
+                        invoke: invokeAdapter
+                    }}
                 });
 
                 var externalObject = {
                     name: 'external',
                     location: 'outsideOfTree',
-                    identifier: {
-                        namespace: '',
-                        key: 'externalId'
-                    }
+                    identifier: {namespace: '', key: 'externalId'}
                 };
                 addChild(externalObject);
 

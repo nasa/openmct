@@ -33,8 +33,8 @@ define(
                 testCapabilities = {
                     "static": "some static capability",
                     "dynamic": function (domainObject) {
-                        return "Dynamically generated for "
-                                    + domainObject.getId();
+                        return "Dynamically generated for " +
+                                    domainObject.getId();
                     },
                     "invokable": {
                         invoke: function (arg) {

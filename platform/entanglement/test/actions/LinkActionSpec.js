@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 define(
     [
         '../../src/actions/LinkAction',
@@ -98,6 +99,7 @@ define(
                 linkService = new MockLinkService();
             });
 
+
             describe("with context from context-action", function () {
                 beforeEach(function () {
                     context = {
@@ -166,6 +168,7 @@ define(
                 it("initializes happily", function () {
                     expect(linkAction).toBeDefined();
                 });
+
 
                 it("performs link immediately", function () {
                     linkAction.perform();
