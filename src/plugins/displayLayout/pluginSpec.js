@@ -284,6 +284,7 @@ describe('the plugin', function () {
                 [{
                     context: {
                         "layoutItem": displayLayoutItem.configuration.items[2],
+                        "item": displayLayoutItem.configuration.items[2],
                         "index": 2
                     }
                 },
