@@ -159,14 +159,11 @@ define([
                 ])
             };
 
-
             openmct.time.getAllTimeSystems.and.returnValue([{key: 'timestamp'}]);
             openmct.time.timeSystem.and.returnValue({key: 'timestamp'});
 
-
             unobserver = jasmine.createSpy('unobserver');
             openmct.objects.observe.and.returnValue(unobserver);
-
 
             composition = jasmine.createSpyObj('compositionCollection', [
                 'on',
@@ -202,6 +199,7 @@ define([
                         });
                     });
                 });
+
                 return loader.promise;
             });
             openmct.composition.get.and.returnValue(composition);
@@ -210,6 +208,7 @@ define([
             openmct.telemetry.subscribe.and.callFake(function () {
                 var unsubscriber = jasmine.createSpy('unsubscriber' + telemUnsubscribes.length);
                 telemUnsubscribes.push(unsubscriber);
+
                 return unsubscriber;
             });
 
@@ -223,6 +222,7 @@ define([
 
             openmct.telemetry.getFormatMap.and.callFake(function (metadata) {
                 expect(metadata.name).toBe('fake metadata manager');
+
                 return {
                     metadata: metadata,
                     timestamp: {
@@ -376,15 +376,24 @@ define([
             beforeEach(function () {
                 openmct.telemetry.request.and.callFake(function (rObj, options) {
                     expect(rObj).toEqual(jasmine.any(Object));
-                    expect(options).toEqual({size: 1, strategy: 'latest', domain: 'timestamp'});
+                    expect(options).toEqual({
+                        size: 1,
+                        strategy: 'latest',
+                        domain: 'timestamp'
+                    });
                     expect(responseDatums[rObj.identifier.namespace]).toBeDefined();
+
                     return Promise.resolve([responseDatums[rObj.identifier.namespace]]);
                 });
                 responseDatums = {};
 
                 resultsShouldBe = function (results) {
                     return telemetryProvider
-                        .request(summaryWidgetObject, {size: 1, strategy: 'latest', domain: 'timestamp'})
+                        .request(summaryWidgetObject, {
+                            size: 1,
+                            strategy: 'latest',
+                            domain: 'timestamp'
+                        })
                         .then(function (r) {
                             expect(r).toEqual(results);
                         });

@@ -87,6 +87,7 @@ define([
         } else {
             this.config.push(newItem);
         }
+
         this.updateDomainObject();
         this.refreshItems();
     };

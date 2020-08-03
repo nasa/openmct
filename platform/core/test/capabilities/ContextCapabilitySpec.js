@@ -74,7 +74,6 @@ define(
                 expect(context.getRoot()).toEqual(mockParent);
             });
 
-
         });
     }
 );

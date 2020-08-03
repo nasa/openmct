@@ -21,11 +21,11 @@
  *****************************************************************************/
 define([], function () {
     var LEGACY_INDICATOR_TEMPLATE =
-        '<mct-include ' +
-        '   ng-model="indicator" ' +
-        '   class="h-indicator" ' +
-        '   key="template">' +
-        ' </mct-include>';
+        '<mct-include '
+        + '   ng-model="indicator" '
+        + '   class="h-indicator" '
+        + '   key="template">'
+        + ' </mct-include>';
 
     return function () {
         return function (openmct) {
@@ -51,6 +51,7 @@ define([], function () {
                 } else {
                     legacyIndicator = LegacyIndicatorDef;
                 }
+
                 return legacyIndicator;
             }
 

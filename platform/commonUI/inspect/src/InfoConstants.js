@@ -27,13 +27,13 @@
  */
 
 define({
-    BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" " +
-                "bubble-title=\"{{bubbleTitle}}\" " +
-                "bubble-layout=\"{{bubbleLayout}}\">" +
-                "<mct-include key=\"bubbleTemplate\" " +
-                "ng-model=\"bubbleModel\">" +
-                "</mct-include>" +
-                "</mct-container>",
+    BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" "
+                + "bubble-title=\"{{bubbleTitle}}\" "
+                + "bubble-layout=\"{{bubbleLayout}}\">"
+                + "<mct-include key=\"bubbleTemplate\" "
+                + "ng-model=\"bubbleModel\">"
+                + "</mct-include>"
+                + "</mct-container>",
     // Options and classes for bubble
     BUBBLE_OPTIONS: {
         offsetX: 0,

@@ -90,6 +90,7 @@ define(
             decorate($log);
             app.decorator('$log', ['$delegate', function ($delegate) {
                 decorate($delegate);
+
                 return $delegate;
             }]);
         };

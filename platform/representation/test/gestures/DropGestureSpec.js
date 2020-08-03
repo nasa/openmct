@@ -27,7 +27,6 @@ define(
     ["../../src/gestures/DropGesture"],
     function (DropGesture) {
 
-
         // Methods to mock
         var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr", "scope"],
             DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
@@ -170,7 +169,10 @@ define(
                 expect(mockScope.$broadcast).toHaveBeenCalledWith(
                     'mctDrop',
                     DROP_ID,
-                    { x: 10, y: 28 }
+                    {
+                        x: 10,
+                        y: 28
+                    }
                 );
             });
 

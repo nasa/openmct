@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Migrations from './Migrations.js'
+import Migrations from './Migrations.js';
 
 export default function () {
     return function (openmct) {
@@ -36,22 +36,20 @@ export default function () {
         }
 
         let wrappedFunction = openmct.objects.get;
-        openmct.objects.get = function migrate(identifier, fallback) {
-            return wrappedFunction.apply(openmct.objects, [identifier, fallback])
+        openmct.objects.get = function migrate(identifier) {
+            return wrappedFunction.apply(openmct.objects, [identifier])
                 .then(function (object) {
-                    if (!object && fallback === undefined) {
-                        return openmct.objects.get(identifier, true);
-                    } else {
-                        if (needsMigration(object)) {
-                            migrateObject(object)
-                                .then(newObject => {
-                                    openmct.objects.mutate(newObject, 'persisted', Date.now());
-                                    return newObject;
-                                });
-                        }
-                        return object;
+                    if (needsMigration(object)) {
+                        migrateObject(object)
+                            .then(newObject => {
+                                openmct.objects.mutate(newObject, 'persisted', Date.now());
+
+                                return newObject;
+                            });
                     }
+
+                    return object;
                 });
-        }
+        };
     };
 }
