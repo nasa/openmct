@@ -422,7 +422,7 @@ describe('the plugin', function () {
                                         "telemetry": "any",
                                         "operation": "isStale",
                                         "input": [
-                                            "1"
+                                            "0.2"
                                         ],
                                         "metadata": "dataReceived"
                                     }
@@ -481,12 +481,12 @@ describe('the plugin', function () {
                     utc: undefined
                 });
                 done();
-            }, 1500);
+            }, 300);
         });
 
         it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
             const date = Date.now();
-            conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["2"];
+            conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["0.4"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
             conditionMgr.telemetryObjects = {
@@ -507,7 +507,7 @@ describe('the plugin', function () {
                     utc: undefined
                 });
                 done();
-            }, 1500);
+            }, 300);
         });
     });
 });
