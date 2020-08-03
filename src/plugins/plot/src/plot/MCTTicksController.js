@@ -46,6 +46,7 @@ define([
         } else if (error >= e2) {
             step1 *= 2;
         }
+
         return stop < start ? -step1 : step1;
     }
 
@@ -60,7 +61,7 @@ define([
             return 0;
         }
 
-        var precision = Math.max(0, -(+exponential.slice(i + 1)));
+        var precision = Math.max(0, -(Number(exponential.slice(i + 1))));
 
         if (precision > 20) {
             precision = 20;
@@ -69,19 +70,19 @@ define([
         return precision;
     }
 
-
     /**
      * Linear tick generation from d3-array.
      */
     function ticks(start, stop, count) {
         var step = tickStep(start, stop, count),
             precision = getPrecision(step);
+
         return _.range(
             Math.ceil(start / step) * step,
             Math.floor(stop / step) * step + step / 2, // inclusive
             step
         ).map(function round(tick) {
-            return +tick.toFixed(precision);
+            return Number(tick.toFixed(precision));
         });
     }
 
@@ -92,10 +93,12 @@ define([
             if (a[i] !== b[i]) {
                 break;
             }
+
             if (a[i] === ' ') {
                 breakpoint = i + 1;
             }
         }
+
         return a.slice(0, breakpoint);
     }
 
@@ -106,10 +109,12 @@ define([
             if (a[a.length - i] !== b[b.length - i]) {
                 break;
             }
+
             if ('. '.indexOf(a[a.length - i]) !== -1) {
                 breakpoint = i;
             }
         }
+
         return a.slice(a.length - breakpoint);
     }
 
@@ -124,7 +129,7 @@ define([
             this.listenTo(this.axis, 'change:format', this.updateTicks, this);
             this.listenTo(this.$scope, '$destroy', this.stopListening, this);
             this.updateTicks();
-        }
+        };
     }
 
     MCTTicksController.$inject = ['$scope', '$element'];
@@ -142,15 +147,19 @@ define([
         if (!this.tickRange || !this.$scope.ticks || !this.$scope.ticks.length) {
             return true;
         }
+
         if (this.tickRange.max > range.max || this.tickRange.min < range.min) {
             return true;
         }
+
         if (Math.abs(range.max - this.tickRange.max) > this.tickRange.step) {
             return true;
         }
+
         if (Math.abs(this.tickRange.min - range.min) > this.tickRange.step) {
             return true;
         }
+
         return false;
     };
 
@@ -163,6 +172,7 @@ define([
                 return value <= range.max && value >= range.min;
             }, this);
         }
+
         return ticks(range.min, range.max, number);
     };
 
@@ -175,12 +185,15 @@ define([
             delete this.tickRange;
             delete this.$scope.ticks;
             delete this.shouldCheckWidth;
+
             return;
         }
+
         var format = this.axis.get('format');
         if (!format) {
             return;
         }
+
         this.$scope.min = range.min;
         this.$scope.max = range.max;
         this.$scope.interval = Math.abs(range.min - range.max);
@@ -215,9 +228,11 @@ define([
                     }
                 });
             }
+
             this.$scope.ticks = newTicks;
             this.shouldCheckWidth = true;
         }
+
         this.scheduleTickUpdate();
     };
 
@@ -225,6 +240,7 @@ define([
         if (this.tickUpdate) {
             return;
         }
+
         this.tickUpdate = true;
         setTimeout(this.doTickUpdate.bind(this), 0);
     };
@@ -242,6 +258,7 @@ define([
             this.$scope.$emit('plot:tickWidth', tickWidth);
             this.shouldCheckWidth = false;
         }
+
         this.$scope.$digest();
         this.tickUpdate = false;
     };

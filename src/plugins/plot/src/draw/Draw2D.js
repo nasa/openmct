@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define([
     'EventEmitter',
     '../lib/eventHelpers',
@@ -61,8 +60,8 @@ define([
 
     // Convert from logical to physical y coordinates
     Draw2D.prototype.y = function (v) {
-        return this.height -
-            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height
+            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
     // Set the color to be used for drawing operations
@@ -73,7 +72,6 @@ define([
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
     };
-
 
     Draw2D.prototype.clear = function () {
         this.width = this.canvas.width = this.canvas.offsetWidth;
@@ -160,7 +158,6 @@ define([
             );
         }
     };
-
 
     return Draw2D;
 });

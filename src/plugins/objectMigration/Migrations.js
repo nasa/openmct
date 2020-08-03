@@ -37,6 +37,7 @@ define([
                                 nameKeyMap[value.name] = value.key;
                             });
                         }
+
                         return nameKeyMap;
                     }, {});
                 });
@@ -109,6 +110,7 @@ define([
             migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
             delete migratedObject.layoutGrid;
             delete migratedObject.configuration.layout;
+
             return migratedObject;
         }
 
@@ -164,7 +166,7 @@ define([
                     item.size = element.size || DEFAULT_SIZE;
                 } else if (element.type === 'fixed.image') {
                     item.type = "image-view";
-                    item.url =element.url;
+                    item.url = element.url;
                     item.stroke = element.stroke || DEFAULT_STROKE;
                 }
 
@@ -177,9 +179,9 @@ define([
         return [
             {
                 check(domainObject) {
-                    return domainObject.type === 'layout' &&
-                        domainObject.configuration &&
-                        domainObject.configuration.layout;
+                    return domainObject.type === 'layout'
+                        && domainObject.configuration
+                        && domainObject.configuration.layout;
                 },
                 migrate(domainObject) {
                     let childObjects = {};
@@ -198,9 +200,9 @@ define([
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'telemetry.fixed' &&
-                        domainObject.configuration &&
-                        domainObject.configuration['fixed-display'];
+                    return domainObject.type === 'telemetry.fixed'
+                        && domainObject.configuration
+                        && domainObject.configuration['fixed-display'];
                 },
                 migrate(domainObject) {
                     const DEFAULT_GRID_SIZE = [64, 16];
@@ -231,34 +233,38 @@ define([
                         .then(function () {
                             newLayoutObject.configuration.items =
                                 migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize);
+
                             return newLayoutObject;
                         });
                 }
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'table' &&
-                        domainObject.configuration &&
-                        domainObject.configuration.table;
+                    return domainObject.type === 'table'
+                        && domainObject.configuration
+                        && domainObject.configuration.table;
                 },
                 migrate(domainObject) {
                     let currentTableConfiguration = domainObject.configuration.table || {};
                     let currentColumnConfiguration = currentTableConfiguration.columns || {};
+
                     return getColumnNameKeyMap(domainObject).then(nameKeyMap => {
                         let hiddenColumns = Object.keys(currentColumnConfiguration).filter(columnName => {
                             return currentColumnConfiguration[columnName] === false;
                         }).reduce((hiddenColumnsMap, hiddenColumnName) => {
                             let key = nameKeyMap[hiddenColumnName];
                             hiddenColumnsMap[key] = true;
+
                             return hiddenColumnsMap;
                         }, {});
 
                         domainObject.configuration.hiddenColumns = hiddenColumns;
                         delete domainObject.configuration.table;
+
                         return domainObject;
                     });
                 }
             }
         ];
-    }
+    };
 });

@@ -52,6 +52,7 @@ define(
             function discard(failure) {
                 var persistence =
                     failure.domainObject.getCapability('persistence');
+
                 return persistence.refresh();
             }
 

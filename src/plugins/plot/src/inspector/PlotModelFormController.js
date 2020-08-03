@@ -39,7 +39,6 @@ define([
         this.openmct = openmct;
         this.attrs = attrs;
 
-
         if (this.isReady()) {
             this.initializeScope();
         } else {
@@ -55,8 +54,8 @@ define([
     eventHelpers.extend(PlotModelFormController.prototype);
 
     PlotModelFormController.prototype.isReady = function () {
-        return !!this.$scope.formDomainObject &&
-            !!this.$scope.$eval(this.attrs.formModel);
+        return Boolean(this.$scope.formDomainObject)
+            && Boolean(this.$scope.$eval(this.attrs.formModel));
     };
 
     /**
@@ -121,23 +120,27 @@ define([
         if (!formProp) {
             formProp = prop;
         }
+
         var formPath = 'form.' + formProp;
         if (!coerce) {
             coerce = function (v) {
                 return v;
             };
         }
+
         if (!validate) {
             validate = function () {
                 return true;
             };
         }
+
         if (objectPath && !_.isFunction(objectPath)) {
             var staticObjectPath = objectPath;
             objectPath = function () {
                 return staticObjectPath;
             };
         }
+
         this.listenTo(this.model, 'change:' + prop, function (newVal, oldVal) {
             if (!_.isEqual(coerce(_.get(this.$scope, formPath)), coerce(newVal))) {
                 _.set(this.$scope, formPath, coerce(newVal));
@@ -149,11 +152,14 @@ define([
                 delete this.$scope.validation[formProp];
             } else {
                 this.$scope.validation[formProp] = validationResult;
+
                 return;
             }
+
             if (_.isEqual(coerce(newVal), coerce(this.model.get(prop)))) {
                 return; // Don't trigger excessive mutations.
             }
+
             if (!_.isEqual(coerce(newVal), coerce(oldVal))) {
                 this.model.set(prop, coerce(newVal));
                 if (objectPath) {
