@@ -34,7 +34,12 @@ describe("the plugin", () => {
     let provider;
     let testSpace = "testSpace";
     let testPath = "/test/db";
-    let mockDomainObject = { identifier: {namespace: '', key: "some-value"} };
+    let mockDomainObject = {
+        identifier: {
+            namespace: '',
+            key: "some-value"
+        }
+    };
 
     beforeEach((done) => {
         openmct = createOpenMct(false);

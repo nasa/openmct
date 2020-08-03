@@ -43,6 +43,7 @@ export default class CouchObjectProvider {
             if (!this.objectQueue[id]) {
                 this.objectQueue[id] = new CouchObjectQueue(undefined, rev);
             }
+
             this.objectQueue[id].updateRevision(rev);
             this.objectQueue[id].pending = false;
             if (this.objectQueue[id].hasNext()) {
@@ -63,7 +64,9 @@ export default class CouchObjectProvider {
             if (!this.objectQueue[key]) {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
+
             this.objectQueue[key].updateRevision(response[REV]);
+
             return object;
         } else {
             return undefined;
@@ -80,6 +83,7 @@ export default class CouchObjectProvider {
             intermediateResponse.resolve = resolve;
             intermediateResponse.reject = reject;
         });
+
         return intermediateResponse;
     }
 
@@ -106,6 +110,7 @@ export default class CouchObjectProvider {
         this.request(key, "PUT", new CouchDocument(key, queued.model)).then((response) => {
             this.checkResponse(response, queued.intermediateResponse);
         });
+
         return intermediateResponse.promise;
     }
 
@@ -126,6 +131,7 @@ export default class CouchObjectProvider {
         const key = model.identifier.key;
         this.enqueueObject(key, model, intermediateResponse);
         this.updateQueued(key);
+
         return intermediateResponse.promise;
     }
 }
