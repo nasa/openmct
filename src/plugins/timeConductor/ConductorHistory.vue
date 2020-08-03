@@ -84,7 +84,12 @@ export default {
     },
     data() {
         return {
-            history: {}, // contains arrays of timespans {start, end}, array key is time system key
+            /**
+             * previous bounds entries available for easy re-use
+             * @history array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
+            history: this.getHistoryFromLocalStorage(),
             presets: []
         }
     },
@@ -111,22 +116,20 @@ export default {
                 this.addTimespan();
             },
             deep: true
-        },
-        history: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
         }
     },
     mounted() {
-        this.getHistoryFromLocalStorage();
+        this.initializeHistoryIfNoHistory();
     },
     methods: {
         getHistoryFromLocalStorage() {
-            if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-                this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
-            } else {
+            const localStorageHistory = localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY);
+            const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
+
+            return history;
+        },
+        initializeHistoryIfNoHistory() {
+            if (!this.history) {
                 this.history = {};
                 this.persistHistoryToLocalStorage();
             }
@@ -156,6 +159,8 @@ export default {
 
             currentHistory.unshift(timespan);
             this.history[key] = currentHistory;
+
+            this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
             this.openmct.time.bounds(timespan);
