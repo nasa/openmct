@@ -68,7 +68,6 @@ function (
             this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
             this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
             this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
-            // this.listenTo(this.config.xAxis, 'change:key', this.clearOffset, this);
             this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
             this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
             this.$scope.$watch('highlights', this.scheduleDraw);
