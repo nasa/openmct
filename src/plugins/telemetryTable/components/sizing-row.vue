@@ -12,7 +12,10 @@ export default {
     },
     mounted() {
         this.height = this.$el.offsetHeight;
-        window.setInterval(this.heightPoll, 1000);
+        this.pollID = window.setInterval(this.heightPoll, 1000);
+    },
+    destroyed() {
+        window.clearInterval(this.pollID);
     },
     methods: {
         heightPoll() {
