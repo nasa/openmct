@@ -101,6 +101,12 @@ body.desktop {
     @each $size in $listFontSizes {
         &[data-font-size="#{$size}"] {
             font-size: #{$size}px;
+
+            // Set row heights in telemetry tables
+            tr {
+                min-height: #{$size + ($tabularTdPadTB * 2)};
+            }
+
         }
     }
 
