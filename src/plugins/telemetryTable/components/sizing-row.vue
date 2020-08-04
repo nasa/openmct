@@ -1,5 +1,5 @@
 <template>
-    <div style="visibility: hidden;">SIZING ROW</div>
+<tr class="c-telemetry-table__sizing-tr"><td>SIZING ROW</td></tr>
 </template>
 
 <script>
@@ -22,9 +22,6 @@ export default {
             let height = this.$el.offsetHeight;
 
             if (height !== this.height) {
-                if (height < this.rowHeight) {
-                    height = this.rowHeight;
-                }
                 this.$emit('change-height', height);
                 this.height = height;
             }
