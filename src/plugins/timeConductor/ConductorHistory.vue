@@ -108,7 +108,7 @@ export default {
              */
             fixedHistory: {},
             presets: []
-        }
+        };
     },
     computed: {
         currentHistory() {
@@ -196,6 +196,7 @@ export default {
 
                 return start || end;
             };
+
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {
@@ -225,7 +226,7 @@ export default {
         },
         loadConfiguration() {
             const configurations = this.configuration.menuOptions
-                .filter(option => option.timeSystem ===  this.timeSystem.key);
+                .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
             this.records = this.loadRecords(configurations);
@@ -264,5 +265,5 @@ export default {
             return (negativeOffset ? '-' : '') + formatter.format(time);
         }
     }
-}
+};
 </script>

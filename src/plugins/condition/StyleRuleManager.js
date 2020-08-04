@@ -31,6 +31,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
             this.isEditing = this.openmct.editor.editing;
         }
+
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
@@ -48,6 +49,7 @@ export default class StyleRuleManager extends EventEmitter {
                 this.stopProvidingTelemetry();
                 delete this.stopProvidingTelemetry;
             }
+
             if (this.conditionSetIdentifier) {
                 this.applySelectedConditionStyle();
             }
@@ -69,6 +71,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
+
         this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
             this.openmct.telemetry.request(conditionSetDomainObject)
                 .then(output => {
@@ -85,8 +88,8 @@ export default class StyleRuleManager extends EventEmitter {
             this.initialize(styleConfiguration || {});
             this.destroy();
         } else {
-            let isNewConditionSet = !this.conditionSetIdentifier ||
-                                    !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
+            let isNewConditionSet = !this.conditionSetIdentifier
+                                    || !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
             this.initialize(styleConfiguration);
             if (this.isEditing) {
                 this.applySelectedConditionStyle();
@@ -117,6 +120,7 @@ export default class StyleRuleManager extends EventEmitter {
             if (foundStyle !== this.currentStyle) {
                 this.currentStyle = foundStyle;
             }
+
             this.updateDomainObjectStyle();
         } else {
             this.applyStaticStyle();
@@ -149,6 +153,7 @@ export default class StyleRuleManager extends EventEmitter {
                 });
             }
         }
+
         this.updateDomainObjectStyle();
     }
 
@@ -158,6 +163,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
+
         this.conditionSetIdentifier = undefined;
     }
 

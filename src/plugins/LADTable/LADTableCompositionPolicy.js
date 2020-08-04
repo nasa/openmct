@@ -22,11 +22,12 @@
 
 export default function ladTableCompositionPolicy(openmct) {
     return function (parent, child) {
-        if(parent.type === 'LadTable') {
+        if (parent.type === 'LadTable') {
             return openmct.telemetry.isTelemetryObject(child);
-        } else if(parent.type === 'LadTableSet') {
+        } else if (parent.type === 'LadTableSet') {
             return child.type === 'LadTable';
         }
+
         return true;
-    }
+    };
 }

@@ -118,6 +118,7 @@ define(
                         $injector.get("telemetryService"));
                 } catch (e) {
                     $log.info("Telemetry service unavailable");
+
                     return (this.telemetryService = null);
                 }
             };
@@ -163,6 +164,7 @@ define(
             if (!fullRequest.id) {
                 fullRequest.id = domainObject.getId();
             }
+
             if (!fullRequest.key) {
                 fullRequest.key = domainObject.getId();
             }
@@ -224,8 +226,8 @@ define(
             var fullRequest = this.buildRequest(request || {});
             var source = fullRequest.source;
             var key = fullRequest.key;
-            var telemetryService = this.telemetryService ||
-                this.initializeTelemetryService(); // Lazy initialization
+            var telemetryService = this.telemetryService
+                || this.initializeTelemetryService(); // Lazy initialization
 
             var domainObject = objectUtils.toNewFormat(this.domainObject.getModel(), this.domainObject.getId());
             var telemetryAPI = this.openmct.telemetry;
@@ -237,14 +239,14 @@ define(
 
             var sourceMap = _.keyBy(metadata.values(), 'key');
 
-            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
-                telemetryAPI.legacyProvider;
+            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject)
+                === telemetryAPI.legacyProvider;
 
             // Pull out the relevant field from the larger,
             // structured response.
             function getRelevantResponse(response) {
-                return ((response || {})[source] || {})[key] ||
-                    EMPTY_SERIES;
+                return ((response || {})[source] || {})[key]
+                    || EMPTY_SERIES;
             }
 
             // Issue a request to the service
@@ -256,8 +258,8 @@ define(
                 // If a telemetryService is not available,
                 // getTelemetryService() should reject, and this should
                 // bubble through subsequent then calls.
-                return telemetryService &&
-                    requestTelemetryFromService().then(getRelevantResponse);
+                return telemetryService
+                    && requestTelemetryFromService().then(getRelevantResponse);
             } else {
                 return telemetryAPI.request(domainObject, fullRequest).then(function (telemetry) {
                     return asSeries(telemetry, defaultDomain, defaultRange, sourceMap);
@@ -289,8 +291,8 @@ define(
          */
         TelemetryCapability.prototype.subscribe = function subscribe(callback, request) {
             var fullRequest = this.buildRequest(request || {});
-            var telemetryService = this.telemetryService ||
-                this.initializeTelemetryService(); // Lazy initialization
+            var telemetryService = this.telemetryService
+                || this.initializeTelemetryService(); // Lazy initialization
 
             var domainObject = objectUtils.toNewFormat(this.domainObject.getModel(), this.domainObject.getId());
             var telemetryAPI = this.openmct.telemetry;
@@ -302,8 +304,8 @@ define(
 
             var sourceMap = _.keyBy(metadata.values(), 'key');
 
-            var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
-                telemetryAPI.legacyProvider;
+            var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject)
+                === telemetryAPI.legacyProvider;
 
             function update(telemetry) {
                 callback(asSeries([telemetry], defaultDomain, defaultRange, sourceMap));
@@ -321,8 +323,8 @@ define(
 
             // Avoid a loop here...
             if (isLegacyProvider) {
-                return telemetryService &&
-                    telemetryService.subscribe(updateLegacy, [fullRequest]);
+                return telemetryService
+                    && telemetryService.subscribe(updateLegacy, [fullRequest]);
             } else {
                 return telemetryAPI.subscribe(domainObject, update, fullRequest);
             }
@@ -333,7 +335,7 @@ define(
          * domain object model has a "telemetry" field.
          */
         TelemetryCapability.appliesTo = function (model) {
-            return (model && model.telemetry) ? true : false;
+            return Boolean(model && model.telemetry);
         };
 
         return TelemetryCapability;

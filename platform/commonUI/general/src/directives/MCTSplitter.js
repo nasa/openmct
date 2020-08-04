@@ -25,10 +25,10 @@ define(
     function () {
 
         // Pixel width to allocate for the splitter itself
-        var SPLITTER_TEMPLATE = "<div class='abs'" +
-                "mct-drag-down=\"splitter.startMove()\" " +
-                "mct-drag=\"splitter.move(delta)\" " +
-                "mct-drag-up=\"splitter.endMove()\"></div>";
+        var SPLITTER_TEMPLATE = "<div class='abs'"
+                + "mct-drag-down=\"splitter.startMove()\" "
+                + "mct-drag=\"splitter.move(delta)\" "
+                + "mct-drag-up=\"splitter.endMove()\"></div>";
 
         /**
          * Implements `mct-splitter` directive.
@@ -52,11 +52,11 @@ define(
                     move: function (delta) {
                         var anchor = mctSplitPane.anchor(),
                             index = anchor.orientation === "vertical" ? 0 : 1,
-                            pixelDelta = delta[index] *
-                                (anchor.reversed ? -1 : 1);
+                            pixelDelta = delta[index]
+                                * (anchor.reversed ? -1 : 1);
 
                         // Update the position of this splitter
-                        newPosition =  initialPosition + pixelDelta;
+                        newPosition = initialPosition + pixelDelta;
 
                         if (initialPosition !== newPosition) {
                             mctSplitPane.position(newPosition);

@@ -49,6 +49,7 @@ define(
             // Look up log level from query string
             function logLevel() {
                 var match = /[?&]log=([a-z]+)/.exec(window.location.search);
+
                 return match ? match[1] : "";
             }
 

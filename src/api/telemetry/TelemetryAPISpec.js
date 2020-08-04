@@ -45,7 +45,10 @@ define([
             ]);
             openmct.$injector.get.and.returnValue(mockTypeService);
             openmct.time.timeSystem.and.returnValue({key: 'system'});
-            openmct.time.bounds.and.returnValue({start: 0, end: 1});
+            openmct.time.bounds.and.returnValue({
+                start: 0,
+                end: 1
+            });
             telemetryAPI = new TelemetryAPI(openmct);
 
         });
@@ -203,6 +206,7 @@ define([
                     var unsubFunc = jasmine.createSpy('unsubscribe ' + unsubFuncs.length);
                     unsubFuncs.push(unsubFunc);
                     notifiers.push(cb);
+
                     return unsubFunc;
                 });
                 telemetryAPI.addProvider(telemetryProvider);
@@ -343,7 +347,7 @@ define([
                     }
                 });
                 mockTypeService.getType.and.returnValue(mockObjectType);
-            })
+            });
             it('respects explicit priority', function () {
                 mockMetadata.values = [
                     {
@@ -554,6 +558,6 @@ define([
                     expect(values[index].key).toBe(key);
                 });
             });
-        })
+        });
     });
 });

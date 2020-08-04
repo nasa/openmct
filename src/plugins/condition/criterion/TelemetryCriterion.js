@@ -54,7 +54,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
         this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
         if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData()
+            this.subscribeForStaleData();
         }
     }
 
@@ -62,7 +62,8 @@ export default class TelemetryCriterion extends EventEmitter {
         if (this.stalenessSubscription) {
             this.stalenessSubscription.clear();
         }
-        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0]*1000);
+
+        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0] * 1000);
     }
 
     handleStaleTelemetry(data) {
@@ -85,7 +86,7 @@ export default class TelemetryCriterion extends EventEmitter {
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
         if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData()
+            this.subscribeForStaleData();
         }
     }
 
@@ -96,6 +97,7 @@ export default class TelemetryCriterion extends EventEmitter {
         const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
             datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
+
             return datum;
         }, {});
 
@@ -111,9 +113,10 @@ export default class TelemetryCriterion extends EventEmitter {
 
         if (data) {
             this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
+                datum[timeSystem.key] = data[timeSystem.key];
             });
         }
+
         return datum;
     }
 
@@ -123,6 +126,7 @@ export default class TelemetryCriterion extends EventEmitter {
             if (this.stalenessSubscription) {
                 this.stalenessSubscription.update(validatedData);
             }
+
             this.result = false;
         } else {
             this.result = this.computeResult(validatedData);
@@ -159,11 +163,12 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     findOperation(operation) {
-        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+        for (let i = 0, ii = OPERATIONS.length; i < ii; i++) {
             if (operation === OPERATIONS[i].name) {
                 return OPERATIONS[i].operation;
             }
         }
+
         return null;
     }
 
@@ -176,10 +181,12 @@ export default class TelemetryCriterion extends EventEmitter {
             if (this.isValidInput()) {
                 this.input.forEach(input => params.push(input));
             }
+
             if (typeof comparator === 'function') {
-                result = !!comparator(params);
+                result = Boolean(comparator(params));
             }
         }
+
         return result;
     }
 
@@ -196,19 +203,21 @@ export default class TelemetryCriterion extends EventEmitter {
             const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
             metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
         }
+
         return metadataObject;
     }
 
     getInputValueFromMetaData(metadataObject, input) {
         let inputValue;
         if (metadataObject) {
-            if(metadataObject.enumerations && input.length) {
+            if (metadataObject.enumerations && input.length) {
                 const enumeration = metadataObject.enumerations[input[0]];
                 if (enumeration !== undefined && enumeration.string) {
                     inputValue = [enumeration.string];
                 }
             }
         }
+
         return inputValue;
     }
 
@@ -219,6 +228,7 @@ export default class TelemetryCriterion extends EventEmitter {
                 metadataValue = metadataObject.name;
             }
         }
+
         return metadataValue;
     }
 

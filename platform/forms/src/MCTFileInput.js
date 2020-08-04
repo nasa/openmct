@@ -34,9 +34,9 @@ define(
             function link(scope, element, attrs, control) {
 
                 function setText(fileName) {
-                    scope.structure.text = fileName.length > 20 ?
-                        fileName.substr(0, 20) + "..." :
-                        fileName;
+                    scope.structure.text = fileName.length > 20
+                        ? fileName.substr(0, 20) + "..."
+                        : fileName;
                 }
 
                 function handleClick() {

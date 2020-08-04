@@ -57,6 +57,7 @@ define(
         RemsTelemetrySeries.prototype.getPointCount = function () {
             return this.data.length;
         };
+
         /**
          * The domain value at the given index. The Rems telemetry data is
          * time ordered, so the domain value is the time stamp of each data

@@ -51,7 +51,6 @@ define(
          * @returns {boolean} false if disallowed; otherwise, true
          */
 
-
         /**
          * The `policyService` handles decisions about what things
          * are and are not allowed in certain contexts.
@@ -92,6 +91,7 @@ define(
             function instantiate(Policy) {
                 var policy = Object.create(new Policy());
                 policy.message = Policy.message;
+
                 return policy;
             }
 
@@ -128,6 +128,7 @@ define(
                     if (callback) {
                         callback(policyList[i].message);
                     }
+
                     // And return the failed result.
                     return false;
                 }

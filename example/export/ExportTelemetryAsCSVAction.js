@@ -76,13 +76,14 @@ define([], function () {
                 copyRangesToRow(row, i);
                 rows.push(row);
             }
+
             exportService.exportCSV(rows, { headers: headers });
         });
     };
 
     ExportTelemetryAsCSVAction.appliesTo = function (context) {
-        return context.domainObject &&
-            context.domainObject.hasCapability("telemetry");
+        return context.domainObject
+            && context.domainObject.hasCapability("telemetry");
     };
 
     return ExportTelemetryAsCSVAction;
