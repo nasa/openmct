@@ -112,7 +112,7 @@ export default {
                 color: '#6e6e6e'
             },
             defaultText: 'add description'
-        }
+        };
     },
     watch: {
         entry() {
@@ -197,7 +197,7 @@ export default {
                 link: null,
                 objectPath,
                 openmct: this.openmct
-            }
+            };
             const newEmbed = createNewEmbed(snapshotMeta);
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const currentEntryEmbeds = entries[entryPos].embeds;
@@ -277,7 +277,7 @@ export default {
                 return;
             }
 
-            const target = $event.target
+            const target = $event.target;
             this.currentEntryValue = target ? target.innerText : '';
 
             if (!this.entry.text.length) {
@@ -312,5 +312,5 @@ export default {
             this.$emit('updateEntries', entries);
         }
     }
-}
+};
 </script>

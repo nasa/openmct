@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ["../src/PersistenceFailureDialog", "../src/PersistenceFailureConstants"],
     function (PersistenceFailureDialog, Constants) {
@@ -31,11 +30,26 @@ define(
 
             beforeEach(function () {
                 testFailures = [
-                    { error: { key: Constants.REVISION_ERROR_KEY }, someKey: "abc" },
-                    { error: { key: "..." }, someKey: "def" },
-                    { error: { key: Constants.REVISION_ERROR_KEY }, someKey: "ghi" },
-                    { error: { key: Constants.REVISION_ERROR_KEY }, someKey: "jkl" },
-                    { error: { key: "..." }, someKey: "mno" }
+                    {
+                        error: { key: Constants.REVISION_ERROR_KEY },
+                        someKey: "abc"
+                    },
+                    {
+                        error: { key: "..." },
+                        someKey: "def"
+                    },
+                    {
+                        error: { key: Constants.REVISION_ERROR_KEY },
+                        someKey: "ghi"
+                    },
+                    {
+                        error: { key: Constants.REVISION_ERROR_KEY },
+                        someKey: "jkl"
+                    },
+                    {
+                        error: { key: "..." },
+                        someKey: "mno"
+                    }
                 ];
                 dialog = new PersistenceFailureDialog(testFailures);
             });

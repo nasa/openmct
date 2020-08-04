@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             menuItems: null
-        }
+        };
     },
     mounted() {
     },
@@ -54,7 +54,7 @@ export default {
             return {
                 x: eventPosX,
                 y: eventPosY
-            }
+            };
         },
         hideMenuItems() {
             document.body.removeChild(this.menuItems.$el);
@@ -89,5 +89,5 @@ export default {
             }, 0);
         }
     }
-}
+};
 </script>

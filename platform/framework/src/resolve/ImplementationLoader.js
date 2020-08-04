@@ -53,6 +53,7 @@ define(
          */
         ImplementationLoader.prototype.load = function loadModule(path) {
             var require = this.require;
+
             return new Promise(function (fulfill, reject) {
                 require([path], fulfill, reject);
             });

@@ -58,8 +58,8 @@ define([
             methods: {
                 increaseColumnWidth: function () {
                     data.width += COLUMN_WIDTH_STEP;
-                    data.width = data.width > MAX_COLUMN_WIDTH ?
-                        INITIAL_COLUMN_WIDTH : data.width;
+                    data.width = data.width > MAX_COLUMN_WIDTH
+                        ? INITIAL_COLUMN_WIDTH : data.width;
                 },
                 reflow: function () {
                     var column = [];

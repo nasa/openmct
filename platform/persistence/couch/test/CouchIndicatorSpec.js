@@ -124,7 +124,6 @@ define(
                 expect(indicator.getGlyphClass()).toEqual("err");
             });
 
-
         });
     }
 );

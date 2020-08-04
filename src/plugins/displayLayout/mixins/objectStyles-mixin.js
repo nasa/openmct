@@ -29,7 +29,7 @@ export default {
         return {
             itemStyle: undefined,
             styleClass: ''
-        }
+        };
     },
     mounted() {
         this.parentDomainObject = this.$parent.domainObject;

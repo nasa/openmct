@@ -24,7 +24,6 @@ define(
     ['./TelemetryHandle'],
     function (TelemetryHandle) {
 
-
         /**
          * A TelemetryRequester provides an easy interface to request
          * telemetry associated with a set of domain objects.
