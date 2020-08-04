@@ -253,6 +253,7 @@ export default {
                 if (time < 0) {
                     negativeOffset = true;
                 }
+
                 time = Math.abs(time);
 
                 format = this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER;
