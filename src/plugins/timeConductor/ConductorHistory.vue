@@ -66,6 +66,7 @@
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
+const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
@@ -78,11 +79,12 @@ export default {
             type: Object,
             required: true
         },
-        timeSystem: {
+        offsets: {
             type: Object,
-            required: true
+            required: false,
+            default: () => {}
         },
-        realtimeHistoryBounds: {
+        timeSystem: {
             type: Object,
             required: true
         },
@@ -102,11 +104,13 @@ export default {
         currentHistory() {
             return this.mode + 'History';
         },
+        isFixed() {
+            return this.openmct.time.clock() === undefined;
+        },
         hasHistoryPresets() {
             return this.timeSystem.isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
-            console.log('hist for cur ts', this.currentHistory, this.timeSystem.key,this[this.currentHistory][this.timeSystem.key]);
             const history = this[this.currentHistory][this.timeSystem.key];
             return history;
         },
@@ -120,16 +124,19 @@ export default {
     },
     watch: {
         bounds: {
-            handler(bounds) {
-                // console.log('bounds in history vue', bounds);
-                if(this.mode === 'fixed') {
+            handler() {
+                // only for fixed time since we track offsets for realtime
+                if(this.isFixed) {
                     this.addTimespan();
                 }
             },
             deep: true
         },
-        realtimeHistoryBounds: function (newBounds) {
-            this.addTimespan();
+        offsets: {
+            handler() {
+                this.addTimespan();
+            },
+            deep: true
         },
         timeSystem: {
             handler(ts) {
@@ -139,9 +146,15 @@ export default {
             deep: true
         },
         mode: function () {
-            console.log('mode changed', this.storageKey);
+            this.loadConfiguration();
         },
-        history: {
+        realtimeHistory: {
+            handler() {
+                this.persistHistoryToLocalStorage();
+            },
+            deep: true
+        },
+        fixedHistory: {
             handler() {
                 this.persistHistoryToLocalStorage();
             },
@@ -153,25 +166,22 @@ export default {
     },
     methods: {
         getHistoryFromLocalStorage() {
-            console.log('getfromlocal', this.storageKey);
             if (localStorage.getItem(this.storageKey)) {
                 this[this.currentHistory] = JSON.parse(localStorage.getItem(this.storageKey))
             } else {
                 this[this.currentHistory] = {};
                 this.persistHistoryToLocalStorage();
             }
-            console.log(this[this.currentHistory]);
         },
         persistHistoryToLocalStorage() {
-            console.log('persist to local', this[this.currentHistory]);
             localStorage.setItem(this.storageKey, JSON.stringify(this[this.currentHistory]));
         },
         addTimespan() {
             const key = this.timeSystem.key;
             let [...currentHistory] = this[this.currentHistory][key] || [];
-            const timespan = {
-                start: this.bounds.start,
-                end: this.bounds.end
+            const  timespan = {
+                start: this.isFixed ? this.bounds.start : this.offsets.start,
+                end: this.isFixed ? this.bounds.end : this.offsets.end
             };
 
             const isNotEqual = function (entry) {
@@ -187,10 +197,14 @@ export default {
             }
 
             currentHistory.unshift(timespan);
-            this[this.currentHistory][key] = currentHistory;
+            this.$set(this[this.currentHistory], key, currentHistory);
         },
         selectTimespan(timespan) {
-            this.openmct.time.bounds(timespan);
+            if (this.isFixed) {
+                this.openmct.time.bounds(timespan);
+            } else {
+                this.openmct.time.clockOffsets(timespan);
+            }
         },
         selectPresetBounds(bounds) {
             const start = typeof bounds.start === 'function' ? bounds.start() : bounds.start;
@@ -209,7 +223,7 @@ export default {
             this.records = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
-            const configuration = configurations.find(option => option.presets);
+            const configuration = configurations.find(option => option.presets && option.name.toLowerCase() === this.mode);
             const presets = configuration ? configuration.presets : [];
 
             return presets;
@@ -221,11 +235,22 @@ export default {
             return records;
         },
         formatTime(time) {
+            let format = this.timeSystem.timeFormat;
+            let negativeOffset = false;
+
+            if (!this.isFixed) {
+                if(time < 0) {
+                    negativeOffset = true;
+                }
+                time = Math.abs(time);
+                format = this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER;
+            }
+
             const formatter = this.openmct.telemetry.getValueFormatter({
-                format: this.timeSystem.timeFormat
+                format: format
             }).formatter;
 
-            return formatter.format(time);
+            return (negativeOffset ? '-' : '') + formatter.format(time);
         }
     }
 }

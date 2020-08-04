@@ -143,8 +143,8 @@
             <ConductorHistory
                 class="c-conductor__history-select"
                 :bounds="openmct.time.bounds()"
+                :offsets="openmct.time.clockOffsets()"
                 :time-system="timeSystem"
-                :realtime-history-bounds="realtimeHistoryBounds"
                 :mode="timeMode"
             />
         </div>
@@ -199,7 +199,6 @@ export default {
                 start: bounds.start,
                 end: bounds.end
             },
-            realtimeHistoryBounds: bounds,
             isFixed: this.openmct.time.clock() === undefined,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false,
@@ -301,10 +300,6 @@ export default {
             this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds, isTick) {
-            if(!isTick) {
-                // specific for realtime history tracking
-                this.realtimeHistoryBounds = bounds;
-            }
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
             this.viewBounds.start = bounds.start;
