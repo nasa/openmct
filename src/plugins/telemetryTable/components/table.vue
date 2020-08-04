@@ -211,6 +211,10 @@
                 :style="{ height: totalHeight + 'px'}"
             >
                 <tbody>
+                    <sizing-row
+                        @change-height="setRowHeight"
+                        :min-height="minRowHeight"
+                    />
                     <telemetry-table-row
                         v-for="(row, rowIndex) in visibleRows"
                         :key="rowIndex"
@@ -266,6 +270,7 @@ import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import SizingRow from './sizing-row.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -278,7 +283,8 @@ export default {
         TableColumnHeader,
         search,
         TelemetryFilterIndicator,
-        ToggleSwitch
+        ToggleSwitch,
+        SizingRow
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -319,6 +325,7 @@ export default {
             columnWidths: {},
             configuredColumnWidths: configuration.columnWidths,
             sizingRows: {},
+            minRowHeight: ROW_HEIGHT,
             rowHeight: ROW_HEIGHT,
             scrollOffset: 0,
             totalHeight: 0,
@@ -876,6 +883,9 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        setRowHeight(height) {
+            this.rowHeight = height;
         }
     }
 }
