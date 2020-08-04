@@ -67,6 +67,7 @@ define(
         function pick(a, b) {
             var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
                 bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
+
             return (aModified > bModified) ? a : (b || a);
         }
 
@@ -81,6 +82,7 @@ define(
                     }
                 });
             });
+
             return result;
         }
 

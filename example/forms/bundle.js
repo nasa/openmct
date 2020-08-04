@@ -29,7 +29,7 @@ define([
     "use strict";
 
     return {
-        name:"example/forms",
+        name: "example/forms",
         definition: {
             "name": "Declarative Forms example",
             "sources": "src",

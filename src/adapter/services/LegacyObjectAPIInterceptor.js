@@ -25,10 +25,11 @@ define([
 ], function (
     utils
 ) {
-    function ObjectServiceProvider(eventEmitter, objectService, instantiate, topic) {
+    function ObjectServiceProvider(eventEmitter, objectService, instantiate, topic, $injector) {
         this.eventEmitter = eventEmitter;
         this.objectService = objectService;
         this.instantiate = instantiate;
+        this.$injector = $injector;
 
         this.generalTopic = topic('mutation');
         this.bridgeEventBuses();
@@ -68,14 +69,54 @@ define([
         removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
     };
 
-    ObjectServiceProvider.prototype.save = function (object) {
-        var key = object.key;
+    ObjectServiceProvider.prototype.create = async function (object) {
+        let model = utils.toOldFormat(object);
 
-        return object.getCapability('persistence')
-            .persist()
-            .then(function () {
-                return utils.toNewFormat(object, key);
-            });
+        return this.getPersistenceService().createObject(
+            this.getSpace(utils.makeKeyString(object.identifier)),
+            object.identifier.key,
+            model
+        );
+    };
+
+    ObjectServiceProvider.prototype.update = async function (object) {
+        let model = utils.toOldFormat(object);
+
+        return this.getPersistenceService().updateObject(
+            this.getSpace(utils.makeKeyString(object.identifier)),
+            object.identifier.key,
+            model
+        );
+    };
+
+    /**
+     * Get the space in which this domain object is persisted;
+     * this is useful when, for example, decided which space a
+     * newly-created domain object should be persisted to (by
+     * default, this should be the space of its containing
+     * object.)
+     *
+     * @returns {string} the name of the space which should
+     *          be used to persist this object
+     */
+    ObjectServiceProvider.prototype.getSpace = function (keystring) {
+        return this.getIdentifierService().parse(keystring).getSpace();
+    };
+
+    ObjectServiceProvider.prototype.getIdentifierService = function () {
+        if (this.identifierService === undefined) {
+            this.identifierService = this.$injector.get('identifierService');
+        }
+
+        return this.identifierService;
+    };
+
+    ObjectServiceProvider.prototype.getPersistenceService = function () {
+        if (this.persistenceService === undefined) {
+            this.persistenceService = this.$injector.get('persistenceService');
+        }
+
+        return this.persistenceService;
     };
 
     ObjectServiceProvider.prototype.delete = function (object) {
@@ -84,9 +125,11 @@ define([
 
     ObjectServiceProvider.prototype.get = function (key) {
         var keyString = utils.makeKeyString(key);
+
         return this.objectService.getObjects([keyString])
             .then(function (results) {
                 var model = results[keyString].getModel();
+
                 return utils.toNewFormat(model, key);
             });
     };
@@ -100,6 +143,7 @@ define([
             var results = {},
                 promises = keys.map(function (keyString) {
                     var key = utils.parseKeyString(keyString);
+
                     return openmct.objects.get(key)
                         .then(function (object) {
                             object = utils.toOldFormat(object);
@@ -118,7 +162,8 @@ define([
                 eventEmitter,
                 objectService,
                 instantiate,
-                topic
+                topic,
+                openmct.$injector
             )
         );
 

@@ -313,6 +313,13 @@
 
     &__actions,
     &__end {
+        .c-button {
+            &[class*='icon-']:before {
+                min-width: 1em;
+                text-align: center;
+            }
+        }
+
         > * + * {
             margin-left: $interiorMargin;
         }
@@ -350,13 +357,17 @@
         flex: 0 1 auto;
     }
 
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
+    }
+
     &__object-name--w {
         @include headerFont(1.4em);
         min-width: 0;
 
-        &:before {
-            // Icon
-            margin-right: $interiorMargin;
+        .is-missing__indicator {
+            right: -5px !important;
+            top: -4px !important;
         }
     }
 

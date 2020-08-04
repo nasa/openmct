@@ -97,8 +97,10 @@ define([
     PlotController.prototype.loadSeriesData = function (series) {
         if (this.$element[0].offsetWidth === 0) {
             this.scheduleLoad(series);
+
             return;
         }
+
         this.startLoading();
         var options = {
             size: this.$element[0].offsetWidth,
@@ -117,6 +119,7 @@ define([
                 if (this.$element[0].offsetWidth === 0) {
                     return;
                 }
+
                 this.stopLoading();
                 this.scheduledLoads.forEach(this.loadSeriesData, this);
                 delete this.scheduledLoads;
@@ -124,6 +127,7 @@ define([
                 delete this.checkForSize;
             }.bind(this));
         }
+
         if (this.scheduledLoads.indexOf(series) === -1) {
             this.scheduledLoads.push(series);
         }
@@ -170,6 +174,7 @@ define([
             });
             configStore.add(configId, config);
         }
+
         return config;
     };
 
@@ -186,6 +191,7 @@ define([
             clearInterval(this.checkForSize);
             delete this.checkForSize;
         }
+
         if (this.filterObserver) {
             this.filterObserver();
         }
@@ -261,6 +267,7 @@ define([
                     .set('timeconductor-unsynced', isUnsynced);
             }
         }
+
         return this._synchronized;
     };
 
@@ -277,8 +284,8 @@ define([
             this.loadMoreData(xDisplayRange);
         }
 
-        this.synchronized(xRange.min === xDisplayRange.min &&
-                          xRange.max === xDisplayRange.max);
+        this.synchronized(xRange.min === xDisplayRange.min
+                          && xRange.max === xDisplayRange.max);
     };
 
     PlotController.prototype.updateFiltersAndResubscribe = function (updatedFilters) {

@@ -36,8 +36,6 @@ define(
         }
 
         EditPersistableObjectsPolicy.prototype.allow = function (action, context) {
-            var identifier;
-            var provider;
             var domainObject = context.domainObject;
             var key = action.getMetadata().key;
             var category = (context || {}).category;
@@ -46,9 +44,9 @@ define(
             // is also invoked during the create process which should be allowed,
             // because it may be saved elsewhere
             if ((key === 'edit' && category === 'view-control') || key === 'properties') {
-                identifier = objectUtils.parseKeyString(domainObject.getId());
-                provider = this.openmct.objects.getProvider(identifier);
-                return provider.save !== undefined;
+                let newStyleObject = objectUtils.toNewFormat(domainObject, domainObject.getId());
+
+                return this.openmct.objects.isPersistable(newStyleObject);
             }
 
             return true;

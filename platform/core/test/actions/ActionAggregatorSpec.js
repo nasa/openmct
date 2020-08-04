@@ -34,6 +34,7 @@ define(
             function createMockActionProvider(actions, i) {
                 var spy = jasmine.createSpyObj("agg" + i, ["getActions"]);
                 spy.getActions.and.returnValue(actions);
+
                 return spy;
             }
 

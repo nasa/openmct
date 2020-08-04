@@ -54,13 +54,14 @@ define(
             if (space === 'scratch') {
                 this.table[key] = JSON.stringify(value);
             }
+
             return this.$q.when(space === 'scratch');
         };
 
         ScratchPersistenceProvider.prototype.readObject = function (space, key) {
             return this.$q.when(
-                (space === 'scratch' && this.table[key]) ?
-                    JSON.parse(this.table[key]) : undefined
+                (space === 'scratch' && this.table[key])
+                    ? JSON.parse(this.table[key]) : undefined
             );
         };
 
@@ -68,6 +69,7 @@ define(
             if (space === 'scratch') {
                 delete this.table[key];
             }
+
             return this.$q.when(space === 'scratch');
         };
 

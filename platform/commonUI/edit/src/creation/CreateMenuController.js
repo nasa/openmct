@@ -38,9 +38,9 @@ define(
         function CreateMenuController($scope) {
             // Update the set of Create actions
             function refreshActions() {
-                $scope.createActions = $scope.action ?
-                    $scope.action.getActions('create') :
-                    [];
+                $scope.createActions = $scope.action
+                    ? $scope.action.getActions('create')
+                    : [];
             }
 
             // Listen for new instances of the represented object's

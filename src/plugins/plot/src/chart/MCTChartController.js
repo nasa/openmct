@@ -73,7 +73,7 @@ function (
             this.$scope.$watch('highlights', this.scheduleDraw);
             this.$scope.$watch('rectangles', this.scheduleDraw);
             this.config.series.forEach(this.onSeriesAdd, this);
-        }
+        };
     }
 
     eventHelpers.extend(MCTChartController.prototype);
@@ -100,6 +100,7 @@ function (
         if (mode === o) {
             return;
         }
+
         var elements = this.seriesElements.get(series);
         elements.lines.forEach(function (line) {
             this.lines.splice(this.lines.indexOf(line), 1);
@@ -118,11 +119,13 @@ function (
         if (mode === o) {
             return;
         }
+
         var elements = this.seriesElements.get(series);
         if (elements.alarmSet) {
             elements.alarmSet.destroy();
             this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
         }
+
         elements.alarmSet = this.alarmPointSetForSeries(series);
         if (elements.alarmSet) {
             this.alarmSets.push(elements.alarmSet);
@@ -133,6 +136,7 @@ function (
         if (mode === o) {
             return;
         }
+
         var elements = this.seriesElements.get(series);
         elements.pointSets.forEach(function (pointSet) {
             this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
@@ -206,7 +210,8 @@ function (
         if (this.drawAPI) {
             this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
         }
-        return !!this.drawAPI;
+
+        return Boolean(this.drawAPI);
     };
 
     MCTChartController.prototype.fallbackToCanvas = function () {
@@ -241,6 +246,7 @@ function (
             elements.alarmSet.destroy();
             this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
         }
+
         this.seriesElements.delete(series);
     };
 
@@ -252,6 +258,7 @@ function (
                 this.offset
             );
         }
+
         if (series.get('interpolate') === 'stepAfter') {
             return new MCTChartLineStepAfter(
                 series,
@@ -311,6 +318,7 @@ function (
         if (!this.offset.x || !this.offset.y) {
             return false;
         }
+
         return true;
     };
 
@@ -326,6 +334,7 @@ function (
         if (this.isDestroyed) {
             return;
         }
+
         this.drawAPI.clear();
         if (this.canDraw()) {
             this.updateViewport();

@@ -7,25 +7,42 @@
     overflow: hidden;
     white-space: nowrap;
 
+    > * + * { margin-left: $interiorMargin; }
+
     &__name {
         @include ellipsize();
         display: inline;
     }
 
-    &__type-icon,
-    &:before {
+    &__type-icon {
         // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        opacity: 0.6;
-        margin-right: $interiorMargin;
+        opacity: $objectLabelTypeIconOpacity;
+    }
+
+    &.is-missing {
+        @include isMissing($absPos: true);
+
+        [class*='__type-icon']:before,
+        [class*='__type-icon']:after{
+            opacity: $opacityMissing;
+        }
+
+        .is-missing__indicator {
+            right: -3px;
+            top: -3px;
+            transform: scale(0.7);
+        }
     }
 }
 
 .c-tree .c-object-label {
     border-radius: $controlCr;
     padding: $interiorMarginSm 1px;
+
+    > * + * { margin-left: $interiorMarginSm; }
 
     &__name {
         display: inline;

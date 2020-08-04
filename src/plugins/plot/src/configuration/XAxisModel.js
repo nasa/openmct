@@ -47,6 +47,7 @@ define([
             if (this.get('range')) {
                 this.set('range', this.get('range'));
             }
+
             this.listenTo(this, 'change:key', this.changeKey, this);
             this.listenTo(this, 'resetSeries', this.resetSeries, this);
         },
