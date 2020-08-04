@@ -237,7 +237,6 @@ export default {
             }
         },
         pan(bounds) {
-            console.log('pan', bounds);
             this.isPanning = true;
             this.setViewFromBounds(bounds);
         },
@@ -299,7 +298,7 @@ export default {
             this.clearAllValidation();
             this.isFixed = clock === undefined;
         },
-        setViewFromBounds(bounds, isTick) {
+        setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
             this.viewBounds.start = bounds.start;
