@@ -5,19 +5,37 @@
 <script>
 export default {
     props: {
-        rowHeight: {
-            type: Number,
-            default: 0
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    },
+    watch: {
+        isEditing: function (isEditing) {
+            if (isEditing) {
+                this.pollForRowHeight();
+            } else {
+                this.clearPoll();
+            }
         }
     },
     mounted() {
         this.height = this.$el.offsetHeight;
-        this.pollID = window.setInterval(this.heightPoll, 1000);
     },
     destroyed() {
-        window.clearInterval(this.pollID);
+        clearPoll();
     },
     methods: {
+        pollForRowHeight() {
+            this.clearPoll();
+            this.pollID = window.setInterval(this.heightPoll, 300);
+        },
+        clearPoll() {
+            if (this.pollID) {
+                window.clearInterval(this.pollID);
+                this.pollID = undefined;
+            }
+        },
         heightPoll() {
             let height = this.$el.offsetHeight;
 

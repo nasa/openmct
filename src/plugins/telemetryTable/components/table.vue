@@ -213,7 +213,7 @@
                 <tbody>
                     <sizing-row
                         @change-height="setRowHeight"
-                        :min-height="minRowHeight"
+                        :is-editing="isEditing"
                     />
                     <telemetry-table-row
                         v-for="(row, rowIndex) in visibleRows"
@@ -325,7 +325,6 @@ export default {
             columnWidths: {},
             configuredColumnWidths: configuration.columnWidths,
             sizingRows: {},
-            minRowHeight: ROW_HEIGHT,
             rowHeight: ROW_HEIGHT,
             scrollOffset: 0,
             totalHeight: 0,
@@ -886,6 +885,8 @@ export default {
         },
         setRowHeight(height) {
             this.rowHeight = height;
+            this.calculateTableSize();
+            this.calculateScrollbarWidth();
         }
     }
 }
