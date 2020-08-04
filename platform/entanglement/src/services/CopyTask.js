@@ -264,7 +264,6 @@ define(
             this.deferred = this.$q.defer();
 
             this.buildCopyPlan()
-                .then(persistObjects)
                 .then(addClonesToParent)
                 .then(this.deferred.resolve, this.deferred.reject);
 

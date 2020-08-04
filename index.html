@@ -43,9 +43,7 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
-        //openmct.install(openmct.plugins.LocalStorage());
-        //Change 'vipersim' to whatever your local db is named
-        openmct.install(openmct.plugins.CouchDB('http://localhost:5984/vipersim'));
+        openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.Generator());

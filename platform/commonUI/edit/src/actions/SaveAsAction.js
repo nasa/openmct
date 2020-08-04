@@ -150,6 +150,13 @@ function (
             return allowed;
         }
 
+        function saveObject(parent) {
+            return this.openmct.editor.save().then(() => {
+                // Force mutation for search indexing
+                return parent;
+            });
+        }
+
         function cloneIntoParent(parent) {
             return copyService.perform(domainObject, parent, allowClone);
         }
@@ -161,13 +168,6 @@ function (
         function undirtyOriginals(object) {
             return Promise.all(toUndirty.map(undirty))
                 .then(resolveWith(object));
-        }
-
-        function saveAfterClone(clonedObject) {
-            return this.openmct.editor.save().then(() => {
-                // Force mutation for search indexing
-                return clonedObject;
-            });
         }
 
         function finishEditing(clonedObject) {
@@ -201,9 +201,9 @@ function (
             .then(doWizardSave)
             .then(showBlockingDialog)
             .then(getParent)
+            .then(saveObject)
             .then(cloneIntoParent)
             .then(undirtyOriginals)
-            .then(saveAfterClone)
             .then(finishEditing)
             .then(indexForSearch)
             .then(hideBlockingDialog)
