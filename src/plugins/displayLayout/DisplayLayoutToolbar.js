@@ -125,7 +125,6 @@ define(['lodash'], function (_) {
                             VIEW_TYPES['telemetry.plot.stacked']
                         ]
                     };
-                let self = this;
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
