@@ -95,7 +95,17 @@ export default {
     },
     data() {
         return {
+            /**
+             * previous bounds entries available for easy re-use
+             * @realtimeHistory array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
             realtimeHistory: {},
+            /**
+             * previous bounds entries available for easy re-use
+             * @fixedHistory array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
             fixedHistory: {},
             presets: []
         }
@@ -146,29 +156,23 @@ export default {
             deep: true
         },
         mode: function () {
+            this.getHistoryFromLocalStorage();
+            this.initializeHistoryIfNoHistory();
             this.loadConfiguration();
-        },
-        realtimeHistory: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
-        },
-        fixedHistory: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
         }
     },
     mounted() {
         this.getHistoryFromLocalStorage();
+        this.initializeHistoryIfNoHistory();
     },
     methods: {
         getHistoryFromLocalStorage() {
-            if (localStorage.getItem(this.storageKey)) {
-                this[this.currentHistory] = JSON.parse(localStorage.getItem(this.storageKey))
-            } else {
+            const localStorageHistory = localStorage.getItem(this.storageKey);
+            const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
+            this[this.currentHistory] = history;
+        },
+        initializeHistoryIfNoHistory() {
+            if (!this[this.currentHistory]) {
                 this[this.currentHistory] = {};
                 this.persistHistoryToLocalStorage();
             }
@@ -198,6 +202,8 @@ export default {
 
             currentHistory.unshift(timespan);
             this.$set(this[this.currentHistory], key, currentHistory);
+
+            this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
             if (this.isFixed) {
@@ -210,10 +216,7 @@ export default {
             const start = typeof bounds.start === 'function' ? bounds.start() : bounds.start;
             const end = typeof bounds.end === 'function' ? bounds.end() : bounds.end;
 
-            this.selectTimespan({
-                start: start,
-                end: end
-            });
+            this.selectTimespan({ start, end });
         },
         loadConfiguration() {
             const configurations = this.configuration.menuOptions
@@ -223,7 +226,9 @@ export default {
             this.records = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
-            const configuration = configurations.find(option => option.presets && option.name.toLowerCase() === this.mode);
+            const configuration = configurations.find(option => {
+                return option.presets && option.name.toLowerCase() === this.mode;
+            });
             const presets = configuration ? configuration.presets : [];
 
             return presets;
