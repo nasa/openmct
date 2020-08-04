@@ -552,7 +552,11 @@ define(['lodash'], function (_) {
                 function unitsOnly(items) {
                     let results = items.filter((item) => {
                         let currentItem = item[0];
-                        let metadata = this.openmct.telemetry.getMetadata(currentItem.context.item);
+                        let metadata = openmct.telemetry.getMetadata(currentItem.context.item);
+                        if (!metadata) {
+                            return false;
+                        }
+
                         let hasUnits = metadata
                             .valueMetadatas
                             .filter((metadatum) => metadatum.unit)
