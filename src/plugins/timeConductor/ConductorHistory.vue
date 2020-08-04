@@ -122,13 +122,15 @@ export default {
         },
         historyForCurrentTimeSystem() {
             const history = this[this.currentHistory][this.timeSystem.key];
+
             return history;
         },
         storageKey() {
             let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
-            if(this.mode !== 'fixed') {
+            if (this.mode !== 'fixed') {
                 key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
             }
+
             return key;
         }
     },
@@ -136,7 +138,7 @@ export default {
         bounds: {
             handler() {
                 // only for fixed time since we track offsets for realtime
-                if(this.isFixed) {
+                if (this.isFixed) {
                     this.addTimespan();
                 }
             },
@@ -183,7 +185,7 @@ export default {
         addTimespan() {
             const key = this.timeSystem.key;
             let [...currentHistory] = this[this.currentHistory][key] || [];
-            const  timespan = {
+            const timespan = {
                 start: this.isFixed ? this.bounds.start : this.offsets.start,
                 end: this.isFixed ? this.bounds.end : this.offsets.end
             };
@@ -216,7 +218,10 @@ export default {
             const start = typeof bounds.start === 'function' ? bounds.start() : bounds.start;
             const end = typeof bounds.end === 'function' ? bounds.end() : bounds.end;
 
-            this.selectTimespan({ start, end });
+            this.selectTimespan({
+                start,
+                end
+            });
         },
         loadConfiguration() {
             const configurations = this.configuration.menuOptions
@@ -244,10 +249,11 @@ export default {
             let negativeOffset = false;
 
             if (!this.isFixed) {
-                if(time < 0) {
+                if (time < 0) {
                     negativeOffset = true;
                 }
                 time = Math.abs(time);
+
                 format = this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER;
             }
 
