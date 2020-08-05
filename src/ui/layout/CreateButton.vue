@@ -13,7 +13,7 @@
         <div class="c-super-menu__menu">
             <ul>
                 <li
-                    v-for="(item, index) in sortedItems"
+                    v-for="(item, index) in sortedItems()"
                     :key="index"
                     :class="item.class"
                     :title="item.title"
@@ -44,41 +44,10 @@ import objectUtils from 'objectUtils';
 export default {
     inject: ['openmct'],
     data: function () {
-        let items = [];
-
-        this.openmct.types.listKeys().forEach(key => {
-            let menuItem = this.openmct.types.get(key).definition;
-
-            if (menuItem.creatable) {
-                let menuItemTemplate = {
-                    key: key,
-                    name: menuItem.name,
-                    class: menuItem.cssClass,
-                    title: menuItem.description
-                };
-
-                items.push(menuItemTemplate);
-            }
-        });
-
         return {
-            items: items,
             selectedMenuItem: {},
             opened: false
         };
-    },
-    computed: {
-        sortedItems() {
-            return this.items.slice().sort((a, b) => {
-                if (a.name < b.name) {
-                    return -1;
-                } else if (a.name > b.name) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
-        }
     },
     destroyed() {
         document.removeEventListener('click', this.close);
@@ -132,6 +101,34 @@ export default {
             let oldModel = objectUtils.toOldFormat(domainObject);
 
             return this.openmct.$injector.get('instantiate')(oldModel, keyString);
+        },
+        sortedItems() {
+            // TODO: optimize to add event on change 'this.openmct.types'
+            let items = [];
+
+            this.openmct.types.listKeys().forEach(key => {
+                let menuItem = this.openmct.types.get(key).definition;
+                if (menuItem.creatable) {
+                    let menuItemTemplate = {
+                        key: key,
+                        name: menuItem.name,
+                        class: menuItem.cssClass,
+                        title: menuItem.description
+                    };
+
+                    items.push(menuItemTemplate);
+                }
+            });
+
+            return items.slice().sort((a, b) => {
+                if (a.name < b.name) {
+                    return -1;
+                } else if (a.name > b.name) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
         }
     }
 };
