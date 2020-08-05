@@ -79,12 +79,6 @@ function (
         return this.objectService;
     };
 
-    function resolveWith(object) {
-        return function () {
-            return object;
-        };
-    }
-
     /**
          * Save changes and conclude editing.
          *
@@ -102,7 +96,6 @@ function (
     SaveAsAction.prototype.save = function () {
         var self = this,
             domainObject = this.domainObject,
-            copyService = this.copyService,
             dialog = new SaveInProgressDialog(this.dialogService),
             toUndirty = [];
 
@@ -139,17 +132,6 @@ function (
             return fetchObject(object.getModel().location);
         }
 
-        function allowClone(objectToClone) {
-            var allowed =
-                    (objectToClone.getId() === domainObject.getId())
-                        || objectToClone.getCapability('location').isOriginal();
-            if (allowed) {
-                toUndirty.push(objectToClone);
-            }
-
-            return allowed;
-        }
-
         function saveObject(parent) {
             return this.openmct.editor.save().then(() => {
                 // Force mutation for search indexing
@@ -157,8 +139,15 @@ function (
             });
         }
 
-        function cloneIntoParent(parent) {
-            return copyService.perform(domainObject, parent, allowClone);
+        function addSavedObjectToParent(parent) {
+            return parent.getCapability("composition")
+                .add(domainObject)
+                .then(function (addedObject) {
+                    return parent.getCapability("persistence").persist()
+                        .then(function () {
+                            return addedObject;
+                        });
+                });
         }
 
         function undirty(object) {
@@ -167,19 +156,17 @@ function (
 
         function undirtyOriginals(object) {
             return Promise.all(toUndirty.map(undirty))
-                .then(resolveWith(object));
+                .then(() => {
+                    return object;
+                });
         }
 
-        function finishEditing(clonedObject) {
-            return fetchObject(clonedObject.getId());
-        }
-
-        function indexForSearch(savedObject) {
-            savedObject.useCapability('mutation', (model) => {
+        function indexForSearch(addedObject) {
+            addedObject.useCapability('mutation', (model) => {
                 return model;
             });
 
-            return savedObject;
+            return addedObject;
         }
 
         function onSuccess(object) {
@@ -202,9 +189,11 @@ function (
             .then(showBlockingDialog)
             .then(getParent)
             .then(saveObject)
-            .then(cloneIntoParent)
+            .then(addSavedObjectToParent)
             .then(undirtyOriginals)
-            .then(finishEditing)
+            .then((addedObject) => {
+                return fetchObject(addedObject.getId());
+            })
             .then(indexForSearch)
             .then(hideBlockingDialog)
             .then(onSuccess)

@@ -75,6 +75,7 @@ describe("the plugin", () => {
 
     it('updates an object', () => {
         openmct.objects.save(mockDomainObject).then((result) => {
+            expect(provider.create).toHaveBeenCalled();
             openmct.objects.save(mockDomainObject).then((updatedResult) => {
                 expect(provider.update).toHaveBeenCalled();
                 expect(updatedResult).toBeDefined();
@@ -84,14 +85,18 @@ describe("the plugin", () => {
 
     it('updates queued objects', () => {
         let couchProvider = new CouchObjectProvider(openmct, 'http://localhost', '');
-        couchProvider.objectQueue[mockDomainObject.identifier.key] = new CouchObjectQueue({
-            mockDomainObject,
-            intermediateResponse: couchProvider.getIntermediateResponse()
-        });
+        let intermediateResponse = couchProvider.getIntermediateResponse();
         spyOn(couchProvider, 'updateQueued');
+        couchProvider.enqueueObject(mockDomainObject.identifier.key, mockDomainObject, intermediateResponse);
+        couchProvider.objectQueue[mockDomainObject.identifier.key].updateRevision(1);
         couchProvider.update(mockDomainObject);
-        setTimeout(() => {
-            expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
-        }, 100);
+        expect(couchProvider.objectQueue[mockDomainObject.identifier.key].hasNext()).toBe(2);
+        couchProvider.checkResponse({
+            ok: true,
+            rev: 2,
+            id: mockDomainObject.identifier.key
+        }, intermediateResponse);
+
+        expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
     });
 });

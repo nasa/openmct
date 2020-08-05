@@ -47,7 +47,6 @@ export default class CouchObjectProvider {
             this.objectQueue[id].updateRevision(rev);
             this.objectQueue[id].pending = false;
             if (this.objectQueue[id].hasNext()) {
-                console.log('Persisting queue', id, this.objectQueue[id].rev);
                 this.updateQueued(id);
             }
         }
@@ -121,8 +120,6 @@ export default class CouchObjectProvider {
             this.request(key, "PUT", new CouchDocument(key, queued.model, this.objectQueue[key].rev)).then((response) => {
                 this.checkResponse(response, queued.intermediateResponse);
             });
-        } else {
-            console.log('Queued persist', key, this.objectQueue[key].rev);
         }
     }
 
