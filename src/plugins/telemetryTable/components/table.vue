@@ -212,8 +212,8 @@
             >
                 <tbody>
                     <sizing-row
-                        @change-height="setRowHeight"
                         :is-editing="isEditing"
+                        @change-height="setRowHeight"
                     />
                     <telemetry-table-row
                         v-for="(row, rowIndex) in visibleRows"
