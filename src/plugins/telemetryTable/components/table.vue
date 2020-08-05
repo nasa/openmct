@@ -211,10 +211,6 @@
                 :style="{ height: totalHeight + 'px'}"
             >
                 <tbody>
-                    <sizing-row
-                        :is-editing="isEditing"
-                        @change-height="setRowHeight"
-                    />
                     <telemetry-table-row
                         v-for="(row, rowIndex) in visibleRows"
                         :key="rowIndex"
@@ -238,6 +234,10 @@
             class="c-telemetry-table__sizing js-telemetry-table__sizing"
             :style="sizingTableWidth"
         >
+            <sizing-row
+                :is-editing="isEditing"
+                @change-height="setRowHeight"
+            />
             <tr>
                 <template v-for="(title, key) in headers">
                     <th
