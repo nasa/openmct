@@ -20,10 +20,17 @@ export default {
         }
     },
     mounted() {
-        this.height = this.$el.offsetHeight;
+        this.$nextTick().then(() => {
+            this.height = this.$el.offsetHeight;
+            this.$emit('change-height', this.height);
+        });
+
+        if (this.isEditing) {
+            this.pollForRowHeight();
+        }
     },
     destroyed() {
-        clearPoll();
+        this.clearPoll();
     },
     methods: {
         pollForRowHeight() {

@@ -885,8 +885,9 @@ export default {
         },
         setRowHeight(height) {
             this.rowHeight = height;
+            this.setHeight();
             this.calculateTableSize();
-            this.calculateScrollbarWidth();
+            this.clearRowsAndRerender();
         }
     }
 }
