@@ -78,7 +78,7 @@ define([
                             hits: [],
                             total: 0
                         });
-                    }, function () {});
+                    });
             });
 
             it('parses and returns when http succeeds', function () {
@@ -90,7 +90,7 @@ define([
                         expect(provider.parseResponse)
                             .toHaveBeenCalledWith('successResponse');
                         expect(results).toBe('parsedResponse');
-                    }, function () {});
+                    });
             });
         });
 
