@@ -30,13 +30,13 @@
             <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
                 <button class="c-nav c-nav--prev"
                         title="Previous image"
-                        :disabled="isDisabled('prev')"
-                        @click="arrowClick('prev')"
+                        :disabled="isPrevDisabled()"
+                        @click="prevImage()"
                 ></button>
                 <button class="c-nav c-nav--next"
                         title="Next image"
-                        :disabled="isDisabled('next')"
-                        @click="arrowClick('next')"
+                        :disabled="isNextDisabled()"
+                        @click="nextImage()"
                 ></button>
             </div>
         </div>
@@ -47,7 +47,7 @@
                 <button
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': paused()}"
-                    @click="paused(!paused())"
+                    @click="paused(!paused(), true)"
                 ></button>
             </div>
         </div>
@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import _ from 'lodash';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -95,6 +94,11 @@ export default {
             requestCount: 0,
             timeFormat: ''
         };
+    },
+    computed: {
+        bounds() {
+            return this.openmct.time.bounds();
+        }
     },
     mounted() {
         // set
@@ -164,11 +168,11 @@ export default {
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
-        paused(state) {
+        paused(state, button = false) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.unselectAllImages();
                 this.isPaused = state;
-                if (state === true) {
+                if (state === true && button) {
                     // If we are pausing, select the latest image in imageHistory
                     this.setSelectedImage(this.imageHistory[this.imageHistory.length - 1]);
                 }
@@ -221,16 +225,15 @@ export default {
             }
         },
         requestHistory() {
-            let bounds = this.openmct.time.bounds();
-            this.requestCount++;
-            const requestId = this.requestCount;
+            const requestId = ++this.requestCount;
             this.imageHistory = [];
             this.openmct.telemetry
-                .request(this.domainObject, bounds)
+                .request(this.domainObject, this.bounds)
                 .then((values = []) => {
                     if (this.requestCount === requestId) {
-                        values.forEach(this.updateHistory, false);
-                        this.updateValues(values[values.length - 1]);
+                        // add each image to the history
+                        // update values for the very last image (set current image time and url)
+                        values.forEach((datum, index) => this.updateHistory(datum, index === values.length - 1));
                     }
                 });
         },
@@ -243,11 +246,9 @@ export default {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
                     let parsedTimestamp = this.timeFormat.parse(datum);
-                    let bounds = this.openmct.time.bounds();
 
-                    if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
+                    if (parsedTimestamp >= this.bounds.start && parsedTimestamp <= this.bounds.end) {
                         this.updateHistory(datum);
-                        this.updateValues(datum);
                     }
                 });
         },
@@ -259,8 +260,7 @@ export default {
                 return;
             }
 
-            const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
-            this.imageHistory.splice(index, 0, datum);
+            this.imageHistory.push(datum);
 
             if (updateValues) {
                 this.updateValues(datum);
@@ -276,11 +276,46 @@ export default {
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
         },
-        arrowClick(type) {
-            console.log('arrow click', type);  
+        selectedImageIndex() {
+            return this.imageHistory.findIndex(image => image.selected);
         },
-        isDisabled(type) {
-            return false;
+        setSelectedByIndex(index) {
+            this.setSelectedImage(this.imageHistory[index]);
+        },
+        nextImage() {
+            let index = this.selectedImageIndex();
+            this.setSelectedByIndex(++index);
+            if (index === this.imageHistory.length - 1) {
+                this.paused(false);
+            }
+        },
+        prevImage() {
+            let index = this.selectedImageIndex();
+            if (index === -1) {
+                this.setSelectedByIndex(this.imageHistory.length - 2);
+            } else {
+                this.setSelectedByIndex(--index);
+            }
+        },
+        isNextDisabled() {
+            let disabled = false;
+            let index = this.selectedImageIndex();
+
+            if (index === -1 || index === this.imageHistory.length - 1) {
+                disabled = true;
+            }
+
+            return disabled;
+        },
+        isPrevDisabled() {
+            let disabled = false;
+            let index = this.selectedImageIndex();
+
+            if (index === 0) {
+                disabled = true;
+            }
+
+            return disabled;
         }
     }
 };
