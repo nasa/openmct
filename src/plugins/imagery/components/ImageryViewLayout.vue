@@ -30,10 +30,13 @@
             <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
                 <button class="c-nav c-nav--prev"
                         title="Previous image"
+                        :disabled="isDisabled('prev')"
+                        @click="arrowClick('prev')"
                 ></button>
                 <button class="c-nav c-nav--next"
                         title="Next image"
-                        :disabled="true"
+                        :disabled="isDisabled('next')"
+                        @click="arrowClick('next')"
                 ></button>
             </div>
         </div>
@@ -271,6 +274,12 @@ export default {
 
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
+        },
+        arrowClick(type) {
+            console.log('arrow click', type);  
+        },
+        isDisabled(type) {
+            return false;
         }
     }
 }
