@@ -499,7 +499,7 @@ export default {
             let columnWidths = {},
                 totalWidth = 0,
                 headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[0],
+                sizingTableRow = this.sizingTable.children[1],
                 sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array)=>{
