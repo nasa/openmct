@@ -55,7 +55,7 @@
                 :title="lockedOrUnlocked"
                 class="c-button"
                 :class="{
-                    'icon-lock': domainObject.locked,
+                    'icon-lock c-button--caution': domainObject.locked,
                     'icon-unlocked': !domainObject.locked
                 }"
                 @click="toggleLock(!domainObject.locked)"
@@ -131,7 +131,7 @@ export default {
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
             notebookEnabled: this.openmct.types.get('notebook')
-        }
+        };
     },
     computed: {
         classList() {
@@ -159,27 +159,31 @@ export default {
                 });
         },
         hasParent() {
-            return this.domainObject !== PLACEHOLDER_OBJECT &&
-                    this.parentUrl !== '#/browse'
+            return this.domainObject !== PLACEHOLDER_OBJECT
+                    && this.parentUrl !== '#/browse';
         },
         parentUrl() {
             let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let hash = window.location.hash;
+
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
             let objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
-                return {}
+                return {};
             }
+
             return objectType.definition;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
+
                 return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
             }
+
             return false;
         },
         lockedOrUnlocked() {
@@ -195,6 +199,7 @@ export default {
             if (this.mutationObserver) {
                 this.mutationObserver();
             }
+
             this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
                 this.domainObject = domainObject;
             });
@@ -212,6 +217,7 @@ export default {
         if (this.mutationObserver) {
             this.mutationObserver();
         }
+
         document.removeEventListener('click', this.closeViewAndSaveMenu);
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
@@ -266,7 +272,7 @@ export default {
             });
         },
         promptUserbeforeNavigatingAway(event) {
-            if(this.openmct.editor.isEditing()) {
+            if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 event.returnValue = '';
             }
@@ -279,7 +285,7 @@ export default {
                 title: 'Saving'
             });
 
-            return this.openmct.editor.save().then(()=> {
+            return this.openmct.editor.save().then(() => {
                 dialog.dismiss();
                 this.openmct.notifications.info('Save successful');
             }).catch((error) => {
@@ -303,5 +309,5 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);
         }
     }
-}
+};
 </script>

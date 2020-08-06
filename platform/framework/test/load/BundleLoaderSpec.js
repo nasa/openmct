@@ -102,7 +102,6 @@ define(
                 });
             });
 
-
             it("warns about, then ignores, malformed bundle declarations", function () {
                 // File-not-found
                 mockHttp.get.and.returnValue(Promise.resolve(["I am not a valid bundle."]));

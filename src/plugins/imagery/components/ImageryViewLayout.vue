@@ -44,11 +44,11 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
             <div class="h-local-controls flex-elem">
-                <a
+                <button
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': paused()}"
                     @click="paused(!paused())"
-                ></a>
+                ></button>
             </div>
         </div>
     </div>
@@ -80,7 +80,7 @@ export default {
     data() {
         return {
             autoScroll: true,
-            filters : {
+            filters: {
                 brightness: 100,
                 contrast: 100
             },
@@ -94,7 +94,7 @@ export default {
             metadata: {},
             requestCount: 0,
             timeFormat: ''
-        }
+        };
     },
     mounted() {
         // set
@@ -119,6 +119,7 @@ export default {
             this.unsubscribe();
             delete this.unsubscribe;
         }
+
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
     },
@@ -143,17 +144,17 @@ export default {
             return matchesLast || isStale;
         },
         getImageUrl(datum) {
-            return datum ?
-                this.imageFormat.format(datum) :
-                this.imageUrl;
+            return datum
+                ? this.imageFormat.format(datum)
+                : this.imageUrl;
         },
         getTime(datum) {
-            return datum ?
-                this.timeFormat.format(datum) :
-                this.time;
+            return datum
+                ? this.timeFormat.format(datum)
+                : this.time;
         },
         handleScroll() {
-            const thumbsWrapper = this.$refs.thumbsWrapper
+            const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper) {
                 return;
             }
@@ -241,10 +242,10 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum[this.timeKey]),
-                        bounds = this.openmct.time.bounds();
+                    let parsedTimestamp = this.timeFormat.parse(datum);
+                    let bounds = this.openmct.time.bounds();
 
-                    if(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
+                    if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);
                         this.updateValues(datum);
                     }
@@ -261,7 +262,7 @@ export default {
             const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
             this.imageHistory.splice(index, 0, datum);
 
-            if(updateValues) {
+            if (updateValues) {
                 this.updateValues(datum);
             }
         },
@@ -282,5 +283,5 @@ export default {
             return false;
         }
     }
-}
+};
 </script>

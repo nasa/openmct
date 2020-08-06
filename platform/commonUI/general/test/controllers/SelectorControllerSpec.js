@@ -46,6 +46,7 @@ define(
                     ['getId']
                 );
                 mockObject.getId.and.returnValue(id);
+
                 return mockObject;
             }
 
@@ -89,7 +90,10 @@ define(
             });
 
             it("watches for changes in selection in left-hand tree", function () {
-                var testObject = { a: 123, b: 456 };
+                var testObject = {
+                    a: 123,
+                    b: 456
+                };
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watch.calls.count()).toEqual(1);
                 // Make sure we're watching the correct object

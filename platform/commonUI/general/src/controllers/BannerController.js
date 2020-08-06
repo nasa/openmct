@@ -46,18 +46,22 @@ define(
                   notification button
                  */
                 $event.stopPropagation();
+
                 return action();
             };
+
             $scope.dismiss = function (notification, $event) {
                 $event.stopPropagation();
                 notification.dismiss();
             };
+
             $scope.maximize = function (notification) {
                 if (notification.model.severity !== "info") {
                     var dialog;
                     notification.model.cancel = function () {
                         dialog.dismiss();
                     };
+
                     //If the notification is dismissed by the user, close
                     // the dialog.
                     notification.on('dismiss', function () {
@@ -68,5 +72,6 @@ define(
                 }
             };
         }
+
         return BannerController;
     });

@@ -35,12 +35,18 @@ define(
                 testControls = [
                     {
                         key: "abc",
-                        bundle: { path: "a", resources: "b" },
+                        bundle: {
+                            path: "a",
+                            resources: "b"
+                        },
                         templateUrl: "c/template.html"
                     },
                     {
                         key: "xyz",
-                        bundle: { path: "x", resources: "y" },
+                        bundle: {
+                            path: "x",
+                            resources: "y"
+                        },
                         templateUrl: "z/template.html"
                     }
                 ];

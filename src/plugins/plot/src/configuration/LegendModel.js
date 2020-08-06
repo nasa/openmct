@@ -48,11 +48,13 @@ define([
             return {
                 position: 'top',
                 expandByDefault: false,
+                hideLegendWhenSmall: false,
                 valueToShowWhenCollapsed: 'nearestValue',
                 showTimestampWhenExpanded: true,
                 showValueWhenExpanded: true,
                 showMaximumWhenExpanded: true,
-                showMinimumWhenExpanded: true
+                showMinimumWhenExpanded: true,
+                showUnitsWhenExpanded: true
             };
         }
     });

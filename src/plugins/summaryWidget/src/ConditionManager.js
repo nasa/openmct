@@ -142,6 +142,7 @@ define ([
             } else {
                 type = 'string';
             }
+
             this.telemetryTypesById[objectId][valueMetadata.key] = type;
             this.addGlobalPropertyType(valueMetadata.key, type);
         }, this);
@@ -174,6 +175,7 @@ define ([
     ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDatum) {
         return Object.values(this.telemetryMetadataById[objId]).reduce((normalizedDatum, metadatum) => {
             normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+
             return normalizedDatum;
         }, {});
     };
@@ -211,7 +213,10 @@ define ([
             self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
                 self.handleSubscriptionCallback(objId, datum);
             }, {});
-            telemetryAPI.request(obj, {strategy: 'latest', size: 1})
+            telemetryAPI.request(obj, {
+                strategy: 'latest',
+                size: 1
+            })
                 .then(function (results) {
                     if (results && results.length) {
                         self.handleSubscriptionCallback(objId, results[results.length - 1]);
@@ -242,8 +247,8 @@ define ([
         var objectId = objectUtils.makeKeyString(identifier);
         // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
-            return id.key === identifier.key &&
-                id.namespace === identifier.namespace;
+            return id.key === identifier.key
+                && id.namespace === identifier.namespace;
         });
         delete this.compositionObjs[objectId];
         delete this.subscriptionCache[objectId];
@@ -360,7 +365,6 @@ define ([
     ConditionManager.prototype.triggerTelemetryCallback = function () {
         this.eventEmitter.emit('receiveTelemetry');
     };
-
 
     /**
      * Unsubscribe from all registered telemetry sources and unregister all event

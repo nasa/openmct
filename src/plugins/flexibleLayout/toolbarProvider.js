@@ -29,8 +29,8 @@ function ToolbarProvider(openmct) {
         forSelection: function (selection) {
             let context = selection[0][0].context;
 
-            return (context && context.type &&
-                (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
+            return (context && context.type
+                && (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
 

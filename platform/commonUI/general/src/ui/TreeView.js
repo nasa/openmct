@@ -121,6 +121,7 @@ define([
 
     TreeView.prototype.observe = function (callback) {
         this.callbacks.push(callback);
+
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
                 return c !== callback;
@@ -135,7 +136,6 @@ define([
     TreeView.prototype.elements = function () {
         return this.ul;
     };
-
 
     return TreeView;
 });

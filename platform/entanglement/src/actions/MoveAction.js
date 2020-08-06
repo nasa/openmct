@@ -49,8 +49,8 @@ define(
                 return false;
             }
 
-            return Boolean(applicableObject &&
-                applicableObject.hasCapability('context'));
+            return Boolean(applicableObject
+                && applicableObject.hasCapability('context'));
         };
 
         return MoveAction;

@@ -21,8 +21,11 @@
 -->
 <div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
     <div class="c-plot-legend gl-plot-legend"
-         ng-class="{ 'hover-on-plot': !!highlights.length }"
-         ng-show="legend.get('position') !== 'hidden'">
+         ng-class="{
+            'hover-on-plot': !!highlights.length,
+            'is-legend-hidden': legend.get('hideLegendWhenSmall')
+        }"
+    >
         <div class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
             ng-class="{ 'c-disclosure-triangle--expanded': legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
@@ -36,15 +39,17 @@
                  ng-class="{'is-cursor-locked': !!lockHighlightPoint }">
                 <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock" title="Cursor is point locked. Click anywhere in the plot to unlock."></div>
                 <div class="plot-legend-item"
-                     ng-class="{'is-missing': series.domainObject.status === 'missing'}"
+                     ng-class="{
+                        'is-missing': series.domainObject.status === 'missing'
+                    }"
                      ng-repeat="series in series track by $index"
                 >
                     <div class="plot-series-swatch-and-name">
-                        <span class="plot-series-color-swatch "
+                        <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
                         <span class="is-missing__indicator" title="This item is missing"></span>
-                        <span class="plot-series-name">{{ series.get('name') }}</span>
+                        <span class="plot-series-name">{{ series.nameWithUnit() }}</span>
                     </div>
                     <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
                          ng-class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
@@ -74,6 +79,9 @@
                             <th ng-if="legend.get('showValueWhenExpanded')">
                                 Value
                             </th>
+                            <th ng-if="legend.get('showUnitsWhenExpanded')">
+                                Unit
+                            </th>
                             <th ng-if="legend.get('showMinimumWhenExpanded')"
                                 class="mobile-hide">
                                 Min
@@ -86,7 +94,9 @@
                     </thead>
                     <tr ng-repeat="series in series"
                         class="plot-legend-item"
-                        ng-class="{'is-missing': series.domainObject.status === 'missing'}"
+                        ng-class="{
+                            'is-missing': series.domainObject.status === 'missing'
+                        }"
                     >
                         <td class="plot-series-swatch-and-name">
                             <span class="plot-series-color-swatch"
@@ -105,6 +115,11 @@
                             <span class="plot-series-value cursor-hover hover-value-enabled"
                                   ng-class="series.closest.mctLimitState.cssClass">
                                 {{ series.formatY(series.closest) }}
+                            </span>
+                        </td>
+                        <td ng-if="legend.get('showUnitsWhenExpanded')">
+                            <span class="plot-series-value cursor-hover hover-value-enabled">
+                                {{ series.get('unit') }}
                             </span>
                         </td>
                         <td ng-if="legend.get('showMinimumWhenExpanded')"
@@ -128,7 +143,7 @@
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div class="gl-plot-axis-area gl-plot-y has-local-controls"
              ng-style="{
-                 width: (tickWidth + 30) + 'px'
+                 width: (tickWidth + 20) + 'px'
              }">
 
             <div class="gl-plot-label gl-plot-y-label"
@@ -146,7 +161,6 @@
                 </option>
             </select>
 
-
             <mct-ticks axis="yAxis">
                 <div ng-repeat="tick in ticks track by tick.value"
                      class="gl-plot-tick gl-plot-y-tick-label"
@@ -159,17 +173,15 @@
         </div>
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              ng-style="{
-                     left: (tickWidth + 30) + 'px'
-                 }">
-            <div class="l-state-indicators">
-                <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
-                      title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
-                <span class="l-state-indicators__alert-cursor-lock icon-cursor-lock"
-                      title="Telemetry point selection is locked. Click anywhere in the plot to unlock."
-                      ng-if="lockHighlightPoint"></span>
-            </div>
+                 left: (tickWidth + 20) + 'px'
+             }">
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
+                <div class="l-state-indicators">
+                    <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                          title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."></span>
+                </div>
+
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"

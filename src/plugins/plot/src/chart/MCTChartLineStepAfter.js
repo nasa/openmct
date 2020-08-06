@@ -37,12 +37,14 @@ define([
             if (index === 0 && this.count === 0) {
                 return 2;
             }
+
             return 4;
         },
         startIndexForPointAtIndex: function (index) {
             if (index === 0) {
                 return 0;
             }
+
             return 2 + ((index - 1) * 4);
         },
         addPoint: function (point, start, count) {

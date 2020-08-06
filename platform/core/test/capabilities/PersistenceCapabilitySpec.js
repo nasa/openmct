@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 /**
  * PersistenceCapabilitySpec. Created by vwoeltje on 11/6/14.
  */
@@ -40,7 +39,8 @@ define(
                 model,
                 SPACE = "some space",
                 persistence,
-                happyPromise;
+                mockOpenMCT,
+                mockNewStyleDomainObject;
 
             function asPromise(value, doCatch) {
                 return (value || {}).then ? value : {
@@ -56,8 +56,10 @@ define(
             }
 
             beforeEach(function () {
-                happyPromise = asPromise(true);
-                model = { someKey: "some value", name: "domain object"};
+                model = {
+                    someKey: "some value",
+                    name: "domain object"
+                };
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
@@ -94,12 +96,23 @@ define(
                     },
                     useCapability: jasmine.createSpy()
                 };
+
+                mockNewStyleDomainObject = Object.assign({}, model);
+                mockNewStyleDomainObject.identifier = {
+                    namespace: "",
+                    key: id
+                };
+
                 // Simulate mutation capability
                 mockDomainObject.useCapability.and.callFake(function (capability, mutator) {
                     if (capability === 'mutation') {
                         model = mutator(model) || model;
                     }
                 });
+
+                mockOpenMCT = {};
+                mockOpenMCT.objects = jasmine.createSpyObj('Object API', ['save']);
+
                 mockIdentifierService.parse.and.returnValue(mockIdentifier);
                 mockIdentifier.getSpace.and.returnValue(SPACE);
                 mockIdentifier.getKey.and.returnValue(key);
@@ -110,51 +123,28 @@ define(
                     mockIdentifierService,
                     mockNofificationService,
                     mockQ,
+                    mockOpenMCT,
                     mockDomainObject
                 );
             });
 
             describe("successful persistence", function () {
                 beforeEach(function () {
-                    mockPersistenceService.updateObject.and.returnValue(happyPromise);
-                    mockPersistenceService.createObject.and.returnValue(happyPromise);
+                    mockOpenMCT.objects.save.and.returnValue(Promise.resolve(true));
                 });
                 it("creates unpersisted objects with the persistence service", function () {
                     // Verify precondition; no call made during constructor
-                    expect(mockPersistenceService.createObject).not.toHaveBeenCalled();
+                    expect(mockOpenMCT.objects.save).not.toHaveBeenCalled();
 
                     persistence.persist();
 
-                    expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
-                        SPACE,
-                        key,
-                        model
-                    );
-                });
-
-                it("updates previously persisted objects with the persistence service", function () {
-                    // Verify precondition; no call made during constructor
-                    expect(mockPersistenceService.updateObject).not.toHaveBeenCalled();
-
-                    model.persisted = 12321;
-                    persistence.persist();
-
-                    expect(mockPersistenceService.updateObject).toHaveBeenCalledWith(
-                        SPACE,
-                        key,
-                        model
-                    );
+                    expect(mockOpenMCT.objects.save).toHaveBeenCalledWith(mockNewStyleDomainObject);
                 });
 
                 it("reports which persistence space an object belongs to", function () {
                     expect(persistence.getSpace()).toEqual(SPACE);
                 });
 
-                it("updates persisted timestamp on persistence", function () {
-                    model.modified = 12321;
-                    persistence.persist();
-                    expect(model.persisted).toEqual(12321);
-                });
                 it("refreshes the domain object model from persistence", function () {
                     var refreshModel = {someOtherKey: "some other value"};
                     model.persisted = 1;
@@ -163,32 +153,42 @@ define(
                     expect(model).toEqual(refreshModel);
                 });
 
-                it("does not trigger error notification on successful" +
-                    " persistence", function () {
-                    persistence.persist();
-                    expect(mockQ.reject).not.toHaveBeenCalled();
-                    expect(mockNofificationService.error).not.toHaveBeenCalled();
+                it("does not trigger error notification on successful"
+                    + " persistence", function () {
+                    let rejected = false;
+
+                    return persistence.persist()
+                        .catch(() => rejected = true)
+                        .then(() => {
+                            expect(rejected).toBe(false);
+                            expect(mockNofificationService.error).not.toHaveBeenCalled();
+                        });
                 });
             });
 
             describe("unsuccessful persistence", function () {
-                var sadPromise = {
-                    then: function (callback) {
-                        return asPromise(callback(0), true);
-                    }
-                };
                 beforeEach(function () {
-                    mockPersistenceService.createObject.and.returnValue(sadPromise);
+                    mockOpenMCT.objects.save.and.returnValue(Promise.resolve(false));
                 });
                 it("rejects on falsey persistence result", function () {
-                    persistence.persist();
-                    expect(mockQ.reject).toHaveBeenCalled();
+                    let rejected = false;
+
+                    return persistence.persist()
+                        .catch(() => rejected = true)
+                        .then(() => {
+                            expect(rejected).toBe(true);
+                        });
                 });
 
                 it("notifies user on persistence failure", function () {
-                    persistence.persist();
-                    expect(mockQ.reject).toHaveBeenCalled();
-                    expect(mockNofificationService.error).toHaveBeenCalled();
+                    let rejected = false;
+
+                    return persistence.persist()
+                        .catch(() => rejected = true)
+                        .then(() => {
+                            expect(rejected).toBe(true);
+                            expect(mockNofificationService.error).toHaveBeenCalled();
+                        });
                 });
             });
         });
