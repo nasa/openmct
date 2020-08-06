@@ -27,7 +27,7 @@ import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
 
-describe('the plugin', function () {
+xdescribe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
     let mockListener;
