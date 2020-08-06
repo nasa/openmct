@@ -232,9 +232,9 @@
                 </div>
             </div>
 
-            <div class="gl-plot-axis-area gl-plot-x">
+            <div class="gl-plot-axis-area gl-plot-x has-local-controls">
                 <mct-ticks axis="xAxis">
-                     <div ng-repeat="tick in ticks track by tick.value"
+                     <div ng-repeat="tick in ticks track by tick.text"
                           class="gl-plot-tick gl-plot-x-tick-label"
                           ng-style="{
                               left: (100 * (tick.value - min) / interval) + '%'
@@ -244,9 +244,21 @@
                      </div>
                 </mct-ticks>
 
-                <div class="gl-plot-label gl-plot-x-label">
+                <div
+                    class="gl-plot-label gl-plot-x-label"
+                    ng-class="{'icon-gear': (xKeyOptions.length > 1 && series.length === 1)}"
+                >
                     {{ xAxis.get('label') }}
                 </div>
+
+                <select
+                    ng-if="plot.isEnabledXKeyToggle()"
+                    ng-model="selectedXKeyOption.key"
+                    ng-change="plot.toggleXKeyOption()"
+                    class="gl-plot-x-label__select local-controls--hidden"
+                    ng-options="option.key as option.name for option in xKeyOptions"
+                >
+                </select>
             </div>
 
         </div>

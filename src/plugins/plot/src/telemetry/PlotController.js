@@ -130,6 +130,9 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
+        this.listenTo(series, 'change:xKey', function (xKey) {
+            this.setDisplayRange(series, xKey);
+        }, this);
         this.listenTo(series, 'change:yKey', function () {
             this.loadSeriesData(series);
         }, this);
@@ -139,6 +142,16 @@ define([
         }, this);
 
         this.loadSeriesData(series);
+    };
+
+
+    PlotController.prototype.setDisplayRange = function (series, xKey) {
+        if (this.config.series.models.length !== 1) {
+            return;
+        }
+
+        const displayRange = series.getDisplayRange(xKey);
+        this.config.xAxis.set('range', displayRange);
     };
 
     PlotController.prototype.removeSeries = function (plotSeries) {
@@ -162,6 +175,7 @@ define([
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
         this.config.xAxis.set('key', timeSystem.key);
+        this.config.xAxis.emit('resetSeries');
     };
 
     PlotController.prototype.destroy = function () {

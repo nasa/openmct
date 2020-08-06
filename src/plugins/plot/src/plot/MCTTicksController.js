@@ -122,6 +122,7 @@ define([
             this.tickUpdate = false;
             this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
             this.listenTo(this.axis, 'change:format', this.updateTicks, this);
+            this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
             this.listenTo(this.$scope, '$destroy', this.stopListening, this);
             this.updateTicks();
         }
@@ -133,12 +134,18 @@ define([
 
     /**
      * Determine whether ticks should be regenerated for a given range.
-     * Ticks are updated a) if they don't exist, b) if the existing ticks are
-     * outside of given range, or c) if the range exceeds the size of the tick
-     * range by more than one tick step.
+     * Ticks are updated
+     * a) if they don't exist,
+     * b) if existing ticks are outside of given range,
+     * c) if range exceeds size of tick range by more than one tick step,
+     * d) if forced to regenerate (ex. changing x-axis metadata).
+     *
      * @private
      */
-    MCTTicksController.prototype.shouldRegenerateTicks = function (range) {
+    MCTTicksController.prototype.shouldRegenerateTicks = function (range, forceRegeneration) {
+        if (forceRegeneration) {
+            return true;
+        }
         if (!this.tickRange || !this.$scope.ticks || !this.$scope.ticks.length) {
             return true;
         }
@@ -166,7 +173,11 @@ define([
         return ticks(range.min, range.max, number);
     };
 
-    MCTTicksController.prototype.updateTicks = function () {
+    MCTTicksController.prototype.updateTicksForceRegeneration = function () {
+        this.updateTicks(true);
+    }
+
+    MCTTicksController.prototype.updateTicks = function (forceRegeneration = false) {
         var range = this.axis.get('displayRange');
         if (!range) {
             delete this.$scope.min;
@@ -184,7 +195,7 @@ define([
         this.$scope.min = range.min;
         this.$scope.max = range.max;
         this.$scope.interval = Math.abs(range.min - range.max);
-        if (this.shouldRegenerateTicks(range)) {
+        if (this.shouldRegenerateTicks(range, forceRegeneration)) {
             var newTicks = this.getTicks();
             this.tickRange = {
                 min: Math.min.apply(Math, newTicks),
@@ -242,6 +253,7 @@ define([
             this.$scope.$emit('plot:tickWidth', tickWidth);
             this.shouldCheckWidth = false;
         }
+
         this.$scope.$digest();
         this.tickUpdate = false;
     };
