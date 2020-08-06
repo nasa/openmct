@@ -272,7 +272,8 @@
         //margin-left: $interiorMarginSm;
     }
     &[class*='labels'] {
-        //background: green;
+        font-size: 0.8em;
+
         [class*='__'] {
             opacity: 0.6;
             width: 50px;
@@ -290,7 +291,7 @@
         padding: 2px;
 
         input {
-            font-size: 1.5em;
+            font-size: 1.25em;
             width: 42px;
         }
 
