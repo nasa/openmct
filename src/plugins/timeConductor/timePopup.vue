@@ -16,7 +16,7 @@
             max="999"
             @focusin="selectAll($event)"
             @focusout="format('inputHrs')"
-            @wheel="increment('inputHrs')"
+            @wheel="increment($event, 'inputHrs')"
         >
         <span class="pr-tim-colon">:</span>
         <input
@@ -29,7 +29,7 @@
             step="1"
             @focusin="selectAll($event)"
             @focusout="format('inputMins')"
-            @wheel="increment('inputMins')"
+            @wheel="increment($event, 'inputMins')"
         >
         <span class="pr-tim-colon">:</span>
         <input
@@ -42,7 +42,7 @@
             step="1"
             @focusin="selectAll($event)"
             @focusout="format('inputSecs')"
-            @wheel="increment('inputSecs')"
+            @wheel="increment($event, 'inputSecs')"
         >
     </div>
     <div class="pr-tim__buttons c-button-set c-button-set--strip-h">
@@ -57,23 +57,31 @@
 </template>
 
 <script>
+import isNumber from "../../../bower_components/moment/src/lib/utils/is-number";
+
 export default {
-    name: "PrTimePopupVue",
+    mounted() {
+        this.$refs.inputHrs.focus();
+    },
     methods: {
         format(ref) {
             const currentInput = this.$refs[ref];
             const curVal = currentInput.value;
             const padAmt = (ref === 'inputHrs') ? 3 : 2;
-            // console.log(currentInput);
             currentInput.value = curVal.padStart(padAmt, '0');
         },
         hide() {
             this.$emit('hide');
         },
-        increment(ref) {
+        increment($ev, ref) {
+            $ev.preventDefault();
             const currentInput = this.$refs[ref];
-            // console.log(currentInput);
-            // console.log('increment');
+            const padAmt = (ref === 'inputHrs') ? 3 : 2;
+            const step = (ref === 'inputHrs') ? 1 : 5;
+            const maxVal = (ref === 'inputHrs') ? 999 : 59;
+            let cv = Math.round(parseInt(currentInput.value) / step) * step;
+            cv = Math.min(maxVal, Math.max(0, ($ev.deltaY < 0) ? cv + step : cv - step));
+            currentInput.value = cv.toString().padStart(padAmt, '0');
         },
         selectAll($ev) {
             $ev.target.select();

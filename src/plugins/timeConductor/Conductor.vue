@@ -74,7 +74,7 @@
                 <!-- RT start -->
                 <div class="c-direction-indicator icon-minus"></div>
                 <time-popup
-                    v-if="prShowTCInputStart"
+                    v-if="showTCInputStart"
                     class="pr-tc-input-menu--start"
                     @focus.native="$event.target.select()"
                     @hide="hideAllTimePopups"
@@ -122,7 +122,7 @@
                 <!-- RT end -->
                 <div class="c-direction-indicator icon-plus"></div>
                 <time-popup
-                    v-if="prShowTCInputEnd"
+                    v-if="showTCInputEnd"
                     class="pr-tc-input-menu--end"
                     @focus.native="$event.target.select()"
                     @hide="hideAllTimePopups"
@@ -224,8 +224,8 @@ export default {
             altPressed: false,
             isPanning: false,
             isZooming: false,
-            prShowTCInputStart: false,
-            prShowTCInputEnd: false
+            showTCInputStart: false,
+            showTCInputEnd: false
         };
     },
     mounted() {
@@ -471,16 +471,16 @@ export default {
             this.submitForm();
         },
         hideAllTimePopups() {
-            this.prShowTCInputStart = false;
-            this.prShowTCInputEnd = false;
+            this.showTCInputStart = false;
+            this.showTCInputEnd = false;
         },
         showTimePopupStart() {
             this.hideAllTimePopups();
-            this.prShowTCInputStart = !this.prShowTCInputStart;
+            this.showTCInputStart = !this.showTCInputStart;
         },
         showTimePopupEnd() {
             this.hideAllTimePopups();
-            this.prShowTCInputEnd = !this.prShowTCInputEnd;
+            this.showTCInputEnd = !this.showTCInputEnd;
         }
     }
 };
