@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['../src/Condition', 'zepto'], function (Condition, $) {
-    xdescribe('A summary widget condition', function () {
+    describe('A summary widget condition', function () {
         var testCondition,
             mockConfig,
             mockConditionManager,
