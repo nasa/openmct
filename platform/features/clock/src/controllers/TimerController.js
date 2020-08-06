@@ -26,7 +26,6 @@ define(
 
         var FORMATTER = new TimerFormatter();
 
-
         /**
          * Controller for views of a Timer domain object.
          *
@@ -50,10 +49,10 @@ define(
 
                 if (formatter && !isNaN(timeDelta)) {
                     self.textValue = formatter(timeDelta);
-                    self.signValue = timeDelta < 0 ? "-" :
-                        timeDelta >= 1000 ? "+" : "";
-                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
-                        timeDelta >= 1000 ? "icon-plus" : "";
+                    self.signValue = timeDelta < 0 ? "-"
+                        : timeDelta >= 1000 ? "+" : "";
+                    self.signCssClass = timeDelta < 0 ? "icon-minus"
+                        : timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
@@ -74,11 +73,11 @@ define(
             }
 
             function updateActions(actionCapability, actionKey) {
-                self.relevantAction = actionCapability &&
-                    actionCapability.getActions(actionKey)[0];
+                self.relevantAction = actionCapability
+                    && actionCapability.getActions(actionKey)[0];
 
-                self.stopAction = relativeTimerState !== 'stopped' ?
-                    actionCapability && actionCapability.getActions('timer.stop')[0] : undefined;
+                self.stopAction = relativeTimerState !== 'stopped'
+                    ? actionCapability && actionCapability.getActions('timer.stop')[0] : undefined;
 
             }
 
@@ -88,8 +87,8 @@ define(
 
             function handleLegacyTimer(model) {
                 if (model.timerState === undefined) {
-                    model.timerState = model.timestamp === undefined ?
-                        'stopped' : 'started';
+                    model.timerState = model.timestamp === undefined
+                        ? 'stopped' : 'started';
                 }
             }
 
@@ -101,8 +100,8 @@ define(
                     formatKey = model.timerFormat,
                     timerState = model.timerState,
                     actionCapability = domainObject.getCapability('action'),
-                    actionKey = (timerState !== 'started') ?
-                        'timer.start' : 'timer.pause';
+                    actionKey = (timerState !== 'started')
+                        ? 'timer.start' : 'timer.pause';
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
@@ -146,6 +145,7 @@ define(
                 if (lastSign !== self.signValue || lastText !== self.textValue) {
                     $scope.$apply();
                 }
+
                 if (active) {
                     $window.requestAnimationFrame(tick);
                 }
@@ -174,8 +174,8 @@ define(
          * @returns {string} cssclass to display
          */
         TimerController.prototype.buttonCssClass = function () {
-            return this.relevantAction ?
-                this.relevantAction.getMetadata().cssClass : "";
+            return this.relevantAction
+                ? this.relevantAction.getMetadata().cssClass : "";
         };
 
         /**
@@ -184,10 +184,9 @@ define(
          * @returns {string} name of the action
          */
         TimerController.prototype.buttonText = function () {
-            return this.relevantAction ?
-                this.relevantAction.getMetadata().name : "";
+            return this.relevantAction
+                ? this.relevantAction.getMetadata().name : "";
         };
-
 
         /**
          * Perform the action associated with the start/pause button.

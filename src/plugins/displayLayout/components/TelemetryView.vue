@@ -60,6 +60,12 @@
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
+                <span
+                    v-if="unit && item.showUnits"
+                    class="c-telemetry-view__value-text__unit"
+                >
+                    {{ unit }}
+                </span>
             </div>
         </div>
     </div>
@@ -67,8 +73,8 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
-import printj from 'printj'
+import LayoutFrame from './LayoutFrame.vue';
+import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
@@ -127,16 +133,24 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined
-        }
+        };
     },
     computed: {
         showLabel() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'label';
         },
         showValue() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'value';
+        },
+        unit() {
+            let value = this.item.value,
+                unit = this.metadata.value(value).unit;
+
+            return unit;
         },
         styleObject() {
             let size;
@@ -175,6 +189,7 @@ export default {
             }
 
             let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
             return alarm && alarm.cssClass;
         }
     },
@@ -262,7 +277,9 @@ export default {
                 item: domainObject,
                 layoutItem: this.item,
                 index: this.index,
-                updateTelemetryFormat: this.updateTelemetryFormat
+                updateTelemetryFormat: this.updateTelemetryFormat,
+                toggleUnits: this.toggleUnits,
+                showUnits: this.showUnits
             };
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
@@ -275,6 +292,6 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
-}
+};
 
 </script>

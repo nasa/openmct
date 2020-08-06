@@ -44,14 +44,13 @@ define(
 
         PauseTimerAction.appliesTo = function (context) {
             var model =
-                (context.domainObject && context.domainObject.getModel()) ||
-                {};
-
+                (context.domainObject && context.domainObject.getModel())
+                || {};
 
             // We show this variant for timers which have
             // a target time, or is in a playing state.
-            return model.type === 'timer' &&
-                    model.timerState === 'started';
+            return model.type === 'timer'
+                    && model.timerState === 'started';
         };
 
         PauseTimerAction.prototype.perform = function () {

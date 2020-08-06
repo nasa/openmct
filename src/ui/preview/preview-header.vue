@@ -25,7 +25,6 @@
 </div>
 </template>
 
-
 <script>
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
 
@@ -72,5 +71,5 @@ export default {
             this.$emit('setView', view);
         }
     }
-}
+};
 </script>

@@ -67,7 +67,7 @@ export default {
             dragStartX: undefined,
             dragX: undefined,
             zoomStyle: {}
-        }
+        };
     },
     computed: {
         inZoomMode() {
@@ -207,7 +207,7 @@ export default {
             this.$emit('panAxis', panBounds);
         },
         endPan() {
-            const panBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
+            const panBounds = this.isChangingViewBounds()
                 ? this.getPanBounds()
                 : undefined;
             this.$emit('endPan', panBounds);
@@ -251,16 +251,14 @@ export default {
             });
         },
         endZoom() {
-            const zoomRange = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
-                ? this.getZoomRange()
-                : undefined;
-
-            const zoomBounds = zoomRange
-                ? {
+            let zoomBounds;
+            if (this.isChangingViewBounds()) {
+                const zoomRange = this.getZoomRange();
+                zoomBounds = {
                     start: this.scaleToBounds(zoomRange.start),
                     end: this.scaleToBounds(zoomRange.end)
-                }
-                : this.openmct.time.bounds();
+                };
+            }
 
             this.zoomStyle = {};
             this.$emit('endZoom', zoomBounds);
@@ -287,7 +285,11 @@ export default {
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
+
             return bounds.start + offset;
+        },
+        isChangingViewBounds() {
+            return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
@@ -297,5 +299,5 @@ export default {
         }
     }
 
-}
+};
 </script>

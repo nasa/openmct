@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import _ from "lodash"
+import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 
@@ -96,6 +96,7 @@ export default {
                     delete this.releaseEditModeHandler;
                 }
             }
+
             delete this.viewContainer;
             delete this.currentView;
 
@@ -138,6 +139,7 @@ export default {
             if (!styleObj) {
                 return;
             }
+
             let keys = Object.keys(styleObj);
             let elemToStyle = this.getStyleReceiver();
             keys.forEach(key => {
@@ -196,6 +198,7 @@ export default {
                     this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.invokeEditModeHandler);
                 }
             }
+
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
@@ -292,23 +295,25 @@ export default {
                     return;
                 }
             }
+
             return provider;
         },
         editIfEditable(event) {
             let provider = this.getViewProvider();
-            if (provider &&
-                provider.canEdit &&
-                provider.canEdit(this.currentObject) &&
-                this.isEditingAllowed() &&
-                !this.openmct.editor.isEditing()) {
+            if (provider
+                && provider.canEdit
+                && provider.canEdit(this.currentObject)
+                && this.isEditingAllowed()
+                && !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
             }
         },
         hasComposableDomainObject(event) {
-            return event.dataTransfer.types.includes('openmct/composable-domain-object')
+            return event.dataTransfer.types.includes('openmct/composable-domain-object');
         },
         getComposableDomainObject(event) {
             let serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
+
             return JSON.parse(serializedDomainObject);
         },
         clearData(domainObject) {
@@ -329,7 +334,7 @@ export default {
         },
         isEditingAllowed() {
             let browseObject = this.openmct.layout.$refs.browseObject.currentObject,
-                objectPath= this.currentObjectPath || this.objectPath,
+                objectPath = this.currentObjectPath || this.objectPath,
                 parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
@@ -343,7 +348,6 @@ export default {
             elemToStyle.dataset.font = newFont;
         }
     }
-}
+};
 </script>
-
 

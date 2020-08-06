@@ -33,7 +33,7 @@ export default {
     data() {
         return {
             selection: []
-        }
+        };
     },
     mounted() {
         this.openmct.selection.on('change', this.updateSelection);
@@ -50,6 +50,7 @@ export default {
                     this.component = undefined;
                     this.$el.innerHTML = '';
                 }
+
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 this.component = new Vue({
@@ -66,5 +67,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

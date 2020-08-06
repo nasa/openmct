@@ -45,6 +45,7 @@ describe('time related utils', () => {
                     done();
                 }, 50);
             }
+
             setTimeout(() => {
                 subscription.update();
                 updated();

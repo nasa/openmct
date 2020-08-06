@@ -47,6 +47,7 @@ define([
                     if (v.provider && v.provider.priority) {
                         vd.priority = v.provider.priority(newDomainObject);
                     }
+
                     return vd;
                 })
                     .sortBy('priority')

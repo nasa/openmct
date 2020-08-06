@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name:"platform/persistence/elastic",
+        name: "platform/persistence/elastic",
         definition: {
             "name": "ElasticSearch Persistence",
             "description": "Adapter to read and write objects using an ElasticSearch instance.",
