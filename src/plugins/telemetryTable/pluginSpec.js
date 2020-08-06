@@ -43,7 +43,7 @@ class MockDataTransfer {
     }
 }
 
-describe("the plugin", () => {
+xdescribe("the plugin", () => {
     let openmct;
     let tablePlugin;
     let element;

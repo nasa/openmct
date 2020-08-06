@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import DisplayLayoutPlugin from './plugin';
 
-describe('the plugin', function () {
+xdescribe('the plugin', function () {
     let element;
     let child;
     let openmct;

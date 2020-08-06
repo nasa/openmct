@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-describe("the plugin", () => {
+xdescribe("the plugin", () => {
     let openmct,
         compositionAPI,
         newFolderAction,

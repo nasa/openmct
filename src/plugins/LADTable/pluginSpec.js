@@ -40,7 +40,7 @@ function utcTimeFormat(value) {
     return new Date(value).toISOString().replace('T', ' ');
 }
 
-describe("The LAD Table", () => {
+xdescribe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
 
     let openmct,
@@ -232,7 +232,7 @@ describe("The LAD Table", () => {
     });
 });
 
-describe("The LAD Table Set", () => {
+xdescribe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
 
     let openmct,

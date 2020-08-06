@@ -23,7 +23,7 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'FirefoxHeadless'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'Chrome'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html'];
 
@@ -57,6 +57,11 @@ module.exports = (config) => {
         port: 9876,
         reporters: reporters,
         browsers: browsers,
+        client: {
+            jasmine: {
+                random: false
+            }
+        },
         customLaunchers: {
             ChromeDebugging: {
                 base: 'Chrome',
@@ -96,4 +101,4 @@ module.exports = (config) => {
         singleRun: true,
         browserNoActivityTimeout: 90000
     });
-}
+};
