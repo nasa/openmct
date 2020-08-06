@@ -52,8 +52,7 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'platform/**/*Spec.js',
-            'src/**/*Spec.js'
+            'indexTest.js'
         ],
         port: 9876,
         reporters: reporters,
@@ -87,8 +86,7 @@ module.exports = (config) => {
             }
         },
         preprocessors: {
-            'platform/**/*Spec.js': ['webpack', 'sourcemap'],
-            'src/**/*Spec.js': ['webpack', 'sourcemap']
+            'indexTest.js': ['webpack', 'sourcemap']
         },
         webpack: webpackConfig,
         webpackMiddleware: {
