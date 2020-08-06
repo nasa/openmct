@@ -52,37 +52,47 @@ define([
                             max: 0
                         };
                     }
+
                     var newRange = {};
                     if (typeof range.min !== 'undefined' && range.min !== null) {
                         newRange.min = Number(range.min);
                     }
+
                     if (typeof range.max !== 'undefined' && range.max !== null) {
                         newRange.max = Number(range.max);
                     }
+
                     return newRange;
                 },
                 validate: function validateRange(range, model) {
                     if (!range) {
                         return 'Need range';
                     }
+
                     if (range.min === '' || range.min === null || typeof range.min === 'undefined') {
                         return 'Must specify Minimum';
                     }
+
                     if (range.max === '' || range.max === null || typeof range.max === 'undefined') {
                         return 'Must specify Maximum';
                     }
+
                     if (Number.isNaN(Number(range.min))) {
                         return 'Minimum must be a number.';
                     }
+
                     if (Number.isNaN(Number(range.max))) {
                         return 'Maximum must be a number.';
                     }
+
                     if (Number(range.min) > Number(range.max)) {
                         return 'Minimum must be less than Maximum.';
                     }
+
                     if (model.get('autoscale')) {
                         return false;
                     }
+
                     return true;
                 }
             }

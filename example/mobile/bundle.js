@@ -25,7 +25,7 @@ define([], function () {
     "use strict";
 
     return {
-        name:"example/mobile",
+        name: "example/mobile",
         definition: {
             "name": "Mobile",
             "description": "Allows elements with pertinence to mobile usage and development",

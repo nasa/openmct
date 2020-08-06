@@ -56,7 +56,7 @@ define([
             initialize: function (object) {
                 object.telemetry = {
                     duration: 5
-                }
+                };
             }
         });
 

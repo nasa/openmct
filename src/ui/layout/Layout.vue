@@ -124,20 +124,18 @@ var enterFullScreen = () => {
         docElm.msRequestFullscreen();
     }
 };
+
 var exitFullScreen = () => {
     if (document.exitFullscreen) {
         document.exitFullscreen();
-    }
-    else if (document.mozCancelFullScreen) {
+    } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
-    }
-    else if (document.webkitCancelFullScreen) {
+    } else if (document.webkitCancelFullScreen) {
         document.webkitCancelFullScreen();
-    }
-    else if (document.msExitFullscreen) {
+    } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
-}
+};
 
 export default {
     inject: ['openmct'],
@@ -177,7 +175,7 @@ export default {
         }
     },
     mounted() {
-        this.openmct.editor.on('isEditing', (isEditing)=>{
+        this.openmct.editor.on('isEditing', (isEditing) => {
             this.isEditing = isEditing;
         });
 
@@ -223,5 +221,5 @@ export default {
             this.triggerSync = !this.triggerSync;
         }
     }
-}
+};
 </script>

@@ -67,13 +67,14 @@ export default {
             currentSearch: '',
             isDragging: false,
             selection: []
-        }
+        };
     },
     mounted() {
         let selection = this.openmct.selection.get();
         if (selection && selection.length > 0) {
             this.showSelection(selection);
         }
+
         this.openmct.selection.on('change', this.showSelection);
         this.openmct.editor.on('isEditing', this.setEditState);
     },
@@ -84,6 +85,7 @@ export default {
         if (this.mutationUnobserver) {
             this.mutationUnobserver();
         }
+
         if (this.compositionUnlistener) {
             this.compositionUnlistener();
         }
@@ -97,6 +99,7 @@ export default {
             if (_.isEqual(this.selection, selection)) {
                 return;
             }
+
             this.selection = selection;
             this.elements = [];
             this.elementsCache = {};
@@ -106,6 +109,7 @@ export default {
             if (this.mutationUnobserver) {
                 this.mutationUnobserver();
             }
+
             if (this.compositionUnlistener) {
                 this.compositionUnlistener();
             }
@@ -128,7 +132,7 @@ export default {
                         this.composition.off('remove', this.removeElement);
                         this.composition.off('reorder', this.reorderElements);
                         delete this.compositionUnlistener;
-                    }
+                    };
                 }
             }
         },
@@ -151,8 +155,8 @@ export default {
             this.elements = this.parentObject.composition.map((id) =>
                 this.elementsCache[this.openmct.objects.makeKeyString(id)]
             ).filter((element) => {
-                return element !== undefined &&
-                    element.name.toLowerCase().search(this.currentSearch) !== -1;
+                return element !== undefined
+                    && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
         },
         allowDrop(event) {
@@ -171,5 +175,5 @@ export default {
             document.removeEventListener('dragend', this.hideDragStyling);
         }
     }
-}
+};
 </script>

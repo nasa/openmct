@@ -91,11 +91,12 @@ export default {
     },
     data() {
         this.navigateToPath = this.buildPathString(this.node.navigateToParent);
+
         return {
             hasComposition: false,
             navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
             expanded: false
-        }
+        };
     },
     computed: {
         isAlias() {
@@ -103,7 +104,9 @@ export default {
             if (!parent) {
                 return false;
             }
+
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+
             return parentKeyString !== this.node.object.location;
         },
         itemTop() {
@@ -156,5 +159,5 @@ export default {
             this.$emit('resetTree', this.node);
         }
     }
-}
+};
 </script>

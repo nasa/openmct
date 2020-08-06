@@ -48,7 +48,7 @@ define(
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
                 mockTimeout = function (callback) {
                     callback();
-                }
+                };
 
                 mockDocument.find.and.returnValue(mockBody);
                 mockCompile.and.returnValue(mockTemplate);

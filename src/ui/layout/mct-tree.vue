@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import treeItem from './tree-item.vue'
+import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -587,5 +587,5 @@ export default {
             return Number(styleString.slice(0, index));
         }
     }
-}
+};
 </script>

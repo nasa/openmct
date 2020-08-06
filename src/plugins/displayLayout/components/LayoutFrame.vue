@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag'
-import _ from 'lodash'
+import LayoutDrag from './../LayoutDrag';
+import _ from 'lodash';
 
 export default {
     inject: ['openmct'],
@@ -63,6 +63,7 @@ export default {
     computed: {
         size() {
             let {width, height} = this.item;
+
             return {
                 width: (this.gridSize[0] * width),
                 height: (this.gridSize[1] * height)
@@ -70,6 +71,7 @@ export default {
         },
         style() {
             let {x, y, width, height} = this.item;
+
             return {
                 left: (this.gridSize[0] * x) + 'px',
                 top: (this.gridSize[1] * y) + 'px',
@@ -127,5 +129,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

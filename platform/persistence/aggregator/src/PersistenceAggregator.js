@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [],
     function () {
@@ -75,11 +74,13 @@ define(
         Object.keys(METHOD_DEFAULTS).forEach(function (method) {
             PersistenceAggregator.prototype[method] = function (space) {
                 var delegateArgs = Array.prototype.slice.apply(arguments, []);
+
                 return this.providerMapPromise.then(function (map) {
                     var provider = map[space];
-                    return provider ?
-                        provider[method].apply(provider, delegateArgs) :
-                        METHOD_DEFAULTS[method];
+
+                    return provider
+                        ? provider[method].apply(provider, delegateArgs)
+                        : METHOD_DEFAULTS[method];
                 });
             };
         });
