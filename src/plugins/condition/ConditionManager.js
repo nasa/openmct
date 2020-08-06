@@ -322,8 +322,11 @@ export default class ConditionManager extends EventEmitter {
         let timestamp = {};
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
-        this.conditions.forEach(condition => {
+        //We want to stop when the first condition evaluates to true.
+        this.conditions.some((condition) => {
             condition.getResult(normalizedDatum);
+
+            return condition.result === true;
         });
 
         this.updateCurrentCondition(timestamp);

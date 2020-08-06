@@ -49,8 +49,9 @@ describe('the plugin', function () {
             type: "test-object",
             name: "Test Object",
             telemetry: {
-                valueMetadatas: [{
-                    key: "some-key",
+                values: [{
+                    key: "some-key2",
+                    source: "some-key2",
                     name: "Some attribute",
                     hints: {
                         range: 2
@@ -68,6 +69,13 @@ describe('the plugin', function () {
                     source: "value",
                     name: "Test",
                     format: "string"
+                },
+                {
+                    key: "some-key",
+                    source: "some-key",
+                    hints: {
+                        domain: 1
+                    }
                 }]
             }
         };
@@ -508,6 +516,129 @@ describe('the plugin', function () {
                 });
                 done();
             }, 300);
+        });
+    });
+
+    describe('the condition evaluation', () => {
+        let conditionSetDomainObject;
+
+        beforeEach(() => {
+            conditionSetDomainObject = {
+                "configuration": {
+                    "conditionTestData": [
+                        {
+                            "telemetry": "",
+                            "metadata": "",
+                            "input": ""
+                        }
+                    ],
+                    "conditionCollection": [
+                        {
+                            "id": "39584410-cbf9-499e-96dc-76f27e69885f",
+                            "configuration": {
+                                "name": "Unnamed Condition0",
+                                "output": "Any telemetry less than 0",
+                                "trigger": "all",
+                                "criteria": [
+                                    {
+                                        "id": "35400132-63b0-425c-ac30-8197df7d5864",
+                                        "telemetry": "any",
+                                        "operation": "lessThan",
+                                        "input": [
+                                            "0"
+                                        ],
+                                        "metadata": "some-key"
+                                    }
+                                ]
+                            },
+                            "summary": "Match if all criteria are met: Any telemetry value is less than 0"
+                        },
+                        {
+                            "id": "39584410-cbf9-499e-96dc-76f27e69885d",
+                            "configuration": {
+                                "name": "Unnamed Condition",
+                                "output": "Any telemetry greater than 0",
+                                "trigger": "all",
+                                "criteria": [
+                                    {
+                                        "id": "35400132-63b0-425c-ac30-8197df7d5862",
+                                        "telemetry": "any",
+                                        "operation": "greaterThan",
+                                        "input": [
+                                            "0"
+                                        ],
+                                        "metadata": "some-key"
+                                    }
+                                ]
+                            },
+                            "summary": "Match if all criteria are met: Any telemetry value is greater than 0"
+                        },
+                        {
+                            "id": "39584410-cbf9-499e-96dc-76f27e69885e",
+                            "configuration": {
+                                "name": "Unnamed Condition1",
+                                "output": "Any telemetry greater than 1",
+                                "trigger": "all",
+                                "criteria": [
+                                    {
+                                        "id": "35400132-63b0-425c-ac30-8197df7d5863",
+                                        "telemetry": "any",
+                                        "operation": "greaterThan",
+                                        "input": [
+                                            "1"
+                                        ],
+                                        "metadata": "some-key"
+                                    }
+                                ]
+                            },
+                            "summary": "Match if all criteria are met: Any telemetry value is greater than 1"
+                        },
+                        {
+                            "isDefault": true,
+                            "id": "2532d90a-e0d6-4935-b546-3123522da2de",
+                            "configuration": {
+                                "name": "Default",
+                                "output": "Default",
+                                "trigger": "all",
+                                "criteria": [
+                                ]
+                            },
+                            "summary": ""
+                        }
+                    ]
+                },
+                "composition": [
+                    {
+                        "namespace": "",
+                        "key": "test-object"
+                    }
+                ],
+                "telemetry": {
+                },
+                "name": "Condition Set",
+                "type": "conditionSet",
+                "identifier": {
+                    "namespace": "",
+                    "key": "cf4456a9-296a-4e6b-b182-62ed29cd15b9"
+                }
+
+            };
+        });
+
+        it('should stop evaluating conditions when a condition evaluates to true', () => {
+            const date = Date.now();
+            let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
+            conditionMgr.on('conditionSetResultUpdated', mockListener);
+            conditionMgr.telemetryObjects = {
+                "test-object": testTelemetryObject
+            };
+            conditionMgr.updateConditionTelemetryObjects();
+            conditionMgr.telemetryReceived(testTelemetryObject, {
+                "some-key": 2,
+                utc: date
+            });
+            let result = conditionMgr.conditions.map(condition => condition.result);
+            expect(result[2]).toBeUndefined();
         });
     });
 });
