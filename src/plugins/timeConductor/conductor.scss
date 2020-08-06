@@ -207,7 +207,7 @@
 }
 
 .is-realtime-mode {
-    button {
+    .c-conductor__controls button {
         @include themedButton($colorTimeBg);
         color: $colorTimeFg;
 
@@ -235,4 +235,77 @@
             pointer-events: none;
         }
     }
+}
+
+// Prototype
+[class^='pr-tc-input-menu'] {
+    background: $colorBodyBg;
+    border-radius: $controlCr;
+    filter: brightness(1.4);
+    box-shadow: $shdwMenu;
+    padding: $interiorMargin;
+    position: absolute;
+    width: 170px;
+    height: 90px;
+    bottom: 20px;
+    z-index: 99;
+
+    &[class*='--start'] {
+        left: -25px;
+    }
+
+    &[class*='--end'] {
+        right: 0;
+    }
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+}
+
+[class^='pr-tim'] {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    > * + * {
+        //margin-left: $interiorMarginSm;
+    }
+    &[class*='labels'] {
+        //background: green;
+        [class*='__'] {
+            opacity: 0.6;
+            width: 50px;
+        }
+
+        [class*='_hrs'] {
+            width: 67px;
+        }
+    }
+
+    &[class*='inputs'] {
+        //background: deeppink;
+        border: 1px solid rgba($colorBodyFg, 0.2);
+        border-radius: $controlCr;
+        padding: 2px;
+
+        input {
+            font-size: 1.5em;
+            width: 42px;
+        }
+
+        [class*='_hrs'] {
+            width: 52px;
+        }
+
+        [class*="colon"] {
+            padding: 0 2px;
+        }
+
+    }
+
+    &[class*='__buttons'] {
+        justify-content: flex-end;
+    }
+
 }

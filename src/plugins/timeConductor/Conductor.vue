@@ -73,6 +73,12 @@
             >
                 <!-- RT start -->
                 <div class="c-direction-indicator icon-minus"></div>
+                <time-popup
+                    v-if="prShowTCInputStart"
+                    class="pr-tc-input-menu--start"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                />
                 <input
                     ref="startOffset"
                     v-model="offsets.start"
@@ -81,6 +87,7 @@
                     autocorrect="off"
                     spellcheck="false"
                     @change="validateAllOffsets(); submitForm()"
+                    @click="showTimePopupStart"
                 >
             </div>
 
@@ -97,7 +104,7 @@
                     autocorrect="off"
                     spellcheck="false"
                     :disabled="!isFixed"
-                    @change="validateAllBounds('endDate'); submitForm()"
+                    @change="validateAllBounds('endDate'); submitForm ()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
@@ -114,6 +121,12 @@
             >
                 <!-- RT end -->
                 <div class="c-direction-indicator icon-plus"></div>
+                <time-popup
+                    v-if="prShowTCInputEnd"
+                    class="pr-tc-input-menu--end"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                />
                 <input
                     ref="endOffset"
                     v-model="offsets.end"
@@ -122,6 +135,7 @@
                     autocorrect="off"
                     spellcheck="false"
                     @change="validateAllOffsets(); submitForm()"
+                    @click="showTimePopupEnd"
                 >
             </div>
 
@@ -162,6 +176,7 @@ import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
+import TimePopup from './timePopup.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -173,7 +188,8 @@ export default {
         DatePicker,
         ConductorAxis,
         ConductorModeIcon,
-        ConductorHistory
+        ConductorHistory,
+        TimePopup
     },
     data() {
         let bounds = this.openmct.time.bounds();
@@ -207,7 +223,9 @@ export default {
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
-            isZooming: false
+            isZooming: false,
+            prShowTCInputStart: false,
+            prShowTCInputEnd: false
         };
     },
     mounted() {
@@ -451,6 +469,18 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds('endDate');
             this.submitForm();
+        },
+        hideAllTimePopups() {
+            this.prShowTCInputStart = false;
+            this.prShowTCInputEnd = false;
+        },
+        showTimePopupStart() {
+            this.hideAllTimePopups();
+            this.prShowTCInputStart = !this.prShowTCInputStart;
+        },
+        showTimePopupEnd() {
+            this.hideAllTimePopups();
+            this.prShowTCInputEnd = !this.prShowTCInputEnd;
         }
     }
 };
