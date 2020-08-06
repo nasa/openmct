@@ -512,7 +512,7 @@ describe('the plugin', function () {
                         key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
                     },
                     conditionId: '2532d90a-e0d6-4935-b546-3123522da2de',
-                    utc: undefined
+                    utc: date
                 });
                 done();
             }, 300);
