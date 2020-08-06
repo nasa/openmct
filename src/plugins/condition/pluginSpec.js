@@ -37,7 +37,7 @@ describe('the plugin', function () {
     let testTelemetryObject;
 
     beforeAll(() => {
-        resetApplicationState(openmct);
+        resetApplicationState();
     });
 
     beforeEach((done) => {
@@ -481,7 +481,7 @@ describe('the plugin', function () {
                     utc: undefined
                 });
                 done();
-            }, 300);
+            }, 400);
         });
 
         it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
