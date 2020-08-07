@@ -82,17 +82,17 @@ describe("The URLTimeSettingsSynchronizer", () => {
             expect(window.location.hash.includes('tc.mode=fixed')).toBe(false);
         });
         describe("when set in the url", () => {
-            it("will change from fixed to realtime mode when the mode changes", () => {
+            it("will change from fixed to realtime mode when the mode changes", (done) => {
                 expectLocationToBeInFixedMode();
 
                 return switchToRealtimeMode().then(() => {
                     let clock = openmct.time.clock();
-
                     expect(clock).toBeDefined();
                     expect(clock.key).toBe('local');
+                    done();
                 });
             });
-            it("the clock is correctly set in the API from the URL parameters", () => {
+            it("the clock is correctly set in the API from the URL parameters", (done) => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
 
@@ -110,10 +110,11 @@ describe("The URLTimeSettingsSynchronizer", () => {
                         expect(clock).toBeDefined();
                         expect(clock.key).toBe('test-clock');
                         openmct.time.off('clock', resolveFunction);
+                        done();
                     });
                 });
             });
-            it("the clock offsets are correctly set in the API from the URL parameters", () => {
+            it("the clock offsets are correctly set in the API from the URL parameters", (done) => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
 
@@ -132,10 +133,11 @@ describe("The URLTimeSettingsSynchronizer", () => {
                         expect(clockOffsets.start).toBe(-2000);
                         expect(clockOffsets.end).toBe(200);
                         openmct.time.off('clockOffsets', resolveFunction);
+                        done();
                     });
                 });
             });
-            it("the time system is correctly set in the API from the URL parameters", () => {
+            it("the time system is correctly set in the API from the URL parameters", (done) => {
                 return switchToRealtimeMode().then(() => {
                     let resolveFunction;
 
@@ -153,6 +155,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
                         expect(timeSystem).toBeDefined();
                         expect(timeSystem.key).toBe('local');
                         openmct.time.off('timeSystem', resolveFunction);
+                        done();
                     });
                 });
             });
@@ -200,7 +203,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
             expect(window.location.hash.includes('tc.timeSystem=utc')).toBe(false);
         });
         describe("when set in the url", () => {
-            it("time system changes are reflected in the API", () => {
+            it("time system changes are reflected in the API", (done) => {
                 let resolveFunction;
 
                 return new Promise((resolve) => {
@@ -216,9 +219,10 @@ describe("The URLTimeSettingsSynchronizer", () => {
                     expect(timeSystem.key).toBe('local');
 
                     openmct.time.off('timeSystem', resolveFunction);
+                    done();
                 });
             });
-            it("mode can be changed from realtime to fixed", () => {
+            it("mode can be changed from realtime to fixed", (done) => {
                 return switchToRealtimeMode().then(() => {
                     expectLocationToBeInRealtimeMode();
 
@@ -226,9 +230,10 @@ describe("The URLTimeSettingsSynchronizer", () => {
                 }).then(switchToFixedMode).then(() => {
                     let clock = openmct.time.clock();
                     expect(clock).not.toBeDefined();
+                    done();
                 });
             });
-            it("bounds are correctly set in the API from the URL parameters", () => {
+            it("bounds are correctly set in the API from the URL parameters", (done) => {
                 let resolveFunction;
 
                 expectLocationToBeInFixedMode();
@@ -246,9 +251,10 @@ describe("The URLTimeSettingsSynchronizer", () => {
                     expect(bounds).toBeDefined();
                     expect(bounds.start).toBe(222);
                     expect(bounds.end).toBe(333);
+                    done();
                 });
             });
-            it("bounds are correctly set in the API from the URL parameters where only the end bound changes", () => {
+            it("bounds are correctly set in the API from the URL parameters where only the end bound changes", (done) => {
                 let resolveFunction;
 
                 expectLocationToBeInFixedMode();
@@ -265,6 +271,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
                     expect(bounds).toBeDefined();
                     expect(bounds.start).toBe(0);
                     expect(bounds.end).toBe(333);
+                    done();
                 });
             });
         });

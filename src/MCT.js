@@ -422,7 +422,10 @@ define([
 
                 this.router.start();
                 this.emit('start');
-            }.bind(this));
+            }.bind(this), function () {
+                console.log('startPromise failed');
+                this.emit('start');
+            });
     };
 
     MCT.prototype.startHeadless = function () {

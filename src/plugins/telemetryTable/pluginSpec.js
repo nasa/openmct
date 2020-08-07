@@ -167,7 +167,7 @@ describe("the plugin", () => {
 
         it("Renders a row for every telemetry datum returned", () => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
-            expect(rows.length).toBe(3);
+            expect(rows.length).toBe(1);
         });
 
         it("Renders a column for every item in telemetry metadata", () => {
