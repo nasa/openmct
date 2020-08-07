@@ -42,7 +42,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.startHeadless();
     });
 
-    afterEach(() => resetApplicationState(openmct));
+    afterEach(() => resetApplicationState());
 
     describe("realtime mode", () => {
         it("when the clock is set via the time API, it is immediately reflected in the URL", () => {

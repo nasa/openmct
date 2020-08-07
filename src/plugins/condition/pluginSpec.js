@@ -98,7 +98,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     let mockConditionSetObject = {

@@ -24,8 +24,15 @@ import MCT from 'MCT';
 let nativeFunctions = [],
     mockObjects = setMockObjects();
 
+let openmct;
+
 export function createOpenMct() {
-    const openmct = new MCT();
+    if (openmct !== undefined) {
+        console.log('=========================');
+        console.log('createOpenMct sending old');
+        return openmct;
+    }
+    openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
     openmct.time.timeSystem('utc', {
@@ -64,7 +71,7 @@ export function clearBuiltinSpies() {
     nativeFunctions = [];
 }
 
-export function resetApplicationState(openmct) {
+export function resetApplicationState() {
     let promise;
 
     clearBuiltinSpies();
@@ -79,15 +86,6 @@ export function resetApplicationState(openmct) {
             window.addEventListener('hashchange', cleanup);
             let timeTag = Date.now();
             // console.log(`${timeTag}: window.location.hash is ${window.location.hash}`);
-            /*function getStackTrace() {
-                var obj = {};
-                Error.captureStackTrace(obj, getStackTrace);
-
-                return obj.stack;
-            }
-
-            console.log(getStackTrace());*/
-
             window.location.hash = '#';
             //setTimeout(resolve);
             function cleanup() {

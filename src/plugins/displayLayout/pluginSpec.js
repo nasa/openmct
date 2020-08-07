@@ -29,10 +29,6 @@ describe('the plugin', function () {
     let openmct;
     let displayLayoutDefinition;
 
-    // beforeAll(() => {
-    //     return resetApplicationState(openmct);
-    // });
-
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new DisplayLayoutPlugin({
@@ -49,7 +45,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     it('defines a display layout object type with the correct key', () => {

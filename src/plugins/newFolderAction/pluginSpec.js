@@ -46,7 +46,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     it('installs the new folder action', () => {
@@ -54,7 +54,6 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach((done) => {
             compositionAPI = openmct.composition;
             mockObjectPath = [{
@@ -65,10 +64,10 @@ describe("the plugin", () => {
                     namespace: ''
                 }
             }];
+
             mockPromise = {
                 then: (callback) => {
                     callback({name: newFolderName});
-                    done();
                 }
             };
 

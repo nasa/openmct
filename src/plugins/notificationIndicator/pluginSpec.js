@@ -61,7 +61,7 @@ describe('the plugin', () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     describe('the indicator plugin element', () => {

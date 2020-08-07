@@ -94,7 +94,7 @@ describe("The LAD Table", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     it("should provide a table view only for lad table objects", () => {
@@ -284,7 +284,7 @@ describe("The LAD Table Set", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {

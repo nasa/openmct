@@ -82,7 +82,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationState();
     });
 
     describe("defines a table object", function () {
