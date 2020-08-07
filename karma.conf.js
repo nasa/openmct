@@ -59,7 +59,8 @@ module.exports = (config) => {
         browsers: browsers,
         client: {
             jasmine: {
-                random: false
+                random: false,
+                timeoutInterval: 6000
             }
         },
         customLaunchers: {
@@ -98,6 +99,7 @@ module.exports = (config) => {
             stats: 'errors-only',
             logLevel: 'warn'
         },
+        concurrency: 1,
         singleRun: true,
         browserNoActivityTimeout: 90000
     });

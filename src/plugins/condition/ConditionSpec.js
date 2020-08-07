@@ -32,7 +32,7 @@ let openmct = {},
     mockTelemetryReceived,
     mockTimeSystems;
 
-xdescribe("The condition", function () {
+describe("The condition", function () {
 
     beforeEach (() => {
         conditionManager = jasmine.createSpyObj('conditionManager',

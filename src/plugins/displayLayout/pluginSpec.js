@@ -23,14 +23,14 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import DisplayLayoutPlugin from './plugin';
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
     let displayLayoutDefinition;
 
     beforeAll(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     beforeEach((done) => {
@@ -49,7 +49,7 @@ xdescribe('the plugin', function () {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('defines a display layout object type with the correct key', () => {

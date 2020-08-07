@@ -27,7 +27,7 @@ import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
     let mockListener;
@@ -37,7 +37,7 @@ xdescribe('the plugin', function () {
     let testTelemetryObject;
 
     beforeAll(() => {
-        resetApplicationState();
+        return resetApplicationState();
     });
 
     beforeEach((done) => {
@@ -98,7 +98,7 @@ xdescribe('the plugin', function () {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     let mockConditionSetObject = {
@@ -462,7 +462,7 @@ xdescribe('the plugin', function () {
             };
         });
 
-        it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
+        xit('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
 
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
@@ -484,7 +484,7 @@ xdescribe('the plugin', function () {
             }, 400);
         });
 
-        it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
+        xit('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
             const date = Date.now();
             conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["0.4"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);

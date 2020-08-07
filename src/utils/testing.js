@@ -65,12 +65,42 @@ export function clearBuiltinSpies() {
 }
 
 export function resetApplicationState(openmct) {
+    let promise;
+
     clearBuiltinSpies();
-    window.location.hash = '#';
 
     if (openmct !== undefined) {
         openmct.destroy();
     }
+
+    if (window.location.hash !== '#' && window.location.hash !== '') {
+        promise = new Promise((resolve, reject) => {
+            window.addEventListener('hashchange', cleanup);
+            let timeTag = Date.now();
+            console.log(`${timeTag}: window.location.hash is ${window.location.hash}`);
+            function getStackTrace() {
+                var obj = {};
+                Error.captureStackTrace(obj, getStackTrace);
+
+                return obj.stack;
+            }
+
+            console.log(getStackTrace());
+
+            window.location.hash = '#';
+            //setTimeout(resolve);
+            function cleanup() {
+                let endTag = Date.now();
+                console.log(`${timeTag} after reset window.location.hash is ${window.location.hash} and took ${(endTag - timeTag) / 1000}s`);
+                window.removeEventListener('hashchange', cleanup);
+                resolve();
+            }
+        });
+    } else {
+        promise = Promise.resolve();
+    }
+
+    return promise;
 }
 
 function clearBuiltinSpy(funcDefinition) {

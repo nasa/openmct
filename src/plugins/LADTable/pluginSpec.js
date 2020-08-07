@@ -40,7 +40,7 @@ function utcTimeFormat(value) {
     return new Date(value).toISOString().replace('T', ' ');
 }
 
-xdescribe("The LAD Table", () => {
+describe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
 
     let openmct,
@@ -94,7 +94,7 @@ xdescribe("The LAD Table", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a table view only for lad table objects", () => {
@@ -284,7 +284,7 @@ xdescribe("The LAD Table Set", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {

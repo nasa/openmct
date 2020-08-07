@@ -33,7 +33,7 @@ define([
         var oldBundles;
 
         beforeAll(() => {
-            testUtils.resetApplicationState();
+            return testUtils.resetApplicationState();
         });
 
         beforeEach(function () {
@@ -56,7 +56,8 @@ define([
                     legacyRegistry.delete(bundle);
                 }
             });
-            testUtils.resetApplicationState(openmct);
+
+            return testUtils.resetApplicationState(openmct);
         });
 
         it("exposes plugins", function () {

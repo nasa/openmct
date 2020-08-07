@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-xdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct,
         compositionAPI,
         newFolderAction,
@@ -46,7 +46,7 @@ xdescribe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('installs the new folder action', () => {

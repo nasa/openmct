@@ -50,7 +50,7 @@ describe("the plugin", () => {
     let child;
 
     beforeAll(() => {
-        resetApplicationState();
+        return resetApplicationState();
     });
 
     beforeEach((done) => {
@@ -82,7 +82,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("defines a table object", function () {
