@@ -82,6 +82,7 @@ describe("the plugin", () => {
             spyOn(openmct.objects, 'mutate');
 
             newFolderAction.invoke(mockObjectPath);
+            done();
         });
 
         it('gets user input for folder name', () => {

@@ -23,7 +23,8 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'FirefoxHeadless'];
+const debugMode = process.env.NODE_ENV === 'debug';
+const browsers = [debugMode ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html'];
 
@@ -59,6 +60,7 @@ module.exports = (config) => {
         browsers: browsers,
         client: {
             jasmine: {
+                failFast: true,
                 random: false,
                 timeoutInterval: 6000
             }
@@ -72,7 +74,7 @@ module.exports = (config) => {
         },
         colors: true,
         logLevel: config.LOG_INFO,
-        autoWatch: true,
+        autoWatch: debugMode,
         // HTML test reporting.
         htmlReporter: {
             outputDir: "dist/reports/tests",
@@ -101,6 +103,7 @@ module.exports = (config) => {
         },
         concurrency: 1,
         singleRun: true,
-        browserNoActivityTimeout: 90000
+        browserNoActivityTimeout: 90000,
+        reportSlowerThan: 5000
     });
 };

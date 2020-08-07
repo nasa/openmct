@@ -71,13 +71,14 @@ export function resetApplicationState(openmct) {
 
     if (openmct !== undefined) {
         openmct.destroy();
+        openmct = undefined;
     }
 
     if (window.location.hash !== '#' && window.location.hash !== '') {
         promise = new Promise((resolve, reject) => {
             window.addEventListener('hashchange', cleanup);
             let timeTag = Date.now();
-            console.log(`${timeTag}: window.location.hash is ${window.location.hash}`);
+            // console.log(`${timeTag}: window.location.hash is ${window.location.hash}`);
             /*function getStackTrace() {
                 var obj = {};
                 Error.captureStackTrace(obj, getStackTrace);
@@ -91,7 +92,7 @@ export function resetApplicationState(openmct) {
             //setTimeout(resolve);
             function cleanup() {
                 let endTag = Date.now();
-                console.log(`${timeTag} after reset window.location.hash is ${window.location.hash} and took ${(endTag - timeTag) / 1000}s`);
+                // console.log(`${timeTag} after reset window.location.hash is ${window.location.hash} and took ${(endTag - timeTag) / 1000}s`);
                 window.removeEventListener('hashchange', cleanup);
                 resolve();
             }
