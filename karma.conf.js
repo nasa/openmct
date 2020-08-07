@@ -62,7 +62,7 @@ module.exports = (config) => {
             jasmine: {
                 failFast: true,
                 random: false,
-                timeoutInterval: 6000
+                timeoutInterval: 10000
             }
         },
         customLaunchers: {
