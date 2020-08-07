@@ -49,9 +49,9 @@ describe("the plugin", () => {
     let element;
     let child;
 
-    beforeAll(() => {
-        return resetApplicationState();
-    });
+    // beforeAll(() => {
+    //     return resetApplicationState();
+    // });
 
     beforeEach((done) => {
         openmct = createOpenMct();

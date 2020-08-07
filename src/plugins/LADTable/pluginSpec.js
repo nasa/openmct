@@ -232,7 +232,7 @@ describe("The LAD Table", () => {
     });
 });
 
-xdescribe("The LAD Table Set", () => {
+describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
 
     let openmct,

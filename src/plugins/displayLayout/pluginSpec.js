@@ -29,9 +29,9 @@ describe('the plugin', function () {
     let openmct;
     let displayLayoutDefinition;
 
-    beforeAll(() => {
-        return resetApplicationState(openmct);
-    });
+    // beforeAll(() => {
+    //     return resetApplicationState(openmct);
+    // });
 
     beforeEach((done) => {
         openmct = createOpenMct();
