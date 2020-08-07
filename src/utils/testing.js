@@ -78,14 +78,14 @@ export function resetApplicationState(openmct) {
             window.addEventListener('hashchange', cleanup);
             let timeTag = Date.now();
             console.log(`${timeTag}: window.location.hash is ${window.location.hash}`);
-            function getStackTrace() {
+            /*function getStackTrace() {
                 var obj = {};
                 Error.captureStackTrace(obj, getStackTrace);
 
                 return obj.stack;
             }
 
-            console.log(getStackTrace());
+            console.log(getStackTrace());*/
 
             window.location.hash = '#';
             //setTimeout(resolve);
