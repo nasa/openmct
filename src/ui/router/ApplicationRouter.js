@@ -45,6 +45,7 @@ class ApplicationRouter extends EventEmitter {
         super();
         this.routes = [];
         this.started = false;
+        this.locationBar = new LocationBar();
     }
 
     /**
@@ -56,11 +57,15 @@ class ApplicationRouter extends EventEmitter {
         }
 
         this.started = true;
-        let locationBar = new LocationBar();
-        locationBar.onChange(p => this.handleLocationChange(p));
-        locationBar.start({
+
+        this.locationBar.onChange(p => this.handleLocationChange(p));
+        this.locationBar.start({
             root: location.pathname
         });
+    }
+
+    destroy() {
+        this.locationBar.stop();
     }
 
     handleLocationChange(pathString) {

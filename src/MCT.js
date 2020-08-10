@@ -444,6 +444,7 @@ define([
 
     MCT.prototype.destroy = function () {
         this.emit('destroy');
+        this.router.destroy();
     };
 
     MCT.prototype.plugins = plugins;

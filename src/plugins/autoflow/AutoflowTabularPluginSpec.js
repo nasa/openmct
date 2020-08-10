@@ -27,7 +27,7 @@ define([
     'zepto',
     './dom-observer'
 ], function (AutoflowTabularPlugin, AutoflowTabularConstants, MCT, $, DOMObserver) {
-    xdescribe("AutoflowTabularPlugin", function () {
+    describe("AutoflowTabularPlugin", function () {
         let testType;
         let testObject;
         let mockmct;

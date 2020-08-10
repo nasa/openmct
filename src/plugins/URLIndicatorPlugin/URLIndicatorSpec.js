@@ -35,7 +35,7 @@ define(
     ) {
         const defaultAjaxFunction = $.ajax;
 
-        xdescribe("The URLIndicator", function () {
+        describe("The URLIndicator", function () {
             let openmct;
             let indicatorElement;
             let pluginOptions;
