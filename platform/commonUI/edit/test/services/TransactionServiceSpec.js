@@ -25,9 +25,10 @@ define(
     ["../../src/services/TransactionService"],
     function (TransactionService) {
 
-        xdescribe("The Transaction Service", function () {
+        describe("The Transaction Service", function () {
             var mockQ,
                 mockLog,
+                mockCacheService,
                 transactionService;
 
             function fastPromise(val) {
@@ -40,9 +41,10 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
+                mockCacheService = jasmine.createSpyObj("cacheService", ["flush"]);
                 mockQ.all.and.returnValue(fastPromise());
                 mockLog = jasmine.createSpyObj("$log", ["error"]);
-                transactionService = new TransactionService(mockQ, mockLog);
+                transactionService = new TransactionService(mockQ, mockLog, mockCacheService);
             });
 
             it("isActive returns true if a transaction is in progress", function () {
@@ -94,8 +96,6 @@ define(
                 });
 
                 it("commit resets active state and clears queues", function () {
-                    transactionService.commit();
-
                     return transactionService.commit().then(() => {
                         expect(transactionService.isActive()).toBe(false);
                         expect(transactionService.size()).toBe(0);
