@@ -35,10 +35,6 @@ describe('the plugin', () => {
         parentElement,
         mockMessages = ['error', 'test', 'notifications'];
 
-    // beforeAll(() => {
-    //     return resetApplicationState();
-    // });
-
     beforeEach((done) => {
         openmct = createOpenMct();
 

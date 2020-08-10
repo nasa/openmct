@@ -32,10 +32,6 @@ define([
         var mockListener;
         var oldBundles;
 
-        // beforeAll(() => {
-        //     return testUtils.resetApplicationState();
-        // });
-
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
             mockPlugin2 = jasmine.createSpy('plugin2');

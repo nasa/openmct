@@ -36,10 +36,6 @@ describe('the plugin', function () {
     let openmct;
     let testTelemetryObject;
 
-    // beforeAll(() => {
-    //     return resetApplicationState();
-    // });
-
     beforeEach((done) => {
         testTelemetryObject = {
             identifier: {

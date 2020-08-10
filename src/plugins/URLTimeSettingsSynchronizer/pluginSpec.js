@@ -27,7 +27,6 @@ import {
 describe("The URLTimeSettingsSynchronizer", () => {
     let openmct;
     let testClock;
-    // beforeAll(() => resetApplicationState());
 
     beforeEach((done) => {
         openmct = createOpenMct();
