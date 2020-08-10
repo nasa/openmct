@@ -123,7 +123,7 @@ define([
      * @returns modelResults
      */
     ElasticSearchProvider.prototype.parseResponse = function (response) {
-        console.log(`response.data: ${JSON.stringify(response)}`);
+        console.log(`response: ${JSON.stringify(response)}`);
         var results = response.data.hits.hits,
             searchResults = results.map(function (result) {
                 return {
