@@ -133,7 +133,7 @@ function (
         }
 
         function saveObject(parent) {
-            return this.openmct.editor.save().then(() => {
+            return self.openmct.editor.save().then(() => {
                 // Force mutation for search indexing
                 return parent;
             });

@@ -270,7 +270,7 @@ define([
         }
 
         isTelemetryObject(domainObject) {
-            return domainObject.hasOwnProperty('telemetry');
+            return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
         }
 
         buildOptionsFromConfiguration(telemetryObject) {

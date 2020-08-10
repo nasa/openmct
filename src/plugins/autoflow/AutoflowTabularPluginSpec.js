@@ -339,6 +339,7 @@ define([
                     }
 
                     for (var height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
+                        // eslint-disable-next-line no-invalid-this
                         promiseChain = promiseChain.then(setHeight.bind(this, height));
                     }
 
