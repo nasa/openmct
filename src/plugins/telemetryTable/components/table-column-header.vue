@@ -113,8 +113,6 @@ export default {
             event.dataTransfer.setData(MOVE_COLUMN_DT_TYPE, this.headerIndex);
         },
         isColumnMoveEvent(event) {
-            console.error(`Types: ${event.dataTransfer.types}`);
-
             return [...event.dataTransfer.types].includes(MOVE_COLUMN_DT_TYPE);
         },
         dragOverColumn(event) {
@@ -146,7 +144,6 @@ export default {
             if (this.isColumnMoveEvent(event)) {
                 let toIndex = this.headerIndex;
                 let fromIndex = event.dataTransfer.getData(MOVE_COLUMN_DT_TYPE);
-                console.error(`fromIndex: ${fromIndex}`);
                 if (event.offsetX < event.target.offsetWidth / 2) {
                     if (toIndex > fromIndex) {
                         toIndex--;
