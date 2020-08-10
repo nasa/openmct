@@ -143,7 +143,7 @@ export default {
     },
     methods: {
         enterFullScreen() {
-            var docElm = document.documentElement;
+            let docElm = document.documentElement;
 
             if (docElm.requestFullscreen) {
                 docElm.requestFullscreen();

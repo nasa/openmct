@@ -1,6 +1,7 @@
 define(['../../src/input/IconPalette'], function (IconPalette) {
     describe('An Open MCT icon palette', function () {
-        var iconPalette, changeCallback;
+        let iconPalette;
+        let changeCallback;
 
         beforeEach(function () {
             changeCallback = jasmine.createSpy('changeCallback');

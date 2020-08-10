@@ -102,7 +102,7 @@ define([
         }
 
         this.startLoading();
-        var options = {
+        const options = {
             size: this.$element[0].offsetWidth,
             domain: this.config.xAxis.get('key')
         };
@@ -150,10 +150,10 @@ define([
     };
 
     PlotController.prototype.getConfig = function (domainObject) {
-        var configId = domainObject.getId();
-        var config = configStore.get(configId);
+        const configId = domainObject.getId();
+        let config = configStore.get(configId);
         if (!config) {
-            var newDomainObject = domainObject.useCapability('adapter');
+            const newDomainObject = domainObject.useCapability('adapter');
             config = new PlotConfigurationModel({
                 id: configId,
                 domainObject: newDomainObject,
@@ -202,7 +202,7 @@ define([
      * Track latest display bounds.  Forces update when not receiving ticks.
      */
     PlotController.prototype.updateDisplayBounds = function (bounds, isTick) {
-        var newRange = {
+        const newRange = {
             min: bounds.start,
             max: bounds.end
         };
@@ -216,7 +216,7 @@ define([
             // Drop any data that is more than 1x (max-min) before min.
             // Limit these purges to once a second.
             if (!this.nextPurge || this.nextPurge < Date.now()) {
-                var keepRange = {
+                const keepRange = {
                     min: newRange.min - (newRange.max - newRange.min),
                     max: newRange.max
                 };
@@ -247,7 +247,7 @@ define([
     PlotController.prototype.synchronized = function (value) {
         if (typeof value !== 'undefined') {
             this._synchronized = value;
-            var isUnsynced = !value && this.openmct.time.clock();
+            const isUnsynced = !value && this.openmct.time.clock();
             if (this.$scope.domainObject.getCapability('status')) {
                 this.$scope.domainObject.getCapability('status')
                     .set('timeconductor-unsynced', isUnsynced);
@@ -263,8 +263,8 @@ define([
      * @private
      */
     PlotController.prototype.onUserViewportChangeEnd = function () {
-        var xDisplayRange = this.config.xAxis.get('displayRange');
-        var xRange = this.config.xAxis.get('range');
+        const xDisplayRange = this.config.xAxis.get('displayRange');
+        const xRange = this.config.xAxis.get('range');
 
         if (!this.skipReloadOnInteraction) {
             this.loadMoreData(xDisplayRange);
@@ -290,7 +290,7 @@ define([
      * Export view as JPG.
      */
     PlotController.prototype.exportJPG = function () {
-        var plotElement = this.$element.children()[1];
+        const plotElement = this.$element.children()[1];
 
         this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
     };
@@ -299,7 +299,7 @@ define([
      * Export view as PNG.
      */
     PlotController.prototype.exportPNG = function () {
-        var plotElement = this.$element.children()[1];
+        const plotElement = this.$element.children()[1];
 
         this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
     };

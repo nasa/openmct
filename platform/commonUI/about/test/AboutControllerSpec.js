@@ -25,9 +25,9 @@ define(
     function (AboutController) {
 
         describe("The About controller", function () {
-            var testVersions,
-                mockWindow,
-                controller;
+            let testVersions;
+            let mockWindow;
+            let controller;
 
             beforeEach(function () {
                 testVersions = [
@@ -56,7 +56,6 @@ define(
                 controller.openLicenses();
                 expect(mockWindow.open).toHaveBeenCalledWith("#/licenses");
             });
-
         });
 
     }

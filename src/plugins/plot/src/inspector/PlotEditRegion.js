@@ -26,7 +26,7 @@ define([
     Region
 ) {
 
-    var PlotEditRegion = new Region({
+    const PlotEditRegion = new Region({
         name: "plot-options",
         title: "Plot Options",
         modes: ['edit'],

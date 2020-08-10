@@ -41,10 +41,10 @@ define([
     }
 
     SummaryWidgetCondition.prototype.evaluate = function (telemetryState) {
-        var stateKeys = Object.keys(telemetryState);
-        var state;
-        var result;
-        var i;
+        const stateKeys = Object.keys(telemetryState);
+        let state;
+        let result;
+        let i;
 
         if (this.object === 'any') {
             for (i = 0; i < stateKeys.length; i++) {
@@ -72,7 +72,7 @@ define([
     };
 
     SummaryWidgetCondition.prototype.evaluateState = function (state) {
-        var testValues = [
+        const testValues = [
             state.formats[this.key].parse(state.lastDatum)
         ].concat(this.values);
 

@@ -8,10 +8,10 @@ define([
 
     describe('StaticModelProvider', function () {
 
-        var staticProvider;
+        let staticProvider;
 
         beforeEach(function () {
-            var staticData = JSON.parse(JSON.stringify(testStaticData));
+            const staticData = JSON.parse(JSON.stringify(testStaticData));
             staticProvider = new StaticModelProvider(staticData, {
                 namespace: 'my-import',
                 key: 'root'
@@ -19,7 +19,7 @@ define([
         });
 
         describe('rootObject', function () {
-            var rootModel;
+            let rootModel;
 
             beforeEach(function () {
                 rootModel = staticProvider.get({
@@ -52,9 +52,9 @@ define([
         });
 
         describe('childObjects', function () {
-            var swg;
-            var layout;
-            var fixed;
+            let swg;
+            let layout;
+            let fixed;
 
             beforeEach(function () {
                 swg = staticProvider.get({

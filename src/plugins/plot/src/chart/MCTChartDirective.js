@@ -29,7 +29,7 @@ define([
     MCTChartController
 ) {
 
-    var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
+    let TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
     TEMPLATE += TEMPLATE;
 
     /**
@@ -43,8 +43,8 @@ define([
             template: TEMPLATE,
             link: function ($scope, $element, attrs, ctrl) {
                 ctrl.TEMPLATE = TEMPLATE;
-                var mainCanvas = $element.find("canvas")[1];
-                var overlayCanvas = $element.find("canvas")[0];
+                const mainCanvas = $element.find("canvas")[1];
+                const overlayCanvas = $element.find("canvas")[0];
 
                 if (ctrl.initializeCanvas(mainCanvas, overlayCanvas)) {
                     ctrl.draw();
