@@ -27,7 +27,7 @@ define([
     "../../src/services/SearchAggregator"
 ], function (SearchAggregator) {
 
-    xdescribe("SearchAggregator", function () {
+    describe("SearchAggregator", function () {
         var $q,
             objectService,
             providers,
