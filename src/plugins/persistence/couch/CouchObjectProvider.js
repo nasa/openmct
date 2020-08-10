@@ -30,7 +30,7 @@ export default class CouchObjectProvider {
     // persist any queued objects
     checkResponse(response, intermediateResponse) {
         let requestSuccess = false;
-        const id = response.id;
+        const id = response ? response.id : undefined;
         let rev;
         if (response && response.ok) {
             rev = response.rev;

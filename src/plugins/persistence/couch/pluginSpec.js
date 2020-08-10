@@ -22,22 +22,21 @@
 import CouchPlugin from './plugin.js';
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
-import CouchObjectProvider from "@/plugins/persistence/couch/CouchObjectProvider";
-import CouchObjectQueue from "@/plugins/persistence/couch/CouchObjectQueue";
+import CouchObjectProvider from './CouchObjectProvider';
 
-describe("the plugin", () => {
+fdescribe('the plugin', () => {
     let openmct;
     let element;
     let child;
     let provider;
-    let testSpace = "testSpace";
-    let testPath = "/test/db";
+    let testSpace = 'testSpace';
+    let testPath = '/test/db';
     let mockDomainObject = {
         identifier: {
             namespace: '',
-            key: "some-value"
+            key: 'some-value'
         }
     };
 
@@ -53,32 +52,47 @@ describe("the plugin", () => {
         openmct.startHeadless();
 
         provider = openmct.objects.getProvider(mockDomainObject.identifier);
+        spyOn(provider, 'get').and.callThrough();
+        spyOn(provider, 'create').and.callThrough();
+        spyOn(provider, 'update').and.callThrough();
+
+        spyOnBuiltins(['fetch'], window);
+        fetch.and.returnValue(Promise.resolve({
+            json: () => {
+                return {
+                    ok: true,
+                    _id: 'some-value',
+                    _rev: 1,
+                    model: {}
+                };
+            }
+        }));
     });
 
-    it('registers a provider for objects', () => {
-        expect(provider).toBeDefined();
+    afterEach(() => {
+        return resetApplicationState(openmct);
     });
 
     it('gets an object', () => {
         openmct.objects.get(mockDomainObject.identifier).then((result) => {
-            expect(provider.get).toHaveBeenCalled();
-            expect(result).toBeDefined();
+            expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
     });
 
     it('creates an object', () => {
         openmct.objects.save(mockDomainObject).then((result) => {
             expect(provider.create).toHaveBeenCalled();
-            expect(result).toBeDefined();
+            expect(result).toBeTrue();
         });
     });
 
     it('updates an object', () => {
         openmct.objects.save(mockDomainObject).then((result) => {
+            expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
             openmct.objects.save(mockDomainObject).then((updatedResult) => {
+                expect(updatedResult).toBeTrue();
                 expect(provider.update).toHaveBeenCalled();
-                expect(updatedResult).toBeDefined();
             });
         });
     });
