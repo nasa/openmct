@@ -55,9 +55,9 @@ export async function getDefaultNotebookLink(openmct, domainObject = null) {
 
     const path = await openmct.objects.getOriginalPath(domainObject.identifier)
         .then(objectPath => objectPath
-                .map(o => o && openmct.objects.makeKeyString(o.identifier))
-                .reverse()
-                .join('/')
+            .map(o => o && openmct.objects.makeKeyString(o.identifier))
+            .reverse()
+            .join('/')
         );
     const { page, section } = getDefaultNotebook();
 

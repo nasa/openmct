@@ -73,13 +73,13 @@ export default class Snapshot {
     _showNotification(msg, url) {
         const options = {
             autoDismissTimeout: 30000,
-            link : {
+            link: {
                 callback: this._navigateToNotebook(url),
                 cssClass: '',
                 label: 'Go to Notebook',
                 msg: 'click to view'
             }
-        }
+        };
 
         this.openmct.notifications.info(msg, options);
     }
@@ -91,6 +91,6 @@ export default class Snapshot {
 
         return () => {
             window.location.href = window.location.origin + url;
-        }
+        };
     }
 }

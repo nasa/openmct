@@ -84,7 +84,8 @@ export default class NotificationAPI extends EventEmitter {
             autoDismiss: true,
             severity: "info",
             options
-        }
+        };
+
         return this._notify(notificationModel);
     }
 
@@ -99,7 +100,8 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             severity: "alert",
             options
-        }
+        };
+
         return this._notify(notificationModel);
     }
 
@@ -114,7 +116,8 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             severity: "error",
             options
-        }
+        };
+
         return this._notify(notificationModel);
     }
 

@@ -92,6 +92,7 @@ export default {
     computed: {
         haslink() {
             const options = this.activeModel.options;
+
             return options && options.link;
         },
         getLinkProps() {
@@ -164,9 +165,9 @@ export default {
                 linkProps.callback();
 
                 activeNotification.dismiss();
+
                 return;
             }
-
 
             if (this.activeModel.progressPerc !== undefined) {
                 maximizedDialog = this.openmct.overlays.progressDialog({
