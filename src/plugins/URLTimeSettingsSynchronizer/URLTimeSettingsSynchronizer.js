@@ -66,7 +66,7 @@ export default class URLTimeSettingsSynchronizer {
         TIME_EVENTS.forEach(event => {
             this.openmct.time.off(event, this.setUrlFromTimeApi);
         });
-        this.openmct.time.on('bounds', this.updateBounds);
+        this.openmct.time.off('bounds', this.updateBounds);
     }
 
     updateTimeSettings() {

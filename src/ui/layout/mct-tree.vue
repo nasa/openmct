@@ -81,7 +81,12 @@ export default {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
-                    return this.openmct.composition.get(root).load();
+                    let composition = this.openmct.composition.get(root);
+                    if (composition !== undefined) {
+                        return composition.load();
+                    } else {
+                        return [];
+                    }
                 })
                 .then(children => {
                     this.isLoading = false;
