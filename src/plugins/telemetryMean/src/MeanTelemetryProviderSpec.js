@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jshint latedef: nofunc */
+/* eslint-disable no-invalid-this */
 define([
     "./MeanTelemetryProvider",
     "./MockTelemetryApi"

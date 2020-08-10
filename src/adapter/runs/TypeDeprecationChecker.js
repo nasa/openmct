@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open openmct, Copyright (c) 2014-2018, United States Government
+ * Open openmct, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/* global console */
 define([
 
 ], function (
@@ -28,7 +27,7 @@ define([
 ) {
 
     function checkForDeprecatedFunctionality(typeDef) {
-        if (typeDef.hasOwnProperty('telemetry')) {
+        if (Object.prototype.hasOwnProperty.call(typeDef, 'telemetry')) {
             console.warn(
                 'DEPRECATION WARNING: Telemetry data on type '
                 + 'registrations will be deprecated in a future version, '

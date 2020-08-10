@@ -79,7 +79,7 @@ define([
 
         self.options.forEach(function (option, index) {
             $('select', self.domElement)
-                .append('<option value = "' + option[0] + '"' + ' >'
+                .append('<option value = "' + option[0] + '" >'
                         + option[1] + '</option>');
         });
 

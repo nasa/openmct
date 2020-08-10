@@ -16,7 +16,7 @@ define([
 
         var cachedProvider;
 
-        var loadProvider = function () {
+        function loadProvider() {
             return fetch(exportUrl)
                 .then(function (response) {
                     return response.json();
@@ -26,16 +26,15 @@ define([
 
                     return cachedProvider;
                 });
+        }
 
-        };
-
-        var getProvider = function () {
+        function getProvider() {
             if (!cachedProvider) {
                 cachedProvider = loadProvider();
             }
 
             return Promise.resolve(cachedProvider);
-        };
+        }
 
         return function install(openmct) {
             openmct.objects.addRoot(rootIdentifier);
