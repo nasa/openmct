@@ -70,7 +70,7 @@ export default {
         document.removeEventListener('click', this.hideMenu);
     },
     methods: {
-        async setNotebookTypes() {
+        setNotebookTypes() {
             const notebookTypes = [];
             const defaultNotebook = getDefaultNotebook();
 
