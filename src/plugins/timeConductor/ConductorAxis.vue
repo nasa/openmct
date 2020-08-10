@@ -194,7 +194,7 @@ export default {
                     if (this.inPanMode) {
                         this.pan();
                     } else {
-                        this.zoom()
+                        this.zoom();
                     }
 
                     this.dragging = false;
@@ -205,7 +205,7 @@ export default {
             if (this.inPanMode) {
                 this.endPan();
             } else {
-                this.endZoom()
+                this.endZoom();
             }
 
             document.removeEventListener('mousemove', this.drag);

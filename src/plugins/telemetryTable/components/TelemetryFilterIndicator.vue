@@ -68,21 +68,22 @@ export default {
         setFilterNames() {
             let names = [];
             let composition = this.openmct.composition.get(this.table.configuration.domainObject);
+            if (composition !== undefined) {
+                composition.load().then((domainObjects) => {
+                    domainObjects.forEach(telemetryObject => {
+                        let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                        let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                        let filters = this.filteredTelemetry[keyString];
 
-            composition && composition.load().then((domainObjects) => {
-                domainObjects.forEach(telemetryObject => {
-                    let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-                    let filters = this.filteredTelemetry[keyString];
+                        if (filters !== undefined) {
+                            names.push(this.getFilterNamesFromMetadata(filters, metadataValues));
+                        }
+                    });
 
-                    if (filters !== undefined) {
-                        names.push(this.getFilterNamesFromMetadata(filters, metadataValues));
-                    }
+                    names = _.flatten(names);
+                    this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
                 });
-
-                names = _.flatten(names);
-                this.filterNames = names.length === 0 ? names : Array.from(new Set(names));
-            });
+            }
         },
         getFilterNamesFromMetadata(filters, metadataValues) {
             let filterNames = [];
