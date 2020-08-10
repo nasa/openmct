@@ -108,8 +108,7 @@
 </template>
 
 <script>
-import { OPERATIONS } from '../utils/operations';
-import { INPUT_TYPES } from '../utils/operations';
+import { OPERATIONS, INPUT_TYPES } from '../utils/operations';
 import {TRIGGER_CONJUNCTION} from "../utils/constants";
 
 export default {
@@ -214,9 +213,9 @@ export default {
                     this.enumerations = foundMetadata.enumerations;
                 } else if (foundMetadata.format === 'string' || foundMetadata.format === 'number') {
                     this.operationFormat = foundMetadata.format;
-                } else if (foundMetadata.hints.hasOwnProperty('range')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'range')) {
                     this.operationFormat = 'number';
-                } else if (foundMetadata.hints.hasOwnProperty('domain')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'domain')) {
                     this.operationFormat = 'number';
                 } else if (foundMetadata.key === 'name') {
                     this.operationFormat = 'string';

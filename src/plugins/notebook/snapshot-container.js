@@ -14,6 +14,7 @@ export default class SnapshotContainer extends EventEmitter {
 
         this.openmct = openmct;
 
+        // eslint-disable-next-line
         return SnapshotContainer.instance;
     }
 
