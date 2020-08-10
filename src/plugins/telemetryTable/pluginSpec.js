@@ -28,15 +28,26 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
+class MockDataTransfer {
+    constructor() {
+        this.data = {};
+    }
+    get types() {
+        return Object.keys(this.data);
+    }
+    setData(format, data) {
+        this.data[format] = data;
+    }
+    getData(format) {
+        return this.data[format];
+    }
+}
+
 describe("the plugin", () => {
     let openmct;
     let tablePlugin;
     let element;
     let child;
-
-    beforeAll(() => {
-        resetApplicationState();
-    });
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -67,7 +78,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("defines a table object", function () {
@@ -191,7 +202,7 @@ describe("the plugin", () => {
 
             dragStartEvent.dataTransfer =
                 dragOverEvent.dataTransfer =
-                    dropEvent.dataTransfer = new DataTransfer();
+                    dropEvent.dataTransfer = new MockDataTransfer();
 
             fromColumn.dispatchEvent(dragStartEvent);
             toColumn.dispatchEvent(dragOverEvent);
