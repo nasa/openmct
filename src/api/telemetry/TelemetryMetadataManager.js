@@ -114,7 +114,7 @@ define([
     ) {
         function hasHint(hint) {
             // eslint-disable-next-line no-invalid-this
-            return this.hints.hasOwnProperty(hint);
+            return Object.prototype.hasOwnProperty.call(this.hints, hint);
         }
 
         function hasHints(metadata) {
