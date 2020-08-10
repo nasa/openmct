@@ -46,7 +46,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('installs the new folder action', () => {
