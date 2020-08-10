@@ -114,7 +114,7 @@ define([
         hints
     ) {
         function hasHint(hint) {
-            /*jshint validthis: true */
+            // eslint-disable-next-line no-invalid-this
             return this.hints.hasOwnProperty(hint);
         }
 

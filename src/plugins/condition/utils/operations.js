@@ -20,23 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const convertToNumbers = (input) => {
+function convertToNumbers(input) {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));
 
     return numberInputs;
-};
+}
 
-const convertToStrings = (input) => {
+function convertToStrings(input) {
     let stringInputs = [];
     input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
 
     return stringInputs;
-};
+}
 
-const joinValues = (values, length) => {
+function joinValues(values, length) {
     return values.slice(0, length).join(', ');
-};
+}
 
 export const OPERATIONS = [
     {
@@ -313,8 +313,8 @@ export const INPUT_TYPES = {
     'number': 'number'
 };
 
-export const getOperatorText = (operationName, values) => {
+export function getOperatorText(operationName, values) {
     const found = OPERATIONS.find((operation) => operation.name === operationName);
 
     return found ? found.getDescription(values) : '';
-};
+}
