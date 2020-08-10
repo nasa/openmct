@@ -44,27 +44,19 @@ describe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
 
     let openmct;
-
     let ladPlugin;
-
     let parent;
-
     let child;
-
     let telemetryCount = 3;
-
     let timeFormat = 'utc';
-
     let mockTelemetry = getMockTelemetry({
         count: telemetryCount,
         format: timeFormat
     });
-
     let mockObj = getMockObjects({
         objectKeyStrings: ['ladTable', 'telemetry'],
         format: timeFormat
     });
-
     let bounds = {
         start: 0,
         end: 4
@@ -139,11 +131,8 @@ describe("The LAD Table", () => {
 
     describe("table view", () => {
         let applicableViews;
-
         let ladTableViewProvider;
-
         let ladTableView;
-
         let anotherTelemetryObj = getMockObjects({
             objectKeyStrings: ['telemetry'],
             overwrite: {
@@ -162,21 +151,18 @@ describe("The LAD Table", () => {
 
         beforeEach(async () => {
             let telemetryRequestResolve;
-
             let telemetryObjectResolve;
-
             let anotherTelemetryObjectResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
-
             let telemetryObjectPromise = new Promise((resolve) => {
                 telemetryObjectResolve = resolve;
             });
-
             let anotherTelemetryObjectPromise = new Promise((resolve) => {
                 anotherTelemetryObjectResolve = resolve;
             });
+
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
 
@@ -253,15 +239,10 @@ describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
 
     let openmct;
-
     let ladPlugin;
-
     let parent;
-
     let child;
-
     let telemetryCount = 3;
-
     let timeFormat = 'utc';
 
     let mockTelemetry = getMockTelemetry({
@@ -277,12 +258,14 @@ describe("The LAD Table Set", () => {
         start: 0,
         end: 4
     };
+
     // add mock telemetry to lad table and lad table to lad table set (composition)
     mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
     mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
 
     beforeEach((done) => {
         const appHolder = document.createElement('div');
+
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -346,9 +329,7 @@ describe("The LAD Table Set", () => {
 
     describe("table view", () => {
         let applicableViews;
-
         let ladTableSetViewProvider;
-
         let ladTableSetView;
 
         let otherObj = getMockObjects({
@@ -370,10 +351,9 @@ describe("The LAD Table Set", () => {
 
         beforeEach(async () => {
             let telemetryRequestResolve;
-
             let ladObjectResolve;
-
             let anotherLadObjectResolve;
+
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
@@ -385,11 +365,13 @@ describe("The LAD Table Set", () => {
             let anotherLadObjectPromise = new Promise((resolve) => {
                 anotherLadObjectResolve = resolve;
             });
+
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
 
                 return telemetryRequestPromise;
             });
+
             openmct.objects.get.and.callFake((obj) => {
                 if (obj.key === 'lad-object') {
                     ladObjectResolve(mockObj.ladObject);
@@ -422,6 +404,7 @@ describe("The LAD Table Set", () => {
 
         it("should show one row per lad table object in the composition", () => {
             const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
+
             expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
             pending();
         });

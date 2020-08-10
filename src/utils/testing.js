@@ -146,11 +146,8 @@ export function getMockObjects(opts = {}) {
     // build out custom telemetry mappings if necessary
     if (requestedMocks.telemetry && opts.telemetryConfig) {
         let keys = opts.telemetryConfig.keys;
-
         let format = opts.telemetryConfig.format || 'utc';
-
         let hints = opts.telemetryConfig.hints;
-
         let values;
 
         // if utc, keep default
