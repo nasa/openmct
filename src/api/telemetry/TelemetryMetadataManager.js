@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console*/
 
 define([
     'lodash'
@@ -31,26 +30,26 @@ define([
         valueMetadata.source = valueMetadata.source || valueMetadata.key;
         valueMetadata.hints = valueMetadata.hints || {};
 
-        if (valueMetadata.hints.hasOwnProperty('x')) {
+        if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'x')) {
             console.warn(
                 'DEPRECATION WARNING: `x` hints should be replaced with '
                 + '`domain` hints moving forward.  '
                 + 'https://github.com/nasa/openmct/issues/1546'
             );
-            if (!valueMetadata.hints.hasOwnProperty('domain')) {
+            if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
                 valueMetadata.hints.domain = valueMetadata.hints.x;
             }
 
             delete valueMetadata.hints.x;
         }
 
-        if (valueMetadata.hints.hasOwnProperty('y')) {
+        if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'y')) {
             console.warn(
                 'DEPRECATION WARNING: `y` hints should be replaced with '
                 + '`range` hints moving forward.  '
                 + 'https://github.com/nasa/openmct/issues/1546'
             );
-            if (!valueMetadata.hints.hasOwnProperty('range')) {
+            if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
                 valueMetadata.hints.range = valueMetadata.hints.y;
             }
 
@@ -62,16 +61,16 @@ define([
                 valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
             }
 
-            if (!valueMetadata.hasOwnProperty('max')) {
+            if (!Object.prototype.hasOwnProperty.call(valueMetadata, 'max')) {
                 valueMetadata.max = Math.max(valueMetadata.values) + 1;
             }
 
-            if (!valueMetadata.hasOwnProperty('min')) {
+            if (!Object.prototype.hasOwnProperty.call(valueMetadata, 'min')) {
                 valueMetadata.min = Math.min(valueMetadata.values) - 1;
             }
         }
 
-        if (!valueMetadata.hints.hasOwnProperty('priority')) {
+        if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'priority')) {
             valueMetadata.hints.priority = index;
         }
 
@@ -115,7 +114,7 @@ define([
     ) {
         function hasHint(hint) {
             // eslint-disable-next-line no-invalid-this
-            return this.hints.hasOwnProperty(hint);
+            return Object.prototype.hasOwnProperty.call(this.hints, hint);
         }
 
         function hasHints(metadata) {

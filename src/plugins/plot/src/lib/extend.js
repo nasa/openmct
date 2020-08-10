@@ -33,7 +33,7 @@ define([
             child,
             Surrogate;
 
-        if (props && props.hasOwnProperty('constructor')) {
+        if (props && Object.prototype.hasOwnProperty.call(props, 'constructor')) {
             child = props.constructor;
         } else {
             child = function () {

@@ -120,6 +120,14 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/default-case-last
+        "default-case-last": "error",
+        // https://eslint.org/docs/rules/default-param-last
+        "default-param-last": "error",
+        // https://eslint.org/docs/rules/grouped-accessor-pairs
+        "grouped-accessor-pairs": "error",
+        // https://eslint.org/docs/rules/no-constructor-return
+        "no-constructor-return": "error",
         // https://eslint.org/docs/rules/array-callback-return
         "array-callback-return": "error",
         // https://eslint.org/docs/rules/no-invalid-this
@@ -224,26 +232,21 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off"
+        "vue/singleline-html-element-content-newline": "off",
+
     },
     "overrides": [
         {
-            "files": ["*Spec.js"],
+            "files": LEGACY_FILES,
             "rules": {
                 "no-unused-vars": [
                     "warn",
                     {
                         "vars": "all",
                         "args": "none",
-                        "varsIgnorePattern": "controller",
-
+                        "varsIgnorePattern": "controller"
                     }
-                ]
-            }
-        }, {
-            "files": LEGACY_FILES,
-            "rules": {
-                // https://eslint.org/docs/rules/no-nested-ternary
+                ],
                 "no-nested-ternary": "off",
                 "no-var": "off"
             }

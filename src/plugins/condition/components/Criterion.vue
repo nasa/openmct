@@ -213,9 +213,9 @@ export default {
                     this.enumerations = foundMetadata.enumerations;
                 } else if (foundMetadata.format === 'string' || foundMetadata.format === 'number') {
                     this.operationFormat = foundMetadata.format;
-                } else if (foundMetadata.hints.hasOwnProperty('range')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'range')) {
                     this.operationFormat = 'number';
-                } else if (foundMetadata.hints.hasOwnProperty('domain')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'domain')) {
                     this.operationFormat = 'number';
                 } else if (foundMetadata.key === 'name') {
                     this.operationFormat = 'string';
