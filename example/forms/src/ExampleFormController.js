@@ -79,7 +79,7 @@ define(
                                 control: "button",
                                 csslass: "icon-save",
                                 click: function () {
-                                    window.alert("Save");
+                                    console.log("Save");
                                 }
                             },
                             {
@@ -87,7 +87,7 @@ define(
                                 csslass: "icon-x",
                                 description: "Button B",
                                 click: function () {
-                                    window.alert("Cancel");
+                                    console.log("Cancel");
                                 }
                             },
                             {
@@ -96,7 +96,7 @@ define(
                                 description: "Button C",
                                 disabled: true,
                                 click: function () {
-                                    window.alert("Delete");
+                                    console.log("Delete");
                                 }
                             }
                         ]

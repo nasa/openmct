@@ -108,8 +108,7 @@
 </template>
 
 <script>
-import { OPERATIONS } from '../utils/operations';
-import { INPUT_TYPES } from '../utils/operations';
+import { OPERATIONS, INPUT_TYPES } from '../utils/operations';
 import {TRIGGER_CONJUNCTION} from "../utils/constants";
 
 export default {

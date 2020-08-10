@@ -64,7 +64,7 @@ const styleProps = {
     }
 };
 
-const aggregateStyleValues = (accumulator, currentStyle) => {
+function aggregateStyleValues(accumulator, currentStyle) {
     const styleKeys = Object.keys(currentStyle);
     const properties = Object.keys(styleProps);
     properties.forEach((property) => {
@@ -79,11 +79,24 @@ const aggregateStyleValues = (accumulator, currentStyle) => {
     });
 
     return accumulator;
-};
+}
+
+function getStaticStyleForItem(domainObject, id) {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
+                return domainObjectStyles[id].staticStyle.style;
+            }
+        } else if (domainObjectStyles.staticStyle) {
+            return domainObjectStyles.staticStyle.style;
+        }
+    }
+}
 
 // Returns a union of styles used by multiple items.
 // Styles that are common to all items but don't have the same value are added to the mixedStyles list
-export const getConsolidatedStyleValues = (multipleItemStyles) => {
+export function getConsolidatedStyleValues(multipleItemStyles) {
     let aggregatedStyleValues = multipleItemStyles.reduce(aggregateStyleValues, {});
 
     let styleValues = {};
@@ -105,22 +118,9 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
         styles: styleValues,
         mixedStyles
     };
-};
+}
 
-const getStaticStyleForItem = (domainObject, id) => {
-    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
-    if (domainObjectStyles) {
-        if (id) {
-            if (domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
-                return domainObjectStyles[id].staticStyle.style;
-            }
-        } else if (domainObjectStyles.staticStyle) {
-            return domainObjectStyles.staticStyle.style;
-        }
-    }
-};
-
-export const getConditionalStyleForItem = (domainObject, id) => {
+export function getConditionalStyleForItem(domainObject, id) {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
         if (id) {
@@ -131,9 +131,9 @@ export const getConditionalStyleForItem = (domainObject, id) => {
             return domainObjectStyles.styles;
         }
     }
-};
+}
 
-export const getConditionSetIdentifierForItem = (domainObject, id) => {
+export function getConditionSetIdentifierForItem(domainObject, id) {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
         if (id) {
@@ -144,10 +144,10 @@ export const getConditionSetIdentifierForItem = (domainObject, id) => {
             return domainObjectStyles.conditionSetIdentifier;
         }
     }
-};
+}
 
 //Returns either existing static styles or uses SVG defaults if available
-export const getApplicableStylesForItem = (domainObject, item) => {
+export function getApplicableStylesForItem(domainObject, item) {
     const type = item && item.type;
     const id = item && item.id;
     let style = {};
@@ -170,9 +170,9 @@ export const getApplicableStylesForItem = (domainObject, item) => {
     });
 
     return style;
-};
+}
 
-export const getStylesWithoutNoneValue = (style) => {
+export function getStylesWithoutNoneValue(style) {
     if (isEmpty(style) || !style) {
         return;
     }
@@ -190,4 +190,4 @@ export const getStylesWithoutNoneValue = (style) => {
     });
 
     return styleObj;
-};
+}

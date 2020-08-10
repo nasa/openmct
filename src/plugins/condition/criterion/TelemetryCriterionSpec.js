@@ -119,7 +119,7 @@ describe("The telemetry criterion", function () {
     });
 
     describe('the LAD request', () => {
-        beforeEach(async () => {
+        beforeEach(() => {
             let telemetryRequestResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
@@ -133,7 +133,7 @@ describe("The telemetry criterion", function () {
             });
         });
 
-        it("returns results for slow LAD requests", async function () {
+        it("returns results for slow LAD requests", function () {
             const criteriaRequest = telemetryCriterion.requestLAD();
             telemetryCriterion.destroy();
             expect(telemetryCriterion.telemetryObject).toBeUndefined();
