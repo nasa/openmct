@@ -59,8 +59,7 @@ module.exports = (config) => {
         browsers: browsers,
         client: {
             jasmine: {
-                random: false,
-                timeoutInterval: 6000
+                random: false
             }
         },
         customLaunchers: {
