@@ -56,6 +56,7 @@ define([
         $('.c-palette', domElement).addClass('c-palette--icon');
 
         $('.c-palette-item', domElement).each(function () {
+            // eslint-disable-next-line no-invalid-this
             var elem = this;
             $(elem).addClass(elem.dataset.item);
         });

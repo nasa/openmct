@@ -303,7 +303,7 @@ export default class ConditionManager extends EventEmitter {
     isTelemetryUsed(endpoint) {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
 
-        for (const condition of this.conditions) {
+        for (let condition of this.conditions) {
             if (condition.isTelemetryUsed(id)) {
                 return true;
             }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global jasmine*/
 define(
     function () {
 
@@ -110,7 +109,7 @@ define(
              * @returns {*} capability object
              */
             domainObject.getCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     return config.capabilities[capability];
                 }
             });
@@ -124,7 +123,7 @@ define(
              * @returns {boolean}
              */
             domainObject.hasCapability.and.callFake(function (capability) {
-                return config.capabilities.hasOwnProperty(capability);
+                return Object.prototype.hasOwnProperty.call(config.capabilities, capability);
             });
 
             /**
@@ -137,7 +136,7 @@ define(
              * @returns {*} result whatever was returned by `invoke`.
              */
             domainObject.useCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     if (!config.capabilities[capability].invoke) {
                         throw new Error(
                             capability + ' missing invoke function.'
