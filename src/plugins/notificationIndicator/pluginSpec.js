@@ -35,10 +35,6 @@ describe('the plugin', () => {
         parentElement,
         mockMessages = ['error', 'test', 'notifications'];
 
-    beforeAll(() => {
-        resetApplicationState();
-    });
-
     beforeEach((done) => {
         openmct = createOpenMct();
 
@@ -61,7 +57,7 @@ describe('the plugin', () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe('the indicator plugin element', () => {
