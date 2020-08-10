@@ -91,18 +91,19 @@ define([
         });
 
         it('filters results with a function', function () {
-            var modelResults = {
-                    hits: [
-                        {model: {thing: 1}},
-                        {model: {thing: 2}},
-                        {model: {thing: 3}}
-                    ],
-                    total: 3
-                },
-                filterFunc = function (model) {
-                    return model.thing < 2;
-                },
-                filtered = aggregator.applyFilter(modelResults, filterFunc);
+            const modelResults = {
+                hits: [
+                    {model: {thing: 1}},
+                    {model: {thing: 2}},
+                    {model: {thing: 3}}
+                ],
+                total: 3
+            };
+            let filtered = aggregator.applyFilter(modelResults, filterFunc);
+
+            function filterFunc(model) {
+                return model.thing < 2;
+            }
 
             expect(filtered.hits).toEqual([
                 {model: {thing: 1}}

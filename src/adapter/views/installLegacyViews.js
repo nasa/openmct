@@ -21,7 +21,7 @@ define([
         });
 
         let inspectorTypes = openmct.$injector.get('types[]')
-            .filter((t) => t.hasOwnProperty('inspector'));
+            .filter((t) => Object.prototype.hasOwnProperty.call(t, 'inspector'));
 
         inspectorTypes.forEach(function (typeDefinition) {
             openmct.inspectorViews.addProvider(new TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject));

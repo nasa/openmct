@@ -9,8 +9,7 @@ define ([
     objectUtils,
     EventEmitter,
     $,
-    _,
-
+    _
 ) {
 
     /**
@@ -133,9 +132,9 @@ define ([
             let type;
             if (valueMetadata.enumerations !== undefined) {
                 type = 'enum';
-            } else if (valueMetadata.hints.hasOwnProperty('range')) {
+            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
                 type = 'number';
-            } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
                 type = 'number';
             } else if (valueMetadata.key === 'name') {
                 type = 'string';

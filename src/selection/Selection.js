@@ -29,7 +29,6 @@ define(
         EventEmitter,
         _
     ) {
-
         /**
          * Manages selection state for Open MCT
          * @private
@@ -115,9 +114,7 @@ define(
          * @private
          */
         Selection.prototype.setSelectionStyles = function (selectable) {
-            this.selected.map(selectionPath => {
-                this.removeSelectionAttributes(selectionPath);
-            });
+            this.selected.forEach(selectionPath => this.removeSelectionAttributes(selectionPath));
             this.addSelectionAttributes(selectable);
         };
 

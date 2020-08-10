@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console*/
+
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
@@ -247,15 +247,15 @@ define([
      * @private
      */
     TelemetryAPI.prototype.standardizeRequestOptions = function (options) {
-        if (!options.hasOwnProperty('start')) {
+        if (!Object.prototype.hasOwnProperty.call(options, 'start')) {
             options.start = this.openmct.time.bounds().start;
         }
 
-        if (!options.hasOwnProperty('end')) {
+        if (!Object.prototype.hasOwnProperty.call(options, 'end')) {
             options.end = this.openmct.time.bounds().end;
         }
 
-        if (!options.hasOwnProperty('domain')) {
+        if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
     };
@@ -386,7 +386,7 @@ define([
         }).reduce(function (a, b) {
             const results = {};
             Object.keys(a).forEach(function (key) {
-                if (b.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(b, key)) {
                     results[key] = a[key];
                 }
             });

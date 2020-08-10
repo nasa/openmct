@@ -116,7 +116,7 @@ export default {
             this.setSelection();
         },
         setSelection() {
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 if (this.$refs && this.$refs.objectFrame) {
                     let childContext = this.$refs.objectFrame.getSelectionContext();
                     childContext.item = this.domainObject;

@@ -137,7 +137,7 @@ export default {
         setObject(domainObject) {
             this.domainObject = domainObject;
             this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 let childContext = this.$refs.objectFrame.getSelectionContext();
                 childContext.item = domainObject;
                 childContext.layoutItem = this.item;

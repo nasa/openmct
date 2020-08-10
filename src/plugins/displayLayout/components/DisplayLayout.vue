@@ -375,8 +375,8 @@ export default {
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
                 .map(type => type.substring(DRAG_OBJECT_TRANSFER_PREFIX.length))[0];
 
-                // If the layout already contains the given object, then shortcut the default dragover behavior and
-                // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
+            // If the layout already contains the given object, then shortcut the default dragover behavior and
+            // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
             if (this.containsObject(draggedKeyString)) {
                 $event.preventDefault();
             }

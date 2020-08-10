@@ -28,16 +28,17 @@ define([
 ) {
 
     function extend(props) {
-        /*jshint validthis: true*/
+        // eslint-disable-next-line no-invalid-this
         const parent = this;
 
         let child;
         let Surrogate;
 
-        if (props && props.hasOwnProperty('constructor')) {
+        if (props && Object.prototype.hasOwnProperty.call(props, 'constructor')) {
             child = props.constructor;
         } else {
             child = function () {
+                // eslint-disable-next-line no-invalid-this
                 return parent.apply(this, arguments);
             };
         }

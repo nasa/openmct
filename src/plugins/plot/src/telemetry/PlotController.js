@@ -134,11 +134,11 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
-        this.listenTo(series, 'change:yKey', function () {
+        this.listenTo(series, 'change:yKey', () => {
             this.loadSeriesData(series);
         }, this);
 
-        this.listenTo(series, 'change:interpolate', function () {
+        this.listenTo(series, 'change:interpolate', () => {
             this.loadSeriesData(series);
         }, this);
 
@@ -184,18 +184,18 @@ define([
     };
 
     PlotController.prototype.loadMoreData = function (range, purge) {
-        this.config.series.map(function (plotSeries) {
+        this.config.series.forEach(plotSeries => {
             this.startLoading();
             plotSeries.load({
                 size: this.$element[0].offsetWidth,
                 start: range.min,
                 end: range.max
             })
-                .then(this.stopLoading.bind(this));
+                .then(this.stopLoading());
             if (purge) {
                 plotSeries.purgeRecordsOutsideRange(range);
             }
-        }, this);
+        });
     };
 
     /**

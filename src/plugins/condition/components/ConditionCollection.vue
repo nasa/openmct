@@ -169,28 +169,7 @@ export default {
         },
         dropCondition(targetIndex) {
             const oldIndexArr = Object.keys(this.conditionCollection);
-            const move = function (arr, old_index, new_index) {
-                while (old_index < 0) {
-                    old_index += arr.length;
-                }
-
-                while (new_index < 0) {
-                    new_index += arr.length;
-                }
-
-                if (new_index >= arr.length) {
-                    let k = new_index - arr.length;
-                    while ((k--) + 1) {
-                        arr.push(undefined);
-                    }
-                }
-
-                arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-
-                return arr;
-            };
-
-            const newIndexArr = move(oldIndexArr, this.moveIndex, targetIndex);
+            const newIndexArr = this.rearrangeIndices(oldIndexArr, this.moveIndex, targetIndex);
             const reorderPlan = [];
 
             for (let i = 0; i < oldIndexArr.length; i++) {
@@ -204,6 +183,26 @@ export default {
         },
         dragComplete() {
             this.isDragging = false;
+        },
+        rearrangeIndices(arr, old_index, new_index) {
+            while (old_index < 0) {
+                old_index += arr.length;
+            }
+
+            while (new_index < 0) {
+                new_index += arr.length;
+            }
+
+            if (new_index >= arr.length) {
+                let k = new_index - arr.length;
+                while ((k--) + 1) {
+                    arr.push(undefined);
+                }
+            }
+
+            arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+
+            return arr;
         },
         addTelemetryObject(domainObject) {
             this.telemetryObjs.push(domainObject);
