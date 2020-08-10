@@ -137,7 +137,7 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
-        if(this.emitHeight) {
+        if (this.emitHeight) {
             this.$emit('emittedHeight', this.$refs.me);
         }
     },

@@ -118,6 +118,7 @@ export default {
     },
     data() {
         let isMobile = this.openmct.$injector.get('agentService');
+
         return {
             isLoading: false,
             searchValue: '',
@@ -139,7 +140,7 @@ export default {
             settingChildrenHeight: false,
             isMobile: isMobile.mobileName,
             multipleRootChildren: false
-        }
+        };
     },
     computed: {
         currentNavigatedPath() {
@@ -147,12 +148,14 @@ export default {
             if (this.multipleRootChildren) {
                 ancestorsCopy.shift(); // remove root
             }
+
             return ancestorsCopy
                 .map((ancestor) => ancestor.id)
                 .join('/');
         },
         currentObjectPath() {
             let ancestorsCopy = [...this.ancestors];
+
             return ancestorsCopy
                 .reverse()
                 .map((ancestor) => ancestor.object);
@@ -169,9 +172,9 @@ export default {
             const AND_SAVE_PATH = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
-            let jumpAndScroll = currentLocationPath &&
-                    hasParent &&
-                    !this.currentPathIsActivePath();
+            let jumpAndScroll = currentLocationPath
+                    && hasParent
+                    && !this.currentPathIsActivePath();
             let justScroll = this.currentPathIsActivePath() && !this.noScroll;
 
             if (this.searchValue) {
@@ -183,15 +186,16 @@ export default {
                 this.allTreeItems = [];
                 this.jumpPath = this.currentlyViewedObjectParentPath();
                 if (this.multipleRootChildren) {
-                    if(!this.jumpPath) {
+                    if (!this.jumpPath) {
                         this.jumpPath = 'ROOT';
                         this.ancestors = [];
                     } else {
-                        this.ancestors = [this.ancestors[0]]
+                        this.ancestors = [this.ancestors[0]];
                     }
                 } else {
                     this.ancestors = [];
                 }
+
                 this.jumpToPath(AND_SAVE_PATH);
             } else if (justScroll) {
                 this.scrollTo = this.currentlyViewedObjectId();
@@ -212,7 +216,7 @@ export default {
     async mounted() {
         let savedPath = this.getSavedNavigatedPath();
         this.searchService = this.openmct.$injector.get('searchService');
-        window.addEventListener('resize',  this.handleWindowResize);
+        window.addEventListener('resize', this.handleWindowResize);
 
         let root = await this.openmct.objects.get('ROOT');
         let rootNode = this.buildTreeItem(root);
@@ -231,6 +235,7 @@ export default {
                     this.scrollTo = this.currentlyViewedObjectId();
                 }
             };
+
             this.jumpPath = savedPath;
             this.afterJump = scrollIfApplicable;
         }
@@ -245,8 +250,9 @@ export default {
             if (this.updatingView) {
                 return;
             }
+
             this.updatingView = true;
-            requestAnimationFrame(()=> {
+            requestAnimationFrame(() => {
                 let start = 0;
                 let end = this.pageThreshold;
                 let allItemsCount = this.focusedItems.length;
@@ -270,6 +276,7 @@ export default {
                         start = end - this.pageThreshold + 1;
                     }
                 }
+
                 this.itemOffset = start;
                 this.visibleItems = this.focusedItems.slice(start, end);
 
@@ -289,6 +296,7 @@ export default {
                     if (this.activeSearch) {
                         ancestorsHeight = 0;
                     }
+
                     this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
 
                     if (allChildrenHeight > this.availableContainerHeight) {
@@ -297,6 +305,7 @@ export default {
                     } else {
                         this.noScroll = true;
                     }
+
                     this.updatevisibleItems();
                 });
             } else {
@@ -305,15 +314,18 @@ export default {
         },
         calculateFirstVisibleItem() {
             let scrollTop = this.$refs.scrollable.scrollTop;
+
             return Math.floor(scrollTop / this.itemHeight);
         },
         calculateLastVisibleItem() {
             let scrollBottom = this.$refs.scrollable.scrollTop + this.$refs.scrollable.offsetHeight;
+
             return Math.ceil(scrollBottom / this.itemHeight);
         },
         calculateChildrenHeight() {
             let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
             let childrenCount = this.focusedItems.length;
+
             return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
         },
         setChildrenHeight() {
@@ -321,12 +333,14 @@ export default {
         },
         calculateAncestorHeight() {
             let ancestorCount = this.ancestors.length;
+
             return this.itemHeight * ancestorCount;
         },
         calculateChildHeight(callback) {
             if (callback) {
                 this.afterChildHeight = callback;
             }
+
             if (!this.activeSearch) {
                 this.getChildHeight = true;
             } else if (this.afterChildHeight) {
@@ -344,6 +358,7 @@ export default {
             if (this.isMobile) {
                 item = item.children[0];
             }
+
             await this.$nextTick();
             let topMargin = this.getElementStyleValue(item, 'marginTop');
             let bottomMargin = this.getElementStyleValue(item, 'marginBottom');
@@ -355,6 +370,7 @@ export default {
                 this.afterChildHeight();
                 delete this.afterChildHeight;
             }
+
             this.getChildHeight = false;
             this.settingChildrenHeight = false;
         },
@@ -384,6 +400,7 @@ export default {
                 this.composition.off('remove', this.removeChild);
                 delete this.composition;
             }
+
             this.allTreeItems = [];
             this.composition = this.openmct.composition.get(node.object);
             this.composition.on('add', this.addChild);
@@ -396,6 +413,7 @@ export default {
             if (navToParent === ROOT_PATH) {
                 navToParent = navToParent.slice(0, -1);
             }
+
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
@@ -416,16 +434,17 @@ export default {
                 .filter(c => c.id !== removeId);
             this.setContainerHeight();
         },
-        async finishLoading() {
+        finishLoading() {
             if (this.jumpPath) {
                 this.jumpToPath();
             }
+
             this.autoScroll();
             this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
             let nodes = this.jumpPath.split('/');
-            for(let i = 0; i < nodes.length; i++) {
+            for (let i = 0; i < nodes.length; i++) {
                 let currentNode = await this.openmct.objects.get(nodes[i]);
                 let newParent = this.buildTreeItem(currentNode);
                 this.ancestors.push(newParent);
@@ -434,10 +453,11 @@ export default {
                     this.jumpPath = '';
                     this.getAllChildren(newParent);
                     if (this.afterJump) {
-                        await this.$nextTick()
+                        await this.$nextTick();
                         this.afterJump();
                         delete this.afterJump;
                     }
+
                     if (saveExpandedPath) {
                         this.setCurrentNavigatedPath();
                     }
@@ -448,6 +468,7 @@ export default {
             if (!this.scrollTo) {
                 return;
             }
+
             if (this.$refs.scrollable) {
                 let indexOfScroll = this.indexOfItemById(this.scrollTo);
                 let scrollTopAmount = indexOfScroll * this.itemHeight;
@@ -455,17 +476,19 @@ export default {
                 await this.$nextTick();
                 this.$refs.scrollable.scrollTop = scrollTopAmount;
                 // race condition check
-                if(scrollTopAmount > 0 && this.$refs.scrollable.scrollTop === 0) {
+                if (scrollTopAmount > 0 && this.$refs.scrollable.scrollTop === 0) {
                     window.setTimeout(this.autoScroll, RECHECK_DELAY);
+
                     return;
                 }
+
                 this.scrollTo = undefined;
             } else {
                 window.setTimeout(this.autoScroll, RECHECK_DELAY);
             }
         },
         indexOfItemById(id) {
-            for(let i = 0; i < this.allTreeItems.length; i++) {
+            for (let i = 0; i < this.allTreeItems.length; i++) {
                 if (this.allTreeItems[i].id === id) {
                     return i;
                 }
@@ -494,7 +517,7 @@ export default {
                     object,
                     objectPath,
                     navigateToParent
-                }
+                };
             });
         },
         searchTree(value) {
@@ -523,6 +546,7 @@ export default {
             if (this.activeSearch) {
                 return;
             }
+
             this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
@@ -544,6 +568,7 @@ export default {
             let currentPath = this.openmct.router.currentLocation.path;
             if (currentPath) {
                 currentPath = currentPath.split(ROOT_PATH)[1];
+
                 return currentPath.split('/').pop();
             }
         },
@@ -553,6 +578,7 @@ export default {
                 currentPath = currentPath.split(ROOT_PATH)[1];
                 currentPath = currentPath.split('/');
                 currentPath.pop();
+
                 return currentPath.join('/');
             }
         },
@@ -568,10 +594,11 @@ export default {
             return {
                 height: this.availableContainerHeight + 'px',
                 overflow: this.noScroll ? 'hidden' : 'scroll'
-            }
+            };
         },
         emptyStyles() {
             let offset = ((this.ancestors.length + 1) * 10);
+
             return {
                 paddingLeft: offset + 'px'
             };
@@ -584,6 +611,7 @@ export default {
         getElementStyleValue(el, style) {
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');
+
             return Number(styleString.slice(0, index));
         }
     }

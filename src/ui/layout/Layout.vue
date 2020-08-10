@@ -167,7 +167,7 @@ export default {
             hasToolbar: false,
             headExpanded,
             triggerSync: false
-        }
+        };
     },
     computed: {
         toolbar() {

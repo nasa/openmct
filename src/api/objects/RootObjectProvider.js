@@ -22,7 +22,7 @@
 
 class RootObjectProvider {
     constructor(rootRegistry) {
-        if(!RootObjectProvider.instance) {
+        if (!RootObjectProvider.instance) {
             this.rootRegistry = rootRegistry;
             this.rootObject = {
                 identifier: {
@@ -35,22 +35,24 @@ class RootObjectProvider {
             };
             RootObjectProvider.instance = this;
         }
+
         return RootObjectProvider.instance;
     }
 
     updateName(name) {
-        this.rootObject.name = name
+        this.rootObject.name = name;
     }
 
     async get() {
         let roots = await this.rootRegistry.getRoots();
         this.rootObject.composition = roots;
+
         return this.rootObject;
     }
 }
 
 const instance = function (rootRegistry) {
     return new RootObjectProvider(rootRegistry);
-}
+};
 
 export default instance;
