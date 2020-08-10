@@ -14,7 +14,6 @@
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
     />
-
     <div v-if="!search.length"
          class="c-notebook__body"
     >
