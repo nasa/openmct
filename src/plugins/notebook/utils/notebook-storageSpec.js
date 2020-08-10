@@ -31,7 +31,7 @@ const notebookStorage = {
             key: 'test-notebook'
         }
     },
-    notebookMeta : {
+    notebookMeta: {
         name: 'notebook',
         identifier: {
             namespace: '',
@@ -43,7 +43,7 @@ const notebookStorage = {
         isDefault: false,
         isSelected: true,
         name: 'section',
-        pages:[],
+        pages: [],
         sectionTitle: 'Section'
     },
     page: {
@@ -94,7 +94,7 @@ describe('Notebook Storage:', () => {
             isDefault: true,
             isSelected: true,
             name: 'new section',
-            pages:[],
+            pages: [],
             sectionTitle: 'Section'
         };
 

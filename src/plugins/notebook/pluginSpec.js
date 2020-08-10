@@ -118,12 +118,12 @@ describe("Notebook plugin:", () => {
             expect(notebookViewProvider).toBeDefined();
         });
 
-        it("renders notebook element",() => {
+        it("renders notebook element", () => {
             const notebookElement = element.querySelectorAll('.c-notebook');
             expect(notebookElement.length).toBe(1);
         });
 
-        it("renders major elements",() => {
+        it("renders major elements", () => {
             const notebookElement = element.querySelector('.c-notebook');
             const searchElement = notebookElement.querySelector('.c-search');
             const sidebarElement = notebookElement.querySelector('.c-sidebar');
@@ -157,7 +157,9 @@ describe("Notebook plugin:", () => {
 
         afterAll(() => {
             snapshotIndicator.remove();
-            drawerElement && drawerElement.remove();
+            if (drawerElement) {
+                drawerElement.remove();
+            }
         });
 
         beforeEach(() => {
@@ -165,7 +167,9 @@ describe("Notebook plugin:", () => {
         });
 
         afterEach(() => {
-            drawerElement && drawerElement.classList.remove('is-expanded');
+            if (drawerElement) {
+                drawerElement.classList.remove('is-expanded');
+            }
         });
 
         it("has Snapshots indicator", () => {

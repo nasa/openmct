@@ -30,7 +30,7 @@ const notebookStorage = {
             key: 'test-notebook'
         }
     },
-    notebookMeta : {
+    notebookMeta: {
         name: 'notebook',
         identifier: {
             namespace: '',
@@ -42,7 +42,7 @@ const notebookStorage = {
         isDefault: true,
         isSelected: true,
         name: 'section',
-        pages:[],
+        pages: [],
         sectionTitle: 'Section'
     },
     page: {
@@ -58,7 +58,7 @@ const notebookEntries = {
     '03a79b6a-971c-4e56-9892-ec536332c3f0': {
         '8b548fd9-2b8a-4b02-93a9-4138e22eba00': []
     }
-}
+};
 
 const notebookDomainObject = {
     identifier: {

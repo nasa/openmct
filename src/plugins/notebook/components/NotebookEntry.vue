@@ -114,7 +114,7 @@ export default {
             defaultText: 'add description'
         };
     },
-    computed : {
+    computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
         },

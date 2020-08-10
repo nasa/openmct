@@ -25,7 +25,7 @@ export default {
     components: {
         NotebookEntry
     },
-    props:{
+    props: {
         domainObject: {
             type: Object,
             default() {
