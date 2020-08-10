@@ -72,21 +72,25 @@ define([
     ObjectServiceProvider.prototype.create = async function (object) {
         let model = utils.toOldFormat(object);
 
-        return this.getPersistenceService().createObject(
+        let result = await this.getPersistenceService().createObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
             object.identifier.key,
             model
         );
+
+        return result;
     };
 
     ObjectServiceProvider.prototype.update = async function (object) {
         let model = utils.toOldFormat(object);
 
-        return this.getPersistenceService().updateObject(
+        let result = await this.getPersistenceService().updateObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
             object.identifier.key,
             model
         );
+
+        return result;
     };
 
     /**

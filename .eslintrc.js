@@ -120,6 +120,20 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/no-unused-expressions
+        "no-unused-expressions": "error",
+        // https://eslint.org/docs/rules/no-useless-concat
+        "no-useless-concat": "error",
+        // https://eslint.org/docs/rules/radix
+        "radix": "error",
+        // https://eslint.org/docs/rules/require-await
+        "require-await": "error",
+        // https://eslint.org/docs/rules/no-alert
+        "no-alert": "error",
+        // https://eslint.org/docs/rules/no-useless-constructor
+        "no-useless-constructor": "error",
+        // https://eslint.org/docs/rules/no-duplicate-imports
+        "no-duplicate-imports": "error",
 
         // https://eslint.org/docs/rules/no-implicit-coercion
         "no-implicit-coercion": "error",
