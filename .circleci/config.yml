@@ -20,8 +20,8 @@ jobs:
             paths:
               - node_modules
         - run:
-            name: npm run test:coverage
-            command: npm run test:coverage
+            name: npm run test
+            command: npm run test
         - run:
             name: npm run lint
             command: npm run lint
