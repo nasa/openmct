@@ -41,7 +41,7 @@ define(function () {
         }
 
         hasValueForDatum(telemetryDatum) {
-            return telemetryDatum.hasOwnProperty(this.metadatum.source);
+            return Object.prototype.hasOwnProperty.call(telemetryDatum, this.metadatum.source);
         }
 
         getRawValue(telemetryDatum) {

@@ -189,13 +189,14 @@ export default {
                 start: this.isFixed ? this.bounds.start : this.offsets.start,
                 end: this.isFixed ? this.bounds.end : this.offsets.end
             };
+            let self = this;
 
-            const isNotEqual = function (entry) {
-                const start = entry.start !== this.start;
-                const end = entry.end !== this.end;
+            function isNotEqual(entry) {
+                const start = entry.start !== self.start;
+                const end = entry.end !== self.end;
 
                 return start || end;
-            };
+            }
 
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 

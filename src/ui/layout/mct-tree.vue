@@ -81,7 +81,12 @@ export default {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
-                    return this.openmct.composition.get(root).load();
+                    let composition = this.openmct.composition.get(root);
+                    if (composition !== undefined) {
+                        return composition.load();
+                    } else {
+                        return [];
+                    }
                 })
                 .then(children => {
                     this.isLoading = false;
@@ -99,10 +104,10 @@ export default {
             this.searchService.query(this.searchValue).then(children => {
                 this.filteredTreeItems = children.hits.map(child => {
 
-                    let context = child.object.getCapability('context'),
-                        object = child.object.useCapability('adapter'),
-                        objectPath = [],
-                        navigateToParent;
+                    let context = child.object.getCapability('context');
+                    let object = child.object.useCapability('adapter');
+                    let objectPath = [];
+                    let navigateToParent;
 
                     if (context) {
                         objectPath = context.getPath().slice(1)

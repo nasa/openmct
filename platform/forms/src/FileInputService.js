@@ -47,6 +47,7 @@ define(["zepto"], function ($) {
         return new Promise(function (resolve, reject) {
             input.trigger("click");
             input.on('change', function (event) {
+                // eslint-disable-next-line no-invalid-this
                 file = this.files[0];
                 input.remove();
                 if (file) {

@@ -44,8 +44,8 @@ define([
      * matches.
      */
     SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
-        var i;
-        var result;
+        let i;
+        let result;
 
         if (this.trigger === 'all') {
             for (i = 0; i < this.conditions.length; i++) {

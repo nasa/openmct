@@ -143,12 +143,12 @@ export default {
     methods: {
         generateTable() {
             let m = moment.utc({
-                    year: this.picker.year,
-                    month: this.picker.month
-                }).day(0),
-                table = [],
-                row,
-                col;
+                year: this.picker.year,
+                month: this.picker.month
+            }).day(0);
+            let table = [];
+            let row;
+            let col;
 
             for (row = 0; row < 6; row += 1) {
                 table.push([]);
