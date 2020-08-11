@@ -8,7 +8,7 @@ function (
 ) {
 
     //The colors that will be used to instantiate this palette if none are provided
-    var DEFAULT_COLORS = [
+    const DEFAULT_COLORS = [
         '#000000', '#434343', '#666666', '#999999', '#b7b7b7', '#cccccc', '#d9d9d9', '#efefef', '#f3f3f3', '#ffffff',
         '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff',
         '#e6b8af', '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#c9daf8', '#cfe2f3', '#d9d2e9', '#ead1dc',
@@ -33,15 +33,16 @@ function (
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 
-        var domElement = $(this.palette.getDOM()),
-            self = this;
+        const domElement = $(this.palette.getDOM());
+        const self = this;
 
         $('.c-button--menu', domElement).addClass('c-button--swatched');
         $('.t-swatch', domElement).addClass('color-swatch');
         $('.c-palette', domElement).addClass('c-palette--color');
 
         $('.c-palette__item', domElement).each(function () {
-            var elem = this;
+            // eslint-disable-next-line no-invalid-this
+            const elem = this;
             $(elem).css('background-color', elem.dataset.item);
         });
 
@@ -51,7 +52,7 @@ function (
          * @private
          */
         function updateSwatch() {
-            var color = self.palette.getCurrent();
+            const color = self.palette.getCurrent();
             $('.color-swatch', domElement).css('background-color', color);
         }
 

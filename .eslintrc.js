@@ -120,6 +120,38 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/no-var
+        "no-var": "error",
+        // https://eslint.org/docs/rules/one-var
+        "one-var": ["error", "never"],
+        // https://eslint.org/docs/rules/default-case-last
+        "default-case-last": "error",
+        // https://eslint.org/docs/rules/default-param-last
+        "default-param-last": "error",
+        // https://eslint.org/docs/rules/grouped-accessor-pairs
+        "grouped-accessor-pairs": "error",
+        // https://eslint.org/docs/rules/no-constructor-return
+        "no-constructor-return": "error",
+        // https://eslint.org/docs/rules/array-callback-return
+        "array-callback-return": "error",
+        // https://eslint.org/docs/rules/no-invalid-this
+        "no-invalid-this": "error", // Believe this one actually surfaces some bugs
+        // https://eslint.org/docs/rules/func-style
+        "func-style": ["error", "declaration"],
+        // https://eslint.org/docs/rules/no-unused-expressions
+        "no-unused-expressions": "error",
+        // https://eslint.org/docs/rules/no-useless-concat
+        "no-useless-concat": "error",
+        // https://eslint.org/docs/rules/radix
+        "radix": "error",
+        // https://eslint.org/docs/rules/require-await
+        "require-await": "error",
+        // https://eslint.org/docs/rules/no-alert
+        "no-alert": "error",
+        // https://eslint.org/docs/rules/no-useless-constructor
+        "no-useless-constructor": "error",
+        // https://eslint.org/docs/rules/no-duplicate-imports
+        "no-duplicate-imports": "error",
 
         // https://eslint.org/docs/rules/no-implicit-coercion
         "no-implicit-coercion": "error",
@@ -204,28 +236,24 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off"
+        "vue/singleline-html-element-content-newline": "off",
+
     },
     "overrides": [
         {
-            "files": ["*Spec.js"],
+            "files": LEGACY_FILES,
             "rules": {
                 "no-unused-vars": [
                     "warn",
                     {
                         "vars": "all",
                         "args": "none",
-                        "varsIgnorePattern": "controller",
-
+                        "varsIgnorePattern": "controller"
                     }
-                ]
-            }
-        }, {
-            "files": LEGACY_FILES,
-            "rules": {
-                // https://eslint.org/docs/rules/no-nested-ternary
+                ],
                 "no-nested-ternary": "off",
-                "no-var": "off"
+                "no-var": "off",
+                "one-var": "off"
             }
         }
     ]

@@ -270,14 +270,14 @@ define([
         }
 
         isTelemetryObject(domainObject) {
-            return domainObject.hasOwnProperty('telemetry');
+            return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
         }
 
         buildOptionsFromConfiguration(telemetryObject) {
-            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier),
-                filters = this.domainObject.configuration
-                    && this.domainObject.configuration.filters
-                    && this.domainObject.configuration.filters[keyString];
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let filters = this.domainObject.configuration
+                && this.domainObject.configuration.filters
+                && this.domainObject.configuration.filters[keyString];
 
             return {filters} || {};
         }

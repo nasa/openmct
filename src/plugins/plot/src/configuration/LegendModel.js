@@ -28,7 +28,7 @@ define([
     /**
      * TODO: doc strings.
      */
-    var LegendModel = Model.extend({
+    const LegendModel = Model.extend({
         listenToSeriesCollection: function (seriesCollection) {
             this.seriesCollection = seriesCollection;
             this.listenTo(this.seriesCollection, 'add', this.setHeight, this);
@@ -37,7 +37,7 @@ define([
             this.set('expanded', this.get('expandByDefault'));
         },
         setHeight: function () {
-            var expanded = this.get('expanded');
+            const expanded = this.get('expanded');
             if (this.get('position') !== 'top') {
                 this.set('height', '0px');
             } else {

@@ -34,9 +34,6 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
      * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metadata: string, key: {domainObject.identifier} }
      * @param openmct
      */
-    constructor(telemetryDomainObjectDefinition, openmct) {
-        super(telemetryDomainObjectDefinition, openmct);
-    }
 
     initialize() {
         this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };

@@ -40,12 +40,12 @@ define([
      * @private
      */
     ObjectServiceProvider.prototype.bridgeEventBuses = function () {
-        var removeGeneralTopicListener;
-        var handleLegacyMutation;
+        let removeGeneralTopicListener;
+        let handleLegacyMutation;
 
-        var handleMutation = function (newStyleObject) {
-            var keyString = utils.makeKeyString(newStyleObject.identifier);
-            var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
+        const handleMutation = function (newStyleObject) {
+            const keyString = utils.makeKeyString(newStyleObject.identifier);
+            const oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
 
             // Don't trigger self
             removeGeneralTopicListener();
@@ -58,8 +58,8 @@ define([
         }.bind(this);
 
         handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId()),
-                keystring = utils.makeKeyString(newStyleObject.identifier);
+            const newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+            const keystring = utils.makeKeyString(newStyleObject.identifier);
 
             this.eventEmitter.emit(keystring + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
@@ -72,21 +72,25 @@ define([
     ObjectServiceProvider.prototype.create = async function (object) {
         let model = utils.toOldFormat(object);
 
-        return this.getPersistenceService().createObject(
+        let result = await this.getPersistenceService().createObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
             object.identifier.key,
             model
         );
+
+        return result;
     };
 
     ObjectServiceProvider.prototype.update = async function (object) {
         let model = utils.toOldFormat(object);
 
-        return this.getPersistenceService().updateObject(
+        let result = await this.getPersistenceService().updateObject(
             this.getSpace(utils.makeKeyString(object.identifier)),
             object.identifier.key,
             model
         );
+
+        return result;
     };
 
     /**
@@ -124,11 +128,11 @@ define([
     };
 
     ObjectServiceProvider.prototype.get = function (key) {
-        var keyString = utils.makeKeyString(key);
+        const keyString = utils.makeKeyString(key);
 
         return this.objectService.getObjects([keyString])
             .then(function (results) {
-                var model = results[keyString].getModel();
+                let model = results[keyString].getModel();
 
                 return utils.toNewFormat(model, key);
             });
@@ -137,19 +141,20 @@ define([
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
-        var eventEmitter = openmct.objects.eventEmitter;
+        const eventEmitter = openmct.objects.eventEmitter;
 
         this.getObjects = function (keys) {
-            var results = {},
-                promises = keys.map(function (keyString) {
-                    var key = utils.parseKeyString(keyString);
+            const results = {};
 
-                    return openmct.objects.get(key)
-                        .then(function (object) {
-                            object = utils.toOldFormat(object);
-                            results[keyString] = instantiate(object, keyString);
-                        });
-                });
+            const promises = keys.map(function (keyString) {
+                const key = utils.parseKeyString(keyString);
+
+                return openmct.objects.get(key)
+                    .then(function (object) {
+                        object = utils.toOldFormat(object);
+                        results[keyString] = instantiate(object, keyString);
+                    });
+            });
 
             return Promise.all(promises)
                 .then(function () {
