@@ -190,9 +190,9 @@ export function getMockObjects(opts = {}) {
     }
 
     // overwrite any field keys
-    if(opts.overwrite) {
-        for(let mock in requestedMocks) {
-            if(opts.overwrite[mock]) {
+    if (opts.overwrite) {
+        for (let mock in requestedMocks) {
+            if (opts.overwrite[mock]) {
                 requestedMocks[mock] = Object.assign(requestedMocks[mock], opts.overwrite[mock]);
             }
         }
@@ -251,7 +251,10 @@ function setMockObjects() {
     return {
         default: {
             folder: {
-                identifier: { namespace: "", key: "folder-object" },
+                identifier: {
+                    namespace: "",
+                    key: "folder-object"
+                },
                 name: "Test Folder Object",
                 type: "folder",
                 composition: [],

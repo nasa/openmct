@@ -29,10 +29,10 @@ import {
 
 describe("The Remove Action plugin", () => {
 
-    let openmct,
-        removeAction,
-        childObject,
-        parentObject;
+    let openmct;
+    let removeAction;
+    let childObject;
+    let parentObject;
 
     // this setups up the app
     beforeEach((done) => {
@@ -47,7 +47,10 @@ describe("The Remove Action plugin", () => {
             overwrite: {
                 folder: {
                     name: "Child Folder",
-                    identifier: { namespace: "", key: "child-folder-object" }
+                    identifier: {
+                        namespace: "",
+                        key: "child-folder-object"
+                    }
                 }
             }
         }).folder;
