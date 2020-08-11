@@ -22,7 +22,9 @@
 
 class RootObjectProvider {
     constructor(rootRegistry) {
+        console.log('CONSTRUCTOR', rootRegistry);
         if (!RootObjectProvider.instance) {
+            console.log('ROOTOBJECTPROVIDER no instance', rootRegistry);
             this.rootRegistry = rootRegistry;
             this.rootObject = {
                 identifier: {
@@ -35,8 +37,8 @@ class RootObjectProvider {
             };
             RootObjectProvider.instance = this;
         }
-
-        return RootObjectProvider.instance;
+        console.log('ALREADY INSTANCE', this.rootRegistry);
+        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
     }
 
     updateName(name) {
@@ -51,8 +53,8 @@ class RootObjectProvider {
     }
 }
 
-const instance = function (rootRegistry) {
+function instance(rootRegistry) {
     return new RootObjectProvider(rootRegistry);
-};
+}
 
 export default instance;

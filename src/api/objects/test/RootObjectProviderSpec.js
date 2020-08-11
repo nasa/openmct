@@ -37,6 +37,7 @@ define([
         it('supports fetching root', function () {
             return rootObjectProvider.get()
                 .then(function (root) {
+                    console.log('ROOT', root);
                     expect(root).toEqual({
                         identifier: {
                             key: "ROOT",
