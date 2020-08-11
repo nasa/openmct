@@ -26,7 +26,7 @@ define([
     MCTChartSeriesElement
 ) {
 
-    var MCTChartLineStepAfter = MCTChartSeriesElement.extend({
+    const MCTChartLineStepAfter = MCTChartSeriesElement.extend({
         removePoint: function (point, index, count) {
             if (index > 0 && index / 2 < this.count) {
                 this.buffer[index + 1] = this.buffer[index - 1];

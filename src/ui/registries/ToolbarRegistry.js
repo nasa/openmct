@@ -40,11 +40,11 @@ define([], function () {
      * @private for platform-internal use
      */
     ToolbarRegistry.prototype.get = function (selection) {
-        var providers = this.getAllProviders().filter(function (provider) {
+        const providers = this.getAllProviders().filter(function (provider) {
             return provider.forSelection(selection);
         });
 
-        var structure = [];
+        const structure = [];
 
         providers.forEach(provider => {
             provider.toolbar(selection).forEach(item => structure.push(item));
@@ -75,7 +75,7 @@ define([], function () {
      * @memberof module:openmct.ToolbarRegistry#
      */
     ToolbarRegistry.prototype.addProvider = function (provider) {
-        var key = provider.key;
+        const key = provider.key;
 
         if (key === undefined) {
             throw "Toolbar providers must have a unique 'key' property defined.";

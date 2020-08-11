@@ -106,9 +106,9 @@ export default {
         }
     },
     data() {
-        let objectType = this.openmct.types.get(this.domainObject.type),
-            cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
-            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+        let objectType = this.openmct.types.get(this.domainObject.type);
+        let cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown';
+        let complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
 
         return {
             cssClass,
@@ -127,9 +127,9 @@ export default {
     },
     methods: {
         expand() {
-            let objectView = this.$refs.objectView,
-                parentElement = objectView.$el,
-                childElement = parentElement.children[0];
+            let objectView = this.$refs.objectView;
+            let parentElement = objectView.$el;
+            let childElement = parentElement.children[0];
 
             this.openmct.overlays.overlay({
                 element: this.getOverlayElement(childElement),

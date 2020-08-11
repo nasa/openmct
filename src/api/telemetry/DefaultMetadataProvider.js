@@ -52,7 +52,7 @@ define([
      * @private
      */
     function valueMetadatasFromOldFormat(metadata) {
-        var valueMetadatas = [];
+        const valueMetadatas = [];
 
         valueMetadatas.push({
             key: 'name',
@@ -60,7 +60,7 @@ define([
         });
 
         metadata.domains.forEach(function (domain, index) {
-            var valueMetadata = _.clone(domain);
+            const valueMetadata = _.clone(domain);
             valueMetadata.hints = {
                 domain: index + 1
             };
@@ -68,7 +68,7 @@ define([
         });
 
         metadata.ranges.forEach(function (range, index) {
-            var valueMetadata = _.clone(range);
+            const valueMetadata = _.clone(range);
             valueMetadata.hints = {
                 range: index,
                 priority: index + metadata.domains.length + 1
@@ -100,9 +100,9 @@ define([
      * Returns telemetry metadata for a given domain object.
      */
     DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
-        var metadata = domainObject.telemetry || {};
+        const metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
-            var typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
+            const typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
             Object.assign(metadata, typeMetadata);
             if (!metadata.values) {
                 metadata.values = valueMetadatasFromOldFormat(metadata);
