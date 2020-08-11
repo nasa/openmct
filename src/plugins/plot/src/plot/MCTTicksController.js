@@ -150,6 +150,7 @@ define([
         if (forceRegeneration) {
             return true;
         }
+
         if (!this.tickRange || !this.$scope.ticks || !this.$scope.ticks.length) {
             return true;
         }
@@ -184,7 +185,7 @@ define([
 
     MCTTicksController.prototype.updateTicksForceRegeneration = function () {
         this.updateTicks(true);
-    }
+    };
 
     MCTTicksController.prototype.updateTicks = function (forceRegeneration = false) {
         const range = this.axis.get('displayRange');

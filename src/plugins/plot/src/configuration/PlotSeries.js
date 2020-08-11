@@ -434,7 +434,7 @@ define([
             unsortedData.forEach(point => this.add(point, false));
 
             const minValue = this.getXVal(this.data[0]);
-            const maxValue = this.getXVal(this.data[this.data.length-1]);
+            const maxValue = this.getXVal(this.data[this.data.length - 1]);
 
             return {
                 min: minValue,

@@ -148,7 +148,6 @@ define([
         this.loadSeriesData(series);
     };
 
-
     PlotController.prototype.setDisplayRange = function (series, xKey) {
         if (this.config.series.models.length !== 1) {
             return;
