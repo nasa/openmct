@@ -1,9 +1,25 @@
-/**
-
-Application router -- must
-
-*/
-/*global _,module*/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*global module*/
 
 const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
@@ -45,6 +61,7 @@ class ApplicationRouter extends EventEmitter {
         super();
         this.routes = [];
         this.started = false;
+        this.locationBar = new LocationBar();
     }
 
     /**
@@ -56,11 +73,15 @@ class ApplicationRouter extends EventEmitter {
         }
 
         this.started = true;
-        let locationBar = new LocationBar();
-        locationBar.onChange(p => this.handleLocationChange(p));
-        locationBar.start({
+
+        this.locationBar.onChange(p => this.handleLocationChange(p));
+        this.locationBar.start({
             root: location.pathname
         });
+    }
+
+    destroy() {
+        this.locationBar.stop();
     }
 
     handleLocationChange(pathString) {
@@ -119,18 +140,16 @@ class ApplicationRouter extends EventEmitter {
 
     doParamsChange(newParams, oldParams, newLocation) {
         let changedParams = {};
-        for (let [key, value] of Object.entries(newParams)) {
+        Object.entries(newParams).forEach(([key, value]) => {
             if (value !== oldParams[key]) {
                 changedParams[key] = value;
             }
-        }
-
-        for (let key of Object.keys(oldParams)) {
-            if (!newParams.hasOwnProperty(key)) {
+        });
+        Object.keys(oldParams).forEach(key => {
+            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
                 changedParams[key] = undefined;
             }
-        }
-
+        });
         this.emit('change:params', newParams, oldParams, changedParams);
     }
 
@@ -139,14 +158,13 @@ class ApplicationRouter extends EventEmitter {
      */
     updateParams(updateParams) {
         let searchParams = this.currentLocation.url.searchParams;
-        for (let [key, value] of Object.entries(updateParams)) {
+        Object.entries(updateParams).forEach(([key, value]) => {
             if (typeof value === 'undefined') {
                 searchParams.delete(key);
             } else {
                 searchParams.set(key, value);
             }
-        }
-
+        });
         this.setQueryString(searchParams.toString());
     }
 

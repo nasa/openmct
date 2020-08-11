@@ -22,7 +22,7 @@
 
 define(['zepto', './res/indicator-template.html'],
     function ($, indicatorTemplate) {
-        var DEFAULT_ICON_CLASS = 'icon-info';
+        const DEFAULT_ICON_CLASS = 'icon-info';
 
         function SimpleIndicator(openmct) {
             this.openmct = openmct;

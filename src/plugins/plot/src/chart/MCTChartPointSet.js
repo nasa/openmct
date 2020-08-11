@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     './MCTChartSeriesElement'
@@ -27,7 +26,7 @@ define([
     MCTChartSeriesElement
 ) {
 
-    var MCTChartPointSet = MCTChartSeriesElement.extend({
+    const MCTChartPointSet = MCTChartSeriesElement.extend({
         addPoint: function (point, start, count) {
             this.buffer[start] = point.x;
             this.buffer[start + 1] = point.y;

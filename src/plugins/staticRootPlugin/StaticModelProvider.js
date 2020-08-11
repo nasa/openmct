@@ -10,11 +10,11 @@ define([
      * exist in the same namespace as the rootIdentifier.
      */
     function rewriteObjectIdentifiers(importData, rootIdentifier) {
-        var rootId = importData.rootId;
-        var objectString = JSON.stringify(importData.openmct);
+        const rootId = importData.rootId;
+        let objectString = JSON.stringify(importData.openmct);
 
         Object.keys(importData.openmct).forEach(function (originalId, i) {
-            var newId;
+            let newId;
             if (originalId === rootId) {
                 newId = objectUtils.makeKeyString(rootIdentifier);
             } else {
@@ -60,8 +60,8 @@ define([
      * an object provider to fetch those objects.
      */
     function StaticModelProvider(importData, rootIdentifier) {
-        var oldFormatObjectMap = rewriteObjectIdentifiers(importData, rootIdentifier);
-        var newFormatObjectMap = convertToNewObjects(oldFormatObjectMap);
+        const oldFormatObjectMap = rewriteObjectIdentifiers(importData, rootIdentifier);
+        const newFormatObjectMap = convertToNewObjects(oldFormatObjectMap);
         this.objectMap = setRootLocation(newFormatObjectMap, rootIdentifier);
     }
 
@@ -69,7 +69,7 @@ define([
      * Standard "Get".
      */
     StaticModelProvider.prototype.get = function (identifier) {
-        var keyString = objectUtils.makeKeyString(identifier);
+        const keyString = objectUtils.makeKeyString(identifier);
         if (this.objectMap[keyString]) {
             return this.objectMap[keyString];
         }

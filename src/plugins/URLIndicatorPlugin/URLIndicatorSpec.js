@@ -33,14 +33,14 @@ define(
         MCT,
         $
     ) {
-        var defaultAjaxFunction = $.ajax;
+        const defaultAjaxFunction = $.ajax;
 
-        xdescribe("The URLIndicator", function () {
-            var openmct;
-            var indicatorElement;
-            var pluginOptions;
-            var ajaxOptions;
-            var urlIndicator; // eslint-disable-line
+        describe("The URLIndicator", function () {
+            let openmct;
+            let indicatorElement;
+            let pluginOptions;
+            let ajaxOptions;
+            let urlIndicator; // eslint-disable-line
 
             beforeEach(function () {
                 jasmine.clock().install();
