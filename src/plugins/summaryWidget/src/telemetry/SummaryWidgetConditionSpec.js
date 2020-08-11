@@ -27,14 +27,14 @@ define([
 ) {
 
     describe('SummaryWidgetCondition', function () {
-        var condition;
-        var telemetryState;
+        let condition;
+        let telemetryState;
 
         beforeEach(function () {
             // Format map intentionally uses different keys than those present
             // in datum, which serves to verify conditions use format map to get
             // data.
-            var formatMap = {
+            const formatMap = {
                 adjusted: {
                     parse: function (datum) {
                         return datum.value + 10;

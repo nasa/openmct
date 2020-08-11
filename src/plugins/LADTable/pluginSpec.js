@@ -43,24 +43,24 @@ function utcTimeFormat(value) {
 describe("The LAD Table", () => {
     const ladTableKey = 'LadTable';
 
-    let openmct,
-        ladPlugin,
-        parent,
-        child,
-        telemetryCount = 3,
-        timeFormat = 'utc',
-        mockTelemetry = getMockTelemetry({
-            count: telemetryCount,
-            format: timeFormat
-        }),
-        mockObj = getMockObjects({
-            objectKeyStrings: ['ladTable', 'telemetry'],
-            format: timeFormat
-        }),
-        bounds = {
-            start: 0,
-            end: 4
-        };
+    let openmct;
+    let ladPlugin;
+    let parent;
+    let child;
+    let telemetryCount = 3;
+    let timeFormat = 'utc';
+    let mockTelemetry = getMockTelemetry({
+        count: telemetryCount,
+        format: timeFormat
+    });
+    let mockObj = getMockObjects({
+        objectKeyStrings: ['ladTable', 'telemetry'],
+        format: timeFormat
+    });
+    let bounds = {
+        start: 0,
+        end: 4
+    };
 
     // add telemetry object as composition in lad table
     mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
@@ -94,14 +94,15 @@ describe("The LAD Table", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a table view only for lad table objects", () => {
-        let applicableViews = openmct.objectViews.get(mockObj.ladTable),
-            ladTableView = applicableViews.find(
-                (viewProvider) => viewProvider.key === ladTableKey
-            );
+        let applicableViews = openmct.objectViews.get(mockObj.ladTable);
+
+        let ladTableView = applicableViews.find(
+            (viewProvider) => viewProvider.key === ladTableKey
+        );
 
         expect(applicableViews.length).toEqual(1);
         expect(ladTableView).toBeDefined();
@@ -129,38 +130,39 @@ describe("The LAD Table", () => {
     });
 
     describe("table view", () => {
-        let applicableViews,
-            ladTableViewProvider,
-            ladTableView,
-            anotherTelemetryObj = getMockObjects({
-                objectKeyStrings: ['telemetry'],
-                overwrite: {
-                    telemetry: {
-                        name: "New Telemetry Object",
-                        identifier: {
-                            namespace: "",
-                            key: "another-telemetry-object"
-                        }
+        let applicableViews;
+        let ladTableViewProvider;
+        let ladTableView;
+        let anotherTelemetryObj = getMockObjects({
+            objectKeyStrings: ['telemetry'],
+            overwrite: {
+                telemetry: {
+                    name: "New Telemetry Object",
+                    identifier: {
+                        namespace: "",
+                        key: "another-telemetry-object"
                     }
                 }
-            }).telemetry;
+            }
+        }).telemetry;
 
         // add another telemetry object as composition in lad table to test multi rows
         mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
 
         beforeEach(async () => {
-            let telemetryRequestResolve,
-                telemetryObjectResolve,
-                anotherTelemetryObjectResolve;
+            let telemetryRequestResolve;
+            let telemetryObjectResolve;
+            let anotherTelemetryObjectResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
-                    telemetryRequestResolve = resolve;
-                }),
-                telemetryObjectPromise = new Promise((resolve) => {
-                    telemetryObjectResolve = resolve;
-                }),
-                anotherTelemetryObjectPromise = new Promise((resolve) => {
-                    anotherTelemetryObjectResolve = resolve;
-                });
+                telemetryRequestResolve = resolve;
+            });
+            let telemetryObjectPromise = new Promise((resolve) => {
+                telemetryObjectResolve = resolve;
+            });
+            let anotherTelemetryObjectPromise = new Promise((resolve) => {
+                anotherTelemetryObjectResolve = resolve;
+            });
+
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
 
@@ -208,8 +210,9 @@ describe("The LAD Table", () => {
         });
 
         it("should show the name provided for the the telemetry producing object", () => {
-            const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText,
-                expectedName = mockObj.telemetry.name;
+            const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText;
+
+            const expectedName = mockObj.telemetry.name;
             expect(rowName).toBe(expectedName);
         });
 
@@ -235,29 +238,34 @@ describe("The LAD Table", () => {
 describe("The LAD Table Set", () => {
     const ladTableSetKey = 'LadTableSet';
 
-    let openmct,
-        ladPlugin,
-        parent,
-        child,
-        telemetryCount = 3,
-        timeFormat = 'utc',
-        mockTelemetry = getMockTelemetry({
-            count: telemetryCount,
-            format: timeFormat
-        }),
-        mockObj = getMockObjects({
-            objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
-        }),
-        bounds = {
-            start: 0,
-            end: 4
-        };
+    let openmct;
+    let ladPlugin;
+    let parent;
+    let child;
+    let telemetryCount = 3;
+    let timeFormat = 'utc';
+
+    let mockTelemetry = getMockTelemetry({
+        count: telemetryCount,
+        format: timeFormat
+    });
+
+    let mockObj = getMockObjects({
+        objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
+    });
+
+    let bounds = {
+        start: 0,
+        end: 4
+    };
+
     // add mock telemetry to lad table and lad table to lad table set (composition)
     mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
     mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
 
     beforeEach((done) => {
         const appHolder = document.createElement('div');
+
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -284,14 +292,15 @@ describe("The LAD Table Set", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {
-        let applicableViews = openmct.objectViews.get(mockObj.ladTableSet),
-            ladTableSetView = applicableViews.find(
-                (viewProvider) => viewProvider.key === ladTableSetKey
-            );
+        let applicableViews = openmct.objectViews.get(mockObj.ladTableSet);
+
+        let ladTableSetView = applicableViews.find(
+            (viewProvider) => viewProvider.key === ladTableSetKey
+        );
 
         expect(applicableViews.length).toEqual(1);
         expect(ladTableSetView).toBeDefined();
@@ -319,44 +328,50 @@ describe("The LAD Table Set", () => {
     });
 
     describe("table view", () => {
-        let applicableViews,
-            ladTableSetViewProvider,
-            ladTableSetView,
-            otherObj = getMockObjects({
-                objectKeyStrings: ['ladTable'],
-                overwrite: {
-                    ladTable: {
-                        name: "New LAD Table Object",
-                        identifier: {
-                            namespace: "",
-                            key: "another-lad-object"
-                        }
+        let applicableViews;
+        let ladTableSetViewProvider;
+        let ladTableSetView;
+
+        let otherObj = getMockObjects({
+            objectKeyStrings: ['ladTable'],
+            overwrite: {
+                ladTable: {
+                    name: "New LAD Table Object",
+                    identifier: {
+                        namespace: "",
+                        key: "another-lad-object"
                     }
                 }
-            });
+            }
+        });
 
         // add another lad table (with telemetry object) object to the lad table set for multi row test
         otherObj.ladTable.composition.push(mockObj.telemetry.identifier);
         mockObj.ladTableSet.composition.push(otherObj.ladTable.identifier);
 
         beforeEach(async () => {
-            let telemetryRequestResolve,
-                ladObjectResolve,
-                anotherLadObjectResolve;
+            let telemetryRequestResolve;
+            let ladObjectResolve;
+            let anotherLadObjectResolve;
+
             let telemetryRequestPromise = new Promise((resolve) => {
-                    telemetryRequestResolve = resolve;
-                }),
-                ladObjectPromise = new Promise((resolve) => {
-                    ladObjectResolve = resolve;
-                }),
-                anotherLadObjectPromise = new Promise((resolve) => {
-                    anotherLadObjectResolve = resolve;
-                });
+                telemetryRequestResolve = resolve;
+            });
+
+            let ladObjectPromise = new Promise((resolve) => {
+                ladObjectResolve = resolve;
+            });
+
+            let anotherLadObjectPromise = new Promise((resolve) => {
+                anotherLadObjectResolve = resolve;
+            });
+
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
 
                 return telemetryRequestPromise;
             });
+
             openmct.objects.get.and.callFake((obj) => {
                 if (obj.key === 'lad-object') {
                     ladObjectResolve(mockObj.ladObject);
@@ -389,6 +404,7 @@ describe("The LAD Table Set", () => {
 
         it("should show one row per lad table object in the composition", () => {
             const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
+
             expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
             pending();
         });

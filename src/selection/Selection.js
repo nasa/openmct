@@ -29,7 +29,6 @@ define(
         EventEmitter,
         _
     ) {
-
         /**
          * Manages selection state for Open MCT
          * @private
@@ -115,9 +114,7 @@ define(
          * @private
          */
         Selection.prototype.setSelectionStyles = function (selectable) {
-            this.selected.map(selectionPath => {
-                this.removeSelectionAttributes(selectionPath);
-            });
+            this.selected.forEach(selectionPath => this.removeSelectionAttributes(selectionPath));
             this.addSelectionAttributes(selectable);
         };
 
@@ -227,14 +224,15 @@ define(
                 element: element
             };
 
-            var capture = this.capture.bind(this, selectable);
-            var selectCapture = this.selectCapture.bind(this, selectable);
+            const capture = this.capture.bind(this, selectable);
+            const selectCapture = this.selectCapture.bind(this, selectable);
 
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
+            let unlisten = undefined;
             if (context.item) {
-                var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
+                unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
                     context.item = newItem;
                 });
             }
@@ -251,7 +249,7 @@ define(
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (unlisten) {
+                if (unlisten !== undefined) {
                     unlisten();
                 }
             };

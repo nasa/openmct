@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global console */
 
 define(
     [
@@ -28,7 +27,7 @@ define(
     ],
     function (DrawWebGL, Draw2D) {
 
-        var CHARTS = [
+        const CHARTS = [
             {
                 MAX_INSTANCES: 16,
                 API: DrawWebGL,
@@ -54,7 +53,7 @@ define(
                       the draw API to.
              */
             getDrawAPI: function (canvas, overlay) {
-                var api;
+                let api;
 
                 CHARTS.forEach(function (CHART_TYPE) {
                     if (api) {
@@ -90,7 +89,7 @@ define(
              * Returns a fallback draw api.
              */
             getFallbackDrawAPI: function (canvas, overlay) {
-                var api = new CHARTS[1].API(canvas, overlay);
+                const api = new CHARTS[1].API(canvas, overlay);
                 CHARTS[1].ALLOCATIONS.push(api);
 
                 return api;

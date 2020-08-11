@@ -91,14 +91,14 @@ define([
     NotificationIndicator,
     NewFolderAction
 ) {
-    var bundleMap = {
+    const bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
-    var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
+    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
         return function pluginConstructor() {
             return function (openmct) {
                 openmct.legacyRegistry.enable(bundleName);
@@ -129,7 +129,7 @@ define([
     plugins.CouchDB = function (url) {
         return function (openmct) {
             if (url) {
-                var bundleName = "config/couch";
+                const bundleName = "config/couch";
                 openmct.legacyRegistry.register(bundleName, {
                     "extensions": {
                         "constants": [
@@ -151,7 +151,7 @@ define([
     plugins.Elasticsearch = function (url) {
         return function (openmct) {
             if (url) {
-                var bundleName = "config/elastic";
+                const bundleName = "config/elastic";
                 openmct.legacyRegistry.register(bundleName, {
                     "extensions": {
                         "constants": [

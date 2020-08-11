@@ -56,10 +56,11 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                domainObject = this.domainObject;
+                domainObject = this.domainObject,
+                self = this;
 
             function validateLocation(parent) {
-                return parent && this.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
+                return parent && self.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
             }
 
             sections.push({
