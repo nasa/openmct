@@ -36,7 +36,7 @@ describe("the plugin", () => {
 
     beforeAll(() => {
         resetApplicationState();
-    })
+    });
 
     beforeEach((done) => {
         openmct = createOpenMct();

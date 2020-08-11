@@ -15,6 +15,7 @@ export default class ISOTimeFormat {
         if (typeof text === 'number' || text === undefined) {
             return text;
         }
+
         return Date.parse(text);
     }
 
