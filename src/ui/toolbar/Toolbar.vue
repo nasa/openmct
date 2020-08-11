@@ -1,13 +1,20 @@
 <template>
 <div class="c-toolbar">
-    <component
-        :is="item.control"
-        v-for="(item, index) in structure"
-        :key="index"
-        :options="item"
-        @click="triggerMethod(item, $event)"
-        @change="updateObjectValue"
-    />
+    <div class="c-toolbar__element-controls">
+        <component
+            :is="item.control"
+            v-for="(item, index) in structure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
+    </div>
+    <div class="c-toolbar__dimensions-and-controls">
+        <!--span class="c-toolbar__dimensions">1024 x 109</span>
+        <span class="c-toolbar__separator"></span-->
+        <button class="c-toolbar__control c-icon-button icon-grid"></button>
+    </div>
 </div>
 </template>
 

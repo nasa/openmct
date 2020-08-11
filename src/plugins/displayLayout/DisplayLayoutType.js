@@ -56,6 +56,28 @@ define(function () {
                         1
                     ],
                     required: true
+                },
+                {
+                    name: "Horizontal size (px)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    property: [
+                        "configuration",
+                        "layoutGrid",
+                        1
+                    ],
+                    required: false
+                },
+                {
+                    name: "Vertical size (px)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    property: [
+                        "configuration",
+                        "layoutGrid",
+                        1
+                    ],
+                    required: false
                 }
             ]
         };
