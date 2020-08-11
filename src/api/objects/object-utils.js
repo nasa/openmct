@@ -32,8 +32,8 @@ define([
      */
     function isIdentifier(thing) {
         return typeof thing === 'object'
-            && thing.hasOwnProperty('key')
-            && thing.hasOwnProperty('namespace');
+            && Object.prototype.hasOwnProperty.call(thing, 'key')
+            && Object.prototype.hasOwnProperty.call(thing, 'namespace');
     }
 
     /**
@@ -58,9 +58,9 @@ define([
             return keyString;
         }
 
-        var namespace = '',
-            key = keyString;
-        for (var i = 0; i < key.length; i++) {
+        let namespace = '';
+        let key = keyString;
+        for (let i = 0; i < key.length; i++) {
             if (key[i] === "\\" && key[i + 1] === ":") {
                 i++; // skip escape character.
             } else if (key[i] === ":") {

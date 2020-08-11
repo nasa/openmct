@@ -22,8 +22,8 @@
 
 define(['./UTCTimeSystem'], function (UTCTimeSystem) {
     describe("The UTCTimeSystem class", function () {
-        var timeSystem,
-            mockTimeout;
+        let timeSystem;
+        let mockTimeout;
 
         beforeEach(function () {
             mockTimeout = jasmine.createSpy("timeout");

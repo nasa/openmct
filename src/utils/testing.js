@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
-let nativeFunctions = [],
-    mockObjects = setMockObjects();
+let nativeFunctions = [];
+let mockObjects = setMockObjects();
 
 export function createOpenMct() {
     const openmct = new MCT();
@@ -95,8 +95,8 @@ function clearBuiltinSpy(funcDefinition) {
 }
 
 export function getLatestTelemetry(telemetry = [], opts = {}) {
-    let latest = [],
-        timeFormat = opts.timeFormat || 'utc';
+    let latest = [];
+    let timeFormat = opts.timeFormat || 'utc';
 
     if (telemetry.length) {
         latest = telemetry.reduce((prev, cur) => {
@@ -145,10 +145,10 @@ export function getMockObjects(opts = {}) {
 
     // build out custom telemetry mappings if necessary
     if (requestedMocks.telemetry && opts.telemetryConfig) {
-        let keys = opts.telemetryConfig.keys,
-            format = opts.telemetryConfig.format || 'utc',
-            hints = opts.telemetryConfig.hints,
-            values;
+        let keys = opts.telemetryConfig.keys;
+        let format = opts.telemetryConfig.format || 'utc';
+        let hints = opts.telemetryConfig.hints;
+        let values;
 
         // if utc, keep default
         if (format === 'utc') {
@@ -213,12 +213,12 @@ export function getMockObjects(opts = {}) {
 //     format: 'local'
 // })
 export function getMockTelemetry(opts = {}) {
-    let count = opts.count || 2,
-        format = opts.format || 'utc',
-        name = opts.name || 'Mock Telemetry Datum',
-        keyCount = 2,
-        keys = false,
-        telemetry = [];
+    let count = opts.count || 2;
+    let format = opts.format || 'utc';
+    let name = opts.name || 'Mock Telemetry Datum';
+    let keyCount = 2;
+    let keys = false;
+    let telemetry = [];
 
     if (opts.keys && Array.isArray(opts.keys)) {
         keyCount = opts.keys.length;
@@ -234,8 +234,8 @@ export function getMockTelemetry(opts = {}) {
         };
 
         for (let k = 1; k < keyCount + 1; k++) {
-            let key = keys ? keys[k - 1] : 'some-key-' + k,
-                value = keys ? keys[k - 1] + ' value ' + i : 'some value ' + i + '-' + k;
+            let key = keys ? keys[k - 1] : 'some-key-' + k;
+            let value = keys ? keys[k - 1] + ' value ' + i : 'some value ' + i + '-' + k;
             datum[key] = value;
         }
 

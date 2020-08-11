@@ -110,9 +110,9 @@ export default {
             this.$set(this.secondaryTelemetryObjects, primary.key, []);
             this.primaryTelemetryObjects.push(primary);
 
-            let composition = this.openmct.composition.get(primary.domainObject),
-                addCallback = this.addSecondary(primary),
-                removeCallback = this.removeSecondary(primary);
+            let composition = this.openmct.composition.get(primary.domainObject);
+            let addCallback = this.addSecondary(primary);
+            let removeCallback = this.removeSecondary(primary);
 
             composition.on('add', addCallback);
             composition.on('remove', removeCallback);
@@ -125,8 +125,8 @@ export default {
             });
         },
         removePrimary(identifier) {
-            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
-                primary = this.primaryTelemetryObjects[index];
+            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key);
+            let primary = this.primaryTelemetryObjects[index];
 
             this.$delete(this.secondaryTelemetryObjects, primary.key);
             this.primaryTelemetryObjects.splice(index, 1);
@@ -151,8 +151,8 @@ export default {
         },
         removeSecondary(primary) {
             return (identifier) => {
-                let array = this.secondaryTelemetryObjects[primary.key],
-                    index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
+                let array = this.secondaryTelemetryObjects[primary.key];
+                let index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
 
                 array.splice(index, 1);
 

@@ -226,6 +226,8 @@ define([
                                 .then(object => {
                                     telemetryObjects[element.id] = object;
                                 });
+                        } else {
+                            return Promise.resolve(false);
                         }
                     });
 
