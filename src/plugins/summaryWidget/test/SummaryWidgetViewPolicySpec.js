@@ -27,9 +27,9 @@ define([
 ) {
 
     describe('SummaryWidgetViewPolicy', function () {
-        var policy;
-        var domainObject;
-        var view;
+        let policy;
+        let domainObject;
+        let view;
         beforeEach(function () {
             policy = new SummaryWidgetViewPolicy();
             domainObject = jasmine.createSpyObj('domainObject', [

@@ -35,9 +35,9 @@ define(
         ) {
             return function (model, id) {
                 id = id || identifierService.generate();
-                var old_id = model.id;
+                const old_id = model.id;
                 model.id = id;
-                var capabilities = capabilityService.getCapabilities(model, id);
+                const capabilities = capabilityService.getCapabilities(model, id);
                 model.id = old_id;
                 cacheService.put(id, model);
 

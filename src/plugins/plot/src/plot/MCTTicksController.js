@@ -27,18 +27,17 @@ define([
     _,
     eventHelpers
 ) {
-
-    var e10 = Math.sqrt(50),
-        e5 = Math.sqrt(10),
-        e2 = Math.sqrt(2);
+    const e10 = Math.sqrt(50);
+    const e5 = Math.sqrt(10);
+    const e2 = Math.sqrt(2);
 
     /**
      * Nicely formatted tick steps from d3-array.
      */
     function tickStep(start, stop, count) {
-        var step0 = Math.abs(stop - start) / Math.max(0, count),
-            step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-            error = step0 / step1;
+        const step0 = Math.abs(stop - start) / Math.max(0, count);
+        let step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10));
+        const error = step0 / step1;
         if (error >= e10) {
             step1 *= 10;
         } else if (error >= e5) {
@@ -55,13 +54,13 @@ define([
      * ticks to precise values.
      */
     function getPrecision(step) {
-        var exponential = step.toExponential(),
-            i = exponential.indexOf('e');
+        const exponential = step.toExponential();
+        const i = exponential.indexOf('e');
         if (i === -1) {
             return 0;
         }
 
-        var precision = Math.max(0, -(Number(exponential.slice(i + 1))));
+        let precision = Math.max(0, -(Number(exponential.slice(i + 1))));
 
         if (precision > 20) {
             precision = 20;
@@ -74,8 +73,8 @@ define([
      * Linear tick generation from d3-array.
      */
     function ticks(start, stop, count) {
-        var step = tickStep(start, stop, count),
-            precision = getPrecision(step);
+        const step = tickStep(start, stop, count);
+        const precision = getPrecision(step);
 
         return _.range(
             Math.ceil(start / step) * step,
@@ -87,9 +86,9 @@ define([
     }
 
     function commonPrefix(a, b) {
-        var maxLen = Math.min(a.length, b.length);
-        var breakpoint = 0;
-        for (var i = 0; i < maxLen; i++) {
+        const maxLen = Math.min(a.length, b.length);
+        let breakpoint = 0;
+        for (let i = 0; i < maxLen; i++) {
             if (a[i] !== b[i]) {
                 break;
             }
@@ -103,9 +102,9 @@ define([
     }
 
     function commonSuffix(a, b) {
-        var maxLen = Math.min(a.length, b.length);
-        var breakpoint = 0;
-        for (var i = 0; i <= maxLen; i++) {
+        const maxLen = Math.min(a.length, b.length);
+        let breakpoint = 0;
+        for (let i = 0; i <= maxLen; i++) {
             if (a[a.length - i] !== b[b.length - i]) {
                 break;
             }
@@ -171,9 +170,9 @@ define([
     };
 
     MCTTicksController.prototype.getTicks = function () {
-        var number = this.tickCount;
-        var clampRange = this.axis.get('values');
-        var range = this.axis.get('displayRange');
+        const number = this.tickCount;
+        const clampRange = this.axis.get('values');
+        const range = this.axis.get('displayRange');
         if (clampRange) {
             return clampRange.filter(function (value) {
                 return value <= range.max && value >= range.min;
@@ -188,7 +187,7 @@ define([
     }
 
     MCTTicksController.prototype.updateTicks = function (forceRegeneration = false) {
-        var range = this.axis.get('displayRange');
+        const range = this.axis.get('displayRange');
         if (!range) {
             delete this.$scope.min;
             delete this.$scope.max;
@@ -200,7 +199,7 @@ define([
             return;
         }
 
-        var format = this.axis.get('format');
+        const format = this.axis.get('format');
         if (!format) {
             return;
         }
@@ -209,7 +208,7 @@ define([
         this.$scope.max = range.max;
         this.$scope.interval = Math.abs(range.min - range.max);
         if (this.shouldRegenerateTicks(range, forceRegeneration)) {
-            var newTicks = this.getTicks();
+            let newTicks = this.getTicks();
             this.tickRange = {
                 min: Math.min.apply(Math, newTicks),
                 max: Math.max.apply(Math, newTicks),
@@ -225,11 +224,11 @@ define([
                 }, this);
 
             if (newTicks.length && typeof newTicks[0].text === 'string') {
-                var tickText = newTicks.map(function (t) {
+                const tickText = newTicks.map(function (t) {
                     return t.text;
                 });
-                var prefix = tickText.reduce(commonPrefix);
-                var suffix = tickText.reduce(commonSuffix);
+                const prefix = tickText.reduce(commonPrefix);
+                const suffix = tickText.reduce(commonSuffix);
                 newTicks.forEach(function (t, i) {
                     t.fullText = t.text;
                     if (suffix.length) {
@@ -259,11 +258,12 @@ define([
     MCTTicksController.prototype.doTickUpdate = function () {
         if (this.shouldCheckWidth) {
             this.$scope.$digest();
-            var element = this.$element[0],
-                tickElements = element.querySelectorAll('.gl-plot-tick > span'),
-                tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
-                    return Math.max(memo, first.offsetWidth);
-                }, 0));
+            const element = this.$element[0];
+            const tickElements = element.querySelectorAll('.gl-plot-tick > span');
+
+            const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
+                return Math.max(memo, first.offsetWidth);
+            }, 0));
 
             this.$scope.tickWidth = tickWidth;
             this.$scope.$emit('plot:tickWidth', tickWidth);

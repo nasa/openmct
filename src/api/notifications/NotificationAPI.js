@@ -299,7 +299,7 @@ export default class NotificationAPI extends EventEmitter {
             this._dismiss(notification);
         };
 
-        if (notificationModel.hasOwnProperty('progressPerc')) {
+        if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
             notification.progress = (progressPerc, progressText) => {
                 notification.model.progressPerc = progressPerc;
                 notification.model.progressText = progressText;

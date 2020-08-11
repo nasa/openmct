@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
     [],
@@ -80,7 +79,7 @@ define(
                                 control: "button",
                                 csslass: "icon-save",
                                 click: function () {
-                                    window.alert("Save");
+                                    console.log("Save");
                                 }
                             },
                             {
@@ -88,7 +87,7 @@ define(
                                 csslass: "icon-x",
                                 description: "Button B",
                                 click: function () {
-                                    window.alert("Cancel");
+                                    console.log("Cancel");
                                 }
                             },
                             {
@@ -97,7 +96,7 @@ define(
                                 description: "Button C",
                                 disabled: true,
                                 click: function () {
-                                    window.alert("Delete");
+                                    console.log("Delete");
                                 }
                             }
                         ]
