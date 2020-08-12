@@ -30,7 +30,7 @@
         </div>
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
-            <div class="c-imagery__timestamp">{{ getTime() }}</div>
+            <div class="c-imagery__timestamp">{{ getAge() }}</div>
             <div class="h-local-controls flex-elem">
                 <button
                     class="c-button icon-pause pause-play"
@@ -263,6 +263,9 @@ export default {
 
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
+        },
+        getAge() {
+            return 'age';
         }
     }
 };
