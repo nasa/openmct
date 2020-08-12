@@ -63,19 +63,18 @@ export default {
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
             if (defaultNotebook) {
-                const domainObject = defaultNotebook.domainObject;
+                const name = defaultNotebook.notebookMeta.name;
+                const sectionName = defaultNotebook.section.name;
+                const pageName = defaultNotebook.page.name;
+                const defaultPath = `${name} - ${sectionName} - ${pageName}`;
 
-                if (domainObject.location) {
-                    const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
-
-                    notebookTypes.push({
-                        cssClass: 'icon-notebook',
-                        name: `Save to Notebook ${defaultPath}`,
-                        callBack: () => {
-                            return this.snapshot(NOTEBOOK_DEFAULT);
-                        }
-                    });
-                }
+                notebookTypes.push({
+                    cssClass: 'icon-notebook',
+                    name: `Save to Notebook ${defaultPath}`,
+                    callBack: () => {
+                        return this.snapshot(NOTEBOOK_DEFAULT);
+                    }
+                });
             }
 
             notebookTypes.push({
