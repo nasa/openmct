@@ -1,0 +1,42 @@
+.c-timeline {
+  $h: 18px;
+  $tickYPos: ($h / 2) + 12px;
+
+  svg {
+    text-rendering: geometricPrecision;
+    width: 100%;
+    height: 100%;
+    > g.axis {
+      // Overall Tick holder
+      transform: translateY($tickYPos);
+      //path {
+      //  // Domain line
+      //  display: none;
+      //}
+
+      g {
+         //Each tick. These move on drag.
+        line {
+          // Line beneath ticks
+          display: none;
+        }
+      }
+    }
+
+    text:not(.activity) {
+      // Tick labels
+      fill: $colorBodyFg;
+      font-size: 1em;
+      paint-order: stroke;
+      font-weight: bold;
+      stroke: $colorBodyBg;
+      stroke-linecap: butt;
+      stroke-linejoin: bevel;
+      stroke-width: 6px;
+    }
+
+    text.activity {
+      stroke: none;
+    }
+  }
+}
