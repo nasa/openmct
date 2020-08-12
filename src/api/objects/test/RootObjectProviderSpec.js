@@ -19,35 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    '../RootObjectProvider'
-], function (
-    RootObjectProvider
-) {
-    describe('RootObjectProvider', function () {
-        let rootRegistry;
-        let rootObjectProvider;
+import RootObjectProvider from '../RootObjectProvider';
 
-        beforeEach(function () {
-            rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-            rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
-            rootObjectProvider = new RootObjectProvider.default(rootRegistry);
-        });
+fdescribe('RootObjectProvider', function () {
+    let rootRegistry;
+    let rootObjectProvider;
 
-        it('supports fetching root', function () {
-            return rootObjectProvider.get()
-                .then(function (root) {
-                    console.log('ROOT', root);
-                    expect(root).toEqual({
-                        identifier: {
-                            key: "ROOT",
-                            namespace: ""
-                        },
-                        name: 'The root object',
-                        type: 'root',
-                        composition: ['some root']
-                    });
-                });
+    beforeEach(function () {
+        rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
+        rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
+        rootObjectProvider = new RootObjectProvider(rootRegistry);
+    });
+
+    afterEach(() => {
+        rootRegistry = undefined;
+        rootObjectProvider = undefined;
+    });
+
+    it('supports fetching root', async function () {
+        let root = await rootObjectProvider.get();
+        console.log('ROOT', root);
+        expect(root).toEqual({
+            identifier: {
+                key: "ROOT",
+                namespace: ""
+            },
+            name: 'The root object',
+            type: 'root',
+            composition: ['some root']
         });
     });
 });
