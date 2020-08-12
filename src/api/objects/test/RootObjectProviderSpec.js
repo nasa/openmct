@@ -21,7 +21,7 @@
  *****************************************************************************/
 import RootObjectProvider from '../RootObjectProvider';
 
-fdescribe('RootObjectProvider', function () {
+describe('RootObjectProvider', function () {
     let rootRegistry;
     let rootObjectProvider;
 
@@ -32,13 +32,13 @@ fdescribe('RootObjectProvider', function () {
     });
 
     afterEach(() => {
-        rootRegistry = undefined;
+        rootRegistry.getRoots.calls.reset();
         rootObjectProvider = undefined;
     });
 
     it('supports fetching root', async function () {
         let root = await rootObjectProvider.get();
-        console.log('ROOT', root);
+
         expect(root).toEqual({
             identifier: {
                 key: "ROOT",

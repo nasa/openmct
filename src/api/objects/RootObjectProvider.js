@@ -34,6 +34,9 @@ class RootObjectProvider {
                 composition: []
             };
             RootObjectProvider.instance = this;
+        } else {
+            // if called twice, update instance rootRegistry
+            RootObjectProvider.instance.rootRegistry = rootRegistry;
         }
 
         return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
