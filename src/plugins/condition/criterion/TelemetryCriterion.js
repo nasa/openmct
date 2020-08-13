@@ -211,7 +211,7 @@ export default class TelemetryCriterion extends EventEmitter {
         let inputValue;
         if (metadataObject) {
             if (metadataObject.enumerations && input.length) {
-                const enumeration = metadataObject.enumerations[input[0]];
+                const enumeration = metadataObject.enumerations.find((item) => item.value.toString() === input[0].toString());
                 if (enumeration !== undefined && enumeration.string) {
                     inputValue = [enumeration.string];
                 }

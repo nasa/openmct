@@ -28,7 +28,7 @@ define([
     /**
      * TODO: doc strings.
      */
-    var XAxisModel = Model.extend({
+    const XAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
             this.set('label', options.model.name || '');
@@ -51,10 +51,10 @@ define([
             this.listenTo(this, 'change:key', this.changeKey, this);
         },
         changeKey: function (newKey) {
-            var series = this.plot.series.first();
+            const series = this.plot.series.first();
             if (series) {
-                var xMetadata = series.metadata.value(newKey);
-                var xFormat = series.formats[newKey];
+                const xMetadata = series.metadata.value(newKey);
+                const xFormat = series.formats[newKey];
                 this.set('label', xMetadata.name);
                 this.set('format', xFormat.format.bind(xFormat));
             } else {
@@ -70,9 +70,9 @@ define([
             });
         },
         defaults: function (options) {
-            var bounds = options.openmct.time.bounds();
-            var timeSystem = options.openmct.time.timeSystem();
-            var format = options.openmct.$injector.get('formatService')
+            const bounds = options.openmct.time.bounds();
+            const timeSystem = options.openmct.time.timeSystem();
+            const format = options.openmct.$injector.get('formatService')
                 .getFormat(timeSystem.timeFormat);
 
             return {

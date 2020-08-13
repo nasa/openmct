@@ -205,7 +205,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeAPI.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
-            var validationResult = this.validateBounds(newBounds);
+            const validationResult = this.validateBounds(newBounds);
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
@@ -251,7 +251,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 );
             }
 
-            var timeSystem;
+            let timeSystem;
 
             if (timeSystemOrKey === undefined) {
                 throw "Please provide a time system";
@@ -328,7 +328,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * using current offsets.
      */
     TimeAPI.prototype.tick = function (timestamp) {
-        var newBounds = {
+        const newBounds = {
             start: timestamp + this.offsets.start,
             end: timestamp + this.offsets.end
         };
@@ -357,7 +357,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeAPI.prototype.clock = function (keyOrClock, offsets) {
         if (arguments.length === 2) {
-            var clock;
+            let clock;
 
             if (typeof keyOrClock === 'string') {
                 clock = this.clocks.get(keyOrClock);
@@ -371,7 +371,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 }
             }
 
-            var previousClock = this.activeClock;
+            const previousClock = this.activeClock;
             if (previousClock !== undefined) {
                 previousClock.off("tick", this.tick);
             }
@@ -422,15 +422,15 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeAPI.prototype.clockOffsets = function (offsets) {
         if (arguments.length > 0) {
 
-            var validationResult = this.validateOffsets(offsets);
+            const validationResult = this.validateOffsets(offsets);
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
 
             this.offsets = offsets;
 
-            var currentValue = this.activeClock.currentValue();
-            var newBounds = {
+            const currentValue = this.activeClock.currentValue();
+            const newBounds = {
                 start: currentValue + offsets.start,
                 end: currentValue + offsets.end
             };

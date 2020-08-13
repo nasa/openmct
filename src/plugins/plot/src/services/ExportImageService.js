@@ -52,32 +52,34 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.renderElement = function (element, imageType, className) {
+            const dialogService = this.dialogService;
 
-            var dialogService = this.dialogService,
-                dialog = dialogService.showBlockingMessage({
-                    title: "Capturing...",
-                    hint: "Capturing an image",
-                    unknownProgress: true,
-                    severity: "info",
-                    delay: true
-                });
+            const dialog = dialogService.showBlockingMessage({
+                title: "Capturing...",
+                hint: "Capturing an image",
+                unknownProgress: true,
+                severity: "info",
+                delay: true
+            });
 
-            var mimeType = "image/png";
+            let mimeType = "image/png";
             if (imageType === "jpg") {
                 mimeType = "image/jpeg";
             }
 
+            let exportId = undefined;
+            let oldId = undefined;
             if (className) {
-                var exportId = 'export-element-' + this.exportCount;
+                exportId = 'export-element-' + this.exportCount;
                 this.exportCount++;
-                var oldId = element.id;
+                oldId = element.id;
                 element.id = exportId;
             }
 
             return html2canvas(element, {
                 onclone: function (document) {
                     if (className) {
-                        var clonedElement = document.getElementById(exportId);
+                        const clonedElement = document.getElementById(exportId);
                         clonedElement.classList.add(className);
                     }
 
@@ -93,7 +95,7 @@ define(
             }, function (error) {
                 console.log('error capturing image', error);
                 dialog.dismiss();
-                var errorDialog = dialogService.showBlockingMessage({
+                const errorDialog = dialogService.showBlockingMessage({
                     title: "Error capturing image",
                     severity: "error",
                     hint: "Image was not captured successfully!",
@@ -153,12 +155,11 @@ define(
             if (!HTMLCanvasElement.prototype.toBlob) {
                 Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
                     value: function (callback, mimeType, quality) {
+                        const binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]);
+                        const len = binStr.length;
+                        const arr = new Uint8Array(len);
 
-                        var binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]),
-                            len = binStr.length,
-                            arr = new Uint8Array(len);
-
-                        for (var i = 0; i < len; i++) {
+                        for (let i = 0; i < len; i++) {
                             arr[i] = binStr.charCodeAt(i);
                         }
 

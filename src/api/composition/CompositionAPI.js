@@ -70,7 +70,7 @@ define([
      * @memberof module:openmct.CompositionAPI#
      */
     CompositionAPI.prototype.get = function (domainObject) {
-        var provider = this.registry.find(p => {
+        const provider = this.registry.find(p => {
             return p.appliesTo(domainObject);
         });
 

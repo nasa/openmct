@@ -25,8 +25,8 @@ define([
 ) {
     return function (buildInfo) {
         return function (openmct) {
-            var aliases = { timestamp: "Built" };
-            var descriptions = {
+            const aliases = { timestamp: "Built" };
+            const descriptions = {
                 timestamp: "The date on which this version of Open MCT was built.",
                 revision: "A unique revision identifier for the client sources.",
                 branch: "The name of the branch that was used during the build."

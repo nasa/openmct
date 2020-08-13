@@ -30,7 +30,7 @@ define(function () {
         return {
             restrict: "A",
             link: function ($scope, $element) {
-                var splitter = $element.parent();
+                let splitter = $element.parent();
 
                 while (splitter[0].tagName !== 'MCT-SPLIT-PANE') {
                     splitter = splitter.parent();
@@ -40,7 +40,7 @@ define(function () {
                     '.split-pane-component.pane.bottom',
                     'mct-splitter'
                 ].forEach(function (selector) {
-                    var element = splitter[0].querySelectorAll(selector)[0];
+                    const element = splitter[0].querySelectorAll(selector)[0];
                     element.style.maxHeight = '0px';
                     element.style.minHeight = '0px';
                 });

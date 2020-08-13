@@ -44,7 +44,7 @@ define([
      * handle setting defaults and updating in response to various changes.
      *
      */
-    var PlotConfigurationModel = Model.extend({
+    const PlotConfigurationModel = Model.extend({
 
         /**
          * Initializes all sub models and then passes references to submodels
@@ -91,7 +91,7 @@ define([
          * Retrieve the persisted series config for a given identifier.
          */
         getPersistedSeriesConfig: function (identifier) {
-            var domainObject = this.get('domainObject');
+            const domainObject = this.get('domainObject');
             if (!domainObject.configuration || !domainObject.configuration.series) {
                 return;
             }
@@ -105,8 +105,8 @@ define([
          * Retrieve the persisted filters for a given identifier.
          */
         getPersistedFilters: function (identifier) {
-            var domainObject = this.get('domainObject'),
-                keystring = this.openmct.objects.makeKeyString(identifier);
+            const domainObject = this.get('domainObject');
+            const keystring = this.openmct.objects.makeKeyString(identifier);
 
             if (!domainObject.configuration || !domainObject.configuration.filters) {
                 return;

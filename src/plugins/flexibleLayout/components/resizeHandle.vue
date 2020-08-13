@@ -73,7 +73,9 @@ export default {
         mousemove(event) {
             event.preventDefault();
 
-            let elSize, mousePos, delta;
+            let elSize;
+            let mousePos;
+            let delta;
 
             if (this.orientation === 'horizontal') {
                 elSize = this.$el.getBoundingClientRect().x;
