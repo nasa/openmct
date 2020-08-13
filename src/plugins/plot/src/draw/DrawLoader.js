@@ -27,7 +27,7 @@ define(
     ],
     function (DrawWebGL, Draw2D) {
 
-        var CHARTS = [
+        const CHARTS = [
             {
                 MAX_INSTANCES: 16,
                 API: DrawWebGL,
@@ -53,7 +53,7 @@ define(
                       the draw API to.
              */
             getDrawAPI: function (canvas, overlay) {
-                var api;
+                let api;
 
                 CHARTS.forEach(function (CHART_TYPE) {
                     if (api) {
@@ -89,7 +89,7 @@ define(
              * Returns a fallback draw api.
              */
             getFallbackDrawAPI: function (canvas, overlay) {
-                var api = new CHARTS[1].API(canvas, overlay);
+                const api = new CHARTS[1].API(canvas, overlay);
                 CHARTS[1].ALLOCATIONS.push(api);
 
                 return api;

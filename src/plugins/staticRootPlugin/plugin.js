@@ -9,12 +9,12 @@ define([
      */
     function StaticRootPlugin(namespace, exportUrl) {
 
-        var rootIdentifier = {
+        const rootIdentifier = {
             namespace: namespace,
             key: 'root'
         };
 
-        var cachedProvider;
+        let cachedProvider;
 
         function loadProvider() {
             return fetch(exportUrl)

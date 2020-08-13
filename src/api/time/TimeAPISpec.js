@@ -22,14 +22,14 @@
 
 define(['./TimeAPI'], function (TimeAPI) {
     describe("The Time API", function () {
-        var api,
-            timeSystemKey,
-            timeSystem,
-            clockKey,
-            clock,
-            bounds,
-            eventListener,
-            toi;
+        let api;
+        let timeSystemKey;
+        let timeSystem;
+        let clockKey;
+        let clock;
+        let bounds;
+        let eventListener;
+        let toi;
 
         beforeEach(function () {
             api = new TimeAPI();
@@ -162,7 +162,7 @@ define(['./TimeAPI'], function (TimeAPI) {
         });
 
         it("Allows a registered tick source to be activated", function () {
-            var mockTickSource = jasmine.createSpyObj("mockTickSource", [
+            const mockTickSource = jasmine.createSpyObj("mockTickSource", [
                 "on",
                 "off",
                 "currentValue"
@@ -171,9 +171,9 @@ define(['./TimeAPI'], function (TimeAPI) {
         });
 
         describe(" when enabling a tick source", function () {
-            var mockTickSource;
-            var anotherMockTickSource;
-            var mockOffsets = {
+            let mockTickSource;
+            let anotherMockTickSource;
+            const mockOffsets = {
                 start: 0,
                 end: 1
             };
@@ -229,15 +229,15 @@ define(['./TimeAPI'], function (TimeAPI) {
         });
 
         it("on tick, observes offsets, and indicates tick in bounds callback", function () {
-            var mockTickSource = jasmine.createSpyObj("clock", [
+            const mockTickSource = jasmine.createSpyObj("clock", [
                 "on",
                 "off",
                 "currentValue"
             ]);
             mockTickSource.currentValue.and.returnValue(100);
-            var tickCallback;
-            var boundsCallback = jasmine.createSpy("boundsCallback");
-            var clockOffsets = {
+            let tickCallback;
+            const boundsCallback = jasmine.createSpy("boundsCallback");
+            const clockOffsets = {
                 start: -100,
                 end: 100
             };

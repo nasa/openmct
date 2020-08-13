@@ -22,7 +22,7 @@
 
 define(function () {
 
-    var COLOR_PALETTE = [
+    const COLOR_PALETTE = [
         [0x20, 0xB2, 0xAA],
         [0x9A, 0xCD, 0x32],
         [0xFF, 0x8C, 0x00],
@@ -56,7 +56,7 @@ define(function () {
     ];
 
     function isDefaultColor(color) {
-        var a = color.asIntegerArray();
+        const a = color.asIntegerArray();
 
         return COLOR_PALETTE.some(function (b) {
             return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
@@ -139,11 +139,11 @@ define(function () {
      * @constructor
      */
     function ColorPalette() {
-        var allColors = this.allColors = COLOR_PALETTE.map(function (color) {
+        const allColors = this.allColors = COLOR_PALETTE.map(function (color) {
             return new Color(color);
         });
         this.colorGroups = [[], [], []];
-        for (var i = 0; i < allColors.length; i++) {
+        for (let i = 0; i < allColors.length; i++) {
             this.colorGroups[i % 3].push(allColors[i]);
         }
 
@@ -174,7 +174,7 @@ define(function () {
     };
 
     ColorPalette.prototype.getByHexString = function (hexString) {
-        var color = Color.fromHexString(hexString);
+        const color = Color.fromHexString(hexString);
 
         return color;
     };

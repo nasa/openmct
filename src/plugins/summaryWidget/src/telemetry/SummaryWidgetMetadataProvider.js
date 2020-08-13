@@ -48,8 +48,8 @@ define([
     };
 
     SummaryWidgetMetadataProvider.prototype.getMetadata = function (domainObject) {
-        var ruleOrder = domainObject.configuration.ruleOrder || [];
-        var enumerations = ruleOrder
+        const ruleOrder = domainObject.configuration.ruleOrder || [];
+        const enumerations = ruleOrder
             .filter(function (ruleId) {
                 return Boolean(domainObject.configuration.ruleConfigById[ruleId]);
             })
@@ -60,7 +60,7 @@ define([
                 };
             });
 
-        var metadata = {
+        const metadata = {
             // Generally safe assumption is that we have one domain per timeSystem.
             values: this.getDomains().concat([
                 {

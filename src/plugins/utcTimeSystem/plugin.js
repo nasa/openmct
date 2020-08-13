@@ -33,7 +33,7 @@ define([
      */
     return function () {
         return function (openmct) {
-            var timeSystem = new UTCTimeSystem();
+            const timeSystem = new UTCTimeSystem();
             openmct.time.addTimeSystem(timeSystem);
             openmct.time.addClock(new LocalClock(100));
         };

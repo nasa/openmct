@@ -120,6 +120,10 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/no-var
+        "no-var": "error",
+        // https://eslint.org/docs/rules/one-var
+        "one-var": ["error", "never"],
         // https://eslint.org/docs/rules/default-case-last
         "default-case-last": "error",
         // https://eslint.org/docs/rules/default-param-last
@@ -248,7 +252,8 @@ module.exports = {
                     }
                 ],
                 "no-nested-ternary": "off",
-                "no-var": "off"
+                "no-var": "off",
+                "one-var": "off"
             }
         }
     ]

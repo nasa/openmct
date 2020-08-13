@@ -67,7 +67,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @private
      */
     LocalClock.prototype.tick = function () {
-        var now = Date.now();
+        const now = Date.now();
         this.emit("tick", now);
         this.lastTick = now;
         this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
@@ -81,7 +81,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @returns {function} a function for deregistering the provided listener
      */
     LocalClock.prototype.on = function (event) {
-        var result = EventEmitter.prototype.on.apply(this, arguments);
+        const result = EventEmitter.prototype.on.apply(this, arguments);
 
         if (this.listeners(event).length === 1) {
             this.start();
@@ -98,7 +98,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @returns {function} a function for deregistering the provided listener
      */
     LocalClock.prototype.off = function (event) {
-        var result = EventEmitter.prototype.off.apply(this, arguments);
+        const result = EventEmitter.prototype.off.apply(this, arguments);
 
         if (this.listeners(event).length === 0) {
             this.stop();
