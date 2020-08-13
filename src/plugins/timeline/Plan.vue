@@ -19,6 +19,7 @@ const TEXT_PADDING = 15;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 20;
+const canvasContext = document.createElement('canvas').getContext("2d");
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -84,6 +85,12 @@ export default {
         isActivityInBounds(activity) {
             return (activity.start < this.viewBounds.end) && (activity.end > this.viewBounds.start);
         },
+        getTextWidth(name) {
+            // canvasContext.font = font;
+            let metrics = canvasContext.measureText(name);
+
+            return parseInt(metrics.width, 10);
+        },
         // Get the row where the next activity will land.
         getRowForActivity(rectX, rectWidth) {
             let activityRow;
@@ -120,7 +127,24 @@ export default {
                     const rectX = this.xScale(currentStart);
                     const rectWidth = this.xScale(currentEnd);
 
-                    activityRow = this.getRowForActivity(rectX, rectWidth);
+                    const activityNameWidth = this.getTextWidth(activity.name) + PADDING;
+                    const canFitText = (rectWidth > activityNameWidth);
+                    const textStart = canFitText ? rectX + PADDING : rectX + rectWidth + PADDING;
+
+                    if (canFitText) {
+                        activityRow = this.getRowForActivity(rectX, rectWidth);
+                    } else {
+                        activityRow = this.getRowForActivity(rectX, (textStart + activityNameWidth));
+                    }
+
+                    if (!this.activityPositions[activityRow]) {
+                        this.activityPositions[activityRow] = [];
+                    }
+
+                    this.activityPositions[activityRow].push({
+                        start: rectX,
+                        end: canFitText ? rectWidth : textStart + activityNameWidth
+                    });
 
                     this.svgElement.append("rect")
                         .attr("class", "activity")
@@ -130,21 +154,12 @@ export default {
                         .attr("height", ROW_HEIGHT)
                         .attr('fill', activity.color)
                         .attr('stroke', "lightgray");
+
                     this.svgElement.append("text").text(activity.name)
                         .attr("class", "activity")
-                        .attr("x", rectX + PADDING)
+                        .attr("x", textStart)
                         .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
                         .attr('fill', activity.textColor);
-
-                    if (!this.activityPositions[activityRow]) {
-                        this.activityPositions[activityRow] = [];
-                    }
-
-                    this.activityPositions[activityRow].push({
-                        start: rectX,
-                        end: rectWidth,
-                        textWidth: 0
-                    });
                 }
             });
         }
