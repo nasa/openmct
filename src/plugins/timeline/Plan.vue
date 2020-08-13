@@ -13,22 +13,20 @@ import * as d3Scale from 'd3-scale';
 // import utcMultiTimeFormat from '../timeConductor/utcMultiTimeFormat.js';
 
 const PADDING = 1;
+const TEXT_PADDING = 15;
 // const DEFAULT_DURATION_FORMATTER = 'duration';
 // const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
+const ROW_HEIGHT = 20;
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
         Activity
     },
-    data() {
-        return {
-            activities: []
-        };
-    },
     mounted() {
+        this.activityPositions = {};
         this.viewBounds = this.openmct.time.bounds();
         this.xAxis = d3Axis.axisTop();
 
@@ -83,84 +81,70 @@ export default {
                 this.xAxis.ticks(this.width / PIXELS_PER_TICK);
             }
         },
-        sort(items, key) {
-            items.sort(function (a, b) {
-                if (a[key] > b[key]) {
-                    return 1;
-                } else if (a[key] < b[key]) {
-                    return -1;
-                }
-
-                return 0;
-            });
-
-            return items;
+        isActivityInBounds(activity) {
+            return (activity.start < this.viewBounds.end) && (activity.end > this.viewBounds.start);
         },
-        getYForRect(rectX, rectWidth) {
-            // new start between rect start and end?
-            // new end is between rect start and end
-            let currentY = this.top;
-            let rects = this.svgElement.selectAll('rect').nodes().map(rect => {
-                const start = rect.getAttribute('x');
-                const end = rect.getAttribute('width');
-                const y = rect.getAttribute('y');
-                const hasOverlap = (rectX >= start && rectX <= end) || (rectWidth >= start && rectWidth <= end);
+        // Get the row where the next activity will land.
+        getRowForActivity(rectX, rectWidth) {
+            let activityRow;
+            let sortedActivityRows = Object.keys(this.activityPositions).sort();
+            for (let i = 0; i < sortedActivityRows.length; i++) {
+                let row = sortedActivityRows[i];
+                let noOverlap = this.activityPositions[row].every(rect => {
+                    const start = rect.start;
+                    const end = rect.end;
+                    const hasOverlap = (rectX >= start && rectX <= end) || (rectWidth >= start && rectWidth <= end);
 
-                return {
-                    overlap: hasOverlap,
-                    y: y
-                };
-            });
-            rects = this.sort(rects, 'y');
-            let overlappingRects = {};
-
-            rects.forEach(rect => {
-                if (!overlappingRects[rect.y]) {
-                    overlappingRects[rect.y] = rect.overlap;
+                    return !hasOverlap;
+                });
+                if (noOverlap) {
+                    activityRow = row;
+                    break;
                 }
-            });
-
-            let y = Object.keys(overlappingRects).find(key => {
-                return !overlappingRects[key];
-            });
-
-
-            if (y !== undefined) {
-                currentY = y;
-            } else if (rects.length) {
-                return parseInt(rects[rects.length - 1].y, 10) + 20;
             }
 
-            return currentY;
+            if (!activityRow && sortedActivityRows.length) {
+                activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT;
+            }
+
+            return activityRow || this.top;
         },
         plotActivity() {
-            this.activities = this.domainObject.configuration.activities.map(activity => activity);
-            this.activities = this.sort(this.activities, 'start');
             let currentStart;
             let currentEnd;
-            let rectY = this.top;
-            this.activities.forEach((activity) => {
-                if (activity.start < this.viewBounds.end) {
+            let activityRow = this.top;
+            this.domainObject.configuration.activities.forEach((activity) => {
+                if (this.isActivityInBounds(activity)) {
                     currentStart = Math.max(this.viewBounds.start, activity.start);
                     currentEnd = Math.min(this.viewBounds.end, activity.end);
                     const rectX = this.xScale(currentStart);
                     const rectWidth = this.xScale(currentEnd);
 
-                    rectY = this.getYForRect(rectX, rectWidth);
+                    activityRow = this.getRowForActivity(rectX, rectWidth);
 
                     this.svgElement.append("rect")
                         .attr("class", "activity")
                         .attr("x", rectX)
-                        .attr("y", rectY)
+                        .attr("y", activityRow)
                         .attr("width", rectWidth)
-                        .attr("height", 20)
+                        .attr("height", ROW_HEIGHT)
                         .attr('fill', activity.color)
                         .attr('stroke', "lightgray");
                     this.svgElement.append("text").text(activity.name)
                         .attr("class", "activity")
-                        .attr("x", rectX + PADDING * 5)
-                        .attr("y", parseInt(rectY, 10) + 15)
+                        .attr("x", rectX + PADDING)
+                        .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
                         .attr('fill', activity.textColor);
+
+                    if (!this.activityPositions[activityRow]) {
+                        this.activityPositions[activityRow] = [];
+                    }
+
+                    this.activityPositions[activityRow].push({
+                        start: rectX,
+                        end: rectWidth,
+                        textWidth: 0
+                    });
                 }
             });
         }
