@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import Activity from "./Activity.vue";
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
@@ -23,9 +22,6 @@ const canvasContext = document.createElement('canvas').getContext("2d");
 
 export default {
     inject: ['openmct', 'domainObject'],
-    components: {
-        Activity
-    },
     mounted() {
         this.activityPositions = {};
         this.viewBounds = this.openmct.time.bounds();
@@ -155,6 +151,7 @@ export default {
                         .attr('fill', activity.color)
                         .attr('stroke', "lightgray");
 
+                    //TODO: Limit height of the text to 2 rows when it's placed outside the activity rectangle and include that in the activityRow calculation
                     this.svgElement.append("text").text(activity.name)
                         .attr("class", "activity")
                         .attr("x", textStart)
