@@ -11,8 +11,6 @@
         />
     </div>
     <div class="c-toolbar__dimensions-and-controls">
-        <!--span class="c-toolbar__dimensions">1024 x 109</span>
-        <span class="c-toolbar__separator"></span-->
         <button class="c-toolbar__control c-icon-button icon-grid"></button>
     </div>
 </div>
