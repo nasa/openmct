@@ -26,7 +26,7 @@ import {
 } from 'utils/testing';
 import CouchObjectProvider from './CouchObjectProvider';
 
-fdescribe('the plugin', () => {
+describe('the plugin', () => {
     let openmct;
     let element;
     let child;
