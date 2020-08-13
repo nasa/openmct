@@ -57,7 +57,9 @@ export default class ConditionManager extends EventEmitter {
             return;
         }
 
-        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: this.openmct.telemetry.getMetadata(endpoint).valueMetadatas});
+        const metadata = this.openmct.telemetry.getMetadata(endpoint);
+
+        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: metadata ? metadata.valueMetadatas : []});
         this.subscriptions[id] = this.openmct.telemetry.subscribe(
             endpoint,
             this.telemetryReceived.bind(this, endpoint)
