@@ -63,8 +63,8 @@ define(function () {
                     cssClass: "l-input-sm l-numeric",
                     property: [
                         "configuration",
-                        "layoutGrid",
-                        1
+                        "layoutDimensions",
+                        0
                     ],
                     required: false
                 },
@@ -74,7 +74,7 @@ define(function () {
                     cssClass: "l-input-sm l-numeric",
                     property: [
                         "configuration",
-                        "layoutGrid",
+                        "layoutDimensions",
                         1
                     ],
                     required: false
