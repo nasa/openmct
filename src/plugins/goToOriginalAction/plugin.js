@@ -23,6 +23,6 @@ import GoToOriginalAction from './goToOriginalAction';
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new GoToOriginalAction(openmct));
+        openmct.menus.registerObjectAction(new GoToOriginalAction(openmct));
     };
 }

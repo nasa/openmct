@@ -30,7 +30,7 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
+            this.openmct.menus._showObjectMenu(this.objectPath, event.clientX, event.clientY);
         }
     }
 };

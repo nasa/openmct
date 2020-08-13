@@ -1,7 +1,6 @@
 import Overlay from './Overlay';
 import Dialog from './Dialog';
 import ProgressDialog from './ProgressDialog';
-import Menu from './Menu';
 
 /**
  * The OverlayAPI is responsible for pre-pending templates to
@@ -24,7 +23,6 @@ class OverlayAPI {
             }
         });
 
-        this._clearMenuComponent = this._clearMenuComponent.bind(this);
     }
 
     /**
@@ -132,37 +130,6 @@ class OverlayAPI {
         return progressDialog;
     }
 
-    /**
-     * Displays a menu element that will have a list of callbacks,
-     * which the user can click on. This menu will use x and y coordinates to
-     * calculate the position of the menu.
-     * @param {model} options
-     * options = {
-     *      actions: [actionObject],
-     *      x: x-coordinate,
-     *      y: y-coordinate,
-     *      onDestroy: callback that will be called on dimiss of menu *optional
-     * }
-     * actionObject = {
-     *      name: string,
-     *      cssClass: string,
-     *      description: string,
-     *      callback: function
-     * }
-    */
-    menu(options) {
-        if (this.menuComponent) {
-            this.menuComponent.dismiss();
-        }
-
-        this.menuComponent = new Menu(options);
-        this.menuComponent.on('destroy', this._clearMenuComponent);
-    }
-
-    _clearMenuComponent() {
-        this.menuComponent = undefined;
-        delete this.menuComponent;
-    }
 }
 
 export default OverlayAPI;

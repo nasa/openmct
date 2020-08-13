@@ -28,8 +28,8 @@ define([
     './telemetry/TelemetryAPI',
     './indicators/IndicatorAPI',
     './notifications/NotificationAPI',
-    './contextMenu/ContextMenuAPI',
-    './Editor'
+    './Editor',
+    './menu/MenuAPI'
 
 ], function (
     TimeAPI,
@@ -39,8 +39,8 @@ define([
     TelemetryAPI,
     IndicatorAPI,
     NotificationAPI,
-    ContextMenuAPI,
-    EditorAPI
+    EditorAPI,
+    MenuAPI
 ) {
     return {
         TimeAPI: TimeAPI,
@@ -51,6 +51,6 @@ define([
         IndicatorAPI: IndicatorAPI,
         NotificationAPI: NotificationAPI.default,
         EditorAPI: EditorAPI,
-        ContextMenuRegistry: ContextMenuAPI.default
+        MenuAPI: MenuAPI.default
     };
 });

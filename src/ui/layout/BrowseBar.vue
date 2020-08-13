@@ -267,7 +267,7 @@ export default {
             });
         },
         showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
+            this.openmct.menus._showObjectMenu(this.openmct.router.path, event.clientX, event.clientY);
         },
         goToParent() {
             window.location.hash = this.parentUrl;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,25 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import Menu from './menu.js';
+
 /**
- * The ContextMenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
+ * The MenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
- * @interface ContextMenuAPI
+ * @interface MenuAPI
  * @memberof module:openmct
  */
-class ContextMenuAPI {
+
+class MenuAPI {
     constructor(openmct) {
         this.openmct = openmct;
-        this._allActions = [];
+        this._allObjectActions = [];
 
-        this.registerAction = this.registerAction.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.registerObjectAction = this.registerObjectAction.bind(this);
+        this._clearMenuComponent = this._clearMenuComponent.bind(this);
+        this._applicableObjectActions = this._applicableObjectActions.bind(this);
+        this._showObjectMenu = this._showObjectMenu.bind(this);
     }
 
     /**
      * Defines an item to be added to context menus. Allows specification of text, appearance, and behavior when
      * selected. Applicabilioty can be restricted by specification of an `appliesTo` function.
      *
-     * @interface ContextMenuAction
+     * @interface ObjectAction
      * @memberof module:openmct
      * @property {string} name the human-readable name of this view
      * @property {string} description a longer-form description (typically
@@ -64,29 +71,32 @@ class ContextMenuAPI {
     /**
      * @param {ContextMenuAction} actionDefinition
      */
-    registerAction(actionDefinition) {
-        this._allActions.push(actionDefinition);
+    registerObjectAction(actionDefinition) {
+        this._allObjectActions.push(actionDefinition);
     }
 
-    /**
-     * @private
-     */
-    _showContextMenuForObjectPath(objectPath, x, y, actionsToBeIncluded) {
+    showMenu(x, y, actions) {
+        if (this.menuComponent) {
+            this.menuComponent.dismiss();
+        }
 
-        let applicableActions = this._applicableActions(objectPath, actionsToBeIncluded);
-
-        this.openmct.overlays.menu({
-            actions: applicableActions,
+        let options = {
             x,
-            y
-        });
+            y,
+            actions
+        }
+
+        this.menuComponent = new Menu(options);
+        this.menuComponent.on('destroy', this._clearMenuComponent);
     }
 
-    /**
-     * @private
-     */
-    _applicableActions(objectPath, actionsToBeIncluded) {
-        let applicableActions = this._allActions.filter((action) => {
+    _clearMenuComponent() {
+        this.menuComponent = undefined;
+        delete this.menuComponent;
+    }
+
+    _applicableObjectActions(objectPath, actionsToBeIncluded) {
+        let applicableActions = this._allObjectActions.filter((action) => {
             if (actionsToBeIncluded) {
                 if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
                     return true;
@@ -108,5 +118,11 @@ class ContextMenuAPI {
 
         return applicableActions;
     }
+
+    _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
+        let applicableActions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
+
+        this.showMenu(x, y, applicableActions);
+    }
 }
-export default ContextMenuAPI;
+export default MenuAPI;

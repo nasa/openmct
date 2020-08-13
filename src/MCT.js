@@ -240,7 +240,7 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
-        this.contextMenu = new api.ContextMenuRegistry(this);
+        this.menus = new api.MenuAPI(this);
 
         this.router = new ApplicationRouter();
 

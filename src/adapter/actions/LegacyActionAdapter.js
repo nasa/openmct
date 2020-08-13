@@ -33,5 +33,5 @@ export default function LegacyActionAdapter(openmct, legacyActions) {
 
     legacyActions.filter(contextualCategoryOnly)
         .map(LegacyAction => new LegacyContextMenuAction(openmct, LegacyAction))
-        .forEach(openmct.contextMenu.registerAction);
+        .forEach(openmct.menus.registerObjectAction);
 }
