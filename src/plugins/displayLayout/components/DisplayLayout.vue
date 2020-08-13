@@ -171,6 +171,15 @@ export default {
                 return this.itemIsInCurrentSelection(item);
             });
         },
+        contentDimensions() {
+            return this.layoutItems.map(item => [
+                item.x + item.width,
+                item.y + item.height
+            ]).reduce((dimensions, coordinates) => [
+                Math.max(dimensions[0], coordinates[0]),
+                Math.max(dimensions[1], coordinates[1])
+            ], [0, 0]);
+        },
         showMarquee() {
             let selectionPath = this.selection[0];
             let singleSelectedLine = this.selection.length === 1
