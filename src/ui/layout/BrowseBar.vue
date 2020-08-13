@@ -39,6 +39,12 @@
                               :object-path="openmct.router.path"
                               class="c-notebook-snapshot-menubutton"
         />
+        <button
+            v-if="viewProvider.menuItems"
+            class="l-browse-bar__actions c-button icon-download"
+            title="See menu options"
+            @click.prevent.stop="showThreeDotMenu($event)"
+        ></button>
         <div class="l-browse-bar__actions">
             <button
                 v-if="isViewEditable & !isEditing"
@@ -98,6 +104,14 @@ const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
+    props: {
+        viewProvider: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+    },
     components: {
         NotebookMenuSwitcher,
         ViewSwitcher
@@ -271,6 +285,11 @@ export default {
         },
         goToParent() {
             window.location.hash = this.parentUrl;
+        },
+        showThreeDotMenu(event) {
+            event.preventDefault();
+            let applicableActions = this.viewProvider.menuItems();
+            this.openmct.menus.showMenu(event.x, event.y, applicableActions);
         }
     }
 }

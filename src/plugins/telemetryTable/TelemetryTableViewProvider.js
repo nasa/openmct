@@ -77,7 +77,7 @@ define([
                                 table,
                                 objectPath
                             },
-                            template: '<table-component :isEditing="isEditing" :marking="markingProp"/>'
+                            template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp"/>'
                         });
                     },
                     onEditModeChange(editMode) {
@@ -85,6 +85,13 @@ define([
                     },
                     onClearData() {
                         table.clearData();
+                    },
+                    menuItems() {
+                        if (component) {
+                            return component.$refs.tableComponent.getMenuItems();
+                        } else {
+                            return [];
+                        }
                     },
                     destroy: function (element) {
                         component.$destroy();

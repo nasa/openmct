@@ -165,6 +165,7 @@ export default {
                     this.$el, this.getSelectionContext(), true);
             }
 
+            this.$emit('change-provider', this.currentView);
             this.openmct.objectViews.on('clearData', this.clearData);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {

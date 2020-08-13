@@ -872,6 +872,66 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        getMenuItems() {
+
+            let exportCSV = {
+                name: 'Export Table Data',
+                description: "Export this view's data",
+                cssClass: 'icon-download labeled',
+                callBack: this.exportAllDataAsCSV 
+            };
+            let exportMarkedRows = {
+                name: 'Export Marked Rows',
+                description: "Export marked rows as CSV",
+                cssClass: 'icon-download labeled',
+                callBack: this.exportMarkedDataAsCSV
+            };
+            let unmarkAllRows = {
+                name: 'Unmark All Rows',
+                description: 'Unmark all rows',
+                cssClass: 'icon-x labeled',
+                callBack: this.unmarkAllRows
+            }
+            let pausePlay = {
+                name: this.paused ? 'Play' : 'Pause',
+                description: this.paused ? 'Continue real-time data flow' : 'Pause real-time data flow',
+                cssClass: this.paused ? 'icon-play' : 'icon-pause',
+                callBack: this.togglePauseByButton
+            }
+            let expandColumns = {
+                name: 'Expand Columns',
+                description: "Increase column widths to fit currently available data.",
+                cssClass: 'icon-arrows-right-left labeled',
+                callBack: this.recalculateColumnWidths
+            }
+            let autosizeColumns = {
+                name: 'Autosize Columns',
+                description: "Automatically size columns to fit the table into the available space.",
+                cssClass: 'icon-expand labeled',
+                callBack: this.autosizeColumns
+            }
+            let applicableOptions = [];
+
+            if (!this.markedRows.length) {
+                exportMarkedRows.cssClass += ' disabled';
+                unmarkAllRows.cssClass += ' disabled';
+            }
+
+            if (this.isAutosizeEnabled) {
+                autosizeColumns.cssClass += ' disabled';
+            } else {
+                expandColumns.cssClass += ' disabled';
+            }
+
+            return [
+                exportCSV,
+                exportMarkedRows,
+                unmarkAllRows,
+                pausePlay,
+                expandColumns,
+                autosizeColumns
+            ]
         }
     }
 }

@@ -53,6 +53,7 @@
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                :view-provider="viewProvider"
             />
             <toolbar
                 v-if="toolbar"
@@ -62,6 +63,7 @@
                 ref="browseObject"
                 class="l-shell__main-container"
                 :show-edit-view="true"
+                @change-provider="setProvider"
                 data-selectable
             />
             <component
@@ -154,6 +156,7 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
+            viewProvider: undefined,
             headExpanded
         }
     },
@@ -204,6 +207,9 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        setProvider(provider) {
+            this.viewProvider = provider;
         }
     }
 }
