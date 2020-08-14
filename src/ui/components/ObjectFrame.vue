@@ -45,6 +45,12 @@
             title="View Large"
             @click="expand"
         ></button>
+        <button
+            v-if="viewProvider.menuItems"
+            class="c-button icon-download"
+            title="View menu items"
+            @click.prevent.stop="showMenuItems($event)"
+        ></button>
     </div>
     <object-view
         ref="objectView"
@@ -52,6 +58,7 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
+        @change-provider="setViewProvider"
     />
 </div>
 </template>
@@ -94,11 +101,13 @@ export default {
     data() {
         let objectType = this.openmct.types.get(this.domainObject.type),
             cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
-            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type),
+            viewProvider = {};
 
         return {
             cssClass,
-            complexContent
+            complexContent,
+            viewProvider
         }
     },
     computed: {
@@ -155,6 +164,14 @@ export default {
         },
         getSelectionContext() {
             return this.$refs.objectView.getSelectionContext();
+        },
+        setViewProvider(provider) {
+            this.viewProvider = provider;
+        },
+        showMenuItems(event) {
+            let applicableMenuItems = this.viewProvider.menuItems();
+
+            this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
         }
     }
 }

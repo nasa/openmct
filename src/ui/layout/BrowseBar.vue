@@ -39,12 +39,6 @@
                               :object-path="openmct.router.path"
                               class="c-notebook-snapshot-menubutton"
         />
-        <button
-            v-if="viewProvider.menuItems"
-            class="l-browse-bar__actions c-button icon-download"
-            title="See menu options"
-            @click.prevent.stop="showThreeDotMenu($event)"
-        ></button>
         <div class="l-browse-bar__actions">
             <button
                 v-if="isViewEditable & !isEditing"
@@ -90,6 +84,12 @@
                 class="l-browse-bar__actions c-button icon-x"
                 title="Cancel Editing"
                 @click="promptUserandCancelEditing()"
+            ></button>
+            <button
+                v-if="viewProvider.menuItems"
+                class="l-browse-bar__actions c-button icon-download"
+                title="See menu options"
+                @click.prevent.stop="showThreeDotMenu($event)"
             ></button>
         </div>
     </div>
