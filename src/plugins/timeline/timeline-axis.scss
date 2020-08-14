@@ -19,7 +19,7 @@
       }
     }
 
-    text {
+    text:not(.activity) {
       // Tick labels
       fill: $colorBodyFg;
       font-size: 1em;
@@ -29,6 +29,10 @@
       stroke-linecap: butt;
       stroke-linejoin: bevel;
       stroke-width: 6px;
+    }
+
+    text.activity {
+      stroke: none;
     }
   }
 }

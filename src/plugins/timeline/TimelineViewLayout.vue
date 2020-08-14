@@ -22,7 +22,8 @@
 
 <template>
 <div class="c-timeline">
-    <plan></plan>
+<!--    <plan :drawingEngine="'svg'"></plan>-->
+    <plan :drawingEngine="'canvas'"></plan>
 </div>
 </template>
 

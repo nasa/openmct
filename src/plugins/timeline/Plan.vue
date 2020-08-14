@@ -21,6 +21,12 @@ const ROW_HEIGHT = 20;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    props: {
+        drawingEngine: {
+            type: String,
+            default: 'canvas'
+        }
+    },
     mounted() {
         this.activityPositions = {};
         this.viewBounds = this.openmct.time.bounds();
@@ -31,9 +37,12 @@ export default {
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
             .attr("class", "axis");
-
-        this.canvas = this.container.append('canvas').node();
-        this.canvasContext = this.canvas.getContext('2d');
+        if (this.drawingEngine !== 'svg') {
+            this.canvas = this.container.append('canvas').node();
+            this.canvasContext = this.canvas.getContext('2d');
+        } else {
+            this.canvasContext = document.createElement('canvas').getContext('2d');
+        }
 
         this.setDimensions();
         this.setScale();
@@ -45,8 +54,15 @@ export default {
     methods: {
         setDimensions() {
             const axisHolder = this.$refs.axisHolder;
+            const rect = axisHolder.getBoundingClientRect();
+            this.left = Math.round(rect.left);
+            this.top = Math.round(rect.top);
+            this.height = Math.round(rect.height);
             this.width = axisHolder.clientWidth;
-            this.canvas.width = this.width;
+            if (this.drawingEngine !== 'svg') {
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+            }
         },
         setScale() {
             if (!this.width) {
@@ -89,7 +105,7 @@ export default {
             return parseInt(metrics.width, 10);
         },
         // Get the row where the next activity will land.
-        getRowForActivity(rectX, rectWidth) {
+        getRowForActivity(rectX, rectWidth, defaultActivityRow) {
             let activityRow;
             let sortedActivityRows = Object.keys(this.activityPositions).sort();
             for (let i = 0; i < sortedActivityRows.length; i++) {
@@ -111,14 +127,12 @@ export default {
                 activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT;
             }
 
-            return activityRow || 0;
+            return activityRow || defaultActivityRow;
         },
         plotActivity() {
             let currentStart;
             let currentEnd;
-            const canvasDim = this.canvas.getBoundingClientRect();
-            console.log(canvasDim);
-            let activityRow = 0;
+            let activityRow = this.drawingEngine === 'svg' ? this.top : 0;
             this.domainObject.configuration.activities.forEach((activity) => {
                 if (this.isActivityInBounds(activity)) {
                     currentStart = Math.max(this.viewBounds.start, activity.start);
@@ -131,9 +145,9 @@ export default {
                     const textStart = canFitText ? rectX + PADDING : rectX + rectWidth + PADDING;
 
                     if (canFitText) {
-                        activityRow = this.getRowForActivity(rectX, rectWidth);
+                        activityRow = this.getRowForActivity(rectX, rectWidth, this.drawingEngine === 'svg' ? this.top : 0);
                     } else {
-                        activityRow = this.getRowForActivity(rectX, (textStart + activityNameWidth));
+                        activityRow = this.getRowForActivity(rectX, (textStart + activityNameWidth), this.drawingEngine === 'svg' ? this.top : 0);
                     }
 
                     if (!this.activityPositions[activityRow]) {
@@ -145,16 +159,39 @@ export default {
                         end: canFitText ? rectWidth : textStart + activityNameWidth
                     });
 
-                    this.canvasContext.fillStyle = activity.color;
-                    this.canvasContext.strokeStyle = "lightgray";
-                    this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
-
                     //TODO: Limit height of the text to 2 rows when it's placed outside the activity rectangle and include that in the activityRow calculation
-                    this.canvasContext.fillStyle = activity.textColor;
-                    this.canvasContext.strokeStyle = 'none';
-                    this.canvasContext.fillText(activity.name, textStart, parseInt(activityRow, 10) + TEXT_PADDING);
+                    if (this.drawingEngine === 'svg') {
+                        this.plotSVG(activity, rectX, rectWidth, activityRow, textStart);
+                    } else {
+                        this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart);
+                    }
                 }
             });
+        },
+        plotSVG(activity, rectX, rectWidth, activityRow, textStart) {
+            this.svgElement.append("rect")
+                .attr("class", "activity")
+                .attr("x", rectX)
+                .attr("y", activityRow)
+                .attr("width", rectWidth)
+                .attr("height", ROW_HEIGHT)
+                .attr('fill', activity.color)
+                .attr('stroke', "lightgray");
+
+            this.svgElement.append("text").text(activity.name)
+                .attr("class", "activity")
+                .attr("x", textStart)
+                .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
+                .attr('fill', activity.textColor);
+        },
+        plotCanvas(activity, rectX, rectWidth, activityRow, textStart) {
+            this.canvasContext.fillStyle = activity.color;
+            this.canvasContext.strokeStyle = "lightgray";
+            this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
+            this.canvasContext.strokeRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
+
+            this.canvasContext.fillStyle = activity.textColor;
+            this.canvasContext.fillText(activity.name, textStart, parseInt(activityRow, 10) + TEXT_PADDING);
         }
     }
 };
