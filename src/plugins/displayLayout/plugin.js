@@ -25,6 +25,7 @@ import Vue from 'vue';
 import objectUtils from 'objectUtils';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
+import DisplayLayoutDimensionsInspectorViewProvider from './DisplayLayoutDimensionsInspectorViewProvider';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 
 export default function DisplayLayoutPlugin(options) {
@@ -89,6 +90,7 @@ export default function DisplayLayoutPlugin(options) {
         });
         openmct.types.addType('layout', DisplayLayoutType());
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
+        openmct.inspectorViews.addProvider(new DisplayLayoutDimensionsInspectorViewProvider(openmct, options));
         openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'layout' && child.type === 'folder') {
