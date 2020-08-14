@@ -113,7 +113,7 @@ export default {
 
         this.requestHistory();
 
-        if(this.hasUnits) {
+        if (this.hasUnits) {
             this.setUnit();
         }
     },
@@ -128,7 +128,7 @@ export default {
             let newTimestamp = this.getParsedTimestamp(datum),
                 limit;
 
-            if(this.shouldUpdate(newTimestamp)) {
+            if (this.shouldUpdate(newTimestamp)) {
                 this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
@@ -163,7 +163,7 @@ export default {
         },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
-            if(!isTick) {
+            if (!isTick) {
                 this.resetValues();
                 this.requestHistory();
             }
@@ -184,17 +184,17 @@ export default {
             this.valueClass = '';
         },
         getParsedTimestamp(timestamp) {
-            if(this.timeSystemFormat()) {
+            if (this.timeSystemFormat()) {
                 return this.formats[this.timestampKey].parse(timestamp);
             }
         },
         getFormattedTimestamp(timestamp) {
-            if(this.timeSystemFormat()) {
+            if (this.timeSystemFormat()) {
                 return this.formats[this.timestampKey].format(timestamp);
             }
         },
         timeSystemFormat() {
-            if(this.formats[this.timestampKey]) {
+            if (this.formats[this.timestampKey]) {
                 return true;
             } else {
                 console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);

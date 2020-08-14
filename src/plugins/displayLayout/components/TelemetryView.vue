@@ -135,15 +135,18 @@ export default {
     computed: {
         showLabel() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'label';
         },
         showValue() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'value';
         },
         unit() {
-            let value = this.item.value,
-                unit = this.metadata.value(value).unit;
+            let value = this.item.value;
+            let unit = this.metadata.value(value).unit;
+
             return unit;
         },
         styleObject() {
