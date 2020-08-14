@@ -6,7 +6,7 @@ export default function DisplayLayoutDimensionsInspectorViewProvider(openmct, op
         key: 'display-layout-dimensions',
         name: 'Dimensions',
         canView: function (selection) {
-            if (selection.length === 0) {
+            if (selection.length !== 1) {
                 return false;
             }
 
