@@ -311,7 +311,7 @@ export default {
             let disabled = false;
             let index = this.selectedImageIndex();
 
-            if (index === 0) {
+            if (index === 0|| this.imageHistory.length < 2) {
                 disabled = true;
             }
 
