@@ -31,11 +31,6 @@ describe('RootObjectProvider', function () {
         rootObjectProvider = new RootObjectProvider(rootRegistry);
     });
 
-    afterEach(() => {
-        rootRegistry.getRoots.calls.reset();
-        rootObjectProvider = undefined;
-    });
-
     it('supports fetching root', async function () {
         let root = await rootObjectProvider.get();
 
