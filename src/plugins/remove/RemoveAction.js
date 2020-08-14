@@ -25,6 +25,8 @@ export default class RemoveAction {
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
         this.cssClass = "icon-trash";
+        this.group = "action";
+        this.priority = 1;
 
         this.openmct = openmct;
     }

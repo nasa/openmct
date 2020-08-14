@@ -282,14 +282,15 @@ export default {
             window.location.hash = this.parentUrl;
         },
         showThreeDotMenu(event) {
-            let applicableViewActions = this.viewProvider.menuItems && this.viewProvider.menuItems();
-            let applicableObjectActions = this.openmct.menus._applicableObjectActions(this.openmct.router.path);
+            let applicableViewMenuItems = this.viewProvider.menuItems && this.viewProvider.menuItems();
+            let applicableObjectMenuItems = this.openmct.menus._applicableObjectActions(this.openmct.router.path);
             let applicableMenuItems;
 
-            if (!applicableViewActions) {
-                applicableMenuItems = applicableViewActions
+            if (!applicableViewMenuItems) {
+                applicableMenuItems = applicableObjectMenuItems;
             } else {
-                applicableMenuItems = [applicableViewActions, applicableObjectActions];
+                applicableObjectMenuItems.unshift(applicableViewMenuItems);
+                applicableMenuItems = applicableObjectMenuItems;
             }
 
             this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);

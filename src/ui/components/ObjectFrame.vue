@@ -172,7 +172,8 @@ export default {
             if (!applicableViewMenuItems) {
                 applicableMenuItems = applicableObjectMenuItems;
             } else {
-                applicableMenuItems = [applicableViewMenuItems, applicableObjectMenuItems];
+                applicableObjectMenuItems.unshift(applicableViewMenuItems);
+                applicableMenuItems = applicableObjectMenuItems;
             }
 
             this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);

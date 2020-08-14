@@ -48,6 +48,8 @@ define([
                             "implementation": ExportAsJSONAction,
                             "category": "contextual",
                             "cssClass": "icon-export",
+                            "group": "json",
+                            "priority": 2,
                             "depends": [
                                 "openmct",
                                 "exportService",
@@ -62,6 +64,8 @@ define([
                             "implementation": ImportAsJSONAction,
                             "category": "contextual",
                             "cssClass": "icon-import",
+                            "group": "json",
+                            "priority": 2,
                             "depends": [
                                 "exportService",
                                 "identifierService",

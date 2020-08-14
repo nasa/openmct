@@ -33,6 +33,7 @@ class MenuAPI {
     constructor(openmct) {
         this.openmct = openmct;
         this._allObjectActions = [];
+        this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
 
         this.showMenu = this.showMenu.bind(this);
         this.registerObjectAction = this.registerObjectAction.bind(this);
@@ -116,7 +117,34 @@ class MenuAPI {
             };
         });
 
-        return applicableActions;
+        return this._groupAndSortActions(applicableActions);
+    }
+
+    _groupAndSortActions(actionsArray) {
+        let actionsObject = {};
+        let groupedSortedActionsArray = [];
+
+        function sortDescending(a,b) {
+            return b.priority - a.priority;
+        }
+
+        actionsArray.forEach(action => {
+            if (actionsObject[action.group] === undefined) {
+                actionsObject[action.group] = [action];
+            } else {
+                actionsObject[action.group].push(action);
+            }
+        });
+
+        this._groupOrder.forEach(group => {
+            let groupArray = actionsObject[group];
+
+            if (groupArray) {
+                groupedSortedActionsArray.push(groupArray.sort(sortDescending));
+            }
+        });
+
+        return groupedSortedActionsArray;
     }
 
     _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {

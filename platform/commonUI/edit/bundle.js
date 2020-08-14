@@ -139,7 +139,9 @@ define([
                         ],
                         "description": "Edit",
                         "category": "view-control",
-                        "cssClass": "major icon-pencil"
+                        "cssClass": "major icon-pencil",
+                        "group": "action",
+                        "priority": 10
                     },
                     {
                         "key": "properties",

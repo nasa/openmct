@@ -31,6 +31,8 @@ export default class LegacyContextMenuAction {
         this.description = LegacyAction.definition.description;
         this.cssClass = LegacyAction.definition.cssClass;
         this.LegacyAction = LegacyAction;
+        this.group = LegacyAction.definition.group;
+        this.priority = LegacyAction.definition.priority;
     }
 
     invoke(objectPath) {

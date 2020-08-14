@@ -16,7 +16,7 @@
             <div
                 v-if="index !== actions.length - 1"
                 :key="index"
-                style="min-height: 2px; max-height: 2px; background: gray; margin: 4px 0;"
+                style="min-height: 1px; max-height: 1px; background: gray; margin: 4px 0;"
             >
             </div>
             <li v-if="actionGroups.length === 0" :key="index">
