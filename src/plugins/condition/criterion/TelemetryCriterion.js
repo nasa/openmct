@@ -120,7 +120,7 @@ export default class TelemetryCriterion extends EventEmitter {
         return datum;
     }
 
-    getResult(data) {
+    updateResult(data) {
         const validatedData = this.isValid() ? data : {};
         if (this.isStalenessCheck()) {
             if (this.stalenessSubscription) {
