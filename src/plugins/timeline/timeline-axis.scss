@@ -9,10 +9,6 @@
     > g.axis {
       // Overall Tick holder
       transform: translateY($tickYPos);
-      //path {
-      //  // Domain line
-      //  display: none;
-      //}
 
       g {
          //Each tick. These move on drag.
@@ -23,7 +19,7 @@
       }
     }
 
-    text:not(.activity) {
+    text {
       // Tick labels
       fill: $colorBodyFg;
       font-size: 1em;
@@ -33,10 +29,6 @@
       stroke-linecap: butt;
       stroke-linejoin: bevel;
       stroke-width: 6px;
-    }
-
-    text.activity {
-      stroke: none;
     }
   }
 }

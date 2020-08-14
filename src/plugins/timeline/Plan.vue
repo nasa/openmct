@@ -18,7 +18,6 @@ const TEXT_PADDING = 15;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 20;
-const canvasContext = document.createElement('canvas').getContext("2d");
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -27,25 +26,27 @@ export default {
         this.viewBounds = this.openmct.time.bounds();
         this.xAxis = d3Axis.axisTop();
 
-        this.svgElement = d3Selection.select(this.$refs.axisHolder).append("svg:svg");
+        this.container = d3Selection.select(this.$refs.axisHolder);
+        this.svgElement = this.container.append("svg:svg");
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
             .attr("class", "axis");
 
-        this.setAxisDimensions();
+        this.canvas = this.container.append('canvas').node();
+        this.canvasContext = this.canvas.getContext('2d');
+
+        this.setDimensions();
         this.setScale();
+
         // setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.plotActivity();
 
     },
     methods: {
-        setAxisDimensions() {
+        setDimensions() {
             const axisHolder = this.$refs.axisHolder;
-            const rect = axisHolder.getBoundingClientRect();
-            this.left = Math.round(rect.left);
-            this.top = Math.round(rect.top);
-            this.height = Math.round(rect.height);
             this.width = axisHolder.clientWidth;
+            this.canvas.width = this.width;
         },
         setScale() {
             if (!this.width) {
@@ -83,7 +84,7 @@ export default {
         },
         getTextWidth(name) {
             // canvasContext.font = font;
-            let metrics = canvasContext.measureText(name);
+            let metrics = this.canvasContext.measureText(name);
 
             return parseInt(metrics.width, 10);
         },
@@ -110,12 +111,14 @@ export default {
                 activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT;
             }
 
-            return activityRow || this.top;
+            return activityRow || 0;
         },
         plotActivity() {
             let currentStart;
             let currentEnd;
-            let activityRow = this.top;
+            const canvasDim = this.canvas.getBoundingClientRect();
+            console.log(canvasDim);
+            let activityRow = 0;
             this.domainObject.configuration.activities.forEach((activity) => {
                 if (this.isActivityInBounds(activity)) {
                     currentStart = Math.max(this.viewBounds.start, activity.start);
@@ -142,21 +145,14 @@ export default {
                         end: canFitText ? rectWidth : textStart + activityNameWidth
                     });
 
-                    this.svgElement.append("rect")
-                        .attr("class", "activity")
-                        .attr("x", rectX)
-                        .attr("y", activityRow)
-                        .attr("width", rectWidth)
-                        .attr("height", ROW_HEIGHT)
-                        .attr('fill', activity.color)
-                        .attr('stroke', "lightgray");
+                    this.canvasContext.fillStyle = activity.color;
+                    this.canvasContext.strokeStyle = "lightgray";
+                    this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
 
                     //TODO: Limit height of the text to 2 rows when it's placed outside the activity rectangle and include that in the activityRow calculation
-                    this.svgElement.append("text").text(activity.name)
-                        .attr("class", "activity")
-                        .attr("x", textStart)
-                        .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
-                        .attr('fill', activity.textColor);
+                    this.canvasContext.fillStyle = activity.textColor;
+                    this.canvasContext.strokeStyle = 'none';
+                    this.canvasContext.fillText(activity.name, textStart, parseInt(activityRow, 10) + TEXT_PADDING);
                 }
             });
         }
