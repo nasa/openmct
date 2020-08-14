@@ -911,6 +911,7 @@ export default {
                 cssClass: 'icon-expand labeled',
                 callBack: this.autosizeColumns
             }
+            let columnSizing;
             let applicableOptions = [];
 
             if (!this.markedRows.length) {
@@ -919,9 +920,9 @@ export default {
             }
 
             if (this.isAutosizeEnabled) {
-                autosizeColumns.cssClass += ' disabled';
+                columnSizing = expandColumns;
             } else {
-                expandColumns.cssClass += ' disabled';
+                columnSizing = autosizeColumns;
             }
 
             return [
@@ -929,8 +930,7 @@ export default {
                 exportMarkedRows,
                 unmarkAllRows,
                 pausePlay,
-                expandColumns,
-                autosizeColumns
+                columnSizing
             ]
         }
     }

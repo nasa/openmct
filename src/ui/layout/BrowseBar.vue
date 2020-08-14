@@ -20,10 +20,6 @@
                 {{ domainObject.name }}
             </span>
         </div>
-        <div
-            class="l-browse-bar__context-actions c-disclosure-button"
-            @click.prevent.stop="showContextMenu"
-        ></div>
     </div>
 
     <div class="l-browse-bar__end">
@@ -86,7 +82,6 @@
                 @click="promptUserandCancelEditing()"
             ></button>
             <button
-                v-if="viewProvider.menuItems"
                 class="l-browse-bar__actions c-button icon-download"
                 title="See menu options"
                 @click.prevent.stop="showThreeDotMenu($event)"
@@ -287,9 +282,17 @@ export default {
             window.location.hash = this.parentUrl;
         },
         showThreeDotMenu(event) {
-            event.preventDefault();
-            let applicableActions = this.viewProvider.menuItems();
-            this.openmct.menus.showMenu(event.x, event.y, applicableActions);
+            let applicableViewActions = this.viewProvider.menuItems && this.viewProvider.menuItems();
+            let applicableObjectActions = this.openmct.menus._applicableObjectActions(this.openmct.router.path);
+            let applicableMenuItems;
+
+            if (!applicableViewActions) {
+                applicableMenuItems = applicableViewActions
+            } else {
+                applicableMenuItems = [applicableViewActions, applicableObjectActions];
+            }
+
+            this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
         }
     }
 }

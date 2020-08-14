@@ -35,9 +35,6 @@
                 {{ domainObject && domainObject.name }}
             </div>
         </div>
-        <context-menu-drop-down
-            :object-path="objectPath"
-        />
     </div>
     <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
         <button
@@ -46,7 +43,6 @@
             @click="expand"
         ></button>
         <button
-            v-if="viewProvider.menuItems"
             class="c-button icon-download"
             title="View menu items"
             @click.prevent.stop="showMenuItems($event)"
@@ -169,7 +165,15 @@ export default {
             this.viewProvider = provider;
         },
         showMenuItems(event) {
-            let applicableMenuItems = this.viewProvider.menuItems();
+            let applicableViewMenuItems = this.viewProvider.menuItems && this.viewProvider.menuItems();
+            let applicableObjectMenuItems = this.openmct.menus._applicableObjectActions(this.objectPath);
+            let applicableMenuItems;
+
+            if (!applicableViewMenuItems) {
+                applicableMenuItems = applicableObjectMenuItems;
+            } else {
+                applicableMenuItems = [applicableViewMenuItems, applicableObjectMenuItems];
+            }
 
             this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
         }

@@ -1,6 +1,31 @@
 <template>
 <div class="c-menu">
-    <ul>
+    <ul v-if="actions.length && actions[0].length">
+        <template 
+            v-for="(actionGroups, index) in actions"  
+        >
+            <li
+                v-for="action in actionGroups"
+                :key="action.name"
+                :class="action.cssClass"
+                :title="action.description"
+                @click="action.callBack"
+            >
+                {{ action.name }}
+            </li>
+            <div
+                v-if="index !== actions.length - 1"
+                :key="index"
+                style="min-height: 2px; max-height: 2px; background: gray; margin: 4px 0;"
+            >
+            </div>
+            <li v-if="actionGroups.length === 0" :key="index">
+                No actions defined.
+            </li>
+        </template>
+    </ul>
+
+    <ul v-else>
         <li
             v-for="action in actions"
             :key="action.name"
