@@ -129,7 +129,7 @@ export default {
             let ladTable = this.ladTableObjects[index];
 
             this.$delete(this.ladTelemetryObjects, ladTable.key);
-            this.ladTableObjects.splice(index,1);
+            this.ladTableObjects.splice(index, 1);
         },
         reorderLadTables(reorderPlan) {
             let oldComposition = this.ladTableObjects.slice();
@@ -147,7 +147,7 @@ export default {
                 array.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, array);
-            }
+            };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
@@ -157,7 +157,7 @@ export default {
                 telemetryObjects.splice(index, 1);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
-            }
+            };
         }
     }
 };

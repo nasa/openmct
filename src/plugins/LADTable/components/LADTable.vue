@@ -68,16 +68,6 @@ export default {
             return itemsWithUnits.length !== 0;
         }
     },
-    computed: {
-        hasUnits() {
-            let itemsWithUnits = this.items.filter((item) => {
-                let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
-                return this.metadataHasUnits(metadata.valueMetadatas);
-
-            });
-            return itemsWithUnits.length !== 0;
-        }
-    },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
