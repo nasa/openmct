@@ -68,7 +68,7 @@ export default class Condition extends EventEmitter {
         this.description = '';
     }
 
-    calculateResult(datum) {
+    updateResult(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
 
