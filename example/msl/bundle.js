@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/RemsTelemetryServerAdapter",
@@ -31,14 +30,15 @@ define([
     RemsTelemetryProvider
 ) {
     "use strict";
+
     return {
-        name:"example/msl",
+        name: "example/msl",
         definition: {
-            "name" : "Mars Science Laboratory Data Adapter",
-            "extensions" : {
+            "name": "Mars Science Laboratory Data Adapter",
+            "extensions": {
                 "types": [
                     {
-                        "name":"Mars Science Laboratory",
+                        "name": "Mars Science Laboratory",
                         "key": "msl.curiosity",
                         "cssClass": "icon-object"
                     },
@@ -89,7 +89,7 @@ define([
                 ],
                 "services": [
                     {
-                        "key":"rems.adapter",
+                        "key": "rems.adapter",
                         "implementation": RemsTelemetryServerAdapter,
                         "depends": ["$http", "$log", "REMS_WS_URL"]
                     }

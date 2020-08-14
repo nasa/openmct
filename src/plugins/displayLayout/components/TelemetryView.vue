@@ -71,13 +71,13 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
-import printj from 'printj'
+import LayoutFrame from './LayoutFrame.vue';
+import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
-const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
-    DEFAULT_POSITION = [1, 1],
-    CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
+const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+const DEFAULT_POSITION = [1, 1];
+const CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -130,7 +130,7 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined
-        }
+        };
     },
     computed: {
         showLabel() {
@@ -181,6 +181,7 @@ export default {
             }
 
             let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
             return alarm && alarm.cssClass;
         }
     },
@@ -283,6 +284,6 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
         }
     }
-}
+};
 
 </script>

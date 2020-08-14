@@ -1,19 +1,19 @@
 define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
     describe('A Summary Widget Rule Evaluator', function () {
-        var evaluator,
-            testEvaluator,
-            testOperation,
-            mockCache,
-            mockTestCache,
-            mockComposition,
-            mockConditions,
-            mockConditionsEmpty,
-            mockConditionsUndefined,
-            mockConditionsAnyTrue,
-            mockConditionsAllTrue,
-            mockConditionsAnyFalse,
-            mockConditionsAllFalse,
-            mockOperations;
+        let evaluator;
+        let testEvaluator;
+        let testOperation;
+        let mockCache;
+        let mockTestCache;
+        let mockComposition;
+        let mockConditions;
+        let mockConditionsEmpty;
+        let mockConditionsUndefined;
+        let mockConditionsAnyTrue;
+        let mockConditionsAllTrue;
+        let mockConditionsAnyFalse;
+        let mockConditionsAllFalse;
+        let mockOperations;
 
         beforeEach(function () {
             mockCache = {
@@ -57,7 +57,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 key: 'alpha',
                 operation: 'greaterThan',
                 values: [2]
-            },{
+            }, {
                 object: 'b',
                 key: 'gamma',
                 operation: 'lessThan',
@@ -74,22 +74,22 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 key: '',
                 operation: '',
                 values: []
-            },{
+            }, {
                 object: 'a',
                 key: 'No Such Key',
                 operation: '',
                 values: []
-            },{
+            }, {
                 object: 'a',
                 key: 'alpha',
                 operation: 'No Such Operation',
                 values: []
-            },{
+            }, {
                 object: 'all',
                 key: 'Nonexistent Field',
                 operation: 'Random Operation',
                 values: []
-            },{
+            }, {
                 object: 'any',
                 key: 'Nonexistent Field',
                 operation: 'Whatever Operation',
@@ -128,7 +128,7 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                     appliesTo: ['number'],
                     inputCount: 1,
                     getDescription: function (values) {
-                        return ' > ' + values [0];
+                        return ' > ' + values[0];
                     }
                 },
                 lessThan: {

@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window*/
-
 define([
     './Constants',
     './FrameworkInitializer',
@@ -98,6 +96,7 @@ define([
 
         // Initialize the application
         $log.info("Initializing application.");
+
         return initializer.runApplication();
     };
 

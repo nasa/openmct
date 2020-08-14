@@ -59,7 +59,7 @@ export default {
             notebookSnapshot: null,
             notebookTypes: [],
             showMenu: false
-        }
+        };
     },
     mounted() {
         this.notebookSnapshot = new Snapshot(this.openmct);
@@ -70,7 +70,7 @@ export default {
         document.removeEventListener('click', this.hideMenu);
     },
     methods: {
-        async setNotebookTypes() {
+        setNotebookTypes() {
             const notebookTypes = [];
             const defaultNotebook = getDefaultNotebook();
 
@@ -126,5 +126,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

@@ -64,5 +64,5 @@ export default function ConditionPlugin() {
         openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
         openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
 
-    }
+    };
 }

@@ -59,8 +59,7 @@ import {
     deleteSearchParam
 } from 'utils/openmctLocation';
 
-
-var unknownObjectType = {
+const unknownObjectType = {
     definition: {
         cssClass: 'icon-object-unknown',
         name: 'Unknown Type'
@@ -68,7 +67,7 @@ var unknownObjectType = {
 };
 
 export default {
-    inject: ['openmct','domainObject', 'composition'],
+    inject: ['openmct', 'domainObject', 'composition'],
     components: {
         ObjectView
     },
@@ -135,7 +134,7 @@ export default {
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
-    methods:{
+    methods: {
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
                 this.currentTab = this.tabsList[index];
@@ -149,12 +148,12 @@ export default {
             this.currentTab = tab;
         },
         showRemoveDialog(index) {
-            if(!this.tabsList[index]) {
+            if (!this.tabsList[index]) {
                 return;
             }
 
             let activeTab = this.tabsList[index];
-            let childDomainObject = activeTab.domainObject
+            let childDomainObject = activeTab.domainObject;
 
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
@@ -181,12 +180,12 @@ export default {
             this.composition.remove(childDomainObject);
         },
         addItem(domainObject) {
-            let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
-                tabItem = {
-                    domainObject,
-                    type: type,
-                    key: this.openmct.objects.makeKeyString(domainObject.identifier)
-                };
+            let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
+            let tabItem = {
+                domainObject,
+                type: type,
+                key: this.openmct.objects.makeKeyString(domainObject.identifier)
+            };
 
             this.tabsList.push(tabItem);
 
@@ -201,9 +200,9 @@ export default {
         },
         removeItem(identifier) {
             let pos = this.tabsList.findIndex(tab =>
-                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
-                ),
-                tabToBeRemoved = this.tabsList[pos];
+                tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
+            );
+            let tabToBeRemoved = this.tabsList[pos];
 
             this.tabsList.splice(pos, 1);
 
@@ -262,5 +261,5 @@ export default {
             deleteSearchParam(this.searchTabKey);
         }
     }
-}
+};
 </script>

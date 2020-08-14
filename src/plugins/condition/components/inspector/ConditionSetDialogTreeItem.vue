@@ -98,7 +98,7 @@ export default {
             loaded: false,
             children: [],
             expanded: false
-        }
+        };
     },
     computed: {
         navigated() {
@@ -106,8 +106,10 @@ export default {
             const isSelectedObject = itemId && this.openmct.objects.areIdsEqual(this.node.object.identifier, itemId);
             if (isSelectedObject && this.node.objectPath && this.node.objectPath.length > 1) {
                 const isParent = this.openmct.objects.areIdsEqual(this.node.objectPath[1].identifier, this.selectedItem.parentId);
+
                 return isSelectedObject && isParent;
             }
+
             return isSelectedObject;
         },
         isAlias() {
@@ -115,7 +117,9 @@ export default {
             if (!parent) {
                 return false;
             }
+
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+
             return parentKeyString !== this.node.object.location;
         },
         typeClass() {
@@ -123,6 +127,7 @@ export default {
             if (!type) {
                 return 'icon-object-unknown';
             }
+
             return type.definition.cssClass;
         }
     },
@@ -131,6 +136,7 @@ export default {
             if (!this.hasChildren) {
                 return;
             }
+
             if (!this.loaded && !this.isLoading) {
                 this.composition = this.openmct.composition.get(this.domainObject);
                 this.composition.on('add', this.addChild);
@@ -181,5 +187,5 @@ export default {
             this.loaded = true;
         }
     }
-}
+};
 </script>

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/BrowserPersistenceProvider"
@@ -29,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/persistence",
+        name: "example/persistence",
         definition: {
             "extensions": {
                 "components": [

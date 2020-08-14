@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,requestAnimationFrame,Float32Array*/
 
 /**
  * Module defining MCTChart. Created by vwoeltje on 11/12/14.
@@ -40,9 +39,8 @@ function (
     DrawLoader,
     eventHelpers
 ) {
-
-    var MARKER_SIZE = 6.0,
-        HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
+    const MARKER_SIZE = 6.0;
+    const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 
     /**
      * Offsetter adjusts x and y values by a fixed amount,
@@ -74,7 +72,7 @@ function (
             this.$scope.$watch('highlights', this.scheduleDraw);
             this.$scope.$watch('rectangles', this.scheduleDraw);
             this.config.series.forEach(this.onSeriesAdd, this);
-        }
+        };
     }
 
     eventHelpers.extend(MCTChartController.prototype);
@@ -94,14 +92,15 @@ function (
         if (mode === o) {
             return;
         }
-        var elements = this.seriesElements.get(series);
+
+        const elements = this.seriesElements.get(series);
         elements.lines.forEach(function (line) {
             this.lines.splice(this.lines.indexOf(line), 1);
             line.destroy();
         }, this);
         elements.lines = [];
 
-        var newLine = this.lineForSeries(series);
+        const newLine = this.lineForSeries(series);
         if (newLine) {
             elements.lines.push(newLine);
             this.lines.push(newLine);
@@ -112,11 +111,13 @@ function (
         if (mode === o) {
             return;
         }
-        var elements = this.seriesElements.get(series);
+
+        const elements = this.seriesElements.get(series);
         if (elements.alarmSet) {
             elements.alarmSet.destroy();
             this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
         }
+
         elements.alarmSet = this.alarmPointSetForSeries(series);
         if (elements.alarmSet) {
             this.alarmSets.push(elements.alarmSet);
@@ -127,14 +128,15 @@ function (
         if (mode === o) {
             return;
         }
-        var elements = this.seriesElements.get(series);
+
+        const elements = this.seriesElements.get(series);
         elements.pointSets.forEach(function (pointSet) {
             this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
             pointSet.destroy();
         }, this);
         elements.pointSets = [];
 
-        var pointSet = this.pointSetForSeries(series);
+        const pointSet = this.pointSetForSeries(series);
         if (pointSet) {
             elements.pointSets.push(pointSet);
             this.pointSets.push(pointSet);
@@ -174,7 +176,7 @@ function (
             return;
         }
 
-        var offsets = {
+        const offsets = {
             x: series.getXVal(offsetPoint),
             y: series.getYVal(offsetPoint)
         };
@@ -200,7 +202,8 @@ function (
         if (this.drawAPI) {
             this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
         }
-        return !!this.drawAPI;
+
+        return Boolean(this.drawAPI);
     };
 
     MCTChartController.prototype.fallbackToCanvas = function () {
@@ -208,10 +211,10 @@ function (
         DrawLoader.releaseDrawAPI(this.drawAPI);
         // Have to throw away the old canvas elements and replace with new
         // canvas elements in order to get new drawing contexts.
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.innerHTML = this.TEMPLATE;
-        var mainCanvas = div.querySelectorAll("canvas")[1];
-        var overlayCanvas = div.querySelectorAll("canvas")[0];
+        const mainCanvas = div.querySelectorAll("canvas")[1];
+        const overlayCanvas = div.querySelectorAll("canvas")[0];
         this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
         this.canvas = mainCanvas;
         this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
@@ -221,7 +224,7 @@ function (
     };
 
     MCTChartController.prototype.removeChartElement = function (series) {
-        var elements = this.seriesElements.get(series);
+        const elements = this.seriesElements.get(series);
 
         elements.lines.forEach(function (line) {
             this.lines.splice(this.lines.indexOf(line), 1);
@@ -235,6 +238,7 @@ function (
             elements.alarmSet.destroy();
             this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
         }
+
         this.seriesElements.delete(series);
     };
 
@@ -246,6 +250,7 @@ function (
                 this.offset
             );
         }
+
         if (series.get('interpolate') === 'stepAfter') {
             return new MCTChartLineStepAfter(
                 series,
@@ -276,18 +281,18 @@ function (
     };
 
     MCTChartController.prototype.makeChartElement = function (series) {
-        var elements = {
+        const elements = {
             lines: [],
             pointSets: []
         };
 
-        var line = this.lineForSeries(series);
+        const line = this.lineForSeries(series);
         if (line) {
             elements.lines.push(line);
             this.lines.push(line);
         }
 
-        var pointSet = this.pointSetForSeries(series);
+        const pointSet = this.pointSetForSeries(series);
         if (pointSet) {
             elements.pointSets.push(pointSet);
             this.pointSets.push(pointSet);
@@ -305,6 +310,7 @@ function (
         if (!this.offset.x || !this.offset.y) {
             return false;
         }
+
         return true;
     };
 
@@ -320,6 +326,7 @@ function (
         if (this.isDestroyed) {
             return;
         }
+
         this.drawAPI.clear();
         if (this.canDraw()) {
             this.updateViewport();
@@ -330,21 +337,22 @@ function (
     };
 
     MCTChartController.prototype.updateViewport = function () {
-        var xRange = this.config.xAxis.get('displayRange'),
-            yRange = this.config.yAxis.get('displayRange');
+        const xRange = this.config.xAxis.get('displayRange');
+        const yRange = this.config.yAxis.get('displayRange');
 
         if (!xRange || !yRange) {
             return;
         }
 
-        var dimensions = [
-                xRange.max - xRange.min,
-                yRange.max - yRange.min
-            ],
-            origin = [
-                this.offset.x(xRange.min),
-                this.offset.y(yRange.min)
-            ];
+        const dimensions = [
+            xRange.max - xRange.min,
+            yRange.max - yRange.min
+        ];
+
+        const origin = [
+            this.offset.x(xRange.min),
+            this.offset.y(yRange.min)
+        ];
 
         this.drawAPI.setDimensions(
             dimensions,
@@ -391,13 +399,14 @@ function (
     };
 
     MCTChartController.prototype.drawHighlight = function (highlight) {
-        var points = new Float32Array([
-                this.offset.xVal(highlight.point, highlight.series),
-                this.offset.yVal(highlight.point, highlight.series)
-            ]),
-            color = highlight.series.get('color').asRGBAArray(),
-            pointCount = 1,
-            shape = highlight.series.get('markerShape');
+        const points = new Float32Array([
+            this.offset.xVal(highlight.point, highlight.series),
+            this.offset.yVal(highlight.point, highlight.series)
+        ]);
+
+        const color = highlight.series.get('color').asRGBAArray();
+        const pointCount = 1;
+        const shape = highlight.series.get('markerShape');
 
         this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE, shape);
     };

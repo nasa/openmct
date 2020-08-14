@@ -31,7 +31,7 @@ define([
      */
     function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
         eventHelpers.extend(this);
-        var self = this;
+        const self = this;
         const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
 
         this.config = ruleConfig;
@@ -125,7 +125,7 @@ define([
          * @private
          */
         function onTriggerInput(event) {
-            var elem = event.target;
+            const elem = event.target;
             self.config.trigger = encodeMsg(elem.value);
             self.generateDescription();
             self.updateDomainObject();
@@ -140,7 +140,7 @@ define([
          * @private
          */
         function onTextInput(elem, inputKey) {
-            var text = encodeMsg(elem.value);
+            const text = encodeMsg(elem.value);
             self.config[inputKey] = text;
             self.updateDomainObject();
             if (inputKey === 'name') {
@@ -148,6 +148,7 @@ define([
             } else if (inputKey === 'label') {
                 self.thumbnailLabel.html(text);
             }
+
             self.eventEmitter.emit('change');
         }
 
@@ -158,12 +159,14 @@ define([
          */
         function onDragStart(event) {
             $('.t-drag-indicator').each(function () {
+                // eslint-disable-next-line no-invalid-this
                 $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
             });
             self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
             self.widgetDnD.dragStart(self.config.id);
             self.domElement.hide();
         }
+
         /**
          * Show or hide this rule's configuration properties
          * @private
@@ -185,7 +188,7 @@ define([
         this.thumbnailLabel.html(self.config.label);
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
-            var input = self.colorInputs[inputKey];
+            const input = self.colorInputs[inputKey];
 
             input.set(self.config.style[inputKey]);
             onColorInput(self.config.style[inputKey], inputKey);
@@ -201,6 +204,7 @@ define([
         Object.keys(this.textInputs).forEach(function (inputKey) {
             self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
             self.listenTo(self.textInputs[inputKey], 'input', function () {
+                // eslint-disable-next-line no-invalid-this
                 onTextInput(this, inputKey);
             });
         });
@@ -219,6 +223,7 @@ define([
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
         this.widgetDnD.on('drop', function () {
+            // eslint-disable-next-line no-invalid-this
             this.domElement.show();
             $('.t-drag-indicator').hide();
         }, this);
@@ -307,8 +312,8 @@ define([
      * Mutate thet domain object with this rule's local configuration
      */
     Rule.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.' +
-            this.config.id, this.config);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.'
+            + this.config.id, this.config);
     };
 
     /**
@@ -325,9 +330,9 @@ define([
      * registered remove callbacks
      */
     Rule.prototype.remove = function () {
-        var ruleOrder = this.domainObject.configuration.ruleOrder,
-            ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            self = this;
+        const ruleOrder = this.domainObject.configuration.ruleOrder;
+        const ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        const self = this;
 
         ruleConfigById[self.config.id] = undefined;
         _.remove(ruleOrder, function (ruleId) {
@@ -345,7 +350,7 @@ define([
      * callback with the cloned configuration as an argument if one has been registered
      */
     Rule.prototype.duplicate = function () {
-        var sourceRule = JSON.parse(JSON.stringify(this.config));
+        const sourceRule = JSON.parse(JSON.stringify(this.config));
         sourceRule.expanded = true;
         this.eventEmitter.emit('duplicate', sourceRule);
     };
@@ -359,15 +364,15 @@ define([
      *                          consisting of sourceCondition and index fields
      */
     Rule.prototype.initCondition = function (config) {
-        var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            newConfig,
-            sourceIndex = config && config.index,
-            defaultConfig = {
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            };
+        const ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        let newConfig;
+        const sourceIndex = config && config.index;
+        const defaultConfig = {
+            object: '',
+            key: '',
+            operation: '',
+            values: []
+        };
 
         newConfig = (config !== undefined ? config.sourceCondition : defaultConfig);
         if (sourceIndex !== undefined) {
@@ -375,6 +380,7 @@ define([
         } else {
             ruleConfigById[this.config.id].conditions.push(newConfig);
         }
+
         this.domainObject.configuration.ruleConfigById = ruleConfigById;
         this.updateDomainObject();
         this.refreshConditions();
@@ -385,16 +391,16 @@ define([
      * Build {Condition} objects from configuration and rebuild associated view
      */
     Rule.prototype.refreshConditions = function () {
-        var self = this,
-            $condition = null,
-            loopCnt = 0,
-            triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
+        const self = this;
+        let $condition = null;
+        let loopCnt = 0;
+        const triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
         $('.t-condition', this.domElement).remove();
 
         this.config.conditions.forEach(function (condition, index) {
-            var newCondition = new Condition(condition, index, self.conditionManager);
+            const newCondition = new Condition(condition, index, self.conditionManager);
             newCondition.on('remove', self.removeCondition, self);
             newCondition.on('duplicate', self.initCondition, self);
             newCondition.on('change', self.onConditionChange, self);
@@ -413,6 +419,7 @@ define([
                 if (loopCnt > 0) {
                     $('.t-condition-context', $condition).html(triggerContextStr + ' when');
                 }
+
                 loopCnt++;
             });
         }
@@ -428,8 +435,8 @@ define([
      * @param {number} removeIndex The index of the condition to remove
      */
     Rule.prototype.removeCondition = function (removeIndex) {
-        var ruleConfigById = this.domainObject.configuration.ruleConfigById,
-            conditions = ruleConfigById[this.config.id].conditions;
+        const ruleConfigById = this.domainObject.configuration.ruleConfigById;
+        const conditions = ruleConfigById[this.config.id].conditions;
 
         _.remove(conditions, function (condition, index) {
             return index === removeIndex;
@@ -446,13 +453,13 @@ define([
      * Build a human-readable description from this rule's conditions
      */
     Rule.prototype.generateDescription = function () {
-        var description = '',
-            manager = this.conditionManager,
-            evaluator = manager.getEvaluator(),
-            name,
-            property,
-            operation,
-            self = this;
+        let description = '';
+        const manager = this.conditionManager;
+        const evaluator = manager.getEvaluator();
+        let name;
+        let property;
+        let operation;
+        const self = this;
 
         if (this.config.conditions && this.config.id !== 'default') {
             if (self.config.trigger === 'js') {
@@ -463,11 +470,11 @@ define([
                     property = manager.getTelemetryPropertyName(condition.object, condition.key);
                     operation = evaluator.getOperationDescription(condition.operation, condition.values);
                     if (name || property || operation) {
-                        description += 'when ' +
-                            (name ? name + '\'s ' : '') +
-                            (property ? property + ' ' : '') +
-                            (operation ? operation + ' ' : '') +
-                            (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                        description += 'when '
+                            + (name ? name + '\'s ' : '')
+                            + (property ? property + ' ' : '')
+                            + (operation ? operation + ' ' : '')
+                            + (self.config.trigger === 'any' ? ' OR ' : ' AND ');
                     }
                 });
             }
@@ -476,9 +483,11 @@ define([
         if (description.endsWith('OR ')) {
             description = description.substring(0, description.length - 3);
         }
+
         if (description.endsWith('AND ')) {
             description = description.substring(0, description.length - 4);
         }
+
         description = (description === '' ? this.config.description : description);
         this.description.html(description);
         this.config.description = description;

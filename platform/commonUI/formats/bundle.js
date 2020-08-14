@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/formats",
+        name: "platform/commonUI/formats",
         definition: {
             "name": "Format Registry",
             "description": "Provides a registry for formats, which allow parsing and formatting of values.",
@@ -68,8 +68,8 @@ define([
                         "version": "3.0.0",
                         "description": "Incorporates modified code from d3 Time Scales",
                         "author": "Mike Bostock",
-                        "copyright": "Copyright 2010-2016 Mike Bostock. " +
-                    "All rights reserved.",
+                        "copyright": "Copyright 2010-2016 Mike Bostock. "
+                    + "All rights reserved.",
                         "link": "https://github.com/d3/d3/blob/master/LICENSE"
                     }
                 ]

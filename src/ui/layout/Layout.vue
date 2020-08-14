@@ -98,34 +98,6 @@ import AppLogo from './AppLogo.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
-var enterFullScreen = () => {
-    var docElm = document.documentElement;
-
-    if (docElm.requestFullscreen) {
-        docElm.requestFullscreen();
-    } else if (docElm.mozRequestFullScreen) { /* Firefox */
-        docElm.mozRequestFullScreen();
-    } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        docElm.webkitRequestFullscreen();
-    } else if (docElm.msRequestFullscreen) { /* IE/Edge */
-        docElm.msRequestFullscreen();
-    }
-};
-var exitFullScreen = () => {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    }
-    else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-    }
-    else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen();
-    }
-    else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    }
-}
-
 export default {
     inject: ['openmct'],
     components: {
@@ -155,7 +127,7 @@ export default {
             isEditing: false,
             hasToolbar: false,
             headExpanded
-        }
+        };
     },
     computed: {
         toolbar() {
@@ -163,13 +135,37 @@ export default {
         }
     },
     mounted() {
-        this.openmct.editor.on('isEditing', (isEditing)=>{
+        this.openmct.editor.on('isEditing', (isEditing) => {
             this.isEditing = isEditing;
         });
 
         this.openmct.selection.on('change', this.toggleHasToolbar);
     },
     methods: {
+        enterFullScreen() {
+            let docElm = document.documentElement;
+
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                docElm.mozRequestFullScreen();
+            } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                docElm.webkitRequestFullscreen();
+            } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+                docElm.msRequestFullscreen();
+            }
+        },
+        exitFullScreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        },
         toggleShellHead() {
             this.headExpanded = !this.headExpanded;
 
@@ -185,10 +181,10 @@ export default {
         fullScreenToggle() {
             if (this.fullScreen) {
                 this.fullScreen = false;
-                exitFullScreen();
+                this.exitFullScreen();
             } else {
                 this.fullScreen = true;
-                enterFullScreen();
+                this.enterFullScreen();
             }
         },
         openInNewTab(event) {
@@ -206,5 +202,5 @@ export default {
             this.hasToolbar = structure.length > 0;
         }
     }
-}
+};
 </script>

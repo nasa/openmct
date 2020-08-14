@@ -4,14 +4,14 @@ import Vue from 'vue';
 export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';
 
-    const hasImageTelemetry = function (domainObject) {
+    function hasImageTelemetry(domainObject) {
         const metadata = openmct.telemetry.getMetadata(domainObject);
         if (!metadata) {
             return false;
         }
 
         return metadata.valuesForHints(['image']).length > 0;
-    };
+    }
 
     return {
         key: type,
@@ -43,5 +43,5 @@ export default function ImageryViewProvider(openmct) {
                 }
             };
         }
-    }
+    };
 }

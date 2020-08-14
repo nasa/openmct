@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     [
@@ -76,15 +75,15 @@ define(
                 );
             });
 
-            it("if no transaction is active, passes through to persistence" +
-                " provider", function () {
+            it("if no transaction is active, passes through to persistence"
+                + " provider", function () {
                 mockTransactionManager.isActive.and.returnValue(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
-            it("if transaction is active, persist and cancel calls are" +
-                " queued", function () {
+            it("if transaction is active, persist and cancel calls are"
+                + " queued", function () {
                 mockTransactionManager.isActive.and.returnValue(true);
                 capability.persist();
                 expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();

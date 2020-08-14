@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global setTimeout*/
 
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
@@ -66,7 +65,6 @@ define([
         ROOTS.forEach(function indexRoot(rootId) {
             provider.scheduleForIndexing(rootId);
         });
-
 
     }
 
@@ -154,6 +152,7 @@ define([
             this.pendingIndex[id] = true;
             this.idsToIndex.push(id);
         }
+
         this.keepIndexing();
     };
 
@@ -164,8 +163,8 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
-        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
-            this.idsToIndex.length
+        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS
+            && this.idsToIndex.length
         ) {
             this.beginIndexRequest();
         }
@@ -292,6 +291,7 @@ define([
         while (this.pendingQueries[queryId]) {
             queryId = Math.ceil(Math.random() * 100000);
         }
+
         return queryId;
     };
 
@@ -316,7 +316,6 @@ define([
 
         return queryId;
     };
-
 
     return GenericSearchProvider;
 });

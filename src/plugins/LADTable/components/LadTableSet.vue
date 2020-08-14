@@ -66,21 +66,22 @@ export default {
             ladTableObjects: [],
             ladTelemetryObjects: {},
             compositions: []
-        }
+        };
     },
     computed: {
         hasUnits() {
-            let telemetryObjects = Object.values(this.ladTelemetryObjects);
-            for(let telemtryObjectsByKey of telemetryObjects) {
-                for(let telemetryObject of telemtryObjectsByKey) {
+            let ladTables = Object.values(this.ladTelemetryObjects);
+            for (let ladTable of ladTables) {
+                for (let telemetryObject of ladTable) {
                     let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
-                    for(let metadatum of metadata.valueMetadatas) {
-                        if(metadatum.unit) {
+                    for (let metadatum of metadata.valueMetadatas) {
+                        if (metadatum.unit) {
                             return true;
                         }
                     }
                 }
             }
+
             return false;
         }
     },
@@ -109,15 +110,19 @@ export default {
             this.$set(this.ladTelemetryObjects, ladTable.key, []);
             this.ladTableObjects.push(ladTable);
 
-            let composition = this.openmct.composition.get(ladTable.domainObject),
-                addCallback = this.addTelemetryObject(ladTable),
-                removeCallback = this.removeTelemetryObject(ladTable);
+            let composition = this.openmct.composition.get(ladTable.domainObject);
+            let addCallback = this.addTelemetryObject(ladTable);
+            let removeCallback = this.removeTelemetryObject(ladTable);
 
             composition.on('add', addCallback);
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({composition, addCallback, removeCallback});
+            this.compositions.push({
+                composition,
+                addCallback,
+                removeCallback
+            });
         },
         removeLadTable(identifier) {
             let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
@@ -155,5 +160,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

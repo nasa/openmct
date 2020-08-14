@@ -120,7 +120,7 @@ export default {
     },
     data() {
         return {
-        }
+        };
     },
     watch: {
         pages(newpages) {
@@ -147,43 +147,55 @@ export default {
             const id = uuid();
             const page = {
                 id,
-                isDefault : false,
+                isDefault: false,
                 isSelected: true,
-                name : `Unnamed ${pageTitle}`,
+                name: `Unnamed ${pageTitle}`,
                 pageTitle
             };
 
             this.pages.forEach(p => p.isSelected = false);
             const pages = this.pages.concat(page);
 
-            this.updatePage({ pages, id });
+            this.updatePage({
+                pages,
+                id
+            });
         },
         addSection() {
             const sectionTitle = this.sectionTitle;
             const id = uuid();
             const section = {
                 id,
-                isDefault : false,
+                isDefault: false,
                 isSelected: true,
-                name : `Unnamed ${sectionTitle}`,
-                pages : [],
+                name: `Unnamed ${sectionTitle}`,
+                pages: [],
                 sectionTitle
             };
 
             this.sections.forEach(s => s.isSelected = false);
             const sections = this.sections.concat(section);
 
-            this.updateSection({ sections, id });
+            this.updateSection({
+                sections,
+                id
+            });
         },
         toggleNav() {
             this.$emit('toggleNav');
         },
         updatePage({ pages, id }) {
-            this.$emit('updatePage', { pages, id });
+            this.$emit('updatePage', {
+                pages,
+                id
+            });
         },
         updateSection({ sections, id }) {
-            this.$emit('updateSection', { sections, id });
+            this.$emit('updateSection', {
+                sections,
+                id
+            });
         }
     }
-}
+};
 </script>

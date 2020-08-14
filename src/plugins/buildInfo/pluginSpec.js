@@ -24,12 +24,15 @@ define([
     './plugin'
 ], function (plugin) {
     describe("The buildInfo plugin", function () {
-        var mockmct;
-        var testInfo;
+        let mockmct;
+        let testInfo;
 
         beforeEach(function () {
             mockmct = jasmine.createSpyObj('openmct', ['legacyExtension']);
-            testInfo = { foo: 123, bar: "baz" };
+            testInfo = {
+                foo: 123,
+                bar: "baz"
+            };
             plugin(testInfo)(mockmct);
         });
 

@@ -102,19 +102,21 @@ define([
         };
         /* eslint-enable no-undef */
 
+        this.legacyBundle = {
+            extensions: {
+                services: [
+                    {
+                        key: "openmct",
+                        implementation: function ($injector) {
+                            this.$injector = $injector;
 
-        this.legacyBundle = { extensions: {
-            services: [
-                {
-                    key: "openmct",
-                    implementation: function ($injector) {
-                        this.$injector = $injector;
-                        return this;
-                    }.bind(this),
-                    depends: ['$injector']
-                }
-            ]
-        } };
+                            return this;
+                        }.bind(this),
+                        depends: ['$injector']
+                    }
+                ]
+            }
+        };
 
         /**
          * Tracks current selection state of the application.
@@ -290,8 +292,9 @@ define([
         let capabilityService = this.$injector.get('capabilityService');
 
         function instantiate(model, keyString) {
-            var capabilities = capabilityService.getCapabilities(model, keyString);
+            const capabilities = capabilityService.getCapabilities(model, keyString);
             model.id = keyString;
+
             return new DomainObjectImpl(keyString, model, capabilities);
         }
 
@@ -303,6 +306,7 @@ define([
                 .map((o) => {
                     let keyString = objectUtils.makeKeyString(o.identifier);
                     let oldModel = objectUtils.toOldFormat(o);
+
                     return instantiate(oldModel, keyString);
                 })
                 .reverse()
@@ -313,6 +317,7 @@ define([
         } else {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return instantiate(oldModel, keyString);
         }
     };
@@ -372,8 +377,8 @@ define([
 
         // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
-            var type = this.types.get(typeKey);
-            var legacyDefinition = type.toLegacyDefinition();
+            const type = this.types.get(typeKey);
+            const legacyDefinition = type.toLegacyDefinition();
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
@@ -391,7 +396,7 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        const startPromise = new Main()
+        const startPromise = new Main();
         startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
@@ -400,7 +405,7 @@ define([
                 this.$injector.get('objectService');
 
                 if (!isHeadlessMode) {
-                    var appLayout = new Vue({
+                    const appLayout = new Vue({
                         components: {
                             'Layout': Layout.default
                         },
@@ -414,6 +419,7 @@ define([
                     this.layout = appLayout.$refs.layout;
                     Browse(this);
                 }
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -421,8 +427,9 @@ define([
 
     MCT.prototype.startHeadless = function () {
         let unreachableNode = document.createElement('div');
+
         return this.start(unreachableNode, true);
-    }
+    };
 
     /**
      * Install a plugin in MCT.
@@ -437,6 +444,7 @@ define([
 
     MCT.prototype.destroy = function () {
         this.emit('destroy');
+        this.router.destroy();
     };
 
     MCT.prototype.plugins = plugins;

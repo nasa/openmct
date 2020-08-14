@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     './Collection',
@@ -45,7 +44,7 @@ define([
      * handle setting defaults and updating in response to various changes.
      *
      */
-    var PlotConfigurationModel = Model.extend({
+    const PlotConfigurationModel = Model.extend({
 
         /**
          * Initializes all sub models and then passes references to submodels
@@ -92,21 +91,22 @@ define([
          * Retrieve the persisted series config for a given identifier.
          */
         getPersistedSeriesConfig: function (identifier) {
-            var domainObject = this.get('domainObject');
+            const domainObject = this.get('domainObject');
             if (!domainObject.configuration || !domainObject.configuration.series) {
                 return;
             }
+
             return domainObject.configuration.series.filter(function (seriesConfig) {
-                return seriesConfig.identifier.key === identifier.key &&
-                    seriesConfig.identifier.namespace === identifier.namespace;
+                return seriesConfig.identifier.key === identifier.key
+                    && seriesConfig.identifier.namespace === identifier.namespace;
             })[0];
         },
         /**
          * Retrieve the persisted filters for a given identifier.
          */
         getPersistedFilters: function (identifier) {
-            var domainObject = this.get('domainObject'),
-                keystring = this.openmct.objects.makeKeyString(identifier);
+            const domainObject = this.get('domainObject');
+            const keystring = this.openmct.objects.makeKeyString(identifier);
 
             if (!domainObject.configuration || !domainObject.configuration.filters) {
                 return;

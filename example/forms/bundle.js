@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/ExampleFormController"
@@ -29,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/forms",
+        name: "example/forms",
         definition: {
             "name": "Declarative Forms example",
             "sources": "src",

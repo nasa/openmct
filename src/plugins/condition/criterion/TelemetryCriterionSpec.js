@@ -23,18 +23,21 @@
 import TelemetryCriterion from "./TelemetryCriterion";
 import { getMockTelemetry } from "utils/testing";
 
-let openmct = {},
-    mockListener,
-    testCriterionDefinition,
-    testTelemetryObject,
-    telemetryCriterion,
-    mockTelemetry = getMockTelemetry();
+let openmct = {};
+let mockListener;
+let testCriterionDefinition;
+let testTelemetryObject;
+let telemetryCriterion;
+let mockTelemetry = getMockTelemetry();
 
 describe("The telemetry criterion", function () {
 
     beforeEach (() => {
         testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
+            identifier: {
+                namespace: "",
+                key: "test-object"
+            },
             type: "test-object",
             name: "Test Object",
             telemetry: {
@@ -76,7 +79,10 @@ describe("The telemetry criterion", function () {
             ['timeSystem', 'bounds', 'getAllTimeSystems']
         );
         openmct.time.timeSystem.and.returnValue({key: 'system'});
-        openmct.time.bounds.and.returnValue({start: 0, end: 1});
+        openmct.time.bounds.and.returnValue({
+            start: 0,
+            end: 1
+        });
         openmct.time.getAllTimeSystems.and.returnValue([{key: 'system'}]);
 
         testCriterionDefinition = {
@@ -113,7 +119,7 @@ describe("The telemetry criterion", function () {
     });
 
     describe('the LAD request', () => {
-        beforeEach(async () => {
+        beforeEach(() => {
             let telemetryRequestResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
@@ -122,11 +128,12 @@ describe("The telemetry criterion", function () {
                 setTimeout(() => {
                     telemetryRequestResolve(mockTelemetry);
                 }, 100);
+
                 return telemetryRequestPromise;
             });
         });
 
-        it("returns results for slow LAD requests", async function () {
+        it("returns results for slow LAD requests", function () {
             const criteriaRequest = telemetryCriterion.requestLAD();
             telemetryCriterion.destroy();
             expect(telemetryCriterion.telemetryObject).toBeUndefined();

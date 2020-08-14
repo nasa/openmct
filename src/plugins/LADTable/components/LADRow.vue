@@ -71,7 +71,7 @@ export default {
             valueClass: '',
             currentObjectPath,
             unit: ''
-        }
+        };
     },
     computed: {
         formattedTimestamp() {
@@ -105,7 +105,7 @@ export default {
             .metadata
             .valuesForHints(['range'])[0];
 
-        this.valueKey = this.valueMetadata.key
+        this.valueKey = this.valueMetadata.key;
 
         this.unsubscribe = this.openmct
             .telemetry
@@ -125,8 +125,8 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            let newTimestamp = this.getParsedTimestamp(datum),
-                limit;
+            let newTimestamp = this.getParsedTimestamp(datum);
+            let limit;
 
             if (this.shouldUpdate(newTimestamp)) {
                 this.timestamp = newTimestamp;
@@ -140,12 +140,12 @@ export default {
             }
         },
         shouldUpdate(newTimestamp) {
-            let newTimestampInBounds = this.inBounds(newTimestamp),
-                noExistingTimestamp = this.timestamp === undefined,
-                newTimestampIsLatest = newTimestamp > this.timestamp;
+            let newTimestampInBounds = this.inBounds(newTimestamp);
+            let noExistingTimestamp = this.timestamp === undefined;
+            let newTimestampIsLatest = newTimestamp > this.timestamp;
 
-            return newTimestampInBounds &&
-                (noExistingTimestamp || newTimestampIsLatest);
+            return newTimestampInBounds
+                && (noExistingTimestamp || newTimestampIsLatest);
         },
         requestHistory() {
             this.openmct
@@ -198,6 +198,7 @@ export default {
                 return true;
             } else {
                 console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+
                 return false;
             }
         },
@@ -205,6 +206,6 @@ export default {
             this.unit = this.valueMetadata.unit || '';
         }
     }
-}
+};
 </script>
 

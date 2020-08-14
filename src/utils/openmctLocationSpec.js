@@ -32,7 +32,6 @@ import {
 import {resetApplicationState} from 'utils/testing';
 
 describe('the openmct location utility functions', () => {
-    beforeAll(() => resetApplicationState());
     afterEach(() => resetApplicationState());
 
     it('The setSearchParam function sets an individual search parameters in the window location hash', () => {
@@ -100,7 +99,7 @@ describe('the openmct location utility functions', () => {
                     key: 'objectKey3'
                 }
             }
-        ]
+        ];
         window.location.hash = '#/some/object/path?someParameter=someValue';
         setObjectPath(OBJECT_PATH);
         expect(window.location.hash).toBe('#/namespace:objectKey1/namespace:objectKey2/namespace:objectKey3?someParameter=someValue');

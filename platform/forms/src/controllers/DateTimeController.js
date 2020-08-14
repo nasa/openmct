@@ -96,8 +96,8 @@ define(
 
             // Initialize forms values
             updateDateTime(
-                ($scope.ngModel && $scope.field) ?
-                    $scope.ngModel[$scope.field] : undefined
+                ($scope.ngModel && $scope.field)
+                    ? $scope.ngModel[$scope.field] : undefined
             );
         }
 
