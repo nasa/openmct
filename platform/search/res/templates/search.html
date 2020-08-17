@@ -29,9 +29,9 @@
                        type="text" tabindex="10000"
                        ng-model="ngModel.input"
                        ng-keyup="controller.search()"/>
-                <a class="c-search__clear-input clear-icon icon-x-in-circle"
+                <button class="c-search__clear-input clear-icon icon-x-in-circle"
                    ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
-                   ng-click="ngModel.input = ''; controller.search()"></a>
+                   ng-click="ngModel.input = ''; controller.search()"></button>
                 <!-- To prevent double triggering of clicks on click away, render
                    non-clickable version of the button when menu active-->
                 <a ng-if="!toggle.isActive()" class="menu-icon context-available"
@@ -45,16 +45,16 @@
                 </mct-include>
             </div>
 
-            <a class="c-button c-search__btn-cancel"
+            <button class="c-button c-search__btn-cancel"
                ng-show="!(ngModel.input === '' || ngModel.input === undefined)"
                ng-click="ngModel.input = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
-                Cancel</a>
+                Cancel</button>
         </div>
 
         <div class="active-filter-display flex-elem holder"
              ng-class="{invisible: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
-            <a class="clear-filters icon-x-in-circle s-icon-button"
-               ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
+            <button class="clear-filters icon-x-in-circle s-icon-button"
+               ng-click="ngModel.checkAll = true; menuController.checkAll()"></button>Filtered by: {{ ngModel.filtersString }}
         </div>
 
         <div class="flex-elem holder results-msg" ng-model="ngModel" ng-show="!loading && ngModel.search">
@@ -72,7 +72,7 @@
                                 ng-model="ngModel"
                                 class="l-flex-row flex-elem grows">
             </mct-representation>
-            <a class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
+            <button class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</button>
         </div>
     </div>
 </div>

@@ -41,7 +41,7 @@ export default class LegacyContextMenuAction {
             let context = {
                 category: 'contextual',
                 domainObject: this.openmct.legacyObject(pathWithRoot)
-            }
+            };
             let legacyAction = new this.LegacyAction(context);
 
             if (!legacyAction.getMetadata) {
@@ -51,6 +51,7 @@ export default class LegacyContextMenuAction {
                     return metadata;
                 }.bind(legacyAction);
             }
+
             legacyAction.perform();
         });
     }
@@ -58,9 +59,9 @@ export default class LegacyContextMenuAction {
     appliesTo(objectPath) {
         let legacyObject = this.openmct.legacyObject(objectPath);
 
-        return (this.LegacyAction.appliesTo === undefined ||
-                this.LegacyAction.appliesTo({domainObject: legacyObject})) &&
-                !this.isBlacklisted(objectPath);
+        return (this.LegacyAction.appliesTo === undefined
+                || this.LegacyAction.appliesTo({domainObject: legacyObject}))
+                && !this.isBlacklisted(objectPath);
     }
 
     /**
@@ -84,6 +85,7 @@ export default class LegacyContextMenuAction {
                 return OUTSIDE_EDIT_PATH_BLACKLIST.some(actionKey => this.LegacyAction.key === actionKey);
             }
         }
+
         return false;
     }
 }

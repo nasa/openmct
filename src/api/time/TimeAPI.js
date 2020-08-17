@@ -148,15 +148,16 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateBounds = function (bounds) {
-        if ((bounds.start === undefined) ||
-            (bounds.end === undefined) ||
-            isNaN(bounds.start) ||
-            isNaN(bounds.end)
+        if ((bounds.start === undefined)
+            || (bounds.end === undefined)
+            || isNaN(bounds.start)
+            || isNaN(bounds.end)
         ) {
             return "Start and end must be specified as integer values";
         } else if (bounds.start > bounds.end) {
             return "Specified start date exceeds end bound";
         }
+
         return true;
     };
 
@@ -169,15 +170,16 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method validateBounds
      */
     TimeAPI.prototype.validateOffsets = function (offsets) {
-        if ((offsets.start === undefined) ||
-            (offsets.end === undefined) ||
-            isNaN(offsets.start) ||
-            isNaN(offsets.end)
+        if ((offsets.start === undefined)
+            || (offsets.end === undefined)
+            || isNaN(offsets.start)
+            || isNaN(offsets.end)
         ) {
             return "Start and end offsets must be specified as integer values";
         } else if (offsets.start >= offsets.end) {
             return "Specified start offset must be < end offset";
         }
+
         return true;
     };
 
@@ -203,10 +205,11 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeAPI.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
-            var validationResult = this.validateBounds(newBounds);
+            const validationResult = this.validateBounds(newBounds);
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
+
             //Create a copy to avoid direct mutation of conductor bounds
             this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
@@ -225,6 +228,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 this.timeOfInterest(undefined);
             }
         }
+
         //Return a copy to prevent direct mutation of time conductor bounds.
         return JSON.parse(JSON.stringify(this.boundsVal));
     };
@@ -242,11 +246,12 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
-                    "Must specify bounds when changing time system without " +
-                    "an active clock."
+                    "Must specify bounds when changing time system without "
+                    + "an active clock."
                 );
             }
-            var timeSystem;
+
+            let timeSystem;
 
             if (timeSystemOrKey === undefined) {
                 throw "Please provide a time system";
@@ -312,6 +317,7 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit('timeOfInterest', this.toi);
         }
+
         return this.toi;
     };
 
@@ -322,7 +328,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * using current offsets.
      */
     TimeAPI.prototype.tick = function (timestamp) {
-        var newBounds = {
+        const newBounds = {
             start: timestamp + this.offsets.start,
             end: timestamp + this.offsets.end
         };
@@ -351,7 +357,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeAPI.prototype.clock = function (keyOrClock, offsets) {
         if (arguments.length === 2) {
-            var clock;
+            let clock;
 
             if (typeof keyOrClock === 'string') {
                 clock = this.clocks.get(keyOrClock);
@@ -365,7 +371,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 }
             }
 
-            var previousClock = this.activeClock;
+            const previousClock = this.activeClock;
             if (previousClock !== undefined) {
                 previousClock.off("tick", this.tick);
             }
@@ -416,15 +422,15 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeAPI.prototype.clockOffsets = function (offsets) {
         if (arguments.length > 0) {
 
-            var validationResult = this.validateOffsets(offsets);
+            const validationResult = this.validateOffsets(offsets);
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
 
             this.offsets = offsets;
 
-            var currentValue = this.activeClock.currentValue();
-            var newBounds = {
+            const currentValue = this.activeClock.currentValue();
+            const newBounds = {
                 start: currentValue + offsets.start,
                 end: currentValue + offsets.end
             };
@@ -440,6 +446,7 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit("clockOffsets", offsets);
         }
+
         return this.offsets;
     };
 

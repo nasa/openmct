@@ -48,9 +48,9 @@ define(
                 mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.and.returnValue('root-id');
+
                     return mockRoot;
                 });
-
 
                 controller = new EditPanesController(mockScope);
             });
@@ -97,6 +97,7 @@ define(
                 mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.and.returnValue('other-root-id');
+
                     return mockRoot;
                 });
 

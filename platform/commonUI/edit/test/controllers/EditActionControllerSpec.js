@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/EditActionController"],
@@ -40,6 +39,7 @@ define(
                     mockedSaveActions.forEach(function (action) {
                         action.getMetadata.and.returnValue(mockSaveActionMetadata);
                     });
+
                     return mockedSaveActions;
                 } else if (actionContext.category === "conclude-editing") {
                     return ["a", "b", "c"];

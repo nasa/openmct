@@ -60,9 +60,9 @@ define(
                     capabilities.persistence = function (domainObject) {
                         // Get/instantiate the original
                         var original =
-                            (typeof originalPersistence === 'function') ?
-                                originalPersistence(domainObject) :
-                                originalPersistence;
+                            (typeof originalPersistence === 'function')
+                                ? originalPersistence(domainObject)
+                                : originalPersistence;
 
                         // Provide a decorated version
                         return new QueuingPersistenceCapability(
@@ -72,6 +72,7 @@ define(
                         );
                     };
                 }
+
                 return capabilities;
             }
 

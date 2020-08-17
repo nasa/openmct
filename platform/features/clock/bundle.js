@@ -54,7 +54,7 @@ define([
     timerTemplate
 ) {
     return {
-        name:"platform/features/clock",
+        name: "platform/features/clock",
         definition: {
             "name": "Clocks/Timers",
             "descriptions": "Domain objects for displaying current & relative times.",

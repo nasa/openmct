@@ -114,6 +114,7 @@ define([
         if (!format) {
             throw new Error("FormatProvider: No format found for " + key);
         }
+
         return format;
     };
 

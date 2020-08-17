@@ -70,7 +70,6 @@ define(
                 expect(mockModelService.getModels).toHaveBeenCalledWith(ids);
             });
 
-
             it("instantiates objects with provided models", function () {
                 var ids = ["a", "b", "c"],
                     model = { someKey: "some value"},

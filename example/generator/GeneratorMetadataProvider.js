@@ -41,6 +41,7 @@ define([
                 {
                     key: "sin",
                     name: "Sine",
+                    unit: "Hz",
                     formatString: '%0.2f',
                     hints: {
                         range: 1
@@ -49,6 +50,7 @@ define([
                 {
                     key: "cos",
                     name: "Cosine",
+                    unit: "deg",
                     formatString: '%0.2f',
                     hints: {
                         range: 2
@@ -108,14 +110,14 @@ define([
                 }
             ]
         }
-    }
+    };
 
     function GeneratorMetadataProvider() {
 
     }
 
     GeneratorMetadataProvider.prototype.supportsMetadata = function (domainObject) {
-        return METADATA_BY_TYPE.hasOwnProperty(domainObject.type);
+        return Object.prototype.hasOwnProperty.call(METADATA_BY_TYPE, domainObject.type);
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {

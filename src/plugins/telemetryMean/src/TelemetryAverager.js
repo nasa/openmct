@@ -44,8 +44,8 @@ define([], function () {
     TelemetryAverager.prototype.createAverageDatum = function (telemetryDatum) {
         this.setDomainKeyAndFormatter();
 
-        var timeValue = this.domainFormatter.parse(telemetryDatum);
-        var rangeValue = this.rangeFormatter.parse(telemetryDatum);
+        const timeValue = this.domainFormatter.parse(telemetryDatum);
+        const rangeValue = this.rangeFormatter.parse(telemetryDatum);
 
         this.averagingWindow.push(rangeValue);
 
@@ -57,9 +57,9 @@ define([], function () {
             this.averagingWindow.shift();
         }
 
-        var averageValue = this.calculateMean();
+        const averageValue = this.calculateMean();
 
-        var meanDatum = {};
+        const meanDatum = {};
         meanDatum[this.domainKey] = timeValue;
         meanDatum.value = averageValue;
 
@@ -70,8 +70,8 @@ define([], function () {
      * @private
      */
     TelemetryAverager.prototype.calculateMean = function () {
-        var sum = 0;
-        var i = 0;
+        let sum = 0;
+        let i = 0;
 
         for (; i < this.averagingWindow.length; i++) {
             sum += this.averagingWindow[i];
@@ -88,7 +88,7 @@ define([], function () {
      * @private
      */
     TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
-        var domainKey = this.timeAPI.timeSystem().key;
+        const domainKey = this.timeAPI.timeSystem().key;
         if (domainKey !== this.domainKey) {
             this.domainKey = domainKey;
             this.domainFormatter = this.getFormatter(domainKey);
@@ -99,8 +99,8 @@ define([], function () {
      * @private
      */
     TelemetryAverager.prototype.setRangeKeyAndFormatter = function () {
-        var metadatas = this.telemetryAPI.getMetadata(this.domainObject);
-        var rangeValues = metadatas.valuesForHints(['range']);
+        const metadatas = this.telemetryAPI.getMetadata(this.domainObject);
+        const rangeValues = metadatas.valuesForHints(['range']);
 
         this.rangeKey = rangeValues[0].key;
         this.rangeFormatter = this.getFormatter(this.rangeKey);
@@ -110,8 +110,8 @@ define([], function () {
      * @private
      */
     TelemetryAverager.prototype.getFormatter = function (key) {
-        var objectMetadata = this.telemetryAPI.getMetadata(this.domainObject);
-        var valueMetadata = objectMetadata.value(key);
+        const objectMetadata = this.telemetryAPI.getMetadata(this.domainObject);
+        const valueMetadata = objectMetadata.value(key);
 
         return this.telemetryAPI.getValueFormatter(valueMetadata);
     };

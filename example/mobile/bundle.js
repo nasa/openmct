@@ -19,13 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([], function () {
     "use strict";
 
     return {
-        name:"example/mobile",
+        name: "example/mobile",
         definition: {
             "name": "Mobile",
             "description": "Allows elements with pertinence to mobile usage and development",

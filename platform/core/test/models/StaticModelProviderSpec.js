@@ -55,9 +55,11 @@ define(
             });
 
             it("provides models from extension declarations", function () {
-                var mockPromise = { then: function () {
-                    return;
-                } };
+                var mockPromise = {
+                    then: function () {
+                        return;
+                    }
+                };
                 mockQ.when.and.returnValue(mockPromise);
 
                 // Verify that we got the promise as the return value
@@ -70,7 +72,6 @@ define(
                 expect(mockQ.when.calls.mostRecent().args[0].b.name).toEqual("Thing B");
                 expect(mockQ.when.calls.mostRecent().args[0].b.someProperty).toEqual("Some Value B");
             });
-
 
             it("does not provide models which are not in extension declarations", function () {
                 provider.getModels(["c"]);
@@ -89,8 +90,14 @@ define(
                     { "bad": "no id" },
                     { "id": "...but no model..." },
                     { "model": "...and no id..." },
-                    { "id": -40, "model": {} },
-                    { "model": "should be an object", "id": "x" }
+                    {
+                        "id": -40,
+                        "model": {}
+                    },
+                    {
+                        "model": "should be an object",
+                        "id": "x"
+                    }
                 ], mockQ, mockLog)).toBeDefined();
 
                 // Should show warnings

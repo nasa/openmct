@@ -66,8 +66,6 @@ define(
                 expect(mockLog.info).toHaveBeenCalled();
             });
 
-
-
         });
     }
 );

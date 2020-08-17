@@ -95,7 +95,7 @@ export default {
 
             this.viewKey = view.key;
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('u-angular-object-view-wrapper');
+            this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$refs.objectView.append(this.viewContainer);
 
             this.view = this.currentView.view(this.domainObject, this.objectPath);
@@ -122,6 +122,7 @@ export default {
             if (!styleObj) {
                 return;
             }
+
             let keys = Object.keys(styleObj);
             keys.forEach(key => {
                 let firstChild = this.$refs.objectView.querySelector(':first-child');
@@ -136,11 +137,12 @@ export default {
                         } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
                             firstChild.classList.add(styleObj.isStyleInvisible);
                         }
+
                         firstChild.style[key] = styleObj[key];
                     }
                 }
             });
         }
     }
-}
+};
 </script>

@@ -74,8 +74,8 @@ define(
             // sensible timestamp indicating they've been persisted.
             function addPersistedTimestamp(model) {
                 if (model && (model.persisted === undefined)) {
-                    model.persisted = model.modified !== undefined ?
-                        model.modified : now();
+                    model.persisted = model.modified !== undefined
+                        ? model.modified : now();
                 }
 
                 return model;
@@ -90,6 +90,7 @@ define(
                         result[id] = models[index];
                     }
                 });
+
                 return result;
             }
 
@@ -111,9 +112,18 @@ define(
 
             parsedIds = ids.map(function (id) {
                 var parts = id.split(":");
-                return (parts.length > 1) ?
-                    { id: id, space: parts[0], key: parts.slice(1).join(":") } :
-                    { id: id, space: defaultSpace, key: id };
+
+                return (parts.length > 1)
+                    ? {
+                        id: id,
+                        space: parts[0],
+                        key: parts.slice(1).join(":")
+                    }
+                    : {
+                        id: id,
+                        space: defaultSpace,
+                        key: id
+                    };
             });
 
             return persistenceService.listSpaces()

@@ -53,7 +53,12 @@ define(
             it("invokes the extension resolver for all bundle extensions", function () {
                 return resolver.resolveBundles([
                     new Bundle("x", { extensions: { tests: [{}, {}, {}] } }),
-                    new Bundle("y", { extensions: { tests: [{}, {}], others: [{}, {}] } }),
+                    new Bundle("y", {
+                        extensions: {
+                            tests: [{}, {}],
+                            others: [{}, {}]
+                        }
+                    }),
                     new Bundle("z", { extensions: { others: [{}] } })
                 ]).then(function (result) {
                     expect(result.tests).toEqual(["a", "a", "a", "a", "a"]);

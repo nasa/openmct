@@ -113,6 +113,7 @@ define(
 
                     // Don't show selection highlights, etc
                     event.preventDefault();
+
                     return false;
                 }
 
@@ -133,6 +134,7 @@ define(
 
                     // Don't show selection highlights, etc
                     event.preventDefault();
+
                     return false;
                 }
 

@@ -30,7 +30,6 @@ define([
             $scope,
             representer;
 
-
         beforeEach(function () {
             $log = jasmine.createSpyObj('$log', ['debug']);
             $scope = {};
@@ -83,7 +82,6 @@ define([
             });
 
         });
-
 
     });
 });

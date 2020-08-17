@@ -45,7 +45,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/dialog",
+        name: "platform/commonUI/dialog",
         definition: {
             "extensions": {
                 "services": [

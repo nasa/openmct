@@ -44,8 +44,8 @@ define([
      * matches.
      */
     SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
-        var i;
-        var result;
+        let i;
+        let result;
 
         if (this.trigger === 'all') {
             for (i = 0; i < this.conditions.length; i++) {
@@ -54,6 +54,7 @@ define([
                     return false;
                 }
             }
+
             return true;
         } else if (this.trigger === 'any') {
             for (i = 0; i < this.conditions.length; i++) {
@@ -62,6 +63,7 @@ define([
                     return true;
                 }
             }
+
             return false;
         } else {
             throw new Error('Invalid rule trigger: ' + this.trigger);

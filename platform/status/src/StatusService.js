@@ -68,6 +68,7 @@ define(
             if (state) {
                 this.statusTable[id].push(status);
             }
+
             this.topic(STATUS_PREFIX + id).notify(this.statusTable[id]);
         };
 

@@ -76,7 +76,6 @@ define(
             this.path = path;
             this.interval = interval;
 
-
             // Callback if the HTTP request to Couch fails
             function handleError() {
                 self.state = DISCONNECTED;

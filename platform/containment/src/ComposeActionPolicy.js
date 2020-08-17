@@ -40,6 +40,7 @@ define(
             this.getPolicyService = function () {
                 return $injector.get('policyService');
             };
+
             this.openmct = openmct;
         }
 
@@ -49,8 +50,8 @@ define(
             this.policyService = this.policyService || this.getPolicyService();
 
             // ...and delegate to the composition policy
-            return containerObject.getId() !== selectedObject.getId() &&
-                this.openmct.composition.checkPolicy(containerObject.useCapability('adapter'),
+            return containerObject.getId() !== selectedObject.getId()
+                && this.openmct.composition.checkPolicy(containerObject.useCapability('adapter'),
                     selectedObject.useCapability('adapter'));
         };
 
@@ -67,6 +68,7 @@ define(
                     (context || {}).selectedObject
                 );
             }
+
             return true;
         };
 

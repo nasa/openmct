@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define*/
-
 define([
     "./src/chart/MCTChartDirective",
     "./src/plot/MCTPlotDirective",
@@ -64,13 +62,14 @@ define([
     PlotTemplate
 ) {
 
-    var installed = false;
+    let installed = false;
 
     function PlotPlugin() {
         return function install(openmct) {
             if (installed) {
                 return;
             }
+
             installed = true;
 
             openmct.legacyRegistry.register("openmct/plot", {

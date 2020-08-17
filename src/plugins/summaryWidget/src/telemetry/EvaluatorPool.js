@@ -35,8 +35,8 @@ define([
     }
 
     EvaluatorPool.prototype.get = function (domainObject) {
-        var objectId = objectUtils.makeKeyString(domainObject.identifier);
-        var poolEntry = this.byObjectId[objectId];
+        const objectId = objectUtils.makeKeyString(domainObject.identifier);
+        let poolEntry = this.byObjectId[objectId];
         if (!poolEntry) {
             poolEntry = {
                 leases: 0,
@@ -46,12 +46,14 @@ define([
             this.byEvaluator.set(poolEntry.evaluator, poolEntry);
             this.byObjectId[objectId] = poolEntry;
         }
+
         poolEntry.leases += 1;
+
         return poolEntry.evaluator;
     };
 
     EvaluatorPool.prototype.release = function (evaluator) {
-        var poolEntry = this.byEvaluator.get(evaluator);
+        const poolEntry = this.byEvaluator.get(evaluator);
         poolEntry.leases -= 1;
         if (poolEntry.leases === 0) {
             evaluator.destroy();

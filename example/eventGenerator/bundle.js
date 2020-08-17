@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/EventTelemetryProvider"
@@ -29,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/eventGenerator",
+        name: "example/eventGenerator",
         definition: {
             "name": "Event Message Generator",
             "description": "For development use. Creates sample event message data that mimics a live data stream.",

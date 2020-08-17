@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [
         '../../src/actions/AbstractComposeAction',
@@ -122,7 +121,6 @@ define(
                 })).toBe(false);
             });
 
-
             describe("with context from context-action", function () {
                 beforeEach(function () {
                     context = {
@@ -217,7 +215,6 @@ define(
                 it("initializes happily", function () {
                     expect(action).toBeDefined();
                 });
-
 
                 it("performs copy immediately", function () {
                     action.perform();

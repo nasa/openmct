@@ -94,9 +94,10 @@ define(
             // Otherwise, look up in the sequence defined in the array
             if (propertyPath.length > 0) {
                 value = object[propertyPath[0]];
-                return propertyPath.length > 1 ?
-                    lookupValue(value, propertyPath.slice(1)) :
-                    value;
+
+                return propertyPath.length > 1
+                    ? lookupValue(value, propertyPath.slice(1))
+                    : value;
             }
 
             // Fallback; property path was empty
@@ -110,16 +111,16 @@ define(
          * @returns {*} the value for this property, as read from the model
          */
         TypeProperty.prototype.getValue = function (model) {
-            var property = this.propertyDefinition.property ||
-                    this.propertyDefinition.key,
+            var property = this.propertyDefinition.property
+                    || this.propertyDefinition.key,
                 initialValue =
                     property && lookupValue(model, property);
 
             // Provide an empty array if this is a multi-item
             // property.
             if (Array.isArray(this.propertyDefinition.items)) {
-                initialValue = initialValue ||
-                    new Array(this.propertyDefinition.items.length);
+                initialValue = initialValue
+                    || new Array(this.propertyDefinition.items.length);
             }
 
             return this.conversion.toFormValue(initialValue);
@@ -132,8 +133,8 @@ define(
          * @param {*} value the new value to set for this property
          */
         TypeProperty.prototype.setValue = function (model, value) {
-            var property = this.propertyDefinition.property ||
-                    this.propertyDefinition.key;
+            var property = this.propertyDefinition.property
+                    || this.propertyDefinition.key;
 
             // If an array contains all undefined values, treat it
             // as undefined, to filter back out arrays for input
@@ -144,9 +145,9 @@ define(
             // domain object's model
             value = this.conversion.toModelValue(value);
 
-            return property ?
-                specifyValue(model, property, value) :
-                undefined;
+            return property
+                ? specifyValue(model, property, value)
+                : undefined;
         };
 
         /**

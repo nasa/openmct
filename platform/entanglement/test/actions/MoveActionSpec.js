@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [
         '../../src/actions/MoveAction',
@@ -99,7 +98,6 @@ define(
                 moveService = new MockMoveService();
             });
 
-
             describe("with context from context-action", function () {
                 beforeEach(function () {
                     context = {
@@ -168,7 +166,6 @@ define(
                 it("initializes happily", function () {
                     expect(moveAction).toBeDefined();
                 });
-
 
                 it("performs move immediately", function () {
                     moveAction.perform();

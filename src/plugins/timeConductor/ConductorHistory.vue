@@ -84,9 +84,14 @@ export default {
     },
     data() {
         return {
-            history: {}, // contains arrays of timespans {start, end}, array key is time system key
+            /**
+             * previous bounds entries available for easy re-use
+             * @history array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
+            history: this.getHistoryFromLocalStorage(),
             presets: []
-        }
+        };
     },
     computed: {
         hasHistoryPresets() {
@@ -111,22 +116,20 @@ export default {
                 this.addTimespan();
             },
             deep: true
-        },
-        history: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
         }
     },
     mounted() {
-        this.getHistoryFromLocalStorage();
+        this.initializeHistoryIfNoHistory();
     },
     methods: {
         getHistoryFromLocalStorage() {
-            if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-                this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
-            } else {
+            const localStorageHistory = localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY);
+            const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
+
+            return history;
+        },
+        initializeHistoryIfNoHistory() {
+            if (!this.history) {
                 this.history = {};
                 this.persistHistoryToLocalStorage();
             }
@@ -141,13 +144,15 @@ export default {
                 start: this.bounds.start,
                 end: this.bounds.end
             };
+            let self = this;
 
-            const isNotEqual = function (entry) {
-                const start = entry.start !== this.start;
-                const end = entry.end !== this.end;
+            function isNotEqual(entry) {
+                const start = entry.start !== self.start;
+                const end = entry.end !== self.end;
 
                 return start || end;
-            };
+            }
+
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {
@@ -156,6 +161,8 @@ export default {
 
             currentHistory.unshift(timespan);
             this.history[key] = currentHistory;
+
+            this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
             this.openmct.time.bounds(timespan);
@@ -171,7 +178,7 @@ export default {
         },
         loadConfiguration() {
             const configurations = this.configuration.menuOptions
-                .filter(option => option.timeSystem ===  this.timeSystem.key);
+                .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
             this.records = this.loadRecords(configurations);
@@ -196,5 +203,5 @@ export default {
             return formatter.format(time);
         }
     }
-}
+};
 </script>

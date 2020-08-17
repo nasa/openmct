@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
+import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 export default {
@@ -118,5 +118,5 @@ export default {
             this.removeSelectable();
         }
     }
-}
+};
 </script>

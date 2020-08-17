@@ -40,6 +40,7 @@ define([], function () {
 
         function getParent(domainObject) {
             var context = domainObject.getCapability('context');
+
             return context.getParent();
         }
 

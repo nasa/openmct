@@ -20,21 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const convertToNumbers = (input) => {
+function convertToNumbers(input) {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));
-    return numberInputs;
-};
 
-const convertToStrings = (input) => {
+    return numberInputs;
+}
+
+function convertToStrings(input) {
     let stringInputs = [];
     input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
-    return stringInputs;
-};
 
-const joinValues = (values, length) => {
+    return stringInputs;
+}
+
+function joinValues(values, length) {
     return values.slice(0, length).join(', ');
-};
+}
 
 export const OPERATIONS = [
     {
@@ -113,8 +115,9 @@ export const OPERATIONS = [
         name: 'between',
         operation: function (input) {
             let numberInputs = convertToNumbers(input);
-            let larger = Math.max(...numberInputs.slice(1,3));
-            let smaller = Math.min(...numberInputs.slice(1,3));
+            let larger = Math.max(...numberInputs.slice(1, 3));
+            let smaller = Math.min(...numberInputs.slice(1, 3));
+
             return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
         },
         text: 'is between',
@@ -128,8 +131,9 @@ export const OPERATIONS = [
         name: 'notBetween',
         operation: function (input) {
             let numberInputs = convertToNumbers(input);
-            let larger = Math.max(...numberInputs.slice(1,3));
-            let smaller = Math.min(...numberInputs.slice(1,3));
+            let larger = Math.max(...numberInputs.slice(1, 3));
+            let smaller = Math.min(...numberInputs.slice(1, 3));
+
             return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
         },
         text: 'is not between',
@@ -227,6 +231,7 @@ export const OPERATIONS = [
         name: 'enumValueIs',
         operation: function (input) {
             let stringInputs = convertToStrings(input);
+
             return stringInputs[0] === stringInputs[1];
         },
         text: 'is',
@@ -240,6 +245,7 @@ export const OPERATIONS = [
         name: 'enumValueIsNot',
         operation: function (input) {
             let stringInputs = convertToStrings(input);
+
             return stringInputs[0] !== stringInputs[1];
         },
         text: 'is not',
@@ -255,8 +261,10 @@ export const OPERATIONS = [
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
+
                 return values.some((value) => lhsValue === value.toString().trim());
             }
+
             return false;
         },
         text: 'is one of',
@@ -273,8 +281,10 @@ export const OPERATIONS = [
             if (input[1]) {
                 const values = input[1].split(',');
                 const found = values.some((value) => lhsValue === value.toString().trim());
+
                 return !found;
             }
+
             return false;
         },
         text: 'is not one of',
@@ -303,7 +313,8 @@ export const INPUT_TYPES = {
     'number': 'number'
 };
 
-export const getOperatorText = (operationName, values) => {
+export function getOperatorText(operationName, values) {
     const found = OPERATIONS.find((operation) => operation.name === operationName);
+
     return found ? found.getDescription(values) : '';
-};
+}

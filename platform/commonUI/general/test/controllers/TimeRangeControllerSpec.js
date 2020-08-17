@@ -106,7 +106,7 @@ define(
 
             it("exposes end time validator", function () {
                 var testValue = 42000000;
-                mockScope.formModel = { start:  testValue };
+                mockScope.formModel = { start: testValue };
                 expect(controller.validateEnd(testValue - 1))
                     .toBe(false);
                 expect(controller.validateEnd(testValue + 60 * 60 * 1000 + 1))
@@ -116,8 +116,14 @@ define(
             describe("when changes are made via form entry", function () {
                 beforeEach(function () {
                     mockScope.ngModel = {
-                        outer: { start: DAY * 2, end: DAY * 3 },
-                        inner: { start: DAY * 2.25, end: DAY * 2.75 }
+                        outer: {
+                            start: DAY * 2,
+                            end: DAY * 3
+                        },
+                        inner: {
+                            start: DAY * 2.25,
+                            end: DAY * 2.75
+                        }
                     };
                     mockScope.formModel = {
                         start: DAY * 10000,

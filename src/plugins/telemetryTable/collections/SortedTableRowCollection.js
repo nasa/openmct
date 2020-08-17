@@ -60,6 +60,7 @@ define(
                     if (rowsAdded.length > 0) {
                         this.emit('add', rowsAdded);
                     }
+
                     this.dupeCheck = true;
                 } else {
                     let wasAdded = this.addOne(rows);
@@ -98,8 +99,10 @@ define(
 
                 if (!isDuplicate) {
                     this.rows.splice(endIx || startIx, 0, row);
+
                     return true;
                 }
+
                 return false;
             }
 
@@ -201,9 +204,10 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
-                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key) , sortOptions.direction);
+                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key), sortOptions.direction);
                     this.emit('sort');
                 }
+
                 // Return duplicate to avoid direct modification of underlying object
                 return Object.assign({}, this.sortOptions);
             }
@@ -213,8 +217,10 @@ define(
                 this.rows = this.rows.filter(row => {
                     if (row.objectKeyString === objectKeyString) {
                         removed.push(row);
+
                         return false;
                     }
+
                     return true;
                 });
 
@@ -244,5 +250,6 @@ define(
                 this.emit('remove', removedRows);
             }
         }
+
         return SortedTableRowCollection;
     });

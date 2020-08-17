@@ -40,6 +40,7 @@ define(
                     ['getSpace']
                 );
                 mockPersistence.getSpace.and.returnValue(space);
+
                 return domainObjectFactory({
                     id: space + ":foo",
                     model: {},

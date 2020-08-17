@@ -26,15 +26,11 @@ define([
     'utils/testing'
 ], function (plugins, legacyRegistry, testUtils) {
     describe("MCT", function () {
-        var openmct;
-        var mockPlugin;
-        var mockPlugin2;
-        var mockListener;
-        var oldBundles;
-
-        beforeAll(() => {
-            testUtils.resetApplicationState();
-        });
+        let openmct;
+        let mockPlugin;
+        let mockPlugin2;
+        let mockListener;
+        let oldBundles;
 
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
@@ -56,7 +52,8 @@ define([
                     legacyRegistry.delete(bundle);
                 }
             });
-            testUtils.resetApplicationState(openmct);
+
+            return testUtils.resetApplicationState(openmct);
         });
 
         it("exposes plugins", function () {
@@ -112,7 +109,7 @@ define([
         });
 
         describe("setAssetPath", function () {
-            var testAssetPath;
+            let testAssetPath;
 
             beforeEach(function () {
                 openmct.legacyExtension = jasmine.createSpy('legacyExtension');

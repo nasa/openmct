@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
@@ -37,6 +36,7 @@ define(
                         model = (domainObject && domainObject.getModel()) || {},
                         name = model.name || "",
                         metadata = action.getMetadata() || {};
+
                     return metadata.key !== 'remove' || name.indexOf('foo') < 0;
                 }
             };

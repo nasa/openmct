@@ -75,7 +75,7 @@ define([
 ) {
 
     return {
-        name:"platform/forms",
+        name: "platform/forms",
         definition: {
             "name": "MCT Forms",
             "description": "Form generator; includes directive and some controls.",

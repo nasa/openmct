@@ -151,6 +151,7 @@ define(
                 } else {
                     removeElement();
                 }
+
                 activeTemplateUrl = templateUrl;
             }
 

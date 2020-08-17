@@ -87,7 +87,6 @@ define(
             }
         };
 
-
         return StatusRepresenter;
 
     }

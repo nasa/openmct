@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window*/
-
 /**
  * Implements the framework layer, which handles the loading of bundles
  * and the wiring-together of the extensions they expose.
@@ -49,6 +47,7 @@ define(
             // Look up log level from query string
             function logLevel() {
                 var match = /[?&]log=([a-z]+)/.exec(window.location.search);
+
                 return match ? match[1] : "";
             }
 

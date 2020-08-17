@@ -47,13 +47,16 @@ define(
 
                 mockScope.structure = {text: 'Select File'};
                 mockScope.field = "file-input";
-                mockScope.ngModel = {"file-input" : undefined};
+                mockScope.ngModel = {"file-input": undefined};
 
                 element.on.and.callFake(function (event, clickHandler) {
                     clickHandler();
                 });
                 mockFileInputService.getInput.and.returnValue(
-                    Promise.resolve({name: "file-name", body: "file-body"})
+                    Promise.resolve({
+                        name: "file-name",
+                        body: "file-body"
+                    })
                 );
 
                 mctFileInput = new MCTFileInput(mockFileInputService);

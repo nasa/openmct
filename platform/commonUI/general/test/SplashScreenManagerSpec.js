@@ -52,6 +52,7 @@ define([
         describe('when element exists', function () {
             beforeEach(function () {
                 $document.querySelectorAll.and.returnValue([splashElement]);
+
                 return new SplashScreenManager([$document]);
             });
 

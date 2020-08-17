@@ -50,9 +50,9 @@ define(
          *        data and time, suitable for display.
          */
         TelemetryFormatter.prototype.formatDomainValue = function (v, key) {
-            var formatter = (key === undefined) ?
-                this.defaultFormat :
-                this.formatService.getFormat(key);
+            var formatter = (key === undefined)
+                ? this.defaultFormat
+                : this.formatService.getFormat(key);
 
             return isNaN(v) ? "" : formatter.format(v);
         };

@@ -22,7 +22,7 @@
 
 define([], function () {
     return {
-        name:"platform/features/my-items",
+        name: "platform/features/my-items",
         definition: {
             "name": "My Items",
             "description": "Defines a root named My Items",

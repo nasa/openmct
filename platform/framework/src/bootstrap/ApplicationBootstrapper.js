@@ -55,6 +55,7 @@ define(
             var angular = this.angular,
                 document = this.document,
                 $log = this.$log;
+
             return new Promise(function (resolve, reject) {
                 $log.info("Bootstrapping application " + (app || {}).name);
                 angular.element(document).ready(function () {

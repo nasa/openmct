@@ -25,8 +25,8 @@ define([
     RootObjectProvider
 ) {
     describe('RootObjectProvider', function () {
-        var rootRegistry,
-            rootObjectProvider;
+        let rootRegistry;
+        let rootObjectProvider;
 
         beforeEach(function () {
             rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);

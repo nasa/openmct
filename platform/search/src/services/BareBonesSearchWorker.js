@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global self*/
-
 /**
  * Module defining BareBonesSearchWorker. Created by deeptailor on 10/03/2019.
  */

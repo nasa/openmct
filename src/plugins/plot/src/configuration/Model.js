@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'lodash',
@@ -37,15 +36,17 @@ define([
         if (!options) {
             options = {};
         }
+
         this.id = options.id;
         this.model = options.model;
         this.collection = options.collection;
-        var defaults = this.defaults(options);
+        const defaults = this.defaults(options);
         if (!this.model) {
             this.model = options.model = defaults;
         } else {
             _.defaultsDeep(this.model, defaults);
         }
+
         this.initialize(options);
     }
 
@@ -85,14 +86,14 @@ define([
     };
 
     Model.prototype.set = function (attribute, value) {
-        var oldValue = this.model[attribute];
+        const oldValue = this.model[attribute];
         this.model[attribute] = value;
         this.emit('change', attribute, value, oldValue, this);
         this.emit('change:' + attribute, value, oldValue, this);
     };
 
     Model.prototype.unset = function (attribute) {
-        var oldValue = this.model[attribute];
+        const oldValue = this.model[attribute];
         delete this.model[attribute];
         this.emit('change', attribute, undefined, oldValue, this);
         this.emit('change:' + attribute, undefined, oldValue, this);

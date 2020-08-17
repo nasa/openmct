@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['./src/MeanTelemetryProvider'], function (MeanTelemetryProvider) {
-    var DEFAULT_SAMPLES = 10;
+    const DEFAULT_SAMPLES = 10;
 
     function plugin() {
         return function install(openmct) {

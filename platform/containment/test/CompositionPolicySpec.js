@@ -45,7 +45,6 @@ define(
                     contains: ['a']
                 });
 
-
                 typeB = jasmine.createSpyObj(
                     'type B-- anything goes',
                     ['getKey', 'getDefinition']
@@ -89,7 +88,6 @@ define(
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
                 });
-
 
                 it('disallows when type doesn\'t match', function () {
 

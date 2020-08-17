@@ -22,7 +22,7 @@
 
 define(['./TypeRegistry', './Type'], function (TypeRegistry, Type) {
     describe('The Type API', function () {
-        var typeRegistryInstance;
+        let typeRegistryInstance;
 
         beforeEach(function () {
             typeRegistryInstance = new TypeRegistry ();

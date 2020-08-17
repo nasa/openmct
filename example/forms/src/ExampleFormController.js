@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
     [],
@@ -80,7 +79,7 @@ define(
                                 control: "button",
                                 csslass: "icon-save",
                                 click: function () {
-                                    window.alert("Save");
+                                    console.log("Save");
                                 }
                             },
                             {
@@ -88,7 +87,7 @@ define(
                                 csslass: "icon-x",
                                 description: "Button B",
                                 click: function () {
-                                    window.alert("Cancel");
+                                    console.log("Cancel");
                                 }
                             },
                             {
@@ -97,7 +96,7 @@ define(
                                 description: "Button C",
                                 disabled: true,
                                 click: function () {
-                                    window.alert("Delete");
+                                    console.log("Delete");
                                 }
                             }
                         ]
@@ -152,10 +151,22 @@ define(
                                 name: "Choose something",
                                 control: "select",
                                 options: [
-                                    { name: "Hats", value: "hats" },
-                                    { name: "Bats", value: "bats" },
-                                    { name: "Cats", value: "cats" },
-                                    { name: "Mats", value: "mats" }
+                                    {
+                                        name: "Hats",
+                                        value: "hats"
+                                    },
+                                    {
+                                        name: "Bats",
+                                        value: "bats"
+                                    },
+                                    {
+                                        name: "Cats",
+                                        value: "cats"
+                                    },
+                                    {
+                                        name: "Mats",
+                                        value: "mats"
+                                    }
                                 ],
                                 key: "aChoice"
                             },
@@ -164,10 +175,22 @@ define(
                                 control: "select",
                                 required: true,
                                 options: [
-                                    { name: "Hats", value: "hats" },
-                                    { name: "Bats", value: "bats" },
-                                    { name: "Cats", value: "cats" },
-                                    { name: "Mats", value: "mats" }
+                                    {
+                                        name: "Hats",
+                                        value: "hats"
+                                    },
+                                    {
+                                        name: "Bats",
+                                        value: "bats"
+                                    },
+                                    {
+                                        name: "Cats",
+                                        value: "cats"
+                                    },
+                                    {
+                                        name: "Mats",
+                                        value: "mats"
+                                    }
                                 ],
                                 key: "aRequiredChoice"
                             }

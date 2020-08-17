@@ -74,8 +74,8 @@ define(
                 // Filter candidates by object type
                 for (i = 0; i < candidates.length; i += 1) {
                     type = candidates[i].type;
-                    if (!type || !domainObject ||
-                            domainObject.getCapability('type').instanceOf(type)) {
+                    if (!type || !domainObject
+                            || domainObject.getCapability('type').instanceOf(type)) {
                         return candidates[i];
                     }
                 }
@@ -146,10 +146,10 @@ define(
                 }
 
                 function unchanged(canRepresent, idPath, key) {
-                    return (canRepresent === couldRepresent) &&
-                        (key === lastKey) &&
-                        (idPath.length === lastIdPath.length) &&
-                        idPath.every(function (id, i) {
+                    return (canRepresent === couldRepresent)
+                        && (key === lastKey)
+                        && (idPath.length === lastIdPath.length)
+                        && idPath.every(function (id, i) {
                             return id === lastIdPath[i];
                         });
                 }
@@ -158,9 +158,11 @@ define(
                     if (!domainObject) {
                         return [];
                     }
+
                     if (!domainObject.hasCapability('context')) {
                         return [domainObject.getId()];
                     }
+
                     return domainObject.getCapability('context')
                         .getPath().map(function (pathObject) {
                             return pathObject.getId();
@@ -174,7 +176,7 @@ define(
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
-                        canRepresent = !!(representation && domainObject),
+                        canRepresent = Boolean(representation && domainObject),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
@@ -299,7 +301,6 @@ define(
          * @param {DomainObject} domainObject the domain object
          *        being represented
          */
-
 
         return MCTRepresentation;
     }

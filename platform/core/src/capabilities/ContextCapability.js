@@ -81,8 +81,8 @@ define(
             var parentObject = this.parentObject,
                 parentContext =
                     parentObject && parentObject.getCapability('context'),
-                parentPath = parentContext ?
-                    parentContext.getPath() : [this.parentObject];
+                parentPath = parentContext
+                    ? parentContext.getPath() : [this.parentObject];
 
             return parentPath.concat([this.domainObject]);
         };
@@ -98,12 +98,12 @@ define(
          *          object which exposed this capability.
          */
         ContextCapability.prototype.getRoot = function () {
-            var parentContext = this.parentObject &&
-                this.parentObject.getCapability('context');
+            var parentContext = this.parentObject
+                && this.parentObject.getCapability('context');
 
-            return parentContext ?
-                parentContext.getRoot() :
-                (this.parentObject || this.domainObject);
+            return parentContext
+                ? parentContext.getRoot()
+                : (this.parentObject || this.domainObject);
         };
 
         return ContextCapability;

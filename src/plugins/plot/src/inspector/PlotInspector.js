@@ -30,7 +30,7 @@ define([
     PlotEditRegion
 ) {
 
-    var plotInspector = new InspectorRegion();
+    const plotInspector = new InspectorRegion();
 
     plotInspector.addRegion(PlotBrowseRegion);
     plotInspector.addRegion(PlotEditRegion);

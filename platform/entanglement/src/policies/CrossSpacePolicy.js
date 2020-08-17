@@ -38,17 +38,19 @@ define(
         }
 
         function lookupSpace(domainObject) {
-            var persistence = domainObject &&
-                domainObject.getCapability("persistence");
+            var persistence = domainObject
+                && domainObject.getCapability("persistence");
+
             return persistence && persistence.getSpace();
         }
 
         function isCrossSpace(context) {
             var domainObject = context.domainObject,
                 selectedObject = context.selectedObject;
-            return selectedObject !== undefined &&
-                domainObject !== undefined &&
-                lookupSpace(domainObject) !== lookupSpace(selectedObject);
+
+            return selectedObject !== undefined
+                && domainObject !== undefined
+                && lookupSpace(domainObject) !== lookupSpace(selectedObject);
         }
 
         CrossSpacePolicy.prototype.allow = function (action, context) {

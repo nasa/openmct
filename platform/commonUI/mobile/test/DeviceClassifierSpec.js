@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ["../src/DeviceClassifier", "../src/DeviceMatchers"],
     function (DeviceClassifier, DeviceMatchers) {
@@ -69,9 +68,9 @@ define(
             });
 
             TEST_PERMUTATIONS.forEach(function (trueMethods) {
-                var summary = trueMethods.length === 0 ?
-                    "device has no detected characteristics" :
-                    "device " + (trueMethods.join(", "));
+                var summary = trueMethods.length === 0
+                    ? "device has no detected characteristics"
+                    : "device " + (trueMethods.join(", "));
 
                 describe("when " + summary, function () {
                     var classifier; // eslint-disable-line

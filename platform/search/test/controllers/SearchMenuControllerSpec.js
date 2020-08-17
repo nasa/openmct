@@ -39,8 +39,16 @@ define(
                 );
 
                 mockTypes = [
-                    {key: 'mock.type.1', name: 'Mock Type 1', cssClass: 'icon-layout'},
-                    {key: 'mock.type.2', name: 'Mock Type 2', cssClass: 'icon-telemetry'}
+                    {
+                        key: 'mock.type.1',
+                        name: 'Mock Type 1',
+                        cssClass: 'icon-layout'
+                    },
+                    {
+                        key: 'mock.type.2',
+                        name: 'Mock Type 2',
+                        cssClass: 'icon-telemetry'
+                    }
                 ];
 
                 mockScope.ngModel = {};

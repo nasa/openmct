@@ -62,6 +62,7 @@ define(
                         " upon ",
                         domainObject && domainObject.getId()
                     ].join(""));
+
                     return action.perform.apply(action, arguments);
                 };
 

@@ -41,7 +41,6 @@ define(
                 uniqueId,
                 newObjects;
 
-
             beforeEach(function () {
 
                 uniqueId = 0;
@@ -79,7 +78,9 @@ define(
                                 });
                             config.capabilities.composition = compCapability;
                         }
+
                         newObjects.push(domainObjectFactory(config));
+
                         return domainObjectFactory(config);
                     });
                 openmct.$injector.get.and.returnValue(mockInstantiate);
@@ -96,6 +97,7 @@ define(
                 );
                 identifierService.generate.and.callFake(function () {
                     uniqueId++;
+
                     return uniqueId;
                 });
                 compositionCapability = jasmine.createSpy('compositionCapability');
@@ -158,7 +160,10 @@ define(
                             body: JSON.stringify({
                                 "openmct": {
                                     "infiniteParent": {
-                                        "composition": [{key: "infinteChild", namespace: ""}],
+                                        "composition": [{
+                                            key: "infinteChild",
+                                            namespace: ""
+                                        }],
                                         "name": "1",
                                         "type": "folder",
                                         "modified": 1503598129176,
@@ -166,7 +171,10 @@ define(
                                         "persisted": 1503598129176
                                     },
                                     "infinteChild": {
-                                        "composition": [{key: "infinteParent", namespace: ""}],
+                                        "composition": [{
+                                            key: "infinteParent",
+                                            namespace: ""
+                                        }],
                                         "name": "2",
                                         "type": "folder",
                                         "modified": 1503598132428,

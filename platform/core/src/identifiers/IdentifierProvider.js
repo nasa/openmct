@@ -47,6 +47,7 @@ define(
             if (space !== undefined) {
                 id = space + ":" + id;
             }
+
             return id;
         };
 

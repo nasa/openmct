@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global spyOn*/
+
 define(
     function () {
 
@@ -33,7 +33,6 @@ define(
             this.rejectHandlers = [];
             spyOn(this, 'then').and.callThrough();
         }
-
 
         /**
          * Resolve the promise, passing the supplied value to all resolve

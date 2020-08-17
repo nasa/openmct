@@ -88,7 +88,11 @@ define(
                 priority: -1000,
 
                 // Two-way bind key, ngModel, and parameters
-                scope: { key: "=", ngModel: "=", parameters: "=" }
+                scope: {
+                    key: "=",
+                    ngModel: "=",
+                    parameters: "="
+                }
             };
         }
 

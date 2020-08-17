@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/* global console */
 define([
 
 ], function (
@@ -28,12 +27,12 @@ define([
 ) {
 
     function checkForDeprecatedFunctionality(typeDef) {
-        if (typeDef.hasOwnProperty('telemetry')) {
+        if (Object.prototype.hasOwnProperty.call(typeDef, 'telemetry')) {
             console.warn(
-                'DEPRECATION WARNING: Telemetry data on type ' +
-                'registrations will be deprecated in a future version, ' +
-                'please convert to a custom telemetry metadata provider ' +
-                'for type: ' + typeDef.key
+                'DEPRECATION WARNING: Telemetry data on type '
+                + 'registrations will be deprecated in a future version, '
+                + 'please convert to a custom telemetry metadata provider '
+                + 'for type: ' + typeDef.key
             );
         }
     }

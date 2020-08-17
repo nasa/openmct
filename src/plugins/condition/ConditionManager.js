@@ -37,7 +37,10 @@ export default class ConditionManager extends EventEmitter {
         this.compositionLoad = this.composition.load();
         this.subscriptions = {};
         this.telemetryObjects = {};
-        this.testData = {conditionTestData: [], applied: false};
+        this.testData = {
+            conditionTestData: [],
+            applied: false
+        };
         this.initialize();
 
         this.stopObservingForChanges = this.openmct.objects.observe(this.conditionSetDomainObject, '*', (newDomainObject) => {
@@ -50,9 +53,13 @@ export default class ConditionManager extends EventEmitter {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
         if (this.subscriptions[id]) {
             console.log('subscription already exists');
+
             return;
         }
-        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: this.openmct.telemetry.getMetadata(endpoint).valueMetadatas});
+
+        const metadata = this.openmct.telemetry.getMetadata(endpoint);
+
+        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: metadata ? metadata.valueMetadatas : []});
         this.subscriptions[id] = this.openmct.telemetry.subscribe(
             endpoint,
             this.telemetryReceived.bind(this, endpoint)
@@ -64,6 +71,7 @@ export default class ConditionManager extends EventEmitter {
         const id = this.openmct.objects.makeKeyString(endpointIdentifier);
         if (!this.subscriptions[id]) {
             console.log('no subscription to remove');
+
             return;
         }
 
@@ -189,6 +197,7 @@ export default class ConditionManager extends EventEmitter {
         } else {
             this.conditionSetDomainObject.configuration.conditionCollection.unshift(newCondition);
         }
+
         this.initCondition(newCondition, index);
         this.persistConditions();
     }
@@ -218,10 +227,10 @@ export default class ConditionManager extends EventEmitter {
 
     getCurrentCondition() {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-        let currentCondition = conditionCollection[conditionCollection.length-1];
+        let currentCondition = conditionCollection[conditionCollection.length - 1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
-            const condition = this.findConditionById(conditionCollection[i].id)
+            const condition = this.findConditionById(conditionCollection[i].id);
             if (condition.result) {
                 //first condition to be true wins
                 currentCondition = conditionCollection[i];
@@ -234,7 +243,7 @@ export default class ConditionManager extends EventEmitter {
 
     getCurrentConditionLAD(conditionResults) {
         const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-        let currentCondition = conditionCollection[conditionCollection.length-1];
+        let currentCondition = conditionCollection[conditionCollection.length - 1];
 
         for (let i = 0; i < conditionCollection.length - 1; i++) {
             if (conditionResults[conditionCollection[i].id]) {
@@ -243,6 +252,7 @@ export default class ConditionManager extends EventEmitter {
                 break;
             }
         }
+
         return currentCondition;
     }
 
@@ -262,8 +272,9 @@ export default class ConditionManager extends EventEmitter {
                     results.forEach(resultObj => {
                         const { id, data, data: { result } } = resultObj;
                         if (this.findConditionById(id)) {
-                            conditionResults[id] = !!result;
+                            conditionResults[id] = Boolean(result);
                         }
+
                         latestTimestamp = getLatestTimestamp(
                             latestTimestamp,
                             data,
@@ -294,7 +305,7 @@ export default class ConditionManager extends EventEmitter {
     isTelemetryUsed(endpoint) {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
 
-        for(const condition of this.conditions) {
+        for (let condition of this.conditions) {
             if (condition.isTelemetryUsed(id)) {
                 return true;
             }
@@ -313,8 +324,11 @@ export default class ConditionManager extends EventEmitter {
         let timestamp = {};
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
-        this.conditions.forEach(condition => {
-            condition.getResult(normalizedDatum);
+        //We want to stop when the first condition evaluates to true.
+        this.conditions.some((condition) => {
+            condition.updateResult(normalizedDatum);
+
+            return condition.result === true;
         });
 
         this.updateCurrentCondition(timestamp);
@@ -332,7 +346,7 @@ export default class ConditionManager extends EventEmitter {
                 },
                 timestamp
             )
-        )
+        );
     }
 
     getTestData(metadatum) {
@@ -343,6 +357,7 @@ export default class ConditionManager extends EventEmitter {
                 data = found.value;
             }
         }
+
         return data;
     }
 
@@ -353,7 +368,8 @@ export default class ConditionManager extends EventEmitter {
         const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
             const testValue = this.getTestData(metadatum);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-            datum[metadatum.key] = testValue !== undefined ?  formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
+            datum[metadatum.key] = testValue !== undefined ? formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
+
             return datum;
         }, {});
 
@@ -377,12 +393,12 @@ export default class ConditionManager extends EventEmitter {
         Object.values(this.subscriptions).forEach(unsubscribe => unsubscribe());
         delete this.subscriptions;
 
-        if(this.stopObservingForChanges) {
+        if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
 
         this.conditions.forEach((condition) => {
             condition.destroy();
-        })
+        });
     }
 }

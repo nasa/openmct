@@ -56,7 +56,7 @@ define([], function () {
      * @returns {boolean} true if present; false if not
      */
     ModelCacheService.prototype.has = function (id) {
-        return this.cache.hasOwnProperty(id);
+        return Object.prototype.hasOwnProperty.call(this.cache, id);
     };
 
     /**

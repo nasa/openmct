@@ -1,6 +1,7 @@
 define(['../../src/input/ColorPalette'], function (ColorPalette) {
     describe('An Open MCT color palette', function () {
-        var colorPalette, changeCallback;
+        let colorPalette;
+        let changeCallback;
 
         beforeEach(function () {
             changeCallback = jasmine.createSpy('changeCallback');

@@ -120,6 +120,91 @@ module.exports = {
         "no-useless-computed-key": "error",
         // https://eslint.org/docs/rules/rest-spread-spacing
         "rest-spread-spacing": ["error"],
+        // https://eslint.org/docs/rules/no-var
+        "no-var": "error",
+        // https://eslint.org/docs/rules/one-var
+        "one-var": ["error", "never"],
+        // https://eslint.org/docs/rules/default-case-last
+        "default-case-last": "error",
+        // https://eslint.org/docs/rules/default-param-last
+        "default-param-last": "error",
+        // https://eslint.org/docs/rules/grouped-accessor-pairs
+        "grouped-accessor-pairs": "error",
+        // https://eslint.org/docs/rules/no-constructor-return
+        "no-constructor-return": "error",
+        // https://eslint.org/docs/rules/array-callback-return
+        "array-callback-return": "error",
+        // https://eslint.org/docs/rules/no-invalid-this
+        "no-invalid-this": "error", // Believe this one actually surfaces some bugs
+        // https://eslint.org/docs/rules/func-style
+        "func-style": ["error", "declaration"],
+        // https://eslint.org/docs/rules/no-unused-expressions
+        "no-unused-expressions": "error",
+        // https://eslint.org/docs/rules/no-useless-concat
+        "no-useless-concat": "error",
+        // https://eslint.org/docs/rules/radix
+        "radix": "error",
+        // https://eslint.org/docs/rules/require-await
+        "require-await": "error",
+        // https://eslint.org/docs/rules/no-alert
+        "no-alert": "error",
+        // https://eslint.org/docs/rules/no-useless-constructor
+        "no-useless-constructor": "error",
+        // https://eslint.org/docs/rules/no-duplicate-imports
+        "no-duplicate-imports": "error",
+
+        // https://eslint.org/docs/rules/no-implicit-coercion
+        "no-implicit-coercion": "error",
+        //https://eslint.org/docs/rules/no-unneeded-ternary
+        "no-unneeded-ternary": "error",
+        // https://eslint.org/docs/rules/semi
+        "semi": ["error", "always"],
+        // https://eslint.org/docs/rules/no-multi-spaces
+        "no-multi-spaces": "error",
+        // https://eslint.org/docs/rules/key-spacing
+        "key-spacing": ["error", {
+            "afterColon": true
+        }],
+        // https://eslint.org/docs/rules/keyword-spacing
+        "keyword-spacing": ["error", {
+            "before": true,
+            "after": true
+        }],
+        // https://eslint.org/docs/rules/comma-spacing
+        // Also requires one line code fix
+        "comma-spacing": ["error", {
+            "after": true
+        }],
+        //https://eslint.org/docs/rules/no-whitespace-before-property
+        "no-whitespace-before-property": "error",
+        // https://eslint.org/docs/rules/object-curly-newline
+        "object-curly-newline": ["error", {"consistent": true, "multiline": true}],
+        // https://eslint.org/docs/rules/object-property-newline
+        "object-property-newline": "error",
+        // https://eslint.org/docs/rules/brace-style
+        "brace-style": "error",
+        // https://eslint.org/docs/rules/no-multiple-empty-lines
+        "no-multiple-empty-lines": ["error", {"max": 1}],
+        // https://eslint.org/docs/rules/operator-linebreak
+        "operator-linebreak": ["error", "before", {"overrides": {"=": "after"}}],
+        // https://eslint.org/docs/rules/padding-line-between-statements
+        "padding-line-between-statements":["error", {
+            "blankLine": "always",
+            "prev": "multiline-block-like",
+            "next": "*"
+        }, {
+            "blankLine": "always",
+            "prev": "*",
+            "next": "return"
+        }],
+        // https://eslint.org/docs/rules/space-infix-ops
+        "space-infix-ops": "error",
+        // https://eslint.org/docs/rules/space-unary-ops
+        "space-unary-ops": ["error", {"words": true, "nonwords": false}],
+        // https://eslint.org/docs/rules/arrow-spacing
+        "arrow-spacing": "error",
+        // https://eslint.org/docs/rules/semi-spacing
+        "semi-spacing": ["error", {"before": false, "after": true}],
 
         "vue/html-indent": [
             "error",
@@ -151,28 +236,24 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off"
+        "vue/singleline-html-element-content-newline": "off",
+
     },
     "overrides": [
         {
-            "files": ["*Spec.js"],
+            "files": LEGACY_FILES,
             "rules": {
                 "no-unused-vars": [
                     "warn",
                     {
                         "vars": "all",
                         "args": "none",
-                        "varsIgnorePattern": "controller",
-
+                        "varsIgnorePattern": "controller"
                     }
-                ]
-            }
-        }, {
-            "files": LEGACY_FILES,
-            "rules": {
-                // https://eslint.org/docs/rules/no-nested-ternary
+                ],
                 "no-nested-ternary": "off",
-                "no-var": "off"
+                "no-var": "off",
+                "one-var": "off"
             }
         }
     ]

@@ -75,16 +75,17 @@ define(
             function mergeObjects(a, b) {
                 var result = {};
                 Object.keys(a).forEach(function (k) {
-                    result[k] = b.hasOwnProperty(k) ?
-                        mergeModels(a[k], b[k], (merger || {})[k]) :
-                        a[k];
+                    result[k] = Object.prototype.hasOwnProperty.call(b, k)
+                        ? mergeModels(a[k], b[k], (merger || {})[k])
+                        : a[k];
                 });
                 Object.keys(b).forEach(function (k) {
                     // Copy any properties not already merged
-                    if (!a.hasOwnProperty(k)) {
+                    if (!Object.prototype.hasOwnProperty.call(a, k)) {
                         result[k] = b[k];
                     }
                 });
+
                 return result;
             }
 
@@ -92,10 +93,10 @@ define(
                 return b;
             }
 
-            mergeFunction = (merger && Function.isFunction(merger)) ? merger :
-                (Array.isArray(modelA) && Array.isArray(modelB)) ? mergeArrays :
-                    (modelA instanceof Object && modelB instanceof Object) ? mergeObjects :
-                        mergeOther;
+            mergeFunction = (merger && Function.isFunction(merger)) ? merger
+                : (Array.isArray(modelA) && Array.isArray(modelB)) ? mergeArrays
+                    : (modelA instanceof Object && modelB instanceof Object) ? mergeObjects
+                        : mergeOther;
 
             return mergeFunction(modelA, modelB);
         }

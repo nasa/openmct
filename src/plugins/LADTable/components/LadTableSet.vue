@@ -27,6 +27,7 @@
             <th>Name</th>
             <th>Timestamp</th>
             <th>Value</th>
+            <th v-if="hasUnits">Unit</th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +46,7 @@
                 v-for="secondary in secondaryTelemetryObjects[primary.key]"
                 :key="secondary.key"
                 :domain-object="secondary.domainObject"
+                :has-units="hasUnits"
             />
         </template>
     </tbody>
@@ -64,6 +66,23 @@ export default {
             primaryTelemetryObjects: [],
             secondaryTelemetryObjects: {},
             compositions: []
+        };
+    },
+    computed: {
+        hasUnits() {
+            let ladTables = Object.values(this.secondaryTelemetryObjects);
+            for (let ladTable of ladTables) {
+                for (let telemetryObject of ladTable) {
+                    let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
+                    for (let metadatum of metadata.valueMetadatas) {
+                        if (metadatum.unit) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     },
     mounted() {
@@ -91,23 +110,26 @@ export default {
             this.$set(this.secondaryTelemetryObjects, primary.key, []);
             this.primaryTelemetryObjects.push(primary);
 
-            let composition = this.openmct.composition.get(primary.domainObject),
-                addCallback = this.addSecondary(primary),
-                removeCallback = this.removeSecondary(primary);
+            let composition = this.openmct.composition.get(primary.domainObject);
+            let addCallback = this.addSecondary(primary);
+            let removeCallback = this.removeSecondary(primary);
 
             composition.on('add', addCallback);
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({composition, addCallback, removeCallback});
+            this.compositions.push({
+                composition,
+                addCallback,
+                removeCallback
+            });
         },
         removePrimary(identifier) {
-            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
-                primary = this.primaryTelemetryObjects[index];
+            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key);
+            let primary = this.primaryTelemetryObjects[index];
 
-            this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
-            this.primaryTelemetryObjects.splice(index,1);
-            primary = undefined;
+            this.$delete(this.secondaryTelemetryObjects, primary.key);
+            this.primaryTelemetryObjects.splice(index, 1);
         },
         reorderPrimary(reorderPlan) {
             let oldComposition = this.primaryTelemetryObjects.slice();
@@ -125,18 +147,18 @@ export default {
                 array.push(secondary);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         },
         removeSecondary(primary) {
             return (identifier) => {
-                let array = this.secondaryTelemetryObjects[primary.key],
-                    index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
+                let array = this.secondaryTelemetryObjects[primary.key];
+                let index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
 
                 array.splice(index, 1);
 
                 this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            };
         }
     }
-}
+};
 </script>

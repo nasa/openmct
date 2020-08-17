@@ -118,8 +118,8 @@ define(
                 expect(capability.isEditContextRoot()).toBe(true);
             });
 
-            it("inEditingContext returns true if parent object is being" +
-                " edited", function () {
+            it("inEditingContext returns true if parent object is being"
+                + " edited", function () {
                 mockStatusCapability.get.and.returnValue(false);
                 mockParentStatus.get.and.returnValue(false);
                 expect(capability.inEditContext()).toBe(false);
@@ -179,8 +179,8 @@ define(
                     capability.edit();
                     capability.finish();
                 });
-                it("returns true if the object has been modified since it" +
-                    " was last persisted", function () {
+                it("returns true if the object has been modified since it"
+                    + " was last persisted", function () {
                     mockTransactionService.size.and.returnValue(0);
                     expect(capability.dirty()).toBe(false);
                     mockTransactionService.size.and.returnValue(1);

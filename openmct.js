@@ -32,6 +32,6 @@ if (document.currentScript) {
 
 const MCT = require('./src/MCT');
 
-var openmct = new MCT();
+const openmct = new MCT();
 
 module.exports = openmct;

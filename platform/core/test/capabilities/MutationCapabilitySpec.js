@@ -74,6 +74,7 @@ define(
             it("allows model mutation to be aborted", function () {
                 mutation.invoke(function (m) {
                     m.number = m.number * 7;
+
                     return false; // Should abort change
                 });
                 // Number should not have been changed

@@ -34,18 +34,39 @@ define(
 
             beforeEach(function () {
                 testPolicies = [
-                    { category: "a", message: "some message", result: true },
-                    { category: "a", result: true },
-                    { category: "a", result: true },
-                    { category: "b", message: "some message", result: true },
-                    { category: "b", result: true },
-                    { category: "b", result: true }
+                    {
+                        category: "a",
+                        message: "some message",
+                        result: true
+                    },
+                    {
+                        category: "a",
+                        result: true
+                    },
+                    {
+                        category: "a",
+                        result: true
+                    },
+                    {
+                        category: "b",
+                        message: "some message",
+                        result: true
+                    },
+                    {
+                        category: "b",
+                        result: true
+                    },
+                    {
+                        category: "b",
+                        result: true
+                    }
                 ];
                 mockPolicies = testPolicies.map(function (p) {
                     var mockPolicy = jasmine.createSpyObj("policy", ['allow']);
                     mockPolicy.allow.and.callFake(function () {
                         return p.result;
                     });
+
                     return mockPolicy;
                 });
                 mockPolicyConstructors = testPolicies.map(function (p, i) {
@@ -53,6 +74,7 @@ define(
                     mockPolicyConstructor.and.returnValue(mockPolicies[i]);
                     mockPolicyConstructor.message = p.message;
                     mockPolicyConstructor.category = p.category;
+
                     return mockPolicyConstructor;
                 });
 

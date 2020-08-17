@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console */
 
 define(['EventEmitter'], function (EventEmitter) {
     const DEFAULT_VIEW_PRIORITY = 100;
@@ -36,7 +35,6 @@ define(['EventEmitter'], function (EventEmitter) {
     }
 
     ViewRegistry.prototype = Object.create(EventEmitter.prototype);
-
 
     /**
      * @private for platform-internal use
@@ -73,10 +71,11 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
-        var key = provider.key;
+        const key = provider.key;
         if (key === undefined) {
             throw "View providers must have a unique 'key' property defined";
         }
+
         if (this.providers[key] !== undefined) {
             console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
         }

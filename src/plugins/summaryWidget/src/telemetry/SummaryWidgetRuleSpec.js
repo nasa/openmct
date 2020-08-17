@@ -27,11 +27,11 @@ define([
 ) {
     describe('SummaryWidgetRule', function () {
 
-        var rule;
-        var telemetryState;
+        let rule;
+        let telemetryState;
 
         beforeEach(function () {
-            var formatMap = {
+            const formatMap = {
                 raw: {
                     parse: function (datum) {
                         return datum.value;

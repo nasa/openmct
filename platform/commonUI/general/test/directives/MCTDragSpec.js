@@ -87,7 +87,10 @@ define(
                 mockElement.on.calls.mostRecent().args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
-                    { delta: [0, 0], $event: event }
+                    {
+                        delta: [0, 0],
+                        $event: event
+                    }
                 );
             });
 
@@ -118,7 +121,10 @@ define(
                 // Should have passed that delta to mct-drag expression
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDrag,
-                    { delta: [10, 140], $event: event }
+                    {
+                        delta: [10, 140],
+                        $event: event
+                    }
                 );
             });
 
@@ -145,7 +151,10 @@ define(
                 // initial position
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragUp,
-                    { delta: [-2, 11], $event: event }
+                    {
+                        delta: [-2, 11],
+                        $event: event
+                    }
                 );
 
                 // Should also have unregistered listeners
@@ -215,7 +224,10 @@ define(
                 mockElement.on.calls.mostRecent().args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
-                    { delta: [0, 0], $event: event }
+                    {
+                        delta: [0, 0],
+                        $event: event
+                    }
                 );
             });
 
@@ -246,7 +258,10 @@ define(
                 // Should have passed that delta to mct-drag expression
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDrag,
-                    { delta: [10, 140], $event: event }
+                    {
+                        delta: [10, 140],
+                        $event: event
+                    }
                 );
             });
 
@@ -273,7 +288,10 @@ define(
                 // initial position
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragUp,
-                    { delta: [-2, 11], $event: event }
+                    {
+                        delta: [-2, 11],
+                        $event: event
+                    }
                 );
 
                 // Should also have unregistered listeners

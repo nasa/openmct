@@ -51,6 +51,7 @@ export default {
         },
         isSelectable() {
             let column = this.row.columns[this.columnKey];
+
             return column && column.selectable;
         }
     },
@@ -64,7 +65,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.objectPath[0]

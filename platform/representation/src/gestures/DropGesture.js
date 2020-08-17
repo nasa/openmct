@@ -83,6 +83,7 @@ define(
 
                         // Indicate that we will accept the drag
                         event.preventDefault(); // Required in Chrome?
+
                         return false;
                     }
                 }
@@ -122,7 +123,6 @@ define(
             this.element.off('dragover', this.dragOverCallback);
             this.element.off('drop', this.dropCallback);
         };
-
 
         return DropGesture;
     }

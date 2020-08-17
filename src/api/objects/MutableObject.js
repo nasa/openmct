@@ -27,7 +27,7 @@ define([
     utils,
     _
 ) {
-    var ANY_OBJECT_EVENT = "mutation";
+    const ANY_OBJECT_EVENT = "mutation";
 
     /**
      * The MutableObject wraps a DomainObject and provides getters and
@@ -43,7 +43,7 @@ define([
     }
 
     function qualifiedEventName(object, eventName) {
-        var keystring = utils.makeKeyString(object.identifier);
+        const keystring = utils.makeKeyString(object.identifier);
 
         return [keystring, eventName].join(':');
     }
@@ -64,8 +64,8 @@ define([
      * @memberof module:openmct.MutableObject#
      */
     MutableObject.prototype.on = function (path, callback) {
-        var fullPath = qualifiedEventName(this.object, path);
-        var eventOff =
+        const fullPath = qualifiedEventName(this.object, path);
+        const eventOff =
             this.eventEmitter.off.bind(this.eventEmitter, fullPath, callback);
 
         this.eventEmitter.on(fullPath, callback);
@@ -83,7 +83,7 @@ define([
         _.set(this.object, path, value);
         _.set(this.object, 'modified', Date.now());
 
-        var handleRecursiveMutation = function (newObject) {
+        const handleRecursiveMutation = function (newObject) {
             this.object = newObject;
         }.bind(this);
 

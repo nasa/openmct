@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     function () {
 
@@ -38,6 +37,7 @@ define(
             if (parent && parent.getId) {
                 model.location = parent.getId();
             }
+
             return this.creationService.createObject(model, parent);
         };
 

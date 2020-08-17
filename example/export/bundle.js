@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     './ExportTelemetryAsCSVAction'
@@ -27,7 +26,7 @@ define([
     "use strict";
 
     return {
-        name:"example/export",
+        name: "example/export",
         definition: {
             "name": "Example of using CSV Export",
             "extensions": {

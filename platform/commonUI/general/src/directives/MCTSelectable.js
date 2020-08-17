@@ -58,14 +58,14 @@ define(
                     var removeSelectable = openmct.selection.selectable(
                         element[0],
                         scope.$eval(attrs.mctSelectable),
-                        attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
+                        Object.prototype.hasOwnProperty.call(attrs, 'mctInitSelect')
+                        && scope.$eval(attrs.mctInitSelect) !== false
                     );
 
                     scope.$on("$destroy", function () {
                         removeSelectable();
                     });
                 });
-
 
             }
 

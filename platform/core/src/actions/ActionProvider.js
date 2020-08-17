@@ -51,8 +51,8 @@ define(
                 var categories = Action.category || [];
 
                 // Convert to an array if necessary
-                categories = Array.isArray(categories) ?
-                    categories : [categories];
+                categories = Array.isArray(categories)
+                    ? categories : [categories];
 
                 // Store action under all relevant categories
                 categories.forEach(function (category) {
@@ -118,6 +118,7 @@ define(
                             "due to:",
                             e.message
                         ].join(" "));
+
                         return undefined;
                     }
                 }

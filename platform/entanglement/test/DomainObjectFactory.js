@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global jasmine*/
 define(
     function () {
 
@@ -45,14 +44,17 @@ define(
             if (!config || !config.hasOwnProperty) {
                 config = {};
             }
+
             if (!config.name) {
                 config.name = 'domainObject';
             }
+
             configObjectProps.forEach(function (prop) {
                 if (!config[prop] || !config[prop].hasOwnProperty) {
                     config[prop] = {};
                 }
             });
+
             return config;
         }
 
@@ -107,7 +109,7 @@ define(
              * @returns {*} capability object
              */
             domainObject.getCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     return config.capabilities[capability];
                 }
             });
@@ -121,7 +123,7 @@ define(
              * @returns {boolean}
              */
             domainObject.hasCapability.and.callFake(function (capability) {
-                return config.capabilities.hasOwnProperty(capability);
+                return Object.prototype.hasOwnProperty.call(config.capabilities, capability);
             });
 
             /**
@@ -134,13 +136,15 @@ define(
              * @returns {*} result whatever was returned by `invoke`.
              */
             domainObject.useCapability.and.callFake(function (capability) {
-                if (config.capabilities.hasOwnProperty(capability)) {
+                if (Object.prototype.hasOwnProperty.call(config.capabilities, capability)) {
                     if (!config.capabilities[capability].invoke) {
                         throw new Error(
                             capability + ' missing invoke function.'
                         );
                     }
+
                     var passThroughArgs = [].slice.call(arguments, 1);
+
                     return config
                         .capabilities[capability]
                         .invoke

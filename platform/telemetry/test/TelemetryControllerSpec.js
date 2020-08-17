@@ -142,7 +142,10 @@ define(
                 mockScope.$watch.calls.mostRecent().args[1](mockDomainObject);
 
                 expect(controller.getMetadata()).toEqual([
-                    { source: "testSource", key: "testKey" }
+                    {
+                        source: "testSource",
+                        key: "testKey"
+                    }
                 ]);
             });
 

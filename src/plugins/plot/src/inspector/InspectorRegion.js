@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [
         './Region'
@@ -47,7 +46,7 @@ define(
          * @private
          */
         InspectorRegion.prototype.buildRegion = function () {
-            var metadataRegion = {
+            const metadataRegion = {
                 name: 'metadata',
                 title: 'Metadata Region',
                 // Which modes should the region part be visible in? If

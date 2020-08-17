@@ -27,7 +27,6 @@ define(
             ATTRIBUTE = "testAttribute",
             EXPRESSION = "some.expression";
 
-
         // MCTScroll is the commonality between mct-scroll-x and
         // mct-scroll-y; it gets the event property to watch and
         // the attribute which contains the associated assignable

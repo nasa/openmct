@@ -31,7 +31,7 @@ define([
 ) {
 
     return {
-        name:"platform/policy",
+        name: "platform/policy",
         definition: {
             "name": "Policy Service",
             "description": "Provides support for extension-driven decisions.",

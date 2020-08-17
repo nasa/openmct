@@ -113,7 +113,6 @@ define(
                     ])
                 ).getType(undefined);
 
-
                 expect(captured.type.getDefinition().capabilities).toEqual(
                     ['a', 'b', 'c', 'x', 'y', 'z']
                 );
@@ -142,7 +141,6 @@ define(
                     }).length
                 );
             });
-
 
         });
     }

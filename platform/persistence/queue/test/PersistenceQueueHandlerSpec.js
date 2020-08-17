@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ["../src/PersistenceQueueHandler"],
     function (PersistenceQueueHandler) {
@@ -50,6 +49,7 @@ define(
                     ['persist', 'refresh']
                 );
                 mockPersistence.persist.and.returnValue(asPromise(true));
+
                 return mockPersistence;
             }
 
@@ -59,6 +59,7 @@ define(
                     ['getId']
                 );
                 mockDomainObject.getId.and.returnValue(id);
+
                 return mockDomainObject;
             }
 

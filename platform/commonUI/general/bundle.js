@@ -117,7 +117,7 @@ define([
 ) {
 
     return {
-        name:"platform/commonUI/general",
+        name: "platform/commonUI/general",
         definition: {
             "name": "General UI elements",
             "description": "General UI elements, meant to be reused across modes",

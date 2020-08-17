@@ -82,7 +82,6 @@ define([
             });
     };
 
-
     /**
      * Clean excess whitespace from a search term and return the cleaned
      * version.

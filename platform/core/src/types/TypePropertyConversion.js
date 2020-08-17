@@ -23,13 +23,12 @@
 define(
     function () {
 
-
         var conversions = {
                 number: {
                     toModelValue: parseFloat,
                     toFormValue: function (modelValue) {
-                        return (typeof modelValue === 'number') ?
-                            modelValue.toString(10) : undefined;
+                        return (typeof modelValue === 'number')
+                            ? modelValue.toString(10) : undefined;
                     }
                 },
                 identity: {
@@ -62,9 +61,9 @@ define(
          * @memberof platform/core
          */
         function TypePropertyConversion(name) {
-            if (name &&
-                    name.length > ARRAY_SUFFIX.length &&
-                    name.indexOf(ARRAY_SUFFIX, name.length - ARRAY_SUFFIX.length) !== -1) {
+            if (name
+                    && name.length > ARRAY_SUFFIX.length
+                    && name.indexOf(ARRAY_SUFFIX, name.length - ARRAY_SUFFIX.length) !== -1) {
                 return new ArrayConversion(
                     new TypePropertyConversion(
                         name.substring(0, name.length - ARRAY_SUFFIX.length)
@@ -74,6 +73,7 @@ define(
                 if (!conversions[name]) {
                     throw new Error("Unknown conversion type: " + name);
                 }
+
                 return conversions[name];
             }
         }
@@ -93,7 +93,6 @@ define(
          * @param {*} modelValue value as stored in a model
          * @returns {*} value to display within a form
          */
-
 
         return TypePropertyConversion;
     }

@@ -64,7 +64,10 @@ define(
                         return true;
                     }
                 };
-                context = { someKey: "some value", domainObject: object };
+                context = {
+                    someKey: "some value",
+                    domainObject: object
+                };
                 dialogService = {
                     getUserInput: function () {
                         return mockPromise(input);

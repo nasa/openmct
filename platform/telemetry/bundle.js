@@ -37,7 +37,7 @@ define([
 ) {
 
     return {
-        name:"platform/telemetry",
+        name: "platform/telemetry",
         definition: {
             "name": "Data bundle",
             "description": "Interfaces and infrastructure for real-time and historical data",

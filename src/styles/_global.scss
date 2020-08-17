@@ -206,10 +206,6 @@ body.desktop .has-local-controls {
     &:hover {
         box-shadow: $browseSelectableShdwHov;
     }
-
-    &[s-selected] {
-        border: $browseSelectedBorder;
-    }
 }
 
 /**************************** EDITING */

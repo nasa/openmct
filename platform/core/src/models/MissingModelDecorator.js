@@ -49,6 +49,7 @@ define(
                 ids.forEach(function (id) {
                     result[id] = models[id] || missingModel(id);
                 });
+
                 return result;
             }
 
