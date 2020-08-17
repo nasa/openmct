@@ -104,7 +104,7 @@ define(
             }
 
             rowHasColumn(row, key) {
-                return row.columns.hasOwnProperty(key);
+                return Object.prototype.hasOwnProperty.call(row.columns, key);
             }
 
             destroy() {

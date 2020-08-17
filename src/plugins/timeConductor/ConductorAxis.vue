@@ -190,13 +190,23 @@ export default {
 
                 requestAnimationFrame(() => {
                     this.dragX = $event.clientX;
-                    this.inPanMode ? this.pan() : this.zoom();
+
+                    if (this.inPanMode) {
+                        this.pan();
+                    } else {
+                        this.zoom();
+                    }
+
                     this.dragging = false;
                 });
             }
         },
         dragEnd() {
-            this.inPanMode ? this.endPan() : this.endZoom();
+            if (this.inPanMode) {
+                this.endPan();
+            } else {
+                this.endZoom();
+            }
 
             document.removeEventListener('mousemove', this.drag);
             this.dragStartX = undefined;
@@ -207,7 +217,7 @@ export default {
             this.$emit('panAxis', panBounds);
         },
         endPan() {
-            const panBounds = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
+            const panBounds = this.isChangingViewBounds()
                 ? this.getPanBounds()
                 : undefined;
             this.$emit('endPan', panBounds);
@@ -251,16 +261,14 @@ export default {
             });
         },
         endZoom() {
-            const zoomRange = this.dragStartX && this.dragX && this.dragStartX !== this.dragX
-                ? this.getZoomRange()
-                : undefined;
-
-            const zoomBounds = zoomRange
-                ? {
+            let zoomBounds;
+            if (this.isChangingViewBounds()) {
+                const zoomRange = this.getZoomRange();
+                zoomBounds = {
                     start: this.scaleToBounds(zoomRange.start),
                     end: this.scaleToBounds(zoomRange.end)
-                }
-                : this.openmct.time.bounds();
+                };
+            }
 
             this.zoomStyle = {};
             this.$emit('endZoom', zoomBounds);
@@ -289,6 +297,9 @@ export default {
             const offset = valueDelta / this.width * timeDelta;
 
             return bounds.start + offset;
+        },
+        isChangingViewBounds() {
+            return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {

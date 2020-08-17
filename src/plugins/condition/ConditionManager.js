@@ -57,7 +57,9 @@ export default class ConditionManager extends EventEmitter {
             return;
         }
 
-        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: this.openmct.telemetry.getMetadata(endpoint).valueMetadatas});
+        const metadata = this.openmct.telemetry.getMetadata(endpoint);
+
+        this.telemetryObjects[id] = Object.assign({}, endpoint, {telemetryMetaData: metadata ? metadata.valueMetadatas : []});
         this.subscriptions[id] = this.openmct.telemetry.subscribe(
             endpoint,
             this.telemetryReceived.bind(this, endpoint)
@@ -303,7 +305,7 @@ export default class ConditionManager extends EventEmitter {
     isTelemetryUsed(endpoint) {
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
 
-        for (const condition of this.conditions) {
+        for (let condition of this.conditions) {
             if (condition.isTelemetryUsed(id)) {
                 return true;
             }
@@ -322,8 +324,11 @@ export default class ConditionManager extends EventEmitter {
         let timestamp = {};
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
-        this.conditions.forEach(condition => {
-            condition.getResult(normalizedDatum);
+        //We want to stop when the first condition evaluates to true.
+        this.conditions.some((condition) => {
+            condition.updateResult(normalizedDatum);
+
+            return condition.result === true;
         });
 
         this.updateCurrentCondition(timestamp);

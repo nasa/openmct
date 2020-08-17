@@ -29,8 +29,8 @@ define([], function () {
         view,
         legacyObject
     ) {
-        if (view.hasOwnProperty('provider')) {
-            var domainObject = legacyObject.useCapability('adapter');
+        if (Object.prototype.hasOwnProperty.call(view, 'provider')) {
+            const domainObject = legacyObject.useCapability('adapter');
 
             return view.provider.canView(domainObject);
         }

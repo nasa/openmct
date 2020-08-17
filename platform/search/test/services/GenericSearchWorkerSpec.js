@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global require*/
-
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */

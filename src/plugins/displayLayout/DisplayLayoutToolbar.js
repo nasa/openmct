@@ -41,90 +41,92 @@ define(['lodash'], function (_) {
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
-                        'text': {
-                            name: "Text Element Properties",
-                            sections: [
-                                {
-                                    rows: [
-                                        {
-                                            key: "text",
-                                            control: "textfield",
-                                            name: "Text",
-                                            required: true
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        'image': {
-                            name: "Image Properties",
-                            sections: [
-                                {
-                                    rows: [
-                                        {
-                                            key: "url",
-                                            control: "textfield",
-                                            name: "Image URL",
-                                            "cssClass": "l-input-lg",
-                                            required: true
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    VIEW_TYPES = {
-                        'telemetry-view': {
-                            value: 'telemetry-view',
-                            name: 'Alphanumeric',
-                            class: 'icon-alphanumeric'
-                        },
-                        'telemetry.plot.overlay': {
-                            value: 'telemetry.plot.overlay',
-                            name: 'Overlay Plot',
-                            class: "icon-plot-overlay"
-                        },
-                        'telemetry.plot.stacked': {
-                            value: "telemetry.plot.stacked",
-                            name: "Stacked Plot",
-                            class: "icon-plot-stacked"
-                        },
-                        'table': {
-                            value: 'table',
-                            name: 'Table',
-                            class: 'icon-tabular-realtime'
-                        }
-                    },
-                    APPLICABLE_VIEWS = {
-                        'telemetry-view': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table
-                        ],
-                        'telemetry.plot.overlay': [
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table,
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'telemetry.plot.stacked': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES.table,
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'table': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'telemetry-view-multi': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table
-                        ],
-                        'telemetry.plot.overlay-multi': [
-                            VIEW_TYPES['telemetry.plot.stacked']
+                    'text': {
+                        name: "Text Element Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "text",
+                                        control: "textfield",
+                                        name: "Text",
+                                        required: true
+                                    }
+                                ]
+                            }
                         ]
-                    };
+                    },
+                    'image': {
+                        name: "Image Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "url",
+                                        control: "textfield",
+                                        name: "Image URL",
+                                        "cssClass": "l-input-lg",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                };
+
+                const VIEW_TYPES = {
+                    'telemetry-view': {
+                        value: 'telemetry-view',
+                        name: 'Alphanumeric',
+                        class: 'icon-alphanumeric'
+                    },
+                    'telemetry.plot.overlay': {
+                        value: 'telemetry.plot.overlay',
+                        name: 'Overlay Plot',
+                        class: "icon-plot-overlay"
+                    },
+                    'telemetry.plot.stacked': {
+                        value: "telemetry.plot.stacked",
+                        name: "Stacked Plot",
+                        class: "icon-plot-stacked"
+                    },
+                    'table': {
+                        value: 'table',
+                        name: 'Table',
+                        class: 'icon-tabular-realtime'
+                    }
+                };
+
+                const APPLICABLE_VIEWS = {
+                    'telemetry-view': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
+                    ],
+                    'telemetry.plot.overlay': [
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'telemetry.plot.stacked': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'table': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'telemetry-view-multi': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
+                    ],
+                    'telemetry.plot.overlay-multi': [
+                        VIEW_TYPES['telemetry.plot.stacked']
+                    ]
+                };
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -494,8 +496,8 @@ define(['lodash'], function (_) {
                 }
 
                 function getPropertyFromPath(object, path) {
-                    let splitPath = path.split('.'),
-                        property = Object.assign({}, object);
+                    let splitPath = path.split('.');
+                    let property = Object.assign({}, object);
 
                     while (splitPath.length && property) {
                         property = property[splitPath.shift()];
@@ -550,7 +552,11 @@ define(['lodash'], function (_) {
                 function unitsOnly(items) {
                     let results = items.filter((item) => {
                         let currentItem = item[0];
-                        let metadata = this.openmct.telemetry.getMetadata(currentItem.context.item);
+                        let metadata = openmct.telemetry.getMetadata(currentItem.context.item);
+                        if (!metadata) {
+                            return false;
+                        }
+
                         let hasUnits = metadata
                             .valueMetadatas
                             .filter((metadatum) => metadatum.unit)
@@ -564,9 +570,9 @@ define(['lodash'], function (_) {
 
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
                     if (selection.length === 1) {
-                        let displayLayoutContext = selectionPath[1].context,
-                            selectedItemContext = selectionPath[0].context,
-                            selectedItemType = selectedItemContext.item.type;
+                        let displayLayoutContext = selectionPath[1].context;
+                        let selectedItemContext = selectionPath[0].context;
+                        let selectedItemType = selectedItemContext.item.type;
 
                         if (selectedItemContext.layoutItem.type === 'telemetry-view') {
                             selectedItemType = 'telemetry-view';

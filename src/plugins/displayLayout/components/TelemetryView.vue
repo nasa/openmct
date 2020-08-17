@@ -39,7 +39,7 @@
         @contextmenu.prevent="showContextMenu"
     >
         <div class="is-missing__indicator"
-             title="This item is missing"
+             title="This i tem is missing"
         ></div>
         <div
             v-if="showLabel"
@@ -75,9 +75,9 @@ import LayoutFrame from './LayoutFrame.vue';
 import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
-const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
-    DEFAULT_POSITION = [1, 1],
-    CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
+const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+const DEFAULT_POSITION = [1, 1];
+const CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -144,8 +144,8 @@ export default {
             return displayMode === 'all' || displayMode === 'value';
         },
         unit() {
-            let value = this.item.value,
-                unit = this.metadata.value(value).unit;
+            let value = this.item.value;
+            let unit = this.metadata.value(value).unit;
 
             return unit;
         },

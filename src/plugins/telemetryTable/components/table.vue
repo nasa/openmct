@@ -117,7 +117,7 @@
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">Deselect All</span>
+            <span class="c-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>
@@ -303,6 +303,7 @@ export default {
             default() {
                 return {
                     enable: false,
+                    disableMultiSelect: false,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
@@ -495,11 +496,11 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {},
-                totalWidth = 0,
-                headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[0],
-                sizingCells = sizingTableRow.children;
+            let columnWidths = {};
+            let totalWidth = 0;
+            let headerKeys = Object.keys(this.headers);
+            let sizingTableRow = this.sizingTable.children[0];
+            let sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array) => {
                 if (this.isAutosizeEnabled) {
@@ -753,8 +754,8 @@ export default {
         },
         unmarkRow(rowIndex) {
             if (this.markedRows.length > 1) {
-                let row = this.visibleRows[rowIndex],
-                    positionInMarkedArray = this.markedRows.indexOf(row);
+                let row = this.visibleRows[rowIndex];
+                let positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
@@ -787,6 +788,11 @@ export default {
             this.$set(markedRow, 'marked', true);
             this.pause();
 
+            if (this.marking.disableMultiSelect) {
+                this.unmarkAllRows();
+                insertMethod = 'push';
+            }
+
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
@@ -800,7 +806,7 @@ export default {
                 return;
             }
 
-            if (!this.markedRows.length) {
+            if (!this.markedRows.length || this.marking.disableMultiSelect) {
                 this.markRow(rowIndex);
             } else {
                 if (this.markedRows.length > 1) {
@@ -814,9 +820,9 @@ export default {
 
                 let lastRowToBeMarked = this.visibleRows[rowIndex];
 
-                let allRows = this.table.filteredRows.getRows(),
-                    firstRowIndex = allRows.indexOf(this.markedRows[0]),
-                    lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+                let allRows = this.table.filteredRows.getRows();
+                let firstRowIndex = allRows.indexOf(this.markedRows[0]);
+                let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
@@ -825,7 +831,7 @@ export default {
 
                 let baseRow = this.markedRows[0];
 
-                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
+                for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
 

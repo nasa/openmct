@@ -1,7 +1,13 @@
 define(['../../src/input/OperationSelect'], function (OperationSelect) {
     describe('A select for choosing composition object properties', function () {
-        var mockConfig, mockBadConfig, mockManager, operationSelect, mockOperations,
-            mockPropertyTypes, mockKeySelect, mockEvaluator;
+        let mockConfig;
+        let mockBadConfig;
+        let mockManager;
+        let operationSelect;
+        let mockOperations;
+        let mockPropertyTypes;
+        let mockKeySelect;
+        let mockEvaluator;
         beforeEach(function () {
 
             mockConfig = {
@@ -65,22 +71,22 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 return (mockOperations[operation].appliesTo.includes(type));
             });
 
-            mockKeySelect.on.and.callFake(function (event, callback) {
-                this.callbacks = this.callbacks || {};
-                this.callbacks[event] = callback;
+            mockKeySelect.on.and.callFake((event, callback) => {
+                mockKeySelect.callbacks = mockKeySelect.callbacks || {};
+                mockKeySelect.callbacks[event] = callback;
             });
 
-            mockKeySelect.triggerCallback.and.callFake(function (event, key) {
-                this.callbacks[event](key);
+            mockKeySelect.triggerCallback.and.callFake((event, key) => {
+                mockKeySelect.callbacks[event](key);
             });
 
-            mockManager.on.and.callFake(function (event, callback) {
-                this.callbacks = this.callbacks || {};
-                this.callbacks[event] = callback;
+            mockManager.on.and.callFake((event, callback) => {
+                mockManager.callbacks = mockManager.callbacks || {};
+                mockManager.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.and.callFake(function (event) {
-                this.callbacks[event]();
+            mockManager.triggerCallback.and.callFake(event => {
+                mockManager.callbacks[event]();
             });
 
             mockManager.getTelemetryPropertyType.and.callFake(function (object, key) {
