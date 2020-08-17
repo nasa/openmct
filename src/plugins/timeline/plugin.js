@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import TimelineViewProvider from './TimelineViewProvider';
-import uuid from "uuid";
 
 export default function () {
     return function install(openmct) {
@@ -37,7 +36,7 @@ export default function () {
                     swimlanes: 10,
                     activities: [
                         {
-                            name: 'Activity 1',
+                            name: 'Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1',
                             start: 1597170002854,
                             end: 1597171032854,
                             type: 'NIRVSS',
@@ -53,7 +52,7 @@ export default function () {
                             textColor: 'black'
                         },
                         {
-                            name: 'Activity 3',
+                            name: 'Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3',
                             start: 1597170132854,
                             end: 1597171202854,
                             type: 'VIPER',

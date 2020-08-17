@@ -11,6 +11,7 @@ import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
 // import utcMultiTimeFormat from '../timeConductor/utcMultiTimeFormat.js';
 
+//TODO: UI direction needed for the following property values
 const PADDING = 1;
 const TEXT_PADDING = 15;
 // const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -18,15 +19,10 @@ const TEXT_PADDING = 15;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 20;
+const MAX_TEXT_WIDTH = 300;
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: {
-        drawingEngine: {
-            type: String,
-            default: 'canvas'
-        }
-    },
     mounted() {
         this.activityPositions = {};
         this.viewBounds = this.openmct.time.bounds();
@@ -37,12 +33,8 @@ export default {
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
             .attr("class", "axis");
-        if (this.drawingEngine !== 'svg') {
-            this.canvas = this.container.append('canvas').node();
-            this.canvasContext = this.canvas.getContext('2d');
-        } else {
-            this.canvasContext = document.createElement('canvas').getContext('2d');
-        }
+        this.canvas = this.container.append('canvas').node();
+        this.canvasContext = this.canvas.getContext('2d');
 
         this.setDimensions();
         this.setScale();
@@ -59,10 +51,8 @@ export default {
             this.top = Math.round(rect.top);
             this.height = Math.round(rect.height);
             this.width = axisHolder.clientWidth;
-            if (this.drawingEngine !== 'svg') {
-                this.canvas.width = this.width;
-                this.canvas.height = this.height;
-            }
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
         },
         setScale() {
             if (!this.width) {
@@ -105,35 +95,43 @@ export default {
             return parseInt(metrics.width, 10);
         },
         // Get the row where the next activity will land.
-        getRowForActivity(rectX, rectWidth, defaultActivityRow) {
+        getRowForActivity(rectX, rectWidth, defaultActivityRow = 0) {
             let activityRow;
             let sortedActivityRows = Object.keys(this.activityPositions).sort();
-            for (let i = 0; i < sortedActivityRows.length; i++) {
-                let row = sortedActivityRows[i];
-                let noOverlap = this.activityPositions[row].every(rect => {
-                    const start = rect.start;
-                    const end = rect.end;
-                    const hasOverlap = (rectX >= start && rectX <= end) || (rectWidth >= start && rectWidth <= end);
+            let textRows = 0;
+
+            function getOverlap(rects) {
+                return rects.every(rect => {
+                    const { start, end } = rect;
+                    const hasOverlap = (rectX >= start && rectX <= end) || (rectWidth >= start && rectWidth <= end) || (rectX <= start && rectWidth >=  end);
+
+                    textRows = textRows + rect.textRows;
 
                     return !hasOverlap;
                 });
-                if (noOverlap) {
+            }
+
+            for (let i = 0; i < sortedActivityRows.length; i++) {
+                let row = sortedActivityRows[i];
+                textRows = 0;
+                if (getOverlap(this.activityPositions[row])) {
                     activityRow = row;
                     break;
                 }
             }
 
             if (!activityRow && sortedActivityRows.length) {
-                activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT;
+                activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + (ROW_HEIGHT * textRows);
             }
 
-            return activityRow || defaultActivityRow;
+            return (activityRow || defaultActivityRow);
         },
         plotActivity() {
             let currentStart;
             let currentEnd;
-            let activityRow = this.drawingEngine === 'svg' ? this.top : 0;
+            let activityRow = 0;
             this.domainObject.configuration.activities.forEach((activity) => {
+                let textRows;
                 if (this.isActivityInBounds(activity)) {
                     currentStart = Math.max(this.viewBounds.start, activity.start);
                     currentEnd = Math.min(this.viewBounds.end, activity.end);
@@ -145,10 +143,12 @@ export default {
                     const textStart = canFitText ? rectX + PADDING : rectX + rectWidth + PADDING;
 
                     if (canFitText) {
-                        activityRow = this.getRowForActivity(rectX, rectWidth, this.drawingEngine === 'svg' ? this.top : 0);
+                        activityRow = this.getRowForActivity(rectX, rectWidth);
                     } else {
-                        activityRow = this.getRowForActivity(rectX, (textStart + activityNameWidth), this.drawingEngine === 'svg' ? this.top : 0);
+                        activityRow = this.getRowForActivity(rectX, (textStart + activityNameWidth));
                     }
+
+                    textRows = this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText);
 
                     if (!this.activityPositions[activityRow]) {
                         this.activityPositions[activityRow] = [];
@@ -156,15 +156,9 @@ export default {
 
                     this.activityPositions[activityRow].push({
                         start: rectX,
-                        end: canFitText ? rectWidth : textStart + activityNameWidth
+                        end: canFitText ? rectWidth : textStart + activityNameWidth,
+                        textRows: textRows || 1
                     });
-
-                    //TODO: Limit height of the text to 2 rows when it's placed outside the activity rectangle and include that in the activityRow calculation
-                    if (this.drawingEngine === 'svg') {
-                        this.plotSVG(activity, rectX, rectWidth, activityRow, textStart);
-                    } else {
-                        this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart);
-                    }
                 }
             });
         },
@@ -184,14 +178,48 @@ export default {
                 .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
                 .attr('fill', activity.textColor);
         },
-        plotCanvas(activity, rectX, rectWidth, activityRow, textStart) {
+        plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
             this.canvasContext.fillStyle = activity.color;
             this.canvasContext.strokeStyle = "lightgray";
             this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
             this.canvasContext.strokeRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
 
             this.canvasContext.fillStyle = activity.textColor;
-            this.canvasContext.fillText(activity.name, textStart, parseInt(activityRow, 10) + TEXT_PADDING);
+            this.canvasContext.font = "normal 12px sans-serif";
+            let textRows = this.drawText(this.canvasContext, activity.name, textStart, parseInt(activityRow, 10) + TEXT_PADDING, canFitText);
+
+            //This is necessary as if you paint the rectangle after the text, the text is hidden
+            if (textRows) {
+                this.canvasContext.fillStyle = activity.color;
+                this.canvasContext.strokeStyle = "lightgray";
+                this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT * textRows);
+                this.canvasContext.strokeRect(rectX, activityRow, rectWidth, ROW_HEIGHT * textRows);
+            }
+
+            return textRows;
+        },
+        drawText(context, text, x, y, canFitText) {
+            let words = text.split(' ');
+            let line = '';
+            let rows = 1;
+
+            for (let n = 0; (n < words.length) && (rows <= 2); n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (!canFitText && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += ROW_HEIGHT;
+                    rows = rows + 1;
+                } else {
+                    line = testLine;
+                }
+            }
+
+            context.fillText(line, x, y);
+
+            return rows - 1;
         }
     }
 };
