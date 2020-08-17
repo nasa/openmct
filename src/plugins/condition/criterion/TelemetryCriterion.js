@@ -120,7 +120,7 @@ export default class TelemetryCriterion extends EventEmitter {
         return datum;
     }
 
-    getResult(data) {
+    updateResult(data) {
         const validatedData = this.isValid() ? data : {};
         if (this.isStalenessCheck()) {
             if (this.stalenessSubscription) {
@@ -201,7 +201,9 @@ export default class TelemetryCriterion extends EventEmitter {
         let metadataObject;
         if (metadata) {
             const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+            if (telemetryMetadata) {
+                metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+            }
         }
 
         return metadataObject;
