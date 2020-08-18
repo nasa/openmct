@@ -23,6 +23,6 @@ import RemoveAction from "./RemoveAction";
 
 export default function () {
     return function (openmct) {
-        openmct.menus.registerObjectAction(new RemoveAction(openmct));
+        openmct.actions.registerObjectAction(new RemoveAction(openmct));
     }
 }

@@ -37,6 +37,16 @@
         </div>
     </div>
     <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
+        <button 
+            v-for="(item, index) in statusBarItems"
+            style="margin: 2px;"
+            :key="index"
+            class="c-button"
+            :class="item.cssClass"
+            @click="item.callBack"
+        >
+        </button>
+
         <button
             class="c-button icon-expand"
             title="View Large"
@@ -98,12 +108,14 @@ export default {
         let objectType = this.openmct.types.get(this.domainObject.type),
             cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
             complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type),
-            viewProvider = {};
+            viewProvider = {},
+            statusBarItems = {};
 
         return {
             cssClass,
             complexContent,
-            viewProvider
+            viewProvider,
+            statusBarItems
         }
     },
     computed: {
@@ -163,10 +175,32 @@ export default {
         },
         setViewProvider(provider) {
             this.viewProvider = provider;
+            this.initializeStatusBarItems();
+        },
+        initializeStatusBarItems() {
+            if (!this.actionsListener) {
+                this.openmct.actions.on('update', this.setStatusBarItems)
+                this.actionsListener = true;
+            }
+
+            let viewContext = this.viewProvider.getViewContext && this.viewProvider.getViewContext();
+
+            if (viewContext) {
+                this.viewKey = viewContext.getViewKey();
+                this.statusBarItems = this.openmct.actions._applicableViewActions(this.viewKey).filter(action => action.showInStatusBar);
+            } else {
+                this.openmct.actions.off('update', this.setStatusBarItems);
+            }
+        },
+        setStatusBarItems(viewKey, actionItems) {
+            if (viewKey === this.viewKey) {
+                this.statusBarItems = actionItems.filter(action => action.showInStatusBar);
+            }
         },
         showMenuItems(event) {
-            let applicableViewMenuItems = this.viewProvider.menuItems && this.viewProvider.menuItems();
-            let applicableObjectMenuItems = this.openmct.menus._applicableObjectActions(this.objectPath);
+            let viewKey = this.viewProvider.getViewContext().getViewKey();
+            let applicableViewMenuItems = this.openmct.actions._applicableViewActions(viewKey);
+            let applicableObjectMenuItems = this.openmct.actions._applicableObjectActions(this.objectPath);
             let applicableMenuItems;
 
             if (!applicableViewMenuItems) {

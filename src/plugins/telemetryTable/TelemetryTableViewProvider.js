@@ -86,9 +86,11 @@ define([
                     onClearData() {
                         table.clearData();
                     },
-                    menuItems() {
+                    getViewContext() {
                         if (component) {
-                            return component.$refs.tableComponent.getMenuItems();
+                            return {
+                                getViewKey: component.$refs.tableComponent.getViewKey
+                            }
                         } else {
                             return [];
                         }

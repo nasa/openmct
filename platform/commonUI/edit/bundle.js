@@ -152,6 +152,8 @@ define([
                         "implementation": PropertiesAction,
                         "cssClass": "major icon-pencil",
                         "name": "Edit Properties...",
+                        "group": "action",
+                        "priority": 10,
                         "description": "Edit properties of this object.",
                         "depends": [
                             "dialogService"

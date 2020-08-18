@@ -24,7 +24,7 @@ import ViewHistoricalDataAction from './ViewHistoricalDataAction';
 
 export default function () {
     return function (openmct) {
-        openmct.menus.registerObjectAction(new PreviewAction(openmct));
-        openmct.menus.registerObjectAction(new ViewHistoricalDataAction(openmct));
+        openmct.actions.registerObjectAction(new PreviewAction(openmct));
+        openmct.actions.registerObjectAction(new ViewHistoricalDataAction(openmct));
     };
 }

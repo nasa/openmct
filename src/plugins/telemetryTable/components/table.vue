@@ -22,6 +22,7 @@
 <template>
 <div class="c-table-wrapper">
     <!-- main contolbar  start-->
+    <!--
     <div v-if="!marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
     >
@@ -91,6 +92,7 @@
 
         <slot name="buttons"></slot>
     </div>
+    -->
     <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
@@ -338,7 +340,8 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
-            hideHeaders: configuration.hideHeaders
+            hideHeaders: configuration.hideHeaders,
+            viewKey: Math.random()
         }
     },
     computed: {
@@ -376,6 +379,20 @@ export default {
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
+
+                if (oldVal.length === 0 && newVal.length > 0 || oldVal.length > 0 && newVal === 0) {
+                    this.updateMenuItems();
+                }
+            }
+        },
+        paused: {
+            handler() {
+                this.updateMenuItems();
+            }
+        },
+        isAutosizeEnabled: {
+            handler() {
+                this.updateMenuItems();
             }
         }
     },
@@ -407,6 +424,8 @@ export default {
         this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
 
         this.table.configuration.on('change', this.updateConfiguration);
+
+        this.openmct.actions.registerViewAction(this.viewKey, this.getMenuItems());
 
         this.calculateTableSize();
         this.pollForResize();
@@ -873,6 +892,12 @@ export default {
 
             this.$nextTick().then(this.calculateColumnWidths);
         },
+        getViewKey() {
+            return this.viewKey;
+        },
+        updateMenuItems() {
+            this.openmct.actions.updateViewActions(this.viewKey, this.getMenuItems());
+        },
         getMenuItems() {
 
             let exportCSV = {
@@ -891,25 +916,29 @@ export default {
                 name: 'Unmark All Rows',
                 description: 'Unmark all rows',
                 cssClass: 'icon-x labeled',
-                callBack: this.unmarkAllRows
+                callBack: this.unmarkAllRows,
+                showInStatusBar: true
             }
             let pausePlay = {
                 name: this.paused ? 'Play' : 'Pause',
                 description: this.paused ? 'Continue real-time data flow' : 'Pause real-time data flow',
-                cssClass: this.paused ? 'icon-play' : 'icon-pause',
-                callBack: this.togglePauseByButton
+                cssClass: this.paused ? 'c-button pause-play is-paused' : 'icon-pause',
+                callBack: this.togglePauseByButton,
+                showInStatusBar: true
             }
             let expandColumns = {
                 name: 'Expand Columns',
                 description: "Increase column widths to fit currently available data.",
                 cssClass: 'icon-arrows-right-left labeled',
-                callBack: this.recalculateColumnWidths
+                callBack: this.recalculateColumnWidths,
+                showInStatusBar: true
             }
             let autosizeColumns = {
                 name: 'Autosize Columns',
                 description: "Automatically size columns to fit the table into the available space.",
                 cssClass: 'icon-expand labeled',
-                callBack: this.autosizeColumns
+                callBack: this.autosizeColumns,
+                showInStatusBar: true
             }
             let columnSizing;
             let applicableOptions = [];

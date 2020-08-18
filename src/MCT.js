@@ -242,6 +242,8 @@ define([
 
         this.menus = new api.MenuAPI(this);
 
+        this.actions = new api.ActionsAPI();
+
         this.router = new ApplicationRouter();
 
         this.branding = BrandingAPI.default;

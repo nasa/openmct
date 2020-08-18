@@ -31,6 +31,8 @@ export default class PreviewAction {
         this.key = 'preview';
         this.description = 'Preview in large dialog';
         this.cssClass = 'icon-eye-open';
+        this.group = 'windowing';
+        this.priority = 1;
 
         /**
          * Dependencies

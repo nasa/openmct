@@ -143,8 +143,8 @@ define([
                             "$window"
                         ],
                         "group": "windowing",
-                        "cssClass": "icon-new-window",
-                        "priority": "preferred"
+                        "priority": 10,
+                        "cssClass": "icon-new-window"
                     }
                 ],
                 "runs": [

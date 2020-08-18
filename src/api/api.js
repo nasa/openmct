@@ -29,7 +29,8 @@ define([
     './indicators/IndicatorAPI',
     './notifications/NotificationAPI',
     './Editor',
-    './menu/MenuAPI'
+    './menu/MenuAPI',
+    './actions/ActionsAPI'
 
 ], function (
     TimeAPI,
@@ -40,7 +41,8 @@ define([
     IndicatorAPI,
     NotificationAPI,
     EditorAPI,
-    MenuAPI
+    MenuAPI,
+    ActionsAPI
 ) {
     return {
         TimeAPI: TimeAPI,
@@ -51,6 +53,7 @@ define([
         IndicatorAPI: IndicatorAPI,
         NotificationAPI: NotificationAPI.default,
         EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default
+        MenuAPI: MenuAPI.default,
+        ActionsAPI: ActionsAPI.default
     };
 });
