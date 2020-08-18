@@ -928,41 +928,47 @@ export default {
                 name: 'Export Table Data',
                 description: "Export this view's data",
                 cssClass: 'icon-download labeled',
-                callBack: this.exportAllDataAsCSV 
+                callBack: this.exportAllDataAsCSV,
+                group: 'view'
             };
             let exportMarkedRows = {
                 name: 'Export Marked Rows',
                 description: "Export marked rows as CSV",
                 cssClass: 'icon-download labeled',
-                callBack: this.exportMarkedDataAsCSV
+                callBack: this.exportMarkedDataAsCSV,
+                group: 'view'
             };
             let unmarkAllRows = {
                 name: 'Unmark All Rows',
                 description: 'Unmark all rows',
                 cssClass: 'icon-x labeled',
                 callBack: this.unmarkAllRows,
-                showInStatusBar: true
+                showInStatusBar: true,
+                group: 'view'
             }
             let pausePlay = {
                 name: this.paused ? 'Play' : 'Pause',
                 description: this.paused ? 'Continue real-time data flow' : 'Pause real-time data flow',
                 cssClass: this.paused ? 'c-button pause-play is-paused' : 'icon-pause',
                 callBack: this.togglePauseByButton,
-                showInStatusBar: true
+                showInStatusBar: true,
+                group: 'view'
             }
             let expandColumns = {
                 name: 'Expand Columns',
                 description: "Increase column widths to fit currently available data.",
                 cssClass: 'icon-arrows-right-left labeled',
                 callBack: this.recalculateColumnWidths,
-                showInStatusBar: true
+                showInStatusBar: true,
+                group: 'view'
             }
             let autosizeColumns = {
                 name: 'Autosize Columns',
                 description: "Automatically size columns to fit the table into the available space.",
                 cssClass: 'icon-expand labeled',
                 callBack: this.autosizeColumns,
-                showInStatusBar: true
+                showInStatusBar: true,
+                group: 'view'
             }
             let columnSizing;
             let applicableOptions = [];

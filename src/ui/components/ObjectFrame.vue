@@ -216,24 +216,7 @@ export default {
             }
         },
         showMenuItems(event) {
-            let viewKey = this.viewProvider.getViewContext && this.viewProvider.getViewContext().getViewKey();
-            let applicableViewMenuItems;
-
-            if (viewKey) {
-                applicableViewMenuItems = this.openmct.actions._applicableViewActions(viewKey);
-            }
-
-            let applicableObjectMenuItems = this.openmct.actions._applicableObjectActions(this.objectPath);
-            let applicableMenuItems;
-
-            if (!applicableViewMenuItems) {
-                applicableMenuItems = applicableObjectMenuItems;
-            } else if(!applicableObjectMenuItems) {
-                applicableMenuItems = applicableViewMenuItems;
-            } else {
-                applicableObjectMenuItems.splice(1, 0, applicableViewMenuItems);
-                applicableMenuItems = applicableObjectMenuItems;
-            }
+            let applicableMenuItems = this.openmct.actions._applicableActions(this.objectPath, this.viewKey);
 
             this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
         }

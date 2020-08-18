@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
+import { timingSafeEqual } from 'crypto';
 
 class ActionsAPI extends EventEmitter {
     constructor() {
@@ -34,7 +35,9 @@ class ActionsAPI extends EventEmitter {
         this.registerViewAction = this.registerViewAction.bind(this);
         this.removeAllViewActions = this.removeAllViewActions.bind(this);
         this._applicableObjectActions = this._applicableObjectActions.bind(this);
+        this._groupedAndSortedObjectActions = this._groupedAndSortedObjectActions.bind(this);
         this._applicableViewActions = this._applicableViewActions.bind(this);
+        this._applicableActions = this._applicableActions.bind(this);
     }
 
     registerObjectAction(actionDefinition) {
@@ -44,7 +47,7 @@ class ActionsAPI extends EventEmitter {
     registerViewAction(viewKey, actionDefinition) {
 
         if (Array.isArray(actionDefinition)) {
-            this._viewActions[viewKey] = actionDefinition
+            this._viewActions[viewKey] = actionDefinition;
         } else {
             if (this._viewActions[viewKey]) {
                 this._viewActions[viewKey].push(actionDefinition);
@@ -72,11 +75,13 @@ class ActionsAPI extends EventEmitter {
                 if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
                     return true;
                 }
+
                 return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
             } else {
                 if (action.appliesTo === undefined) {
                     return true;
                 }
+
                 return action.appliesTo(objectPath, actionsToBeIncluded) && !action.hideInDefaultMenu;
             }
         });
@@ -87,18 +92,32 @@ class ActionsAPI extends EventEmitter {
             };
         });
 
-        return this._groupAndSortActions(applicableActions);
+        return applicableActions;
+    }
+
+    _groupedAndSortedObjectActions(objectPath, actionsToBeIncluded) {
+        let actions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
+
+        return this._groupAndSortActions(actions);
     }
 
     _applicableViewActions(viewKey) {
         return this._viewActions[viewKey] || [];
     }
 
+    _applicableActions(objectPath, viewKey, actionsToBeIncluded) {
+        let objectActions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
+        let viewActions = this._applicableViewActions(viewKey);
+        let combinedActions = objectActions.concat(viewActions);
+
+        return this._groupAndSortActions(combinedActions);
+    }
+
     _groupAndSortActions(actionsArray) {
         let actionsObject = {};
         let groupedSortedActionsArray = [];
 
-        function sortDescending(a,b) {
+        function sortDescending(a, b) {
             return b.priority - a.priority;
         }
 
