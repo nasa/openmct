@@ -854,7 +854,7 @@ export default {
 
                 for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
-                    row.marked = true;
+                    this.$set(row, 'marked', true);
 
                     if (row !== baseRow) {
                         this.markedRows.push(row);
