@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.0.0-snapshot",
+  "version": "1.2.4",
   "description": "The Open MCT core platform",
   "dependencies": {},
   "devDependencies": {
