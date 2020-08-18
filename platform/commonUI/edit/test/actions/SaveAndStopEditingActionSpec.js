@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/actions/SaveAndStopEditingAction"],
@@ -96,7 +95,6 @@ define(
 
                 action = new SaveAndStopEditingAction(dialogService, notificationService, actionContext);
             });
-
 
             it("only applies to domain object with an editor capability", function () {
                 expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(true);

@@ -22,7 +22,7 @@
 
 define(['zepto', './res/indicator-template.html'],
     function ($, indicatorTemplate) {
-        var DEFAULT_ICON_CLASS = 'icon-info';
+        const DEFAULT_ICON_CLASS = 'icon-info';
 
         function SimpleIndicator(openmct) {
             this.openmct = openmct;
@@ -68,9 +68,11 @@ define(['zepto', './res/indicator-template.html'],
                 if (this.iconClassValue) {
                     this.element.classList.remove(this.iconClassValue);
                 }
+
                 if (iconClass) {
                     this.element.classList.add(iconClass);
                 }
+
                 this.iconClassValue = iconClass;
             }
 
@@ -82,9 +84,11 @@ define(['zepto', './res/indicator-template.html'],
                 if (this.statusClassValue) {
                     this.element.classList.remove(this.statusClassValue);
                 }
+
                 if (statusClass) {
                     this.element.classList.add(statusClass);
                 }
+
                 this.statusClassValue = statusClass;
             }
 

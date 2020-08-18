@@ -102,7 +102,6 @@ class OverlayAPI {
         return dialog;
     }
 
-
     /**
      * Displays a blocking (modal) progress dialog. This dialog can be used for
      * displaying messages that require the user's attention, and show progress

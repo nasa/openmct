@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global require*/
-
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */
@@ -35,7 +33,6 @@ define([
         [GenericSearchWorkerText],
         {type: 'application/javascript'}
     ));
-
 
     describe('GenericSearchWorker', function () {
         // If this test fails, make sure this path is correct

@@ -39,7 +39,7 @@ export default class RemoveAction {
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
-        }).catch(() =>{});
+        }).catch(() => {});
     }
 
     showConfirmDialog(object) {
@@ -64,8 +64,8 @@ export default class RemoveAction {
                         }
                     }
                 ]
-            })
-        })
+            });
+        });
     }
 
     inNavigationPath(object) {
@@ -103,9 +103,15 @@ export default class RemoveAction {
     appliesTo(objectPath) {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
+        let child = objectPath[0];
+        let locked = child.locked ? child.locked : parent && parent.locked;
 
-        return parentType &&
-            parentType.definition.creatable &&
-            Array.isArray(parent.composition);
+        if (locked) {
+            return false;
+        }
+
+        return parentType
+            && parentType.definition.creatable
+            && Array.isArray(parent.composition);
     }
 }

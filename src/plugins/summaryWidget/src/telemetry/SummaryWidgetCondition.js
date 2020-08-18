@@ -41,10 +41,10 @@ define([
     }
 
     SummaryWidgetCondition.prototype.evaluate = function (telemetryState) {
-        var stateKeys = Object.keys(telemetryState);
-        var state;
-        var result;
-        var i;
+        const stateKeys = Object.keys(telemetryState);
+        let state;
+        let result;
+        let i;
 
         if (this.object === 'any') {
             for (i = 0; i < stateKeys.length; i++) {
@@ -54,6 +54,7 @@ define([
                     return true;
                 }
             }
+
             return false;
         } else if (this.object === 'all') {
             for (i = 0; i < stateKeys.length; i++) {
@@ -63,6 +64,7 @@ define([
                     return false;
                 }
             }
+
             return true;
         } else {
             return this.evaluateState(telemetryState[this.object]);
@@ -70,9 +72,10 @@ define([
     };
 
     SummaryWidgetCondition.prototype.evaluateState = function (state) {
-        var testValues = [
+        const testValues = [
             state.formats[this.key].parse(state.lastDatum)
         ].concat(this.values);
+
         return this.comparator(testValues);
     };
 

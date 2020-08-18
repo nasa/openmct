@@ -54,12 +54,13 @@ export default {
     data() {
         return {
             popupMenuItems: []
-        }
+        };
     },
     watch: {
     },
     mounted() {
         this.addPopupMenuItems();
+        this.exportImageService = this.openmct.$injector.get('exportImageService');
     },
     methods: {
         addPopupMenuItems() {
@@ -67,12 +68,12 @@ export default {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
-            }
+            };
             const preview = {
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)
-            }
+            };
 
             this.popupMenuItems = [removeEmbed, preview];
         },
@@ -199,13 +200,13 @@ export default {
             const options = {
                 name: this.removeActionString,
                 callback: this.removeEmbed.bind(this)
-            }
+            };
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
         openSnapshot() {
             const self = this;
-            const snapshot = new Vue({
+            this.snapshot = new Vue({
                 data: () => {
                     return {
                         embed: self.embed
@@ -213,14 +214,17 @@ export default {
                 },
                 methods: {
                     formatTime: self.formatTime,
-                    annotateSnapshot: self.annotateSnapshot
+                    annotateSnapshot: self.annotateSnapshot,
+                    exportImage: self.exportImage
                 },
                 template: SnapshotTemplate
             });
 
             const snapshotOverlay = this.openmct.overlays.overlay({
-                element: snapshot.$mount().$el,
-                onDestroy: () => { snapshot.$destroy(true) },
+                element: this.snapshot.$mount().$el,
+                onDestroy: () => {
+                    this.snapshot.$destroy(true);
+                },
                 size: 'large',
                 dismissable: true,
                 buttons: [
@@ -234,10 +238,20 @@ export default {
                 ]
             });
         },
+        exportImage(type) {
+            let element = this.snapshot.$refs['snapshot-image'];
+
+            if (type === 'png') {
+                this.exportImageService.exportPNG(element, this.embed.name);
+            } else {
+                this.exportImageService.exportJPG(element, this.embed.name);
+            }
+        },
         previewEmbed() {
             const self = this;
             const previewAction = new PreviewAction(self.openmct);
-            previewAction.invoke(JSON.parse(self.embed.objectPath));
+            this.openmct.objects.get(self.embed.domainObject.identifier)
+                .then(domainObject => previewAction.invoke([domainObject]));
         },
         removeEmbed(success) {
             if (!success) {
@@ -250,5 +264,5 @@ export default {
             this.$emit('updateEmbed', embed);
         }
     }
-}
+};
 </script>

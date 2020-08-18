@@ -24,5 +24,5 @@ import RemoveAction from "./RemoveAction";
 export default function () {
     return function (openmct) {
         openmct.actions.registerObjectAction(new RemoveAction(openmct));
-    }
+    };
 }

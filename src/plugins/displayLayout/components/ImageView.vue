@@ -24,6 +24,7 @@
 <layout-frame
     :item="item"
     :grid-size="gridSize"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
@@ -36,7 +37,7 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
+import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 
 export default {
@@ -70,7 +71,11 @@ export default {
             type: Number,
             required: true
         },
-        initSelect: Boolean
+        initSelect: Boolean,
+        isEditing: {
+            type: Boolean,
+            required: true
+        }
     },
     computed: {
         style() {
@@ -80,8 +85,10 @@ export default {
                 if (this.itemStyle.imageUrl !== undefined) {
                     backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
                 }
+
                 border = this.itemStyle.border;
             }
+
             return {
                 backgroundImage,
                 border
@@ -95,6 +102,13 @@ export default {
             }
 
             this.context.index = newIndex;
+        },
+        item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.layoutItem = newItem;
         }
     },
     mounted() {
@@ -110,5 +124,5 @@ export default {
             this.removeSelectable();
         }
     }
-}
+};
 </script>

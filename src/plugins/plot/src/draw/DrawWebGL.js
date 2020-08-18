@@ -20,35 +20,66 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define([
-    'lodash',
     'EventEmitter',
-    '../lib/eventHelpers'
+    '../lib/eventHelpers',
+    './MarkerShapes'
 ], function (
-    _,
     EventEmitter,
-    eventHelpers
+    eventHelpers,
+    MARKER_SHAPES
 ) {
 
     // WebGL shader sources (for drawing plain colors)
-    var FRAGMENT_SHADER = [
-            "precision mediump float;",
-            "uniform vec4 uColor;",
-            "void main(void) {",
-            "gl_FragColor = uColor;",
-            "}"
-        ].join('\n'),
-        VERTEX_SHADER = [
-            "attribute vec2 aVertexPosition;",
-            "uniform vec2 uDimensions;",
-            "uniform vec2 uOrigin;",
-            "uniform float uPointSize;",
-            "void main(void) {",
-            "gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);",
-            "gl_PointSize = uPointSize;",
-            "}"
-        ].join('\n');
+    const FRAGMENT_SHADER = `
+        precision mediump float;
+        uniform vec4 uColor;
+        uniform int uMarkerShape;
+        
+        void main(void) {
+            gl_FragColor = uColor;
+
+            if (uMarkerShape > 1) {
+                vec2 clipSpacePointCoord = 2.0 * gl_PointCoord - 1.0;
+
+                if (uMarkerShape == 2) { // circle
+                    float distance = length(clipSpacePointCoord);
+
+                    if (distance > 1.0) {
+                        discard;
+                    }
+                } else if (uMarkerShape == 3) { // diamond
+                    float distance = abs(clipSpacePointCoord.x) + abs(clipSpacePointCoord.y);
+
+                    if (distance > 1.0) {
+                        discard;
+                    }
+                } else if (uMarkerShape == 4) { // triangle
+                    float x = clipSpacePointCoord.x;
+                    float y = clipSpacePointCoord.y;
+                    float distance = 2.0 * x - 1.0;
+                    float distance2 = -2.0 * x - 1.0;
+
+                    if (distance > y || distance2 > y) {
+                        discard;
+                    }
+                }
+
+            }
+        }
+    `;
+
+    const VERTEX_SHADER = `
+        attribute vec2 aVertexPosition;
+        uniform vec2 uDimensions;
+        uniform vec2 uOrigin;
+        uniform float uPointSize;
+        
+        void main(void) {
+            gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);
+            gl_PointSize = uPointSize;
+        }
+    `;
 
     /**
      * Create a draw api utilizing WebGL.
@@ -59,8 +90,8 @@ define([
      */
     function DrawWebGL(canvas, overlay) {
         this.canvas = canvas;
-        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true }) ||
-            this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
+        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true })
+            || this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
 
         this.overlay = overlay;
         this.c2d = overlay.getContext('2d');
@@ -92,6 +123,7 @@ define([
         this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
         this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
         this.gl.compileShader(this.vertexShader);
+
         this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
         this.gl.shaderSource(this.fragmentShader, FRAGMENT_SHADER);
         this.gl.compileShader(this.fragmentShader);
@@ -107,6 +139,7 @@ define([
         // shader programs (to pass values into shaders at draw-time)
         this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.uColor = this.gl.getUniformLocation(this.program, "uColor");
+        this.uMarkerShape = this.gl.getUniformLocation(this.program, "uMarkerShape");
         this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
         this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
         this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
@@ -115,9 +148,6 @@ define([
 
         // Create a buffer to holds points which will be drawn
         this.buffer = this.gl.createBuffer();
-
-        // Use a line width of 2.0 for legibility
-        this.gl.lineWidth(2.0);
 
         // Enable blending, for smoothness
         this.gl.enable(this.gl.BLEND);
@@ -136,18 +166,22 @@ define([
 
     // Convert from logical to physical y coordinates
     DrawWebGL.prototype.y = function (v) {
-        return this.height -
-            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height
+            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
-    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points) {
+    DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
         if (this.isContextLost) {
             return;
         }
+
+        const shapeCode = MARKER_SHAPES[shape] ? MARKER_SHAPES[shape].drawWebGL : 0;
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
         this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.uniform4fv(this.uColor, color);
+        this.gl.uniform1i(this.uMarkerShape, shapeCode);
         this.gl.drawArrays(drawType, 0, points);
     };
 
@@ -155,6 +189,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.height = this.canvas.height = this.canvas.offsetHeight;
         this.width = this.canvas.width = this.canvas.offsetWidth;
         this.overlay.height = this.overlay.offsetHeight;
@@ -184,8 +219,9 @@ define([
         if (this.isContextLost) {
             return;
         }
-        if (dimensions && dimensions.length > 0 &&
-                origin && origin.length > 0) {
+
+        if (dimensions && dimensions.length > 0
+                && origin && origin.length > 0) {
             this.gl.uniform2fv(this.uDimensions, dimensions);
             this.gl.uniform2fv(this.uOrigin, origin);
         }
@@ -205,6 +241,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.doDraw(this.gl.LINE_STRIP, buf, color, points);
     };
 
@@ -212,12 +249,13 @@ define([
      * Draw the buffer as points.
      *
      */
-    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize) {
+    DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
         if (this.isContextLost) {
             return;
         }
+
         this.gl.uniform1f(this.uPointSize, pointSize);
-        this.doDraw(this.gl.POINTS, buf, color, points);
+        this.doDraw(this.gl.POINTS, buf, color, points, shape);
     };
 
     /**
@@ -233,6 +271,7 @@ define([
         if (this.isContextLost) {
             return;
         }
+
         this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
             min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
         ), color, 4);
@@ -246,16 +285,16 @@ define([
     };
 
     DrawWebGL.prototype.drawLimitPoints = function (points, color, pointSize) {
-        var limitSize = pointSize * 2;
-        var offset = limitSize / 2;
+        const limitSize = pointSize * 2;
+        const offset = limitSize / 2;
 
-        var mappedColor = color.map(function (c, i) {
+        const mappedColor = color.map(function (c, i) {
             return i < 3 ? Math.floor(c * 255) : (c);
         }).join(',');
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
 
-        for (var i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             this.drawLimitPoint(
                 this.x(points[i].x) - offset,
                 this.y(points[i].y) - offset,

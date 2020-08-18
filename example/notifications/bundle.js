@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/DialogLaunchController",
@@ -39,7 +38,7 @@ define([
     "use strict";
 
     return {
-        name:"example/notifications",
+        name: "example/notifications",
         definition: {
             "extensions": {
                 "templates": [

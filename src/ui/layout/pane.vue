@@ -57,18 +57,18 @@ export default {
         return {
             collapsed: false,
             resizing: false
-        }
+        };
     },
     beforeMount() {
         this.type = this.$parent.type;
-        this.styleProp = (this.type === 'horizontal') ? 'width' : 'height'
+        this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     methods: {
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
                 // Pane is expanded and is being collapsed
-                this.currentSize = (this.dragCollapse === true)? this.initial : this.$el.style[this.styleProp];
+                this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
                 this.$el.style[this.styleProp] = '';
             } else {
                 // Pane is collapsed and is being expanded
@@ -87,22 +87,23 @@ export default {
             }
         },
         getPosition: function (event) {
-            return this.type === 'horizontal' ?
-                event.pageX :
-                event.pageY;
+            return this.type === 'horizontal'
+                ? event.pageX
+                : event.pageY;
         },
         getNewSize: function (event) {
             let delta = this.startPosition - this.getPosition(event);
             if (this.handle === "before") {
                 return `${this.initial + delta}px`;
             }
+
             if (this.handle === "after") {
                 return `${this.initial - delta}px`;
             }
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            let intSize = parseInt(size.substr(0, size.length - 2));
+            let intSize = parseInt(size.substr(0, size.length - 2), 10);
             if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
                 this.dragCollapse = true;
                 this.end();
@@ -127,5 +128,5 @@ export default {
             this.trackSize();
         }
     }
-}
+};
 </script>

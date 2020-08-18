@@ -22,10 +22,11 @@
 
 define(['vue'], function (Vue) {
     function VueView(options) {
-        var vm = new Vue(options);
+        const vm = new Vue(options);
         this.show = function (container) {
             container.appendChild(vm.$mount().$el);
         };
+
         this.destroy = vm.$destroy.bind(vm);
     }
 

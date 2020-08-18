@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,18 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'lodash',
     '../configuration/Model',
     '../lib/extend',
-    'EventEmitter'
+    'EventEmitter',
+    '../draw/MarkerShapes'
 ], function (
     _,
     Model,
     extend,
-    EventEmitter
+    EventEmitter,
+    MARKER_SHAPES
 ) {
 
     /**
@@ -56,6 +57,7 @@ define([
      *                `linear` (points are connected via straight lines), or
      *                `stepAfter` (points are connected by steps).
      * `markers`: boolean, whether or not this series should render with markers.
+     * `markerShape`: string, shape of markers.
      * `markerSize`: number, size in pixels of markers for this series.
      * `alarmMarkers`: whether or not to display alarm markers for this series.
      * `stats`: An object that tracks the min and max y values observed in this
@@ -68,7 +70,7 @@ define([
      *             telemetry point.
      * `formats`: the Open MCT format map for this telemetry point.
      */
-    var PlotSeries = Model.extend({
+    const PlotSeries = Model.extend({
         constructor: function (options) {
             this.metadata = options
                 .openmct
@@ -95,12 +97,15 @@ define([
          * Set defaults for telemetry series.
          */
         defaults: function (options) {
-            var range = this.metadata.valuesForHints(['range'])[0];
+            const range = this.metadata.valuesForHints(['range'])[0];
+
             return {
                 name: options.domainObject.name,
+                unit: range.unit,
                 xKey: options.collection.plot.xAxis.get('key'),
                 yKey: range.key,
                 markers: true,
+                markerShape: 'point',
                 markerSize: 2.0,
                 alarmMarkers: true
             };
@@ -146,7 +151,11 @@ define([
                 strategy = 'minmax';
             }
 
-            options = Object.assign({}, { size: 1000, strategy, filters: this.filters }, options || {});
+            options = Object.assign({}, {
+                size: 1000,
+                strategy,
+                filters: this.filters
+            }, options || {});
 
             if (!this.unsubscribe) {
                 this.unsubscribe = this.openmct
@@ -165,7 +174,7 @@ define([
                 .telemetry
                 .request(this.domainObject, options)
                 .then(function (points) {
-                    var newPoints = _(this.data)
+                    const newPoints = _(this.data)
                         .concat(points)
                         .sortBy(this.getXVal)
                         .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
@@ -178,7 +187,7 @@ define([
          * Update x formatter on x change.
          */
         onXKeyChange: function (xKey) {
-            var format = this.formats[xKey];
+            const format = this.formats[xKey];
             this.getXVal = format.parse.bind(format);
         },
         /**
@@ -189,7 +198,8 @@ define([
             if (newKey === oldKey) {
                 return;
             }
-            var valueMetadata = this.metadata.value(newKey);
+
+            const valueMetadata = this.metadata.value(newKey);
             if (!this.persistedConfig || !this.persistedConfig.interpolate) {
                 if (valueMetadata.format === 'enum') {
                     this.set('interpolate', 'stepAfter');
@@ -197,10 +207,11 @@ define([
                     this.set('interpolate', 'linear');
                 }
             }
+
             this.evaluate = function (datum) {
                 return this.limitEvaluator.evaluate(datum, valueMetadata);
             }.bind(this);
-            var format = this.formats[newKey];
+            const format = this.formats[newKey];
             this.getYVal = format.parse.bind(format);
         },
 
@@ -238,17 +249,17 @@ define([
          * Return the point closest to a given x value.
          */
         nearestPoint: function (xValue) {
-            var insertIndex = this.sortedIndex(xValue),
-                lowPoint = this.data[insertIndex - 1],
-                highPoint = this.data[insertIndex],
-                indexVal = this.getXVal(xValue),
-                lowDistance = lowPoint ?
-                    indexVal - this.getXVal(lowPoint) :
-                    Number.POSITIVE_INFINITY,
-                highDistance = highPoint ?
-                    this.getXVal(highPoint) - indexVal :
-                    Number.POSITIVE_INFINITY,
-                nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
+            const insertIndex = this.sortedIndex(xValue);
+            const lowPoint = this.data[insertIndex - 1];
+            const highPoint = this.data[insertIndex];
+            const indexVal = this.getXVal(xValue);
+            const lowDistance = lowPoint
+                ? indexVal - this.getXVal(lowPoint)
+                : Number.POSITIVE_INFINITY;
+            const highDistance = highPoint
+                ? this.getXVal(highPoint) - indexVal
+                : Number.POSITIVE_INFINITY;
+            const nearestPoint = highDistance < lowDistance ? highPoint : lowPoint;
 
             return nearestPoint;
         },
@@ -263,6 +274,7 @@ define([
             return this.fetch(options)
                 .then(function (res) {
                     this.emit('load');
+
                     return res;
                 }.bind(this));
         },
@@ -279,9 +291,9 @@ define([
          * @private
          */
         updateStats: function (point) {
-            var value = this.getYVal(point);
-            var stats = this.get('stats');
-            var changed = false;
+            const value = this.getYVal(point);
+            let stats = this.get('stats');
+            let changed = false;
             if (!stats) {
                 stats = {
                     minValue: value,
@@ -296,12 +308,14 @@ define([
                     stats.maxPoint = point;
                     changed = true;
                 }
+
                 if (stats.minValue > value) {
                     stats.minValue = value;
                     stats.minPoint = point;
                     changed = true;
                 }
             }
+
             if (changed) {
                 this.set('stats', {
                     minValue: stats.minValue,
@@ -324,12 +338,13 @@ define([
          *                  a point to the end without dupe checking.
          */
         add: function (point, appendOnly) {
-            var insertIndex = this.data.length,
-                currentYVal = this.getYVal(point),
-                lastYVal = this.getYVal(this.data[insertIndex - 1]);
+            let insertIndex = this.data.length;
+            const currentYVal = this.getYVal(point);
+            const lastYVal = this.getYVal(this.data[insertIndex - 1]);
 
             if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
                 console.warn('[Plot] Invalid Y Values detected');
+
                 return;
             }
 
@@ -338,6 +353,7 @@ define([
                 if (this.getXVal(this.data[insertIndex]) === this.getXVal(point)) {
                     return;
                 }
+
                 if (this.getXVal(this.data[insertIndex - 1]) === this.getXVal(point)) {
                     return;
                 }
@@ -362,7 +378,7 @@ define([
          * @private
          */
         remove: function (point) {
-            var index = this.data.indexOf(point);
+            const index = this.data.indexOf(point);
             this.data.splice(index, 1);
             this.emit('remove', point, index, this);
         },
@@ -377,16 +393,16 @@ define([
          * @param {number} range.max maximum x value to keep.
          */
         purgeRecordsOutsideRange: function (range) {
-            var startIndex = this.sortedIndex(range.min);
-            var endIndex = this.sortedIndex(range.max) + 1;
-            var pointsToRemove = startIndex + (this.data.length - endIndex + 1);
+            const startIndex = this.sortedIndex(range.min);
+            const endIndex = this.sortedIndex(range.max) + 1;
+            const pointsToRemove = startIndex + (this.data.length - endIndex + 1);
             if (pointsToRemove > 0) {
                 if (pointsToRemove < 1000) {
                     this.data.slice(0, startIndex).forEach(this.remove, this);
                     this.data.slice(endIndex, this.data.length).forEach(this.remove, this);
                     this.resetStats();
                 } else {
-                    var newData = this.data.slice(startIndex, endIndex);
+                    const newData = this.data.slice(startIndex, endIndex);
                     this.reset(newData);
                 }
             }
@@ -406,10 +422,28 @@ define([
                     this.unsubscribe();
                     delete this.unsubscribe;
                 }
+
                 this.fetch();
             } else {
                 this.filters = deepCopiedFilters;
             }
+        },
+        markerOptionsDisplayText: function () {
+            const showMarkers = this.get('markers');
+            if (!showMarkers) {
+                return "Disabled";
+            }
+
+            const markerShapeKey = this.get('markerShape');
+            const markerShape = MARKER_SHAPES[markerShapeKey].label;
+            const markerSize = this.get('markerSize');
+
+            return `${markerShape}: ${markerSize}px`;
+        },
+        nameWithUnit: function () {
+            let unit = this.get('unit');
+
+            return this.get('name') + (unit ? ' ' + unit : '');
         }
     });
 

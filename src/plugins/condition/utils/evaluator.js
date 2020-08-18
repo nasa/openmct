@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { TRIGGER } from "./constants";
 
-export const evaluateResults = (results, trigger) => {
+export function evaluateResults(results, trigger) {
     if (trigger && trigger === TRIGGER.XOR) {
         return matchExact(results, 1);
     } else if (trigger && trigger === TRIGGER.NOT) {
@@ -34,8 +34,8 @@ export const evaluateResults = (results, trigger) => {
 }
 
 function matchAll(results) {
-    for (const result of results) {
-        if (!result) {
+    for (let result of results) {
+        if (result !== true) {
             return false;
         }
     }
@@ -44,8 +44,8 @@ function matchAll(results) {
 }
 
 function matchAny(results) {
-    for (const result of results) {
-        if (result) {
+    for (let result of results) {
+        if (result === true) {
             return true;
         }
     }
@@ -55,10 +55,11 @@ function matchAny(results) {
 
 function matchExact(results, target) {
     let matches = 0;
-    for (const result of results) {
-        if (result) {
+    for (let result of results) {
+        if (result === true) {
             matches++;
         }
+
         if (matches > target) {
             return false;
         }

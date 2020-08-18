@@ -29,20 +29,19 @@ function ToolbarProvider(openmct) {
         forSelection: function (selection) {
             let context = selection[0][0].context;
 
-            return (context && context.type &&
-                (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
+            return (context && context.type
+                && (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
-
-            let selectionPath = selection[0],
-                primary = selectionPath[0],
-                secondary = selectionPath[1],
-                tertiary = selectionPath[2],
-                deleteFrame,
-                toggleContainer,
-                deleteContainer,
-                addContainer,
-                toggleFrame;
+            let selectionPath = selection[0];
+            let primary = selectionPath[0];
+            let secondary = selectionPath[1];
+            let tertiary = selectionPath[2];
+            let deleteFrame;
+            let toggleContainer;
+            let deleteContainer;
+            let addContainer;
+            let toggleFrame;
 
             toggleContainer = {
                 control: 'toggle-button',
@@ -70,6 +69,10 @@ function ToolbarProvider(openmct) {
             }
 
             if (primary.context.type === 'frame') {
+                if (secondary.context.item.locked) {
+                    return [];
+                }
+
                 let frameId = primary.context.frameId;
                 let layoutObject = tertiary.context.item;
                 let containers = layoutObject
@@ -143,13 +146,16 @@ function ToolbarProvider(openmct) {
                 toggleContainer.domainObject = secondary.context.item;
 
             } else if (primary.context.type === 'container') {
+                if (primary.context.item.locked) {
+                    return [];
+                }
 
                 deleteContainer = {
                     control: "button",
                     domainObject: primary.context.item,
                     method: function () {
-                        let removeContainer = secondary.context.deleteContainer,
-                            containerId = primary.context.containerId;
+                        let removeContainer = secondary.context.deleteContainer;
+                        let containerId = primary.context.containerId;
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
@@ -187,6 +193,9 @@ function ToolbarProvider(openmct) {
                 };
 
             } else if (primary.context.type === 'flexible-layout') {
+                if (primary.context.item.locked) {
+                    return [];
+                }
 
                 addContainer = {
                     control: "button",

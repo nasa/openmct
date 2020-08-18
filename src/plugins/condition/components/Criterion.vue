@@ -55,6 +55,7 @@
                 >
                     {{ option.name }}
                 </option>
+                <option value="dataReceived">any data received</option>
             </select>
         </span>
         <span v-if="criterion.telemetry && criterion.metadata"
@@ -79,10 +80,11 @@
                     <input v-model="criterion.input[inputIndex]"
                            class="c-cdef__control__input"
                            :type="setInputType"
-                           @blur="persist"
+                           @change="persist"
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
+                <span v-if="criterion.metadata === 'dataReceived'">seconds</span>
             </template>
             <span v-else>
                 <span v-if="inputCount && criterion.operation"
@@ -106,8 +108,8 @@
 </template>
 
 <script>
-import { OPERATIONS } from '../utils/operations';
-import { INPUT_TYPES } from '../utils/operations';
+import { OPERATIONS, INPUT_TYPES } from '../utils/operations';
+import {TRIGGER_CONJUNCTION} from "../utils/constants";
 
 export default {
     inject: ['openmct'],
@@ -139,15 +141,20 @@ export default {
             operationFormat: '',
             enumerations: [],
             inputTypes: INPUT_TYPES
-        }
+        };
     },
     computed: {
         setRowLabel: function () {
-            let operator = this.trigger === 'all' ? 'and ': 'or ';
-            return (this.index !== 0 ? operator : '') + 'when';
+            let operator = TRIGGER_CONJUNCTION[this.trigger];
+
+            return (this.index !== 0 ? operator : '') + ' when';
         },
         filteredOps: function () {
-            return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
+            if (this.criterion.metadata === 'dataReceived') {
+                return this.operations.filter(op => op.name === 'isStale');
+            } else {
+                return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
+            }
         },
         setInputType: function () {
             let type = '';
@@ -156,11 +163,13 @@ export default {
                     if (this.filteredOps[i].appliesTo.length) {
                         type = this.inputTypes[this.filteredOps[i].appliesTo[0]];
                     } else {
-                        type = 'text'
+                        type = 'text';
                     }
+
                     break;
                 }
             }
+
             return type;
         }
     },
@@ -177,18 +186,19 @@ export default {
     },
     methods: {
         checkTelemetry() {
-            if(this.criterion.telemetry) {
-                if (this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all') {
-                    this.updateMetadataOptions();
+            if (this.criterion.telemetry) {
+                const isAnyAllTelemetry = this.criterion.telemetry === 'any' || this.criterion.telemetry === 'all';
+                const telemetryForCriterionExists = this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier));
+                if (!isAnyAllTelemetry
+                    && !telemetryForCriterionExists) {
+                    //telemetry being used was removed. So reset this criterion.
+                    this.criterion.telemetry = '';
+                    this.criterion.metadata = '';
+                    this.criterion.input = [];
+                    this.criterion.operation = '';
+                    this.persist();
                 } else {
-                    if (!this.telemetry.find((telemetryObj) => this.openmct.objects.areIdsEqual(this.criterion.telemetry, telemetryObj.identifier))) {
-                        //telemetry being used was removed. So reset this criterion.
-                        this.criterion.telemetry = '';
-                        this.criterion.metadata = '';
-                        this.criterion.input = [];
-                        this.criterion.operation = '';
-                        this.persist();
-                    }
+                    this.updateMetadataOptions();
                 }
             }
         },
@@ -203,16 +213,19 @@ export default {
                     this.enumerations = foundMetadata.enumerations;
                 } else if (foundMetadata.format === 'string' || foundMetadata.format === 'number') {
                     this.operationFormat = foundMetadata.format;
-                } else if (foundMetadata.hints.hasOwnProperty('range')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'range')) {
                     this.operationFormat = 'number';
-                } else if (foundMetadata.hints.hasOwnProperty('domain')) {
+                } else if (Object.prototype.hasOwnProperty.call(foundMetadata.hints, 'domain')) {
                     this.operationFormat = 'number';
                 } else if (foundMetadata.key === 'name') {
                     this.operationFormat = 'string';
                 } else {
                     this.operationFormat = 'number';
                 }
+            } else if (this.criterion.metadata === 'dataReceived') {
+                this.operationFormat = 'number';
             }
+
             this.updateInputVisibilityAndValues();
         },
         updateMetadataOptions(ev) {
@@ -220,29 +233,30 @@ export default {
                 this.clearDependentFields(ev.target);
                 this.persist();
             }
-            if (this.criterion.telemetry) {
-                const telemetry = (this.criterion.telemetry === 'all' || this.criterion.telemetry === 'any') ? this.telemetry : [{
-                    identifier: this.criterion.telemetry
-                }];
 
-                let telemetryPromises = telemetry.map((telemetryObject) => this.openmct.objects.get(telemetryObject.identifier));
-                Promise.all(telemetryPromises).then(telemetryObjects => {
-                    this.telemetryMetadataOptions = [];
-                    telemetryObjects.forEach(telemetryObject => {
-                        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                        this.addMetaDataOptions(telemetryMetadata.values());
-                    });
-                    this.updateOperations();
+            if (this.criterion.telemetry) {
+                let telemetryObjects = this.telemetry;
+                if (this.criterion.telemetry !== 'all' && this.criterion.telemetry !== 'any') {
+                    const found = this.telemetry.find(telemetryObj => (this.openmct.objects.areIdsEqual(telemetryObj.identifier, this.criterion.telemetry)));
+                    telemetryObjects = found ? [found] : [];
+                }
+
+                this.telemetryMetadataOptions = [];
+                telemetryObjects.forEach(telemetryObject => {
+                    let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                    this.addMetaDataOptions(telemetryMetadata.values());
                 });
+                this.updateOperations();
             }
         },
         addMetaDataOptions(options) {
             if (!this.telemetryMetadataOptions) {
                 this.telemetryMetadataOptions = options;
             }
+
             options.forEach((option) => {
                 const found = this.telemetryMetadataOptions.find((metadataOption) => {
-                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name))
+                    return (metadataOption.key && (metadataOption.key === option.key)) && (metadataOption.name && (metadataOption.name === option.name));
                 });
                 if (!found) {
                     this.telemetryMetadataOptions.push(option);
@@ -267,6 +281,7 @@ export default {
                     this.inputCount = this.filteredOps[i].inputCount;
                 }
             }
+
             if (!this.inputCount) {
                 this.criterion.input = [];
             }
@@ -284,6 +299,7 @@ export default {
                 if (this.enumerations.length && !this.criterion.input.length) {
                     this.criterion.input = [this.enumerations[0].value.toString()];
                 }
+
                 this.inputCount = 0;
             }
         },

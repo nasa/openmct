@@ -14,7 +14,7 @@ define([
 
     function plugin() {
 
-        var widgetType = {
+        const widgetType = {
             name: 'Summary Widget',
             description: 'A compact status update for collections of telemetry-producing items',
             creatable: true,
@@ -85,8 +85,10 @@ define([
 
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
-            openmct.legacyExtension('policies', {category: 'composition',
-                implementation: SummaryWidgetsCompositionPolicy, depends: ['openmct']
+            openmct.legacyExtension('policies', {
+                category: 'composition',
+                implementation: SummaryWidgetsCompositionPolicy,
+                depends: ['openmct']
             });
             openmct.legacyExtension('policies', {
                 category: 'view',

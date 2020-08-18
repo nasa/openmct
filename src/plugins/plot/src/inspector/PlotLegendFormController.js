@@ -26,11 +26,16 @@ define([
     PlotModelFormController
 ) {
 
-    var PlotLegendFormController = PlotModelFormController.extend({
+    const PlotLegendFormController = PlotModelFormController.extend({
         fields: [
             {
                 modelProp: 'position',
                 objectPath: 'configuration.legend.position'
+            },
+            {
+                modelProp: 'hideLegendWhenSmall',
+                coerce: Boolean,
+                objectPath: 'configuration.legend.hideLegendWhenSmall'
             },
             {
                 modelProp: 'expandByDefault',
@@ -60,6 +65,11 @@ define([
                 modelProp: 'showMinimumWhenExpanded',
                 coerce: Boolean,
                 objectPath: 'configuration.legend.showMinimumWhenExpanded'
+            },
+            {
+                modelProp: 'showUnitsWhenExpanded',
+                coerce: Boolean,
+                objectPath: 'configuration.legend.showUnitsWhenExpanded'
             }
         ]
     });

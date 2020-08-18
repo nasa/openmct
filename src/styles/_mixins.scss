@@ -117,6 +117,33 @@
     }
 }
 
+@mixin isMissing($absPos: false) {
+    // Common styles to be applied to tree items, object labels, grid and list item views
+    //opacity: 0.7;
+    //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
+
+    .is-missing__indicator {
+        display: none ;
+        text-shadow: $colorBodyBg 0 0 2px;
+        color: $colorAlert;
+        font-family: symbolsfont;
+
+        &:before {
+            content: $glyph-icon-alert-triangle;
+        }
+    }
+
+    @if $absPos {
+        .is-missing__indicator {
+            position: absolute;
+            z-index: 3;
+        }
+    }
+
+    &.is-missing .is-missing__indicator,
+    .is-missing .is-missing__indicator { display: block !important; }
+}
+
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
     background-image: linear-gradient(-45deg,
         rgba($c, $a) 25%, transparent 25%,
@@ -416,28 +443,18 @@
     }
 
     @include hover() {
-        background: $colorBtnBgHov;
-        color: $colorBtnFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"],
     &[class*='is-active']{
         background: $colorBtnMajorBg;
         color: $colorBtnMajorFg;
-
-        @include hover() {
-            background: $colorBtnMajorBgHov;
-            color: $colorBtnMajorFgHov;
-        }
     }
 
     &[class*='--caution'] {
-        background: $colorBtnCautionBg;
-        color: $colorBtnCautionFg;
-
-        &:hover {
-            background: $colorBtnCautionBgHov;
-        }
+        background: $colorBtnCautionBg !important;
+        color: $colorBtnCautionFg !important;
     }
 }
 

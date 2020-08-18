@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TransactionalPersistenceCapability'],
@@ -56,9 +55,10 @@ define(
 
             capabilities.persistence = function (domainObject) {
                 var original =
-                    (typeof persistenceCapability === 'function') ?
-                        persistenceCapability(domainObject) :
-                        persistenceCapability;
+                    (typeof persistenceCapability === 'function')
+                        ? persistenceCapability(domainObject)
+                        : persistenceCapability;
+
                 return new TransactionalPersistenceCapability(
                     self.$q,
                     self.transactionService,
@@ -66,6 +66,7 @@ define(
                     domainObject
                 );
             };
+
             return capabilities;
         };
 

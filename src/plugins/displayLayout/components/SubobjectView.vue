@@ -24,6 +24,7 @@
     :item="item"
     :grid-size="gridSize"
     :title="domainObject && domainObject.name"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
@@ -39,13 +40,13 @@
 </template>
 
 <script>
-import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
-import LayoutFrame from './LayoutFrame.vue'
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
+import LayoutFrame from './LayoutFrame.vue';
 
-const MINIMUM_FRAME_SIZE = [320, 180],
-    DEFAULT_DIMENSIONS = [10, 10],
-    DEFAULT_POSITION = [1, 1],
-    DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
+const MINIMUM_FRAME_SIZE = [320, 180];
+const DEFAULT_DIMENSIONS = [10, 10];
+const DEFAULT_POSITION = [1, 1];
+const DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
 
 function getDefaultDimensions(gridSize) {
     return MINIMUM_FRAME_SIZE.map((min, index) => {
@@ -61,7 +62,7 @@ function hasFrameByDefault(type) {
 }
 
 export default {
-    makeDefinition(openmct, gridSize, domainObject, position) {
+    makeDefinition(openmct, gridSize, domainObject, position, viewKey) {
         let defaultDimensions = getDefaultDimensions(gridSize);
         position = position || DEFAULT_POSITION;
 
@@ -71,7 +72,8 @@ export default {
             x: position[0],
             y: position[1],
             identifier: domainObject.identifier,
-            hasFrame: hasFrameByDefault(domainObject.type)
+            hasFrame: hasFrameByDefault(domainObject.type),
+            viewKey
         };
     },
     inject: ['openmct', 'objectPath'],
@@ -94,13 +96,17 @@ export default {
         index: {
             type: Number,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
         return {
             domainObject: undefined,
             currentObjectPath: []
-        }
+        };
     },
     watch: {
         index(newIndex) {
@@ -109,6 +115,13 @@ export default {
             }
 
             this.context.index = newIndex;
+        },
+        item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.layoutItem = newItem;
         }
     },
     mounted() {
@@ -124,16 +137,17 @@ export default {
         setObject(domainObject) {
             this.domainObject = domainObject;
             this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 let childContext = this.$refs.objectFrame.getSelectionContext();
                 childContext.item = domainObject;
                 childContext.layoutItem = this.item;
                 childContext.index = this.index;
                 this.context = childContext;
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.initSelect);
+                    this.$el, this.context, this.immediatelySelect || this.initSelect);
+                delete this.immediatelySelect;
             });
         }
     }
-}
+};
 </script>

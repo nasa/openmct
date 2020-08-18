@@ -37,12 +37,13 @@
             >
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="staticStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               :mixed-styles="mixedStyles"
                               @persist="updateStaticStyle"
                 />
             </div>
             <button
+                v-if="allowEditing"
                 id="addConditionSet"
                 class="c-button c-button--major c-toggle-styling-button labeled"
                 @click="addConditionSet"
@@ -63,7 +64,7 @@
             >
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </a>
-            <template v-if="isEditing">
+            <template v-if="allowEditing">
                 <button
                     id="changeConditionSet"
                     class="c-button labeled"
@@ -96,7 +97,7 @@
                 />
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="conditionStyle"
-                              :is-editing="isEditing"
+                              :is-editing="allowEditing"
                               @persist="updateConditionalStyle"
                 />
             </div>
@@ -137,7 +138,13 @@ export default {
             conditions: undefined,
             conditionsLoaded: false,
             navigateToPath: '',
-            selectedConditionId: ''
+            selectedConditionId: '',
+            locked: false
+        };
+    },
+    computed: {
+        allowEditing() {
+            return this.isEditing && !this.locked;
         }
     },
     destroyed() {
@@ -158,6 +165,7 @@ export default {
         } else {
             this.initializeStaticStyle();
         }
+
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     methods: {
@@ -176,6 +184,7 @@ export default {
             } else if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
                 objectStyles = this.domainObject.configuration.objectStyles;
             }
+
             return objectStyles;
         },
         setEditState(isEditing) {
@@ -183,6 +192,7 @@ export default {
             if (this.isEditing) {
                 if (this.stopProvidingTelemetry) {
                     this.stopProvidingTelemetry();
+                    delete this.stopProvidingTelemetry;
                 }
             } else {
                 this.subscribeToConditionSet();
@@ -211,6 +221,7 @@ export default {
         },
         hasConditionalStyle(domainObject, layoutItem) {
             const id = layoutItem ? layoutItem.id : undefined;
+
             return getConditionSetIdentifierForItem(domainObject, id) !== undefined;
         },
         getObjectsAndItemsFromSelection() {
@@ -224,7 +235,13 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
+                const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
+
+                if (layoutDomainObject && layoutDomainObject.locked) {
+                    this.locked = true;
+                }
+
                 if (!isChildItem) {
                     domainObject = item;
                     itemStyle = getApplicableStylesForItem(item);
@@ -251,6 +268,7 @@ export default {
                         }
                     }
                 }
+
                 itemInitialStyles.push(itemStyle);
             });
             this.isStaticAndConditionalStyles = this.isMultipleSelection && itemsWithConditionalStyles;
@@ -278,11 +296,11 @@ export default {
             });
         },
         isKeyItemId(key) {
-            return (key !== 'styles') &&
-                (key !== 'staticStyle') &&
-                (key !== 'defaultConditionId') &&
-                (key !== 'selectedConditionId') &&
-                (key !== 'conditionSetIdentifier');
+            return (key !== 'styles')
+                && (key !== 'staticStyle')
+                && (key !== 'defaultConditionId')
+                && (key !== 'selectedConditionId')
+                && (key !== 'conditionSetIdentifier');
         },
         registerListener(domainObject) {
             let id = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -306,12 +324,14 @@ export default {
             if (this.stopObserving) {
                 this.stopObserving();
             }
+
             if (this.stopObservingItems) {
                 this.stopObservingItems();
             }
 
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
 
             if (this.unObserveObjects) {
@@ -319,12 +339,15 @@ export default {
                     unObserveObject();
                 });
             }
+
             this.unObserveObjects = [];
         },
         subscribeToConditionSet() {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
+
             if (this.conditionSetDomainObject) {
                 this.openmct.telemetry.request(this.conditionSetDomainObject)
                     .then(output => {
@@ -348,11 +371,13 @@ export default {
             if (!this.conditions) {
                 this.conditions = {};
             }
+
             let conditionalStyles = [];
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 if (conditionConfiguration.isDefault) {
                     this.selectedConditionId = conditionConfiguration.id;
                 }
+
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
                 if (foundStyle) {
@@ -387,13 +412,14 @@ export default {
             }
         },
         removeItemStyles(itemId) {
-            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (itemId && domainObjectStyles[itemId]) {
                 delete domainObjectStyles[itemId];
 
                 if (Object.keys(domainObjectStyles).length <= 0) {
                     domainObjectStyles = undefined;
                 }
+
                 this.persist(this.domainObject, domainObjectStyles);
             }
         },
@@ -405,19 +431,23 @@ export default {
         },
         addConditionSet() {
             let conditionSetDomainObject;
-            const handleItemSelection = (item) => {
+            let self = this;
+            function handleItemSelection(item) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
-            };
-            const dismissDialog = (overlay, initialize) => {
+            }
+
+            function dismissDialog(overlay, initialize) {
                 overlay.dismiss();
+
                 if (initialize && conditionSetDomainObject) {
-                    this.conditionSetDomainObject = conditionSetDomainObject;
-                    this.conditionalStyles = [];
-                    this.initializeConditionalStyles();
+                    self.conditionSetDomainObject = conditionSetDomainObject;
+                    self.conditionalStyles = [];
+                    self.initializeConditionalStyles();
                 }
-            };
+            }
+
             let vm = new Vue({
                 provide: {
                     openmct: this.openmct
@@ -426,7 +456,7 @@ export default {
                 data() {
                     return {
                         handleItemSelection
-                    }
+                    };
                 },
                 template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
             }).$mount();
@@ -451,18 +481,20 @@ export default {
         removeConditionSet() {
             this.conditionSetDomainObject = undefined;
             this.conditionalStyles = [];
-            let domainObjectStyles =  (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
+            let domainObjectStyles = (this.domainObject.configuration && this.domainObject.configuration.objectStyles) || {};
             if (this.domainObjectsById) {
                 const domainObjects = Object.values(this.domainObjectsById);
                 domainObjects.forEach(domainObject => {
-                    let objectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
+                    let objectStyles = (domainObject.configuration && domainObject.configuration.objectStyles) || {};
                     this.removeConditionalStyles(objectStyles);
                     if (objectStyles && Object.keys(objectStyles).length <= 0) {
                         objectStyles = undefined;
                     }
+
                     this.persist(domainObject, objectStyles);
                 });
             }
+
             if (this.items.length) {
                 this.items.forEach((item) => {
                     const itemId = item.id;
@@ -471,16 +503,19 @@ export default {
                         delete domainObjectStyles[itemId];
                     }
                 });
-            }  else {
+            } else {
                 this.removeConditionalStyles(domainObjectStyles);
             }
+
             if (domainObjectStyles && Object.keys(domainObjectStyles).length <= 0) {
                 domainObjectStyles = undefined;
             }
+
             this.persist(this.domainObject, domainObjectStyles);
 
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
+                delete this.stopProvidingTelemetry;
             }
         },
         removeConditionalStyles(domainObjectStyles, itemId) {
@@ -522,9 +557,11 @@ export default {
                     this.persist(domainObject, this.getDomainObjectStyle(domainObject, property, null, defaultConditionId));
                 });
             }
+
             if (!this.items.length && !this.domainObjectsById) {
                 this.persist(this.domainObject, this.getDomainObjectStyle(this.domainObject, property, null, defaultConditionId));
             }
+
             this.isStaticAndConditionalStyles = false;
             if (property) {
                 let foundIndex = this.mixedStyles.indexOf(property);
@@ -542,10 +579,12 @@ export default {
             if (defaultConditionId) {
                 objectStyle.defaultConditionId = defaultConditionId;
             }
+
             if (this.conditionSetDomainObject) {
                 objectStyle.conditionSetIdentifier = this.conditionSetDomainObject.identifier;
             }
-            let domainObjectStyles =  (domainObject.configuration && domainObject.configuration.objectStyles) || {};
+
+            let domainObjectStyles = (domainObject.configuration && domainObject.configuration.objectStyles) || {};
 
             if (items) {
                 items.forEach(item => {
@@ -555,12 +594,15 @@ export default {
                         if (domainObjectStyles[item.id] && domainObjectStyles[item.id].staticStyle) {
                             itemStaticStyle = Object.assign({}, domainObjectStyles[item.id].staticStyle.style);
                         }
+
                         if (item.applicableStyles[property] !== undefined) {
                             itemStaticStyle[property] = this.staticStyle.style[property];
                         }
+
                         if (Object.keys(itemStaticStyle).length <= 0) {
                             itemStaticStyle = undefined;
                         }
+
                         domainObjectStyles[item.id] = { staticStyle: { style: itemStaticStyle } };
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
@@ -597,5 +639,5 @@ export default {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         }
     }
-}
+};
 </script>

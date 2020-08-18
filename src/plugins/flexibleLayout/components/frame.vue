@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -37,7 +38,7 @@
             v-if="domainObject"
             ref="objectFrame"
             :domain-object="domainObject"
-            :object-path="objectPath"
+            :object-path="currentObjectPath"
             :has-frame="hasFrame"
             :show-edit-view="false"
         />
@@ -77,13 +78,17 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     data() {
         return {
             domainObject: undefined,
-            objectPath: undefined
-        }
+            currentObjectPath: undefined
+        };
     },
     computed: {
         hasFrame() {
@@ -92,7 +97,7 @@ export default {
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object)=>{
+            this.openmct.objects.get(this.frame.domainObjectIdentifier).then((object) => {
                 this.setDomainObject(object);
             });
         }
@@ -107,11 +112,11 @@ export default {
     methods: {
         setDomainObject(object) {
             this.domainObject = object;
-            this.objectPath = [object];
+            this.currentObjectPath = [object].concat(this.objectPath);
             this.setSelection();
         },
         setSelection() {
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 if (this.$refs && this.$refs.objectFrame) {
                     let childContext = this.$refs.objectFrame.getSelectionContext();
                     childContext.item = this.domainObject;
@@ -123,8 +128,8 @@ export default {
             });
         },
         initDrag(event) {
-            let type = this.openmct.types.get(this.domainObject.type),
-                iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
+            let type = this.openmct.types.get(this.domainObject.type);
+            let iconClass = type.definition ? type.definition.cssClass : 'icon-object-unknown';
 
             if (this.dragGhost) {
                 let originalClassName = this.dragGhost.classList[0];
@@ -139,5 +144,5 @@ export default {
             event.dataTransfer.setData('containerIndex', this.containerIndex);
         }
     }
-}
+};
 </script>

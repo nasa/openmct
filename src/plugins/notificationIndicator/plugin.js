@@ -25,18 +25,19 @@ import NotificationIndicator from './components/NotificationIndicator.vue';
 export default function plugin() {
     return function install(openmct) {
         let component = new Vue ({
-                provide: {
-                    openmct
-                },
-                components: {
-                    NotificationIndicator: NotificationIndicator
-                },
-                template: '<NotificationIndicator></NotificationIndicator>'
-            }),
-            indicator = {
-                key: 'notifications-indicator',
-                element: component.$mount().$el
-            };
+            provide: {
+                openmct
+            },
+            components: {
+                NotificationIndicator: NotificationIndicator
+            },
+            template: '<NotificationIndicator></NotificationIndicator>'
+        });
+
+        let indicator = {
+            key: 'notifications-indicator',
+            element: component.$mount().$el
+        };
 
         openmct.indicators.add(indicator);
     };

@@ -34,8 +34,8 @@
     <body>
     </body>
     <script>
-        const FIVE_MINUTES = 5 * 60 * 1000;
-        const THIRTY_MINUTES = 30 * 60 * 1000;
+        const THIRTY_SECONDS = 30 * 1000;
+        const THIRTY_MINUTES = THIRTY_SECONDS * 60;
 
         [
             'example/eventGenerator'
@@ -63,7 +63,39 @@
                     bounds: {
                         start: Date.now() - THIRTY_MINUTES,
                         end: Date.now()
-                    }
+                    },
+                    // commonly used bounds can be stored in history
+                    // bounds (start and end) can accept either a milliseconds number
+                    // or a callback function returning a milliseconds number
+                    // a function is useful for invoking Date.now() at exact moment of preset selection
+                    presets: [
+                        {
+                            label: 'Last Day',
+                            bounds: {
+                                start: () => Date.now() - 1000 * 60 * 60 * 24,
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 2 hours',
+                            bounds: {
+                                start: () => Date.now() - 1000 * 60 * 60 * 2,
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last hour',
+                            bounds: {
+                                start: () => Date.now() - 1000 * 60 * 60,
+                                end: () => Date.now()
+                            }
+                        }
+                    ],
+                    // maximum recent bounds to retain in conductor history
+                    records: 10,
+                    // maximum duration between start and end bounds
+                    // for utc-based time systems this is in milliseconds
+                    limit: 1000 * 60 * 60 * 24
                 },
                 {
                     name: "Realtime",
@@ -71,7 +103,7 @@
                     clock: 'local',
                     clockOffsets: {
                         start: - THIRTY_MINUTES,
-                        end: FIVE_MINUTES
+                        end: THIRTY_SECONDS
                     }
                 }
             ]
@@ -81,7 +113,10 @@
         openmct.install(openmct.plugins.LADTable());
         openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
         openmct.install(openmct.plugins.ObjectMigration());
-        openmct.install(openmct.plugins.ClearData(['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked']));
+        openmct.install(openmct.plugins.ClearData(
+            ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
+            {indicator: true}
+        ));
         openmct.start();
     </script>
 </html>

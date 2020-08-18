@@ -80,9 +80,13 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
-$filterHov: brightness(1.3); // Tree, location items
+$filterHov: brightness(0.8) contrast(2); // Tree, location items
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
+
+// Object labels
+$objectLabelTypeIconOpacity: 0.5;
+$objectLabelNameFilter: brightness(0.5);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -132,7 +136,7 @@ $colorPausedFg: #fff;
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: pushBack($colorKey, 50%);
-$colorKeySubtle: pushBack($colorKey, 10%);
+$colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
 $colorTime: #618cff;
@@ -142,12 +146,19 @@ $colorTimeHov: pushBack($colorTime, 5%);
 $colorTimeSubtle: pushBack($colorTime, 20%);
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$timeConductorAxisHoverFilter: brightness(0.8);
+$timeConductorActiveBg: $colorKey;
+$timeConductorActivePanBg: #A0CDE1;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
 $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
+$filterItemHoverFg: brightness(0.9);
+$filterItemMissing: contrast(0.2);
+$opacityMissing: 0.4;
+$borderMissing: 1px dashed $colorAlert !important;
 
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
@@ -217,7 +228,7 @@ $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 $btnStdH: 24px;
 $colorCursorGuide: rgba(black, 0.6);
 $shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
-$colorLocalControlOvrBg: rgba($colorBodyFg, 0.8);
+$colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);

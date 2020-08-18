@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,21 +29,26 @@ mct-plot {
     .gl-plot.child-frame {
         &:hover {
             background: rgba($editUIColorBg, 0.1);
-            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+            box-shadow: inset rgba($editUIColorBg, 0.3) 0 0 0 1px;
         }
 
         &[s-selected] {
-            border: 1px solid $editUIColorFg !important;
-            color: $editUIColorFg !important;
-            box-shadow: $editFrameSelectedShdw;
+            background: rgba($editUIColorBg, 0.2);
+            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
             z-index: 2;
         }
+    }
+
+    .plot-wrapper-axis-and-display-area {
+        pointer-events: none;
     }
 }
 
 .c-plot,
 .gl-plot {
-    .s-status-taking-snapshot & {
+    overflow: hidden;
+
+        .s-status-taking-snapshot & {
         .c-control-bar {
             display: none;
         }
@@ -51,29 +56,35 @@ mct-plot {
             display: none;
         }
     }
+
+    /*********************** MISSING ITEM INDICATORS */
+    .is-missing__indicator {
+        display: none;
+    }
+    .is-missing {
+        @include isMissing();
+        .is-missing__indicator {
+            font-size: 0.8em;
+        }
+    }
 }
 
 .c-plot {
-    //$p: $mainViewPad;
     @include abs($mainViewPad);
-    //position: absolute;
-    //top: $p; right: $p; bottom: $p; left: $p;
 
     display: flex;
     flex-direction: column;
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
-
-    .l-control-bar {
+    .c-control-bar {
         flex: 0 0 auto;
+        margin-bottom: $interiorMargin;
     }
 
     .l-view-section {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
+        overflow: hidden;
     }
 
     &--stacked {
@@ -100,39 +111,23 @@ mct-plot {
             }
         }
     }
-}
 
+    .is-in-small-container & {
+        .c-control-bar {
+            display: none;
+        }
+    }
+}
 
 .gl-plot {
     display: flex;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: $plotMinH;
+    flex: 1 1 auto;
 
     /*********************** AXIS AND DISPLAY AREA */
     .plot-wrapper-axis-and-display-area {
         position: relative;
         flex: 1 1 auto;
-
-        .l-state-indicators {
-            color: $colorPausedBg;
-            position: absolute;
-            display: block;
-            font-size: 1.5em;
-            pointer-events: none;
-            top: $interiorMarginSm;
-            left: $interiorMarginSm;
-            z-index: 2;
-
-            > * + * {
-                margin-left: $interiorMarginSm;
-            }
-
-            .t-alert-unsynced {
-                display: none;
-            }
-        }
+        min-height: $plotMinH;
     }
 
     .gl-plot-wrapper-display-area-and-x-axis {
@@ -213,9 +208,7 @@ mct-plot {
         &.gl-plot-y-label {
             display: block;
             left: 0; top: 0; right: auto; bottom: 0;
-            padding-left: 5px;
             text-orientation: mixed;
-            //overflow: hidden;
             writing-mode: vertical-lr;
             &:before {
                 // Icon denoting configurability
@@ -280,7 +273,7 @@ mct-plot {
         align-items: center;
         position: absolute;
         top: $m;
-        right: $m;
+        left: $m;
         z-index: 9;
 
         &__reset {
@@ -292,6 +285,28 @@ mct-plot {
         &__zoom-and-guides {
             top: $m;
             right: $m;
+        }
+
+        .c-button {
+            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+        }
+    }
+
+    .l-state-indicators {
+        color: $colorPausedBg;
+        position: absolute;
+        cursor: help;
+        font-size: 1.2em;
+        bottom: $interiorMarginSm;
+        left: $interiorMarginSm;
+        z-index: 2;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        .t-alert-unsynced {
+            display: none;
         }
     }
 }
@@ -341,11 +356,11 @@ mct-plot {
 
 .gl-plot-tick {
     &.gl-plot-x-tick-label {
-        top: $interiorMargin;
+        top: $interiorMarginSm;
     }
     &.gl-plot-y-tick-label {
-        right: $interiorMargin;
-        left: $interiorMargin;
+        right: $interiorMarginSm;
+        left: auto;
     }
 }
 
@@ -368,12 +383,6 @@ mct-plot {
     z-index: -10;
 
     .l-view-section {
-        //$m: $interiorMargin;
-        //top: $m !important;
-        //right: $m;
-        //bottom: $m;
-        //left: $m;
-
         .s-status-timeconductor-unsynced .holder-plot {
             .t-object-alert.t-alert-unsynced {
                 display: none;
@@ -429,13 +438,18 @@ mct-plot {
 /****************** _LEGEND.SCSS */
 .gl-plot-legend,
 .c-plot-legend {
+    overflow: hidden;
+
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
         flex: 1 1 auto;
+        height: 100%;
+        overflow: auto;
+        padding: 2px;
     }
 
     &__view-control {
-        padding-top: 2px;
+        padding-top: 4px;
         margin-right: $interiorMarginSm;
     }
 
@@ -443,7 +457,21 @@ mct-plot {
         @include propertiesHeader();
         margin-bottom: $interiorMarginSm;
     }
+
+    .is-in-small-container & {
+        &.is-legend-hidden {
+            display: none;
+        }
+    }
 }
+
+.c-plot--stacked {
+    .is-legend-hidden {
+        // Always show the legend in a stacked plot
+        display: flex !important;
+    }
+}
+
 
 .gl-plot-legend {
     display: flex;
@@ -480,15 +508,21 @@ mct-plot {
 /***************** GENERAL STYLES, ALL STATES */
 .plot-legend-item {
     // General styles for legend items, both expanded and collapsed legend states
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
     .plot-series-color-swatch {
-        border-radius: $smallCr;
+        border-radius: 30%; //$smallCr;
         border: 1px solid $colorBodyBg;
         display: inline-block;
+        flex: 0 0 auto;
         height: $plotSwatchD;
         width: $plotSwatchD;
     }
     .plot-series-name {
         display: inline;
+        @include ellipsize();
     }
 
     .plot-series-value {
@@ -496,11 +530,27 @@ mct-plot {
     }
 }
 
+.plot-series-swatch-and-name {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+}
+
 .plot-wrapper-expanded-legend {
     flex: 1 1 auto;
 }
 
-.gl-plot {
+.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
+.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
+.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
+.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
+
+.gl-plot,
+.c-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
     &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
 
@@ -518,19 +568,12 @@ mct-plot {
 
         .plot-legend-item {
             display: flex;
-            align-items: center;
             justify-content: stretch;
-            &:not(:first-child) {
-                margin-left: $interiorMarginLg;
-            }
+
             .plot-series-swatch-and-name,
             .plot-series-value {
                 @include ellipsize();
                 flex: 1 1 auto;
-            }
-
-            .plot-series-swatch-and-name {
-                margin-right: $interiorMarginSm;
             }
 
             .plot-series-value {
@@ -542,7 +585,7 @@ mct-plot {
     /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
         .gl-plot-legend {
-            // max-height: 70%;
+             max-height: 70%;
         }
 
         .plot-wrapper-expanded-legend {
@@ -553,8 +596,10 @@ mct-plot {
 
     /***************** TOP OR BOTTOM */
     &.plot-legend-top,
-    &.plot-legend-bottom {
+    &.plot-legend-bottom,
+    &.plot-legend-hidden {
         // General styles when legend is on the top or bottom
+        // -hidden included for legacy plots
         flex-direction: column;
 
         &.plot-legend-collapsed {
@@ -563,6 +608,11 @@ mct-plot {
                 display: flex;
                 flex: 1 1 auto;
                 overflow: hidden;
+
+                > .plot-legend-item + .plot-legend-item {
+                    // Space between plot items
+                    margin-left: $interiorMarginLg;
+                }
             }
         }
     }
@@ -571,6 +621,7 @@ mct-plot {
     &.plot-legend-left,
     &.plot-legend-right {
         // General styles when legend is on left or right
+
         .gl-plot-legend {
             max-height: inherit;
         }
@@ -594,12 +645,18 @@ mct-plot {
                 min-width: 0;
                 flex: 1 1 auto;
                 overflow-y: auto;
+
+                > * + * {
+                    // Space between plot items
+                    margin-top: $interiorMarginSm;
+                }
             }
             .plot-legend-item {
-                margin-bottom: 1px;
+                margin-bottom: $interiorMarginSm;
                 margin-left: 0;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 .plot-series-swatch-and-name {
+                    @include ellipsize();
                     flex: 0 1 auto;
                     min-width: 20%;
                 }
@@ -621,6 +678,31 @@ mct-plot {
             order: 1;
         }
     }
+}
+
+/***************** STACKED PLOT LEGEND OVERRIDES */
+.c-plot--stacked {
+    // Always show the legend on top, ignore any position setting
+    .c-plot,
+    .gl-plot {
+        flex-direction: column !important;
+
+        .c-plot-legend,
+        .gl-plot-legend {
+            margin: 0;
+            margin-bottom: $interiorMargin;
+            order: 1 !important;
+            width: 100% !important;
+
+            .plot-wrapper-collapsed-legend {
+                flex-direction: row !important;
+            }
+        }
+        .plot-wrapper-axis-and-display-area {
+            order: 2 !important;
+        }
+    }
+
 }
 
 /***************** CURSOR GUIDES */
@@ -651,5 +733,26 @@ mct-plot {
 .s-status-timeconductor-unsynced {
     .t-alert-unsynced {
         display: inline-block !important;
+    }
+}
+
+/*********************** CURSOR LOCK INDICATOR */
+[class*='c-state-indicator__alert-cursor-lock'] {
+    display: none;
+}
+
+[class*='is-cursor-locked'] {
+    background: rgba($colorInfo, 0.1);
+
+    [class*='c-state-indicator__alert-cursor-lock'] {
+        @include userSelectNone();
+        color: $colorInfo;
+        display: block;
+        margin-right: $interiorMarginSm;
+
+        &[class*='--verbose'] {
+            padding: $interiorMarginSm;
+
+        }
     }
 }

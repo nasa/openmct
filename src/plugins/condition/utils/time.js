@@ -20,27 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const getLatestTimestamp = (
-    currentTimestamp,
-    compareTimestamp,
-    timeSystems,
-    currentTimeSystem
-) => {
-    let latest = { ...currentTimestamp };
-    const compare = { ...compareTimestamp };
-    const key = currentTimeSystem.key;
-
-    if (!latest || !latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
-    }
-
-    if (compare[key] > latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems)
-    }
-
-    return latest;
-}
-
 function updateLatestTimeStamp(timestamp, timeSystems) {
     let latest = {};
 
@@ -49,4 +28,50 @@ function updateLatestTimeStamp(timestamp, timeSystems) {
     });
 
     return latest;
+}
+
+export function getLatestTimestamp(
+    currentTimestamp,
+    compareTimestamp,
+    timeSystems,
+    currentTimeSystem
+) {
+    let latest = { ...currentTimestamp };
+    const compare = { ...compareTimestamp };
+    const key = currentTimeSystem.key;
+
+    if (!latest || !latest[key]) {
+        latest = updateLatestTimeStamp(compare, timeSystems);
+    }
+
+    if (compare[key] > latest[key]) {
+        latest = updateLatestTimeStamp(compare, timeSystems);
+    }
+
+    return latest;
+}
+
+export function subscribeForStaleness(callback, timeout) {
+    let stalenessTimer = setTimeout(() => {
+        clearTimeout(stalenessTimer);
+        callback();
+    }, timeout);
+
+    return {
+        update: (data) => {
+            if (stalenessTimer) {
+                clearTimeout(stalenessTimer);
+            }
+
+            stalenessTimer = setTimeout(() => {
+                clearTimeout(stalenessTimer);
+                callback(data);
+            }, timeout);
+        },
+        clear: () => {
+            if (stalenessTimer) {
+                clearTimeout(stalenessTimer);
+            }
+        }
+    };
 }

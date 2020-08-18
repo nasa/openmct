@@ -41,6 +41,7 @@ define(['./Transaction'], function (Transaction) {
             Transaction.prototype.commit.bind(this),
             Transaction.prototype.cancel.bind(this)
         );
+
         return Promise.resolve(true);
     };
 

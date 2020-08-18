@@ -29,7 +29,6 @@ define([
     './capabilities/APICapabilityDecorator',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TimeSettingsURLHandler',
     './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
     './runs/RegisterLegacyTypes',
@@ -46,7 +45,6 @@ define([
     APICapabilityDecorator,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TimeSettingsURLHandler,
     TypeDeprecationChecker,
     LegacyTelemetryProvider,
     RegisterLegacyTypes,
@@ -135,16 +133,6 @@ define([
                         depends: ["openmct"]
                     },
                     {
-                        implementation: function (openmct, $location, $rootScope) {
-                            return new TimeSettingsURLHandler(
-                                openmct.time,
-                                $location,
-                                $rootScope
-                            );
-                        },
-                        depends: ["openmct", "$location", "$rootScope"]
-                    },
-                    {
                         implementation: LegacyTelemetryProvider,
                         depends: [
                             "openmct",
@@ -214,5 +202,5 @@ define([
                 ]
             }
         }
-    }
+    };
 });

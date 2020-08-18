@@ -9,8 +9,7 @@ define ([
     objectUtils,
     EventEmitter,
     $,
-    _,
-
+    _
 ) {
 
     /**
@@ -83,10 +82,10 @@ define ([
      * @return {string} The ID of the rule to display on the widget
      */
     ConditionManager.prototype.executeRules = function (ruleOrder, rules) {
-        var self = this,
-            activeId = ruleOrder[0],
-            rule,
-            conditions;
+        const self = this;
+        let activeId = ruleOrder[0];
+        let rule;
+        let conditions;
 
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
@@ -126,22 +125,23 @@ define ([
      *                   has completed and types have been parsed
      */
     ConditionManager.prototype.parsePropertyTypes = function (object) {
-        var objectId = objectUtils.makeKeyString(object.identifier);
+        const objectId = objectUtils.makeKeyString(object.identifier);
 
         this.telemetryTypesById[objectId] = {};
         Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
-            var type;
+            let type;
             if (valueMetadata.enumerations !== undefined) {
                 type = 'enum';
-            } else if (valueMetadata.hints.hasOwnProperty('range')) {
+            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
                 type = 'number';
-            } else if (valueMetadata.hints.hasOwnProperty('domain')) {
+            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
                 type = 'number';
             } else if (valueMetadata.key === 'name') {
                 type = 'string';
             } else {
                 type = 'string';
             }
+
             this.telemetryTypesById[objectId][valueMetadata.key] = type;
             this.addGlobalPropertyType(valueMetadata.key, type);
         }, this);
@@ -174,6 +174,7 @@ define ([
     ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDatum) {
         return Object.values(this.telemetryMetadataById[objId]).reduce((normalizedDatum, metadatum) => {
             normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+
             return normalizedDatum;
         }, {});
     };
@@ -185,11 +186,11 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionAdd = function (obj) {
-        var compositionKeys,
-            telemetryAPI = this.openmct.telemetry,
-            objId = objectUtils.makeKeyString(obj.identifier),
-            telemetryMetadata,
-            self = this;
+        let compositionKeys;
+        const telemetryAPI = this.openmct.telemetry;
+        const objId = objectUtils.makeKeyString(obj.identifier);
+        let telemetryMetadata;
+        const self = this;
 
         if (telemetryAPI.isTelemetryObject(obj)) {
             self.compositionObjs[objId] = obj;
@@ -211,7 +212,10 @@ define ([
             self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
                 self.handleSubscriptionCallback(objId, datum);
             }, {});
-            telemetryAPI.request(obj, {strategy: 'latest', size: 1})
+            telemetryAPI.request(obj, {
+                strategy: 'latest',
+                size: 1
+            })
                 .then(function (results) {
                     if (results && results.length) {
                         self.handleSubscriptionCallback(objId, results[results.length - 1]);
@@ -239,11 +243,11 @@ define ([
      * @private
      */
     ConditionManager.prototype.onCompositionRemove = function (identifier) {
-        var objectId = objectUtils.makeKeyString(identifier);
+        const objectId = objectUtils.makeKeyString(identifier);
         // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
-            return id.key === identifier.key &&
-                id.namespace === identifier.namespace;
+            return id.key === identifier.key
+                && id.namespace === identifier.namespace;
         });
         delete this.compositionObjs[objectId];
         delete this.subscriptionCache[objectId];
@@ -282,7 +286,7 @@ define ([
      * @return {string} The human-readable name of the domain object
      */
     ConditionManager.prototype.getObjectName = function (id) {
-        var name;
+        let name;
 
         if (this.keywordLabels[id]) {
             name = this.keywordLabels[id];
@@ -360,7 +364,6 @@ define ([
     ConditionManager.prototype.triggerTelemetryCallback = function () {
         this.eventEmitter.emit('receiveTelemetry');
     };
-
 
     /**
      * Unsubscribe from all registered telemetry sources and unregister all event

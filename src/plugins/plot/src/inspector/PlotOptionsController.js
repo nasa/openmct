@@ -23,13 +23,11 @@
 define([
     '../configuration/configStore',
     '../lib/eventHelpers',
-    'objectUtils',
-    'lodash'
+    'objectUtils'
 ], function (
     configStore,
     eventHelpers,
-    objectUtils,
-    _
+    objectUtils
 ) {
 
     function PlotOptionsController($scope, openmct, $timeout) {
@@ -54,9 +52,10 @@ define([
     };
 
     PlotOptionsController.prototype.setUpScope = function () {
-        var config = configStore.get(this.configId);
+        const config = configStore.get(this.configId);
         if (!config) {
             this.$timeout(this.setUpScope.bind(this));
+
             return;
         }
 

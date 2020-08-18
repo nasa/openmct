@@ -8,8 +8,18 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="[ type.cssClass, classList ]"
+            :class="{
+                classList,
+                'is-missing': domainObject.status === 'missing'
+            }"
         >
+            <div class="c-object-label__type-icon"
+                 :class="type.cssClass"
+            >
+                <span class="is-missing__indicator"
+                      title="This item is missing"
+                ></span>
+            </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"
                 contenteditable
@@ -43,10 +53,21 @@
                 :class="item.cssClass"
                 @click="item.callBack"
             >
-
             </button>
+
             <button
                 v-if="isViewEditable & !isEditing"
+                :title="lockedOrUnlocked"
+                class="c-button"
+                :class="{
+                    'icon-lock c-button--caution': domainObject.locked,
+                    'icon-unlocked': !domainObject.locked
+                }"
+                @click="toggleLock(!domainObject.locked)"
+            ></button>
+
+            <button
+                v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
@@ -158,28 +179,39 @@ export default {
                 });
         },
         hasParent() {
-            return this.domainObject !== PLACEHOLDER_OBJECT &&
-                    this.parentUrl !== '#/browse'
+            return this.domainObject !== PLACEHOLDER_OBJECT
+                    && this.parentUrl !== '#/browse';
         },
         parentUrl() {
             let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let hash = window.location.hash;
+
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
             let objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
-                return {}
+                return {};
             }
+
             return objectType.definition;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
+
                 return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
             }
+
             return false;
+        },
+        lockedOrUnlocked() {
+            if (this.domainObject.locked) {
+                return 'Locked for editing - click to unlock.';
+            } else {
+                return 'Unlocked for editing - click to lock.';
+            }
         }
     },
     watch: {
@@ -187,6 +219,7 @@ export default {
             if (this.mutationObserver) {
                 this.mutationObserver();
             }
+
             this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
                 this.domainObject = domainObject;
             });
@@ -218,6 +251,7 @@ export default {
         if (this.mutationObserver) {
             this.mutationObserver();
         }
+
         document.removeEventListener('click', this.closeViewAndSaveMenu);
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
@@ -272,7 +306,7 @@ export default {
             });
         },
         promptUserbeforeNavigatingAway(event) {
-            if(this.openmct.editor.isEditing()) {
+            if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 event.returnValue = '';
             }
@@ -285,7 +319,7 @@ export default {
                 title: 'Saving'
             });
 
-            return this.openmct.editor.save().then(()=> {
+            return this.openmct.editor.save().then(() => {
                 dialog.dismiss();
                 this.openmct.notifications.info('Save successful');
             }).catch((error) => {
@@ -326,7 +360,10 @@ export default {
             }
 
             this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
+        },
+        toggleLock(flag) {
+            this.openmct.objects.mutate(this.domainObject, 'locked', flag);
         }
     }
-}
+};
 </script>

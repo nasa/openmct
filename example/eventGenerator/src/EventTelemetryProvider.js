@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining EventTelemetryProvider. Created by chacskaylo on 06/18/2015.
@@ -57,6 +56,7 @@ define(
                 results.forEach(function (result) {
                     packaged[result.key] = result.telemetry;
                 });
+
                 // Format as expected (sources -> keys -> telemetry)
                 return { eventGenerator: packaged };
             }

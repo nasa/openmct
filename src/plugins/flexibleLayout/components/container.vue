@@ -53,6 +53,7 @@
                 :index="i"
                 :container-index="index"
                 :is-editing="isEditing"
+                :object-path="objectPath"
             />
 
             <drop-hint
@@ -86,7 +87,7 @@ import DropHint from './dropHint.vue';
 const MIN_FRAME_SIZE = 5;
 
 export default {
-    inject:['openmct'],
+    inject: ['openmct'],
     components: {
         FrameComponent,
         ResizeHandle,
@@ -105,6 +106,14 @@ export default {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        locked: {
+            type: Boolean,
+            default: false
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     computed: {
@@ -112,7 +121,7 @@ export default {
             return this.container.frames;
         },
         sizeString() {
-            return `${Math.round(this.container.size)}%`
+            return `${Math.round(this.container.size)}%`;
         }
     },
     mounted() {
@@ -121,7 +130,7 @@ export default {
             addContainer: this.addContainer,
             type: 'container',
             containerId: this.container.id
-        }
+        };
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
     },
@@ -130,24 +139,29 @@ export default {
     },
     methods: {
         allowDrop(event, index) {
+            if (this.locked) {
+                return false;
+            }
+
             if (event.dataTransfer.types.includes('openmct/domain-object-path')) {
                 return true;
             }
-            let frameId = event.dataTransfer.getData('frameid'),
-                containerIndex = Number(event.dataTransfer.getData('containerIndex'));
+
+            let frameId = event.dataTransfer.getData('frameid');
+            let containerIndex = Number(event.dataTransfer.getData('containerIndex'));
 
             if (!frameId) {
                 return false;
             }
 
             if (containerIndex === this.index) {
-                let frame = this.container.frames.filter((f) => f.id === frameId)[0],
-                    framePos = this.container.frames.indexOf(frame);
+                let frame = this.container.frames.filter((f) => f.id === frameId)[0];
+                let framePos = this.container.frames.indexOf(frame);
 
                 if (index === -1) {
                     return framePos !== 0;
                 } else {
-                    return framePos !== index && (framePos - 1) !== index
+                    return framePos !== index && (framePos - 1) !== index;
                 }
             } else {
                 return true;
@@ -160,8 +174,10 @@ export default {
                     this.index,
                     insertIndex
                 );
+
                 return;
             }
+
             // move frame.
             let frameId = event.dataTransfer.getData('frameid');
             let containerIndex = Number(event.dataTransfer.getData('containerIndex'));
@@ -174,15 +190,15 @@ export default {
             );
         },
         startFrameResizing(index) {
-            let beforeFrame = this.frames[index],
-                afterFrame = this.frames[index + 1];
+            let beforeFrame = this.frames[index];
+            let afterFrame = this.frames[index + 1];
 
             this.maxMoveSize = beforeFrame.size + afterFrame.size;
         },
         frameResizing(index, delta, event) {
-            let percentageMoved = Math.round(delta / this.getElSize() * 100),
-                beforeFrame = this.frames[index],
-                afterFrame = this.frames[index + 1];
+            let percentageMoved = Math.round(delta / this.getElSize() * 100);
+            let beforeFrame = this.frames[index];
+            let afterFrame = this.frames[index + 1];
 
             beforeFrame.size = this.getFrameSize(beforeFrame.size + percentageMoved);
             afterFrame.size = this.getFrameSize(afterFrame.size - percentageMoved);
@@ -199,7 +215,7 @@ export default {
         },
         getFrameSize(size) {
             if (size < MIN_FRAME_SIZE) {
-                return MIN_FRAME_SIZE
+                return MIN_FRAME_SIZE;
             } else if (size > (this.maxMoveSize - MIN_FRAME_SIZE)) {
                 return (this.maxMoveSize - MIN_FRAME_SIZE);
             } else {
@@ -213,5 +229,5 @@ export default {
             event.dataTransfer.setData('containerid', this.container.id);
         }
     }
-}
+};
 </script>

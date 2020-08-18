@@ -57,6 +57,8 @@
                 :container="container"
                 :rows-layout="rowsLayout"
                 :is-editing="isEditing"
+                :locked="domainObject.locked"
+                :object-path="objectPath"
                 @move-frame="moveFrame"
                 @new-frame="setFrameLocation"
                 @persist="persist"
@@ -87,10 +89,10 @@
 </template>
 
 <script>
-import ContainerComponent  from './container.vue';
+import ContainerComponent from './container.vue';
 import Container from '../utils/container';
 import Frame from '../utils/frame';
-import ResizeHandle from  './resizeHandle.vue';
+import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
 
@@ -106,6 +108,7 @@ function sizeItems(items, newItem) {
         if (!newItem.size || newItem.size === 100) {
             newItem.size = Math.round(100 / items.length);
         }
+
         let oldItems = items.filter(item => item !== newItem);
         // Resize oldItems to fit inside remaining space;
         let remainder = 100 - newItem.size;
@@ -125,6 +128,7 @@ function sizeToFill(items) {
     if (items.length === 0) {
         return;
     }
+
     let oldTotal = items.reduce((total, item) => total + item.size, 0);
     items.forEach((item) => {
         item.size = Math.round(item.size * 100 / oldTotal);
@@ -136,7 +140,7 @@ function sizeToFill(items) {
 }
 
 export default {
-    inject: ['openmct', 'layoutObject'],
+    inject: ['openmct', 'objectPath', 'layoutObject'],
     components: {
         ContainerComponent,
         ResizeHandle,
@@ -149,14 +153,14 @@ export default {
         return {
             domainObject: this.layoutObject,
             newFrameLocation: []
-        }
+        };
     },
     computed: {
         layoutDirectionStr() {
             if (this.rowsLayout) {
-                return 'Rows'
+                return 'Rows';
             } else {
-                return 'Columns'
+                return 'Columns';
             }
         },
         containers() {
@@ -192,8 +196,8 @@ export default {
             this.persist();
         },
         deleteContainer(containerId) {
-            let container = this.containers.filter(c => c.id === containerId)[0],
-                containerIndex = this.containers.indexOf(container);
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let containerIndex = this.containers.indexOf(container);
 
             /*
                 remove associated domainObjects from composition
@@ -252,7 +256,7 @@ export default {
 
             this.removeFromComposition(frame.domainObjectIdentifier)
                 .then(() => {
-                    sizeToFill(container.frames)
+                    sizeToFill(container.frames);
                     this.setSelectionToParent();
                 });
         },
@@ -269,14 +273,14 @@ export default {
                 return false;
             }
 
-            let containerId = event.dataTransfer.getData('containerid'),
-                container = this.containers.filter((c) => c.id === containerId)[0],
-                containerPos = this.containers.indexOf(container);
+            let containerId = event.dataTransfer.getData('containerid');
+            let container = this.containers.filter((c) => c.id === containerId)[0];
+            let containerPos = this.containers.indexOf(container);
 
             if (index === -1) {
                 return containerPos !== 0;
             } else {
-                return containerPos !== index && (containerPos - 1) !== index
+                return containerPos !== index && (containerPos - 1) !== index;
             }
         },
         persist(index) {
@@ -287,15 +291,15 @@ export default {
             }
         },
         startContainerResizing(index) {
-            let beforeContainer = this.containers[index],
-                afterContainer = this.containers[index + 1];
+            let beforeContainer = this.containers[index];
+            let afterContainer = this.containers[index + 1];
 
             this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
-            let percentageMoved = Math.round(delta / this.getElSize() * 100),
-                beforeContainer = this.containers[index],
-                afterContainer = this.containers[index + 1];
+            let percentageMoved = Math.round(delta / this.getElSize() * 100);
+            let beforeContainer = this.containers[index];
+            let afterContainer = this.containers[index + 1];
 
             beforeContainer.size = this.getContainerSize(beforeContainer.size + percentageMoved);
             afterContainer.size = this.getContainerSize(afterContainer.size - percentageMoved);
@@ -312,7 +316,7 @@ export default {
         },
         getContainerSize(size) {
             if (size < MIN_CONTAINER_SIZE) {
-                return MIN_CONTAINER_SIZE
+                return MIN_CONTAINER_SIZE;
             } else if (size > (this.maxMoveSize - MIN_CONTAINER_SIZE)) {
                 return (this.maxMoveSize - MIN_CONTAINER_SIZE);
             } else {
@@ -332,6 +336,7 @@ export default {
             } else {
                 this.containers.splice(toIndex, 0, container);
             }
+
             this.persist();
         },
         removeChildObject(identifier) {
@@ -348,5 +353,5 @@ export default {
             this.persist();
         }
     }
-}
+};
 </script>

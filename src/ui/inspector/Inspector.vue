@@ -54,7 +54,6 @@ export default {
     inject: ['openmct'],
     components: {
         StylesInspectorView,
-        // StylesInspectorView,
         multipane,
         pane,
         Elements,
@@ -73,12 +72,12 @@ export default {
             tabbedViews: [{
                 key: '__properties',
                 name: 'Properties'
-            },{
+            }, {
                 key: '__styles',
                 name: 'Styles'
             }],
             currentTabbedView: {}
-        }
+        };
     },
     mounted() {
         this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
@@ -98,7 +97,7 @@ export default {
             if (selection.length > 0 && selection[0].length > 0) {
                 let parentObject = selection[0][0].context.item;
 
-                this.hasComposition = !!(parentObject && this.openmct.composition.get(parentObject));
+                this.hasComposition = Boolean(parentObject && this.openmct.composition.get(parentObject));
             }
         },
         refreshTabs(selection) {
@@ -110,16 +109,16 @@ export default {
                     let type = this.openmct.types.get(object.type);
                     this.showStyles = this.isLayoutObject(selection[0], object.type) || this.isCreatableObject(object, type);
                 }
-                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key))
-                {
+
+                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key)) {
                     this.updateCurrentTab(this.tabbedViews[0]);
                 }
             }
         },
         isLayoutObject(selection, objectType) {
             //we allow conditionSets to be styled if they're part of a layout
-            return selection.length > 1 &&
-                ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
+            return selection.length > 1
+                && ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
         },
         isCreatableObject(object, type) {
             return (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
@@ -128,8 +127,8 @@ export default {
             this.currentTabbedView = view;
         },
         isCurrent(view) {
-            return _.isEqual(this.currentTabbedView, view)
+            return _.isEqual(this.currentTabbedView, view);
         }
     }
-}
+};
 </script>

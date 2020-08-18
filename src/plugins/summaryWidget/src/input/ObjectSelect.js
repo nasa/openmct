@@ -18,7 +18,7 @@ define([
      *                                 display regardless of the composition state
      */
     function ObjectSelect(config, manager, baseOptions) {
-        var self = this;
+        const self = this;
 
         this.config = config;
         this.manager = manager;
@@ -52,7 +52,7 @@ define([
          * @private
          */
         function onCompositionRemove() {
-            var selected = self.select.getSelected();
+            const selected = self.select.getSelected();
             self.generateOptions();
             self.select.setSelected(selected);
         }
@@ -80,7 +80,7 @@ define([
      * Populate this select with options based on its current composition
      */
     ObjectSelect.prototype.generateOptions = function () {
-        var items = Object.values(this.compositionObjs).map(function (obj) {
+        const items = Object.values(this.compositionObjs).map(function (obj) {
             return [objectUtils.makeKeyString(obj.identifier), obj.name];
         });
         this.baseOptions.forEach(function (option, index) {

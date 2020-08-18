@@ -43,14 +43,16 @@ define([
         model,
         id
     ) {
-        var capabilities = this.capabilityService.getCapabilities(model, id);
+        const capabilities = this.capabilityService.getCapabilities(model, id);
         if (capabilities.mutation) {
             capabilities.mutation =
                 synchronizeMutationCapability(capabilities.mutation);
         }
+
         if (capabilities.view) {
             capabilities.view = patchViewCapability(capabilities.view);
         }
+
         if (AlternateCompositionCapability.appliesTo(model, id)) {
             capabilities.composition = function (domainObject) {
                 return new AlternateCompositionCapability(this.$injector, domainObject);

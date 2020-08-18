@@ -22,10 +22,22 @@
  *****************************************************************************/
 
 <template>
-<tr @contextmenu.prevent="showContextMenu">
-    <td>{{ name }}</td>
-    <td>{{ formattedTimestamp }}</td>
-    <td :class="valueClass">{{ value }}</td>
+<tr
+    class="js-lad-table__body__row"
+    @contextmenu.prevent="showContextMenu"
+>
+    <td class="js-first-data">{{ name }}</td>
+    <td class="js-second-data">{{ formattedTimestamp }}</td>
+    <td
+        class="js-third-data"
+        :class="valueClass"
+    >{{ value }}</td>
+    <td
+        v-if="hasUnits"
+        class="js-units"
+    >
+        {{ unit }}
+    </td>
 </tr>
 </template>
 
@@ -42,6 +54,10 @@ export default {
         domainObject: {
             type: Object,
             required: true
+        },
+        hasUnits: {
+            type: Boolean,
+            requred: true
         }
     },
     data() {
@@ -53,12 +69,13 @@ export default {
             timestamp: undefined,
             value: '---',
             valueClass: '',
-            currentObjectPath
-        }
+            currentObjectPath,
+            unit: ''
+        };
     },
     computed: {
         formattedTimestamp() {
-            return this.timestamp !== undefined ? this.formats[this.timestampKey].format(this.timestamp) : '---';
+            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
         }
     },
     mounted() {
@@ -88,13 +105,17 @@ export default {
             .metadata
             .valuesForHints(['range'])[0];
 
-        this.valueKey = this.valueMetadata.key
+        this.valueKey = this.valueMetadata.key;
 
         this.unsubscribe = this.openmct
             .telemetry
             .subscribe(this.domainObject, this.updateValues);
 
         this.requestHistory();
+
+        if (this.hasUnits) {
+            this.setUnit();
+        }
     },
     destroyed() {
         this.stopWatchingMutation();
@@ -104,11 +125,11 @@ export default {
     },
     methods: {
         updateValues(datum) {
-            let newTimestamp = this.formats[this.timestampKey].parse(datum),
-                limit;
+            let newTimestamp = this.getParsedTimestamp(datum);
+            let limit;
 
-            if(this.shouldUpdate(newTimestamp)) {
-                this.timestamp = this.formats[this.timestampKey].parse(datum);
+            if (this.shouldUpdate(newTimestamp)) {
+                this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 if (limit) {
@@ -119,9 +140,12 @@ export default {
             }
         },
         shouldUpdate(newTimestamp) {
-            return (this.timestamp === undefined) ||
-                (this.inBounds(newTimestamp) &&
-                newTimestamp > this.timestamp);
+            let newTimestampInBounds = this.inBounds(newTimestamp);
+            let noExistingTimestamp = this.timestamp === undefined;
+            let newTimestampIsLatest = newTimestamp > this.timestamp;
+
+            return newTimestampInBounds
+                && (noExistingTimestamp || newTimestampIsLatest);
         },
         requestHistory() {
             this.openmct
@@ -139,7 +163,8 @@ export default {
         },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
-            if(!isTick) {
+            if (!isTick) {
+                this.resetValues();
                 this.requestHistory();
             }
         },
@@ -147,15 +172,40 @@ export default {
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
         },
         updateTimeSystem(timeSystem) {
-            this.value = '---';
-            this.timestamp = '---';
-            this.valueClass = '';
+            this.resetValues();
             this.timestampKey = timeSystem.key;
         },
         showContextMenu(event) {
             this.openmct.menus._showObjectMenu(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        },
+        resetValues() {
+            this.value = '---';
+            this.timestamp = undefined;
+            this.valueClass = '';
+        },
+        getParsedTimestamp(timestamp) {
+            if (this.timeSystemFormat()) {
+                return this.formats[this.timestampKey].parse(timestamp);
+            }
+        },
+        getFormattedTimestamp(timestamp) {
+            if (this.timeSystemFormat()) {
+                return this.formats[this.timestampKey].format(timestamp);
+            }
+        },
+        timeSystemFormat() {
+            if (this.formats[this.timestampKey]) {
+                return true;
+            } else {
+                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+
+                return false;
+            }
+        },
+        setUnit() {
+            this.unit = this.valueMetadata.unit || '';
         }
     }
-}
+};
 </script>
 

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
     [],
@@ -42,9 +41,11 @@ define(
         NotificationLaunchIndicator.prototype.getGlyphClass = function () {
             return 'ok';
         };
+
         NotificationLaunchIndicator.prototype.getText = function () {
             return "Launch notification";
         };
+
         NotificationLaunchIndicator.prototype.getDescription = function () {
             return "Launch notification";
         };

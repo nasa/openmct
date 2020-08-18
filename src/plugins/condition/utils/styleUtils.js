@@ -28,31 +28,31 @@ const styleProps = {
         svgProperty: 'fill',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                      type === 'telemetry-view' ||
-                                      type === 'box-view' ||
-                                      type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                      || type === 'telemetry-view'
+                                      || type === 'box-view'
+                                      || type === 'subobject-view');
         }
     },
     border: {
         svgProperty: 'stroke',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                            type === 'telemetry-view' ||
-                                            type === 'box-view' ||
-                                            type === 'image-view' ||
-                                            type === 'line-view'||
-                                            type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                            || type === 'telemetry-view'
+                                            || type === 'box-view'
+                                            || type === 'image-view'
+                                            || type === 'line-view'
+                                            || type === 'subobject-view');
         }
     },
     color: {
         svgProperty: 'color',
         noneValue: NONE_VALUE,
         applicableForType: type => {
-            return !type ? true : (type === 'text-view' ||
-                                    type === 'telemetry-view'||
-                                    type === 'subobject-view');
+            return !type ? true : (type === 'text-view'
+                                    || type === 'telemetry-view'
+                                    || type === 'subobject-view');
         }
     },
     imageUrl: {
@@ -64,24 +64,39 @@ const styleProps = {
     }
 };
 
-const aggregateStyleValues = (accumulator, currentStyle) => {
+function aggregateStyleValues(accumulator, currentStyle) {
     const styleKeys = Object.keys(currentStyle);
     const properties = Object.keys(styleProps);
     properties.forEach((property) => {
         if (!accumulator[property]) {
             accumulator[property] = [];
         }
+
         const found = styleKeys.find(key => key === property);
         if (found) {
             accumulator[property].push(currentStyle[found]);
         }
     });
+
     return accumulator;
-};
+}
+
+function getStaticStyleForItem(domainObject, id) {
+    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
+    if (domainObjectStyles) {
+        if (id) {
+            if (domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
+                return domainObjectStyles[id].staticStyle.style;
+            }
+        } else if (domainObjectStyles.staticStyle) {
+            return domainObjectStyles.staticStyle.style;
+        }
+    }
+}
 
 // Returns a union of styles used by multiple items.
 // Styles that are common to all items but don't have the same value are added to the mixedStyles list
-export const getConsolidatedStyleValues = (multipleItemStyles) => {
+export function getConsolidatedStyleValues(multipleItemStyles) {
     let aggregatedStyleValues = multipleItemStyles.reduce(aggregateStyleValues, {});
 
     let styleValues = {};
@@ -98,26 +113,14 @@ export const getConsolidatedStyleValues = (multipleItemStyles) => {
             }
         }
     });
+
     return {
         styles: styleValues,
         mixedStyles
     };
-};
+}
 
-const getStaticStyleForItem = (domainObject, id) => {
-    let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
-    if (domainObjectStyles) {
-        if (id) {
-            if(domainObjectStyles[id] && domainObjectStyles[id].staticStyle) {
-                return domainObjectStyles[id].staticStyle.style;
-            }
-        } else if (domainObjectStyles.staticStyle) {
-            return domainObjectStyles.staticStyle.style;
-        }
-    }
-};
-
-export const getConditionalStyleForItem = (domainObject, id) => {
+export function getConditionalStyleForItem(domainObject, id) {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
         if (id) {
@@ -128,9 +131,9 @@ export const getConditionalStyleForItem = (domainObject, id) => {
             return domainObjectStyles.styles;
         }
     }
-};
+}
 
-export const getConditionSetIdentifierForItem = (domainObject, id) => {
+export function getConditionSetIdentifierForItem(domainObject, id) {
     let domainObjectStyles = domainObject && domainObject.configuration && domainObject.configuration.objectStyles;
     if (domainObjectStyles) {
         if (id) {
@@ -141,10 +144,10 @@ export const getConditionSetIdentifierForItem = (domainObject, id) => {
             return domainObjectStyles.conditionSetIdentifier;
         }
     }
-};
+}
 
 //Returns either existing static styles or uses SVG defaults if available
-export const getApplicableStylesForItem = (domainObject, item) => {
+export function getApplicableStylesForItem(domainObject, item) {
     const type = item && item.type;
     const id = item && item.id;
     let style = {};
@@ -161,17 +164,19 @@ export const getApplicableStylesForItem = (domainObject, item) => {
             } else if (item) {
                 defaultValue = item[styleProp.svgProperty];
             }
+
             style[property] = defaultValue === undefined ? styleProp.noneValue : defaultValue;
         }
     });
 
     return style;
-};
+}
 
-export const getStylesWithoutNoneValue = (style) => {
+export function getStylesWithoutNoneValue(style) {
     if (isEmpty(style) || !style) {
         return;
     }
+
     let styleObj = {};
     const keys = Object.keys(style);
     keys.forEach(key => {
@@ -183,5 +188,6 @@ export const getStylesWithoutNoneValue = (style) => {
             }
         }
     });
+
     return styleObj;
-};
+}

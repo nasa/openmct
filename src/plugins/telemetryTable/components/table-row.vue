@@ -95,19 +95,21 @@ export default {
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
                 components[header] = this.row.getCellComponentName(header) || 'table-cell';
-                return components
+
+                return components;
             }, {}),
-            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+            selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+
                 return selectable;
             }, {})
-        }
+        };
     },
     computed: {
         listeners() {
             let listenersObject = {
                 click: this.markRow
-            }
+            };
 
             if (this.row.getContextMenuActions().length) {
                 listenersObject.contextmenu = this.showContextMenu;
@@ -159,7 +161,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.openmct.router.path[0]
@@ -171,7 +173,7 @@ export default {
         showContextMenu: function (event) {
             event.preventDefault();
 
-            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+            this.row.getContextualDomainObject(this.openmct, this.row.objectKeyString).then(domainObject => {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 
@@ -179,5 +181,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

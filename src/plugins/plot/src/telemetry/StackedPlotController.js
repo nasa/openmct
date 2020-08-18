@@ -20,18 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
-
+define([], function () {
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
-        var tickWidth = 0,
-            composition,
-            currentRequest,
-            unlisten,
-            tickWidthMap = {};
+        let tickWidth = 0;
+        let composition;
+        let currentRequest;
+        let unlisten;
+        let tickWidthMap = {};
 
         this.$element = $element;
         this.exportImageService = exportImageService;
@@ -41,13 +36,13 @@ define([
         $scope.telemetryObjects = [];
 
         function onDomainObjectChange(domainObject) {
-            var thisRequest = {
+            const thisRequest = {
                 pending: 0
             };
             currentRequest = thisRequest;
             $scope.currentRequest = thisRequest;
-            var telemetryObjects = $scope.telemetryObjects = [];
-            var thisTickWidthMap = {};
+            const telemetryObjects = $scope.telemetryObjects = [];
+            const thisTickWidthMap = {};
             tickWidthMap = thisTickWidthMap;
 
             if (unlisten) {
@@ -56,25 +51,25 @@ define([
             }
 
             function addChild(child) {
-                var id = openmct.objects.makeKeyString(child.identifier);
+                const id = openmct.objects.makeKeyString(child.identifier);
                 thisTickWidthMap[id] = 0;
                 thisRequest.pending += 1;
                 objectService.getObjects([id])
                     .then(function (objects) {
                         thisRequest.pending -= 1;
-                        var childObj = objects[id];
+                        const childObj = objects[id];
                         telemetryObjects.push(childObj);
                     });
             }
 
             function removeChild(childIdentifier) {
-                var id = openmct.objects.makeKeyString(childIdentifier);
+                const id = openmct.objects.makeKeyString(childIdentifier);
                 delete thisTickWidthMap[id];
-                var childObj = telemetryObjects.filter(function (c) {
+                const childObj = telemetryObjects.filter(function (c) {
                     return c.getId() === id;
                 })[0];
                 if (childObj) {
-                    var index = telemetryObjects.indexOf(childObj);
+                    const index = telemetryObjects.indexOf(childObj);
                     telemetryObjects.splice(index, 1);
                     $scope.$broadcast('plot:tickWidth', Math.max(...Object.values(tickWidthMap)));
                 }
@@ -95,6 +90,7 @@ define([
                     if (thisRequest !== currentRequest) {
                         return;
                     }
+
                     composition = openmct.composition.get(obj);
                     composition.on('add', addChild);
                     composition.on('remove', removeChild);
@@ -125,12 +121,13 @@ define([
         $scope.$watch('domainObject.getModel().composition', onCompositionChange);
 
         $scope.$on('plot:tickWidth', function ($e, width) {
-            var plotId = $e.targetScope.domainObject.getId();
-            if (!tickWidthMap.hasOwnProperty(plotId)) {
+            const plotId = $e.targetScope.domainObject.getId();
+            if (!Object.prototype.hasOwnProperty.call(tickWidthMap, plotId)) {
                 return;
             }
+
             tickWidthMap[plotId] = Math.max(width, tickWidthMap[plotId]);
-            var newTickWidth = _.max(tickWidthMap);
+            const newTickWidth = Math.max(...Object.values(tickWidthMap));
             if (newTickWidth !== tickWidth || width !== tickWidth) {
                 tickWidth = newTickWidth;
                 $scope.$broadcast('plot:tickWidth', tickWidth);

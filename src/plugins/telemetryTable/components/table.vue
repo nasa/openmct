@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper">
+<div class="c-table-wrapper"
+     :class="{ 'is-paused': paused }"
+>
     <!-- main contolbar  start-->
     <!--
     <div v-if="!marking.useAlternateControlBar"
@@ -28,6 +30,7 @@
     >
         <button
             v-if="allowExport"
+            v-show="!markedRows.length"
             class="c-button icon-download labeled"
             title="Export this view's data"
             @click="exportAllDataAsCSV()"
@@ -116,7 +119,7 @@
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">Deselect All</span>
+            <span class="c-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>
@@ -127,7 +130,7 @@
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
         :class="{
             'loading': loading,
-            'paused' : paused
+            'is-paused' : paused
         }"
     >
         <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">
@@ -302,10 +305,11 @@ export default {
             default() {
                 return {
                     enable: false,
+                    disableMultiSelect: false,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
-                }
+                };
             }
         }
     },
@@ -350,10 +354,11 @@ export default {
                 top: this.$refs.headersTable.offsetTop + 'px',
                 height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
-            }
+            };
         },
         lastHeaderKey() {
             let headerKeys = Object.keys(this.headers);
+
             return headerKeys[headerKeys.length - 1];
         },
         widthWithScroll() {
@@ -367,11 +372,13 @@ export default {
             } else {
                 let totalWidth = Object.keys(this.headers).reduce((total, key) => {
                     total += this.configuredColumnWidths[key];
+
                     return total;
                 }, 0);
 
                 style = {width: totalWidth + 'px'};
             }
+
             return style;
         }
     },
@@ -458,7 +465,7 @@ export default {
         updateVisibleRows() {
             if (!this.updatingView) {
                 this.updatingView = true;
-                requestAnimationFrame(()=> {
+                requestAnimationFrame(() => {
 
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
@@ -484,6 +491,7 @@ export default {
                             start = end - VISIBLE_ROW_COUNT + 1;
                         }
                     }
+
                     this.rowOffset = start;
                     this.visibleRows = filteredRows.slice(start, end);
 
@@ -493,10 +501,12 @@ export default {
         },
         calculateFirstVisibleRow() {
             let scrollTop = this.scrollable.scrollTop;
+
             return Math.floor(scrollTop / this.rowHeight);
         },
         calculateLastVisibleRow() {
             let scrollBottom = this.scrollable.scrollTop + this.scrollable.offsetHeight;
+
             return Math.ceil(scrollBottom / this.rowHeight);
         },
         updateHeaders() {
@@ -507,19 +517,20 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {},
-                totalWidth = 0,
-                headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[0],
-                sizingCells = sizingTableRow.children;
+            let columnWidths = {};
+            let totalWidth = 0;
+            let headerKeys = Object.keys(this.headers);
+            let sizingTableRow = this.sizingTable.children[0];
+            let sizingCells = sizingTableRow.children;
 
-            headerKeys.forEach((headerKey, headerIndex, array)=>{
+            headerKeys.forEach((headerKey, headerIndex, array) => {
                 if (this.isAutosizeEnabled) {
                     columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
                 } else {
                     let cell = sizingCells[headerIndex];
                     columnWidths[headerKey] = cell.offsetWidth;
                 }
+
                 totalWidth += columnWidths[headerKey];
             });
 
@@ -540,8 +551,9 @@ export default {
                 this.sortOptions = {
                     key: columnKey,
                     direction: 'asc'
-                }
+                };
             }
+
             this.table.sortBy(this.sortOptions);
         },
         scroll() {
@@ -682,8 +694,9 @@ export default {
                 newHeaderKeys.splice(to, 0, moveFromKey);
             }
 
-            let newHeaders = newHeaderKeys.reduce((headers, headerKey)=>{
+            let newHeaders = newHeaderKeys.reduce((headers, headerKey) => {
                 headers[headerKey] = this.headers[headerKey];
+
                 return headers;
             }, {});
 
@@ -713,9 +726,11 @@ export default {
                     } else {
                         this.scrollable.scrollTop = scrollTop;
                     }
+
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
+
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
@@ -727,6 +742,7 @@ export default {
             if (pausedByButton) {
                 this.pausedByButton = true;
             }
+
             this.paused = true;
             this.table.pause();
         },
@@ -759,8 +775,8 @@ export default {
         },
         unmarkRow(rowIndex) {
             if (this.markedRows.length > 1) {
-                let row = this.visibleRows[rowIndex],
-                    positionInMarkedArray = this.markedRows.indexOf(row);
+                let row = this.visibleRows[rowIndex];
+                let positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
@@ -793,6 +809,11 @@ export default {
             this.$set(markedRow, 'marked', true);
             this.pause();
 
+            if (this.marking.disableMultiSelect) {
+                this.unmarkAllRows();
+                insertMethod = 'push';
+            }
+
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
@@ -806,22 +827,23 @@ export default {
                 return;
             }
 
-            if (!this.markedRows.length) {
+            if (!this.markedRows.length || this.marking.disableMultiSelect) {
                 this.markRow(rowIndex);
             } else {
                 if (this.markedRows.length > 1) {
-                    this.markedRows.forEach((r,i) => {
+                    this.markedRows.forEach((r, i) => {
                         if (i !== 0) {
                             r.marked = false;
                         }
                     });
                     this.markedRows.splice(1);
                 }
+
                 let lastRowToBeMarked = this.visibleRows[rowIndex];
 
-                let allRows = this.table.filteredRows.getRows(),
-                    firstRowIndex = allRows.indexOf(this.markedRows[0]),
-                    lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+                let allRows = this.table.filteredRows.getRows();
+                let firstRowIndex = allRows.indexOf(this.markedRows[0]);
+                let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
@@ -830,7 +852,7 @@ export default {
 
                 let baseRow = this.markedRows[0];
 
-                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
+                for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
 
@@ -879,7 +901,7 @@ export default {
             });
         },
         recalculateColumnWidths() {
-            this.visibleRows.forEach((row,i) => {
+            this.visibleRows.forEach((row, i) => {
                 this.$set(this.sizingRows, i, row);
             });
 
@@ -965,5 +987,5 @@ export default {
             ]
         }
     }
-}
+};
 </script>

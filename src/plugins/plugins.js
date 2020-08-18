@@ -52,7 +52,9 @@ define([
     './themes/espresso',
     './themes/maelstrom',
     './themes/snow',
-    './notificationIndicator/plugin'
+    './URLTimeSettingsSynchronizer/plugin',
+    './notificationIndicator/plugin',
+    './newFolderAction/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -85,16 +87,18 @@ define([
     Espresso,
     Maelstrom,
     Snow,
-    NotificationIndicator
+    URLTimeSettingsSynchronizer,
+    NotificationIndicator,
+    NewFolderAction
 ) {
-    var bundleMap = {
+    const bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
-    var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
+    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
         return function pluginConstructor() {
             return function (openmct) {
                 openmct.legacyRegistry.enable(bundleName);
@@ -125,7 +129,7 @@ define([
     plugins.CouchDB = function (url) {
         return function (openmct) {
             if (url) {
-                var bundleName = "config/couch";
+                const bundleName = "config/couch";
                 openmct.legacyRegistry.register(bundleName, {
                     "extensions": {
                         "constants": [
@@ -147,7 +151,7 @@ define([
     plugins.Elasticsearch = function (url) {
         return function (openmct) {
             if (url) {
-                var bundleName = "config/elastic";
+                const bundleName = "config/elastic";
                 openmct.legacyRegistry.register(bundleName, {
                     "extensions": {
                         "constants": [
@@ -183,7 +187,7 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable;
+    plugins.LADTable = LADTable.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
@@ -194,7 +198,9 @@ define([
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
+    plugins.NewFolderAction = NewFolderAction.default;
 
     return plugins;
 });

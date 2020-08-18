@@ -28,9 +28,20 @@ define([
                         domain: 2
                     }
                 },
+                // Need to enable "LocalTimeSystem" plugin to make use of this
+                // {
+                //     key: "local",
+                //     name: "Time",
+                //     format: "local-format",
+                //     source: "utc",
+                //     hints: {
+                //         domain: 3
+                //     }
+                // },
                 {
                     key: "sin",
                     name: "Sine",
+                    unit: "Hz",
                     formatString: '%0.2f',
                     hints: {
                         range: 1
@@ -39,6 +50,7 @@ define([
                 {
                     key: "cos",
                     name: "Cosine",
+                    unit: "deg",
                     formatString: '%0.2f',
                     hints: {
                         range: 2
@@ -59,6 +71,15 @@ define([
                     format: "utc",
                     hints: {
                         domain: 1
+                    }
+                },
+                {
+                    key: "local",
+                    name: "Time",
+                    format: "utc",
+                    source: "utc",
+                    hints: {
+                        domain: 2
                     }
                 },
                 {
@@ -89,14 +110,14 @@ define([
                 }
             ]
         }
-    }
+    };
 
     function GeneratorMetadataProvider() {
 
     }
 
     GeneratorMetadataProvider.prototype.supportsMetadata = function (domainObject) {
-        return METADATA_BY_TYPE.hasOwnProperty(domainObject.type);
+        return Object.prototype.hasOwnProperty.call(METADATA_BY_TYPE, domainObject.type);
     };
 
     GeneratorMetadataProvider.prototype.getMetadata = function (domainObject) {
