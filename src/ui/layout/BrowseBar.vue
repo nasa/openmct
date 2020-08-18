@@ -354,8 +354,10 @@ export default {
 
             if (!applicableViewMenuItems) {
                 applicableMenuItems = applicableObjectMenuItems;
+            } else if(!applicableObjectMenuItems) {
+                applicableMenuItems = applicableViewMenuItems;
             } else {
-                applicableObjectMenuItems.unshift(applicableViewMenuItems);
+                applicableObjectMenuItems.splice(1, 0, applicableViewMenuItems);
                 applicableMenuItems = applicableObjectMenuItems;
             }
 
