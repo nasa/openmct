@@ -40,8 +40,9 @@
         <button 
             v-for="(item, index) in statusBarItems"
             style="margin: 2px;"
-            :key="index"
             class="c-button"
+            :title="item.name"
+            :key="index"
             :class="item.cssClass"
             @click="item.callBack"
         >
@@ -53,7 +54,7 @@
             @click="expand"
         ></button>
         <button
-            class="c-button icon-download"
+            class="c-button icon-dataset"
             title="View menu items"
             @click.prevent.stop="showMenuItems($event)"
         ></button>
@@ -198,8 +199,13 @@ export default {
             }
         },
         showMenuItems(event) {
-            let viewKey = this.viewProvider.getViewContext().getViewKey();
-            let applicableViewMenuItems = this.openmct.actions._applicableViewActions(viewKey);
+            let viewKey = this.viewProvider.getViewContext && this.viewProvider.getViewContext().getViewKey();
+            let applicableViewMenuItems;
+
+            if (viewKey) {
+                applicableViewMenuItems = this.openmct.actions._applicableViewActions(viewKey);
+            }
+
             let applicableObjectMenuItems = this.openmct.actions._applicableObjectActions(this.objectPath);
             let applicableMenuItems;
 

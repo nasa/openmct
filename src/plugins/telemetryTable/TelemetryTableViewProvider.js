@@ -92,7 +92,7 @@ define([
                                 getViewKey: component.$refs.tableComponent.getViewKey
                             }
                         } else {
-                            return [];
+                            return {};
                         }
                     },
                     destroy: function (element) {

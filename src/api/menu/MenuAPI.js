@@ -148,7 +148,7 @@ class MenuAPI {
     }
 
     _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
-        let applicableActions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
+        let applicableActions = this.openmct.actions._applicableObjectActions(objectPath, actionsToBeIncluded);
 
         this.showMenu(x, y, applicableActions);
     }

@@ -62,6 +62,8 @@ class ActionsAPI extends EventEmitter {
     removeAllViewActions(viewKey) {
         this._viewActions[viewKey] = undefined;
         delete this._viewActions[viewKey];
+
+        this.emit('update', viewKey, []);
     }
 
     _applicableObjectActions(objectPath, actionsToBeIncluded) {

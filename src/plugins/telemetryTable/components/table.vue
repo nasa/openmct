@@ -448,6 +448,8 @@ export default {
 
         clearInterval(this.resizePollHandle);
 
+        this.openmct.actions.removeAllViewActions(this.viewKey);
+
         this.table.configuration.destroy();
 
         this.table.destroy();

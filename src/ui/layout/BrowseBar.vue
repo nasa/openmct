@@ -37,6 +37,15 @@
         />
         <div class="l-browse-bar__actions">
             <button
+                v-for="(item, index) in statusBarItems"
+                :key="index"
+                class="c-button"
+                :class="item.cssClass"
+                @click="item.callBack"
+            >
+
+            </button>
+            <button
                 v-if="isViewEditable & !isEditing"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
@@ -82,9 +91,9 @@
                 @click="promptUserandCancelEditing()"
             ></button>
             <button
-                class="l-browse-bar__actions c-button icon-download"
+                class="l-browse-bar__actions c-button icon-dataset"
                 title="See menu options"
-                @click.prevent.stop="showThreeDotMenu($event)"
+                @click.prevent.stop="showMenuItems($event)"
             ></button>
         </div>
     </div>
@@ -119,7 +128,8 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: this.openmct.types.get('notebook')
+            notebookEnabled: this.openmct.types.get('notebook'),
+            statusBarItems: []
         }
     },
     computed: {
@@ -180,6 +190,20 @@ export default {
             this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
                 this.domainObject = domainObject;
             });
+        },
+        viewProvider(viewProvider) {
+            if (viewProvider.getViewContext) {
+                if (!this.statusBarViewKey) {
+                    this.openmct.actions.on('update', this.updateStatusBarItems);
+                }
+                this.statusBarViewKey = viewProvider.getViewContext().getViewKey();
+                
+                let statusBarItems = this.openmct.actions._applicableViewActions(this.statusBarViewKey);
+                this.updateStatusBarItems(this.statusBarViewKey, statusBarItems);
+            } else {
+                this.statusBarViewKey = undefined;
+                this.statusBarItems = [];
+            }
         }
     },
     mounted: function () {
@@ -275,15 +299,23 @@ export default {
                 this.openmct.editor.edit();
             });
         },
-        showContextMenu(event) {
-            this.openmct.menus._showObjectMenu(this.openmct.router.path, event.clientX, event.clientY);
-        },
         goToParent() {
             window.location.hash = this.parentUrl;
         },
-        showThreeDotMenu(event) {
-            let applicableViewMenuItems = this.viewProvider.menuItems && this.viewProvider.menuItems();
-            let applicableObjectMenuItems = this.openmct.menus._applicableObjectActions(this.openmct.router.path);
+        updateStatusBarItems(statusBarViewKey, items) {
+            if (this.statusBarViewKey === statusBarViewKey) {
+                this.statusBarItems = items.filter(item => item.showInStatusBar);
+            }
+        },
+        showMenuItems(event) {
+            let viewKey = this.viewProvider.getViewContext && this.viewProvider.getViewContext().getViewKey();
+            let applicableViewMenuItems;
+
+            if (viewKey) {
+                applicableViewMenuItems = this.openmct.actions._applicableViewActions(viewKey);
+            }
+
+            let applicableObjectMenuItems = this.openmct.actions._applicableObjectActions(this.openmct.router.path);
             let applicableMenuItems;
 
             if (!applicableViewMenuItems) {
