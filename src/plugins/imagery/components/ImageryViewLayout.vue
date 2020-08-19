@@ -30,7 +30,11 @@
         </div>
         <div class="c-imagery__control-bar">
             <div class="c-imagery__timestamp">{{ getTime() }}</div>
-            <div class="c-imagery__timestamp">{{ getAge() }}</div>
+            <div
+                v-if="clock"
+                :class="{'new': isImageNew()}"
+                class="c-imagery__timestamp"
+            >{{ age }}</div>
             <div class="h-local-controls flex-elem">
                 <button
                     class="c-button icon-pause pause-play"
@@ -63,11 +67,25 @@
 <script>
 import _ from 'lodash';
 
+const DEFAULT_DURATION_FORMATTER = 'duration';
+const AGE_TRACK_INTERVAL_MS = 100;
+
+const ONE_MINUTE = 60 * 100;
+const FIVE_MINUTES = 5 * ONE_MINUTE;
+const ONE_HOUR = ONE_MINUTE * 60;
+const EIGHT_HOURS = 8 * ONE_HOUR;
+const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
+
 export default {
     inject: ['openmct', 'domainObject'],
     data() {
+        let timeSystem = this.openmct.time.timeSystem();
+        let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        let clock = this.openmct.time.clock();
+
         return {
             autoScroll: true,
+            durationFormatter: durationFormatter,
             filters: {
                 brightness: 100,
                 contrast: 100
@@ -78,10 +96,13 @@ export default {
             imageFormat: '',
             imageHistory: [],
             imageUrl: '',
+            age: '',
             isPaused: false,
             metadata: {},
             requestCount: 0,
-            timeFormat: ''
+            timeFormat: '',
+            clock: clock,
+            ageTracker: undefined
         };
     },
     mounted() {
@@ -95,6 +116,7 @@ export default {
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
+        this.openmct.time.on('clock', this.clockChange);
         // kickoff
         this.subscribe();
         this.requestHistory();
@@ -108,6 +130,7 @@ export default {
             delete this.unsubscribe;
         }
 
+        this.clearAgeTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
     },
@@ -203,6 +226,15 @@ export default {
                 image.selected = true;
             }
         },
+        getSelectedImage() {
+            let selected = this.imageHistory.find(image => image.selected);
+
+            if (selected === undefined) {
+                selected = this.imageHistory[this.imageHistory.length - 1];
+            }
+
+            return selected;
+        },
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
@@ -223,9 +255,22 @@ export default {
                 });
         },
         timeSystemChange(system) {
+            let timeSystem = this.openmct.time.timeSystem();
             // reset timesystem dependent variables
             this.timeKey = system.key;
             this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
+            this.durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        },
+        clockChange(clock) {
+            this.clock = clock;
+            if (this.clock !== undefined) {
+                this.trackAge();
+            } else {
+                this.clearAgeTracking();
+            }
+        },
+        currentTimeValue() {
+            return this.clock.currentValue();
         },
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
@@ -264,8 +309,65 @@ export default {
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
         },
-        getAge() {
-            return 'age';
+        getFormatter(key) {
+            let valueFormatter = this.openmct.telemetry.getValueFormatter({
+                format: key
+            });
+
+            return valueFormatter.formatter;
+        },
+        numericImageAge() {
+            let currentTime = this.currentTimeValue();
+            let selectedImage = this.getSelectedImage();
+
+            if (selectedImage === undefined || selectedImage[this.timeKey] === undefined) {
+                return;
+            }
+
+            return currentTime - selectedImage[this.timeKey];
+        },
+        formattedAge() {
+            let age = this.numericImageAge();
+            let result;
+
+            if (!age) {
+                return;
+            }
+
+            result = this.durationFormatter.format(age);
+
+            if (age > EIGHT_HOURS) {
+                result = '> 8 hours';
+            }
+
+            if (age > TWENTYFOUR_HOURS) {
+                result = '> 24 hours';
+            }
+
+            return result;
+        },
+        trackAge() {
+            let age;
+            this.clearAgeTracking();
+            this.ageTracker = window.setInterval(() => {
+                age = this.formattedAge();
+                if (age) {
+                    this.age = age;
+                } else {
+                    this.age = 'N/A';
+                }
+            }, AGE_TRACK_INTERVAL_MS);
+        },
+        clearAgeTracking() {
+            window.clearInterval(this.ageTracker);
+        },
+        isImageNew(lessThanMinutes) {
+            let cutoff = lessThanMinutes
+                ? lessThanMinutes * 60 * 1000
+                : FIVE_MINUTES;
+            let age = this.numericImageAge();
+
+            return age < cutoff;
         }
     }
 };
