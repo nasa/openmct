@@ -25,10 +25,10 @@ define([
     RootRegistry
 ) {
     describe('RootRegistry', function () {
-        var idA,
-            idB,
-            idC,
-            registry;
+        let idA;
+        let idB;
+        let idC;
+        let registry;
 
         beforeEach(function () {
             idA = {

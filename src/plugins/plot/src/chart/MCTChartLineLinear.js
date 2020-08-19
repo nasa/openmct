@@ -26,7 +26,7 @@ define([
     MCTChartSeriesElement
 ) {
 
-    var MCTChartLineLinear = MCTChartSeriesElement.extend({
+    const MCTChartLineLinear = MCTChartSeriesElement.extend({
         addPoint: function (point, start, count) {
             this.buffer[start] = point.x;
             this.buffer[start + 1] = point.y;

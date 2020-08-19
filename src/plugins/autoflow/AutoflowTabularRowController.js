@@ -54,7 +54,7 @@ define([], function () {
      * @private
      */
     AutoflowTabularRowController.prototype.updateRowData = function (datum) {
-        var violations = this.evaluator.evaluate(datum, this.ranges[0]);
+        const violations = this.evaluator.evaluate(datum, this.ranges[0]);
 
         this.initialized = true;
         this.data.classes = violations ? violations.cssClass : "";

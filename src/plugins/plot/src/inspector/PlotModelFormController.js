@@ -121,7 +121,7 @@ define([
             formProp = prop;
         }
 
-        var formPath = 'form.' + formProp;
+        const formPath = 'form.' + formProp;
         let self = this;
 
         if (!coerce) {
@@ -137,7 +137,7 @@ define([
         }
 
         if (objectPath && !_.isFunction(objectPath)) {
-            var staticObjectPath = objectPath;
+            const staticObjectPath = objectPath;
             objectPath = function () {
                 return staticObjectPath;
             };
@@ -149,7 +149,7 @@ define([
             }
         });
         this.model.listenTo(this.$scope, 'change:' + formPath, (newVal, oldVal) => {
-            var validationResult = validate(newVal, this.model);
+            const validationResult = validate(newVal, this.model);
             if (validationResult === true) {
                 delete this.$scope.validation[formProp];
             } else {

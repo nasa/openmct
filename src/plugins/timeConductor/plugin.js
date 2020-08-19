@@ -57,13 +57,13 @@ function hasRequiredOptions(config) {
 }
 
 function validateConfiguration(config, openmct) {
-    var systems = openmct.time.getAllTimeSystems()
+    const systems = openmct.time.getAllTimeSystems()
         .reduce(function (m, ts) {
             m[ts.key] = ts;
 
             return m;
         }, {});
-    var clocks = openmct.time.getAllClocks()
+    const clocks = openmct.time.getAllClocks()
         .reduce(function (m, c) {
             m[c.key] = c;
 
@@ -108,7 +108,7 @@ export default function (config) {
         let configResult = hasRequiredOptions(config) || validateConfiguration(config, openmct);
         throwIfError(configResult);
 
-        var defaults = config.menuOptions[0];
+        const defaults = config.menuOptions[0];
         if (defaults.clock) {
             openmct.time.clock(defaults.clock, defaults.clockOffsets);
             openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());

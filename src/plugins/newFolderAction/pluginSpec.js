@@ -25,14 +25,14 @@ import {
 } from 'utils/testing';
 
 describe("the plugin", () => {
-    let openmct,
-        compositionAPI,
-        newFolderAction,
-        mockObjectPath,
-        mockDialogService,
-        mockComposition,
-        mockPromise,
-        newFolderName = 'New Folder';
+    let openmct;
+    let compositionAPI;
+    let newFolderAction;
+    let mockObjectPath;
+    let mockDialogService;
+    let mockComposition;
+    let mockPromise;
+    let newFolderName = 'New Folder';
 
     beforeEach((done) => {
         openmct = createOpenMct();

@@ -29,15 +29,15 @@ define(
         // CONNECTED: Everything nominal, expect to be able to read/write.
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
         // PENDING: Still trying to connect, and haven't failed yet.
-        var CONNECTED = {
-                statusClass: "s-status-on"
-            },
-            PENDING = {
-                statusClass: "s-status-warning-lo"
-            },
-            DISCONNECTED = {
-                statusClass: "s-status-warning-hi"
-            };
+        const CONNECTED = {
+            statusClass: "s-status-on"
+        };
+        const PENDING = {
+            statusClass: "s-status-warning-lo"
+        };
+        const DISCONNECTED = {
+            statusClass: "s-status-warning-hi"
+        };
         function URLIndicator(options, simpleIndicator) {
             this.bindMethods();
             this.count = 0;

@@ -43,10 +43,10 @@
 import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
 import LayoutFrame from './LayoutFrame.vue';
 
-const MINIMUM_FRAME_SIZE = [320, 180],
-    DEFAULT_DIMENSIONS = [10, 10],
-    DEFAULT_POSITION = [1, 1],
-    DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
+const MINIMUM_FRAME_SIZE = [320, 180];
+const DEFAULT_DIMENSIONS = [10, 10];
+const DEFAULT_POSITION = [1, 1];
+const DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
 
 function getDefaultDimensions(gridSize) {
     return MINIMUM_FRAME_SIZE.map((min, index) => {

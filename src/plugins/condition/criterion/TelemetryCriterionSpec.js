@@ -23,12 +23,12 @@
 import TelemetryCriterion from "./TelemetryCriterion";
 import { getMockTelemetry } from "utils/testing";
 
-let openmct = {},
-    mockListener,
-    testCriterionDefinition,
-    testTelemetryObject,
-    telemetryCriterion,
-    mockTelemetry = getMockTelemetry();
+let openmct = {};
+let mockListener;
+let testCriterionDefinition;
+let testTelemetryObject;
+let telemetryCriterion;
+let mockTelemetry = getMockTelemetry();
 
 describe("The telemetry criterion", function () {
 
@@ -110,7 +110,7 @@ describe("The telemetry criterion", function () {
     });
 
     it("returns a result on new data from relevant telemetry providers", function () {
-        telemetryCriterion.getResult({
+        telemetryCriterion.updateResult({
             value: 'Hello',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key

@@ -30,7 +30,7 @@ define([], function () {
         legacyObject
     ) {
         if (Object.prototype.hasOwnProperty.call(view, 'provider')) {
-            var domainObject = legacyObject.useCapability('adapter');
+            const domainObject = legacyObject.useCapability('adapter');
 
             return view.provider.canView(domainObject);
         }

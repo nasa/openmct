@@ -18,7 +18,7 @@ define([
     function Select() {
         eventHelpers.extend(this);
 
-        var self = this;
+        const self = this;
 
         this.domElement = $(selectTemplate);
         this.options = [];
@@ -34,8 +34,8 @@ define([
          * @private
          */
         function onChange(event) {
-            var elem = event.target,
-                value = self.options[$(elem).prop('selectedIndex')];
+            const elem = event.target;
+            const value = self.options[$(elem).prop('selectedIndex')];
 
             self.eventEmitter.emit('change', value[0]);
         }
@@ -71,8 +71,8 @@ define([
      * model
      */
     Select.prototype.populate = function () {
-        var self = this,
-            selectedIndex = 0;
+        const self = this;
+        let selectedIndex = 0;
 
         selectedIndex = $('select', this.domElement).prop('selectedIndex');
         $('option', this.domElement).remove();
@@ -112,8 +112,8 @@ define([
      * @param {string} value The value to set as the selected option
      */
     Select.prototype.setSelected = function (value) {
-        var selectedIndex = 0,
-            selectedOption;
+        let selectedIndex = 0;
+        let selectedOption;
 
         this.options.forEach (function (option, index) {
             if (option[0] === value) {
