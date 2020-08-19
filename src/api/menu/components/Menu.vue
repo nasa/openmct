@@ -1,8 +1,8 @@
 <template>
 <div class="c-menu">
     <ul v-if="actions.length && actions[0].length">
-        <template 
-            v-for="(actionGroups, index) in actions"  
+        <template
+            v-for="(actionGroups, index) in actions"
         >
             <li
                 v-for="action in actionGroups"
@@ -16,7 +16,7 @@
             <div
                 v-if="index !== actions.length - 1"
                 :key="index"
-                style="min-height: 1px; max-height: 1px; background: gray; margin: 4px 0;"
+                class="c-menu__section-separator"
             >
             </div>
             <li v-if="actionGroups.length === 0" :key="index">

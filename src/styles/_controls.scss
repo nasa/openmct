@@ -512,7 +512,7 @@ select {
 
     &__section-hint {
         $m: $interiorMargin;
-        margin: $m 0;
+        margin: 0 0 $m 0;
         padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
 
         opacity: 0.6;
@@ -524,7 +524,7 @@ select {
         $m: $interiorMargin;
         border-top: 1px solid $colorInteriorBorder;
         margin: $m 0;
-        padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+        padding: 0 nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
     }
 }
 
