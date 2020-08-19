@@ -3,7 +3,7 @@
     <div class="c-toolbar__element-controls">
         <component
             :is="item.control"
-            v-for="(item, index) in structure"
+            v-for="(item, index) in primaryStructure"
             :key="index"
             :options="item"
             @change="updateObjectValue"
@@ -11,7 +11,14 @@
         />
     </div>
     <div class="c-toolbar__dimensions-and-controls">
-        <button class="c-toolbar__control c-icon-button icon-grid"></button>
+        <component
+            :is="item.control"
+            v-for="(item, index) in secondaryStructure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
     </div>
 </div>
 </template>
@@ -44,6 +51,14 @@ export default {
         return {
             structure: []
         };
+    },
+    computed: {
+        primaryStructure() {
+            return this.structure.filter(item => !item.secondary);
+        },
+        secondaryStructure() {
+            return this.structure.filter(item => item.secondary);
+        }
     },
     mounted() {
         this.openmct.selection.on('change', this.handleSelection);
