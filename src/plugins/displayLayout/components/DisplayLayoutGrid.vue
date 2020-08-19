@@ -24,16 +24,10 @@ export default {
             required: true,
             validator: (arr) => arr && arr.length === 2
                 && arr.every(el => typeof el === 'number')
-        }
-    },
-    data() {
-        return {
-            showGrid: true
-        };
-    },
-    methods: {
-        toggleGrid() {
-            this.showGrid = !this.showGrid;
+        },
+        showGrid: {
+            type: Boolean,
+            required: true
         }
     }
 };

@@ -34,6 +34,7 @@
     <display-layout-grid
         v-if="isEditing"
         :grid-size="gridSize"
+        :show-grid="showGrid"
     />
 
     <component
@@ -147,7 +148,8 @@ export default {
         return {
             internalDomainObject: domainObject,
             initSelectIndex: undefined,
-            selection: []
+            selection: [],
+            showGrid: true
         };
     },
     computed: {
@@ -783,6 +785,9 @@ export default {
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        toggleGrid() {
+            this.showGrid = !this.showGrid;
         }
     }
 };

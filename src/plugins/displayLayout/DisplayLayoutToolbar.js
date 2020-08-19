@@ -623,6 +623,25 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getToggleGridButton(selection, selectionPath) {
+                    let displayLayoutContext;
+                    if (selection.length === 1 && selectionPath === undefined) {
+                        displayLayoutContext = selection[0][0].context;
+                    } else {
+                        displayLayoutContext = selectionPath[1].context;
+                    }
+
+                    return {
+                        control: "button",
+                        domainObject: displayLayoutContext.item,
+                        icon: "icon-grid",
+                        method: () => {
+                            displayLayoutContext.toggleGrid();
+                        },
+                        secondary: true
+                    };
+                }
+
                 function getSeparator() {
                     return {
                         control: "separator"
@@ -637,7 +656,9 @@ define(['lodash'], function (_) {
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {
-                    return [getAddButton(selectedObjects)];
+                    return [
+                        getToggleGridButton(selectedObjects),
+                        getAddButton(selectedObjects)];
                 }
 
                 let toolbar = {
@@ -653,7 +674,8 @@ define(['lodash'], function (_) {
                     'position': [],
                     'duplicate': [],
                     'unit-toggle': [],
-                    'remove': []
+                    'remove': [],
+                    'toggle-grid': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
@@ -799,6 +821,10 @@ define(['lodash'], function (_) {
 
                     if (toolbar.duplicate.length === 0) {
                         toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
+                    }
+
+                    if (toolbar['toggle-grid'].length === 0) {
+                        toolbar['toggle-grid'] = [getToggleGridButton(selectedObjects, selectionPath)];
                     }
                 });
 
