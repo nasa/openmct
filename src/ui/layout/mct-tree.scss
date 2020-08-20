@@ -144,13 +144,6 @@
                 color: $colorItemTreeSelectedIcon;
             }
         }
-
-        &.is-navigated-object  {
-            [class*="__label"],
-            [class*="__name"] {
-                pointer-events: none;
-            }
-        }
     }
 
     &__item__label {
