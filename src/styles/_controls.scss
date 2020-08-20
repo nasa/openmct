@@ -915,14 +915,6 @@ input[type="range"] {
         display: inline-flex;
         align-items: center;
     }
-
-    &--overlay-content {
-        > .c-button {
-            background: $colorLocalControlOvrBg;
-            border-radius: $controlCr;
-            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        }
-    }
 }
 
 .c-local-controls {
