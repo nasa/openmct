@@ -132,6 +132,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
     components: components,
+    inject: ['openmct', 'options', 'objectPath'],
     props: {
         domainObject: {
             type: Object,
@@ -172,7 +173,13 @@ export default {
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
-    inject: ['openmct', 'options', 'objectPath'],
+    watch: {
+        isEditing(value) {
+            if (value) {
+                this.showGrid = value;
+            }
+        }
+    },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
             this.internalDomainObject = JSON.parse(JSON.stringify(obj));
