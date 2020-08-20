@@ -624,7 +624,11 @@ define(['lodash'], function (_) {
                 }
 
                 function getToggleGridButton(selection, selectionPath) {
+                    const ICON_GRID_SHOW = 'icon-grid-show';
+                    const ICON_GRID_HIDE = 'icon-grid-hide';
+
                     let displayLayoutContext;
+
                     if (selection.length === 1 && selectionPath === undefined) {
                         displayLayoutContext = selection[0][0].context;
                     } else {
@@ -634,8 +638,12 @@ define(['lodash'], function (_) {
                     return {
                         control: "button",
                         domainObject: displayLayoutContext.item,
-                        icon: "icon-grid",
-                        method: () => {
+                        icon: ICON_GRID_SHOW,
+                        method: function () {
+                            this.icon = this.icon === ICON_GRID_SHOW
+                                ? ICON_GRID_HIDE
+                                : ICON_GRID_SHOW;
+
                             displayLayoutContext.toggleGrid();
                         },
                         secondary: true
