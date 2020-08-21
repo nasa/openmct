@@ -41,7 +41,7 @@
         }
 
         path.xy2-y {
-            stroke: $colorPlotHash !important;
+            stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
             opacity: $opacityPlotHash !important;
         }
     }
