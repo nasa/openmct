@@ -47,6 +47,11 @@
             :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
         ></div>
     </div>
+    <div
+        class="l-layout__dimensions"
+        :style="layoutDimensionsStyle"
+    >
+    </div>
     <component
         :is="item.type"
         v-for="(item, index) in layoutItems"
@@ -170,6 +175,21 @@ export default {
             return this.layoutItems.filter(item => {
                 return this.itemIsInCurrentSelection(item);
             });
+        },
+        layoutDimensions() {
+            return this.internalDomainObject.configuration.layoutDimensions;
+        },
+        layoutDimensionsStyle() {
+            return `outline: 2px solid red; width: ${this.layoutDimensions[0]}px; height: ${this.layoutDimensions[1]}px; `;
+        },
+        contentDimensions() {
+            return this.layoutItems.map(item => [
+                item.x + item.width,
+                item.y + item.height
+            ]).reduce((dimensions, coordinates) => [
+                Math.max(dimensions[0], coordinates[0]),
+                Math.max(dimensions[1], coordinates[1])
+            ], [0, 0]);
         },
         showMarquee() {
             let selectionPath = this.selection[0];
