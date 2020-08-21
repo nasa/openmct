@@ -76,8 +76,11 @@
                 <time-popup
                     v-if="showTCInputStart"
                     class="pr-tc-input-menu--start"
+                    :type="'start'"
+                    :offset="offsets.start"
                     @focus.native="$event.target.select()"
                     @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
                 />
                 <input
                     ref="startOffset"
@@ -124,8 +127,11 @@
                 <time-popup
                     v-if="showTCInputEnd"
                     class="pr-tc-input-menu--end"
+                    :type="'end'"
+                    :offset="offsets.end"
                     @focus.native="$event.target.select()"
                     @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
                 />
                 <input
                     ref="endOffset"
@@ -481,6 +487,13 @@ export default {
         showTimePopupEnd() {
             this.hideAllTimePopups();
             this.showTCInputEnd = !this.showTCInputEnd;
+        },
+        timePopUpdate(opts) {
+            let { type, hours, minutes, seconds } = opts;
+
+            this.offsets[type] = [hours, minutes, seconds].join(':');
+            this.setOffsetsFromView();
+            this.hideAllTimePopups();
         }
     }
 };
