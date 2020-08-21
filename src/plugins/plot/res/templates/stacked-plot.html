@@ -22,22 +22,27 @@
 <div ng-controller="StackedPlotController as stackedPlot"
       class="c-plot c-plot--stacked holder holder-plot has-control-bar">
     <div class="c-control-bar" ng-show="!stackedPlot.hideExportButtons">
-       <span class="c-button-set c-button-set--strip-h">
-          <button class="c-button icon-download"
-             ng-click="stackedPlot.exportPNG()"
-             title="Export This View's Data as PNG">
-              <span class="c-button__label">PNG</span>
-          </button>
-          <button class="c-button"
-             ng-click="stackedPlot.exportJPG()"
-             title="Export This View's Data as JPG">
-              <span class="c-button__label">JPG</span>
-          </button>
+        <span class="c-button-set c-button-set--strip-h">
+            <button class="c-button icon-download"
+                ng-click="stackedPlot.exportPNG()"
+                title="Export This View's Data as PNG">
+                <span class="c-button__label">PNG</span>
+            </button>
+            <button class="c-button"
+                ng-click="stackedPlot.exportJPG()"
+                title="Export This View's Data as JPG">
+                <span class="c-button__label">JPG</span>
+            </button>
         </span>
         <button class="c-button icon-crosshair"
                 ng-class="{ 'is-active': stackedPlot.cursorGuide }"
                 ng-click="stackedPlot.toggleCursorGuide($event)"
                 title="Toggle cursor guides">
+        </button>
+        <button class="c-button"
+                ng-class="{ 'icon-grid-show': stackedPlot.gridLines, 'icon-grid-hide': !stackedPlot.gridLines }"
+                ng-click="stackedPlot.toggleGridLines($event)"
+                title="Toggle grid lines">
         </button>
     </div>
     <div class="l-view-section">
