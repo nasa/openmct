@@ -29,20 +29,26 @@
         stroke-width: 1 !important;
     }
 
-    .cartesianlayer .gridlayer {
-        .x,
-        .y {
-            path {
-                opacity: $opacityPlotHash;
-                stroke: $colorPlotHash !important;
+    .cartesianlayer {
+        .gridlayer {
+            .x,
+            .y {
+                path {
+                    opacity: $opacityPlotHash;
+                    stroke: $colorPlotHash !important;
+                }
             }
+        }
+
+        path.xy2-y {
+            stroke: $colorPlotHash !important;
         }
     }
 
     .xtick,
     .ytick,
-    .g-xtitle,
-    .g-ytitle {
+    [class^="g-"] text[class*="title"] {
+        // Matches <g class="g-*"> <text class="*title">
         text {
             fill: $colorPlotFg !important;
             font-size: 12px !important;
