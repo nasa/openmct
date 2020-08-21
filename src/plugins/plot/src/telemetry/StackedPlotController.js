@@ -160,5 +160,10 @@ define([], function () {
         this.$scope.$broadcast('cursorguide', $event);
     };
 
+    StackedPlotController.prototype.toggleGridLines = function ($event) {
+        this.gridLines = !this.gridLines;
+        this.$scope.$broadcast('toggleGridLines', $event);
+    };
+
     return StackedPlotController;
 });

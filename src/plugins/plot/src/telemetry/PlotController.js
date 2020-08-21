@@ -60,6 +60,7 @@ define([
         this.objectService = objectService;
         this.exportImageService = exportImageService;
         this.cursorGuide = false;
+        this.gridLines = true;
 
         $scope.pending = 0;
 
@@ -307,6 +308,11 @@ define([
     PlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
         this.$scope.$broadcast('cursorguide', $event);
+    };
+
+    PlotController.prototype.toggleGridLines = function ($event) {
+        this.gridLines = !this.gridLines;
+        this.$scope.$broadcast('toggleGridLines', $event);
     };
 
     return PlotController;
