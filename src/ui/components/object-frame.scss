@@ -2,20 +2,17 @@
     display: flex;
     flex-direction: column;
 
-    &.is-missing {
-        border: $borderMissing;
-    }
-
     /*************************** HEADER */
     &__header {
         flex: 0 0 auto;
         display: flex;
-        font-size: 1.05em;
+        justify-content: space-between;
         align-items: center;
         margin-bottom: $interiorMarginSm;
-        padding: 1px 2px;
+        padding: 3px;
 
         .c-object-label {
+            font-size: 1.05em;
             &__name {
                 filter: $objectLabelNameFilter;
             }
@@ -31,9 +28,55 @@
         }
     }
 
+    /*************************** FRAME CONTROLS */
+    &__frame-controls {
+        display: flex;
+        //font-size: 0.9em;
+
+        &__btns,
+        &__more {
+            flex: 0 0 auto;
+        }
+    }
+
+    /*************************** HIDDEN FRAME */
     &--no-frame {
         > .c-so-view__header {
-            display: none;
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            top: 0; right: 0; bottom: auto; left: 0;
+            z-index: 2;
+
+            .c-object-label {
+                visibility: hidden;
+            }
+
+            .c-so-view__frame-controls {
+                background: $colorBodyBg;
+                border-radius: $controlCr;
+                box-shadow: $shdwMenu;
+                //margin: 1px;
+                padding: 1px;
+                pointer-events: all;
+
+                &__btns {
+                    display: none;
+                }
+
+                &:hover {
+                    [class*="__btns"] {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        /* HOVERS */
+        &:hover {
+            > .c-so-view__header {
+                visibility: visible;
+            }
         }
 
         &.is-missing {
@@ -46,30 +89,7 @@
         }
     }
 
-    &__local-controls {
-        // View Large button
-        box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        position: absolute;
-        top: $interiorMargin; right: $interiorMargin;
-        z-index: 10;
-    }
-
-    .c-click-icon,
-    .c-button {
-        // Shrink buttons a bit when they appear in a frame
-        border-radius: $smallCr !important;
-        font-size: 0.9em;
-        padding: 3px 5px;
-    }
-
-    &__view-large {
-        display: none;
-    }
-
-    &.has-complex-content {
-        > .c-so-view__view-large { display: block; }
-    }
-
+    /*************************** OBJECT VIEW */
     &__object-view {
         flex: 1 1 auto;
         height: 0; // Chrome 73 overflow bug fix
@@ -79,6 +99,23 @@
             // Expand component types that fill a container
             @include abs();
         }
+    }
+
+    .c-click-icon,
+    .c-button,
+    .c-icon-button {
+        // Shrink buttons a bit when they appear in a frame
+        border-radius: $smallCr !important;
+        font-size: 0.9em;
+        padding: 5px;
+    }
+
+    &.has-complex-content {
+        > .c-so-view__view-large { display: block; }
+    }
+
+    &.is-missing {
+        border: $borderMissing;
     }
 }
 

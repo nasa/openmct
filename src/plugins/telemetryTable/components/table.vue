@@ -115,11 +115,11 @@
 
         <button
             :class="{'hide-nice': !markedRows.length}"
-            class="c-button icon-x labeled"
+            class="c-icon-button icon-x labeled"
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
+            <span class="c-icon-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>

@@ -500,6 +500,7 @@
     @include cControl();
     @include cClickIconButtonLayout();
     background: none;
+    color: $colorClickIconButton;
     box-shadow: none;
     cursor: pointer;
     transition: $transOut;

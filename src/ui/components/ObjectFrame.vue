@@ -21,14 +21,16 @@
  *****************************************************************************/
 <template>
 <div
-    class="c-so-view has-local-controls"
+    class="c-so-view"
     :class="{
         'c-so-view--no-frame': !hasFrame,
         'has-complex-content': complexContent,
         'is-missing': domainObject.status === 'missing'
     }"
 >
-    <div class="c-so-view__header">
+    <div
+        class="c-so-view__header"
+    >
         <div class="c-object-label"
              :class="{
                  classList,
@@ -46,30 +48,40 @@
                 {{ domainObject && domainObject.name }}
             </div>
         </div>
-    </div>
-    <div class="c-so-view__local-controls c-so-view__view-large h-local-controls c-local-controls--show-on-hover">
-        <button 
-            v-for="(item, index) in statusBarItems"
-            style="margin: 2px;"
-            class="c-button"
-            :title="item.name"
-            :key="index"
-            :class="item.cssClass"
-            @click="item.callBack"
-        >
-        </button>
 
-        <button
-            class="c-button icon-expand"
-            title="View Large"
-            @click="expand"
-        ></button>
-        <button
-            class="c-button icon-dataset"
-            title="View menu items"
-            @click.prevent.stop="showMenuItems($event)"
-        ></button>
+        <div
+            class="c-so-view__frame-controls"
+            :class="{
+                'c-so-view__frame-controls--no-frame': !hasFrame,
+                'has-complex-content': complexContent
+            }"
+        >
+            <div class="c-so-view__frame-controls__btns">
+                <button
+                    v-for="(item, index) in statusBarItems"
+                    :key="index"
+                    class="c-icon-button"
+                    :class="item.cssClass"
+                    :title="item.name"
+                    @click="item.callBack"
+                >
+                </button>
+
+                <button
+                    class="c-icon-button icon-items-expand"
+                    title="View Large"
+                    @click="expand"
+                ></button>
+
+            </div>
+            <button
+                class="c-icon-button icon-3-dots c-so-view__frame-controls__more"
+                title="View menu items"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
+        </div>
     </div>
+
     <div class="is-missing__indicator"
          title="This item is missing"
     ></div>
@@ -120,18 +132,22 @@ export default {
         }
     },
     data() {
-        let objectType = this.openmct.types.get(this.domainObject.type),
-            cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown',
-            complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type),
-            viewProvider = {},
-            statusBarItems = {};
+        let objectType = this.openmct.types.get(this.domainObject.type);
+
+        let cssClass = objectType && objectType.definition ? objectType.definition.cssClass : 'icon-object-unknown';
+
+        let complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
+
+        let viewProvider = {};
+
+        let statusBarItems = {};
 
         return {
             cssClass,
             complexContent,
             viewProvider,
             statusBarItems
-        }
+        };
     },
     computed: {
         classList() {
@@ -197,7 +213,7 @@ export default {
         },
         initializeStatusBarItems() {
             if (!this.actionsListener) {
-                this.openmct.actions.on('update', this.setStatusBarItems)
+                this.openmct.actions.on('update', this.setStatusBarItems);
                 this.actionsListener = true;
             }
 

@@ -112,7 +112,7 @@
                 @click="promptUserandCancelEditing()"
             ></button>
             <button
-                class="l-browse-bar__actions c-button icon-dataset"
+                class="l-browse-bar__actions c-icon-button icon-3-dots"
                 title="See menu options"
                 @click.prevent.stop="showMenuItems($event)"
             ></button>
@@ -230,7 +230,7 @@ export default {
                     this.openmct.actions.on('update', this.updateStatusBarItems);
                 }
                 this.statusBarViewKey = viewProvider.getViewContext().getViewKey();
-                
+
                 let statusBarItems = this.openmct.actions._applicableViewActions(this.statusBarViewKey);
                 this.updateStatusBarItems(this.statusBarViewKey, statusBarItems);
             } else {
