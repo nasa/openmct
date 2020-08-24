@@ -219,28 +219,30 @@ export default {
         window.addEventListener('resize', this.handleWindowResize);
 
         let root = await this.openmct.objects.get('ROOT');
-        let rootNode = this.buildTreeItem(root);
-        // if more than one root item, set multipleRootChildren to true and add root to ancestors
-        if (root.composition && root.composition.length > 1) {
-            this.ancestors.push(rootNode);
-            this.multipleRootChildren = true;
-        } else if (!savedPath) {
-            // needed if saved path is not set, need to set it to the only root child
-            savedPath = root.composition[0].key;
+        if (root.key !== undefined && root.namespace !== undefined) {
+            let rootNode = this.buildTreeItem(root);
+            // if more than one root item, set multipleRootChildren to true and add root to ancestors
+            if (root.composition && root.composition.length > 1) {
+                this.ancestors.push(rootNode);
+                this.multipleRootChildren = true;
+            } else if (!savedPath && root.composition[0] !== undefined) {
+                // needed if saved path is not set, need to set it to the only root child
+                savedPath = root.composition[0];
+            }
+
+            if (savedPath) {
+                let scrollIfApplicable = () => {
+                    if (this.currentPathIsActivePath()) {
+                        this.scrollTo = this.currentlyViewedObjectId();
+                    }
+                };
+
+                this.jumpPath = savedPath;
+                this.afterJump = scrollIfApplicable;
+            }
+
+            this.getAllChildren(rootNode);
         }
-
-        if (savedPath) {
-            let scrollIfApplicable = () => {
-                if (this.currentPathIsActivePath()) {
-                    this.scrollTo = this.currentlyViewedObjectId();
-                }
-            };
-
-            this.jumpPath = savedPath;
-            this.afterJump = scrollIfApplicable;
-        }
-
-        this.getAllChildren(rootNode);
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);

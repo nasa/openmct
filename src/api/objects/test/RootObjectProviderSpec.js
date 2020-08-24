@@ -22,16 +22,20 @@
 import RootObjectProvider from '../RootObjectProvider';
 
 describe('RootObjectProvider', function () {
-    let rootRegistry;
+    // let rootRegistry;
     let rootObjectProvider;
+    let roots = ['some root'];
+    let rootRegistry = {
+        getRoots: () => {
+            return Promise.resolve(roots);
+        }
+    };
 
     beforeEach(function () {
-        rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-        rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
         rootObjectProvider = new RootObjectProvider(rootRegistry);
     });
 
-    it('supports fetching root', async function () {
+    it('supports fetching root', async () => {
         let root = await rootObjectProvider.get();
 
         expect(root).toEqual({
