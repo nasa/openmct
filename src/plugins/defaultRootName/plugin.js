@@ -19,43 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import RootObjectProvider from '../../api/objects/RootObjectProvider.js';
 
-class RootObjectProvider {
-    constructor(rootRegistry) {
-        if (!RootObjectProvider.instance) {
-            this.rootRegistry = rootRegistry;
-            this.rootObject = {
-                identifier: {
-                    key: "ROOT",
-                    namespace: ""
-                },
-                name: 'The root object',
-                type: 'root',
-                composition: []
-            };
-            RootObjectProvider.instance = this;
-        } else {
-            // if called twice, update instance rootRegistry
-            RootObjectProvider.instance.rootRegistry = rootRegistry;
-        }
-
-        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
-    }
-
-    updateName(name) {
-        this.rootObject.name = name;
-    }
-
-    async get() {
-        let roots = await this.rootRegistry.getRoots();
-        this.rootObject.composition = roots;
-
-        return this.rootObject;
-    }
+export default function (name) {
+    return function (openmct) {
+        let rootObjectProvider = new RootObjectProvider();
+        rootObjectProvider.updateName(name);
+    };
 }
-
-function instance(rootRegistry) {
-    return new RootObjectProvider(rootRegistry);
-}
-
-export default instance;
