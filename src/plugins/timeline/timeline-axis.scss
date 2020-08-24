@@ -2,6 +2,8 @@
   $h: 18px;
   $tickYPos: ($h / 2) + 12px;
 
+  height: 100%;
+
   svg {
     text-rendering: geometricPrecision;
     width: 100%;

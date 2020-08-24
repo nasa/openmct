@@ -21,9 +21,10 @@
 *****************************************************************************/
 
 <template>
-<div class="c-timeline">
-<!--    <plan :drawingEngine="'svg'"></plan>-->
-    <plan :drawingEngine="'canvas'"></plan>
+<div ref="planHolder"
+     class="c-timeline"
+>
+    <plan :drawing-engine="'canvas'" />
 </div>
 </template>
 

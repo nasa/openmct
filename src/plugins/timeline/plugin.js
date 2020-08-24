@@ -31,38 +31,61 @@ export default function () {
             creatable: true,
             cssClass: 'icon-clock',
             initialize: function (domainObject) {
+                let currentTimeStamp = new Date().getTime();
                 domainObject.configuration = {
                     name: 'Demo Plan',
                     swimlanes: 10,
                     activities: [
                         {
                             name: 'Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1',
-                            start: 1597170002854,
-                            end: 1597171032854,
+                            // start: 1597170002854,
+                            start: currentTimeStamp,
+                            end: currentTimeStamp + 564000,
                             type: 'NIRVSS',
                             color: 'fuchsia',
                             textColor: 'black'
                         },
                         {
-                            name: 'Activity 2',
-                            start: 1597171132854,
-                            end: 1597171232854,
+                            name: 'Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2',
+                            // start: 1597171132854,
+                            start: currentTimeStamp + 565000,
+                            end: currentTimeStamp + 565000 + 50000,
                             type: 'NIRVSS',
                             color: 'fuchsia',
                             textColor: 'black'
                         },
                         {
                             name: 'Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3',
-                            start: 1597170132854,
-                            end: 1597171202854,
+                            // start: 1597170132854,
+                            start: currentTimeStamp + 65000,
+                            end: currentTimeStamp + 65000 + 535000,
                             type: 'VIPER',
                             color: 'fuchsia',
                             textColor: 'black'
                         },
                         {
-                            name: 'Activity 4',
-                            start: 1597171132854,
-                            end: 1597171232854,
+                            name: 'Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4',
+                            // start: 1597170132854,
+                            start: currentTimeStamp + 65000,
+                            end: currentTimeStamp + 65000 + 535000,
+                            type: 'VIPER',
+                            color: 'fuchsia',
+                            textColor: 'black'
+                        },
+                        {
+                            name: 'Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 ',
+                            // start: 1597170132854,
+                            start: currentTimeStamp + 65000,
+                            end: currentTimeStamp + 65000 + 535000,
+                            type: 'VIPER',
+                            color: 'fuchsia',
+                            textColor: 'black'
+                        },
+                        {
+                            name: 'Activity 6',
+                            // start: 1597171132854,
+                            start: currentTimeStamp + 565000,
+                            end: currentTimeStamp + 565000 + 50000,
                             type: 'NIRVSS',
                             color: 'fuchsia',
                             textColor: 'black'
