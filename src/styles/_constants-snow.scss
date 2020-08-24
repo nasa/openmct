@@ -351,8 +351,8 @@ $colorSummaryFgEm: white;
 // Plot
 $colorPlotBg: rgba(black, 0.05);
 $colorPlotFg: $colorBodyFg;
-$colorPlotHash: black;
-$opacityPlotHash: 0.2;
+$colorPlotHash: $colorPlotFg;
+$opacityPlotHash: 0.3;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
