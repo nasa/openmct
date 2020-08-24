@@ -219,7 +219,8 @@ export default {
         window.addEventListener('resize', this.handleWindowResize);
 
         let root = await this.openmct.objects.get('ROOT');
-        if (root.key !== undefined && root.namespace !== undefined) {
+
+        if (root.identifier !== undefined) {
             let rootNode = this.buildTreeItem(root);
             // if more than one root item, set multipleRootChildren to true and add root to ancestors
             if (root.composition && root.composition.length > 1) {
@@ -445,7 +446,13 @@ export default {
             this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
+            // check for older implementations of tree storage and reformat if necessary
+            if (Array.isArray(this.jumpPath)) {
+                this.jumpPath = this.jumpPath[0];
+            }
+
             let nodes = this.jumpPath.split('/');
+
             for (let i = 0; i < nodes.length; i++) {
                 let currentNode = await this.openmct.objects.get(nodes[i]);
                 let newParent = this.buildTreeItem(currentNode);
