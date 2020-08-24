@@ -34,7 +34,7 @@ class RootObjectProvider {
                 composition: []
             };
             RootObjectProvider.instance = this;
-        } else {
+        } else if (rootRegistry) {
             // if called twice, update instance rootRegistry
             RootObjectProvider.instance.rootRegistry = rootRegistry;
         }
