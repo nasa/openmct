@@ -451,6 +451,12 @@ export default {
                 this.jumpPath = this.jumpPath[0];
             }
 
+            // switching back and forth between multiple root children can cause issues,
+            // this checks for one of those issues
+            if (this.jumpPath.key) {
+                this.jumpPath = this.jumpPath.key;
+            }
+
             let nodes = this.jumpPath.split('/');
 
             for (let i = 0; i < nodes.length; i++) {
