@@ -214,7 +214,7 @@ export default {
             this.setContainerHeight();
         },
         allTreeItems() {
-            // catches an edge case race condition
+            // catches an edge case race condition and when new items are added (ex. folder)
             if (!this.isLoading) {
                 this.setContainerHeight();
             }
@@ -435,12 +435,7 @@ export default {
         },
         addChild(child) {
             let item = this.buildTreeItem(child);
-
             this.allTreeItems.push(item);
-            // if a new item was added after initial composition load
-            if (!this.isLoading) {
-                this.setContainerHeight();
-            }
         },
         removeChild(identifier) {
             let removeId = this.openmct.objects.makeKeyString(identifier);
