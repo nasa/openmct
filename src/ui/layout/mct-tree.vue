@@ -571,11 +571,11 @@ export default {
             this.setCurrentNavigatedPath();
         },
         getSavedNavigatedPath() {
-            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE));
         },
         setCurrentNavigatedPath() {
             if (!this.searchValue) {
-                localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD, JSON.stringify(this.currentNavigatedPath));
+                localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify(this.currentNavigatedPath));
             }
         },
         currentPathIsActivePath() {
@@ -633,7 +633,10 @@ export default {
         },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
-            console.log(oldTreeExpanded);
+
+            if (oldTreeExpanded) {
+                localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
+            }
         }
     }
 };
