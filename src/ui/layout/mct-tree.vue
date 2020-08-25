@@ -212,10 +212,17 @@ export default {
         },
         searchResultItems() {
             this.setContainerHeight();
+        },
+        allTreeItems() {
+            // catches an edge case race condition
+            if (!this.isLoading) {
+                this.setContainerHeight();
+            }
         }
     },
     async mounted() {
         this.backwardsCompatibilityCheck();
+
         let savedPath = this.getSavedNavigatedPath();
         this.searchService = this.openmct.$injector.get('searchService');
         window.addEventListener('resize', this.handleWindowResize);
@@ -428,7 +435,9 @@ export default {
         },
         addChild(child) {
             let item = this.buildTreeItem(child);
+
             this.allTreeItems.push(item);
+            // if a new item was added after initial composition load
             if (!this.isLoading) {
                 this.setContainerHeight();
             }
@@ -440,6 +449,7 @@ export default {
             this.setContainerHeight();
         },
         finishLoading() {
+            console.log('DONE LOADING FOOL');
             if (this.jumpPath) {
                 this.jumpToPath();
             }
@@ -548,17 +558,21 @@ export default {
             this.$refs.scrollable.scrollTop = 0;
             this.setContainerHeight();
         },
-        handleReset(node) {
+        async handleReset(node) {
+            this.visibleItems = [];
+            await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-right';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
             this.setCurrentNavigatedPath();
         },
-        handleExpanded(node) {
+        async handleExpanded(node) {
             if (this.activeSearch) {
                 return;
             }
 
+            this.visibleItems = [];
+            await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
