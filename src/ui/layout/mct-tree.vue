@@ -95,7 +95,8 @@
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 
-const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
+const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
+const LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE = 'mct-expanded-tree-node';
 const ROOT_PATH = '/browse/';
 const ITEM_BUFFER = 5;
 const RECHECK_DELAY = 100;
@@ -211,9 +212,17 @@ export default {
         },
         searchResultItems() {
             this.setContainerHeight();
+        },
+        allTreeItems() {
+            // catches an edge case race condition and when new items are added (ex. folder)
+            if (!this.isLoading) {
+                this.setContainerHeight();
+            }
         }
     },
     async mounted() {
+        this.backwardsCompatibilityCheck();
+
         let savedPath = this.getSavedNavigatedPath();
         this.searchService = this.openmct.$injector.get('searchService');
         window.addEventListener('resize', this.handleWindowResize);
@@ -427,9 +436,6 @@ export default {
         addChild(child) {
             let item = this.buildTreeItem(child);
             this.allTreeItems.push(item);
-            if (!this.isLoading) {
-                this.setContainerHeight();
-            }
         },
         removeChild(identifier) {
             let removeId = this.openmct.objects.makeKeyString(identifier);
@@ -446,11 +452,6 @@ export default {
             this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
-            // check for older implementations of tree storage and reformat if necessary
-            if (Array.isArray(this.jumpPath)) {
-                this.jumpPath = this.jumpPath[0];
-            }
-
             // switching back and forth between multiple root children can cause issues,
             // this checks for one of those issues
             if (this.jumpPath.key) {
@@ -551,17 +552,21 @@ export default {
             this.$refs.scrollable.scrollTop = 0;
             this.setContainerHeight();
         },
-        handleReset(node) {
+        async handleReset(node) {
+            this.visibleItems = [];
+            await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-right';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
             this.setCurrentNavigatedPath();
         },
-        handleExpanded(node) {
+        async handleExpanded(node) {
             if (this.activeSearch) {
                 return;
             }
 
+            this.visibleItems = [];
+            await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
@@ -569,11 +574,11 @@ export default {
             this.setCurrentNavigatedPath();
         },
         getSavedNavigatedPath() {
-            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE));
         },
         setCurrentNavigatedPath() {
             if (!this.searchValue) {
-                localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
+                localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify(this.currentNavigatedPath));
             }
         },
         currentPathIsActivePath() {
@@ -628,6 +633,13 @@ export default {
             let index = styleString.indexOf('px');
 
             return Number(styleString.slice(0, index));
+        },
+        backwardsCompatibilityCheck() {
+            let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
+
+            if (oldTreeExpanded) {
+                localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
+            }
         }
     }
 };
