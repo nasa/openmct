@@ -55,7 +55,8 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
-    './persistence/couch/plugin'
+    './persistence/couch/plugin',
+    './defaultRootName/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -91,7 +92,8 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
-    CouchDBPlugin
+    CouchDBPlugin,
+    DefaultRootName
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -182,6 +184,7 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.DefaultRootName = DefaultRootName.default;
 
     return plugins;
 });

@@ -46,7 +46,7 @@ define([
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
-        this.rootProvider = new RootObjectProvider(this.rootRegistry);
+        this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
     }
 
     /**
