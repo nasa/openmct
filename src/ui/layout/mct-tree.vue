@@ -448,11 +448,6 @@ export default {
             this.isLoading = false;
         },
         async jumpToPath(saveExpandedPath = false) {
-            // check for older implementations of tree storage and reformat if necessary
-            if (Array.isArray(this.jumpPath)) {
-                this.jumpPath = this.jumpPath[0];
-            }
-
             // switching back and forth between multiple root children can cause issues,
             // this checks for one of those issues
             if (this.jumpPath.key) {
