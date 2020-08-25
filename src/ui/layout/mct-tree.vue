@@ -95,7 +95,8 @@
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 
-const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
+const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
+const LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE = 'mct-expanded-tree-node';
 const ROOT_PATH = '/browse/';
 const ITEM_BUFFER = 5;
 const RECHECK_DELAY = 100;
@@ -214,6 +215,7 @@ export default {
         }
     },
     async mounted() {
+        this.backwardsCompatibilityCheck();
         let savedPath = this.getSavedNavigatedPath();
         this.searchService = this.openmct.$injector.get('searchService');
         window.addEventListener('resize', this.handleWindowResize);
@@ -569,11 +571,11 @@ export default {
             this.setCurrentNavigatedPath();
         },
         getSavedNavigatedPath() {
-            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED));
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
         },
         setCurrentNavigatedPath() {
             if (!this.searchValue) {
-                localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.currentNavigatedPath));
+                localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD, JSON.stringify(this.currentNavigatedPath));
             }
         },
         currentPathIsActivePath() {
@@ -628,6 +630,10 @@ export default {
             let index = styleString.indexOf('px');
 
             return Number(styleString.slice(0, index));
+        },
+        backwardsCompatibilityCheck() {
+            let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
+            console.log(oldTreeExpanded);
         }
     }
 };
