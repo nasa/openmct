@@ -449,7 +449,6 @@ export default {
             this.setContainerHeight();
         },
         finishLoading() {
-            console.log('DONE LOADING FOOL');
             if (this.jumpPath) {
                 this.jumpToPath();
             }
