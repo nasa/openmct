@@ -65,13 +65,16 @@
                     :title="item.name"
                     @click="item.callBack"
                 >
+                    <span class="c-icon-button__label">{{ item.name }}</span>
                 </button>
 
                 <button
                     class="c-icon-button icon-items-expand"
                     title="View Large"
                     @click="expand"
-                ></button>
+                >
+                    <span class="c-icon-button__label">View Large</span>
+                </button>
 
             </div>
             <button

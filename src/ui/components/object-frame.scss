@@ -37,6 +37,15 @@
         &__more {
             flex: 0 0 auto;
         }
+
+        .is-in-small-container & {
+            [class*="__label"] {
+                // button labels
+                display: none;
+
+            }
+
+        }
     }
 
     /*************************** HIDDEN FRAME */
@@ -68,6 +77,12 @@
                     [class*="__btns"] {
                         display: block;
                     }
+                }
+
+                [class*="__label"] {
+                    // button labels
+                    display: none;
+
                 }
             }
         }
