@@ -39,7 +39,7 @@
         @contextmenu.prevent="showContextMenu"
     >
         <div class="is-missing__indicator"
-             title="This i tem is missing"
+             title="This item is missing"
         ></div>
         <div
             v-if="showLabel"
@@ -145,6 +145,7 @@ export default {
         },
         unit() {
             let value = this.item.value;
+
             let unit = this.metadata.value(value).unit;
 
             return unit;
