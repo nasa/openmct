@@ -15,7 +15,9 @@
         <CreateButton class="l-shell__create-button" />
         <indicators class="l-shell__head-section l-shell__indicators" />
         <button
-            class="l-shell__head__collapse-button c-button"
+            class="l-shell__head__collapse-button c-icon-button"
+            :class="headExpanded ? 'l-shell__head__collapse-button--collapse' : 'l-shell__head__collapse-button--expand'"
+            :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
             @click="toggleShellHead"
         ></button>
         <notification-banner />
@@ -47,12 +49,23 @@
             label="Browse"
             collapsable
         >
-            <mct-tree class="l-shell__tree" />
+            <button
+                slot="controls"
+                class="c-icon-button l-shell__sync-tree-button icon-target"
+                title="Show selected item in tree"
+                @click="handleSyncTreeNavigation"
+            >
+            </button>
+            <mct-tree
+                :sync-tree-navigation="triggerSync"
+                class="l-shell__tree"
+            />
         </pane>
         <pane class="l-shell__pane-main">
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
                 v-if="toolbar"
@@ -126,7 +139,8 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            headExpanded
+            headExpanded,
+            triggerSync: false
         };
     },
     computed: {
@@ -200,6 +214,9 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        handleSyncTreeNavigation() {
+            this.triggerSync = !this.triggerSync;
         }
     }
 };
