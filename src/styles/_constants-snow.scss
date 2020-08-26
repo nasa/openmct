@@ -80,13 +80,13 @@ $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
-$filterHov: brightness(0.8) contrast(2); // Tree, location items
+$filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location items
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
-$objectLabelNameFilter: brightness(0.5);
+$objectLabelNameFilter: brightness(0.9);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -375,6 +375,11 @@ $colorItemTreeEditingIcon: $editUIColor;
 $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $shdwItemTreeIcon: none;
+
+// Layout frame controls
+$frameControlsColorFg: $colorClickIconButton;
+$frameControlsColorBg: $colorMenuBg;
+$frameControlsShdw: $shdwMenu;
 
 // Images
 $colorThumbHoverBg: $colorItemTreeHoverBg;

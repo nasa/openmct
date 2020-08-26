@@ -1,12 +1,12 @@
 <template>
 <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
-        class="c-button--menu icon-notebook"
+        class="c-icon-button c-button--menu icon-camera"
         title="Take a Notebook Snapshot"
         @click="setNotebookTypes"
         @click.stop="toggleMenu"
     >
-        <span class="c-button__label"></span>
+        <span title="Take Notebook Snapshot" class="c-icon-button__label">Snapshot</span>
     </button>
     <div
         v-show="showMenu"
@@ -89,7 +89,7 @@ export default {
             }
 
             notebookTypes.push({
-                cssClass: 'icon-notebook',
+                cssClass: 'icon-camera',
                 name: 'Save to Notebook Snapshots',
                 type: NOTEBOOK_SNAPSHOT
             });

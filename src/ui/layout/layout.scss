@@ -321,7 +321,7 @@
         }
 
         > * + * {
-            margin-left: $interiorMargin;
+            margin-left: $interiorMarginSm;
         }
     }
 
@@ -359,6 +359,10 @@
 
     .c-object-label__name {
         filter: $objectLabelNameFilter;
+    }
+
+    .c-object-label__type-icon {
+        opacity: $objectLabelTypeIconOpacity;
     }
 
     &__object-name--w {

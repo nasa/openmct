@@ -28,9 +28,5 @@
         padding-top: $p;
         padding-bottom: $p;
         width: 25%;
-
-        &:not(.c-list-item__name) {
-            color: $colorItemFgDetails;
-        }
     }
 }

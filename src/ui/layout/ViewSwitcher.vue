@@ -4,12 +4,12 @@
     class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
 >
     <button
-        class="c-button--menu"
+        class="c-icon-button c-button--menu"
         :class="currentView.cssClass"
         title="Change the current view"
         @click.stop="toggleViewMenu"
     >
-        <span class="c-button__label">
+        <span class="c-icon-button__label">
             {{ currentView.name }}
         </span>
     </button>

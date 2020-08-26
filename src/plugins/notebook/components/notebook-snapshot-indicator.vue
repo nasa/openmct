@@ -1,5 +1,5 @@
 <template>
-<div class="c-indicator c-indicator--clickable icon-notebook"
+<div class="c-indicator c-indicator--clickable icon-camera"
      :class="[
          { 's-status-off': snapshotCount === 0 },
          { 's-status-on': snapshotCount > 0 },

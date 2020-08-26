@@ -13,6 +13,10 @@
 
         .c-object-label {
             font-size: 1.05em;
+            &__type-icon {
+                opacity: $objectLabelTypeIconOpacity;
+            }
+
             &__name {
                 filter: $objectLabelNameFilter;
             }
@@ -31,7 +35,6 @@
     /*************************** FRAME CONTROLS */
     &__frame-controls {
         display: flex;
-        //font-size: 0.9em;
 
         &__btns,
         &__more {
@@ -44,7 +47,6 @@
                 display: none;
 
             }
-
         }
     }
 
@@ -62,12 +64,19 @@
             }
 
             .c-so-view__frame-controls {
-                background: $colorBodyBg;
+                background: $frameControlsColorBg;
                 border-radius: $controlCr;
-                box-shadow: $shdwMenu;
-                //margin: 1px;
+                box-shadow: $frameControlsShdw;
                 padding: 1px;
                 pointer-events: all;
+
+                .c-icon-button {
+                    color: $frameControlsColorFg;
+
+                    &:hover {
+                        background: rgba($frameControlsColorFg, 0.3);
+                    }
+                }
 
                 &__btns {
                     display: none;
@@ -84,6 +93,12 @@
                     display: none;
 
                 }
+            }
+        }
+        &.c-so-view--layout {
+            // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
+            > .c-so-view__header {
+                display: none;
             }
         }
 

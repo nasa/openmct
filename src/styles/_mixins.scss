@@ -480,8 +480,8 @@
 }
 
 @mixin cClickIconButtonLayout() {
-    $pLR: 4px;
-    $pTB: 4px;
+    $pLR: 5px;
+    $pTB: 5px;
     padding: $pTB $pLR;
 
     &:before,
@@ -509,7 +509,8 @@
     @include hover() {
         transition: $transIn;
         background: $colorClickIconButtonBgHov;
-        color: $colorClickIconButtonFgHov;
+        //color: $colorClickIconButtonFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"] {

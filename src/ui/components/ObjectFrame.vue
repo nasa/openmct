@@ -22,11 +22,14 @@
 <template>
 <div
     class="c-so-view"
-    :class="{
-        'c-so-view--no-frame': !hasFrame,
-        'has-complex-content': complexContent,
-        'is-missing': domainObject.status === 'missing'
-    }"
+    :class="[
+        'c-so-view--' + domainObject.type,
+        {
+            'c-so-view--no-frame': !hasFrame,
+            'has-complex-content': complexContent,
+            'is-missing': domainObject.status === 'missing'
+        }
+    ]"
 >
     <div
         class="c-so-view__header"

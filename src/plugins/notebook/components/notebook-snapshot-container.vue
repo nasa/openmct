@@ -4,7 +4,7 @@
         <div class="l-browse-bar__start">
             <div class="l-browse-bar__object-name--w">
                 <div class="l-browse-bar__object-name c-object-label">
-                    <div class="c-object-label__type-icon icon-notebook"></div>
+                    <div class="c-object-label__type-icon icon-camera"></div>
                     <div class="c-object-label__name">
                         Notebook Snapshots
                         <span v-if="snapshots.length"

@@ -57,11 +57,10 @@
 
             <button
                 v-if="isViewEditable & !isEditing"
-                :title="lockedOrUnlocked"
-                class="c-button"
+                :title="lockedOrUnlockedTitle"
                 :class="{
-                    'icon-lock c-button--caution': domainObject.locked,
-                    'icon-unlocked': !domainObject.locked
+                    'c-button icon-lock': domainObject.locked,
+                    'c-icon-button icon-unlocked': !domainObject.locked
                 }"
                 @click="toggleLock(!domainObject.locked)"
             ></button>
@@ -206,7 +205,7 @@ export default {
 
             return false;
         },
-        lockedOrUnlocked() {
+        lockedOrUnlockedTitle() {
             if (this.domainObject.locked) {
                 return 'Locked for editing - click to unlock.';
             } else {
