@@ -55,7 +55,8 @@ define([
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
-    './newFolderAction/plugin'
+    './newFolderAction/plugin',
+    './defaultRootName/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -91,7 +92,8 @@ define([
     Snow,
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
-    NewFolderAction
+    NewFolderAction,
+    DefaultRootName
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -204,6 +206,7 @@ define([
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
+    plugins.DefaultRootName = DefaultRootName.default;
 
     return plugins;
 });
