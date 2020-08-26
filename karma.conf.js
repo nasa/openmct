@@ -100,6 +100,6 @@ module.exports = (config) => {
         },
         concurrency: 1,
         singleRun: true,
-        browserNoActivityTimeout: 90000
+        browserNoActivityTimeout: 400000
     });
 };
