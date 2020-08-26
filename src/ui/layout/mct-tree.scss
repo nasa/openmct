@@ -12,10 +12,6 @@
         flex: 0 0 auto;
     }
 
-    &__loading {
-        flex: 1 1 auto;
-    }
-
     &__no-results {
         font-style: italic;
         opacity: 0.6;
@@ -25,6 +21,33 @@
         flex: 1 1 auto;
         height: 0; // Chrome 73 overflow bug fix
         padding-right: $interiorMarginSm;
+    }
+
+    .c-tree {
+        flex: 1 1 auto;
+        overflow: hidden;
+        transition: all;
+
+        .scrollable-children {
+            .c-tree__item-h {
+                width: 100%;
+            }
+        }
+
+        &__item--empty {
+            // Styling for empty tree items
+            // Indent should allow for c-nav view-control width and icon spacing
+            font-style: italic;
+            padding: $interiorMarginSm * 2 1px;
+            opacity: 0.7;
+            pointer-events: none;
+
+            &:before {
+                content: '';
+                display: inline-block;
+                width: $treeNavArrowD + $interiorMarginLg;
+            }
+        }
     }
 }
 
@@ -43,7 +66,6 @@
     }
 
     &__item {
-        $aPad: $interiorMarginSm;
         border-radius: $controlCr;
         display: flex;
         align-items: center;
@@ -82,32 +104,15 @@
             margin-left: $interiorMarginSm;
         }
 
-        &.is-navigated-object,
-        &.is-selected {
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeIconHover;
-            }
-        }
-
-        &.is-being-edited {
-            background: $colorItemTreeEditingBg;
-            .c-tree__item__type-icon:before {
-                color: $colorItemTreeEditingIcon;
-            }
-
-            .c-tree__item__name {
-                color: $colorItemTreeEditingFg;
-                font-style: italic;
+        @include desktop {
+            &:hover {
+                background: $colorItemTreeHoverBg;
             }
         }
 
         // Object labels in trees
         &__label {
             flex: 1 1 auto;
-        }
-
-        &__name {
-            color: $colorItemTreeFg;
         }
 
         &.is-alias {
@@ -125,6 +130,55 @@
                 width: ceil($mobileTreeItemH * 0.5);
             }
         }
+
+        &.is-navigated-object,
+        &.is-selected {
+            background: $colorItemTreeSelectedBg;
+
+            [class*="__label"],
+            [class*="__name"] {
+                color: $colorItemTreeSelectedFg;
+            }
+
+            [class*="__type-icon"]:before {
+                color: $colorItemTreeSelectedIcon;
+            }
+        }
+    }
+
+    &__item__label {
+        @include desktop {
+            &:hover {
+                filter: $filterHov;
+            }
+        }
+    }
+}
+
+.is-editing .is-navigated-object {
+    a[class*="__item__label"] {
+        opacity: 0.4;
+
+        [class*="__name"] {
+            font-style: italic;
+        }
+    }
+}
+
+.c-tree {
+    &__item {
+       body.mobile & {
+            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+            height: $mobileTreeItemH;
+            margin-bottom: $interiorMarginSm;
+            [class*="view-control"] {
+                width: ceil($mobileTreeItemH * 0.5);
+            }
+        }
+    }
+
+    .c-tree {
+        margin-left: $treeItemIndent;
     }
 }
 
@@ -141,10 +195,84 @@
     }
 }
 
+.c-nav {
+    $dimension: $treeNavArrowD;
+
+    &__up, &__down {
+        flex: 0 0 auto;
+        height: $dimension;
+        width: $dimension;
+        visibility: hidden;
+        position: relative;
+        text-align: center;
+
+        &.is-enabled {
+            visibility: visible;
+        }
+
+        &:before {
+            // Nav arrow
+            $dimension: 9px;
+            $width: 3px;
+            border: solid $colorItemTreeVC;
+            border-width: 0 $width $width 0;
+            content: '';
+            display: block;
+            position: absolute;
+            left: 50%; top: 50%;
+            height: $dimension;
+            width: $dimension;
+        }
+
+        @include desktop {
+            &:hover:before {
+                border-color: $colorItemTreeHoverFg;
+            }
+        }
+    }
+
+    &__up:before {
+        transform: translate(-30%, -50%) rotate(135deg);
+    }
+
+    &__down:before {
+        transform: translate(-70%, -50%) rotate(-45deg);
+    }
+}
+
 .c-selector {
     .c-tree-and-search__tree.c-tree {
         border: 1px solid $colorInteriorBorder;
         border-radius: $controlCr;
         padding: $interiorMargin;
     }
+}
+
+// TRANSITIONS
+.slide-left,
+.slide-right {
+    animation-duration: 500ms;
+    animation-iteration-count: 1;
+    transition: all;
+    transition-timing-function: ease-in-out;
+}
+
+.slide-left {
+    animation-name: animSlideLeft;
+}
+
+.slide-right {
+    animation-name: animSlideRight;
+}
+
+@keyframes animSlideLeft {
+    0% {opactiy: 0; transform: translateX(100%);}
+    10% {opacity: 1;}
+    100% {transform: translateX(0);}
+}
+
+@keyframes animSlideRight {
+    0% {opactiy: 0; transform: translateX(-100%);}
+    10% {opacity: 1;}
+    100% {transform: translateX(0);}
 }
