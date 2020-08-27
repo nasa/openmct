@@ -27,19 +27,19 @@ export default class LegacyPersistenceAdapter {
         this.openmct = openmct;
     }
 
-    listObjects () {
+    listObjects() {
         return Promise.resolve([]);
     }
 
-    listSpaces () {
+    listSpaces() {
         return Promise.resolve(Object.keys(this.openmct.objects.providers));
     }
 
-    updateObject (legacyDomainObject) {
+    updateObject(legacyDomainObject) {
         return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
     }
 
-    readObject (keystring) {
+    readObject(keystring) {
         let identifier = objectUtils.parseKeyString(keystring);
 
         return this.openmct.legacyObject(this.openmct.objects.get(identifier));

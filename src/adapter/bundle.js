@@ -121,7 +121,7 @@ define([
                         provides: "persistenceService",
                         type: "provider",
                         priority: "fallback",
-                        implementation: function legacyPersistenceProvider (openmct) {
+                        implementation: function legacyPersistenceProvider(openmct) {
                             return new LegacyPersistenceAdapter.default(openmct);
                         },
                         depends: ["openmct"]
