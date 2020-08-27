@@ -25,35 +25,57 @@
         }
     }
 
-    &__control-bar {
-        padding: 5px 0 0 0;
+    &__control-bar,
+    &__time {
         display: flex;
         align-items: baseline;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+    }
+
+    &__control-bar {
+        margin-top: 2px;
+        padding: $interiorMarginSm 0;
         justify-content: space-between;
+
+    }
+
+    &__time {
+        flex: 0 1 auto;
+        overflow: hidden;
     }
 
     &__timestamp,
     &__age {
+        @include ellipsize();
         flex: 0 1 auto;
     }
 
+    &__timestamp {
+        flex-shrink: 10;
+    }
+
     &__age {
-        background: rgba($colorBodyFg, 0.2);
         border-radius: $controlCr;
         display: flex;
+        flex-shrink: 0;
         align-items: baseline;
-        padding: $interiorMargin;
+        padding: 1px $interiorMarginSm;
 
         &:before {
-            opacity: 0.7;
+            opacity: 0.5;
             margin-right: $interiorMarginSm;
         }
+    }
 
-        &.new {
-            $bgColor: $colorOk;
-            background: rgba($bgColor, 0.5);
-            @include flash($animName: flashImageAge, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
-        }
+    &--new {
+        // New imagery
+        $bgColor: $colorOk;
+        background: rgba($bgColor, 0.5);
+        @include flash($animName: flashImageAge, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
     }
 
     &__thumbs-wrapper {
@@ -172,6 +194,8 @@
 /*************************************** BUTTONS */
 .c-button.pause-play {
     // Pause icon set by default in markup
+    justify-self: end;
+
     &.is-paused {
         background: $colorPausedBg !important;
         color: $colorPausedFg;

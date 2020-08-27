@@ -29,12 +29,14 @@
         >
         </div>
         <div class="c-imagery__control-bar">
-            <div class="c-imagery__timestamp">{{ getTime() }}</div>
-            <div
-                v-if="clock"
-                :class="{'new': isImageNew()}"
-                class="c-imagery__age icon-timer"
-            >{{ age }}</div>
+            <div class="c-imagery__time">
+                <div class="c-imagery__timestamp">{{ getTime() }}</div>
+                <div
+                    v-if="clock"
+                    :class="{'c-imagery--new': isImageNew()}"
+                    class="c-imagery__age icon-timer"
+                >{{ age }}</div>
+            </div>
             <div class="h-local-controls flex-elem">
                 <button
                     class="c-button icon-pause pause-play"
