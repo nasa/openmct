@@ -112,7 +112,7 @@
             ></button>
             <button
                 class="l-browse-bar__actions c-icon-button icon-3-dots"
-                title="See menu options"
+                title="More options"
                 @click.prevent.stop="showMenuItems($event)"
             ></button>
         </div>
