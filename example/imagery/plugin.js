@@ -27,7 +27,7 @@ define([
 ) {
     function ImageryPlugin() {
 
-        var IMAGE_SAMPLES = [
+        const IMAGE_SAMPLES = [
             "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
             "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
             "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
@@ -47,13 +47,14 @@ define([
             "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
             "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
         ];
+        const IMAGE_DELAY = 20000;
 
         function pointForTimestamp(timestamp, name) {
             return {
                 name: name,
-                utc: Math.floor(timestamp / 5000) * 5000,
-                local: Math.floor(timestamp / 5000) * 5000,
-                url: IMAGE_SAMPLES[Math.floor(timestamp / 5000) % IMAGE_SAMPLES.length]
+                utc: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
+                local: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
+                url: IMAGE_SAMPLES[Math.floor(timestamp / IMAGE_DELAY) % IMAGE_SAMPLES.length]
             };
         }
 
@@ -64,7 +65,7 @@ define([
             subscribe: function (domainObject, callback) {
                 var interval = setInterval(function () {
                     callback(pointForTimestamp(Date.now(), domainObject.name));
-                }, 5000);
+                }, IMAGE_DELAY);
 
                 return function () {
                     clearInterval(interval);
@@ -81,9 +82,9 @@ define([
                 var start = options.start;
                 var end = Math.min(options.end, Date.now());
                 var data = [];
-                while (start <= end && data.length < 5000) {
+                while (start <= end && data.length < IMAGE_DELAY) {
                     data.push(pointForTimestamp(start, domainObject.name));
-                    start += 5000;
+                    start += IMAGE_DELAY;
                 }
 
                 return Promise.resolve(data);
