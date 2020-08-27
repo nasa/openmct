@@ -640,11 +640,11 @@ define(['lodash'], function (_) {
                         domainObject: displayLayoutContext.item,
                         icon: ICON_GRID_SHOW,
                         method: function () {
+                            displayLayoutContext.toggleGrid();
+
                             this.icon = this.icon === ICON_GRID_SHOW
                                 ? ICON_GRID_HIDE
                                 : ICON_GRID_SHOW;
-
-                            displayLayoutContext.toggleGrid();
                         },
                         secondary: true
                     };
