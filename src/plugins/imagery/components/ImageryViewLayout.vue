@@ -33,7 +33,7 @@
             <div
                 v-if="clock"
                 :class="{'new': isImageNew()}"
-                class="c-imagery__timestamp"
+                class="c-imagery__age icon-timer"
             >{{ age }}</div>
             <div class="h-local-controls flex-elem">
                 <button
@@ -337,11 +337,11 @@ export default {
             result = this.durationFormatter.format(age);
 
             if (age > EIGHT_HOURS) {
-                result = '> 8 hours';
+                result = '&gt; 8 hours';
             }
 
             if (age > TWENTYFOUR_HOURS) {
-                result = '> 24 hours';
+                result = '&gt; 24 hours';
             }
 
             return result;

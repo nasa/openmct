@@ -50,6 +50,18 @@
 }
 
 /************************** EFFECTS */
+@mixin flash($animName: flash, $dur: 500ms, $dir: alternate, $iter: 20, $prop: background, $valStart: rgba($colorOk, 1), $valEnd: rgba($colorOk, 0)) {
+    @keyframes #{$animName} {
+        0%   { #{$prop}: $valStart; }
+        100% {  #{$prop}: $valEnd; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: $dir;
+    animation-iteration-count: $iter;
+    animation-timing-function: ease-out;
+}
+
 @mixin mixedBg() {
     $c1: nth($mixedSettingBg, 1);
     $c2: nth($mixedSettingBg, 2);

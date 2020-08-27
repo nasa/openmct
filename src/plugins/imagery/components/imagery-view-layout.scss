@@ -28,11 +28,32 @@
     &__control-bar {
         padding: 5px 0 0 0;
         display: flex;
-        align-items: center;
+        align-items: baseline;
+        justify-content: space-between;
     }
 
-    &__timestamp {
-        flex: 1 1 auto;
+    &__timestamp,
+    &__age {
+        flex: 0 1 auto;
+    }
+
+    &__age {
+        background: rgba($colorBodyFg, 0.2);
+        border-radius: $controlCr;
+        display: flex;
+        align-items: baseline;
+        padding: $interiorMargin;
+
+        &:before {
+            opacity: 0.7;
+            margin-right: $interiorMarginSm;
+        }
+
+        &.new {
+            $bgColor: $colorOk;
+            background: rgba($bgColor, 0.5);
+            @include flash($animName: flashImageAge, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        }
     }
 
     &__thumbs-wrapper {
