@@ -180,7 +180,7 @@ export default {
             return this.internalDomainObject.configuration.layoutDimensions;
         },
         layoutDimensionsStyle() {
-            return `outline: 2px solid red; width: ${this.layoutDimensions[0]}px; height: ${this.layoutDimensions[1]}px; `;
+            return `width: ${this.layoutDimensions[0]}px; height: ${this.layoutDimensions[1]}px;`;
         },
         showMarquee() {
             let selectionPath = this.selection[0];
