@@ -125,11 +125,17 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    updateCondition(conditionConfiguration, index) {
-        let condition = this.conditions[index];
-        this.conditionSetDomainObject.configuration.conditionCollection[index] = conditionConfiguration;
-        condition.update(conditionConfiguration);
-        this.persistConditions();
+    updateCondition(conditionConfiguration) {
+        let condition = this.findConditionById(conditionConfiguration.id);
+        if (condition) {
+            condition.update(conditionConfiguration);
+        }
+
+        let index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === conditionConfiguration.id);
+        if (index > -1) {
+            this.conditionSetDomainObject.configuration.conditionCollection[index] = conditionConfiguration;
+            this.persistConditions();
+        }
     }
 
     updateConditionDescription(condition) {
@@ -202,12 +208,18 @@ export default class ConditionManager extends EventEmitter {
         this.persistConditions();
     }
 
-    removeCondition(index) {
-        let condition = this.conditions[index];
-        condition.destroy();
-        this.conditions.splice(index, 1);
-        this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
-        this.persistConditions();
+    removeCondition(id) {
+        let index = this.conditions.findIndex(item => item.id === id);
+        if (index > -1) {
+            this.conditions[index].destroy();
+            this.conditions.splice(index, 1);
+        }
+
+        index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === id);
+        if (index > -1) {
+            this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
+            this.persistConditions();
+        }
     }
 
     findConditionById(id) {
@@ -220,8 +232,8 @@ export default class ConditionManager extends EventEmitter {
         reorderPlan.forEach((reorderEvent) => {
             let item = oldConditions[reorderEvent.oldIndex];
             newCollection.push(item);
-            this.conditionSetDomainObject.configuration.conditionCollection = newCollection;
         });
+        this.conditionSetDomainObject.configuration.conditionCollection = newCollection;
         this.persistConditions();
     }
 

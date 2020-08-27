@@ -309,6 +309,7 @@ export default {
             this.condition.configuration.criteria.push(criteriaObject);
         },
         dragStart(e) {
+            e.dataTransfer.clearData();
             e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
             e.dataTransfer.effectAllowed = "copyMove";
             e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
@@ -316,7 +317,6 @@ export default {
         },
         dragEnd(event) {
             this.dragStarted = false;
-            event.dataTransfer.clearData();
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
@@ -360,7 +360,7 @@ export default {
         destroy() {
         },
         removeCondition(ev) {
-            this.$emit('removeCondition', this.conditionIndex);
+            this.$emit('removeCondition', this.condition.id);
         },
         cloneCondition(ev) {
             this.$emit('cloneCondition', {
@@ -380,8 +380,7 @@ export default {
         },
         persist() {
             this.$emit('updateCondition', {
-                condition: this.condition,
-                index: this.conditionIndex
+                condition: this.condition
             });
         },
         initCap(str) {
