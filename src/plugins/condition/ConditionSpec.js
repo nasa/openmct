@@ -149,7 +149,7 @@ describe("The condition", function () {
     });
 
     it("gets the result of a condition when new telemetry data is received", function () {
-        conditionObj.updateResult({
+        conditionObj.getResult({
             value: '0',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
@@ -158,7 +158,7 @@ describe("The condition", function () {
     });
 
     it("gets the result of a condition when new telemetry data is received", function () {
-        conditionObj.updateResult({
+        conditionObj.getResult({
             value: '1',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
@@ -167,14 +167,14 @@ describe("The condition", function () {
     });
 
     it("keeps the old result new telemetry data is not used by it", function () {
-        conditionObj.updateResult({
+        conditionObj.getResult({
             value: '0',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
         });
         expect(conditionObj.result).toBeTrue();
 
-        conditionObj.updateResult({
+        conditionObj.getResult({
             value: '1',
             utc: 'Hi',
             id: '1234'

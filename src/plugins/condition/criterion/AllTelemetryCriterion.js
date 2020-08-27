@@ -122,7 +122,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         return datum;
     }
 
-    updateResult(data, telemetryObjects) {
+    getResult(data, telemetryObjects) {
         const validatedData = this.isValid() ? data : {};
 
         if (validatedData) {

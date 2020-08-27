@@ -68,7 +68,7 @@ export default class Condition extends EventEmitter {
         this.description = '';
     }
 
-    updateResult(datum) {
+    getResult(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
 
@@ -79,9 +79,9 @@ export default class Condition extends EventEmitter {
 
             this.criteria.forEach(criterion => {
                 if (this.isAnyOrAllTelemetry(criterion)) {
-                    criterion.updateResult(datum, this.conditionManager.telemetryObjects);
+                    criterion.getResult(datum, this.conditionManager.telemetryObjects);
                 } else {
-                    criterion.updateResult(datum);
+                    criterion.getResult(datum);
                 }
             });
 
