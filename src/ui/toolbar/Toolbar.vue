@@ -5,8 +5,8 @@
         v-for="(item, index) in structure"
         :key="index"
         :options="item"
-        @change="updateObjectValue"
         @click="triggerMethod(item, $event)"
+        @change="updateObjectValue"
     />
 </div>
 </template>
