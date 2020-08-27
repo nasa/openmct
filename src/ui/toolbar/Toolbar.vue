@@ -1,18 +1,13 @@
 <template>
 <div class="c-toolbar">
-    <div class="c-toolbar__element-controls">
-        <component
-            :is="item.control"
-            v-for="(item, index) in structure"
-            :key="index"
-            :options="item"
-            @change="updateObjectValue"
-            @click="triggerMethod(item, $event)"
-        />
-    </div>
-    <div class="c-toolbar__dimensions-and-controls">
-        <button class="c-toolbar__control c-icon-button icon-grid"></button>
-    </div>
+    <component
+        :is="item.control"
+        v-for="(item, index) in structure"
+        :key="index"
+        :options="item"
+        @change="updateObjectValue"
+        @click="triggerMethod(item, $event)"
+    />
 </div>
 </template>
 

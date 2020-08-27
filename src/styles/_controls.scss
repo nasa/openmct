@@ -731,17 +731,8 @@ select {
 }
 
 .c-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    > * {
-        // First level items
-        display: flex;
-
-        > * + * {
-            margin-left: 2px;
-        }
+    > * + * {
+        margin-left: 2px;
     }
 
     &__separator {
