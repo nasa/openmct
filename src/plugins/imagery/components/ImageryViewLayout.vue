@@ -120,6 +120,7 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
+        this.ageTrackConditionCheck();
     },
     updated() {
         this.scrollToRight();
@@ -263,6 +264,9 @@ export default {
         },
         clockChange(clock) {
             this.clock = clock;
+            this.ageTrackConditionCheck();
+        },
+        ageTrackConditionCheck() {
             if (this.clock !== undefined) {
                 this.trackAge();
             } else {
