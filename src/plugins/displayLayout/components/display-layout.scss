@@ -45,7 +45,7 @@
         &[s-selected],
         &[s-selected-parent] {
             // Display grid and allow edit marquee to display in nested layouts when editing
-            > * > * > .l-layout + .allow-editing {
+            > * > * > .l-layout.allow-editing {
                 box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
 
                 > [class*='grid-holder'] {
