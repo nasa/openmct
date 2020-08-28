@@ -21,17 +21,12 @@
  *****************************************************************************/
 
 import ISOTimeFormat from './ISOTimeFormat.js';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
 
 describe("the plugin", () => {
     const ISO_KEY = 'iso';
     const JUNK = "junk";
     const MOON_LANDING_TIMESTAMP = -14256000000;
     const MOON_LANDING_DATESTRING = '1969-07-20T00:00:00.000Z';
-    let openmct;
     let isoFormatter;
 
     beforeAll(() => {
@@ -39,16 +34,7 @@ describe("the plugin", () => {
     });
 
     beforeEach((done) => {
-        openmct = createOpenMct();
-
         isoFormatter = new ISOTimeFormat();
-
-        openmct.on('start', done);
-        openmct.startHeadless();
-    });
-
-    afterEach(() => {
-        resetApplicationState(openmct);
     });
 
     describe("creates a new ISO based formatter", function () {
