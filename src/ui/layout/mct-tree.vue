@@ -76,7 +76,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0"
+                            v-if="visibleItems.length === 0 && !isLoading"
                             :style="emptyStyles()"
                             class="c-tree__item c-tree__item--empty"
                         >
