@@ -29,11 +29,7 @@ describe("the plugin", () => {
     const MOON_LANDING_DATESTRING = '1969-07-20T00:00:00.000Z';
     let isoFormatter;
 
-    beforeAll(() => {
-        resetApplicationState();
-    });
-
-    beforeEach((done) => {
+    beforeEach(() => {
         isoFormatter = new ISOTimeFormat();
     });
 
