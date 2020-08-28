@@ -215,9 +215,9 @@ export default class ConditionManager extends EventEmitter {
             this.conditions.splice(index, 1);
         }
 
-        index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === id);
-        if (index > -1) {
-            this.conditionSetDomainObject.configuration.conditionCollection.splice(index, 1);
+        let conditionCollectionIndex = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === id);
+        if (conditionCollectionIndex > -1) {
+            this.conditionSetDomainObject.configuration.conditionCollection.splice(conditionCollectionIndex, 1);
             this.persistConditions();
         }
     }
