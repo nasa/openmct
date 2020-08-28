@@ -309,10 +309,10 @@ export default {
             this.condition.configuration.criteria.push(criteriaObject);
         },
         dragStart(event) {
-          event.dataTransfer.clearData();
-          event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
-          event.dataTransfer.effectAllowed = "copyMove";
-          event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
+            event.dataTransfer.clearData();
+            event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
+            event.dataTransfer.effectAllowed = "copyMove";
+            event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
         dragEnd() {
