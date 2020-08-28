@@ -222,7 +222,6 @@ export default {
         }
     },
     async mounted() {
-        console.log('sup');
         this.backwardsCompatibilityCheck();
 
         let savedPath = this.getSavedNavigatedPath();
@@ -629,7 +628,6 @@ export default {
         },
         childrenIn(el, done) {
             // still needing this timeout for some reason
-            // this.hideNoItemsText = true;
             window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
             done();
         },
