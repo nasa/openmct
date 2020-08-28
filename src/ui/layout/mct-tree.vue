@@ -76,7 +76,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0 && !isLoading"
+                            v-if="visibleItems.length === 0 && !hideNoItemsText"
                             :style="emptyStyles()"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -140,7 +140,8 @@ export default {
             getChildHeight: false,
             settingChildrenHeight: false,
             isMobile: isMobile.mobileName,
-            multipleRootChildren: false
+            multipleRootChildren: false,
+            hideNoItemsText: false
         };
     },
     computed: {
@@ -221,6 +222,7 @@ export default {
         }
     },
     async mounted() {
+        console.log('sup');
         this.backwardsCompatibilityCheck();
 
         let savedPath = this.getSavedNavigatedPath();
@@ -318,6 +320,7 @@ export default {
                         this.noScroll = true;
                     }
 
+                    this.hideNoItemsText = false;
                     this.updatevisibleItems();
                 });
             } else {
@@ -565,6 +568,7 @@ export default {
                 return;
             }
 
+            this.hideNoItemsText = true;
             this.visibleItems = [];
             await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-left';
@@ -625,6 +629,7 @@ export default {
         },
         childrenIn(el, done) {
             // still needing this timeout for some reason
+            // this.hideNoItemsText = true;
             window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
             done();
         },
