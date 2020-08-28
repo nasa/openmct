@@ -56,6 +56,7 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
+    './persistence/couch/plugin',
     './defaultRootName/plugin'
 ], function (
     _,
@@ -93,12 +94,12 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
+    CouchDBPlugin,
     DefaultRootName
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -130,27 +131,7 @@ define([
 
     plugins.Conductor = TimeConductorPlugin.default;
 
-    plugins.CouchDB = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/couch";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "COUCHDB_PATH",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.CouchDB);
-        };
-    };
+    plugins.CouchDB = CouchDBPlugin.default;
 
     plugins.Elasticsearch = function (url) {
         return function (openmct) {
