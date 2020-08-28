@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,42 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-class RootObjectProvider {
-    constructor(rootRegistry) {
-        if (!RootObjectProvider.instance) {
-            this.rootRegistry = rootRegistry;
-            this.rootObject = {
-                identifier: {
-                    key: "ROOT",
-                    namespace: ""
-                },
-                name: 'The root object',
-                type: 'root',
-                composition: []
-            };
-            RootObjectProvider.instance = this;
-        } else if (rootRegistry) {
-            // if called twice, update instance rootRegistry
-            RootObjectProvider.instance.rootRegistry = rootRegistry;
+export default class ISOTimeFormat {
+    constructor() {
+        this.key = 'iso';
+    }
+
+    format(value) {
+        if (value !== undefined) {
+            return new Date(value).toISOString();
+        } else {
+            return value;
+        }
+    }
+
+    parse(text) {
+        if (typeof text === 'number' || text === undefined) {
+            return text;
         }
 
-        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+        return Date.parse(text);
     }
 
-    updateName(name) {
-        this.rootObject.name = name;
-    }
-
-    async get() {
-        let roots = await this.rootRegistry.getRoots();
-        this.rootObject.composition = roots;
-
-        return this.rootObject;
+    validate(text) {
+        return !isNaN(Date.parse(text));
     }
 }
-
-function instance(rootRegistry) {
-    return new RootObjectProvider(rootRegistry);
-}
-
-export default instance;

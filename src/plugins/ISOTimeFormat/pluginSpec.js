@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,33 +19,37 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
 
-describe('RootObjectProvider', function () {
-    // let rootRegistry;
-    let rootObjectProvider;
-    let roots = ['some root'];
-    let rootRegistry = {
-        getRoots: () => {
-            return Promise.resolve(roots);
-        }
-    };
+import ISOTimeFormat from './ISOTimeFormat.js';
 
-    beforeEach(function () {
-        rootObjectProvider = new RootObjectProvider(rootRegistry);
+describe("the plugin", () => {
+    const ISO_KEY = 'iso';
+    const JUNK = "junk";
+    const MOON_LANDING_TIMESTAMP = -14256000000;
+    const MOON_LANDING_DATESTRING = '1969-07-20T00:00:00.000Z';
+    let isoFormatter;
+
+    beforeEach(() => {
+        isoFormatter = new ISOTimeFormat();
     });
 
-    it('supports fetching root', async () => {
-        let root = await rootObjectProvider.get();
+    describe("creates a new ISO based formatter", function () {
 
-        expect(root).toEqual({
-            identifier: {
-                key: "ROOT",
-                namespace: ""
-            },
-            name: 'The root object',
-            type: 'root',
-            composition: ['some root']
+        it("with the key 'iso'", () => {
+            expect(isoFormatter.key).toBe(ISO_KEY);
+        });
+
+        it("that will format a timestamp in ISO standard format", () => {
+            expect(isoFormatter.format(MOON_LANDING_TIMESTAMP)).toBe(MOON_LANDING_DATESTRING);
+        });
+
+        it("that will parse an ISO Date String into milliseconds", () => {
+            expect(isoFormatter.parse(MOON_LANDING_DATESTRING)).toBe(MOON_LANDING_TIMESTAMP);
+        });
+
+        it("that will validate correctly", () => {
+            expect(isoFormatter.validate(MOON_LANDING_DATESTRING)).toBe(true);
+            expect(isoFormatter.validate(JUNK)).toBe(false);
         });
     });
 });

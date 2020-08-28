@@ -1,10 +1,10 @@
 <template>
 <span
-    class="c-disclosure-triangle"
-    :class="{
-        'c-disclosure-triangle--expanded' : value,
-        'is-enabled' : enabled
-    }"
+    :class="[
+        controlClass,
+        { 'c-disclosure-triangle--expanded' : value },
+        {'is-enabled' : enabled }
+    ]"
     @click="handleClick"
 ></span>
 </template>
@@ -25,6 +25,10 @@ export default {
         propagate: {
             type: Boolean,
             default: true
+        },
+        controlClass: {
+            type: String,
+            default: 'c-disclosure-triangle'
         }
     },
     methods: {

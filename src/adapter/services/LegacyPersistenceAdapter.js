@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,42 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-class RootObjectProvider {
-    constructor(rootRegistry) {
-        if (!RootObjectProvider.instance) {
-            this.rootRegistry = rootRegistry;
-            this.rootObject = {
-                identifier: {
-                    key: "ROOT",
-                    namespace: ""
-                },
-                name: 'The root object',
-                type: 'root',
-                composition: []
-            };
-            RootObjectProvider.instance = this;
-        } else if (rootRegistry) {
-            // if called twice, update instance rootRegistry
-            RootObjectProvider.instance.rootRegistry = rootRegistry;
-        }
+import objectUtils from 'objectUtils';
 
-        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+export default class LegacyPersistenceAdapter {
+    constructor(openmct) {
+        this.openmct = openmct;
     }
 
-    updateName(name) {
-        this.rootObject.name = name;
+    listObjects() {
+        return Promise.resolve([]);
     }
 
-    async get() {
-        let roots = await this.rootRegistry.getRoots();
-        this.rootObject.composition = roots;
+    listSpaces() {
+        return Promise.resolve(Object.keys(this.openmct.objects.providers));
+    }
 
-        return this.rootObject;
+    updateObject(legacyDomainObject) {
+        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
+    }
+
+    readObject(keystring) {
+        let identifier = objectUtils.parseKeyString(keystring);
+
+        return this.openmct.legacyObject(this.openmct.objects.get(identifier));
     }
 }
-
-function instance(rootRegistry) {
-    return new RootObjectProvider(rootRegistry);
-}
-
-export default instance;

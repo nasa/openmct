@@ -97,7 +97,8 @@ button {
     }
 }
 
-.c-click-link {
+.c-click-link,
+.c-icon-link {
     // A clickable element, typically inline, with an icon and label
     @include cControl();
     cursor: pointer;
@@ -112,8 +113,15 @@ button {
     }
 }
 
+.c-icon-link {
+    &:before {
+        // Icon
+        //color: $colorBtnMajorBg;
+    }
+}
+
 .c-icon-button {
-    .c-icon-button__label {
+    &__label {
         margin-left: $interiorMargin;
     }
 
