@@ -34,6 +34,7 @@
         </multipane>
         <template v-else>
             <styles-inspector-view />
+            <saved-styles-inspector-view />
         </template>
     </div>
 </div>
@@ -49,11 +50,13 @@ import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import StylesInspectorView from "./StylesInspectorView.vue";
+import SavedStylesInspectorView from "./SavedStylesInspectorView.vue";
 
 export default {
     inject: ['openmct'],
     components: {
         StylesInspectorView,
+        SavedStylesInspectorView,
         multipane,
         pane,
         Elements,
