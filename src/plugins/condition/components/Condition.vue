@@ -308,14 +308,14 @@ export default {
             };
             this.condition.configuration.criteria.push(criteriaObject);
         },
-        dragStart(e) {
-            e.dataTransfer.clearData();
-            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
-            e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
+        dragStart(event) {
+          event.dataTransfer.clearData();
+          event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
+          event.dataTransfer.effectAllowed = "copyMove";
+          event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
-        dragEnd(event) {
+        dragEnd() {
             this.dragStarted = false;
             this.$emit('dragComplete');
         },
@@ -359,10 +359,10 @@ export default {
         },
         destroy() {
         },
-        removeCondition(ev) {
+        removeCondition() {
             this.$emit('removeCondition', this.condition.id);
         },
-        cloneCondition(ev) {
+        cloneCondition() {
             this.$emit('cloneCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
