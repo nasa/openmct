@@ -11,16 +11,16 @@
 #   make, docker, docker-compose
 #------------------------------------------------------------------------------
 
-install: ## Install openmct on a docker node image, which implicitly uses ./Dockerfile
+openmct-install: ## Install openmct on a docker image, which uses ./Dockerfile
 	docker build -t openmct:latest .
 
-start: install stop ## Start openmct in docker container (in an attached state), which implicitly uses ./docker-compose.yml
+openmct-up: openmct-install openmct-down ## Start openmct in docker container, in an attached state, which uses ./docker-compose.yml
 	docker-compose up
 
-stop: ## Stop openmct on docker conainter
+openmct-down: ## Stop openmct on docker conainter
 	docker-compose down -v
 
-inspect: ## shell into running container
+openmct-inspect: ## Shell into running container
 	docker exec -it openmct_openmct_1 bash
 
 help:
