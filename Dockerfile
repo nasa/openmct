@@ -1,9 +1,11 @@
 FROM node:latest
 
-LABEL maintainer="Haisam.Ido@gmail.com"
+LABEL maintainer="haisam.ido@gmail.com"
 
 RUN mkdir openmct
 WORKDIR /openmct
+
+# Mounting a volume would be better
 ADD . .
 
 RUN rm -rf dist
