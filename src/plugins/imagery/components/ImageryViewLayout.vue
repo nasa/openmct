@@ -325,12 +325,15 @@ export default {
         numericImageAge() {
             let currentTime = this.currentTimeValue();
             let selectedImage = this.getSelectedImage();
+            let formatter = this.getFormatter(this.timeKey);
 
             if (selectedImage === undefined || selectedImage[this.timeKey] === undefined) {
                 return;
             }
 
-            return currentTime - selectedImage[this.timeKey];
+            let parsedSelectedTime = formatter.parse(selectedImage[this.timeKey]);
+
+            return currentTime - parsedSelectedTime;
         },
         formattedAge() {
             let age = this.numericImageAge();
