@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,42 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-class RootObjectProvider {
-    constructor(rootRegistry) {
-        if (!RootObjectProvider.instance) {
-            this.rootRegistry = rootRegistry;
-            this.rootObject = {
-                identifier: {
-                    key: "ROOT",
-                    namespace: ""
-                },
-                name: 'The root object',
-                type: 'root',
-                composition: []
-            };
-            RootObjectProvider.instance = this;
-        } else if (rootRegistry) {
-            // if called twice, update instance rootRegistry
-            RootObjectProvider.instance.rootRegistry = rootRegistry;
-        }
-
-        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+export default class CouchObjectQueue {
+    constructor(object, rev) {
+        this.rev = rev;
+        this.objects = object ? [object] : [];
+        this.pending = false;
     }
 
-    updateName(name) {
-        this.rootObject.name = name;
+    updateRevision(rev) {
+        this.rev = rev;
     }
 
-    async get() {
-        let roots = await this.rootRegistry.getRoots();
-        this.rootObject.composition = roots;
-
-        return this.rootObject;
+    hasNext() {
+        return this.objects.length;
     }
+
+    enqueue(item) {
+        this.objects.push(item);
+    }
+
+    dequeue() {
+        return this.objects.shift();
+    }
+
+    clear() {
+        this.rev = undefined;
+        this.objects = [];
+    }
+
 }
-
-function instance(rootRegistry) {
-    return new RootObjectProvider(rootRegistry);
-}
-
-export default instance;

@@ -3,7 +3,8 @@
     <div class="l-browse-bar__start">
         <button
             v-if="hasParent"
-            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
             @click="goToParent"
         ></button>
         <div

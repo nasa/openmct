@@ -24,6 +24,7 @@ define([
     'lodash',
     './utcTimeSystem/plugin',
     './localTimeSystem/plugin',
+    './ISOTimeFormat/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -54,11 +55,14 @@ define([
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
-    './newFolderAction/plugin'
+    './newFolderAction/plugin',
+    './persistence/couch/plugin',
+    './defaultRootName/plugin'
 ], function (
     _,
     UTCTimeSystem,
     LocalTimeSystem,
+    ISOTimeFormat,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -89,12 +93,13 @@ define([
     Snow,
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
-    NewFolderAction
+    NewFolderAction,
+    CouchDBPlugin,
+    DefaultRootName
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -126,27 +131,7 @@ define([
 
     plugins.Conductor = TimeConductorPlugin.default;
 
-    plugins.CouchDB = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/couch";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "COUCHDB_PATH",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.CouchDB);
-        };
-    };
+    plugins.CouchDB = CouchDBPlugin.default;
 
     plugins.Elasticsearch = function (url) {
         return function (openmct) {
@@ -201,6 +186,8 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.ISOTimeFormat = ISOTimeFormat.default;
+    plugins.DefaultRootName = DefaultRootName.default;
 
     return plugins;
 });
