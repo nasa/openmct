@@ -270,7 +270,7 @@ export default {
             this.ageTrackConditionCheck();
         },
         ageTrackConditionCheck() {
-            if (this.clock !== undefined) {
+            if (this.clock !== undefined && this.openmct.time.timeSystem().isUTCBased) {
                 this.trackAge();
             } else {
                 this.clearAgeTracking();
