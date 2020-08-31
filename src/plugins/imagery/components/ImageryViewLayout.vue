@@ -68,6 +68,7 @@
 
 <script>
 import _ from 'lodash';
+import moment from 'moment';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const AGE_TRACK_INTERVAL_MS = 100;
@@ -337,20 +338,21 @@ export default {
         },
         formattedAge() {
             let age = this.numericImageAge();
-            let result;
 
             if (!age) {
                 return;
             }
 
-            result = this.durationFormatter.format(age);
+            let result = this.durationFormatter.format(age);
 
             if (age > EIGHT_HOURS) {
-                result = '&gt; 8 hours';
-            }
+                let negativeAge = (age / ONE_HOUR) * -1;
+                result = moment.duration(negativeAge, 'hours').humanize(true);
 
-            if (age > TWENTYFOUR_HOURS) {
-                result = '&gt; 24 hours';
+                if (age > TWENTYFOUR_HOURS) {
+                    negativeAge = (age / TWENTYFOUR_HOURS) * -1;
+                    result = moment.duration(negativeAge, 'days').humanize(true);
+                }
             }
 
             return result;
