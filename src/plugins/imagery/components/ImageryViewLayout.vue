@@ -113,11 +113,7 @@ export default {
     },
     watch: {
         time() {
-            this.refreshCSS = true;
-            window.setTimeout(() => {
-                // trigger class reimplimentation so animations start over
-                this.refreshCSS = false;
-            }, REFRESH_CHECK_MS);
+            this.resetAgeCSS();
         }
     },
     mounted() {
@@ -176,6 +172,7 @@ export default {
                 : this.imageUrl;
         },
         getTime(datum) {
+            console.log('get time', datum);
             return datum
                 ? this.timeFormat.format(datum)
                 : this.time;
@@ -225,6 +222,7 @@ export default {
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
         setSelectedImage(image) {
+            console.log('set selected image', image);
             // If we are paused and the current image IS selected, unpause
             // Otherwise, set current image and pause
             if (!image) {
@@ -235,6 +233,7 @@ export default {
                 this.paused(false);
                 this.unselectAllImages();
             } else {
+                console.log('sup');
                 this.imageUrl = this.getImageUrl(image);
                 this.time = this.getTime(image);
                 this.paused(true);
@@ -391,6 +390,13 @@ export default {
             let age = this.numericImageAge();
 
             return age < cutoff;
+        },
+        resetAgeCSS() {
+            this.refreshCSS = true;
+            window.setTimeout(() => {
+                // trigger class reimplimentation so animations start over
+                this.refreshCSS = false;
+            }, REFRESH_CHECK_MS);
         }
     }
 };
