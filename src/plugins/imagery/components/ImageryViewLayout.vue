@@ -33,7 +33,7 @@
                 <div class="c-imagery__timestamp">{{ getTime() }}</div>
                 <div
                     v-if="clock"
-                    :class="{'c-imagery--new': isImageNew()}"
+                    :class="{'c-imagery--new': isImageNew() && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ age }}</div>
             </div>
@@ -72,8 +72,9 @@ import moment from 'moment';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const AGE_TRACK_INTERVAL_MS = 100;
+const REFRESH_CHECK_MS = 500;
 
-const ONE_MINUTE = 60 * 100;
+const ONE_MINUTE = 60 * 1000;
 const FIVE_MINUTES = 5 * ONE_MINUTE;
 const ONE_HOUR = ONE_MINUTE * 60;
 const EIGHT_HOURS = 8 * ONE_HOUR;
@@ -103,10 +104,21 @@ export default {
             isPaused: false,
             metadata: {},
             requestCount: 0,
+            time: undefined,
             timeFormat: '',
             clock: clock,
-            ageTracker: undefined
+            ageTracker: undefined,
+            refreshCSS: false
         };
+    },
+    watch: {
+        time() {
+            this.refreshCSS = true;
+            window.setTimeout(() => {
+                // trigger class reimplimentation so animations start over
+                this.refreshCSS = false;
+            }, REFRESH_CHECK_MS);
+        }
     },
     mounted() {
         // set
@@ -374,7 +386,7 @@ export default {
         },
         isImageNew(lessThanMinutes) {
             let cutoff = lessThanMinutes
-                ? lessThanMinutes * 60 * 1000
+                ? lessThanMinutes * ONE_MINUTE
                 : FIVE_MINUTES;
             let age = this.numericImageAge();
 
