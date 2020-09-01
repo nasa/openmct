@@ -27,10 +27,10 @@ export default class PreviewAction {
         /**
          * Metadata
          */
-        this.name = 'Preview';
+        this.name = 'View';
         this.key = 'preview';
-        this.description = 'Preview in large dialog';
-        this.cssClass = 'icon-eye-open';
+        this.description = 'View in large dialog';
+        this.cssClass = 'icon-items-expand';
         this.group = 'windowing';
         this.priority = 1;
 
