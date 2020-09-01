@@ -172,7 +172,6 @@ export default {
                 : this.imageUrl;
         },
         getTime(datum) {
-            console.log('get time', datum);
             return datum
                 ? this.timeFormat.format(datum)
                 : this.time;
@@ -222,7 +221,6 @@ export default {
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
         setSelectedImage(image) {
-            console.log('set selected image', image);
             // If we are paused and the current image IS selected, unpause
             // Otherwise, set current image and pause
             if (!image) {
@@ -233,10 +231,9 @@ export default {
                 this.paused(false);
                 this.unselectAllImages();
             } else {
-                console.log('sup');
+                this.paused(true);
                 this.imageUrl = this.getImageUrl(image);
                 this.time = this.getTime(image);
-                this.paused(true);
                 this.unselectAllImages();
                 image.selected = true;
             }
