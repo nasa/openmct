@@ -23,7 +23,7 @@
 <template>
 <div class="c-style">
     <span :class="[
-              { 'is-style-invisible': styleItem.style.isStyleInvisible },
+              { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
               { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
           ]"
           :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
@@ -60,6 +60,13 @@
                                class="c-style__toolbar-button--toggle-visible"
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
+        />
+
+        <!-- Save Styles -->
+        <toolbar-button v-if="canSaveStyle()"
+                        class="c-style__toolbar-button--save"
+                        :options="saveOptions"
+                        @click="saveStyle()"
         />
     </span>
 </div>
@@ -182,7 +189,16 @@ export default {
                     }
                 ]
             };
-
+        },
+        saveOptions() {
+            return {
+                icon: 'icon-save',
+                title: 'Save style',
+                // value: this.normalizeValueForSwatch(value),
+                // property: 'color',
+                isEditing: this.isEditing
+                // nonSpecific: this.mixedStyles.indexOf('color') > -1
+            };
         }
     },
     methods: {
@@ -216,6 +232,12 @@ export default {
             }
 
             this.$emit('persist', this.styleItem, item.property);
+        },
+        canSaveStyle() {
+            return !this.mixedStyles.length;
+        },
+        saveStyle() {
+            console.log('saving style');
         }
     }
 };

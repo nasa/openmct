@@ -113,6 +113,10 @@ button {
     }
 }
 
+.c-icon-button--disabled {
+    @include cClickIconButtonLayout();
+}
+
 .c-icon-link {
     &:before {
         // Icon
@@ -120,7 +124,8 @@ button {
     }
 }
 
-.c-icon-button {
+.c-icon-button,
+.c-icon-button--disabled {
     &__label {
         margin-left: $interiorMargin;
     }

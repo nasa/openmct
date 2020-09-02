@@ -26,35 +26,75 @@
         Saved Styles
     </div>
     <div class="c-inspect-styles__content">
-    </div>
-    <div class="c-inspect-styles__saved-style">
-        <div
-            v-for="(savedStyle, index) in savedStyles"
-            :key="index"
-            class="c-inspect-styles__saved-style"
-            @click="applySavedStyle(savedStyle)"
-        >
-            <style-editor
-                class="c-inspect-styles__editor"
-                :style-item="savedStyle"
-            />
+        <div class="c-inspect-styles__saved-style">
+            <div
+                v-for="(savedStyle, index) in savedStyles"
+                :key="index"
+                class="c-inspect-styles__saved-style"
+            >
+                <saved-style-selector
+                    class="c-inspect-styles__selector"
+                    :saved-style="savedStyle"
+                />
+            </div>
         </div>
     </div>
 </div>
 </template>
 
 <script>
+import SavedStyleSelector from './SavedStyleSelector.vue';
 
 export default {
     name: 'SavedStylesView',
+    components: {
+        SavedStyleSelector
+    },
     inject: [
         'openmct',
         'selection'
     ],
     data: () => {
-        return {
-            savedStyles: []
+        const defaultStyle = {
+            backgroundColor: '',
+            border: '',
+            color: ''
         };
+
+        const testStyle = {
+            backgroundColor: 'red',
+            border: 'green',
+            color: 'blue'
+        }
+
+        return {
+            savedStyles: [defaultStyle, testStyle]
+        };
+    },
+    methods: {
+        hash(style) {
+            return `
+                backgroundColor:${style.backgroundColor}
+                border:${style.border}
+                color:${style.color}
+            `;
+        },
+        applySavedStyle(hash) {
+            console.log(this.selection);
+            console.log('applystyle');
+        },
+        applyStaticStyleToSingleSelection(style) {
+            const selectionId = this.selection[0].context.layoutItem.id;
+            let styleConfiguration = this.selection[0][1].context.item.configuration.objectStyles[selectionId].staticStyle;
+            let styles = Object.keys(styleConfiguration);
+            // styles.forEach(style => {
+            //     styleConfiguration[style] = 
+            // });
+            console.log('applying single selection');
+        },
+        deleteSavedStyle(hash) {
+
+        }
     }
 };
 </script>
