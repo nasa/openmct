@@ -36,9 +36,11 @@ export default {
         this.setDimensions();
         this.canvas = this.container.append('canvas').node();
         this.canvasContext = this.canvas.getContext('2d');
-      this.canvasContext.font = "normal 14px sans-serif";
-      this.canvas.width = this.width;
-        this.canvas.height = this.height;
+        this.canvasContext.font = "normal 14px sans-serif";
+        // this.canvas.width = this.width;
+        // this.canvas.height = this.height;
+        this.svgElement.attr("width", this.width);
+        this.svgElement.attr("height", this.height);
 
         this.updateViewBounds();
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
@@ -53,6 +55,7 @@ export default {
         },
         setScaleAndPlotActivities() {
             this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            d3Selection.selectAll("svg > *").remove();
             this.setScale();
             this.plotActivity();
         },
@@ -158,7 +161,8 @@ export default {
                     currentStart = Math.max(this.viewBounds.start, activity.start);
                     currentEnd = Math.min(this.viewBounds.end, activity.end);
                     const rectX = this.xScale(currentStart);
-                    const rectWidth = this.xScale(currentEnd);
+                    const rectY = this.xScale(currentEnd);
+                    const rectWidth = rectY - rectX;
 
                     const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
 
@@ -177,7 +181,9 @@ export default {
                         activityRow = this.getRowForActivity(rectX, textWidth);
                     }
 
-                    this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText);
+                    //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
+                    // this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText);
+                    this.plotSVG(activity, rectX, rectWidth, activityRow, textStart, canFitText);
 
                     if (!this.activityPositions[activityRow]) {
                         this.activityPositions[activityRow] = [];
@@ -190,7 +196,7 @@ export default {
                 }
             });
         },
-        plotSVG(activity, rectX, rectWidth, activityRow, textStart) {
+        plotSVG(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
             this.svgElement.append("rect")
                 .attr("class", "activity")
                 .attr("x", rectX)
@@ -200,11 +206,15 @@ export default {
                 .attr('fill', activity.color)
                 .attr('stroke', "lightgray");
 
-            this.svgElement.append("text").text(activity.name)
-                .attr("class", "activity")
-                .attr("x", textStart)
-                .attr("y", parseInt(activityRow, 10) + TEXT_PADDING)
-                .attr('fill', activity.textColor);
+            let textLines = this.getActivityText(this.canvasContext, activity.name, canFitText);
+            let y = canFitText ? parseInt(activityRow, 10) + INNER_TEXT_PADDING : parseInt(activityRow, 10) + TEXT_PADDING;
+            textLines.forEach((line, index) => {
+              this.svgElement.append("text").text(line)
+                  .attr("class", "activity")
+                  .attr("x", textStart)
+                  .attr("y", y + (index * LINE_HEIGHT))
+                  .attr('fill', activity.textColor);
+            });
         },
         plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
             this.canvasContext.fillStyle = activity.color;
@@ -215,32 +225,33 @@ export default {
             this.canvasContext.fillStyle = activity.textColor;
 
             let y = canFitText ? parseInt(activityRow, 10) + INNER_TEXT_PADDING : parseInt(activityRow, 10) + TEXT_PADDING;
-            this.drawText(this.canvasContext, activity.name, textStart, y, canFitText);
+            let textLines = this.getActivityText(this.canvasContext, activity.name, canFitText);
+
+            textLines.forEach((line, index) => {
+              this.canvasContext.fillText(line, textStart, y + (index * LINE_HEIGHT));
+            });
         },
-        drawText(context, text, x, y, canFitText) {
-            let words = text.split(' ');
-            let line = '';
-            let rows = 1;
+        getActivityText(context, text, canFitText) {
+          //TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
+          let words = text.split(' ');
+          let line = '';
+          let activityText = [];
+          let rows = 1;
 
-            for (let n = 0; (n < words.length) && (rows <= 2); n++) {
-                let testLine = line + words[n] + ' ';
-                let metrics = context.measureText(testLine);
-                let testWidth = metrics.width;
-                if (!canFitText && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
-                    context.fillText(line, x, y);
-                    line = words[n] + ' ';
-                    y += LINE_HEIGHT;
-                    rows = rows + 1;
-                } else {
-                    line = testLine;
-                }
+          for (let n = 0; (n < words.length) && (rows <= 2); n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = context.measureText(testLine);
+            let testWidth = metrics.width;
+            if (!canFitText && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
+              activityText.push(line);
+              line = words[n] + ' ';
+              testLine = line + words[n] + ' ';
+              rows = rows + 1;
             }
+            line = testLine;
+          }
 
-            if (rows < 2) {
-              context.fillText(line, x, y);
-            }
-
-            return rows - 1;
+          return activityText.length ? activityText : [line];
         }
     }
 };
