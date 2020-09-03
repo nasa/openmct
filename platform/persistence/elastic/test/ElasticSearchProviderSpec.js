@@ -46,25 +46,34 @@ define([
                 spyOn(provider, 'cleanTerm').and.returnValue('cleanedTerm');
                 spyOn(provider, 'fuzzyMatchUnquotedTerms').and.returnValue('fuzzy');
                 spyOn(provider, 'parseResponse').and.returnValue('parsedResponse');
-                $http.and.returnValue(Promise.resolve({}));
+                $http.and.returnValue(Promise.resolve({
+                    data: {
+                        hits: {
+                            hits: []
+                        }
+                    }
+                }));
             });
 
             it('cleans terms and adds fuzzyness', function () {
-                provider.query('hello', 10);
-                expect(provider.cleanTerm).toHaveBeenCalledWith('hello');
-                expect(provider.fuzzyMatchUnquotedTerms)
-                    .toHaveBeenCalledWith('cleanedTerm');
+                return provider.query('hello', 10)
+                    .then(() => {
+                        expect(provider.cleanTerm).toHaveBeenCalledWith('hello');
+                        expect(provider.fuzzyMatchUnquotedTerms)
+                            .toHaveBeenCalledWith('cleanedTerm');
+                    });
             });
 
             it('calls through to $http', function () {
-                provider.query('hello', 10);
-                expect($http).toHaveBeenCalledWith({
-                    method: 'GET',
-                    params: {
-                        q: 'fuzzy',
-                        size: 10
-                    },
-                    url: 'http://localhost:9200/_search/'
+                return provider.query('hello', 10).then(() => {
+                    expect($http).toHaveBeenCalledWith({
+                        method: 'GET',
+                        params: {
+                            q: 'fuzzy',
+                            size: 10
+                        },
+                        url: 'http://localhost:9200/_search/'
+                    });
                 });
             });
 

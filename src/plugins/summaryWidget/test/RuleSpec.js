@@ -1,17 +1,17 @@
 define(['../src/Rule', 'zepto'], function (Rule, $) {
     describe('A Summary Widget Rule', function () {
-        var mockRuleConfig,
-            mockDomainObject,
-            mockOpenMCT,
-            mockConditionManager,
-            mockWidgetDnD,
-            mockEvaluator,
-            mockContainer,
-            testRule,
-            removeSpy,
-            duplicateSpy,
-            changeSpy,
-            conditionChangeSpy;
+        let mockRuleConfig;
+        let mockDomainObject;
+        let mockOpenMCT;
+        let mockConditionManager;
+        let mockWidgetDnD;
+        let mockEvaluator;
+        let mockContainer;
+        let testRule;
+        let removeSpy;
+        let duplicateSpy;
+        let changeSpy;
+        let conditionChangeSpy;
 
         beforeEach(function () {
             mockRuleConfig = {

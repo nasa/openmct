@@ -23,8 +23,8 @@
 define(['./BundleRegistry'], function (BundleRegistry) {
 
     describe("BundleRegistry", function () {
-        var testPath,
-            bundleRegistry;
+        let testPath;
+        let bundleRegistry;
 
         beforeEach(function () {
             testPath = 'some/bundle';
@@ -46,7 +46,7 @@ define(['./BundleRegistry'], function (BundleRegistry) {
         });
 
         describe("when a bundle has been registered", function () {
-            var testBundleDef;
+            let testBundleDef;
 
             beforeEach(function () {
                 testBundleDef = { someKey: "some value" };
@@ -83,7 +83,6 @@ define(['./BundleRegistry'], function (BundleRegistry) {
                 });
             });
         });
-
     });
 
 });

@@ -144,7 +144,7 @@ define(
                     setTimeout(resolve, 100);
                 }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(1);
-                    expect(action.tree.hasOwnProperty("parentId"))
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "parentId"))
                         .toBeTruthy();
                 });
             });
@@ -184,9 +184,9 @@ define(
                     setTimeout(resolve, 100);
                 }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(2);
-                    expect(action.tree.hasOwnProperty("infiniteParentId"))
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "infiniteParentId"))
                         .toBeTruthy();
-                    expect(action.tree.hasOwnProperty("infiniteChildId"))
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "infiniteChildId"))
                         .toBeTruthy();
                 });
             });
@@ -224,9 +224,9 @@ define(
                     setTimeout(resolve, 100);
                 }).then(function () {
                     expect(Object.keys(action.tree).length).toBe(2);
-                    expect(action.tree.hasOwnProperty('parentId'))
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "parentId"))
                         .toBeTruthy();
-                    expect(action.tree.hasOwnProperty('brandNewId'))
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "brandNewId"))
                         .toBeTruthy();
                     expect(action.tree.brandNewId.location).toBe('parentId');
                 });
@@ -239,8 +239,8 @@ define(
                     setTimeout(resolve, 100);
                 }).then(function () {
                     expect(Object.keys(exportedTree).length).toBe(2);
-                    expect(exportedTree.hasOwnProperty('openmct')).toBeTruthy();
-                    expect(exportedTree.hasOwnProperty('rootId')).toBeTruthy();
+                    expect(Object.prototype.hasOwnProperty.call(exportedTree, "openmct")).toBeTruthy();
+                    expect(Object.prototype.hasOwnProperty.call(exportedTree, "rootId")).toBeTruthy();
                 });
             });
 

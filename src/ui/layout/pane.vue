@@ -20,12 +20,19 @@
         <span v-if="label"
               class="l-pane__label"
         >{{ label }}</span>
+        <slot name="controls"></slot>
         <button
             v-if="collapsable"
-            class="l-pane__collapse-button c-button"
+            class="l-pane__collapse-button c-icon-button"
             @click="toggleCollapse"
         ></button>
     </div>
+    <button
+        class="l-pane__expand-button"
+        @click="toggleCollapse"
+    >
+        <span class="l-pane__expand-button__label">{{ label }}</span>
+    </button>
     <div class="l-pane__contents">
         <slot></slot>
     </div>
@@ -103,7 +110,7 @@ export default {
         },
         updatePosition: function (event) {
             let size = this.getNewSize(event);
-            let intSize = parseInt(size.substr(0, size.length - 2));
+            let intSize = parseInt(size.substr(0, size.length - 2), 10);
             if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
                 this.dragCollapse = true;
                 this.end();

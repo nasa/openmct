@@ -32,7 +32,6 @@ import {
 import {resetApplicationState} from 'utils/testing';
 
 describe('the openmct location utility functions', () => {
-    beforeAll(() => resetApplicationState());
     afterEach(() => resetApplicationState());
 
     it('The setSearchParam function sets an individual search parameters in the window location hash', () => {

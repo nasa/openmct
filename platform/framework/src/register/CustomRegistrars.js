@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* eslint-disable no-invalid-this */
 
 /**
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.

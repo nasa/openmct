@@ -19,34 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    '../RootObjectProvider'
-], function (
-    RootObjectProvider
-) {
-    describe('RootObjectProvider', function () {
-        var rootRegistry,
-            rootObjectProvider;
+import RootObjectProvider from '../RootObjectProvider';
 
-        beforeEach(function () {
-            rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-            rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
-            rootObjectProvider = new RootObjectProvider(rootRegistry);
-        });
+describe('RootObjectProvider', function () {
+    // let rootRegistry;
+    let rootObjectProvider;
+    let roots = ['some root'];
+    let rootRegistry = {
+        getRoots: () => {
+            return Promise.resolve(roots);
+        }
+    };
 
-        it('supports fetching root', function () {
-            return rootObjectProvider.get()
-                .then(function (root) {
-                    expect(root).toEqual({
-                        identifier: {
-                            key: "ROOT",
-                            namespace: ""
-                        },
-                        name: 'The root object',
-                        type: 'root',
-                        composition: ['some root']
-                    });
-                });
+    beforeEach(function () {
+        rootObjectProvider = new RootObjectProvider(rootRegistry);
+    });
+
+    it('supports fetching root', async () => {
+        let root = await rootObjectProvider.get();
+
+        expect(root).toEqual({
+            identifier: {
+                key: "ROOT",
+                namespace: ""
+            },
+            name: 'The root object',
+            type: 'root',
+            composition: ['some root']
         });
     });
 });
