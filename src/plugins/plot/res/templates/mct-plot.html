@@ -254,7 +254,7 @@
 
                 <div
                     class="gl-plot-label gl-plot-x-label"
-                    ng-class="{'icon-gear': (xKeyOptions.length > 1 && series.length === 1)}"
+                    ng-class="{'icon-gear': isEnabledXKeyToggle()}"
                 >
                     {{ xAxis.get('label') }}
                 </div>
