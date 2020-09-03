@@ -22,7 +22,7 @@
 import RootObjectProvider from '../RootObjectProvider';
 
 describe('RootObjectProvider', function () {
-    // let rootRegistry;
+    const ROOT_NAME = 'Open MCT';
     let rootObjectProvider;
     let roots = ['some root'];
     let rootRegistry = {
@@ -43,7 +43,7 @@ describe('RootObjectProvider', function () {
                 key: "ROOT",
                 namespace: ""
             },
-            name: 'The root object',
+            name: ROOT_NAME,
             type: 'root',
             composition: ['some root']
         });
