@@ -92,47 +92,59 @@ should update (or delegate the task of updating) Open MCT version
 numbers by the following process:
 
 1. Update version number in `package.json`
-  1. Remove `-SNAPSHOT` suffix.
-  2. Verify that resulting version number meets semantic versioning
-     requirements relative to previous stable version. Increment if
-     necessary.
-  3. If version is considered unstable (which may be the case during
+  1. Create a new branch off the `master` branch.
+  2. CRemove `-SNAPSHOT` suffix from the version in `package.json`.
+  3. Verify that resulting version number meets semantic versioning
+     requirements relative to previous stable version. Increment the 
+     version number if necessary.
+  4. If version is considered unstable (which may be the case during
      the first three sprints of a release), apply a new suffix per
      [Version Numbering](#version-numbering) guidance above.
 2. Tag the release.
-  1. Commit changes to `package.json` on the `master` branch.
+  1. Commit changes to `package.json` on the new branch created in 
+     the previous step.
      The commit message should reference the sprint being closed,
      preferably by a URL reference to the associated Milestone in
      GitHub.
   2. Verify that build still completes, that application passes
      smoke-testing, and that only differences from tested versions
      are the changes to version number above.
-  3. Push the `master` branch.
+  3. Push the new branch.
   4. Tag this commit with the version number, prepending the letter "v".
      (e.g. `git tag v0.9.3-alpha`)
   5. Push the tag to GitHub. (e.g. `git push origin v0.9.3-alpha`).
 3. Upload a release archive.
-  1. Run `npm pack` to generate the archive.
-  2. Use the [GitHub release interface](https://github.com/nasa/openmct/releases)
+  1. Use the [GitHub release interface](https://github.com/nasa/openmct/releases)
      to draft a new release.
-  3. Choose the existing tag for the new version (created and pushed above.)
+  2. Choose the existing tag for the new version (created and pushed above.)
      Enter the tag name as the release name as well; see existing releases
-     for examples.
-  4. Attach the release archive.
-  5. Designate the release as a "pre-release" as appropriate (for instance,
+     for examples. (e.g. `Open MCT v0.9.3-alpha`)
+  3. Designate the release as a "pre-release" as appropriate (for instance,
      when the version number has been suffixed as unstable, or when
      the version number is below 1.0.0.)
-4. Restore snapshot status in `package.json`
-  1. Remove any suffix from the version number, or increment the
-     _patch_ version if there is no suffix.
-  2. Append a `-SNAPSHOT` suffix.
-  3. Commit changes to `package.json` on the `master` branch.
+  4. Add release notes including any breaking changes, enhancements, 
+     bug fixes with solutions in brief.
+  5. Publish the release.
+4. Publish the release to npm
+  1. Login to npm
+  2. Checkout the tag created in the previous step.
+  3. In `package.json` change package to be public (private: false)
+  4. Test the package before publishing by doing `npm publish --dry-run` 
+     if necessary.
+  5. Publish the package to the npmjs registry (e.g. `npm publish --access public`)
+  6. Confirm the package has been published (e.g. `https://www.npmjs.com/package/openmct`)
+5. Update snapshot status in `package.json`
+  1. Create a new branch off the `master` branch.
+  2. Remove any suffix from the version number, 
+     or increment the _patch_ version if there is no suffix.
+  3. Append a `-SNAPSHOT` suffix.
+  4. Commit changes to `package.json` on the `master` branch.
      The commit message should reference the sprint being opened,
      preferably by a URL reference to the associated Milestone in
      GitHub.
-  4. Verify that build still completes, that application passes
+  5. Verify that build still completes, that application passes
      smoke-testing.
-  5. Push the `master` branch.
+  6. Create a PR to be merged into the `master` branch.
 
 Projects dependent on Open MCT being co-developed by the Open MCT
 team should follow a similar process, except that they should
