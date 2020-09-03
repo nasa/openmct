@@ -260,7 +260,7 @@ export default {
             this.isZooming = false;
 
             if (bounds) {
-                this.handleNewBounds(bounds);
+                this.openmct.time.bounds(bounds);
             } else {
                 this.setViewFromBounds(this.bounds);
             }
