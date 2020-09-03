@@ -41,7 +41,8 @@
             flex: 0 0 auto;
         }
 
-        .is-in-small-container & {
+        .is-in-small-container &,
+        .c-fl-frame & {
             [class*="__label"] {
                 // button labels
                 display: none;
