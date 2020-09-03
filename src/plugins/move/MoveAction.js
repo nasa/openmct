@@ -29,41 +29,32 @@ export default class MoveAction {
         this.openmct = openmct;
     }
 
-    invoke(objectPath) {
+    async invoke(objectPath) {
         let object = objectPath[0];
-        let parent = objectPath[1];
-        this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object);
-            if (this.inNavigationPath(object)) {
-                this.navigateTo(objectPath.slice(1));
-            }
-        }).catch(() => {});
-    }
+        let oldParent = objectPath[1];
+        let dialogService = this.openmct.$injector.get('dialogService');
+        let dialogForm = this.getDialogForm(object, oldParent);
+        let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
 
-    showConfirmDialog(object) {
-        return new Promise((resolve, reject) => {
-            let dialog = this.openmct.overlays.dialog({
-                title: `Remove ${object.name}`,
-                iconClass: 'alert',
-                message: 'Warning! This action will remove this object. Are you sure you want to continue?',
-                buttons: [
-                    {
-                        label: 'OK',
-                        callback: () => {
-                            dialog.dismiss();
-                            resolve();
-                        }
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => {
-                            dialog.dismiss();
-                            reject();
-                        }
-                    }
-                ]
-            });
-        });
+        if (object.name !== userInput.name) {
+            this.openmct.objects.mutate(object, 'name', userInput.name);
+        }
+
+        let parentContext = userInput.location.getCapability('context');
+        let newParent = await this.openmct.objects.get(parentContext.domainObject.id);
+
+        if (this.inNavigationPath(object) && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
+        }
+
+        this.addToNewParent(object, newParent);
+        this.removeFromOldParent(oldParent, object);
+
+        if (this.inNavigationPath(object)) {
+            let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+            newObjectPath.pop(); // remove ROOT
+            this.navigateTo(newObjectPath);
+        }
     }
 
     inNavigationPath(object) {
@@ -79,16 +70,22 @@ export default class MoveAction {
         window.location.href = '#/browse/' + urlPath;
     }
 
-    removeFromComposition(parent, child) {
+    addToNewParent(child, newParent) {
+        let newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
+        let composition = newParent.composition;
+
+        composition.push(child.identifier);
+
+        this.openmct.objects.mutate(newParent, 'composition', composition);
+        this.openmct.objects.mutate(child, 'location', newParentKeyString);
+    }
+
+    removeFromOldParent(parent, child) {
         let composition = parent.composition.filter(id =>
             !this.openmct.objects.areIdsEqual(id, child.identifier)
         );
 
         this.openmct.objects.mutate(parent, 'composition', composition);
-
-        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
 
         const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
         const isAlias = parentKeyString !== child.location;
@@ -96,6 +93,61 @@ export default class MoveAction {
         if (!isAlias) {
             this.openmct.objects.mutate(child, 'location', null);
         }
+    }
+
+    getDialogForm(object, parent) {
+        return {
+            name: "Move Item",
+            sections: [
+                {
+                    rows: [
+                        {
+                            key: "name",
+                            control: "textfield",
+                            name: "Folder Name",
+                            pattern: "\\S+",
+                            required: true,
+                            cssClass: "l-input-lg"
+                        },
+                        {
+                            name: "location",
+                            control: "locator",
+                            validate: this.validate(object, parent),
+                            key: 'location'
+                        }
+                    ]
+                }
+            ]
+        };
+    }
+
+    validate(object, currentParent) {
+        return (parentCandidate) => {
+            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
+            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.getId());
+            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+
+            if (!parentCandidate || !currentParentKeystring) {
+                return false;
+            }
+
+            if (parentCandidateKeystring === currentParentKeystring) {
+                return false;
+            }
+
+            if (parentCandidate.getId() === objectKeystring) {
+                return false;
+            }
+
+            if (parentCandidate.getModel().composition.indexOf(objectKeystring) !== -1) {
+                return false;
+            }
+
+            return this.openmct.composition.checkPolicy(
+                parentCandidate.useCapability('adapter'),
+                object
+            );
+        };
     }
 
     appliesTo(objectPath) {

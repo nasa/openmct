@@ -27,12 +27,13 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Remove Action plugin", () => {
+describe("The Move Action plugin", () => {
 
     let openmct;
     let moveAction;
     let childObject;
     let parentObject;
+    let anotherParentObject;
 
     // this setups up the app
     beforeEach((done) => {
@@ -60,6 +61,14 @@ describe("The Remove Action plugin", () => {
                 folder: {
                     name: "Parent Folder",
                     composition: [childObject.identifier]
+                }
+            }
+        }).folder;
+        anotherParentObject = getMockObjects({
+            objectKeyStrings: ['folder'],
+            overwrite: {
+                folder: {
+                    name: "Another Parent Folder"
                 }
             }
         }).folder;
