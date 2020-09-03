@@ -93,7 +93,7 @@ numbers by the following process:
 
 1. Update version number in `package.json`
   1. Create a new branch off the `master` branch.
-  2. CRemove `-SNAPSHOT` suffix from the version in `package.json`.
+  2. Remove `-SNAPSHOT` suffix from the version in `package.json`.
   3. Verify that resulting version number meets semantic versioning
      requirements relative to previous stable version. Increment the 
      version number if necessary.
