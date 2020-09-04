@@ -151,7 +151,7 @@ define([
         }
 
         const displayRange = series.getDisplayRange(xKey);
-        this.config.xAxis.set('range', displayRange);
+        this.config.xAxis.set('displayRange', displayRange);
     };
 
     PlotController.prototype.removeSeries = function (plotSeries) {
